@@ -1,0 +1,11 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+	ignorecase = true
+	editor = vim
+	excludesfile = /home/tyru/git/MyScheme/.gitignore
+[remote "origin"]
+	url = git@github.com:tyru/myscheme.git
+	fetch = +refs/heads/*:refs/remotes/origin/*

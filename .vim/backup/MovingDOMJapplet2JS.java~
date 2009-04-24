@@ -1,0 +1,7 @@
+import javax.swing.*;
+
+class MovingDOMJapplet2JS extends JApplet {
+    public void init() {
+    }
+}
+

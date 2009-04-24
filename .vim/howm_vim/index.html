@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang=ja>
+  <head>
+    <meta Http-Equiv="Content-Type" Content="text/html; charset=UTF-8">
+    <title>howm-mode.vim</title>
+    <!-- スタイル {{{ -->
+    <style type="text/css">
+      <!--
+      body {
+        color: black;
+        background: #efefff;
+      }
+      h1 {
+        color: red;
+        background: #efefff;
+        border-style: none;
+        text-align: center;
+      }
+      h2 {
+        color: navy;
+        background: #dfdfff;
+        border-style: double;
+        text-align: left;
+      }
+      p {
+        text-indent: 1em;
+        margin: 1em;
+      }
+      -->
+    </style>
+    <!-- スタイル }}} -->
+  </head>
+  <body>
+    <div>
+    Last Change: 04-Jun-2006.
+    </div>
+    <h1>howm-mode.vim</h1>
+    <h2>お知らせ</h2>
+      <ul>
+        <li>長いことほったらかしにしてすいませんでした．これからぼちぼち更新再開していこうと思います．</li>
+        <li><a target="brank" href="http://www.unixuser.jp/">ソフトバンク社の UNIX USER</a>に howm-mode.vim の紹介記事を掲載していただけることになりました．<br>
+          よかったら読んでみてください．ｍ（＿ ＿）ｍ
+        <li>長いこと放置して申し訳ありません．<br>
+          修士論文を書くのに忙しくて 2004 年 2 月中旬くらいまで更新できそうにありません．更新する気はあるので気長に待っていてください．<br>
+          なんだかフェードアウトするサイトでよく見かけるフレーズですが…フェードアウトはしません！多分，しません．しないんじゃないかな．ま，ちょっと覚悟はしておけ（冗談です）．</li>
+      </ul>
+    <h2>更新履歴</h2>
+    <ul>
+			<li><strong>04-Jun-2006.</strong>
+			<ul>
+				<li>スクリプトファイルをfileencoding=euc-jp fileformat=unixに統一（howmスレの58,115さんありがとうございます）
+			</ul></li>
+      <li><strong>16-Aug-2003.</strong>
+      <ul>
+        <li>公開開始</li>
+      </ul></li>
+      <li><a href="./history.html">過去の更新履歴</a></li>
+    </ul>
+    <strong>今やってることリスト</strong>
+    <ul>
+      <li>g:howm_dir に空白が含まれていると，色々と困るバグを修正する（まっつんさんから報告）．<br>
+      （ずいぶん前から報告やパッチをいただいてるのに対応がのびのびになっててすいません．あちこち手を入れてるのでもう少しお待ち下さい．）</li>
+      <li>メモ一覧表示を&lt;S-c&gt;辺りにマップする（まっつんさんから要望，全文検索の関数をグローバルにして，各自 .vimrc で定義してもらう？）．</li>
+    </ul>
+    <strong>これから先やるつもりがあることリスト</strong>
+    <ul>
+      <li>iconv の文字コード判定を使うようにする．</li>
+      <li>検索窓からメモを開いたとき，検索窓を閉じないようにするオプション．</li>
+      <li>メニュー画面の実装．</li>
+      <li>ちゃんとしたマニュアルを書く．</li>
+      <li>grep.vim で Windows のショートカットがうまく処理できないのを修正する．</li>
+      <li>{URL} のアクションロックで，「URL を wget か何かでそのまま保存して，そのファイルへの goto リンクを張る」という処理も選べるようにする．</li>
+      <li>ウィンドウ操作がいい加減なのを修正．</li>
+      <li>連結表示重すぎだし不十分なのでどうにかする．</li>
+      <li>g:howm_opencmd_* が定義されてるファイルはプレビューしない．（もしくは任意のコマンドでプレビュー）<br>
+        今の状態だとあまり使いやすくないですね…何か良い案があったら教えてください．</li>
+      <li><del>cygwin のシェルから vim を立ち上げると検索できなかったりするのを修正．</del><br>
+        ただ単に自分が cygwin と vim に疎かっただけです．&amp;shell が cygwin パス（/usr/bin/zsh みたいな）で渡されてたのが原因なので，.vimrc あたりで &amp;shell を set してやれば解決します．</li>
+    </ul>
+    <p>
+    上のリストは大体優先順位順です．（でも簡単にできることからやったりするかも）<br>
+    もしもバグや要望などありましたら<a href="mailto:claymoremine@anet.ne.jp">claymoremine@anet.ne.jp</a>までメールでお知らせいただければ，いずれ対応するかもしれません．
+    </p>
+    <h2>howm って何さ？</h2>
+    <p>
+      hira さんによって Emacs Lisp で実装されたメモ取り用の環境です．
+      あえて分類などはせずに断片的なメモを取って，後で探す時には全文検索で探すという思想で作られています．
+      メモの形式は基本的に plain-text なのですが，メモ間リンクや予定・Todo 抽出などの便利な機能が盛り込まれています．
+    </p>
+    <p>
+      詳しくは hira さんのサイトで．<br>
+      <a href="http://howm.sourceforge.jp/index-j.html">howm: Hitoride Otegaru Wiki Modoki</a>
+    </p>
+    <h2>howm-mode.vim って何さ？</h2>
+    <p>
+      同じ研究室のヤツ（Emacs ユーザ）が howm を使ってるのを見てうらやましくなり，howm を vim スクリプトで実装しちゃいました．
+    </p>
+    <center>
+      <a href="./screen.png"><img width=50% src="./screen.png"><br>スクリーンショット</a>
+    </center>
+    <h2>本家 howm（Emacs 版）との違い</h2>
+    <p>
+      「まだまだやな」なところ
+      <ul>
+        <li>メニュー画面がない．</li>
+        <li>Todo のソート具合が本家と微妙に違う．</li>
+        <li>ウィンドウ操作など細かいところが微妙に快適じゃない．</li>
+        <li>連結表示が不完全．</li>
+        <li>come-from リンクが使えない．</li>
+        <li>まだ他にもあるかも...</li>
+      </ul>
+    </p>
+    <p>
+      「まぁええがな」なところ
+      <ul>
+        <li><del>検索結果からファイルを開くときのコマンドを，ファイルの拡張子に応じて変えられる．</del><br>
+        本家でも実装されました．
+        </li>
+      </ul>
+    </p>
+    <h2>ダウンロード・インストール</h2>
+    <p>
+      必要なもの
+      <ul>
+        <li>iconv 対応の vim</li>
+        <li>GNU grep（Windows の場合は cygwin 版の GNU grep）<br>
+          <strong>22-Oct-2003.</strong><br>
+          無くても大丈夫になりました．でも無いと検索に時間がかかります．</li>
+        <li>Chalice（<a href="http://www.kaoriya.net/">香り屋</a> by KoRoN さん）（無くても動きますが，URL を開けません．）</li>
+      </ul>
+    </p>
+    <p>
+      下記の環境で動作確認しています．
+      <ul>
+        <li><del>Debian GNU/Linux (sarge) + gvim 6.1.320 + GNU grep 2.5.1 + Chalice 1.8.045</del>今は Linux 環境が手元にないので Windows でしかテストしてません。</li>
+        <li>MS Windows 2000 Professional + 香り屋版 gvim 6.3.12 + cygwin 版 GNU grep 2.5 + Chalice 1.8.060</li>
+      </ul>
+    </p>
+    <ul>
+      <li><a href="./howm_vim.tar.bz2">howm_vim.tar.bz2</a></li>
+      <li><a href="./howm_vim-old.tar.bz2">howm_vim-old.tar.bz2</a> 12-Nov-2003. 版（デフォルトで旧書式が使える最後のバージョン）</li>
+    </ul>
+    <p>
+      まずは上記の howm_vim.tar.bz2 をダウンロードしてください．
+      例えば ~/ にインストールする場合は以下のような感じ．他のところにインストールしたい場合はパスを適当に読み替えてください．
+    </p>
+    <pre>
+      % cd ~/
+      % tar jxvf howm_vim.tar.bz2
+    </pre>
+    <p>
+      上記のコマンドを実行した後に .vimrc に下記の 1 行を付け加えます．
+    </p>
+    <pre>
+      set runtimepath+=~/howm_vim
+    </pre>
+    <p>
+      あとは，~/howm というディレクトリを作ったり，g:howm_grepprg で grep のパスを指定したりすれば使えると思います．
+    </p>
+    <h2>設定</h2>
+    <p>
+      以下のグローバル変数の値を変えることで設定が変えられます．
+    </p>
+    <ul>
+      <li>g:howm_dir<br>
+        メモファイルをためるディレクトリ（初期値："~/howm/"）</li>
+      <li>g:howm_filename<br>
+        メモファイル名の形式．strftime() の記号が使えます．"/" が含まれてると勝手にディレクトリ作ります．（初期値："%Y/%m/%d/%Y-%m-%d-%H%M%D.howm"）</li>
+      <li>g:howm_mapleader<br>
+        howm 関係のキーマップリーダを設定できます．（初期値：','）</li>
+      <li>g:howm_fileencoding<br>
+        メモを書くときの fileencoding（初期値：&amp;enc）</li>
+      <li>g:howm_fileformat<br>
+        メモを書くときの fileformat（初期値：&amp;ff）</li>
+      <li>g:howm_instantpreview<br>
+        検索窓からプレビューを見るタイミングを決める．<br>
+        非 0 のときは本家と同様カーソルが動いたらすぐにプレビュー．<br>
+        0 の時は p を押したらプレビュー（操作せずにしばらく放置したときもプレビュー）．<br>
+        （初期値：0）</li>
+      <li>g:howm_grepprg<br>
+      GNU grep のファイルパス．"" に定義されてると，GNU grep 使わずになんとかします（遅いです）．（初期値：'grep' Windows では ''）</li>
+      <li>g:howm_findprg<br>
+      GNU find のファイルパス．"" に定義されてると，GNU find を使わずになんとかします．（初期値：'find' Windows では ''）</li>
+      <li>g:howm_migemoprg<br>
+        migemo のファイルパス（設定次第で ruby migemo と cmigemo どちらでも OK）．（初期値：'migemo'）</li>
+      <li>g:howm_migemoopt<br>
+        migemo 実行時のオプション．ruby migemo なら '-t egrep -d 辞書ファイルパス' cmigemo なら '-q -d 辞書ファイルパス' と指定する．（初期値：-t egrep -d /usr/share/migemo/migemo-dict'）</li>
+      <li>g:howm_hidefile_regexp<br>
+      このパターンにマッチしたファイルは検索結果に表示しない．（初期値：'\(^\|/\)\.\|[~#]$\|\.bak$\|/CVS/'）</li>
+      <li>g:howm_date_pattern<br>
+        メモの中で使う日付の形式．（初期値："%Y-%m-%d"）</li>
+      <li>g:howm_date_yearpos, g:howm_date_monthpos, g:howm_daypos<br>
+        g:howm_date_pattern の中での年・月・日の出現順序（いずれ廃止して，g:howm_date_pattern だけでうまくいくようにします）．（初期値：year=1, month=2, day=3）</li>
+      <li>g:howm_title_pattern<br>
+        メモタイトルを示すパターン．（初期値：'='）</li>
+      <li>g:howm_glink_pattern<br>
+        goto リンクを示すパターン．（初期値："&gt;&gt;&gt;"）</li>
+      <li>g:howm_clink_pattern<br>
+        come-from リンクを示すパターン．（初期値："&lt;&lt;&lt;"）</li>
+      <li>g:howm_removeEmpty<br>
+        非 0 の時はメモファイルが空になったら削除する．（初期値：0）</li>
+    </ul>
+    <p>
+      他にも g:howm_opencmd_{拡張子} という変数を定義しておくと，検索窓からファイルを開くときに，拡張子に応じたコマンドを使えるようになります．<br>
+      例えば pdf ファイルを AcrobatReader で開きたい場合には .vimrc あたりに下記のように書いておきます．
+    </p>
+    <pre>
+      if has('unix')
+        let g:howm_opencmd_pdf = "call system('/usr/bin/acroread %s &')" " unix 系の場合．
+      elsif has('win32')
+        let g:howm_opencmd_pdf="call system('\"C:/Program\ Files/Adobe/Acrobat\ 5.0/Reader/AcroRd32.exe\" %s')" " windows の場合．
+      endif
+    </pre>
+    <p>
+      go to リンクで論文とかが貼れるようになってなかなか便利です．
+    </p>
+    <p>
+      <strong>22-Oct-2003.</strong><br>
+      g:howm_preview_{拡張子} を 0 に定義しておくと，その拡張子のファイルは検索画面でプレビューしなくなります．
+    </p>
+    <p>
+      <strong>新機能</strong><br>
+      g:howm_html2txtcmd という変数を定義すると，Web ページを引用するのに（多分）便利な action-lock を使えるようになります．<br>
+      例えば let g:howm_html2txtcmd = "/usr/bin/w3m-ja -dump -cols 78 %s" のように設定しておいて，メモの中に {http://sworddancer.funkyboy.jp/howm_vim/} と書いてから { か } の上でリターンキーをたたくと，別ウィンドウで {} 内のページを整形した結果が表示されます．その整形された結果の中で引用したい部分をビジュアルモードで選択してからリターンキーをたたくとメモの中に選択した箇所が挿入されます．<br>
+      このとき，let g:howm_quotemark="&gt; " のように g:howm_quotemark を定義しておくと，引用した箇所に引用符がつきます．<br>
+      この機能，バグが多いと思うので気を付けてご使用ください．
+    </p>
+    <h2>いいわけ</h2>
+    <p>
+      自分，これが vim スクリプト初挑戦なもので，熟練者から見るとかなりしょぼいスクリプトなんじゃないかと思います．<br>
+      このスクリプトは無保証です．このスクリプトを使ったことでどのような不利益が生じたとしても，当方はいっさい関知いたしません．<br>
+      もし親切にも「ここの書き方を変えればましになる」とかアドバイスをしていただける場合には，<a href="mailto:claymoremine@anet.ne.jp">claymoremine@anet.ne.jp</a>までメールでお願いいたします．
+    </p>
+  </body>
+</html>
+<!-- vim:set ts=2 sts=2 sw=2 tw=0 fdm=marker: -->

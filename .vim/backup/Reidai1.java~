@@ -1,0 +1,15 @@
+import java.io.*;
+
+class Reidai1 {
+    public static void main(String args[]) {
+        for (int i = 1; i <= 10; i++) {
+            System.out.print("\r" + i);
+            try {
+                Thread.sleep(200);
+            } catch (Exception e) {
+                break;
+            }
+        }
+    }
+}
+

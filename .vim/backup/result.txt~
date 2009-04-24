@@ -1,0 +1,817 @@
+
+# \@ARGV
+#
+#   The array @ARGV contains the command-line arguments intended for
+#   the script.  C<$#ARGV> is generally the number of arguments minus
+#   one, because C<$ARGV[0]> is the first argument, I<not> the program's
+#   command name itself.  See C<$0> for the command name.
+#   $VAR1 = [];
+
+# \@INC,
+#   
+#   The array @INC contains the list of places that the C<do EXPR>,
+#   C<require>, or C<use> constructs look for their library files.  It
+#   initially consists of the arguments to any B<-I> command-line
+#   switches, followed by the default Perl library, probably
+#   F</usr/local/lib/perl>, followed by ".", to represent the current
+#   directory.  ("." will not be appended if taint checks are enabled, either by
+#   C<-T> or by C<-t>.)  If you need to modify this at runtime, you should use
+#   the C<use lib> pragma to get the machine-dependent library properly
+#   loaded also:
+#   
+#       use lib '/mypath/libdir/';
+#       use SomeMod;
+#   
+#   You can also insert hooks into the file inclusion system by putting Perl
+#   code directly into @INC.  Those hooks may be subroutine references, array
+#   references or blessed objects.  See L<perlfunc/require> for details.
+$VAR1 = [
+          '/usr/lib/perl5/5.10/i686-cygwin',
+          '/usr/lib/perl5/5.10',
+          '/usr/lib/perl5/site_perl/5.10/i686-cygwin',
+          '/usr/lib/perl5/site_perl/5.10',
+          '/usr/lib/perl5/vendor_perl/5.10/i686-cygwin',
+          '/usr/lib/perl5/vendor_perl/5.10',
+          '/usr/lib/perl5/vendor_perl/5.10',
+          '/usr/lib/perl5/site_perl/5.8',
+          '/usr/lib/perl5/vendor_perl/5.8',
+          '.'
+        ];
+
+# \@_,
+# @ARG
+#   
+#   Within a subroutine the array @_ contains the parameters passed to that
+#   subroutine.  See L<perlsub>.
+$VAR1 = [];
+
+# \%^H,
+#   
+#   The %^H hash provides the same scoping semantic as $^H.  This makes it
+#   useful for implementation of lexically scoped pragmas. See L<perlpragma>.
+$VAR1 = {};
+
+# \%@,
+$VAR1 = {};
+
+# \%ENV,
+#   
+#   The hash %ENV contains your current environment.  Setting a
+#   value in C<ENV> changes the environment for any child processes
+#   you subsequently fork() off.
+$VAR1 = {
+          'MAKE_MODE' => 'unix',
+          'PS1' => '%B%F{cyan}.%b%F{cyan}-%B%F{black}(%B%F{green}%~%B%F{black})%b%F{cyan}---------------------------%B%F{black}(%b%F{cyan}%n%B%F{cyan}@%b%F{cyan}%m%B%F{black})%b%F{cyan}-
+%{%}%B%F{cyan}\\`-%b%F{cyan}-%B%F{white}%B%F{white}%(!.
+#.>) %b%f%k',
+          'VS90COMNTOOLS' => 'C:\\Program Files\\Microsoft Visual Studio 9.0\\Common7\\Tools\\',
+          'LESS' => 'MrXEd',
+          'PROGRAMFILES' => 'C:\\Program Files',
+          'PWD' => '/home/tyru/work/Perl/dump-sym-table',
+          'CYGWIN' => 'tty notitle glob',
+          'SAVESIZE' => '1000',
+          'LOGNAME' => 'tyru',
+          'FP_NO_HOST_CHECK' => 'NO',
+          'HOMEPATH' => '\\Documents and Settings\\tyru',
+          'PATH' => '/home/tyru/bin:/usr/local/bin:/usr/bin:/bin:/usr/X11R6/bin:/home/tyru/bin:/usr/local/bin:/usr/bin:/bin:/usr/X11R6/bin:/cygdrive/e/usr/bin',
+          'TERM' => 'xterm-color',
+          'HISTSIZE' => '1000',
+          'TERMINFO' => 'cygwin',
+          'PAGER' => 'less',
+          'JLESSCHARSET' => 'japanese-sjis',
+          'PROCESSOR_REVISION' => '4303',
+          'SYSTEMDRIVE' => 'C:',
+          'MANPATH' => '/usr/local/man:/usr/share/man:/usr/man:/usr/local/man:/usr/share/man:/usr/man::/usr/ssl/man:/usr/ssl/man',
+          'WINDIR' => 'C:\\WINDOWS',
+          'FTP_PASSIVE' => '1',
+          'PROCESSOR_LEVEL' => '15',
+          'WINDOW' => '1',
+          'STY' => '3464.tty0.kazy-ibnjqlze95',
+          'HOSTNAME' => 'kazy-ibnjqlze95',
+          'OLDPWD' => '/home/tyru/work/Perl',
+          '_' => '/usr/bin/perl',
+          'PROCESSOR_IDENTIFIER' => 'x86 Family 15 Model 67 Stepping 3, AuthenticAMD',
+          'LS_COLORS' => 'di=36:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30',
+          '!C:' => 'C:\\Documents and Settings\\tyru',
+          'SHELL' => '',
+          'COMPUTERNAME' => 'KAZY-IBNJQLZE95',
+          'CLASSPATH' => '.;C:\\Program Files\\QuickTime\\QTSystem\\QTJava.zip',
+          'TERMCAP' => 'SC|xterm-color|VT 100/ANSI X3.64 virtual terminal:\\
+	:DO=\\E[%dB:LE=\\E[%dD:RI=\\E[%dC:UP=\\E[%dA:bs:bt=\\E[Z:\\
+	:cd=\\E[J:ce=\\E[K:cl=\\E[H\\E[J:cm=\\E[%i%d;%dH:ct=\\E[3g:\\
+	:do=^J:nd=\\E[C:pt:rc=\\E8:rs=\\Ec:sc=\\E7:st=\\EH:up=\\EM:\\
+	:le=^H:bl=^G:cr=^M:it
+#8:ho=\\E[H:nw=\\EE:ta=^I:is=\\E)0:\\
+	:li
+#25:co#80:am:xn:xv:LP:sr=\\EM:al=\\E[L:AL=\\E[%dL:\\
+	:dl=\\E[M:DL=\\E[%dM:dc=\\E[P:DC=\\E[%dP:im=\\E[4h:ei=\\E[4l:\\
+	:mi:IC=\\E[%d@:ks=\\E[?1h\\E=:ke=\\E[?1l\\E>:vi=\\E[?25l:\\
+	:ve=\\E[34h\\E[?25h:vs=\\E[34l:ti=\\E[?1049h:te=\\E[?1049l:\\
+	:us=\\E[4m:ue=\\E[24m:so=\\E[3m:se=\\E[23m:md=\\E[1m:\\
+	:mr=\\E[7m:me=\\E[m:ms:\\
+	:Co
+#8:pa#64:AF=\\E[3%dm:AB=\\E[4%dm:op=\\E[39;49m:AX:\\
+	:as=\\E(0:ae=\\E(B:\\
+	:ac=\\140\\140aaffggjjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~..--++,,hhII00:\\
+	:k0=\\E[10~:k1=\\EOP:k2=\\EOQ:k3=\\EOR:k4=\\EOS:k5=\\E[15~:\\
+	:k6=\\E[17~:k7=\\E[18~:k8=\\E[19~:k9=\\E[20~:k;=\\E[21~:\\
+	:F1=\\E[23~:F2=\\E[24~:F3=\\E[25~:F4=\\E[26~:F5=\\E[28~:\\
+	:F6=\\E[29~:F7=\\E[31~:F8=\\E[32~:F9=\\E[33~:FA=\\E[34~:\\
+	:kb=^H:K2=\\E[G:kh=\\E[1~:@1=\\E[1~:kH=\\E[4~:@7=\\E[4~:\\
+	:kN=\\E[6~:kP=\\E[5~:kI=\\E[2~:kD=\\E[3~:ku=\\EOA:kd=\\EOB:\\
+	:kr=\\EOC:kl=\\EOD:',
+          'TMP' => '/tmp',
+          'USERPROFILE' => 'C:\\Documents and Settings\\tyru',
+          'HOMEDRIVE' => 'C:',
+          'CVS_RSH' => '/bin/ssh',
+          'GISTY_DIR' => '/home/tyru/gist',
+          'COMMONPROGRAMFILES' => 'C:\\Program Files\\Common Files',
+          'APPDATA' => 'C:\\Documents and Settings\\tyru\\Application Data',
+          'OS' => 'Windows_NT',
+          'HISTFILE' => '/home/tyru/.zsh_history',
+          'USER' => 'tyru',
+          'LANG' => 'ja_JP.sjis',
+          'PATHEXT' => '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH',
+          'USR' => 'tyru',
+          'PROMPT' => '$G ',
+          'SHLVL' => '2',
+          'PRINTER' => 'EPSON PM-950C',
+          'NUMBER_OF_PROCESSORS' => '2',
+          'USERDOMAIN' => 'KAZY-IBNJQLZE95',
+          'PROCESSOR_ARCHITECTURE' => 'x86',
+          '!G:' => 'G:\\cygwin\\bin',
+          'HOME' => '/home/tyru',
+          'QTJAVA' => 'C:\\Program Files\\QuickTime\\QTSystem\\QTJava.zip',
+          'TEMP' => '/tmp',
+          'CYGDRIVE' => 'G:',
+          'CYGDIR' => 'G:\\cygwin',
+          'SYSTEMROOT' => 'C:\\WINDOWS',
+          'COMSPEC' => 'C:\\WINDOWS\\system32\\cmd.exe',
+          'SESSIONNAME' => 'Console',
+          'LISTMAX' => '0',
+          'LOGONSERVER' => '\\\\KAZY-IBNJQLZE95',
+          '!::' => '::\\',
+          'EDITOR' => '/usr/bin/vim',
+          'TZ' => 'JST-09',
+          'USERNAME' => 'tyru',
+          'INFOPATH' => '/usr/local/info:/usr/share/info:/usr/info:/usr/local/info:/usr/share/info:/usr/info:',
+          'TMPDIR' => '/tmp',
+          'ALLUSERSPROFILE' => 'C:\\Documents and Settings\\All Users'
+        };
+
+# \%INC,
+#
+#   The array @INC contains the list of places that the C<do EXPR>,
+#   C<require>, or C<use> constructs look for their library files.  It
+#   initially consists of the arguments to any B<-I> command-line
+#   switches, followed by the default Perl library, probably
+#   F</usr/local/lib/perl>, followed by ".", to represent the current
+#   directory.  ("." will not be appended if taint checks are enabled, either by
+#   C<-T> or by C<-t>.)  If you need to modify this at runtime, you should use
+#   the C<use lib> pragma to get the machine-dependent library properly
+#   loaded also:
+#   
+#       use lib '/mypath/libdir/';
+#       use SomeMod;
+#   
+#   You can also insert hooks into the file inclusion system by putting Perl
+#   code directly into @INC.  Those hooks may be subroutine references, array
+#   references or blessed objects.  See L<perlfunc/require> for details.
+$VAR1 = {
+          'warnings/register.pm' => '/usr/lib/perl5/5.10/warnings/register.pm',
+          'XSLoader.pm' => '/usr/lib/perl5/5.10/i686-cygwin/XSLoader.pm',
+          'warnings.pm' => '/usr/lib/perl5/5.10/warnings.pm',
+          'base.pm' => '/usr/lib/perl5/5.10/base.pm',
+          'Config.pm' => '/usr/lib/perl5/5.10/i686-cygwin/Config.pm',
+          'B.pm' => '/usr/lib/perl5/5.10/i686-cygwin/B.pm',
+          'Carp.pm' => '/usr/lib/perl5/5.10/Carp.pm',
+          'bytes.pm' => '/usr/lib/perl5/5.10/bytes.pm',
+          'Exporter.pm' => '/usr/lib/perl5/5.10/Exporter.pm',
+          'strict.pm' => '/usr/lib/perl5/5.10/strict.pm',
+          'vars.pm' => '/usr/lib/perl5/5.10/vars.pm',
+          'Config_heavy.pl' => '/usr/lib/perl5/5.10/i686-cygwin/Config_heavy.pl',
+          'PadWalker.pm' => '/usr/lib/perl5/vendor_perl/5.10/i686-cygwin/PadWalker.pm',
+          'overload.pm' => '/usr/lib/perl5/5.10/overload.pm',
+          'AutoLoader.pm' => '/usr/lib/perl5/5.10/AutoLoader.pm',
+          'DynaLoader.pm' => '/usr/lib/perl5/5.10/i686-cygwin/DynaLoader.pm',
+          'Data/Dumper.pm' => '/usr/lib/perl5/5.10/i686-cygwin/Data/Dumper.pm',
+          'Devel/Caller.pm' => '/usr/lib/perl5/site_perl/5.10/i686-cygwin/Devel/Caller.pm'
+        };
+
+# \%SIG,
+#
+#   The hash C<%SIG> contains signal handlers for signals.  For example:
+#   
+#       sub handler {	# 1st argument is signal name
+#   	my($sig) = @_;
+#   	print "Caught a SIG$sig--shutting down\n";
+#   	close(LOG);
+#   	exit(0);
+#       }
+#   
+#       $SIG{'INT'}  = \&handler;
+#       $SIG{'QUIT'} = \&handler;
+#       ...
+#       $SIG{'INT'}  = 'DEFAULT';	# restore default action
+#       $SIG{'QUIT'} = 'IGNORE';	# ignore SIGQUIT
+#   
+#   Using a value of C<'IGNORE'> usually has the effect of ignoring the
+#   signal, except for the C<CHLD> signal.  See L<perlipc> for more about
+#   this special case.
+#   
+#   Here are some other examples:
+#   
+#       $SIG{"PIPE"} = "Plumber";   # assumes main::Plumber (not recommended)
+#       $SIG{"PIPE"} = \&Plumber;   # just fine; assume current Plumber
+#       $SIG{"PIPE"} = *Plumber;    # somewhat esoteric
+#       $SIG{"PIPE"} = Plumber();   # oops, what did Plumber() return??
+#   
+#   Be sure not to use a bareword as the name of a signal handler,
+#   lest you inadvertently call it. 
+#   
+#   If your system has the sigaction() function then signal handlers are
+#   installed using it.  This means you get reliable signal handling.
+#   
+#   The default delivery policy of signals changed in Perl 5.8.0 from 
+#   immediate (also known as "unsafe") to deferred, also known as 
+#   "safe signals".  See L<perlipc> for more information.
+#   
+#   Certain internal hooks can be also set using the %SIG hash.  The
+#   routine indicated by C<$SIG{__WARN__}> is called when a warning message is
+#   about to be printed.  The warning message is passed as the first
+#   argument.  The presence of a C<__WARN__> hook causes the ordinary printing
+#   of warnings to C<STDERR> to be suppressed.  You can use this to save warnings
+#   in a variable, or turn warnings into fatal errors, like this:
+#   
+#       local $SIG{__WARN__} = sub { die $_[0] };
+#       eval $proggie;
+#   
+#   As the C<'IGNORE'> hook is not supported by C<__WARN__>, you can
+#   disable warnings using the empty subroutine:
+#   
+#       local $SIG{__WARN__} = sub {};
+#   
+#   The routine indicated by C<$SIG{__DIE__}> is called when a fatal exception
+#   is about to be thrown.  The error message is passed as the first
+#   argument.  When a C<__DIE__> hook routine returns, the exception
+#   processing continues as it would have in the absence of the hook,
+#   unless the hook routine itself exits via a C<goto>, a loop exit, or a C<die()>.
+#   The C<__DIE__> handler is explicitly disabled during the call, so that you
+#   can die from a C<__DIE__> handler.  Similarly for C<__WARN__>.
+#   
+#   Due to an implementation glitch, the C<$SIG{__DIE__}> hook is called
+#   even inside an eval().  Do not use this to rewrite a pending exception
+#   in C<$@>, or as a bizarre substitute for overriding C<CORE::GLOBAL::die()>.
+#   This strange action at a distance may be fixed in a future release
+#   so that C<$SIG{__DIE__}> is only called if your program is about
+#   to exit, as was the original intent.  Any other use is deprecated.
+#   
+#   C<__DIE__>/C<__WARN__> handlers are very special in one respect:
+#   they may be called to report (probable) errors found by the parser.
+#   In such a case the parser may be in inconsistent state, so any
+#   attempt to evaluate Perl code from such a handler will probably
+#   result in a segfault.  This means that warnings or errors that
+#   result from parsing Perl should be used with extreme caution, like
+#   this:
+#   
+#       require Carp if defined $^S;
+#       Carp::confess("Something wrong") if defined &Carp::confess;
+#       die "Something wrong, but could not load Carp to give backtrace...
+#            To see backtrace try starting Perl with -MCarp switch";
+#   
+#   Here the first line will load Carp I<unless> it is the parser who
+#   called the handler.  The second line will print backtrace and die if
+#   Carp was available.  The third line will be executed only if Carp was
+#   not available.
+#   
+#   See L<perlfunc/die>, L<perlfunc/warn>, L<perlfunc/eval>, and
+#   L<warnings> for additional information.
+$VAR1 = {
+          'ABRT' => undef,
+          'TRAP' => undef,
+          'CLD' => undef,
+          'EMT' => undef,
+          'TTOU' => undef,
+          'IO' => undef,
+          'URG' => undef,
+          'STOP' => undef,
+          'PROF' => undef,
+          'TSTP' => undef,
+          'LOST' => undef,
+          'RTMIN' => undef,
+          'SEGV' => undef,
+          'POLL' => undef,
+          'PIPE' => undef,
+          'USR2' => undef,
+          'SYS' => undef,
+          'RTMAX' => undef,
+          'VTALRM' => undef,
+          'CONT' => undef,
+          'TERM' => undef,
+          'CHLD' => undef,
+          'BUS' => undef,
+          'HUP' => undef,
+          'FPE' => 'IGNORE',
+          'XCPU' => undef,
+          'TTIN' => undef,
+          'XFSZ' => undef,
+          'INT' => undef,
+          'KILL' => undef,
+          'QUIT' => undef,
+          '__WARN__' => undef,
+          'WINCH' => undef,
+          'USR1' => undef,
+          'ILL' => undef,
+          'ALRM' => undef
+        };
+
+# \*ARGV,
+#   
+#   The special filehandle that iterates over command-line filenames in
+#   C<@ARGV>. Usually written as the null filehandle in the angle operator
+#   C<< <> >>. Note that currently C<ARGV> only has its magical effect
+#   within the C<< <> >> operator; elsewhere it is just a plain filehandle
+#   corresponding to the last file opened by C<< <> >>. In particular,
+#   passing C<\*ARGV> as a parameter to a function that expects a filehandle
+#   may not cause your function to automatically read the contents of all the
+#   files in C<@ARGV>.
+$VAR1 = \*::ARGV;
+
+# \*STDERR,
+$VAR1 = \*::STDERR;
+
+# \*STDIN,
+$VAR1 = \*::STDIN;
+
+# \*STDOUT,
+$VAR1 = \*::STDOUT;
+
+# \*stderr,
+$VAR1 = \*::stderr;
+
+# \*stdin,
+$VAR1 = \*::stdin;
+
+# \*stdout,
+$VAR1 = \*::stdout;
+
+# \$^H,
+#   
+#   WARNING: This variable is strictly for internal use only.  Its availability,
+#   behavior, and contents are subject to change without notice.
+#   
+#   This variable contains compile-time hints for the Perl interpreter.  At the
+#   end of compilation of a BLOCK the value of this variable is restored to the
+#   value when the interpreter started to compile the BLOCK.
+#   
+#   When perl begins to parse any block construct that provides a lexical scope
+#   (e.g., eval body, required file, subroutine body, loop body, or conditional
+#   block), the existing value of $^H is saved, but its value is left unchanged.
+#   When the compilation of the block is completed, it regains the saved value.
+#   Between the points where its value is saved and restored, code that
+#   executes within BEGIN blocks is free to change the value of $^H.
+#   
+#   This behavior provides the semantic of lexical scoping, and is used in,
+#   for instance, the C<use strict> pragma.
+#   
+#   The contents should be an integer; different bits of it are used for
+#   different pragmatic flags.  Here's an example:
+#   
+#       sub add_100 { $^H |= 0x100 }
+#   
+#       sub foo {
+#   	BEGIN { add_100() }
+#   	bar->baz($boon);
+#       }
+#   
+#   Consider what happens during execution of the BEGIN block.  At this point
+#   the BEGIN block has already been compiled, but the body of foo() is still
+#   being compiled.  The new value of $^H will therefore be visible only while
+#   the body of foo() is being compiled.
+#   
+#   Substitution of the above BEGIN block with:
+#   
+#       BEGIN { require strict; strict->import('vars') }
+#   
+#   demonstrates how C<use strict 'vars'> is implemented.  Here's a conditional
+#   version of the same lexical pragma:
+#   
+#       BEGIN { require strict; strict->import('vars') if $condition }
+$VAR1 = \'256';
+
+# \$^R,
+# $LAST_REGEXP_CODE_RESULT
+#   
+#   The result of evaluation of the last successful C<(?{ code })>
+#   regular expression assertion (see L<perlre>).  May be written to.
+$VAR1 = \undef;
+
+# \${^RE_TRIE_MAXBUF},
+#   
+#   Controls how certain regex optimisations are applied and how much memory they
+#   utilize. This value by default is 65536 which corresponds to a 512kB temporary
+#   cache. Set this to a higher value to trade memory for speed when matching
+#   large alternations. Set it to a lower value if you want the optimisations to
+#   be as conservative of memory as possible but still occur, and set it to a
+#   negative value to prevent the optimisation and conserve the most memory.
+#   Under normal situations this variable should be of no interest to you.
+$VAR1 = \65536;
+
+# \$^W,
+# $WARNING
+#   
+#   The current value of the warning switch, initially true if B<-w>
+#   was used, false otherwise, but directly modifiable.  (Mnemonic:
+#   related to the B<-w> switch.)  See also L<warnings>.
+$VAR1 = \'0';
+
+# \${^WARNING_BITS},
+#   
+#   The current set of warning checks enabled by the C<use warnings> pragma.
+#   See the documentation of C<warnings> for more details.
+$VAR1 = \'            ';
+
+# \$^X,
+# $EXECUTABLE_NAME
+#   
+#   The name used to execute the current copy of Perl, from C's
+#   C<argv[0]> or (where supported) F</proc/self/exe>.
+#   
+#   Depending on the host operating system, the value of $^X may be
+#   a relative or absolute pathname of the perl program file, or may
+#   be the string used to invoke perl but not the pathname of the
+#   perl program file.  Also, most operating systems permit invoking
+#   programs that are not in the PATH environment variable, so there
+#   is no guarantee that the value of $^X is in PATH.  For VMS, the
+#   value may or may not include a version number.
+#   
+#   You usually can use the value of $^X to re-invoke an independent
+#   copy of the same perl that is currently running, e.g.,
+#   
+#     @first_run = `$^X -le "print int rand 100 for 1..100"`;
+#   
+#   But recall that not all operating systems support forking or
+#   capturing of the output of commands, so this complex statement
+#   may not be portable.
+#   
+#   It is not safe to use the value of $^X as a path name of a file,
+#   as some operating systems that have a mandatory suffix on
+#   executable files do not require use of the suffix when invoking
+#   a command.  To convert the value of $^X to a path name, use the
+#   following statements:
+#   
+#     # Build up a set of file names (not command names).
+#     use Config;
+#     $this_perl = $^X;
+#     if ($^O ne 'VMS')
+#        {$this_perl .= $Config{_exe}
+#             unless $this_perl =~ m/$Config{_exe}$/i;}
+#   
+#   Because many operating systems permit anyone with read access to
+#   the Perl program file to make a copy of it, patch the copy, and
+#   then execute the copy, the security-conscious Perl programmer
+#   should take care to invoke the installed copy of perl, not the
+#   copy referenced by $^X.  The following statements accomplish
+#   this goal, and produce a pathname that can be invoked as a
+#   command or referenced as a file.
+#   
+#     use Config;
+#     $secure_perl_path = $Config{perlpath};
+#     if ($^O ne 'VMS')
+#        {$secure_perl_path .= $Config{_exe}
+#             unless $secure_perl_path =~ m/$Config{_exe}$/i;}
+$VAR1 = \'/usr/bin/perl.exe';
+
+# \$!,
+#   
+#   If used numerically, yields the current value of the C C<errno>
+#   variable, or in other words, if a system or library call fails, it
+#   sets this variable.  This means that the value of C<$!> is meaningful
+#   only I<immediately> after a B<failure>:
+#   
+#       if (open my $fh, "<", $filename) {
+#   	# Here $! is meaningless.
+#   	...
+#       } else {
+#   	# ONLY here is $! meaningful.
+#   	...
+#   	# Already here $! might be meaningless.
+#       }
+#       # Since here we might have either success or failure,
+#       # here $! is meaningless.
+#   
+#   In the above I<meaningless> stands for anything: zero, non-zero,
+#   C<undef>.  A successful system or library call does B<not> set
+#   the variable to zero.
+#   
+#   If used as a string, yields the corresponding system error string.
+#   You can assign a number to C<$!> to set I<errno> if, for instance,
+#   you want C<"$!"> to return the string for error I<n>, or you want
+#   to set the exit value for the die() operator.  (Mnemonic: What just
+#   went bang?)
+#   
+#   Also see L<Error Indicators>.
+$VAR1 = \'';
+
+# \$",
+#   
+#   This is like C<$,> except that it applies to array and slice values
+#   interpolated into a double-quoted string (or similar interpreted
+#   string).  Default is a space.  (Mnemonic: obvious, I think.)
+$VAR1 = \' ';
+
+# \$$,
+# $PROCESS_ID
+# $PID
+#   
+#   The process number of the Perl running this script.  You should
+#   consider this variable read-only, although it will be altered
+#   across fork() calls.  (Mnemonic: same as shells.)
+#   
+#   Note for Linux users: on Linux, the C functions C<getpid()> and
+#   C<getppid()> return different values from different threads. In order to
+#   be portable, this behavior is not reflected by C<$$>, whose value remains
+#   consistent across threads. If you want to call the underlying C<getpid()>,
+#   you may use the CPAN module C<Linux::Pid>.
+$VAR1 = \2616;
+
+# \$/,
+# IO::Handle->input_record_separator(EXPR)
+# $INPUT_RECORD_SEPARATOR
+# $RS
+#   
+#   The input record separator, newline by default.  This 
+#   influences Perl's idea of what a "line" is.  Works like B<awk>'s RS
+#   variable, including treating empty lines as a terminator if set to
+#   the null string.  (An empty line cannot contain any spaces
+#   or tabs.)  You may set it to a multi-character string to match a
+#   multi-character terminator, or to C<undef> to read through the end
+#   of file.  Setting it to C<"\n\n"> means something slightly
+#   different than setting to C<"">, if the file contains consecutive
+#   empty lines.  Setting to C<""> will treat two or more consecutive
+#   empty lines as a single empty line.  Setting to C<"\n\n"> will
+#   blindly assume that the next input character belongs to the next
+#   paragraph, even if it's a newline.  (Mnemonic: / delimits
+#   line boundaries when quoting poetry.)
+#   
+#       local $/;           # enable "slurp" mode
+#       local $_ = <FH>;    # whole file now here
+#       s/\n[ \t]+/ /g;
+#   
+#   Remember: the value of C<$/> is a string, not a regex.  B<awk> has to be
+#   better for something. :-)
+#   
+#   Setting C<$/> to a reference to an integer, scalar containing an integer, or
+#   scalar that's convertible to an integer will attempt to read records
+#   instead of lines, with the maximum record size being the referenced
+#   integer.  So this:
+#   
+#       local $/ = \32768; # or \"32768", or \$var_containing_32768
+#       open my $fh, "<", $myfile or die $!;
+#       local $_ = <$fh>;
+#   
+#   will read a record of no more than 32768 bytes from FILE.  If you're
+#   not reading from a record-oriented file (or your OS doesn't have
+#   record-oriented files), then you'll likely get a full chunk of data
+#   with every read.  If a record is larger than the record size you've
+#   set, you'll get the record back in pieces.  Trying to set the record
+#   size to zero or less will cause reading in the (rest of the) whole file.
+#   
+#   On VMS, record reads are done with the equivalent of C<sysread>,
+#   so it's best not to mix record and non-record reads on the same
+#   file.  (This is unlikely to be a problem, because any file you'd
+#   want to read in record mode is probably unusable in line mode.)
+#   Non-VMS systems do normal I/O, so it's safe to mix record and
+#   non-record reads of a file.
+#   
+#   See also L<perlport/"Newlines">.  Also see C<$.>.
+$VAR1 = \'
+';
+
+# \$0,
+# $PROGRAM_NAME
+#   
+#   Contains the name of the program being executed.
+#   
+#   On some (read: not all) operating systems assigning to C<$0> modifies
+#   the argument area that the C<ps> program sees.  On some platforms you
+#   may have to use special C<ps> options or a different C<ps> to see the
+#   changes.  Modifying the $0 is more useful as a way of indicating the
+#   current program state than it is for hiding the program you're
+#   running.  (Mnemonic: same as B<sh> and B<ksh>.)
+#   
+#   Note that there are platform specific limitations on the maximum
+#   length of C<$0>.  In the most extreme case it may be limited to the
+#   space occupied by the original C<$0>.
+#   
+#   In some platforms there may be arbitrary amount of padding, for
+#   example space characters, after the modified name as shown by C<ps>.
+#   In some platforms this padding may extend all the way to the original
+#   length of the argument area, no matter what you do (this is the case
+#   for example with Linux 2.2).
+#   
+#   Note for BSD users: setting C<$0> does not completely remove "perl"
+#   from the ps(1) output.  For example, setting C<$0> to C<"foobar"> may
+#   result in C<"perl: foobar (perl)"> (whether both the C<"perl: "> prefix
+#   and the " (perl)" suffix are shown depends on your exact BSD variant
+#   and version).  This is an operating system feature, Perl cannot help it.
+#   
+#   In multithreaded scripts Perl coordinates the threads so that any
+#   thread may modify its copy of the C<$0> and the change becomes visible
+#   to ps(1) (assuming the operating system plays along).  Note that
+#   the view of C<$0> the other threads have will not change since they
+#   have their own copies of it.
+$VAR1 = \'work.pl';
+
+# \$1,
+#   
+#   Contains the subpattern from the corresponding set of capturing
+#   parentheses from the last pattern match, not counting patterns
+#   matched in nested blocks that have been exited already.  (Mnemonic:
+#   like \digits.)  These variables are all read-only and dynamically
+#   scoped to the current BLOCK.
+$VAR1 = \undef;
+
+# \$@,
+# $EVAL_ERROR
+#   
+#   The Perl syntax error message from the last eval() operator.
+#   If $@ is the null string, the last eval() parsed and executed
+#   correctly (although the operations you invoked may have failed in the
+#   normal fashion).  (Mnemonic: Where was the syntax error "at"?)
+#   
+#   Warning messages are not collected in this variable.  You can,
+#   however, set up a routine to process warnings by setting C<$SIG{__WARN__}>
+#   as described below.
+#   
+#   Also see L<Error Indicators>.
+$VAR1 = \'';
+
+# \$ARGV,
+#   
+#   contains the name of the current file when reading from <>.
+$VAR1 = \undef;
+
+# \$BEGIN,
+$VAR1 = \undef;
+
+# \$CORE::,
+$VAR1 = \undef;
+
+# \$Carp::,
+$VAR1 = \undef;
+
+# \$Cwd::,
+$VAR1 = \undef;
+
+# \$Cygwin::,
+$VAR1 = \undef;
+
+# \$DB::,,
+$VAR1 = \undef;
+
+# \$Devel::,
+$VAR1 = \undef;
+
+# \$DynaLoader::,
+$VAR1 = \undef;
+
+# \$ENV,
+$VAR1 = \undef;
+
+# \$Exporter::,
+$VAR1 = \undef;
+
+# \$INC,
+$VAR1 = \undef;
+
+# \$IO::,
+$VAR1 = \undef;
+
+# \$Internals::,
+$VAR1 = \undef;
+
+# \$PerlIO::,
+$VAR1 = \undef;
+
+# \$Regexp::,
+$VAR1 = \undef;
+
+# \$SIG,
+$VAR1 = \undef;
+
+# \$STDERR,
+$VAR1 = \undef;
+
+# \$STDIN,
+$VAR1 = \undef;
+
+# \$STDOUT,
+$VAR1 = \undef;
+
+# \$Tie::,
+$VAR1 = \undef;
+
+# \$UNIVERSAL::,
+$VAR1 = \undef;
+
+# \$Win32::,
+$VAR1 = \undef;
+
+# \$Win32CORE::,
+$VAR1 = \undef;
+
+# \$],
+#   
+#   The version + patchlevel / 1000 of the Perl interpreter.  This variable
+#   can be used to determine whether the Perl interpreter executing a
+#   script is in the right range of versions.  (Mnemonic: Is this version
+#   of perl in the right bracket?)  Example:
+#   
+#       warn "No checksumming!\n" if $] < 3.019;
+#   
+#   See also the documentation of C<use VERSION> and C<require VERSION>
+#   for a convenient way to fail if the running Perl interpreter is too old.
+#   
+#   The floating point representation can sometimes lead to inaccurate
+#   numeric comparisons.  See C<$^V> for a more modern representation of
+#   the Perl version that allows accurate string comparisons.
+$VAR1 = \'5.010000';
+
+# \$_,
+#   
+#   The default input and pattern-searching space.  The following pairs are
+#   equivalent:
+#   
+#       while (<>) {...}	# equivalent only in while!
+#       while (defined($_ = <>)) {...}
+#   
+#       /^Subject:/
+#       $_ =~ /^Subject:/
+#   
+#       tr/a-z/A-Z/
+#       $_ =~ tr/a-z/A-Z/
+#   
+#       chomp
+#       chomp($_)
+#   
+#   Here are the places where Perl will assume $_ even if you
+#   don't use it:
+$VAR1 = \undef;
+
+# \${'_<Win32CORE.c'},
+$VAR1 = \'Win32CORE.c';
+
+# \${'_<cygwin.c'},
+$VAR1 = \'cygwin.c';
+
+# \${'_<mro.c'},
+$VAR1 = \'mro.c';
+
+# \${'_<perlio.c'},
+$VAR1 = \'perlio.c';
+
+# \${'_<perlmain.c'},
+$VAR1 = \'perlmain.c';
+
+# \${'_<universal.c'},
+$VAR1 = \'universal.c';
+
+# \${'_<xsutils.c'},
+$VAR1 = \'xsutils.c';
+
+# \$attributes::,
+$VAR1 = \undef;
+
+# \$main::,
+$VAR1 = \undef;
+
+# \$mro::,
+$VAR1 = \undef;
+
+# \$re::,
+$VAR1 = \undef;
+
+# \$stderr,
+$VAR1 = \undef;
+
+# \$stdin,
+$VAR1 = \undef;
+
+# \$stdout,
+$VAR1 = \undef;
+
+# \$strict::,
+$VAR1 = \undef;
+
+# \$utf8::,
+$VAR1 = \undef;
+
+# \$vars::,
+$VAR1 = \undef;
+
+# \$version::,
+$VAR1 = \undef;
+
+# \$warnings::,
+$VAR1 = \undef;

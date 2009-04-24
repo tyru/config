@@ -1,0 +1,326 @@
+package MyScheme;
+
+
+# TODO:
+#   generate syntax tree
+
+use strict;
+use warnings;
+use Carp qw(carp confess);
+
+use version;
+our $VERSION = qv('0.0.0');
+
+use MyScheme::Atom qw(:check);
+use MyScheme::Atom::Constants;
+
+use Text::Tokenizer::Class;
+use Tie::RefHash;
+use FileHandle;
+use Scalar::Util qw(looks_like_number blessed openhandle);
+use Data::Util qw(:validate);
+use List::MoreUtils qw(all);
+
+
+
+my $_syntax_tree;
+
+
+
+{
+    tie my %char_handler, 'Tie::RefHash';
+    %char_handler = (
+        ";"     => \&_parse_comment,
+        "("     => \&_parse_lparen,
+        # ")"     => { handler => \&_parse_rparen, return_if_found => 1 },
+        ")"     => \&_parse_rparen,
+        "'"     => \&_parse_symbol,
+        ":"     => \&_parse_keyword,
+        "#"     => \&_parse_sharp,
+        '"'     => \&_parse_string,
+        qr/[\w.!?\$%&<>+\-*\/=^~|]/ => \&_parse_word,
+    );
+
+    sub new {
+        my $self = shift;
+        my %option = @_;
+
+        my $tokenizer = Text::Tokenizer::Class->new(
+            parse_type => 'Handler',
+            _verbose => $option{_verbose},
+        );
+
+        # add patterns
+        $tokenizer->ignored_chars(qr/\s/);
+        foreach my $pattern (keys %char_handler) {
+            $tokenizer->add_pattern($pattern => $char_handler{$pattern});
+        }
+
+        # TODO
+        carp "'compile' option is currently ignored." if $option{compile};
+
+        $self = bless \%option, $self;
+        $self->{_tokenizer} = $tokenizer;
+        return $self;
+    }
+}
+
+
+### eval_from_* ###
+sub eval_from_file {
+    my ($self, $file) = @_;
+    confess "file is not exists"  unless -f $file;
+
+    my $fh = FileHandle->new($file);
+    confess "can't open filehandle on $file."
+        unless openhandle($fh);
+
+    $self->eval_from_fh($fh);
+}
+
+sub eval_from_fh {
+    my ($self, $fh) = @_;
+    confess "filehandle is closed or not filehandle."
+        unless openhandle($fh);
+
+    $self->eval_from_string(
+        do { local $/; <$fh> }
+    );
+}
+
+sub eval_from_string {
+    my ($self, $str) = @_;
+    instance($self, __PACKAGE__);
+
+    confess "no string given"
+        if ! defined $str || $str eq "";
+
+    $self->{_NEST} = 0;
+
+    $self->{_tokenizer}->set_string($str);
+    # continue parsing until gets EOF!
+    my @result;
+    until ($self->{_tokenizer}->eof_string()) {
+        push @result, $self->{_tokenizer}->parse(post_stop_if_found => 1);
+    }
+
+    unless (all { _is_instance_atom($_) } @result) {
+         confess sprintf "all atom must have undef or instance of MyScheme::Atom\n";
+    }
+    if ($self->{_NEST} != 0) {
+        confess sprintf "EOF inside a list: nested %s time(s)\n", $self->{_NEST};
+    }
+
+    return wantarray ? @result : $result[0];
+}
+
+
+### parser ###
+sub _parse_comment {
+    my $str_fh = shift->string();
+
+    while (1) {
+        my $c = $str_fh->getc;
+        if (! defined $c || $c eq "\n") {
+            last;
+        }
+    }
+}
+
+sub _parse_lparen {
+    my $self = shift;
+    $self->{_NEST}++;
+    $self->_dprintf('%s:nested!', $self->{_NEST});
+
+    # get proc
+    my $scm_func = $self->parse(post_stop_if_found => 1);
+    # NOTE: this is errored from guile.
+    # but gauche didn't say anything.
+    unless (defined $scm_func) {    # null list => () of (cons 1 ()) but not '()
+        return MyScheme::Atom->new(value => [], type => SCM_LIST);
+    }
+
+    if ($scm_func->{type} != SCM_FUNC) {
+        confess $scm_func->{value} . ": unbound variable\n";
+    }
+
+    # push all arguments, and run
+    my @args;
+    while (1) {
+        my $atom = $self->parse(post_stop_if_found => 1);
+        last    unless defined $atom;
+        push @args, $atom;
+    }
+    my $result = $scm_func->{proc}->(@args);
+
+    confess "all function must return instance of MyScheme::Atom\n"
+        unless (_is_instance_atom($result));
+
+    return $result;
+}
+
+sub _parse_rparen {
+    my $self = shift;
+    $self->{_NEST}--;
+    $self->_dprintf('%s:unnested!', $self->{_NEST});
+    return undef;    ## no critic
+}
+
+sub _parse_symbol {
+    MyScheme::Atom->new(value => shift->step(), type => SCM_SYMBOL);
+}
+
+sub _parse_keyword {
+    MyScheme::Atom->new(value => shift->step(), type => SCM_KEYWORD);
+}
+
+sub _parse_sharp {
+    my $self = shift;
+    my $word = $self->step();
+
+    # TODO: read, nest comment, and so on
+    if ($word eq '#t' || $word eq '#f') {
+        MyScheme::Atom->new(value => $word, type => SCM_BOOLEAN);
+    } else {
+        confess "unsupported #-syntax: $word\n";
+    }
+}
+
+sub _parse_string {
+    my ($self, $str) = @_;
+
+    while (1) {
+        my $c = $self->string()->getc;
+        confess "EOF encountered in a string literal: $str"
+            unless defined $c;
+
+        $str .= $c;
+        if ($c eq '"' && substr($str, -1) ne "\\") {
+            return MyScheme::Atom->new(value => $str, type => SCM_STRING);
+        }
+    }
+
+    confess "never reach this block!";
+}
+
+# numeric, function
+sub _parse_word {
+    my $self = shift;
+    my $word = $self->step();
+
+    if (looks_like_number($word)) {
+        $self->_dprintf("$word is numeric");
+        return MyScheme::Atom->new(value => $word, type => SCM_NUMERIC);
+    } elsif (is_func($word)) {
+        $self->_dprintf("$word is function");
+        return MyScheme::Atom->new(value => $word, type => SCM_FUNC);
+    } else {
+        # NOTE: do not confess here for if, lazy evaluation.
+        $self->_dprintf("$word is unbound word");
+        return MyScheme::Atom->new(value => $word, type => SCM_UNBOUND);
+    }
+}
+
+sub _is_instance_atom {
+    my $obj = shift;
+    return 1    if not defined $obj;
+    return 1    if blessed $obj && blessed $obj eq 'MyScheme::Atom';
+    return 0;
+}
+
+sub _dprintf {
+    return  unless shift->{_verbose};
+    my $fmt = shift || '';
+    warn sprintf "### $fmt ###\n", @_;
+    STDERR->flush();
+}
+
+# sub run {
+#     my $self = shift;
+#     confess   unless defined $_syntax_tree;
+# 
+#     while (1) {
+# 
+#     }
+#     
+# }
+
+
+
+
+
+1;
+__END__
+
+=head1 NAME
+
+MyScheme - Scheme implementation in Perl
+
+
+=head1 VERSION
+
+This document describes MyScheme version 0.0.1
+
+
+=head1 SYNOPSIS
+
+    use MyScheme;
+
+
+  
+=head1 DESCRIPTION
+
+None.
+
+
+=head1 METHODS
+
+=over 4
+
+=item new
+
+options:
+    compile - compile and run if true
+
+=item eval_from_fh
+
+eval from IO::Handle-like reference
+
+=item eval_from_file
+
+eval from file name
+
+=item eval_from_string
+
+eval from string
+
+=back
+
+
+
+=head1 DEPENDENCIES
+
+Text::Tokenizer::Class
+Data::Util
+List::MoreUtils
+
+
+
+=head1 BUGS
+
+    No known bugs.
+
+
+=head1 AUTHOR
+
+tyru  C<< <tyru.exe+perl@gmail.com> >>
+
+
+=head1 LICENCE AND COPYRIGHT
+
+Copyright (c) 2009, tyru C<< <tyru.exe+perl@gmail.com> >>. All rights reserved.
+
+This module is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself. See L<perlartistic>.
+
+

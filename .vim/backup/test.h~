@@ -1,0 +1,101 @@
+#ifndef __FOOSCHEME_TEST_H__
+#define __FOOSCHEME_TEST_H__
+
+
+#include <iostream>
+#include <string>
+#include <stdexcept>
+
+
+
+class Test {
+
+private:
+
+    int testNum;
+    int successNum;
+    int failNum;
+    std::string projName;
+
+
+private:
+
+    void
+    status(bool done, std::string testName = "") {
+        if (done) {
+            std::cout
+                << "\r"
+                << (this->projName.empty() ? "" : "[" + this->projName + "]")
+                << testName
+                << "...ok"
+                << std::flush;
+        } else {
+            std::cout
+                << "\r"
+                << (this->projName.empty() ? "" : "[" + this->projName + "]")
+                << testName
+                << "..."
+                << (this->successNum + this->failNum)
+                << "/"
+                << (this->testNum == -1 ? '?' : this->testNum) 
+                << std::flush;
+        }
+    }
+
+
+public:
+
+    Test() :
+        testNum(-1), successNum(0), failNum(0) { }
+    Test(int n) throw(std::invalid_argument) :
+        testNum(n), successNum(0), failNum(0)
+    {
+        if (n < 0) {
+            throw std::invalid_argument("first arg must be positive");
+        }
+    }
+    Test(int n, std::string& s) :
+        testNum(n), successNum(0), failNum(0)
+    {
+        if (n < 0) {
+            throw std::invalid_argument("first arg must be positive");
+        }
+        this->projName = s;
+    }
+    Test(int n, const char *s) :
+        testNum(n), successNum(0), failNum(0)
+    {
+        if (n < 0) {
+            throw std::invalid_argument("first arg must be positive");
+        }
+        this->projName = s;
+    }
+
+    ~Test() {
+        status(true);
+        if (this->testNum != this->successNum + this->failNum) {
+            std::cerr
+                << std::endl
+                << "warning: the number of test is NOT same as scheduled number"
+                << std::endl;
+        }
+    }
+
+
+    void
+    ok(bool is_ok, const std::string& testName) {
+        if (is_ok) {
+            this->successNum++;
+        } else {
+            this->failNum++;
+        }
+        status(false, testName);
+    }
+    void
+    ok(bool is_ok, const char *testName) {
+        ok(is_ok, this->projName = testName);
+    }
+};
+
+
+#endif

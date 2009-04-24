@@ -1,0 +1,16 @@
+#include <cassert>
+
+
+bool
+isPrime(int n) {
+
+    const int END_N = n / 2;
+
+    for (int i = 2; i <= END_N; i++) {
+        if (n % i == 0) {
+            return false;
+        }
+    }
+
+    return true;
+}

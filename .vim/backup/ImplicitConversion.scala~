@@ -1,0 +1,15 @@
+
+class String {
+    implicit def str2int(str:String) = str.length
+}
+
+object Main {
+
+    def main(args:Array[String]) = {
+        println("foo" + 5)    // => 8
+    }
+}
+
+
+// vim:ft=scala:
+

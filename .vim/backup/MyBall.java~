@@ -1,0 +1,137 @@
+import java.util.ArrayList;
+
+
+class MyBall {
+
+    public static void main (String[] args) {
+
+        // 枠のサイズの指定
+        int WIDTH = 46;
+        int HEIGHT = 20;
+
+        ArrayList<Ball> balls = new ArrayList<Ball>();
+        int MAX_BALL = 7;
+        long SLEEP_MILLISECOND = 200;
+
+
+        // 引数から段数を指定
+        try {
+            if (args.length > 0)
+                MAX_BALL = Integer.parseInt(args[0]);
+            if (args.length > 1)
+                SLEEP_MILLISECOND = Long.parseLong(args[1]);
+        } catch (NumberFormatException e) {
+        }
+
+
+        // ボールをMAX_BALLだけ追加
+        for (int i = 0; i < MAX_BALL; i++) {
+            balls.add(
+                new Ball(
+                    (int)(Math.random() * WIDTH),
+                    (int)(Math.random() * HEIGHT)
+                )
+            );
+        }
+
+
+        // 速度最適化のために事前に枠線部分(上部と下部のみ)は用意しておく
+        StringBuffer tmp = new StringBuffer();
+        for (int i = 0; i <= WIDTH + 2; i++) {
+            tmp.append('-');
+        }
+        String upperBar = new String(tmp);
+        StringBuffer underBar = tmp;
+        String info = " " + MAX_BALL + " balls  " + (1000 / SLEEP_MILLISECOND) + " fps ";
+        underBar.replace(0, info.length(), info);
+
+
+        // ボールの移動をくり返し続ける (プログラムを止めるにはCtrl-Cを押す)
+        while (balls.size() > 0) {
+
+            // 画面をクリアするおまじない
+            System.out.print("\u001b[H\u001b[2J");
+
+            for (Ball ball : balls) {
+                // 移動を行った結果が枠外に、はみでていれば
+                // 進む方向を逆にする (速度の正負を反転させる)
+                if (ball.x + ball.vx < 0 || ball.x + ball.vx > WIDTH)
+                    ball.vx = -ball.vx;
+
+                // ボールを移動
+                ball.x = ball.x + ball.vx;
+
+                // 移動を行った結果が枠外に、はみでていれば
+                // 進む方向を逆にする (速度の正負を反転させる)
+                if (ball.y + ball.vy < 0 || ball.y + ball.vy > HEIGHT)
+                    ball.vy = -ball.vy;
+
+                // ボールを移動
+                ball.y = ball.y + ball.vy;
+            }
+
+
+            System.out.println(upperBar);    // 枠線(上部)
+            for (int x = 0; x <= HEIGHT; x++) {
+                System.out.print("|");
+
+                for(int y = 0; y <= WIDTH; y++) {
+                    boolean found = false;
+
+                    for (int i = 0; i < balls.size(); i++) {
+                        // 座標 x,y の位置にボールがあるならば o を表示、
+                        // なければ空白を表示
+                        if (x == balls[i].y && y == balls[i].x) {
+                            if (found) {
+                                // すでにその座標にボールがあったら削除
+                                balls.remove(i);
+                            } else {
+                                if (balls[i].vx > 0) {
+                                    System.out.print(">");
+                                } else {
+                                    System.out.print("<");
+                                }
+                            }
+                            found = true;
+                        }
+                    }
+
+                    if (! found)
+                        System.out.print(" ");
+                }
+
+                System.out.println("|");
+            }
+            System.out.println(underBar);    // 枠線(下部)
+
+
+            // 時間稼ぎをするためのおまじない
+            try {
+                Thread.sleep(SLEEP_MILLISECOND);
+            }
+            catch(Exception e) {
+                System.err.println("error: couldn't sleep");
+                break;
+            }
+        }
+
+        System.out.print("\u001b[H\u001b[2J");
+        System.out.println("＼(^o^)／");
+    }
+}
+
+class Ball {
+
+    // ボールの座標
+    public int x = 0;
+    public int y = 0;
+
+    // ボールの速度 (x方向とy方向)
+    public int vx = 1;
+    public int vy = 1;
+
+    Ball(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}

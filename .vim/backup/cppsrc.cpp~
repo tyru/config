@@ -1,0 +1,14 @@
+#include <iostream>
+#include <cstdlib>
+#include <string>
+
+
+int
+main(int argc, char *argv[]) {
+
+    std::string &s = string("Hello!");
+    std::cout << s << std::endl;
+
+
+    return EXIT_SUCCESS;
+}

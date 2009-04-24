@@ -1,0 +1,31 @@
+// abstract override def ... とすると
+// そのメソッドをオーバーライドして、しかもsuper.メソッドのように呼び出せる
+//
+// そのabstract override属性を持ったdefを持つtraitを
+// ラップしたいクラスにくっつける(with)だけ
+// (objectのメソッドに対してはラップできない？)
+
+object Main {
+
+    // このクラスのmainをオーバーライドしてラップしたい
+    class TestClass extends AnyRef {
+        def main(args:Array[String]) = {
+            if (! args.isEmpty)
+                println("引数:" + args.reduceLeft(_ + " " + _))
+            println("Main.main")
+        }
+    }
+
+    def main(args:Array[String]) = {
+        // ならtraitを定義してくっつけてしまえばいいじゃない
+        trait TLoggableMain extends TestClass {
+            abstract override def main(args:Array[String]) = {
+                println("main begin!")
+                super.main(args)
+                println("main end!")
+            }
+        }
+        val obj = new TestClass with TLoggableMain
+        obj.main(args)
+    }
+}

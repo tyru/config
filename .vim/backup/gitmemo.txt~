@@ -1,0 +1,17 @@
+if you want to git-pull without "origin master" arguments,
+just do
+    git config branch.master.remote "origin"
+    git config branch.master.merge refs/heads/master
+
+
+matigaeta atode kaku
+
+# if you want to check which file is modified, just do
+#     git status
+# this shows simple status. but you want to know more info, type
+#     git diff
+# or 
+#     git log -p
+
+
+I want to put ~/.skk-jisyo on Github

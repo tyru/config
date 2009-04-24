@@ -1,0 +1,103 @@
+
+// NOTE: 要jQuery
+
+
+$(document).ready(function () {
+
+    var player = {
+
+        moveX: 30,
+        moveY: 30,
+
+        namerakasa: 30,
+
+        hankei: 20,
+
+        upKey: 'K',
+        downKey: 'J',
+        leftKey: 'H',
+        rightKey: 'L',
+
+        move:  function (opt) { $("#player").animate(opt, player.namerakasa); },
+        up:    function () { player.move({"top":  "-=" + player.moveY + "px"}); },
+        down:  function () { player.move({"top":  "+=" + player.moveY + "px"}); },
+        left:  function () { player.move({"left": "-=" + player.moveX + "px"}); },
+        right: function () { player.move({"left": "+=" + player.moveX + "px"}); },
+
+        // TODO
+        shoot: function () {
+        },
+
+        // その方向へのキーが押されているかのフラグ
+        movingTo: { up: false, down: false, left: false, right: false },
+
+        getCenterCoord: function () {
+            var player_id = document.getElementById('player');
+            return {
+                x: player_id.offsetLeft + player.hankei,
+                y: player_id.offsetTop  + player.hankei
+            };
+        }
+    };
+
+    // プレイヤーの大きさを設定
+    var p_id = document.getElementById('player');
+    p_id.style.width = p_id.style.height = (player.hankei * 2) + "px";
+
+    // キーハンドラ
+    $(window).keydown(function (e) {
+        switch (String.fromCharCode(e.keyCode)) {
+            case player.downKey:  player.movingTo.down  = true; break;
+            case player.upKey:    player.movingTo.up    = true; break;
+            case player.leftKey:  player.movingTo.left  = true; break;
+            case player.rightKey: player.movingTo.right = true; break;
+            /* デバッグ */
+            case 'D':
+                var p_coord = player.getCenterCoord();
+                alert('player:(' + p_coord.x + ', ' + p_coord.y + ')');
+                alert('stage: width:' + stage.width + ', height:' + stage.height);
+        }
+    });
+    $(window).keyup(function (e) {
+        switch (String.fromCharCode(e.keyCode)) {
+            case player.downKey:  player.movingTo.down  = false; break;
+            case player.upKey:    player.movingTo.up    = false; break;
+            case player.leftKey:  player.movingTo.left  = false; break;
+            case player.rightKey: player.movingTo.right = false; break;
+        }
+    });
+
+
+
+    var stage_id = document.getElementById('stage');
+    var stage = {
+        fps:    15.0,
+
+        width:  stage_id.offsetWidth,
+        height: stage_id.offsetHeight,
+
+        left:   stage_id.offsetLeft,
+        top:    stage_id.offsetTop,
+
+        mainLoop: function () {
+            var coord = player.getCenterCoord();
+
+            if (player.movingTo.up && coord.y - player.hankei > stage.top)
+                player.up();
+            if (player.movingTo.down && coord.y + player.hankei < stage.height)
+                player.down();
+            if (player.movingTo.left && coord.x - player.hankei > stage.left)
+                player.left();
+            if (player.movingTo.right && coord.x + player.hankei < stage.width)
+                player.right();
+        }
+    };
+
+    stage.timer_id = setInterval(stage.mainLoop, 1000.0 / stage.fps);
+
+    /* デバッグ */
+    // var d_stage = document.getElementById('stage');
+    // for (var i in d_stage)
+    //     if (i.indexOf('offset') != -1)
+    //         alert(i + ':' + d_stage[i]);
+});

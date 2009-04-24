@@ -1,0 +1,47 @@
+import java.io.*;
+
+class KnightRider {
+
+    public static void main(String args[]) {
+
+        int posX            = 0;
+        final int MAX_WIDTH = 8;    // 0から8までなので9歩ステップすることになる
+        boolean toRight     = true;
+
+
+        while (true) {
+            if (toRight)
+                posX = posX + 1;
+            else
+                posX = posX - 1;
+
+            // 左の壁にぶつかった
+            if (posX < 0) {
+                posX = 0;
+                toRight = true;
+            }
+            // 右の壁にぶつかった
+            if (posX > MAX_WIDTH) {
+                posX = MAX_WIDTH;
+                toRight = false;
+            }
+
+            // 行に残る文字を消す
+            System.out.print('\r');
+            for (int i = 0; i <= MAX_WIDTH; i++)    // MAX_WIDTH目も消す必要がある
+                System.out.print(' ');
+            // 'o'を書く
+            System.out.print('\r');
+            for (int i = 0; i < posX; i++)
+                System.out.print(' ');
+            System.out.print('o');
+
+            try {
+                Thread.sleep(200);
+            } catch (Exception e) {
+                break;
+            }
+        }
+    }
+}
+

@@ -1,0 +1,62 @@
+7a8,28
+> 	main::Any
+> 	main::ArrayRef
+> 	main::Bool
+> 	main::ClassName
+> 	main::CodeRef
+> 	main::Defined
+> 	main::FileHandle
+> 	main::GlobRef
+> 	main::HashRef
+> 	main::Int
+> 	main::Item
+> 	main::Maybe
+> 	main::Num
+> 	main::Object
+> 	main::Ref
+> 	main::RegexpRef
+> 	main::Role
+> 	main::ScalarRef
+> 	main::Str
+> 	main::Undef
+> 	main::Value
+114a136,137
+> 	main::Any
+> 	main::ArrayRef
+117a141
+> 	main::Bool
+120a145,146
+> 	main::ClassName
+> 	main::CodeRef
+125a152
+> 	main::Defined
+129a157,159
+> 	main::FileHandle
+> 	main::GlobRef
+> 	main::HashRef
+132a163
+> 	main::Int
+133a165
+> 	main::Item
+135a168
+> 	main::Maybe
+136a170,171
+> 	main::Num
+> 	main::Object
+139a175
+> 	main::Ref
+140a177,178
+> 	main::RegexpRef
+> 	main::Role
+145a184
+> 	main::ScalarRef
+146a186
+> 	main::Str
+151a192,193
+> 	main::Undef
+> 	main::Value
+228c270
+< 	
+\ ファイル末尾に改行がありません
+---
+> 	 at declare.pl line 13.

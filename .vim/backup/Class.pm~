@@ -1,0 +1,434 @@
+package Text::Tokenizer::Class;
+
+# TODO:
+# ・matched_charとmatched_patternをsetterとして
+# 他のパッケージから呼び出した場合croakする
+# 
+# ・同じ文字を比較する場合はキャッシュを見る
+#
+# ・IO::Handleがサポートするようなシークとかの入出力関数は
+# 大体*_stringとして持つことにする
+#
+# ・post_stop_if_foundで指定していちいち返すんじゃなくて
+# あるパターンにマッチしたら返してほしい時は、
+# $self->add_pattern($pattern => { handler => $handler, return_if_found => 1 });
+# とする
+# (だけどText::Tokenizer::Class::Token::Handlerに限った(依存した)方法。。。)。
+
+
+# 「パース中」の定義
+# ・マッチした
+# ・ignore charに登録されていないものを読んだ
+# 
+# の2つの条件を考えると4通りある。
+#
+
+# parse_type => 'group'の場合はパーサは1つ
+# parse_type => 'handler'の場合はパーサハンドラはいっぱいいる
+
+
+use strict;
+use warnings;
+use utf8;
+
+use version;
+our $VERSION = qv('0.0.1');
+our @ISA;
+
+
+use base 'Class::Accessor::Fast';
+__PACKAGE__->mk_accessors(qw(
+    parse_type parser_pkg matched_char _ignored_chars
+));
+
+use Text::Tokenizer::Class::Constant;
+
+use Carp qw(croak);
+use IO::String;
+use Data::Util qw(:check :validate);
+use FileHandle;
+use Scalar::Util qw(openhandle);
+use Hook::LexWrap qw(wrap);
+
+
+
+
+
+
+
+{
+    sub new {
+        my $self = shift;
+        my %option = @_;
+        unless (exists $option{parse_type}) {
+            croak "option 'parse_type' required";
+        }
+
+        # load $option{parse_type}
+        my $parse_type = delete $option{parse_type};
+        my $camelized = ucfirst lc $parse_type;
+        my $load_pkg = "Text::Tokenizer::Class::Token::$camelized";
+
+        # check if package is available
+        eval "require $load_pkg";
+        croak "Can't require $load_pkg: $@"    if $@;
+        push @ISA, $load_pkg;
+
+        _validate_available_package($load_pkg);
+
+        $self = bless \%option, $self;
+
+        $self->parse_type($parse_type);
+        $self->parser_pkg($load_pkg);
+
+        no strict 'refs';
+        # before call $self->SUPER::has_next_match(),
+        # check if this is called from my package or
+        # SUPER package
+        wrap "${load_pkg}::has_next_match", pre => sub {
+            if (@_ >= 2) {
+                my $pkg = caller;
+                unless ($pkg->isa($BASE)) {
+                    croak "this sub is read only!";
+                }
+            }
+        };
+
+        return $self;
+    }
+
+    sub _validate_available_package {
+        my $pkg = shift;
+
+        unless ($pkg->isa($BASE)) {
+            croak "'$pkg' is not IS-A '$BASE'";
+        }
+        for my $method (qw(_notify add_pattern has_pattern has_next_match)) {
+            unless ($pkg->can($method)) {
+                croak "$pkg has to be able to call method '$method'.";
+            }
+        }
+    }
+}
+
+
+
+### set_string_from_* ###
+sub set_string_from_fh {
+    my ($self, $fh) = @_;
+
+    instance($self, __PACKAGE__);
+    unless (openhandle($fh)) {
+        croak 'Usage: $parser->set_string_from_fh(\*STDIN)';
+    }
+
+    my $string = do { local $/; <$fh> };    # slurp
+    return $self->string($string);
+}
+
+sub set_string_from_file {
+    my ($self, $file) = @_;
+    instance($self, __PACKAGE__);
+
+    my $fh = FileHandle->new($file) or croak $!;
+    return $self->set_string_from_fh($fh);
+}
+{ no strict 'refs'; *{"set_string"} = \&string }
+
+
+
+### array accessor ###
+sub ignored_chars {
+    my $self = instance(shift, __PACKAGE__);
+
+    if (@_) {
+        for (@_) {
+            if (! is_string($_) && ! is_regex_ref($_)) {
+                croak "ignored_chars takes only string or regex reference";
+                return undef;    ## no critic
+            }
+        }
+        my $arrayref = $self->_ignored_chars();
+        if (not defined $arrayref) {
+            $self->_ignored_chars([@_]);
+        } elsif (is_array_ref($arrayref)) {
+            $self->_ignored_chars([@$arrayref, @_]);    # push
+        } else {
+            croak "_ignored_chars() returned non-ArrayRef value";
+        }
+    }
+    return is_array_ref($self->_ignored_chars())
+            ? @{$self->_ignored_chars()} : undef;
+}
+
+sub has_ignored_chars { defined instance(shift, __PACKAGE__)->_ignored_chars() }
+
+sub clear_ignored_chars { instance(shift, __PACKAGE__)->_ignored_chars(undef) }
+
+sub is_ignored_char {
+    my $self = instance(shift, __PACKAGE__);
+    my $c = shift;
+    for my $ignored ($self->ignored_chars()) {
+        if ($self->_is_match($c, $ignored)) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+
+
+### simple getter/setter ###
+sub string {
+    my ($self, $string) = @_;
+    instance($self, __PACKAGE__);
+
+    if (is_string($string)) {
+        # convert to instance of IO::String
+        $self->{_string} = IO::String->new($string);
+    } elsif (not defined $string) {
+        return $self->{_string};
+    } else {
+        croak "Can't added '$string' because of non-string value";
+    }
+
+    return $self->{_string};
+}
+
+
+
+### *_string ###
+sub has_string {
+    my $str_fh = instance(shift, __PACKAGE__)->string();
+    return 0    unless defined $str_fh;
+    return 0    unless is_instance($str_fh, 'IO::String');
+    return 1;
+}
+
+{
+    no strict 'refs';
+    foreach my $method (qw(eof getpos setpos tell seek)) {
+        *{"${method}_string"} = sub {
+            use strict 'refs';
+
+            my $self = shift;
+            unless ($self->has_string()) {
+                croak 'no string given: __PACKAGE__->string($str)';
+                return;
+            }
+            return $self->string()->$method(@_);
+        };
+    }
+}
+
+
+
+
+### parse string ###
+sub parse {
+    my $self = shift;
+
+    croak 'no string given: __PACKAGE__->string($str)'
+        unless $self->has_string();
+    croak 'no pattern exists'
+        unless $self->has_pattern();
+    if ($self->can('_parse_init')) {
+        $self->_parse_init();
+    }
+
+    my %option = scalar(@_) ? @_ : ();
+    my $str_fh = $self->string();
+
+
+    my $retval;
+    while (defined(my $c = $str_fh->getc)) {
+
+        # parse again if ignored char
+        if ($self->is_ignored_char($c)) {
+            $self->_dprintf("ignored $c");
+            next;
+        }
+
+        $self->matched_char($c);
+        $self->matched_pattern(undef);
+
+        if ($option{pre_stop_if_found}) {
+            return $self->tell_string();
+        }
+
+        $self->_dprintf("notify $c");
+        # notify __PACKAGE__::Token::* package!
+        my $return_flag = 0;
+        $retval = $self->_notify($c, \$return_flag);
+
+        if ($return_flag || $option{post_stop_if_found}) {
+            return $retval;
+        }
+    }
+
+    return $retval;
+}
+
+
+# this is call with reference
+# because @ISA package can call this.
+sub _is_match {
+    my ($self, $c, $pat) = @_;
+    return 0    if ! defined $c || ! defined $pat;
+    return 0    if $self->is_ignored_char($c);
+    return 1    if is_string($pat) && $c eq $pat;
+    return 1    if is_regex_ref($pat) && $c =~ $pat;
+    if (is_code_ref($pat)) {
+        local $_ = $c;
+        return 1    if $pat->();
+    }
+    return 0;
+}
+
+# _dprintf
+sub _dprintf {
+    return  unless shift->{_verbose};
+    my $fmt = shift || '';
+    warn sprintf "### $fmt ###\n", @_;
+    STDERR->flush();
+}
+
+
+
+
+1;
+__END__
+
+=head1 NAME
+
+Text::Tokenizer::Class - yet another tokenizer by OO.
+
+
+=head1 SYNOPSIS
+
+    use Text::Tokenizer::Class;
+    my $parser = Text::Tokenizer::Class->new(parse_type => 'handler');
+    $parser->string("hello, world.");
+    $parser->ignored_chars(qr/\W/);
+    $parser->add_pattern(qr/\w/ => sub { say shift->step(); });
+
+  
+  
+=head1 DESCRIPTION
+
+
+=head1 METHODS
+
+=over 18
+
+=item new(parse_type => [parse type])
+
+options:
+    parse_type - type of parser. this is camelized and search in Text::Tokenizer::Class::Token::*
+
+
+=item string(), set_string()
+
+accessor of instance of IO::String.
+if not given yet, returns undef.
+
+
+=item eof_string()
+
+
+=item has_string()
+
+
+=item ignored_chars()
+
+if not given yet, returns undef.
+
+
+=item has_ignored_chars()
+
+has ignored chars()
+
+
+=item clear_ignored_chars()
+
+clear ignored chars.
+
+
+=item is_ignored_char($c)
+
+return true if $c is ignored char.
+
+
+=item parse()
+
+parse string.
+
+option:
+    pre_stop_if_found
+    post_stop_if_found
+
+
+=item tell_string()
+
+tell string.
+
+
+=item seek_string()
+
+seek string.
+
+
+=item getpos_string()
+
+getpos string.
+
+
+=item setpos_string()
+
+setpos string.
+
+
+=item set_string_from_fh()
+
+set string from filehandle.
+slurp filehandle and pass to string().
+
+
+=item set_string_from_file()
+
+set string from file name.
+open filehandle and pass to set_string_from_fh().
+
+
+=item matched_char()
+
+=item matched_pattern()
+
+
+=back
+
+
+=head1 DEPENDENCIES
+
+Data::Util
+Hook::LexWrap
+IO::String
+
+
+=head1 BUGS
+
+    No known bugs.
+
+
+=head1 AUTHOR
+
+tyru  C<< <tyru.exe+perl@gmail.com> >>
+
+
+=head1 LICENCE AND COPYRIGHT
+
+Copyright (c) 2009, tyru C<< <tyru.exe+perl@gmail.com> >>. All rights reserved.
+
+This module is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself. See L<perlartistic>.
+

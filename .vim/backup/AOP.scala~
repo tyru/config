@@ -1,0 +1,29 @@
+
+object Main extends Application {
+
+    abstract class LoggingMain {
+        def main(args:Array[String])
+    }
+
+    trait TBeforeAfter extends LoggingMain {
+        override def main(args:Array[String]) = {
+            println("method begin!")
+            super.main(args)
+            println("method end!")
+        }
+    }
+
+
+    class Foo extends LoggingMain {
+        def main(args:Array[String]) = {
+            print("Main.main")
+            if (! args.isEmpty) {
+                println("引数")
+                args.foreach((a) => println("  " + a))
+            }
+            println
+        }
+    }
+
+    val foo = new Foo with TBeforeAfter
+}

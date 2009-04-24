@@ -1,0 +1,227 @@
+package Text::Tokenizer::Class::Token::Handler;
+
+# TODO
+# もしadd_patternで加えられた文字列が2文字以上だった場合
+# 続けて比較する
+
+use strict;
+use warnings;
+use utf8;
+
+use version;
+our $VERSION = qv('0.0.0');
+
+
+use base qw(Text::Tokenizer::Class::Base Class::Accessor::Fast);
+__PACKAGE__->mk_accessors(qw(has_next_match));
+
+use Text::Tokenizer::Class::Constant;    # not using $BASE
+
+use Carp qw(croak);
+use Tie::RefHash;    # store regex refference as key of %pattern
+use List::MoreUtils qw(after);
+use Data::Util qw(:validate :check);
+
+
+
+tie my %pattern, 'Tie::RefHash';
+
+
+
+
+
+sub _notify {
+    my ($self, $c, $want_return) = @_;
+    my @matched;
+
+    for my $pat (sort keys %pattern) {
+        if ($self->_is_match($c, $pat)) {
+
+            $self->_dprintf("match $c" . (is_regex_ref($pat) ? '' : " with $pat"));
+
+            push @matched, sub {
+
+                $self->has_next_match($_[0]);
+                # $self->_dprintf("matched $c" . is_regex_ref($pat) ? "" : "with $pat");
+                $self->matched_pattern($pat);
+
+                my $callback = $pattern{$pat};
+
+                if (is_code_ref($callback)) {
+                    return $callback->($self, $c, $pat);
+
+                } elsif (is_hash_ref($callback)) {
+                    if ($callback->{return_if_found}) {
+                        $$want_return = 1;    # I want to return value!
+                    }
+                    return $callback->{handler}->($self, $c, $pat);
+
+                } else {
+                    croak "never reach this block!";
+                }
+            };
+        }
+    }
+
+    if (@matched) {
+        # NOTE: currently not tell 'matcher'
+        # that other matchers exist.
+        # and just call the first 'matcher'.
+        return $matched[0]->(0);
+        # while (my $sub = shift @matched) {
+        #     $sub->(scalar @matched);
+        # }
+    } else {
+        my ($default_handler) = after { not defined($_) } %pattern;
+        if (is_code_ref($default_handler)) {
+            return $default_handler->($self);
+        } elsif (is_hash_ref($default_handler)) {
+            if ($default_handler->{return_if_found}) {
+                $$want_return = 1;
+            }
+            return $default_handler->{handler}->($self);
+        }
+    }
+}
+
+
+
+### *_pattern ###
+sub add_pattern {
+    my ($self, $pat, $callback) = @_;
+    if (! defined $pat || ! defined $callback) {
+        croak "add_pattern(): undefined value given. not added";
+    }
+
+    if (is_hash_ref($callback)) {
+        unless (exists $callback->{handler}) {
+            croak "'handler' is required for hash reference";
+        }
+        $pattern{$pat} = $callback;
+
+    } elsif (is_code_ref($callback)) {
+        $pattern{$pat} = $callback;
+
+    } else {
+        # %pattern must not undef key(used by default handler).
+        croak "invalid type given: " . ref($callback);
+    }
+}
+
+sub has_pattern { scalar keys %pattern }
+
+sub clear_pattern { undef %pattern }
+
+
+
+sub set_default_handler {
+    my $self = shift;
+    my $callback = shift;
+    if (! is_code_ref($callback) && ! is_hash_ref($callback)) {
+        croak sprintf "can't set %s as default handler", ref($callback);
+    }
+    if (is_hash_ref($callback) && is_code_ref($callback->{handler})) {
+        croak "for hash args, must have 'handler' as the key of handler subroutine";
+    }
+
+    no warnings 'uninitialize';
+    %pattern = (%pattern, undef, $callback);    # push default handler
+}
+
+
+
+1;
+__END__
+
+=head1 NAME
+
+Text::Tokenizer::Class::Token::Handler
+
+
+
+=head1 DESCRIPTION
+
+no description yet.
+
+
+
+=head1 METHODS
+
+=over 5
+
+=item add_pattern()
+
+add pattern.
+
+
+=item has_pattern()
+
+has pattern.
+
+
+=item clear_pattern()
+
+clear pattern.
+this also clear callback setting by set_default_handler().
+
+
+=item has_next_match()
+
+has next match.
+this returns number of matched pattern without current pattern.
+
+
+=item set_default_handler()
+
+set default handler.
+default handler is called when no matching pattern found.
+
+
+=back
+
+
+
+=head1 SYNOPSIS
+
+    use Text::Tokenizer::Class;
+
+    my $parser = Text::Tokenizer::Class->new(parse_type => 'handler');
+    $parser->set_string("Hello, World");
+    $parser->add_pattern(
+        qr/[\w]/ => sub {
+            my ($self, $c) = @_;
+            my $word = "";
+
+            while (1) {
+                $word .= $c;
+                $c = $self->string()->getc;
+                last    unless defined $c;
+            }
+            say $word;
+        };
+    );
+    $parser->parse(post_stop_if_found => 1);    # => "Hello\nWorld"
+  
+
+=head1 DEPENDENCIES
+
+Tie::RefHash
+
+
+=head1 BUGS
+
+    No known bugs.
+
+
+=head1 AUTHOR
+
+tyru  C<< <tyru.exe+perl@gmail.com> >>
+
+
+=head1 LICENCE AND COPYRIGHT
+
+Copyright (c) 2009, tyru C<< <tyru.exe+perl@gmail.com> >>. All rights reserved.
+
+This module is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself. See L<perlartistic>.
+

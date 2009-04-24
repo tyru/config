@@ -1,0 +1,36 @@
+use Text::Tokenizer::Class;
+use Scalar::Util qw(looks_like_number);
+use Perl6::Say;
+
+
+
+my $parser = Text::Tokenizer::Class->new(parse_type => 'handler');
+$parser->ignored_chars(qr/\s/);
+
+$parser->add_pattern(
+    qr/[+\-*\/]/ => sub { shift->step }
+);
+$parser->add_pattern(
+    sub { looks_like_number($_) } => sub { shift->step }
+);
+$parser->add_pattern(
+    '(' => sub {
+        my $self = shift;
+        my $proc = $self->parse(post_stop_if_found => 1);
+        my @nums;
+        while (1) {
+            my $n = $self->parse(post_stop_if_found => 1);
+            last    unless defined $n;
+            push @nums, $n;
+        }
+        eval join $proc, @nums;
+    }
+);
+$parser->add_pattern(
+    ')' => sub { undef }
+);
+
+
+$parser->string("(+ 1 1)");
+say $parser->parse();
+

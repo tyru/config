@@ -1,0 +1,93 @@
+[InstantCommand]
+;
+;[書式]
+;文字列=コマンドライン
+;
+;ファイルを読み込むときに使っているAPIが、コマンドライン両端の
+;ダブルクォーテーションを自動で外す機能を持っている関係で、
+;両端にダブルクォーテーションがあるコマンドラインを指定する場合は、
+;/f=""C:\Program Files\foo\foo.exe""
+;のように二重にダブルクォーテーションをつける必要があります。
+;
+;[置換マクロ]
+;%A             インスタントコマンドに渡された引数。
+;%W             fenrirの作業フォルダのパス。
+;%V             fenrirの作業フォルダのパスのドライブ部分
+;%C             クリップボードに格納されている文字列
+;%scanfile      スキャンファイルのパス（デフォルト：data\scan.ini）
+;%pathfile      インデックスファイルのパス(デフォルト:data\path)
+;%initfile      動作設定ファイルのパス(デフォルト：data\fenrir.ini)
+;%cmddir        コマンドファイルの場所のパス。
+;
+
+
+; 勝手にまとめたfenrirのヘルプ
+/help=""%W\docs\help.txt""
+
+; このファイルを開く
+//=""E:\usr\app\エディタ\Vim7.1\gvim.exe" "%instantfile""
+/ini=""E:\usr\app\エディタ\Vim7.1\gvim.exe" "%initfile""
+/cmd="perl "C:/work/Perl/work/fenrir_cmds/fenrir_cmds.pl""
+
+; ドライブ
+c:=C:\
+e:=E:\
+f:=F:\
+g:=G:\
+
+
+; ブラウザ、FTPなど
+,net=""C:\Program Files\Mozilla Firefox\firefox.exe""
+,gc=""C:\Documents and Settings\kazy\Local Settings\Application Data\Google\Chrome\Application\chrome.exe""
+,ftp=""E:\Program Files\ffftp\FFFTP.exe""
+,irv=""E:\usr\app\通信\irvine1_3_0\irvine.exe""
+
+; コマンドプロンプト、シェル
+,cmd="cmd.exe /K cd %USERPROFILE%"
+; ,cyg=""G:\cygwin\Cygwin.bat""
+; ,msys=""C:\MinGW\msys.bat""
+,ps=""C:\Documents and Settings\kazy\デスクトップ\app\Windows PowerShell""
+
+; いろいろ
+,ie=iexplore.exe
+,no=notepad.exe
+,reg=regedit.exe
+,ta=taskmgr.exe
+,srv=services.msc
+,dic=""C:\WINDOWS\ime\IMJP8_1\imjpdct.exe""
+
+,id=""C:\Program Files\idm\IDM.exe""
+,it=""C:\Program Files\iTunes\iTunes.exe""
+,sa=""E:\Program Files\Safarp\safarp.exe""
+,fa=""E:\Program Files\FastCopy\FastCopy.exe""
+
+,vcs=""C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE\VCSExpress.exe""
+,vcc=""C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE\VCExpress.exe""
+,vi=""E:\usr\app\エディタ\Vim7.1\gvim.exe""
+,em=""E:\usr\meadow\bin\RunMW32.exe""
+,cha=""E:\usr\app\エディタ\Vim7.1\gvim.exe" -c Chalice"
+,mado=""E:\Program Files\Madonote\WinHandXP.exe""
+,man=E:\usr\app\画像\mangameeya_73\MangaMeeya.exe
+
+; cpanコマンドの設定とか
+,pconf=""E:\usr\app\エディタ\Vim7.1\gvim.exe" "C:\strawberry\perl\lib\CPAN\Config.pm""
+
+; フォルダ
+,doc=""E:\My Documents""
+,app=""E:\usr\app""
+; 特殊フォルダ
+$task="explorer.exe /root,,::{20D04FE0-3AEA-1069-A2D8-08002B30309D}\::{D6277990-4C6A-11CF-8D87-00AA0060F5BF}"
+$doc="explorer.exe /root,,::{450D8FBA-AD25-11D0-98A8-0800361B1103}"
+$trash="explorer.exe /root,,::{645FF040-5081-101B-9F08-00AA002F954E}"
+
+; アップデート
+,update=""C:\WINDOWS\system32\wupdmgr.exe""
+
+; メンテナンス
+,mt="iexplore.exe "http://onecare.live.com/site/ja-JP/default.htm""
+
+;「,g 検索語」で検索
+,g=""http://www.google.co.jp/search?ie=SJIS&oe=SJIS&hl=ja&lr=lang_ja&q=%A""
+
+; iTunes操作
+,at="perl "G:/cygwin/home/tyru/work/Perl/autotunes/stable/1.09/autotunes.pl" -e "%A""

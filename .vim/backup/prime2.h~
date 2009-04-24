@@ -1,0 +1,31 @@
+#include <vector>
+
+
+bool
+isPrime(int n) {
+
+    typedef std::vector<int>    Prime;
+    static Prime prime;    // キャッシュ
+
+    assert(n > 0);
+    if (n == 1) return true;
+
+    const int END_N = n / 2;
+
+    if (! prime.empty()) {
+        for (Prime::iterator it = prime.begin(); it != prime.end(); ++it) {
+            if (n % *it == 0) {
+                return false;
+            }
+        }
+    }
+    for (int i = 2; i <= END_N; ++i) {
+        if (n % i == 0) {
+            return false;
+        }
+    }
+
+    // 素数を見つけたらキャッシュしておく
+    prime.push_back(n);
+    return true;
+}

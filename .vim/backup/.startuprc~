@@ -1,0 +1,42 @@
+# vim: ft=memo
+
+wait 5
+
+# echo homeを仮想フォルダ(Z:)に割り当てます・・・
+# cmd     subst Z: "C:/Documents and Settings/kazy/home"
+# open
+
+echo 秀Capsを起動しています・・・
+open "E:\Program Files\HideCaps\HCaps95.exe"
+wait 3
+
+echo cpu% を起動しています・・・
+open "E:\usr\app\常駐系\cpup113\cpu%.exe"
+wait 2
+
+# echo VideoAccelerator を起動しています・・・
+# open    "C:\Program Files\SpeedBit Video Accelerator\VideoAccelerator.exe"
+# wait 2
+
+echo fenrir を起動しています・・・
+open E:\usr\app\常駐系\fenrir074d\fenrir.exe
+wait 5
+ 
+echo TTBase を起動しています・・・
+open "E:\usr\app\常駐系\ttb10016\TTBase.exe"
+wait 5
+
+# echo WinDeskWide を起動しています・・・
+# open "E:\usr\app\常駐系\WinDeskWide130\WinDeskWide.exe"
+# wait 5
+
+# echo Fences を起動しています
+# open "E:\Program Files\Stardock\Fences\Fences.exe"
+
+echo PeerGuardian2 を起動しています・・・
+open "E:\Program Files\PeerGuardian2\pg2.exe"
+
+
+echo
+echo Done.
+

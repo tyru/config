@@ -1,0 +1,109 @@
+// jQuery.jsとかprototype.jsとか色んなライブラリも使う(JavaScriptの学習的な意味で)
+
+
+function $(id) {
+    return document.getElementById(id);
+}
+
+function runOnLoad () {
+
+    // toggleリンク(ボタン)を作る
+    $('toggle').innerHTML = '<a href="javascript:void(0);">toggle</a>';
+
+
+    var enabledAjaxLoad = false;
+    var linksId = {
+        'script':      { 'showed': false },
+        'cgi':         { 'showed': false },
+        'java_applet': { 'showed': false },
+        'javascript':  { 'showed': false },
+        'css':         { 'showed': false },
+        'vim_plugin':  { 'showed': false },
+
+        'hatena_ac': { 'showed': false },
+        'blog':      { 'showed': false },
+        'delicious': { 'showed': false },
+        'twitter':   { 'showed': false },
+        'github':    { 'showed': false },
+        'gist':      { 'showed': false }
+    };
+    var switchHTML = new Array(2);
+    switchHTML[0] = $('switch').innerHTML;
+    switchHTML[1] = '[<a href="javascript:void(0);" id="toggle">toggle</a>] '
+                    + 'peeking mode...'
+
+    function runOnClickToggle() {
+
+        function wrap(id) {
+            return function() {
+                loadOnClick(id);
+            };
+        }
+
+
+        if (enabledAjaxLoad) {    // 復元する
+            for (var id in linksId) {
+                linksId[id].showed = false;
+                $(id).innerHTML = linksId[id].innerHTML;
+                $(id).firstChild.href = linksId[id].url;
+            }
+            $('switch').innerHTML = switchHTML[0];
+            enabledAjaxLoad = false;
+
+        } else {
+            for (var id in linksId) {    // 動的ロードに切り換える
+                alert(id);
+                linksId[id].url = $(id).firstChild.href;
+                linksId[id].innerHTML = $(id).innerHTML;
+                $(id).firstChild.href = 'javascript:void(0);';
+                // $(id).firstChild.saveid = id;
+                // このやり方だとIE8でエラーになった
+                addHandler(
+                    // function () { loadOnClick(this.firstChild.saveid); },
+                    wrap(id),
+                    $(id),
+                    'click'
+                );
+            }
+            $('switch').innerHTML = switchHTML[1];
+            enabledAjaxLoad = true;
+        }
+
+        addHandler(
+            runOnClickToggle,
+            $('toggle'),
+            'click'
+        );
+    }
+
+
+    // idのhref要素をsrcに持つiframeを出現させる
+    function loadOnClick(id) {
+        if (linksId[id] === undefined || linksId[id].showed) return;
+
+        var elem = $(id).firstChild;
+        var iframe = document.createElement('iframe');
+        iframe.innerHTML = sprintf('<a href="%s">%s</a>', linksId[id].url, elem.innerHTML);
+        iframe.src = linksId[id].url;
+
+        elem.appendChild(document.createElement('br'));
+        elem.appendChild(iframe);
+        elem.appendChild(document.createElement('br'));
+        elem.appendChild(document.createElement('br'));
+        linksId[id].showed = true;
+    }
+
+    addHandler(
+        runOnClickToggle,
+        $('toggle'),
+        'click'
+    );
+
+}
+
+
+addHandler(
+    runOnLoad,
+    window,
+    'load'
+);

@@ -1,0 +1,18 @@
+use Test::More qw(no_plan);
+use Test::Exception;
+
+use Text::Tokenizer::Class;
+my $parser = Text::Tokenizer::Class->new(parse_type => 'handler');
+
+dies_ok {
+    $parser->has_next_match('foo')
+} 'has_next_match is read only from outside';
+
+
+$parser->clear_all();
+ok(! defined $parser->string(), 'string is cleared');
+ok(! defined $parser->ignore_chars(), 'ignore_chars is cleared');
+
+ok(! $parser->has_string(), 'string is cleared');
+ok(! $parser->has_ignore_chars(), 'ignore_chars is cleared');
+ok(! $parser->has_pattern(), 'pattern is cleared');

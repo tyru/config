@@ -1,0 +1,40 @@
+#include <iostream>
+#include <cstdlib>
+#include <string>
+
+class TextBlock {
+public:
+
+    TextBlock(const char* s) {
+        text = s;
+    }
+
+    const char&
+    operator[](std::size_t pos) const {
+        std::cout << "const char& operator[]() const" << std::endl;
+        return text[pos];
+    }
+    char&
+    operator[](std::size_t pos) {
+        std::cout << "char& operator[]()" << std::endl;
+        return text[pos];
+    }
+
+
+private:
+
+    std::string text;
+};
+
+int
+main(int argc, char *argv[]) {
+
+    TextBlock tb("Hello");
+    std::cout << tb[0] << std::endl;
+    const TextBlock ctb("World");
+    std::cout << ctb[0] << std::endl;
+
+
+    return EXIT_SUCCESS;
+}
+

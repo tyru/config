@@ -1,0 +1,17 @@
+
+newcounter = function ()
+    local cnt=0 --ãˆÊ’l
+    return function ()
+        cnt = cnt+1
+        return cnt
+    end
+end
+
+cnt_a = newcounter()
+cnt_b = newcounter()
+print(cnt_a())
+print(cnt_a(), cnt_b())
+print(cnt_a())
+print(cnt_a(), cnt_b())
+print(cnt_a())
+print(cnt_a(), cnt_b())

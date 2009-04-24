@@ -1,0 +1,14 @@
+#!/usr/bin/env perl
+# http://d.hatena.ne.jp/gfx/20090223/1235377515
+
+use strict;
+use warnings;
+{
+    use IO::Handle;
+    my $content = "Hello, world\n";
+    open my $in, '<', \$content;
+    local *STDIN = $in;
+    print scalar <STDIN>;
+    print 'isa:' . STDIN->isa('IO::Handle');
+}
+

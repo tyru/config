@@ -1,0 +1,120 @@
+use Data::Dumper;
+use Devel::Caller qw(caller_args);
+
+sub d {
+    for (@_) {
+        print Dumper($_);
+    }
+}
+
+
+d(
+    \@ARGV,
+    \@INC,
+    \@_,
+);
+
+d(
+    \%^H,
+    \%@,
+    \%ENV,
+    \%INC,
+    \%SIG,
+);
+
+d(
+    \*ARGV,
+    \*STDERR,
+    \*STDIN,
+    \*STDOUT,
+    \*stderr,
+    \*stdin,
+    \*stdout,
+);
+
+#   useされてるらしいパッケージ
+# CORE
+# Carp
+# Cwd
+# Cygwin
+# DB
+# Devel
+# DynaLoader
+# Exporter
+# IO
+# Internals
+# PerlIO
+# Regexp
+# Tie
+# UNIVERSAL
+# Win32
+# Win32CORE
+# attributes
+# mro
+# re
+# strict
+# utf8
+# vars
+# version
+# warnings
+
+d(
+    \$^H,
+    \$^R,
+    \${^RE_TRIE_MAXBUF},
+    \$^W,
+    \${^WARNING_BITS},
+    \$^X,
+    \$!,
+    \$",
+    \$$,
+    \$/,
+    \$0,
+    \$1,
+    \$@,
+    \$ARGV,
+    \$BEGIN,
+    \$CORE::,
+    \$Carp::,
+    \$Cwd::,
+    \$Cygwin::,
+    \$DB::,,
+    \$Devel::,
+    \$DynaLoader::,
+    \$ENV,
+    \$Exporter::,
+    \$INC,
+    \$IO::,
+    \$Internals::,
+    \$PerlIO::,
+    \$Regexp::,
+    \$SIG,
+    \$STDERR,
+    \$STDIN,
+    \$STDOUT,
+    \$Tie::,
+    \$UNIVERSAL::,
+    \$Win32::,
+    \$Win32CORE::,
+    \$],
+    \$_,
+    \${'_<Win32CORE.c'},
+    \${'_<cygwin.c'},
+    \${'_<mro.c'},
+    \${'_<perlio.c'},
+    \${'_<perlmain.c'},
+    \${'_<universal.c'},
+    \${'_<xsutils.c'},
+    \$attributes::,
+    \$main::,
+    \$mro::,
+    \$re::,
+    \$stderr,
+    \$stdin,
+    \$stdout,
+    \$strict::,
+    \$utf8::,
+    \$vars::,
+    \$version::,
+    \$warnings::,
+);

@@ -1,0 +1,51 @@
+package Text::Tokenizer::Class::Constant;
+
+use strict;
+use warnings;
+use utf8;
+
+use Carp;
+
+use version;
+our $VERSION = qv('0.0.0');
+
+
+use base qw(Exporter);
+
+our @EXPORT    = qw($BASE);
+our $BASE = 'Text::Tokenizer::Class::Base';
+
+
+
+1;
+__END__
+
+=head1 NAME
+
+Text::Tokenizer::Class::Constant
+
+
+
+=head1 SYNOPSIS
+
+    use Text::Tokenizer::Class::Constant;    # this will export some constants.
+  
+
+
+=head1 BUGS
+
+    No known bugs.
+
+
+=head1 AUTHOR
+
+tyru  C<< <tyru.exe+perl@gmail.com> >>
+
+
+=head1 LICENCE AND COPYRIGHT
+
+Copyright (c) 2009, tyru C<< <tyru.exe+perl@gmail.com> >>. All rights reserved.
+
+This module is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself. See L<perlartistic>.
+

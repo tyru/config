@@ -1,0 +1,218 @@
+package MyScheme::Atom::Function::Basic;
+
+# TODO
+# Hook::LexWrap‚ÅScheme‚ÆPerl‚ÌŠÔ‚Ìƒf[ƒ^•ÏŠ·‚ÌŽèŠÔ‚ðŒ¸‚ç‚·
+
+use strict;
+use warnings;
+use Carp;
+
+use version;
+our $VERSION = qv('0.0.0');
+
+use base qw(Exporter);
+
+
+use MyScheme::Atom::Constants;
+use List::Util qw(reduce);
+use Data::Util qw(install_subroutine);
+use Perl6::Say;
+use Hook::LexWrap qw(wrap);
+
+
+sub import {
+    %MyScheme::Atom::functions = (
+        %MyScheme::Atom::functions,    # NOTE: DON'T FORGET
+        '+' => \&scm_plus,
+        '-' => \&scm_minus,
+        '*' => \&scm_multi,
+        '/' => \&scm_div,
+        'print' => \&scm_print,
+    );
+}
+
+
+### Scheme Functions ###
+
+sub scm_plus {
+    my @args = @_;
+    my $value;
+
+    if (@args == 0) {
+        confess;
+    } elsif (@args == 1) {
+        $value = $args[0]->{value};
+    } else {
+        $value = reduce { $a->{value} + $b->{value} } @args;
+    }
+    MyScheme::Atom->new(value => $value, type => SCM_NUMERIC);
+}
+
+sub scm_minus {
+    my @args = @_;
+    my $value;
+
+    if (@args == 0) {
+        confess;
+    } elsif (@args == 1) {
+        $value = -$args[0]->{value};
+    } else {
+        $value = reduce { $a->{value} - $b->{value} } @args;
+    }
+    MyScheme::Atom->new(value => $value, type => SCM_NUMERIC);
+}
+
+sub scm_multi {
+    my @args = @_;
+    my $value;
+
+    if (@args == 0) {
+        confess;
+    } elsif (@args == 1) {
+        $value = $args[0]->{value};
+    } else {
+        $value = reduce { $a->{value} * $b->{value} } @args;
+    }
+    MyScheme::Atom->new(value => $value, type => SCM_NUMERIC);
+}
+
+sub scm_div {
+    my @args = @_;
+    if (grep { $_->{value} == 0 } @args) {
+        confess;
+    }
+    my $value;
+
+    if (@args == 0) {
+        confess;
+    } elsif (@args == 1) {
+        $value = 1.0 / $args[0]->{value};
+    } else {
+        $value = reduce { $a->{value} / $b->{value} } @args;
+    }
+    MyScheme::Atom->new(value => $value, type => SCM_NUMERIC);
+}
+
+sub scm_print {
+    # use Data::Dumper;
+    # say Dumper(\@_);
+    say join '', map {
+        if ($_->{type} == SCM_STRING) {
+            eval $_->{value};
+        # } elsif ($_->{type} == SCM_UNBOUND) {
+        #     confess;
+        } elsif ($_->{type} == SCM_SYMBOL || $_->{type} == SCM_KEYWORD) {
+            substr $_->{type}, 1;
+        } else {
+            $_->{value};
+        }
+    } @_;
+    MyScheme::Atom->new(value => '#<undef>', type => SCM_UNDEF);
+}
+
+# sub scm_car { $_[0] }
+# 
+# sub scm_cdr { shift; @_ }
+# 
+# sub scm_cons { @_ }
+# 
+# sub scm_quote {
+#     MyScheme::Atom->(value => shift, type => SCM_SYMBOL);
+# }
+# 
+# sub scm_cond {
+# }
+# 
+# sub scm_define {
+# }
+# 
+# install_subroutine(
+#     __PACKAGE__,
+#     'scm_eq?' => sub {
+#     }
+# );
+# 
+# install_subroutine(
+#     __PACKAGE__,
+#     'scm_atom?' => sub {
+#     }
+# );
+# 
+# sub scm_read {
+#     my $in = shift;
+#     if ($in) {
+#         $in = FileHandle->new($in);
+#         unless (defined $in) {
+#             confess "$in: No such a file";
+#         }
+#     } else {
+#         $in = \*STDIN;
+#     }
+# 
+#     while (1) {
+#         # read ...
+#     }
+#     # MyScheme::Atom->new->eval_from_string();
+# }
+
+
+
+1;
+__END__
+
+=head1 SYNOPSIS
+
+    use MyScheme::Atom::Function::Basic;
+
+
+=head1 METHODS
+
+=over 5
+
+=item scm_plus
+
++
+
+=item scm_minus
+
+-
+
+=item scm_multi
+
+*
+
+=item scm_div
+
+/
+
+=item scm_print
+
+print
+
+=back
+
+
+=head1 DEPENDENCIES
+
+Perl6::Say
+Data::Util
+
+
+=head1 BUGS
+
+    No known bugs.
+
+
+=head1 AUTHOR
+
+tyru  C<< <tyru.exe+perl@gmail.com> >>
+
+
+=head1 LICENCE AND COPYRIGHT
+
+Copyright (c) 2009, tyru C<< <tyru.exe+perl@gmail.com> >>. All rights reserved.
+
+This module is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself. See L<perlartistic>.
+
+

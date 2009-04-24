@@ -1,0 +1,35 @@
+
+
+object Main {
+    def main(args:Array[String]) = {
+        val DEFAULT = 100
+        val end:Int = {
+            if (args.isEmpty)
+                DEFAULT
+            else
+                try {
+                    Integer.parseInt(args(0))
+                } catch {
+                    case e:java.lang.NumberFormatException => {
+                        Console.err.println("warning: 不正な値が渡されました: " + args(0))
+                        Thread.sleep(1000)
+                        DEFAULT
+                    }
+                }
+        }
+        (1 to end).foreach(n => {
+            println(
+                if (n % 15 == 0)
+                    "FizzBuzz"
+                else if (n % 5 == 0)
+                    "Buzz"
+                else if (n % 3 == 0)
+                    "Fizz"
+                else
+                    n
+            )
+        })
+    }
+}
+
+// vim:ft=scala:

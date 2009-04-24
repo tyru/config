@@ -1,0 +1,17 @@
+
+body {
+  color: gray;
+  margin-left: 10px;
+}
+
+/* TODO コメント */
+ul.todo {
+  margin-top: 1em;
+  color: purple;
+  font-size: smaller;
+}
+ul.todo li {
+  margin-left: 15px;
+  text-decoration: underline;
+}
+

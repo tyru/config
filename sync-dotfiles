@@ -1,0 +1,151 @@
+#!/bin/bash
+
+OS=$(uname -o)
+CMDNAME=$(basename $0)
+CWD=$(cd $(dirname $0) && pwd)
+FILES=".vim .vimrc .gvimrc .vimperator .vimperatorrc .bash_profile .bashrc .screenrc .inputrc .zshrc .zshenv .skk"
+INFO_FILES=".vim/backup .vim/.vimbackup_deleted .vim/chalice/cache .vim/chalice/*.bmk .vimperator/info"
+GITHUB_USER=$(cd $CWD && git config github.user)
+
+# don't adapt alias.
+function rm() {
+    command rm "$@"
+}
+function cp() {
+    command cp "$@"
+}
+function mkdir() {
+    command mkdir "$@"
+}
+
+function usage() {
+    cat <<EOF
+    Usage: $CMDNAME [-cpxh] [-u user]
+EOF
+    exit
+}
+function warn() {
+    echo $* >&2
+}
+function ask() {
+    echo "$@"
+    local YN
+    read YN
+    if [ "$YN" != "y" -a "$YN" != "yes" ]; then
+        exit
+    fi
+}
+function install_dotfiles() {
+    local src="$1"
+    local dest="$2"
+    local user="$3"
+
+    if [ ! -e $src ]; then
+        warn "$src: No such a file"
+        return
+    fi
+    rm -rf $dest
+
+    echo "$src -> $dest"
+    cp -R $src $dest
+    if [ "$OS" = "Cygwin" ]; then
+        chown -R $user $dest
+    else
+        chown -R $user:$user $dest
+    fi
+}
+
+
+### main ###
+
+# arguments
+OPT_USER="$USER"
+while getopts u:cpxh OPT; do
+    case $OPT in
+        "u" ) OPT_USER="$OPTARG" ;;
+        "c" ) FLAG_COMMIT="true" ;;
+        "p" ) FLAG_PUSH="true" ;;
+        "x" ) FLAG_EXTRACT="true" ;;
+        *   ) usage ;;
+    esac
+done
+
+if [ "$FLAG_EXTRACT" != "true" ]; then
+    if [ "$OS" != "Cygwin" -a $UID != 0 ]; then
+        warn 'you are not root.'
+        exit 1
+    fi
+    if [ -z $GITHUB_USER ]; then
+        warn "Can't determine GITHUB_USER('git config github.user' is empty)."
+        exit 1
+    fi
+fi
+
+
+cd $CWD
+if [ $? != 0 ]; then
+    warn "you can't chdir to '$CWD'."
+    exit 1
+fi
+
+
+# determine user's home
+if [ "$OPT_USER" = "root" ]; then
+    HOME_DIR="/root"
+else
+    HOME_DIR="/home/$OPT_USER"
+fi
+if [ ! -d $HOME_DIR ]; then
+    warn "home directory($HOME_DIR) doesn't exist."
+    exit 1
+fi
+
+
+if [ "$FLAG_EXTRACT" = "true" ]; then
+    ask -n "may I replace the dotfiles in '$HOME_DIR'?[y/n]:"
+fi
+
+
+# replace dotfiles in home directory.
+for i in $FILES; do
+    if [ "$FLAG_EXTRACT" = "true" ]; then
+        if [ "$OS" = "Cygwin" -a "$i" = ".vimperator" ]; then
+            src="vimperator"
+            dest="$HOME_DIR/vimperator"
+        else
+            src="$i"
+            dest="$HOME_DIR/$i"
+        fi
+
+        # install as $OPT_USER.
+        install_dotfiles $src $dest $OPT_USER
+    else
+        if [ "$OS" = "Cygwin" -a "$i" = ".vimperator" ]; then
+            src="$HOME_DIR/vimperator"
+            dest=".vimperator"
+        else
+            src="$HOME_DIR/$i"
+            dest="$i"
+        fi
+
+        # install as $GITHUB_USER.
+        install_dotfiles $src $dest $GITHUB_USER
+    fi
+done
+
+# delete info files.
+if [ "$FLAG_EXTRACT" != "true" ]; then
+    rm -rf "$INFO_FILES"
+fi
+
+
+# commit all.
+if [ "$FLAG_COMMIT" = "true" ]; then
+    git add .
+    git commit -a
+fi
+
+# push to github server.
+if [ "$FLAG_PUSH" = "true" ]; then
+    git push origin master
+fi

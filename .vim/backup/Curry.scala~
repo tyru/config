@@ -1,0 +1,29 @@
+
+object Main {
+    def main(args:Array[String]) = {
+        {
+            def add(x:Int)(y:Int) : Int = x + y
+
+            println(add(1)(1))    // => 2
+            val add100 = add(100) _
+            println(add100(1))    // => 101
+        }
+
+        {
+            // 今度はふつう(?)のadd
+            def add(x:Int, y:Int) : Int = x + y
+            val f = Function.curried(add _)(1)
+            println(f(1))    // => 2
+
+            def add3(x:Int, y:Int, z:Int) : Int = x + y + z
+
+            val g = Function.curried(add3 _)(1)
+            val h = g(2)
+            println(h(3))    // => 6
+        }
+    }
+}
+
+
+// vim:ft=scala:
+

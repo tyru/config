@@ -1,0 +1,26 @@
+#include <iostream>
+#include <cstdlib>
+#include <utility>
+
+
+
+template <typename T1, typename T2>
+class make_pair {
+public:
+
+    std::pair<T1, T2>
+    operator()(T1 a, T2 b) {
+        return std::pair<T1, T2>(a, b);
+    }
+};
+
+
+int main(int argc, char *argv[]) {
+
+    std::pair<int, int> p = make_pair<int, int>()(1, 2);
+    std::cout << p.first << ":" << p.second << std::endl;
+
+    return EXIT_SUCCESS;
+}
+
+

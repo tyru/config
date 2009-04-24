@@ -1,0 +1,14 @@
+#ifndef __FOOSCHEME_DEBUG_H__
+#define __FOOSCHEME_DEBUG_H__
+
+#include <iostream>
+
+#define NDEBUG 0
+
+#if NDEBUG
+    #define dprint(s) std::cerr << s << std::endl;
+#else
+    #define dprint(s)
+#endif
+
+#endif

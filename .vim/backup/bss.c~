@@ -1,0 +1,16 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int global;
+
+int
+main(int argc, char *argv[])
+{
+    // maybe print 0
+    // because global is in BSS segment
+    // so global is initialized by kernel
+    printf("%d\n", global);
+    return EXIT_SUCCESS;
+}
+
+

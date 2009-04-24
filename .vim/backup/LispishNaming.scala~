@@ -1,0 +1,11 @@
+object LispishNaming {
+    def lisp_ish_naming() {
+        println("hi!")
+    }
+
+    def main(args:Array[String]) {
+        lisp_ish_naming()
+    }
+}
+
+// vim:ft=scala:

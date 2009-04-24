@@ -1,0 +1,28 @@
+package MyScheme::Atom::Function;
+
+use strict;
+use warnings;
+use Carp;
+
+use MyScheme::Base;
+use MyScheme::Atom::Constant qw(INFINITY);
+
+
+our %functions = (
+    '+' => \&scmfunc_plus,
+    '-' => \&scmfunc_minus,
+    '*' => \&scmfunc_multi,
+    '/' => \&scmfunc_div,
+);
+
+
+sub new {
+    my $self = shift;
+    bless {}, $self;
+}
+
+
+
+
+1;
+

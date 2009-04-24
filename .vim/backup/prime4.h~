@@ -1,0 +1,38 @@
+#include <deque>
+
+
+typedef std::list<int>     Prime;
+Prime                       prime;    // キャッシュ
+
+
+bool
+isPrime(int n) {
+
+    assert(n > 0);
+    if (n == 1) return true;
+
+    const int END_N = n / 2;
+
+    if (! prime.empty()) {
+        for (Prime::iterator it = prime.begin(); it != prime.end(); ++it) {
+            if (n % *it == 0) {
+                return false;
+            }
+        }
+        if (prime.back() > END_N) {
+            prime.push_back(n);
+            return true;
+        }
+    }
+    int i = prime.empty() ? 2 : prime.back() + 1;
+    while (i <= END_N) {
+        if (n % i == 0) {
+            return false;
+        }
+        i++;
+    }
+
+    // 素数を見つけたらキャッシュしておく
+    prime.push_back(n);
+    return true;
+}

@@ -1,0 +1,46 @@
+
+/* 互換性のため */
+* {
+  padding: 0px;
+  margin: 0px;
+}
+
+body {
+  margin-left: 10px;
+}
+
+
+/* リンク色の指定 */
+a { text-decoration: underline }
+a:link    { color: #00CCCC }
+a:visited { color: #ABA }
+a:hover   { color: #CC0000 }
+a:active  { color: #FF0000 }
+
+
+/* ページのタイトル(色設定はそれぞれ行う ) */
+#title {
+  display: block;
+  text-align: left;
+  font-size: 20px;
+  padding: 15px;
+}
+
+/* タイトル */
+div#title h1 {
+  display: block;
+  font-size: 24px;
+  font-weight: normal;
+}
+
+/* タイトル下のメッセージ */
+div#title span {
+  font-size: 12px;
+  margin-top: 10px;
+  margin-left: 20px;
+}
+
+#annotation {
+  display: block;
+  font-size: smaller;
+}

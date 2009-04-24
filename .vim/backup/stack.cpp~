@@ -1,0 +1,55 @@
+#include <cstdlib>
+#include <stack>
+#include <string>
+#include <iostream>
+#include <stdexcept>
+
+
+typedef std::stack<std::string>  StackTrace;
+static const StackTrace stack_trace;
+
+
+void
+func4() {
+    stack_trace.push("func4");
+    throw std::exception();
+    stack_trace.pop();
+}
+
+void
+func3() {
+    stack_trace.push("func3");
+    func4();
+    stack_trace.pop();
+}
+
+void
+func2() {
+    stack_trace.push("func2");
+    func3();
+    stack_trace.pop();
+}
+
+void
+func1() {
+    stack_trace.push("func1");
+    func2();
+    stack_trace.pop();
+}
+
+
+int main(int argc, char *argv[]) {
+
+    try {
+        func1();
+    } catch (...) {
+        while (! stack_trace.empty()) {
+            std::cerr << stack_trace.top() << std::endl;
+            stack_trace.pop();
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+
+

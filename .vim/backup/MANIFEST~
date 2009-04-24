@@ -1,0 +1,13 @@
+Build.PL
+Changes
+MANIFEST
+Makefile.PL
+README
+lib/MyScheme.pm
+lib/MyScheme/Atom.pm
+lib/MyScheme/Atom/BasicFunctions.pm
+t/00.load.t
+t/perlcritic.t
+t/perlcriticrc
+t/pod-coverage.t
+t/pod.t

@@ -1,0 +1,73 @@
+#ifndef __FOOSCHEME_SCMINTERP_H__
+#define __FOOSCHEME_SCMINTERP_H__
+
+
+#include "debug.h"
+
+#include "scmAtom.h"
+#include "tokenizer.h"
+
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <vector>
+
+
+
+
+
+typedef std::vector<ScmAtom*> ScmResult;
+
+
+class ScmInterp {
+
+private:
+
+    Tokenizer tokenizer;
+
+
+public:
+
+    ScmInterp() {
+        char *symbol = { '0', '9', 'a', 'z', 'A', 'Z', '_', '_' };
+        tokenizer.addToken(SCM_LPAREN, '(');
+        tokenizer.addToken(SCM_RPAREN, ')');
+        tokenizer.addToken(SCM_SYMBOL, symbol);    // FIXME
+        tokenizer.addToken(SCM_SQUOTE, '\'');
+        tokenizer.addToken(SCM_COLON, ':');
+    }
+
+
+    int
+    repl(std::istream& in);
+
+    // TODO
+    ScmAtom*
+    parse();
+
+    // TODO
+    std::string*
+    scmRead() {
+        return new std::string();
+    }
+
+
+    void
+    setSexp(const std::string& sexp) {
+        dprint("# set string [" + sexp + "]");
+        this->tokenizer.setText(sexp);
+    }
+
+    const std::string&
+    getSexp() const {
+        return this->tokenizer.getText();
+    }
+
+    bool
+    eof() {
+        return this->tokenizer.eof();
+    }
+};
+
+
+#endif

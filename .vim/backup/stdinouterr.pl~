@@ -1,0 +1,29 @@
+use strict;
+use warnings;
+use utf8;
+
+use Perl6::Say;
+use String::CamelCase qw(camelize);
+
+
+
+say "--- cat ---";
+filter_print(\*STDIN, \*STDOUT, sub { shift });
+
+# stdin, stdout, stderr are allowed!
+say "--- cat ---";
+filter_print(\*stdin, \*stdout, sub { shift });
+say "--- cat >&2 ---";
+filter_print(\*stdin, \*stderr, sub { shift });
+
+# I like these words though.
+say "--- simple camelized ---";
+filter_print(\*STDIN, \*STDOUT, sub { ucfirst lc shift });
+say "--- camelized by String::CamelCase ---";
+filter_print(\*STDIN, \*STDOUT, sub { camelize shift });
+
+
+sub filter_print {
+    my ($in, $out, $sub) = @_;
+    $out->print($sub->($_))  while (<$in>);
+}

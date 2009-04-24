@@ -1,0 +1,173 @@
+package MyScheme::Atom;
+
+use strict;
+use warnings;
+use Carp qw(confess carp);
+
+use version;
+our $VERSION = qv('0.0.0');
+
+use base qw(Exporter);
+our %EXPORT_TAGS = (
+    check => [qw(
+        is_func
+    )],
+);
+
+use overload '""' => \&as_string, '0+' => \&as_string;
+# 
+# use base qw(Class::Accessor::Fast);
+# __PACKAGE__->mk_accessors(qw(proc value type));
+
+
+# FIXME: won't load MyScheme::Atom::Function::* packages.
+# use Module::Pluggable search_path => 'MyScheme::Atom::Function', require => 1;
+use MyScheme::Atom::Function::Basic;
+use MyScheme::Atom::Constants;
+
+use Data::Util qw(install_subroutine :validate);
+use Scalar::Util qw(blessed);
+
+
+our %functions;    # add functions to this!
+
+
+
+
+# Why Exporter won't import automatically?
+sub import {
+    my $pkg = caller;
+    my ($self, @args) = @_;
+
+    for my $arg (@args) {
+        if ($arg =~ /^:/) {    # tag
+            $arg = substr($arg, 1);
+            if (exists $EXPORT_TAGS{$arg}) {
+                for my $subname (@{$EXPORT_TAGS{$arg}}) {
+                    install_subroutine($pkg, $subname => \&$subname);
+                }
+            } else {
+                carp "Can't find import tag '$arg'. not imported.";
+            }
+        } elsif (defined &$arg) {
+            install_subroutine($pkg, $arg => \&$arg);
+        }
+    }
+}
+
+
+
+sub new {
+    my $self = shift;
+    my %option = @_;
+
+    for my $required (qw(type value)) {
+        if (! exists $option{$required} || ! defined $option{$required}) {
+            confess "must specify $required of atom"
+        }
+    }
+
+    if ($option{type} == SCM_FUNC) {
+        unless (is_func($option{value})) {
+            # NOTE: can I confess when parsing?
+            confess "$option{value}: unbound variable";
+        }
+        $self = bless \%option, $self;
+        $self->{proc} = $functions{$option{value}};
+    } else {
+        $self = bless \%option, $self;
+    }
+
+    return $self;
+}
+
+
+
+### validator ###
+
+sub is_func {
+    my $func = shift;
+    return exists $functions{$func};
+}
+
+
+
+### overload ###
+
+sub as_string { shift->{value} }
+
+
+
+# sub declare {
+#     confess "invalid use of subroutine declare()"
+#         unless @_ == 2;
+#     my ($typecheck, $coderef) = @_;
+# }
+
+
+1;
+__END__
+
+=head1 NAME
+
+MyScheme - Scheme implementation in Perl
+
+
+
+=head1 SYNOPSIS
+
+    use MyScheme::Atom;
+
+
+
+=head1 METHODS
+
+=over 4
+
+=item new
+
+options:
+    value - value of atom
+    type - type of atom
+
+
+=item SCM_UNDEF, SCM_LIST, SCM_NUMERIC, SCM_BOOLEAN, SCM_STRING, SCM_FUNC, SCM_KEYWORD, SCM_SYMBOL
+
+types of atom
+
+=item as_string
+
+C<
+    use overload '""' => \&as_string, '0+' => \&as_string;
+>
+
+=item is_func
+
+check if $_[0] exists as scheme function.
+
+=back
+
+
+=head1 DEPENDENCIES
+
+Perl6::Say
+Data::Util
+
+
+=head1 BUGS
+
+    No known bugs.
+
+
+=head1 AUTHOR
+
+tyru  C<< <tyru.exe+perl@gmail.com> >>
+
+
+=head1 LICENCE AND COPYRIGHT
+
+Copyright (c) 2009, tyru C<< <tyru.exe+perl@gmail.com> >>. All rights reserved.
+
+This module is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself. See L<perlartistic>.
+

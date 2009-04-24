@@ -1,0 +1,25 @@
+import java.io.*;
+import java.util.Properties;
+
+class FileProperties implements FileIO {
+
+    Properties prop = new Properties();
+
+
+    public void readFromFile(String filename) throws IOException {
+        prop.load(new FileInputStream(filename));
+    }
+
+    public void writeToFile(String filename) throws IOException {
+        prop.store(new FileOutputStream(filename), "written by FileProperties");
+    }
+
+    public void setValue(String key, String value) {
+        this.prop.setProperty(key, value);
+    }
+
+    public String getValue(String key) {
+        return this.prop.getProperty(key);
+    }
+}
+

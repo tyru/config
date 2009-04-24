@@ -1,0 +1,44 @@
+
+
+(function () {
+
+    var loadedContent = false;
+
+    function runOnLoad() {
+    
+        function makeExpandLink(node) {
+            var defLink       = document.createElement('a');
+            defLink.href      = "javascript: void(0);";
+            defLink.innerHTML = "説明";
+            // イベントハンドラを登録
+            addHandler(
+                function () {
+                    this.style.display = "block";
+                    this.parentNode.replaceChild(node, this);
+                },
+                defLink,
+                'click'
+            );
+            return defLink;
+        }
+    
+    
+        if (loadedContent) return;
+    
+    
+        var defNodes = document.getElementsByName("def");
+        for (var i = 0; i < defNodes.length; i++) {
+            var node = defNodes.item(i);
+            if (node.getAttribute("class") === "def") {    // METAタグがひっかかってて吹いた
+                // 「説明」と書かれたリンクの要素を追加
+                node.parentNode.insertBefore(makeExpandLink(node.cloneNode(true)), node);
+                // 説明を隠す
+                node.style.display = "none";
+            }
+        }
+    
+        loadedContent = true;
+    }
+    
+    addHandler(runOnLoad, window, 'load');
+})();

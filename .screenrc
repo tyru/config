@@ -1,0 +1,26 @@
+autodetach on
+bell_msg "^G"
+bind ^E encoding euc
+bind ^U encoding utf-8
+bind h prev
+bind j next
+bind l windowlist
+bind n screen
+# blanker
+# blankerprg /usr/bin/fortune -s
+caption always "%{= wb} %-w%{=bu dr}%n %t%{-}%+w %= %{=b wk} [%l] %{=b wb}%y/%m/%d(%D) %{=b wm}%c"
+defencoding utf-8
+defkanji utf-8
+deflogin off
+defscrollback 10000
+encoding utf-8
+escape ^Jj
+idle 600
+shell -$SHELL
+startup_message off
+term xterm-color
+vbell off
+
+# more options:
+#   http://www.linux.or.jp/JM/html/GNU_screen/man1/screen.1.html
+#   http://www.q-eng.imat.eng.osaka-cu.ac.jp/~ippei/unix/screen.html

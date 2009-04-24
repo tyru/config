@@ -1,0 +1,27 @@
+
+git pullでリモートの変更をローカルと同期する。
+git mergeはどうやらローカルのブランチの変更をmaster(origin?)と同期するもの？
+
+auditd
+システムコールをフックしてsyslogに記録したり動作を遮断したりできる。
+
+system-con*
+いろんなGUIシステム管理ユーティリティ。
+
+kernel alsa make menuconfig
+ 
+xautoclick
+
+XFCEのログアウト時にダイアログを出してからログアウト、終了スリープ
+
+suidperl suexec suspend
+
+ローカルホストからそれぞれのユーザにsshでログインすればいいじゃん
+
+/usr/local/backup のbackup.shをsync-dotfilesのやつと置き換える
+
+locate bin/* は実行ファイルを探したいとき便利
+
+rpm -ql [pkg]
+rpm -qf [file]
+

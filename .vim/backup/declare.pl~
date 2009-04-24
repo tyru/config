@@ -1,0 +1,65 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use utf8;
+
+use Moose::Util::TypeConstraints;
+use Devel::Symdump;
+use Perl6::Say;
+use Data::Util qw(install_subroutine);
+use Text::Diff;
+use List::MoreUtils qw(uniq);
+
+# my $before = d('main');
+# Moose::Util::TypeConstraints::export_type_constraints_as_functions();
+# my $after = d('main');
+# 
+# print diff \$before, \$after;
+# main::Any
+# main::ArrayRef
+# main::Bool
+# main::ClassName
+# main::CodeRef
+# main::Defined
+# main::FileHandle
+# main::GlobRef
+# main::HashRef
+# main::Int
+# main::Item
+# main::Maybe
+# main::Num
+# main::Object
+# main::Ref
+# main::RegexpRef
+# main::Role
+# main::ScalarRef
+# main::Str
+# main::Undef
+# main::Value
+say "---------------------------------";
+say $main::Undef;
+say "---------------------------------";
+say %main::Undef;
+say "---------------------------------";
+say @main::Undef;
+
+
+
+
+
+### FUNCTIONS ###
+
+sub sort_uniq { join "\n", uniq sort split /\n/, shift }
+
+sub d {
+    my $pkg = shift;
+    Devel::Symdump->new($pkg)->as_string;
+}
+
+# sub declare (&) {
+#     my %option = @_;
+#     die "Usage: declare argc => 3, argtype => ['HashRef'], sub => sub { ... }"
+#         if ! ref $coderef || ref $coderef ne 'CODE'
+# }
+
+

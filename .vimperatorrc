@@ -1,0 +1,238 @@
+
+let mapleader = ','
+so $HOME/.vimperatorrc.local
+
+colorscheme vimplight
+
+"-----------------------------------------------------------------
+" いろいろ {{{1
+
+" via http://retlet.net/log/2008/06/awesomebar-bookmarklet.html
+set! browser.urlbar.filter.javascript=false
+set! browser.urlbar.maxRichResults=50
+" disable accesskey
+set! ui.key.generalAccessKey=0
+" open bookmarks in background
+set! browser.tabs.loadBookmarksInBackground=true
+
+
+" ScrapBook
+" (:menuで選択したものが次回起動時に消える)
+"
+" command! AutoScrap         :autocmd  PageLoad .* menu ScrapBook-ページの取り込み
+" command! DisableAutoScrap  :autocmd! PageLoad .*
+
+
+" organize icons of status bar
+" style -name statusbar chrome://* <<EOM
+" #status-bar statusbarpanel {
+"     padding: 1px !important;
+" }
+" statusbarpanel > * {
+"     margin: 0 !important;
+"     padding:0 !important;
+" }
+" EOM
+
+" }}}1
+"-----------------------------------------------------------------
+" set {{{1
+
+set activate=homepage
+set complete=sfl
+" set complete=sflH
+set focuscontent
+set guioptions=nbr
+set hlsearch
+set ignorecase
+set incsearch
+set nextpattern+=\b次
+set noinsertmode
+set nopreload
+set previouspattern+=\b前
+set scroll=8
+set smartcase
+set titlestring=Firefox
+set visualbell
+set wildoptions=auto
+
+"ヒントのスタイルを指定
+" set hintstyle=z-index:5000; font-family:monospace; font-size:12px; color:white; background-color:blue; border-color:ButtonShadow; border-width:0px; border-style:solid; padding:0px 1px 0px 1px; position:absolute;
+"ヒント(フォーカス時)のスタイルを指定
+" set focusedhintstyle=z-index:5000; font-family:monospace; font-size:12px; color:ButtonText; background-color:ButtonShadow; border-color:ButtonShadow; border-width:1px; border-style:solid; padding:0px 1px 0px 1px; position:absolute;
+
+
+" }}}1
+"-----------------------------------------------------------------
+" map {{{1
+"
+" NOTE: <silent>つけるとむしろ遅いorz
+
+" ~ noremap ~ {{{2
+noremap <F5>    <Nop>
+noremap <BS>    <Nop>
+
+" 上下移動
+noremap j   4<C-e>
+noremap k   4<C-y>
+noremap J   <C-d>
+noremap K   <C-u>
+
+" タブ移動
+noremap <Right> :tabmove! +1<CR>
+noremap <Left>  :tabmove! -1<CR>
+
+" Escで中止
+noremap <Esc>   <C-c>
+
+" 戻れるように
+noremap gg      mzgg
+noremap G       mzG
+
+" フレーム内移動
+noremap <C-,>   [f
+noremap <C-.>   ]f
+
+" 選択文字列のコピー
+noremap <C-c>   Y
+" 選択文字列のgoogle検索
+noremap <C-g>   YP
+
+
+" vimperatorだとincsearchのとき
+" マッチしなかった場合元の位置に戻らない
+noremap /   mz/
+
+noremap ,b      :buffers<CR>
+noremap ,d      :dialog<Space>
+noremap ,gm     :gmset!<CR>
+noremap ,gf     :tab normal gf<CR>
+
+noremap !       :set invum<CR>
+
+noremap <C-i>   <C-o>
+noremap <C-o>   <C-i>
+
+" }}}2
+
+" ~ c ~ {{{2
+cnoremap <C-a>          <C-v><C-a>
+cnoremap <C-c>          <C-v><C-c>
+cnoremap <C-x>          <C-v><C-x>
+cnoremap <C-v>          <S-Insert>
+cnoremap <C-r><C-r>     <S-Insert>
+" 移動
+cnoremap <C-f>      <Right>
+cnoremap <C-b>      <Left>
+" 履歴
+cnoremap <C-n>      <Down>
+cnoremap <C-p>      <Up>
+" }}}2
+
+" }}}1
+"-----------------------------------------------------------------
+" qmark {{{1
+qmark D http://delicious.com/tyru/
+qmark a bml-hatena-bookmark
+qmark b http://b.hatena.ne.jp/tyru/?mode=detail
+qmark d http://d.hatena.ne.jp/tyru/
+qmark h http://www.hatena.ne.jp/
+qmark i http://tyru.hp.infoseek.co.jp/
+qmark m http://mail.google.com/mail?hl=ja
+qmark n http://www.nicovideo.jp/
+qmark p http://www.pixiv.net/mypage.php
+qmark r http://www.google.co.jp/reader/view/
+qmark t http://twitter.com/
+qmark v http://nanasi.jp/code.html
+qmark z bml-niconico-mp3
+" }}}1
+"-----------------------------------------------------------------
+" abbr {{{1
+cabbrev h@       tab help
+" }}}1
+"-----------------------------------------------------------------
+" command {{{1
+" homeを開く
+command! Dir    !explorer %HOME%
+" }}}1
+"-----------------------------------------------------------------
+" autocmd {{{1
+autocmd VimperatorEnter .* pluginmanager update
+" }}}1
+"-----------------------------------------------------------------
+" プラグイン {{{1
+
+" google-search.js
+noremap s       :google<Space>
+
+
+" direct_bookmark.js
+let direct_sbm_use_services_by_tag  = "d"
+let direct_sbm_use_services_by_post = "hd"
+let direct_sbm_is_use_migemo = 1
+noremap a   :sbm<Space>
+noremap B   :tab bentry<CR>
+
+
+" sbmcommentsviewer.js
+let def_sbm_format = "id,timestamp,tags,comment"
+let def_sbms       = "h"
+noremap b   :viewSBMComments<CR>
+
+
+" migemo_hint.js
+set hintmatching=custom
+
+
+" multi_requester.js
+noremap <C-k>   :mr<Space>
+noremap ,t    :mr twitter-timeline<CR>
+
+
+" ime_controller.js
+let ex_ime_mode = "inactive"  
+let textarea_ime_mode = "inactive"
+
+
+" copy.js
+noremap <Leader>cy      :copy titleAndURL<CR>
+noremap <Leader>ct      :copy title<CR>
+noremap <Leader>co      :copy<Space>
+
+
+" command_menu.js
+noremap g,t      :toolbar<Space>
+noremap g,m      :menu<Space>
+
+
+" stella.js & nicontroller.js
+noremap <Leader>nc      :nicomment<Space>
+noremap <Leader>ni      :nicoinfo<CR>
+noremap <Leader>np      :stplay<CR>
+noremap <Leader>nr      :strepeat<CR>
+noremap <Leader>nm      :stmute<CR>
+noremap <Leader>nv      :nicommentvisible<CR>
+noremap <Leader>nz      :stfullscreen<CR>
+noremap <Leader>ns      :stseek!<Space>
+noremap <Leader>n+      :stvolume! +10<CR>
+noremap <Leader>n-      :stvolume! -10<CR>
+
+
+" appendAnchor.js
+let auto_append_anchor_once = "true"
+
+
+" nextlink.js
+let nextlink_nositeinfo_act = "f"
+
+
+" foxytunes.js
+noremap <Leader>fp  :ftplay<CR>
+noremap <Leader>fs  :ftpause<CR>
+noremap <Leader>ff  :ftnext<CR>
+noremap <Leader>fb  :ftprevious<CR>
+noremap <Leader>fv  :ftvolume<Space>
+" }}}1
+
+
+" vim:fdm=marker:fen:ft=vimperator:

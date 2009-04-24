@@ -1,0 +1,32 @@
+// 結局TestObjectのmainメソッドをラップすることになったけどまあいいか
+
+
+object Main {
+
+    trait TWrapMain {
+        def main(args:Array[String])
+    }
+
+    trait TBeforeAfter extends TWrapMain {
+        abstract override def main(args:Array[String]) = {
+            println("method begin!")
+            super.main(args)
+            println("method end!")
+        }
+    }
+
+    class TestObject extends TWrapMain {
+        def main(args:Array[String]) = {
+            println("Main.main")
+        }
+    }
+
+    def main(args:Array[String]) = {
+        val obj = new TestObject with TBeforeAfter
+        if (! args.isEmpty) {
+            println("引数:" + args.reduceLeft(_ + " " + _))
+        }
+        println
+        obj.main(args)
+    }
+}

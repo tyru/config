@@ -1,0 +1,23 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+
+struct foreach {
+    foreach&
+    operator()(const char* s) {
+        std::cout << s << std::endl;
+        return *this;
+    }
+};
+
+
+int
+main(int argc, char *argv[]) {
+
+    foreach()("Hello")("operator()")("World");
+
+
+    return EXIT_SUCCESS;
+}
+
+

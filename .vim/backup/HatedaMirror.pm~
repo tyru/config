@@ -1,0 +1,82 @@
+package HatedaMirror;
+
+use strict;
+use warnings;
+use utf8;
+
+use lib '.';
+
+use base qw( CGI::Application );
+use CGI::Carp qw( fatalsToBrowser );
+
+
+
+# ここでは最小限の設定をして
+# 定数などはindex.cgiからPARAMSで渡す
+sub setup {
+    my $self = shift;
+
+    # $self->tmpl_path( '' );    # this is specified by diary/index.cgi
+    $self->mode_param( 'rm' );
+    $self->header_props( -type => 'text/html', -charset => 'utf-8' );
+    $self->start_mode( 'start' );
+    $self->run_modes(
+        start => \&start
+    );
+}
+
+sub start {
+    my $self = shift;
+
+    # TODO:
+    #   はてダから自動的にミラー
+    #   ページ遷移
+    my $dir = $self->param('diary_dir');
+    carp "$dir: No such a directory"    unless -d $dir;
+
+    my $template = $self->load_tmpl('index.tmpl');
+    $template->param(
+        entry => load_entry($dir, $self->param('max_entry_per_page'))
+    );
+    return $template->output;
+}
+
+sub load_entry {
+    my ($dir, $max_entry) = @_;
+    my @files = sort glob "$dir/*.txt";
+    $max_entry = $max_entry > scalar(@files) - 1 ? scalar(@files) - 1 : $max_entry;
+    my @entry = ();
+
+    unless (@files) {    # 記事が一つもなかった場合
+        return [{
+            title => '',
+            body  => '',
+            info  => 'No entry found in this server.'
+        }];
+    }
+
+    for my $file (@files[0..$max_entry]) {
+        my $FH = FileHandle->new($file);
+        unless (defined $FH) {
+            carp "Can't open $file...";
+            next;
+        };
+    
+        chomp(my $title = <$FH>);
+        my $body = do { local $/; <$FH> };
+    
+        push @entry, {
+            title => $title || '',
+            body  => $body  || '',
+            info  => ''
+        };
+    
+        $FH->close;
+    }
+
+    return \@entry;
+}
+
+
+
+1;

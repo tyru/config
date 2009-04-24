@@ -1,0 +1,147 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" content="text/HTML; charset=UTF-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript" />
+
+    <meta name="keywords" content="Perl" />
+    <meta name="description" content="自作スクリプトとかを適当に置いていくところ。" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="author" content="tyru" />
+    <meta name="generator" content="gVim" />
+
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/scripts.css" />
+    <link rel="stylesheet" href="css/list.css" />
+
+    <script src="js/base.js"></script>
+    <script src="js/hide_def.js"></script>
+
+
+    <title>スクリプトとかソフトウェアとか色々</title>
+
+  </head>
+  <body>
+
+    <!--
+    TODO
+    ・IE対応
+    -->
+
+    <!-- scripts begin -->
+    <div id="scripts">
+
+      <br />
+      <br />
+      <br />
+
+      <dl id="title">
+        <dt>スクリプトとかソフトウェアの類</dt>
+        <dd>
+        <a href="http://github.com/tyru/">github</a>とかにも置いてます<br />
+        バラバラなのでまとめる予定
+        </dd>
+      </dl>
+
+      <br />
+      <br />
+      <br />
+
+
+      <dl id="list">
+
+        <!-- def begin -->
+        <dt class="def">
+        [Perl] <a href="./prog/perl/shrpath_1.0.zip">shrpath.bat</a>
+        </dt>
+        <dd class="about" name="about">
+        外国のソフトとかだと何かのパスに空白があると実行できなかったり...<br />
+        そういうときにこれで空白を含まないパスを生成すれば結構うまくいったりします<br />
+        まぁ日本語でバグってる場合はダメですがｗ<br />
+        　あとREADME.TXTに書き忘れたのですが<br />
+        引数を与えずに実行するとカレントディレクトリのパスが表示されます
+        </dd>
+        <!-- def end -->
+
+        <hr noshade="noshade" />
+
+        <!-- def begin -->
+        <dt class="def">
+        [Perl] <a href="./prog/perl/autotunes_1.09.zip">AutoTunes</a>
+        </dt>
+        <dd class="about" name="about">
+        iTunesをCLIから操作してみるテスト<br />
+        再生、先送り、音量調整、最大化、ミニプレーヤ化、システムトレイに格納、とか基本的(?)な機能を持つ<br />
+        bashスクリプトみたいに、ファイルへ操作を書いて実行することもできる<br />
+
+        <ul class="todo">TODO
+          <li>(Migemo)検索
+          </li><li>大量の文字で画面が流れないように工夫する
+          </li><li>Term::Shell使う
+          </li><li>パースして即実行、じゃなくて一旦コマンドを返すようにする
+          </li><li>一旦全部パースして行うコマンドのコードリファレンスをスタック変数にpushした後実行(ここまでやるならちゃんと構文木を生成する？)
+        </li></ul>
+        </dd>
+        <!-- def end -->
+
+        <hr noshade="noshade" />
+
+        <!-- def begin -->
+        <dt class="def">
+        [Perl] <a href="./prog/perl/glvs.txt">AutoUpdater for Vimperator Plugins</a>
+        </dt>
+        <dd class="about" name="about">
+        VimperatorというFirefox拡張機能向けのプラグインを自動アップデートする<br />
+        <ul class="todo">TODO
+          <li>CodeReposに登録されていないプラグインにも対応する
+        </li></ul>
+        </dd>
+        <!-- def end -->
+
+        <hr noshade="noshade" />
+
+        <!-- def begin -->
+        <dt class="def">
+        [Perl] <a href="./prog/perl/glvs.txt">AutoUpdater for Vimperator Plugins</a>
+        </dt>
+        <dd class="about" name="about">
+        VimperatorというFirefox拡張機能向けのプラグインを自動アップデートする<br />
+        <ul class="todo">TODO
+          <li>CodeReposに登録されていないプラグインにも対応する
+        </li></ul>
+        </dd>
+        <!-- def end -->
+
+      </dl>
+      <!-- id list end -->
+
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <div id="annotation">
+        ここに置いてあるスクリプトは自由に持っていって編集・公開してかまいません
+      </div>
+
+      <br />
+      <br />
+      <br />
+
+      <a href="index.html" id="home">トップ</a>
+      <a href="cgi.html" id="next">次</a>
+
+      <br />
+      <br />
+      <br />
+
+    </div>
+    <!-- id scripts end -->
+
+  </body>
+</html>
+

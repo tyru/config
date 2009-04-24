@@ -1,0 +1,46 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <functional>
+#include <cstdlib>
+
+typedef std::vector<int>    IntVec;
+
+const int MAX_COUNT = 20;
+const int LESS_NUM  = 10;
+
+
+int
+main(int argc, char *argv[]) {
+
+    IntVec vec;
+
+
+    vec.reserve(MAX_COUNT);
+    for (int i = 0; i < MAX_COUNT; ++i)
+        vec.push_back(i + 1);
+
+
+    for (IntVec::iterator it = vec.begin(); it != vec.end(); ++it)
+        std::cout << *it << std::endl;
+    std::cout << "replace! (size: " << (size_t)vec.size() << ")" << std::endl;
+
+
+    std::remove_if(
+        vec.begin(), vec.end(),
+        std::bind2nd(
+            std::less<int>(), LESS_NUM
+        )
+    );
+
+
+    // LESS_NUMˆÈ‰º‚Ì—v‘f‚¾‚¯‚ğ‚Â
+    for (IntVec::iterator it = vec.begin(); it != vec.end(); ++it)
+        std::cout << *it << std::endl;
+
+
+
+    return EXIT_SUCCESS;
+}
+
+

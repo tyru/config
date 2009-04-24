@@ -1,0 +1,20 @@
+
+CC = g++
+CPP = main.cpp
+HEADER = prime.h prime2.h prime3.h prime4.h
+
+
+
+all: $(PROG)
+
+$(PROG): $(HEADER)
+
+.cpp.o:
+	$(CC) -c $< -o $@
+
+
+depend:
+	makedepend -- $(HEADER) -- $(CPP)
+# DO NOT DELETE
+
+main.o: prime4.h

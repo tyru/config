@@ -1,0 +1,69 @@
+" ======= vimperator colorscheme ========
+" name:   vimplight
+" author: Takuya Fujimura
+" blog:   http://d.hatena.co.jp/tlync
+" mail:   takuya.fujimura@gmail.com
+" tested: vimperator 2.0 b2, mac osx
+" =======================================
+
+"--------------------------------------------------
+" Hint
+"--------------------------------------------------
+hi Hint        font-family: "Lucida Grande", monospace; font-size: 11px; padding: 0 0.25em; margin: -0.5em 0 0 -1em; background-color: #f07e00; border: 1px #ff7d00 solid; -moz-border-radius: 4px; color: white; font-weight: bolder; opacity: 0.9;
+hi HintElem    background-color: #fdffc3; color: #222;
+hi HintActive  background-color: #ffdcdc; border: 1px #ef6f6f dotted; -moz-border-radius: 3px; padding: 0.1em; font-weight: bold;
+
+"--------------------------------------------------
+" Status Line
+"--------------------------------------------------
+hi StatusLine font-size: 11px; color: #262626; background: url("chrome://global/skin/statusbar-background.gif") #949393 repeat-x top left; border-top: 1px solid #888; height: 22px; padding-left: 0.5em;
+hi StatusLineSecure font-size: 11px; color: #262626; background: url("chrome://global/skin/statusbar-background.gif") #949393 repeat-x top left; border-top: 1px solid #888; height: 22px; padding-left: 0.5em;
+hi StatusLineBroken font-size: 11px; color: #d00f0f; background: url("chrome://global/skin/statusbar-background.gif") #949393 repeat-x top left; border-top: 1px solid #888; height: 22px; padding-left: 0.5em;
+
+"--------------------------------------------------
+" Command Line
+"--------------------------------------------------
+hi CmdLine      background: #000; padding: 0.2em 0.5em; background: #111; font-size: 12px;
+"hi CmdOutput
+ 
+hi Normal       color: #f0f0f0; background: #111;
+hi NonText      color: #444;
+hi Title        font-size: 11px; color: #555; font-weight: bold; letter-spacing: -0.04em; text-indent: 0.5em; line-height: 1.5em;
+hi Question     font-size: 11px; color: #4377c6;
+hi Preview      font-size: 12px; color: #555;
+hi Tag          color: #555;
+hi Filter       color: #3f6ecd;
+"hi LineNr
+"hi URL
+
+hi Message      color: #f0f0f0; background: #111; font-size: 11px; padding-left: 0.5em 1em; line-height: 1.3em;
+hi ModeMsg      color: #555; padding-left: 0.5em; font-size: 11px;
+hi MoreMsg      color: #555; padding-left: 0.5em; font-size: 11px;
+hi CompMsg      color: #555; text-decoration: none; font-size: 11px; padding: 0.25em 0.8em;
+hi InfoMsg      color: #f0f0f0; font-size: 11px; padding-left: 0.5em;
+hi WarningMsg   color: #d00f0f; font-size: 11px; padding-left: 0.5em;
+hi ErrorMsg     color: #d00f0f; font-size: 11px; padding-left: 0.5em;
+
+hi CompGroup           padding-bottom: 0.5em;
+hi CompTitle           font-size: 12px; color: #555; font-weight: bold; letter-spacing: -0.04em;
+hi CompResult          padding-left: 0.7em;
+hi CompItem[selected]  background: #292929;
+hi CompIcon            margin-right: 8px;
+hi CompDesc            color: #666;
+
+hi GradientLeft        background-color: #333;
+hi GradientRight       background-color: #111;
+
+hi Indicator           color: #444;
+hi FrameIndicator      background-color: #fdffc3; border: 2px solid yellow;
+
+"--------------------------------------------------
+" JavaScript Objects
+"--------------------------------------------------
+hi Function    color: #2a449a;
+"hi Boolean
+"hi String
+"hi Number
+"hi Object
+"hi Null
+

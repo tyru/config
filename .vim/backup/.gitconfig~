@@ -1,0 +1,12 @@
+[user]
+	name = tyru
+	email = tyru.exe@gmail.com
+
+[alias]
+	co = checkout
+	ci = commit -a
+
+[color]
+	diff = auto
+	status = auto
+	branch = auto

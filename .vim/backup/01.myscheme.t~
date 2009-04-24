@@ -1,0 +1,44 @@
+use strict;
+use warnings;
+use MyScheme;
+
+use Test::More qw(no_plan);
+use Test::Output;
+
+my $interp = MyScheme->new();
+
+my $code = <<CODE;
+(print (+ 1))    ; => 1
+(print (+ 1 1))    ; => 2
+(print (- 1))    ; => -1
+(print (- 1 1))    ; => 0
+(print (* 1))    ; => 1
+(print (* 1 0))    ; => 0
+(print (* 0 1))    ; => 0
+(print (* -1 -1))    ; => 1
+(print (/ 2))    ; => 0.5
+(print (/ 1 2))    ; 0.5
+CODE
+
+stdout_is(
+    sub { $interp->eval_from_fh($code) },
+    join("\n", 1, 2, -1, 0, 1, 0, 0, 1, 0.5, 0.5) . "\n",
+    "eval_from_fh()"
+);
+
+
+use Test::Exception;
+
+
+my @code;
+push @code, '(print (/ 1 0))';
+push @code, '(print (+))';
+push @code, '(print (-))';
+push @code, '(print (*))';
+push @code, '(print (/))';
+
+for (my $i = 0; $i < @code; $i++) {
+    dies_ok {
+        $interp->eval_from_string('(print (/ 1 0))');
+    } "die $i";
+}

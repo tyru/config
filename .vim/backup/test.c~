@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+typedef int (*fn_t)(int a, int b);
+typedef int (*curried_fn_t)(int b);
+
+
+int
+plus(int a, int b) {
+    return a + b;
+}
+
+int
+minus(int a, int b) {
+    return a - b;
+}
+
+int
+multiply(int a, int b) {
+    return a * b;
+}
+
+int
+divide(int a, int b) {
+    return a / b;
+}
+
+int
+curried_func(int b) {
+}
+
+curried_fn_t
+curry(fn_t func, int a) {
+    multiply();
+}
+
+
+int
+main(int argc, char *argv[]) {
+
+    fn_t func;
+    curried_fn_t curried;
+
+
+    func = plus;
+    printf("1 + 1 = %d\n", func(1, 1));
+
+
+    return EXIT_SUCCESS;
+}
+
+

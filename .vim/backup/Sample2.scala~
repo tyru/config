@@ -1,0 +1,35 @@
+
+object Main extends Application {
+
+    trait TAction {
+        def doAction
+    }
+
+    trait TBeforeAfter extends TAction {
+        abstract override def doAction {
+            println("/entry before-action") //doActionの前処理
+            super.doAction                  // 本来の処理doActionの呼び出し
+            println("/exit after-action")   //doActionの後処理
+        }
+    }
+
+    trait TTwiceAction extends TAction {
+        abstract override def doAction {
+            for (i <- 1 to 2) {
+                super.doAction
+                println(" ==> No." + i)
+            }
+        }
+    }
+
+    class RealAction extends TAction {
+        def doAction = { println("** real action done!! **") }
+    }
+
+    val act1 = new RealAction with TBeforeAfter
+    act1.doAction
+    val act2 = new RealAction with TBeforeAfter with TTwiceAction
+    act2.doAction
+    val act3 = new RealAction with TTwiceAction with TBeforeAfter
+    act3.doAction
+}

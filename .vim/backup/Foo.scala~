@@ -1,0 +1,19 @@
+
+class Foo(s:String, n:Int) {
+    val sval:String = s
+    val nval:Int    = n
+
+    def this(s:String) = this(s, Null)
+    def this(n:Int)    = this("", n)
+
+    def toInt()    = this.nval
+    def toString() = this.sval
+}
+
+
+Foo foo = new Foo(1)
+println(foo + 1)    // 2
+foo = new Foo()
+
+
+// vim:ft=scala:

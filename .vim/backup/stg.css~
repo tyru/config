@@ -1,0 +1,15 @@
+
+
+#stage {
+  background-color: #ccc;
+  width: 640px;
+  height: 480px;
+  margin: 0px;
+  padding: 0px;
+  padding-bottom: 10px;
+}
+
+#player {
+  position: absolute;
+  background-color: orange; 
+}

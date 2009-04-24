@@ -1,0 +1,63 @@
+use Test::More qw(no_plan);
+use Test::Exception;
+
+use Text::Tokenizer::Class;
+my $parser = Text::Tokenizer::Class->new(parse_type => 'handler');
+
+is($parser->parse_type, 'handler', 'parse type is handler');
+ok(! $parser->has_string, "parser hasn't have data yet");
+
+{
+    my %groups = (
+        ';' => sub { shift->step('until' => "\n") },
+        '(' => sub {},
+        ')' => sub {},
+        "'" => sub {},
+        ':' => sub {},
+        '#' => sub {},
+        '"' => sub {},
+        qr/[\w.!?\$%&<>+\-*\/=^~|]/ => sub {},
+    );
+
+    for (keys %groups) {
+        $parser->add_pattern($_ => $groups{$_});
+    }
+}
+dies_ok {
+    $parser->add_pattern(undef, 'foo');
+} "can't add undef as the key of pattern";
+
+
+$parser->ignored_chars(qr/\s/);
+ok($parser->has_ignored_chars(), 'now parser has ignored_chars');
+# $parser->list_ignored_char
+# $parser->list_pattern;
+
+$parser->set_string_from_fh(\*DATA);
+ok($parser->has_string, 'now parser has string');
+
+
+my $reached;
+until ($parser->eof_string) {
+    unless ($reached) {
+        ok(1, 'this block is reached');
+        $reached = 1;
+    }
+    # •Ô‚·Œ‹‰Ê‚Íparse_type‚É‚æ‚Á‚Äˆá‚¤
+    # my @groups = $parser->parse(dont_step => 1);
+    # $parser->step;
+    $parser->parse();
+}
+
+
+
+
+
+
+
+
+
+__END__
+
+(print (+ 1 1))    # => 2
+(print (+ (* 3 3) (* 4 4)))    # => 25

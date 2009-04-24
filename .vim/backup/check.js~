@@ -1,0 +1,41 @@
+function check() {
+  with( document.form1 ) {
+    if( ! pass.value ) {
+      alert( 'パスワード欄が空欄です。' );
+      pass.focus();
+
+      return false;
+
+    } else {
+      // ファイル欄チェック
+      for(i = 0; i < command.length; i++) {
+        if( command[i].checked ) {
+          if( command[i].value == 'upload' ) {  // もしuploadが選択されていて、
+            for(k = 1; k <= 5; k++) {
+              if( eval("file" + k + ".value") ) { // ファイルがひとつでも選択されていたら
+                return true;
+              }
+            }
+            alert( 'ファイルが選択されていません。' );
+            return false;
+            
+          } else {
+            // uploadが選択されてないなら
+            //  ファイルをアップロードする必要はない。
+            
+            var userpass = pass.value;
+            reset();
+            pass.value = userpass;
+            command[i].click();
+          }
+        }
+      }
+    }
+    
+    return true;
+  }
+}
+
+window.onload = function () {
+  document.form1.pass.focus();
+}

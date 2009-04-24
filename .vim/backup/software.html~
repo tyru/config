@@ -1,0 +1,83 @@
+<HTML lang="ja">
+  <HEAD>
+    <META http-equiv="Content-Type" content="text/HTML; charset=Shift_JIS">
+    <META http-equiv="Content-Style-Type" content="text/css">
+    <META http-equiv="Content-Script-Type" content="text/javascript">
+
+    <META name="keywords" content="Perl,C++">
+    <META name="description" content="自作スクリプトとかを適当に置いていくところ。">
+    <META name="robots" content="noindex, nofollow">
+    <META name="author" content="tyru">
+    <META name="generator" content="gVim">
+
+    <LINK rel="stylesheet" type="text/css" href="css/software.css">
+
+    <TITLE>Perlスクリプトとか</TITLE>
+
+  </HEAD>
+  <BODY>
+
+    <small>適当に作ったPerlスクリプトなどを適当に置いていくところ。</small>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+
+    <!-- scripts begin -->
+    <div id="scripts">
+
+      <a href="./prog/cui/perl/shrpath_1.0.zip">shrpath.bat</a> [Perl]
+      <p class="comment">
+      外国のソフトとかだと何かのパスに空白があると実行できなかったり...<BR>
+      そういうときにこれで空白を含まないパスを生成すれば結構うまくいったりします<BR>
+      まぁ日本語でバグってる場合はダメですがｗ<BR>
+      　あとREADME.TXTに書き忘れたのですが<BR>
+      引数を与えずに実行するとカレントディレクトリのパスが表示されます
+      </p>
+      <hr align="left" width="250" color="#EEEEEE" noshade>
+
+
+      <a href="./prog/cui/perl/autotunes_1.09.zip">AutoTunes</a> [Perl]
+      <p class="comment">
+      iTunesをCLIから操作してみるテスト<BR>
+      再生、先送り、音量調整、最大化、ミニプレーヤ化、システムトレイに格納、とか基本的(?)な機能を持つ<BR>
+      bashスクリプトみたいに、ファイルへ操作を書いて実行することもできる<BR>
+      <ul class="todo">TODO
+        <li>(Migemo)検索
+        <li>大量の文字で画面が流れないように工夫する
+        <li>Term::Shell使う
+        <li>パースして即実行、じゃなくて一旦コマンドを返すようにする
+        <li>一旦全部パースして行うコマンドのコードリファレンスをスタック変数にpushした後実行(ここまでやるならちゃんと構文木を生成する？)
+      </ul>
+      </p>
+      <hr align="left" width="250" color="#EEEEEE" noshade>
+
+
+      <a href="./prog/cui/perl/glvs.txt">AutoUpdater for Vimperator Plugins</a> [Perl]
+      <p class="comment">
+      VimperatorというFirefox拡張機能向けのプラグインを自動アップデートする<BR>
+      <ul class="todo">TODO
+        <li>CodeReposに登録されていないプラグインにも対応する
+      </ul>
+      </p>
+      <hr align="left" width="250" color="#EEEEEE" noshade>
+
+
+      <a href="./prog/cui/perl/2ch_image_getter_1.0.zip">スレ内画像ダウンローダ</a> [Perl]
+      <p class="comment">
+      2chのスレURLを指定すると画像と思われるURLを抜き出してダウンロードする<br>
+      名前考える必要もない
+      <ul class="todo">TODO
+        <li>指定したURLをダウンロードしないようにする(グロ画像対策)
+        <li>次スレを検出して自動的に追う
+      </ul>
+      </p>
+
+    </div>
+    <!-- scripts end -->
+
+
+  </BODY>
+</HTML>

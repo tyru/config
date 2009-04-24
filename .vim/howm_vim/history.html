@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang=ja>
+  <head>
+    <meta Http-Equiv="Content-Type" Content="text/html; charset=UTF-8">
+    <title>history of howm-mode.vim</title>
+    <!-- スタイル {{{ -->
+    <style type="text/css">
+      <!--
+      body {
+        color: black;
+        background: #efefff;
+      }
+      h1 {
+        color: red;
+        background: #efefff;
+        border-style: none;
+        text-align: center;
+      }
+      h2 {
+        color: navy;
+        background: #dfdfff;
+        border-style: double;
+        text-align: left;
+      }
+      p {
+        text-indent: 1em;
+        margin: 1em;
+      }
+      -->
+    </style>
+    <!-- スタイル }}} -->
+  </head>
+  <body>
+    <ul>
+			<li><strong>04-Jun-2006.</strong>
+			<ul>
+				<li>スクリプトファイルをfileencoding=euc-jp fileformat=unixに統一．（howmスレの58,115さんありがとうございます）
+			</ul></li>
+			<li><strong>02-Jul-2005.</strong>
+			<ul>
+				<li>木原さんから指摘していただいたバグを修正．（木原さんありがとうございます）
+				<ul>
+					<li>キーワードが何も登録されていないときに，Action-Lock で無限ループが発生するバグを修正．</li>
+				</ul></li>
+			</ul></li>
+			<li><strong>28-May-2005.</strong>
+			<ul>
+				<li>木原さんからいただいたパッチを適用．（木原さんありがとうございます）
+				<ul>
+					<li>メモファイル書き込み時に勝手に画面がスクロールしてしまう問題が解消されました．</li>
+					<li>複数の Vim で同じメモファイルを開いたときなどにエラーメッセージが表示されなかった問題が解消されました．</li>
+				</ul></li>
+			</ul></li>
+			<li><strong>17-Feb-2005.</strong>
+			<ul>
+				<li>高山さんからいただいたパッチを適用．（高山さんありがとうございます）
+				<ul>
+					<li>メモファイルを保存したときに come from リンクのキーワード追加判定をおこなうようになった．（七島が手を加えてます）<br>
+					自動でキーワードの削除はおこなわれません．今までのように手動でキーワードファイルを更新したい場合は RevertKeyword() 関数を呼んでください．</li>
+					<li>URL を開こうとして alice.vim がないときは直接コマンドラインで実行するようになった．</li>
+					<li>Web 取り込みのアクションロックのヤンク処理が修正された．</li>
+				</ul></li>
+			</ul></li>
+      <li><strong>02-Dec-2004.</strong>
+      <ul>
+        <li>ずいぶん前から find 検索ができなくなっていたバグを修正．</li>
+        <li>前のバージョンから g:howm_grepprg を '' に設定したときの grep 検索ができなくなっていたバグを修正．</li>
+      </ul></li>
+      <li><strong>18-Nov-2004.</strong>
+      <ul>
+        <li>Grep のコマンドラインの指定方法を変更．（GNU Grep 以外に対応する布石です）</li>
+        <li>g:howm_fileformat に euc-jp 以外を指定しているとうまく検索できなかったのを解消したつもり．</li>
+      </ul></li>
+      <li><strong>16-Aug-2004.</strong>
+      <ul>
+        <li>まっつんさんからいただいたパッチを適用．（まっつんさんありがとうございます）
+        <ul>
+          <li>起動時にバッファ番号が 2 になってしまうのが修正された．</li>
+          <li>空白が含まれるディレクトリ内も検索できるようになった．</li>
+          <li>不要な setlocal コマンドが削除された．</li>
+        </ul></li>
+        <li>Windows で空白が含まれたディレクトリ内でもディレクトリ作成をおこなえるようにした．<br>
+        （上のまっつんさんのパッチと合わせて g:howm_dir に空白が含まれていても使えるようにしたつもりです）</li>
+      </ul></li>
+      <li><strong>09-Aug-2004.</strong>
+      <ul>
+        <li>"howm" という名前の 0 バイトのファイルが出来るバグを修正．（howm スレ Part2 の 348 さんありがとうございます）<br>
+        Windows で ":" を含むファイル名はつけられないのに，そのようなスワップファイルを作ろうとしてたのが原因みたいです。</li>
+      </ul></li>
+      <li><strong>02-Aug-2004.</strong>
+      <ul>
+        <li>改行コードをこっそり修正．（howm スレ Part2 の 330 さんありがとうございます）</li>
+      </ul></li>
+      <li><strong>20-Jul-2004.</strong>
+      <ul>
+        <li>キーワードファイルの更新・読み込み時にバッファが残ってしまうバグを応急処置．</li>
+      </ul></li>
+      <li><strong>30-Jun-2004.</strong>
+      <ul>
+        <li>日付関係の処理を別ファイルに切り出し（いろいろバグを作りこんでるような気がするので，構成をすっきりさせようと試みてます．今回の変更はその第一歩です．）</li>
+      </ul></li>
+      <li><strong>16-May-2004.</strong>
+      <ul>
+        <li>あくつさんからいただいたパッチを反映（あくつさんありがとうございます）．
+        <ul>
+          <li>拡張子が 'howm' のファイルを開いたときにのみ howm_memo ファイルタイプを適用するようにした．</li>
+          <li>ファイル一覧やファイルパス指定検索などからファイルを開いたときに，以前ファイルを開いていたときのカーソル位置を使うようにした．</li>
+          <li>検索結果に特定の文字（\~&amp;）が表示されなかったバグを修正．</li>
+        </ul></li>
+      </ul></li>
+      <li><strong>10-Mar-2004.</strong>
+      <ul>
+        <li>come-from リンクを仮実装．<br>
+        come-from リンクを作ったらいちいち :call UpdateKeyword() しないとダメです．</li>
+        <li>ファイルが空になったらファイルを削除するオプションを追加（g:howm_removeEmpty が 1 だと空ファイルを削除します．デフォルトでは 0 です．）</li>
+        <li>メモタイトルのパターンを設定可能にした（g:howm_title_pattern）．</li>
+      </ul></li>
+      <li><strong>23-Feb-2004.</strong>
+      <ul>
+        <li>三池さんから報告していただいたバグを修正（三池さんありがとうございます）．
+        <ul>
+          <li>set clipboard=unnamed している時にプレビュー表示がうまくいかないバグを修正．</li>
+          <li>当日以降の予定が無いときに予定表示するとエラーが出るバグを修．</li>
+        </ul>
+      </ul></li>
+      <li><strong>19-Feb-2004.</strong>
+      <ul>
+        <li>ソートが速くなった．<br>
+        自分の環境では，要素数 1587 のとき 83 秒 -&gt; 36 秒，要素数 514 のとき 7 秒 -&gt; 3 秒ぐらいになりました．<br>
+        （アルゴリズムを変えたわけじゃなくて，単に無駄なデータ移動を無くしただけ）</li>
+        <li>マップリーダを設定可能にした（g:howm_mapleader）．</li>
+      </ul></li>
+      <li><strong>17-Feb-2004.</strong>
+      <ul>
+        <li>あくつさんからいただいたパッチを反映（あくつさんありがとうございます）．
+        <ul>
+          <li>デフォルトのマップリーダを &lt;C-c&gt; から , に変更（こんな大事なこと知らなくてすいませんでした＾＾；）</li>
+          <li>g:howm_fileencoding のデフォルト値を "euc-jp" から &enc に変更．</li>
+          <li>g:howm_fileformat のデフォルト値を "unix" から &ff に変更．</li>
+          <li>Windows では g:howm_grepprt, g:howm_findprg をデフォルトで "" にして，cygwin なしでも使えるようにした．</li>
+          <li>Win98 系の OS でのディレクトリ作成ができるようになった？（未確認です）</li>
+        </ul></li>
+      </ul></li>
+      <li><strong>30-Nov-2003.</strong>
+      <ul>
+        <li>g:howm_grepprg と g:howm_findprg と g:howm_migemoprg の初期値を変更（パスさえ通っていれば設定なしで使えるようにした）．</li>
+      </ul></li>
+      <li><strong>23-Nov-2003.</strong>
+      <ul>
+        <li>Web Import が動かなくなっていたのを修正．</li>
+      </ul></li>
+      <li><strong>23-Nov-2003.</strong>
+      <ul>
+        <li>本家の書式変更に追従（旧書式からの切り替えや，旧書式のままで使うためのオプションについては <a href="./readme.txt">readme</a> を参照）．</li>
+        <ul>
+          <li>リマインダ（Todo や予定）および日付の書式を変更（@[YYYY/MM/DD] -&gt; [YYYY-MM-DD]-）．</li>
+          <li>リンクの書式を変更（&gt;&gt; -&gt; -&gt;&gt;&gt;）．<li>
+          <li>1 メモ 1 ファイル方式に変更（%Y_%m_%d.howm -&gt; %Y/%m/%d/%Y-%m-%d-%H%M%D.howm）．</li>
+          <li>デフォルトで旧書式が使える<a href="./howm_vim-old.tar.bz2">古いバージョン</a>も置いておきますが，2004 年 4 月ごろを目安に消すと思います．<br>
+              オプションで旧書式のまま使えるようにもしてありますが，旧書式関連のコードは何かバグ報告がない限りメンテナンスしません．</li>
+        </ul>
+        <li>プレビュー表示のカーソル初期位置を変更．</li>
+        <li>プレビューヘッダを変更可能にした．</li>
+        <li>日付のアクションロックを追加（日付の上でリターンキーを押すと，その日付を検索．）</li>
+      </ul></li>
+      <li><strong>12-Nov-2003.</strong>
+      <ul>
+        <li>grep.vim でファイルの最初の行頭や，マッチした行の次の行頭が検索にひっかからなかったバグを修正（まっつんさんありがとうございます）．</li>
+      </ul></li>
+      <li><strong>10-Nov-2003.</strong>
+      <ul>
+        <li>簡単な<a href="./readme.txt">マニュアル</a>を書いた．</li>
+        <li>プレビュー表示処理を改造した．</li>
+        <li>締め切りは当日になったら上位に上がるようにした（本家と同じ）．</li>
+        <li>g:howm_grepprg, g:howm_findprg の設定がうまくいってないときに，メッセージを出すようにした．</li>
+      </ul></li>
+      <li><strong>03-Nov-2003.</strong>
+      <ul>
+        <li>ソートを充実させた（検索結果のウィンドウで &lt;S-s&gt;）．
+        <ul>
+          <li>name - ファイル名順ソート（辞書順）．</li>
+          <li>name-match - 入力パターンにマッチしたファイルを上位に．</li>
+          <li>mtime - 更新日時順ソート（新しい物が上）．</li>
+          <li>content - 一行表示の内容順ソート（辞書順）．</li>
+          <li>content-match - 入力パターンにマッチした位置行表示の内容のものを上位に．</li>
+          <li>reverse - 現在と逆順（検索結果のウィンドウで &lt;S-r&gt;でも可）．</li>
+        </ul>
+        いちいち入力するの面倒ですね．そのうちなんとかします．</li>
+        <li>検索結果を更新日時順に並べるようにした．</li>
+        <li>検索から検索結果の整形までの処理を大改造．</li>
+        <li>ソートアルゴリズムをマージソートに（ソートが安定に）．</li>
+        <li>g:howm_hideswap と g:howm_hidebackup は廃止．g:howm_hidefile_regexp で指定したパターンにマッチしたファイルを隠すようにした．</li>
+        <li>Windows 標準のシェルではディレクトリ作成がうまくできなかったのを修正．</li>
+        <li>検索語に '/' が入っているときにうまく検索できなかったのを修正．</li>
+        <li>他にも何かいじったような気も…</li>
+      </ul></li>
+      <li><strong>31-Oct-2003.</strong>
+      <ul>
+        <li>find が無くてもファイル一覧を表示できるようにした（g:howm_findprg を "" に定義．）．</li>
+        <li>日付・リンクの形式を指定できるようにした（g:howm_date_pattern, g:howm_date_(year|month|day)pos, g:howm_[gc]link_pattern を変更する）．</li>
+        <li>メモファイル名の形式を指定できるようにした（ファイル名の形式は g:howm_filename を変更する）．<br>
+        let g:howm_filename="%Y/%m/%d/%Y_%m_%d-%H%M%S.howm とかやれば 1 メモ 1 ファイルにできます．たぶん．</li>
+      </ul></li>
+      <li><strong>22-Oct-2003.</strong>
+      <ul>
+        <li>grep.vim で，ファイルの最終行でマッチしたときに無限ループに陥るバグを修正．</li>
+      </ul></li>
+      <li><strong>22-Oct-2003.</strong>
+      <ul>
+        <li>任意の拡張子のファイルをプレビューしない設定を追加（g:howm_preview_* を 0 に定義）．</li>
+        <li>GNU grep が無くても検索できるようにした（g:howm_grepprg を "" に定義．Vim Script で grep を書いてみました．最近のマシンなら実用に耐えるかと思います．）．</li>
+      </ul></li>
+      <li><strong>23-Sep-2003.</strong>
+      <ul>
+        <li>migemo 検索に対応（g:howm_migemoprg と g:howm_migemoopt で migemo のコマンドとオプションを指定してから &lt;C-c&gt;,m）．</li>
+      </ul></li>
+      <li><strong>15-Sep-2003.</strong>
+      <ul>
+        <li>g:howm_grepprg と g:howm_findprg を .vimrc から指定できるようにした（前橋さんありがとうございます）．</li>
+        <li>バックアップファイルと swp ファイルは検索窓に表示しないようにした（設定で表示させることも可能）．</li>
+      </ul></li>
+      <li><strong>02-Sep-2003.</strong>
+      <ul>
+        <li>ファイル一覧機能を実装（&lt;C-c&gt;,a）．</li>
+        <li>連結表示の処理を少し効率化（というか前のが効率悪すぎた）．</li>
+      </ul></li>
+      <li><strong>26-Aug-2003.</strong>
+      <ul>
+        <li>検索窓とプレビューしか開いていないときに検索をおこなうとエラーが出ていたバグを修正．</li>
+      </ul></li>
+      <li><strong>25-Aug-2003.</strong>
+      <ul>
+        <li>連結表示を実装．今日と明日の予定・Todo をハイライト表示（本家とちょっと違う）するようにした．</li>
+        <li>予定・Todo 表示の際のカーソル初期位置を変更．</li>
+      </ul></li>
+      <li><strong>20-Aug-2003.</strong>
+      <ul>
+        <li>Web 引用のための action-lock を追加．</li>
+        <li>g:mapleader が設定されていない時にエラーが出ていたのを修正．</li>
+      </ul></li>
+      <li><strong>18-Aug-2003.</strong>
+      <ul>
+        <li>scriptencoding の指定方法が間違っていたのを修正．</li>
+        <li>scriptencoding と実際のエンコーディングが合っていないファイルがあったのを修正．</li>
+      </ul></li>
+      <li><strong>16-Aug-2003.</strong>
+      <ul>
+        <li>公開開始</li>
+      </ul></li>
+    </ul>
+  </body>
+</html>
+<!-- vim:set ts=2 sts=2 sw=2 tw=0 fdm=marker: -->

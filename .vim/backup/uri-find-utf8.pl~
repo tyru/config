@@ -1,0 +1,19 @@
+use utf8;
+use URI::Find::UTF8;
+
+# Since this code has "use utf8", $text is UTF-8 flagged
+my $text = <<TEXT;
+Japanese Wikipedia home page is http://ja.wikipedia.org/wiki/メインページ
+TEXT
+
+my $finder = URI::Find::UTF8->new(\&callback);
+$finder->find(\$text);
+
+sub callback {
+    my($uri, $orig) = @_;
+
+    # $uri is an URI object that represents
+    #   "http://ja.wikipedia.org/wiki/%E3%83%A1%E3%82%A4%E3%83%B3%E3%83%9A%E3%83%BC%E3%82%B8"
+    # $orig is a string
+    #   "http://ja.wikipedia.org/wiki/メインページ"
+}

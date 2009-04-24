@@ -1,0 +1,22 @@
+#include <iostream>
+#include <cstdlib>
+#include <vector>
+#include <boost/assign.hpp>
+
+
+int
+main(int argc, char *argv[]) {
+
+    using namespace boost::assign;
+
+    std::vector<int> v;
+    
+    v += 1,2,3,4,5;
+    
+    
+    for (std::vector<int>::const_iterator it = v.begin(); it != v.end(); it++) {
+    }
+
+    return EXIT_SUCCESS;
+}
+

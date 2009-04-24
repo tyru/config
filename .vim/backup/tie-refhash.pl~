@@ -1,0 +1,21 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use utf8;
+
+use Tie::RefHash;
+
+tie my %hash, 'Tie::RefHash';
+
+%hash = (
+    qr/foo/ => 'regexp',
+    { a => 1 } => 'hash',
+    [ 1, 2, 3 ] => 'array',
+    sub { 'DUMMY' } => 'code',
+    \"bar" => 'scalar',
+    undef => 'undef',
+);
+
+for (keys %hash) {
+    printf "type:%s, value:%s\n", ref($_), $hash{$_};
+}

@@ -1,0 +1,41 @@
+use Test::More qw(no_plan);
+
+use Text::Tokenizer::Class;
+# my $group_parser = Text::Tokenizer::Class->new(parse_type => 'group');
+my $handler_parser = Text::Tokenizer::Class->new(parse_type => 'handler');
+
+# verify if parser can call $method.
+
+
+my @methods = qw(
+    ignore_chars
+
+    string
+    set_string
+    set_string_from_file
+    set_string_from_fh
+    has_string
+    eof_string
+    seek_string
+    setpos_string
+
+    matched_char
+
+    parse
+
+    parse_type
+
+    add_pattern
+    has_pattern
+    has_next_match
+    step
+    _notify
+);
+
+# can_ok($group_parser, @methods);
+isa_ok($handler_parser, 'Text::Tokenizer::Class');
+isa_ok($handler_parser, 'Text::Tokenizer::Class::Token::Handler');
+for my $method (@methods) {
+    can_ok($handler_parser, $method);
+}
+
