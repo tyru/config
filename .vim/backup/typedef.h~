@@ -1,9 +1,0 @@
-#ifndef __FOOSCHEME_TYPEDEF_H__
-#ifndef __FOOSCHEME_TYPEDEF_H__
-
-#include <vector>
-
-typedef std::vector<ScmAtom>
-
-
-#endif

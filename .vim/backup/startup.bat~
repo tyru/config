@@ -1,3 +1,0 @@
-@echo off
-
-perl G:\cygwin\home\tyru\bin\launch_at_boot.pl

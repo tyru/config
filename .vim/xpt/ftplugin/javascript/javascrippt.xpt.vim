@@ -1,3 +1,12 @@
+if exists("b:__JAVASCRIPPT_XPT_VIM__")
+  finish
+endif
+let b:__JAVASCRIPPT_XPT_VIM__ = 1
+
+
+runtime ftplugin/_comment_c_like/cmt.xpt.vim
+
+
 call XPTemplate("bench", "
       \var t0 = new Date().getTime();\n
       \for (var i= 0; i < `times^; ++i){\n

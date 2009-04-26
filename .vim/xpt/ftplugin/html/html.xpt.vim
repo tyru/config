@@ -16,17 +16,28 @@ fun! s:f.createTable(...)
 endfunction
 
 
-call XPTemplate('doctype_html3', [ '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">'])
-call XPTemplate('doctype_html4_frameset', [ '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN" "http://www.w3.org/TR/REC-html40/frameset.dtd">'])
-call XPTemplate('doctype_html4_loose', [ '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">'])
-call XPTemplate('doctype_html4_strict', [ '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">'])
-call XPTemplate('doctype_html41_frameset', [ '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">'])
-call XPTemplate('doctype_html41_loose', [ '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'])
-call XPTemplate('doctype_html41_strict', [ '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">'])
-call XPTemplate('doctype_xthml1_frameset', [ '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">'])
-call XPTemplate('doctype_xhtml1_strict', [ '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'])
-call XPTemplate('doctype_xhtml1_transitional', [ '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'])
-call XPTemplate('doctype_xhtml11', [ '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/1999/xhtml">'])
+call XPTemplate('doctype_html3', [
+      \'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">'])
+call XPTemplate('doctype_html4_frameset', [ 
+      \'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN" "http://www.w3.org/TR/REC-html40/frameset.dtd">'])
+call XPTemplate('doctype_html4_loose', [ 
+      \'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">'])
+call XPTemplate('doctype_html4_strict', [ 
+      \'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">'])
+call XPTemplate('doctype_html41_frameset', [ 
+      \'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">'])
+call XPTemplate('doctype_html41_loose', [ 
+      \'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'])
+call XPTemplate('doctype_html41_strict', [ 
+      \'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">'])
+call XPTemplate('doctype_xthml1_frameset', [ 
+      \'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">'])
+call XPTemplate('doctype_xhtml1_strict', [ 
+      \'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'])
+call XPTemplate('doctype_xhtml1_transitional', [ 
+      \'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'])
+call XPTemplate('doctype_xhtml11', [ 
+      \'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/1999/xhtml">'])
 
 
 call XPTemplate("html", [

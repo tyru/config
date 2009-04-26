@@ -1,3 +1,9 @@
+if exists("b:__SH_XPT_VIM__")
+  finish
+endif
+let b:__SH_XPT_VIM__ = 1
+
+
 runtime ftplugin/_common/common.xpt.vim
 
 " in shell script '`' is used very widely 
@@ -6,6 +12,7 @@ call XPTemplateMark('~', '^')
 call XPTemplate('sh', "#!/bin/sh\n")
 call XPTemplate('ba', "#!/bin/bash\n")
 call XPTemplate('echodate', 'echo `date +~fmt^`')
+
 call XPTemplate('forin', [
       \"for ~i^ in ~list^;do", 
       \"  ~cursor^", 

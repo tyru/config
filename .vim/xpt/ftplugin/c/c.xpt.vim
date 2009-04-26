@@ -14,17 +14,12 @@ let s:v = g:XPTvars()
 
 
 
-call XPTemplate('t2', [
-      \ '`b^ `^\`d\^ \`\^==\^ \`a\^^', 
-      \])
-
 
 call XPTemplate("inc", 'include <`^.h>')
 call XPTemplate("ind", 'include "`^fileRoot()^.h"')
 
-call XPTemplate("assert", [
-      \'assert(`isTrue^, "`text^");', 
-      \''])
+call XPTemplate("assert", 'assert(`isTrue^, "`text^");')
+
 
 call XPTemplate("once", [
       \'#ifndef `symbol^headerSymbol()^',
@@ -32,6 +27,14 @@ call XPTemplate("once", [
       \'`cursor^',
       \'#endif /* `symbol^ */',
       \''])
+
+" Just Another Implementation
+" call XPTemplate("once", [
+"       \'#ifndef `symbol^__{S(S(E("%:t"),".","\\u&"),"\\.","_")}__^',
+"       \'#define `symbol^',
+"       \'`cursor^',
+"       \'#endif /* `symbol^ */',
+"       \''])
 
 call XPTemplate("main", [
       \'  int',
@@ -44,18 +47,18 @@ call XPTemplate("main", [
 
 call XPTemplate("fun", [
       \"  `int^", 
-      \"`name^(`a^^)", 
+      \"`name^(`_^)", 
       \"{", 
       \"  `cursor^", 
       \"}"
       \])
 
 call XPTemplate("ifndef", [
-      \"ifndef `v^", 
-      \"#    define `v^", 
+      \"ifndef `_^SV('.','\\u&')^^", 
+      \"#    define `_^", 
       \"", 
       \"`cursor^", 
-      \"#endif /* `v^ */"
+      \"#endif /* `_^ */"
       \])
 
 call XPTemplate("while0", ""
@@ -81,13 +84,17 @@ call XPTemplate("forr", ""
       \."}")
 
 call XPTemplate('forever', [
-      \ 'for (;;) `^/* void */^;'
+      \ 'for (;;) `_^/* void */;^'
       \])
 
-call XPTemplate("if", ""
-      \."if (`^){\n"
-      \."  `cursor^\n"
-      \."}")
+call XPTemplate('if', [
+      \ 'if (`condi^) {', 
+      \ '  `_^', 
+      \ '}', 
+      \ '`else...^else {', 
+      \ '  \`cursor\^', 
+      \ '}^^'
+      \])
 
 call XPTemplate("ifn", ""
       \."if (NULL == `^){\n"
@@ -115,6 +122,15 @@ call XPTemplate("ifel", "
       \} else {\n
       \  `cursor^\n
       \}")
+
+call XPTemplate('ifee', [
+      \ 'if (`condition^) {',
+      \ '   `_^',
+      \ '}', 
+      \ '`...^else if (`cond^R("condition")^) {', 
+      \ '  `_^',
+      \ '}`...^'
+      \])
 
 
 call XPTemplate("cmt", "

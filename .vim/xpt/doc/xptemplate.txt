@@ -130,6 +130,7 @@
 	replaced by user typing. Function maybe used in ftplugin
 	scripts:
 	|XPTemplate()|		define new template
+	|XPTemplateIndent()|	define indent option to current buffer
 	|XPTemplateMark()|	define new template mark in current buffer
 	|XPTfuncs()|		get function container
 	|XPTvars()|		get variable container
@@ -179,11 +180,11 @@
 	Item is composed as follow :
 	|`| |xpt-item-name| |^| [|xpt-default-value| |^| [|^|]]
 
-							       *xpt-item-name*
-	Item name is the text between |`| and |^|. It can be plain text, |xpt-variable|,
-	|xpt-function|. But can NOT be mixed and you will never need mixed
-	item :).
-	Before you can jump to the first item, all items with |xpt-variable|
+					  *xpt-predefined*     *xpt-item-name*
+	Item name is the text between |`| and |^|. It can be plain text,
+	|xpt-variable|, |xpt-function|. But can NOT be mixed and you will
+	never need mixed item :).
+	Before you can jump to the first item, all items of |xpt-variable|
 	and |xpt-function| will be evaluated.
 
 							   *xpt-format-normal*
@@ -196,15 +197,14 @@
 	to this item. |xpt-default-value| can be plain text, |xpt-variable|,
 	|xpt-function| or mixed.
 
-						  *xpt-format-delayed-default*
+						      *xpt-format-post-filter*
 	Delayed default value format :
-	|`| |xpt-item-name| |^| |xpt-default-value| |^| |^|
+	|`| |xpt-item-name| |^| |xpt-post-filter| |^| |^|
 
 	It is similar with |xpt-format-default|. The only difference is when
 	you jump to such item, |xpt-item-name| is selected and you can edit as
-	well. Like |xpt-format-normal|. But when you jumps to next item
-	leaving the original text of |xpt-item-name| there , the
-	|xpt-default-value| replaces the left text. 
+	well. Like |xpt-format-normal|. But when you jumps to next item , the
+	|xpt-post-filter| applied and evaluated text replaces the left text. 
 
 
 							   *xpt-default-value*
@@ -221,6 +221,36 @@
 	Example : type "#ind<C-\>": >
 		#include "current_file_name.h"
 <
+							    *xpt-post-filter*
+	Post filter can be plain text, |xpt-varaible|, |xpt-function| or
+	mixed.  See |xpt-format-post-filter|.
+	Some usually-used post filters are defined in
+	ftplugin/common/common.xpt.vim. for |xpt-substitute| with name of 'S'.
+	For example for c language, "ifndef" template defined as follow: : >
+		call XPTemplate("ifndef", [
+		      \"ifndef `_^S('.','\\u&')^^", 
+		      \"#    define `_^", 
+		      \"", 
+		      \"`cursor^", 
+		      \"#endif /* `_^ */"
+		      \])
+<	When you pressing <tab> from the first item "_", typed content are
+	made upper case.  : >
+		#ifndef __gnu__
+		#    define __gnu__
+		`cursor^
+		#endif /* __gnu__ */
+<	Pressing <tab> results in : >
+		#ifndef __GNU__
+		#    define __GNU__
+		`cursor^
+		#endif /* __GNU__ */
+<
+						      *S()*   *xpt-substitute*
+S({pattern},{replace},[{flag}])
+	Substitue typed content with pattern and replace. Just like
+	|substitute()|.
+
 
 						     *`cursor^*   *xpt-curosr*
 	The item of name "cursor" is a special one. It always is selected at
@@ -240,10 +270,31 @@
 	unique one and different unnamed items will not be treated as with the
 	same name : empty string.
 
-						   *`...^*    *xpt-repeatable*
+						  *\w\+...*   *xpt-expandable*
+	One of |xpt-post-filter| usages is to define expandable item. When
+	<tab> is pressed, post-filter applied and replace the item text with
+	what post filter evaluated to be. |xpt-repeatable| is implemented with
+	|xpt-expandable|.
+
+	Expandable item must be with name of "\w\+\.\.\." to be able to
+	expand. For example : >
+		call XPTemplate('if', [
+		      \ 'if (`condi^) {', 
+		      \ '  `_^', 
+		      \ '}', 
+		      \ '`else...^else {',    | the expandalbe item
+		      \ '  \`cursor\^',  
+		      \ '}^^'
+		      \])
+<	Only when item is not modified post filter can be applied to item. Or
+	|xpt-expandable| is treated as a normal one without post filter.
+
+
+					 *`...n^*  *`...^*    *xpt-repeatable*
 	Some segment can be defined as repeatable, for example the "case"s in
 	"switch". To specify the repeatable part is easy, just wrap the part
-	you want it to repeat with `...^ . Take the case from "switch": >
+	you want it to repeat with `...n^ . n is a number and can be omitted.
+	Take the case from "switch": >
 		call XPTemplate('switch', [
 		      \ 'switch (`^) {',
 		      \ '  `...^',            | repeatable part
@@ -264,11 +315,12 @@
 		  default:
 		      `^
 		}
-<	Press <tab>, the |`...^| becomes as below, and the 4 lines expanded
-	from |`...^| are selected. These 4 lines are repeatable part, : >
+<	Press <tab>, the |`...^| is selected. Press <tab> again to expand
+	repetition part. Or press <cr> |s_CR| to cancel repetition part. These
+	4 lines are expanded, : >
 		switch () {
 
-		  case `17^ :       | selected
+		  case `17^ :       | expanded
 		    `^              |
 			break;      |
 		    `...^           |
@@ -276,9 +328,8 @@
 		  default:
 			`^
 		}
-<	Now, press <cr>|s_CR| to cancel repeatable part and go to next item.
-	Or press <tab>|s_TAB| to enter the repeatable part. You may have
-	noticed there is another |`...^|, that is the another repeat trigger.
+<	Enter the repeatable part. You may have noticed there is another
+	|`...^|, that is the another repeat trigger.
 
 	Press <tab> 3 times : >
 		switch () {
@@ -295,7 +346,21 @@
 		  default:
 			`^
 		}
+<	More than abore, Using |`...n^| let you define multiple repetition parts in
+	one snippet. : >
+		call XPTemplate( "tryof", [
+		      \ "try `what^",
+		      \ "   `pattern^ ->",
+		      \ "       `body^ `...0^;",
+		      \ "   `patternn^ ->",     
+		      \ "       `bodyn^`...0^",  
+		      \ "catch",
+		      \ "    `excep^ -> `toRet^ `...1^;",
+		      \ "    `except^ -> `toRet^`...1^", 
+		      \ "end `cursor^",
+		      \ "" ] )
 <
+	NOTE repetition part can NOT be recursive.
 
 						   *`wrapped^*   *xpt-wrapped*
 	Define the template : >
@@ -312,9 +377,107 @@
 <	Now edit the name.
 
 					       *xpt-function*   *xpt-variable*
-	*TODO*
-	You can use 2 global function to get function or variable container to
-	define functions or variables used as |xpt-default-value|.
+	You can use 2 global function |XPTfuncs()| |XPTvars()| to get function
+	or variable container for defining functions or variables used as
+	|xpt-predefined|, |xpt-default-value| or |xpt-post-filter|.
+
+	Functions used in |xpt-default-value| or |xpt-post-filter| are invoked
+	with 1 parameter more, than parameters specified in template.
+	The additional parameter is |Dictionary| context, with information
+	of current template or item. : >
+		used in:	predefined	default-value	post-filter
+	key:
+	tmpl(Dic)		*		*		*
+	name(string)		-		*		*
+	value(string)		-		-		*
+<	
+	Supposed we have a function defined as follow : >
+		fun! s:f.SV(ptn, rep, ...)
+		  let flg = a:0 >= 1 ? a:1 : 'g'
+		  return substitute(self.V(), a:ptn, a:rep, flg)
+		endfunction
+
+<	It accept upto 3 arguments. An example is as follow : >
+		call XPTemplate("ifndef", [
+		      \"ifndef `_^SV('.','\\u&')^^", 
+		      ......
+<	It change typed text to upper case.
+
+
+				      *xpt-{}*  *xpt-mixed*   *xpt-expression*
+	xpt expression used as |xpt-default-value| or |xpt-post-filter| in
+	template can be mixed with plain text, |xpt-variable| and
+	|xpt-function|. 
+
+	Function can be template function defined within |XPTfuncs()| or vim
+	native function.
+
+	Function can recursively called.
+
+	Function is called within a |Dictionary|, through which you can access
+	other template function or template rendering context
+	|xpt-function-ctx|
+
+	Function or variable can be enclosed with "{}" to prevent function or
+	variable names confused with surrounded plain text.
+
+	Function can be prevented from being evaluated by escaping the "()". : >
+		S\(S("abc", '.', '\u&'))
+<	is evaluated to be : >
+		S(ABC)
+<
+	Variable can be prevented from being evaluated by escaping the '$'. : >
+		\$authoer
+<	is evaluated to be : >
+		$author
+<	
+	To escaping the "{}" : >
+		\{S("abc", '.', '\u&')}
+<	is evaluated to be : >
+		{ABC}
+<	As : >
+		{S("abc", '.', '\u&')}
+<	is evaluated to be : >
+		ABC
+<	
+	Example of file name of upper case, supposing you are editing a file
+	named of "your_file_name.ext" : >
+		__{S(E("%:t"),".","\\u&")}__
+<	is evaluated to be : >
+		__YOUR_FILE_NAME.EXT__
+<	And : >
+		this is S($author,".","-&")-
+<	is evaluated to be : >
+		this is -d-r-d-r-.-x-p-
+<
+					       *self._ctx*  *xpt-function-ctx*
+	template context can be accessed from within |xpt-function|. For
+	example the reference function: >
+		fun! s:f.R(name) "{{{
+		  let ctx = self._ctx
+		  if has_key(ctx.namedStep, a:name)
+		    return ctx.namedStep[a:name]
+		  endif
+
+		  return a:ctx.name
+		endfunction "}}}
+<
+
+
+									 *C()*
+	Get function context, see |xpt-function-ctx|
+								   *E({expr})*
+	Equals to |expand()|
+									 *N()*
+	Current edited item name. Valid only to |xpt-post-filter|.
+									 *V()*
+	Current typed text. Valid only to |xpt-post-filter|.
+								   *R({name})*
+	Reference to history item. Get value by name.
+					       *S({expr},{pat},{sub},{flags})*
+	Equals to |substitute()|.
+									*SV()*
+	Euqals to S(V(),{pat},{sub},{flag})
 
 								 *xpt-context*
 	You can define template that can only be triggered at certain
@@ -340,6 +503,23 @@ XPTemplate({name}, [, {context}], {template})
 XPTemplateMark({leftmark}, {rightmark})
 	XPTemplateMark defines what chars are used as item quoter. It only
 	takes effect to current buffer. See |xpt-mark|
+
+
+
+
+							  *XPTemplateIndent()*
+							      {default:"auto"}
+XPTemplateIndent({indentOption})
+	XPTemplateIndent set indent option to current buffer. {indentOption}
+	can be :
+	"auto" : indent lines in snippet with default indent options. see
+	|indent.txt|.
+	"keep" : keep indent.
+	"/n*n" : multiple indent space
+
+
+
+
 
 						      *XPTfuncs()* *XPTvars()*
 g:XPTfuncs()   g:XPTvars()
@@ -413,6 +593,7 @@ g:XPTfuncs()   g:XPTvars()
 								   {default:1}
 	When set, items with the same name of current item is highlighted.
 
+
 						     *g:xptemplate_show_stack*
 								   {default:1}
 	When set, at the left of |statusline|, nested template |xpt-nested|
@@ -431,6 +612,15 @@ g:XPTfuncs()   g:XPTvars()
 
 							     *xpt-changes-log*
 : > <
+Added:2009 Apr 25	|xpt-expression| as default value or post filter 
+Fixed:2009 Apr 25	statusline reload bug
+Added:2009 Apr 23	function arguments
+Added:2009 Apr 22	multi repetition part.
+Fixed:2009 Apr 22	item at [1, 1] cause crazy behavior. thanks to
+			Vincent.B
+Fixed:2009 Apr 22	bug that folding causes some text incorrectly deleted
+Fixed:2009 Apr 22	bug of cursor stopping 1 char before template end
+Added:2009 Apr 22	ocaml snippets thanks to Vincent B.
 Fixed:2009 Apr 21	char before template name moved to after template if 
 			'virtualedit' is not set with 'onemore'
 Fixed:2009 Apr 21	ruler and statusline check.Thanks christian.coutinho

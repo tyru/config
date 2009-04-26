@@ -1,6 +1,0 @@
-package calc;
-
-public class UnknownFunctionException extends SyntaxError {
-    UnknownFunctionException(String e) { errMsg = e; }
-}
-

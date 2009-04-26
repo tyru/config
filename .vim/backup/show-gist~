@@ -1,6 +1,0 @@
-#!/bin/sh
-
-CWD=$(cd $(dirname $0) && pwd)
-# gisty listの代わり
-cd $(cd $(dirname $0) && pwd) \
-    && find -type f | grep -v '.git' | grep -v "$(basename $0)"

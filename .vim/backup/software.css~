@@ -1,9 +1,0 @@
-@import url("base.css");
-
-
-/* TODO ƒRƒƒ“ƒg */
-ul.todo {
-  text-decoration: underline;
-  color: purple;
-  font-size: smaller;
-}

@@ -1,3 +1,9 @@
+if exists("b:__XPT_XPT_VIM__")
+  finish
+endif
+let b:__XPT_XPT_VIM__ = 1
+
+
 call XPTemplate('container', [
       \'let s:f = g:XPTfuncs()', 
       \'let s:v = g:XPTvars()', 

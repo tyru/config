@@ -135,7 +135,7 @@ done
 
 # delete info files.
 if [ "$FLAG_EXTRACT" != "true" ]; then
-    rm -rf "$INFO_FILES"
+    rm -rf $INFO_FILES
 fi
 
 

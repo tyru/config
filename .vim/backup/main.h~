@@ -1,8 +1,0 @@
-#ifndef __FOOSCHEME_MAIN_H__
-#define __FOOSCHEME_MAIN_H__
-
-#include <iostream>
-#include <cstdlib>
-#include <string>
-
-#endif

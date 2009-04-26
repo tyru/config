@@ -1,5 +1,0 @@
-
-abstract interface Aggregate {
-    public abstract Iterator iterator();
-}
-

@@ -27,6 +27,8 @@ call s:Def('g:xptemplate_strip_left', 1)
 call s:Def('g:xptemplate_limit_curosr', 1)
 call s:Def('g:xptemplate_show_stack', 1)
 call s:Def('g:xptemplate_highlight', 1)
+" call s:Def('g:xptemplate_indent', 1)
+
 call s:Def('g:xptemplate_key', "<C-\\\\>")
 call s:Def('g:xptemplate_to_right', "<C-l>")
 

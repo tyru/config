@@ -1,3 +1,0 @@
-#!/usr/bin/env perl
-use File::Spec;
-print join "\n", File::Spec->path(), "\n";

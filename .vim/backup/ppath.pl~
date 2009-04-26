@@ -1,8 +1,0 @@
-#!/usr/bin/env perl
-use strict;
-use warnings;
-
-use File::Spec;
-
-
-print join "\n", File::Spec->path();
