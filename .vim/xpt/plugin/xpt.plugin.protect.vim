@@ -42,9 +42,10 @@ fun! g:XPT.XPTprotect(x)
       let curpos = [curpos[0], len(ctx.lastBefore) + 1]
 
   else
-    let lastBefore0 = lt[:ctl[1]-2]
+    let lastBefore0 = ctl[1] > 1 ? lt[:ctl[1]-2] : ""
 
     if lastBefore0 != ctx.lastBefore && curpos[1] < ctl[1] && curpos[0] == ctl[0]
+      " call Log("left changed!!!!!!!!!!!!!!!!!!!!!")
       normal! d0
       let @0 = ctx.lastBefore
       normal! "0P
@@ -54,6 +55,9 @@ fun! g:XPT.XPTprotect(x)
     let lastAfter0 = lb[cbr[1]-1:]
 
     if lastAfter0 != ctx.lastAfter && curpos[1] > cbr[1] && curpos[0] == cbr[0]
+      " call Log("right changed!!!!!!!!!!!!!!!!!!!!!")
+      " call Log("cur   =".lastAfter0)
+      " call Log("last  =".ctx.lastAfter)
       normal! d$
       let @0 = ctx.lastAfter
       normal! "0P

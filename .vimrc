@@ -648,6 +648,7 @@ command! FastEdit
 let s:fast_editing = 0
 func s:FastEdit()
     call garbagecollect()
+
     if s:fast_editing
         " autocomplpop
         if exists( ':AutoComplPopUnLock' )
@@ -1132,9 +1133,11 @@ endfunc
 " 先頭が \S の行に飛ぶ
 noremap <silent> ]k        m`:call search( '^\S', 'W' )<CR>
 noremap <silent> [k        m`:call search( '^\S', 'Wb' )<CR>
+
 " ^i と ^o を逆にする
 nnoremap <silent>  <C-i>              <C-o>
 nnoremap <silent>  <C-o>              <C-i>
+
 " make
 nnoremap <silent>   gm      :make<CR>
 nnoremap <silent>   gc      :cclose<CR>
@@ -1260,6 +1263,8 @@ let g:FuzzyFinderOptions.Base.lasting_cache    = 0
 let g:FuzzyFinderOptions.Base.abbrev_map  = {
             \   '^plug' : [ '~/.vim/plugin/', '~/.vim/plugin/' ],
             \   '^home' : [ '~/' ],
+            \   '^cyg' : [ $CYGHOME ],
+            \   '^msys' : [ $MSYSHOME ],
             \ }
 if isdirectory( $HOME .'/.vim/mine/plugin' )
     let g:FuzzyFinderOptions.Base.abbrev_map['^plug'] += [
@@ -1644,6 +1649,10 @@ let g:ca_oneline_comment = "//"
 let g:ca_filetype_table = {
     \ 'oneline' : {
         \ 'dosbatch' : 'rem ###'
+    \ },
+    \ 'wrapline' : {
+        \ 'html' : [ "<!-- ", " -->" ],
+        \ 'css' : [ "/* ", " */" ]
     \ }
 \ }
 

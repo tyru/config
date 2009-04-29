@@ -1,14 +1,30 @@
-if exists("b:__CPP_XPT_VIM__")
+if exists("b:__CPP_CPP_XPT_VIM__")
   finish
 endif
-let b:__CPP_XPT_VIM__ = 1
+let b:__CPP_CPP_XPT_VIM__ = 1
 
-runtime ftplugin/_common/common.xpt.vim
-runtime ftplugin/_loop/javalike.xpt.vim
+" containers
+let [s:f, s:v] = XPTcontainer()
 
-runtime ftplugin/c/c.xpt.vim
-runtime ftplugin/c/wrap.xpt.vim
+" constant definition
+call extend(s:v, {'\$TRUE': '1', '\$FALSE' : '0', '\$NULL' : 'NULL', '\$UNDEFINED' : ''})
 
+" inclusion
+XPTinclude
+      \ _common/common
+      \ _loop/java.like
+      \ c/c
+      \ c/wrap
+
+" ========================= Function and Varaibles =============================
+function! s:f.cleanTempl( ctx, ... )
+  let notypename = substitute( a:ctx,"\\s*typename\\s*","","g" )
+  let cleaned = substitute( notypename, "\\s*class\\s*", "", "g" )
+  return cleaned
+endfunction
+
+
+" ================================= Snippets ===================================
 call XPTemplate( "namespace", [
       \ "namespace `name^",
       \ "{",
@@ -42,52 +58,50 @@ call XPTemplate( "class", [
       \ "}",
       \ "" ])
 
-let s:f = g:XPTfuncs()
-let s:v = g:XPTvars()
-
-" just to avoid evaluation order problem
-let s:v['$cppCleanTemplate'] = ''
-
-function! s:f.cppSaveTemplate( ... )
-    let ctx = self._ctx
-    let notypename = substitute( ctx.value,"\\s*typename\\s*","","g" )
-    let cleaned = substitute( notypename, "\\s*class\\s*", "", "g" )
-    let s:v['$cppCleanTemplate'] = cleaned
-    return ctx.value
-endfunction
-
-function! s:f.cppReload( ... )
-    return s:v['$cppCleanTemplate']
-endfunction
 
 call XPTemplate( "templateclass", [
-               \ "template",
-               \ "    <`templateParam^cppSaveTemplate('.')^^>",
-               \ "class `className^",
-               \ "{",
-               \ "public:",
-               \ "    `className^( `ctorParam^ );",
-               \ "    ~`className^();",
-               \ "    `className^( const `className^ &cpy );",
-               \ "    `cursor^",
-               \ "private:",
-               \ "};",
-               \ " ",
-               \ "\/\/ Scratch implementation",
-               \ "\/\/ feel free to copy/paste or destroy",
-               \ "template <`templateParam^>",
-               \ "`className^<`^cppReload('.')^^>::`className^( `ctorParam^ )",
-               \ "{",
-               \ "}",
-               \ " ",
-               \ "template <`templateParam^>",
-               \ "`className^<`^cppReload('.')^^>::~`className^()",
-               \ "{",
-               \ "}",
-               \ " ",
-               \ "template <`templateParam^>",
-               \ "`className^<`^cppReload('.')^^>::`className^( const `className^ &cpy )",
-               \ "{",
-               \ "}",
-               \ "" ])
+      \ "template",
+      \ "    <`templateParam^>",
+      \ "class `className^",
+      \ "{",
+      \ "public:",
+      \ "    `className^( `ctorParam^^ );",
+      \ "    ~`className^();",
+      \ "    `className^( const `className^ &cpy );",
+      \ "    `cursor^",
+      \ "private:",
+      \ "};",
+      \ " ",
+      \ "\/\/ Scratch implementation",
+      \ "\/\/ feel free to copy/paste or destroy",
+      \ "template <`templateParam^>",
+      \ "`className^<`^cleanTempl(R('templateParam'))^^>::`className^( `ctorParam^ )",
+      \ "{",
+      \ "}",
+      \ " ",
+      \ "template <`templateParam^>",
+      \ "`className^<`^cleanTempl(R('templateParam'))^^>::~`className^()",
+      \ "{",
+      \ "}",
+      \ " ",
+      \ "template <`templateParam^>",
+      \ "`className^<`^cleanTempl(R('templateParam'))^^>::`className^( const `className^ &cpy )",
+      \ "{",
+      \ "}",
+      \ "" ])
 
+call XPTemplate('try', [
+      \ 'try',
+      \ '{',
+      \ '    `what^',
+      \ '}',
+      \ '`...^catch ( `except^ )',
+      \ '{',
+      \ '    `handler^',
+      \ '}`...^',
+      \ '`catch...^catch ( ... )',
+      \ '{',
+      \ '    \`\^',
+      \ '}^^',
+      \ ''
+      \])

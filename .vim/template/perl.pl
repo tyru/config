@@ -7,16 +7,16 @@ use Getopt::Long qw(:config auto_help gnu_compat);
 use Perl6::Say;
 use Pod::Usage;
 
+### sub ###
 
 
-
+### main ###
 
 GetOptions(
     # some options here ...
 ) or pod2usage(-verbose => 2);
 
 
-### FUNCTIONS ###
 
 
 __END__
@@ -29,6 +29,7 @@ __END__
 =head1 SYNOPSIS
 
     perl <%filename%> [args ...]
+    # or
     ./<%filename%> [args ...]
 
 

@@ -1,184 +1,127 @@
-if exists("b:__C_XPT_VIM__")
+if exists("b:__C_C_XPT_VIM__")
   finish
 endif
-let b:__C_XPT_VIM__ = 1
+let b:__C_C_XPT_VIM__ = 1
+
+" containers
+let [s:f, s:v] = XPTcontainer()
+
+" constant definition
+call extend(s:v, {'\$TRUE': '1', '\$FALSE' : '0', '\$NULL' : 'NULL', '\$UNDEFINED' : ''})
+" call XPTemplateIndent("/2*8")
+
+" inclusion
+XPTinclude
+      \ _common/common 
+      \ _comment/c.like 
+      \ _condition/c.like
+      \ _loops/c.like
 
 
 
-runtime ftplugin/_common/common.xpt.vim
-runtime ftplugin/_comment_c_like/cmt.xpt.vim
+" ========================= Function and Varaibles =============================
+
+" ================================= Snippets ===================================
+XPTemplateDef
+
+" " sample:
+" XPT for indent=/2*8 priority=sub hint=this\ is\ for
+" for (`i^ = 0; `i^ < `len^; ++`i^) {
+"   `cursor^
+" }
+" ..XPT
 
 
-let s:f = g:XPTfuncs()
-let s:v = g:XPTvars()
+XPT inc		hint=include\ <>
+include <`^.h>
+..XPT
 
 
+XPT ind		hint=include\ ""
+include "`_^fileRoot()^.h"
+..XPT
 
 
-call XPTemplate("inc", 'include <`^.h>')
-call XPTemplate("ind", 'include "`^fileRoot()^.h"')
+XPT assert	hint=
+assert(`isTrue^, "`text^");
+..XPT
 
-call XPTemplate("assert", 'assert(`isTrue^, "`text^");')
 
+XPT once
+#ifndef `symbol^headerSymbol()^
+#define `symbol^
+`cursor^
+#endif /* `symbol^ */
+..XPT
 
-call XPTemplate("once", [
-      \'#ifndef `symbol^headerSymbol()^',
-      \'#define `symbol^',
-      \'`cursor^',
-      \'#endif /* `symbol^ */',
-      \''])
 
 " Just Another Implementation
-" call XPTemplate("once", [
-"       \'#ifndef `symbol^__{S(S(E("%:t"),".","\\u&"),"\\.","_")}__^',
-"       \'#define `symbol^',
-"       \'`cursor^',
-"       \'#endif /* `symbol^ */',
-"       \''])
-
-call XPTemplate("main", [
-      \'  int',
-      \'main(int argv, char **args)',
-      \'{',
-      \'  `cursor^',
-      \'  return 0;',
-      \'}',
-      \''])
-
-call XPTemplate("fun", [
-      \"  `int^", 
-      \"`name^(`_^)", 
-      \"{", 
-      \"  `cursor^", 
-      \"}"
-      \])
-
-call XPTemplate("ifndef", [
-      \"ifndef `_^SV('.','\\u&')^^", 
-      \"#    define `_^", 
-      \"", 
-      \"`cursor^", 
-      \"#endif /* `_^ */"
-      \])
-
-call XPTemplate("while0", ""
-      \."do {\n"
-      \."  `cursor^\n"
-      \."} while (0)")
-
-call XPTemplate("while1", [
-      \'while (1) {', 
-      \'  `cursor^',
-      \'}'
-      \])
+" XPT once
+" #ifndef `symbol^__{S(S(E("%:t"),".","\\u&"),"\\.","_")}__^
+" #define `symbol^
+" `cursor^
+" #endif /* `symbol^ */
+" ..XPT
 
 
-call XPTemplate("for", ""
-      \."for (`i^ = `0^; `i^ < `len^; ++`i^){\n"
-      \."  `cursor^\n"
-      \."}")
-
-call XPTemplate("forr", ""
-      \."for (`i^ = `n^; `i^ >`^=^ `end^; --`i^){\n"
-      \."  `cursor^\n"
-      \."}")
-
-call XPTemplate('forever', [
-      \ 'for (;;) `_^/* void */;^'
-      \])
-
-call XPTemplate('if', [
-      \ 'if (`condi^) {', 
-      \ '  `_^', 
-      \ '}', 
-      \ '`else...^else {', 
-      \ '  \`cursor\^', 
-      \ '}^^'
-      \])
-
-call XPTemplate("ifn", ""
-      \."if (NULL == `^){\n"
-      \."  `cursor^\n"
-      \."}")
-
-call XPTemplate("ifnn", ""
-      \."if (NULL != `^){\n"
-      \."  `cursor^\n"
-      \."}")
-
-call XPTemplate("if0", ""
-      \."if (0 == `^){\n"
-      \."  `cursor^\n"
-      \."}")
-
-call XPTemplate("ifn0", ""
-      \."if (0 != `^){\n"
-      \."  `cursor^\n"
-      \."}")
-
-call XPTemplate("ifel", "
-      \if (`^){\n
-      \  `^\n
-      \} else {\n
-      \  `cursor^\n
-      \}")
-
-call XPTemplate('ifee', [
-      \ 'if (`condition^) {',
-      \ '   `_^',
-      \ '}', 
-      \ '`...^else if (`cond^R("condition")^) {', 
-      \ '  `_^',
-      \ '}`...^'
-      \])
+XPT main
+  int
+main(int argv, char **args)
+{
+  `cursor^
+  return 0;
+}
+..XPT
 
 
-call XPTemplate("cmt", "
-      \/**\n
-      \* @author : `$author^ | `$email^\n
-      \* @description\n
-      \*     `cursor^\n
-      \* @return {`int^} `desc^\n
-      \*/")
+XPT fun
+  `int^
+`name^(`_^)
+{
+  `cursor^
+}
+..XPT
 
 
-call XPTemplate("para", {'syn' : 'comment'}, "
-      \@param {`Object^} `name^ `desc^")
+XPT ifndef
+ifndef `_^SV('.','\u&')^^ 
+#    define `_^ 
+
+`cursor^ 
+#endif /* `_^ */
+..XPT
 
 
-call XPTemplate("filehead", [
-      \'/**-------------------------/// `sum^ \\\---------------------------',
-      \' *',
-      \' * <b>`function^</b>',
-      \' * @version : `1.0^',
-      \' * @since : `strftime("%Y %b %d")^',
-      \' * ',
-      \' * @description :',
-      \' *   `cursor^',
-      \' * @usage : ',
-      \' * ',
-      \' * @author : `$author^ | `$email^',
-      \' * @copyright `.com.cn^ ',
-      \' * @TODO : ',
-      \' * ',
-      \' *--------------------------\\\ `sum^ ///---------------------------*/',
-      \''])
-
-call XPTemplate('switch', [
-      \ 'switch (`^) {',
-      \ '  case `_^ :',
-      \ '    `^',
-      \ '    break;',
-      \ '  `...^', 
-      \ '  case `_^ :',
-      \ '    `^',
-      \ '    break;',
-      \ '  `...^', 
-      \ '',
-      \ '  default:',
-      \ '    `cursor^',
-      \ '}'
-      \])
+XPT cmt
+/**
+ * @author : `$author^ | `$email^
+ * @description
+ *     `cursor^
+ * @return {`int^} `desc^
+ */
+..XPT
 
 
+XPT para syn=comment	hint=comment\ parameter
+@param {`Object^} `name^ `desc^
+..XPT
 
+
+XPT filehead
+/**-------------------------/// `sum^ \\\---------------------------
+ *
+ * <b>`function^</b>
+ * @version : `1.0^
+ * @since : `strftime("%Y %b %d")^
+ * 
+ * @description :
+ *   `cursor^
+ * @usage : 
+ * 
+ * @author : `$author^ | `$email^
+ * @copyright `.com.cn^ 
+ * @TODO : 
+ * 
+ *--------------------------\\\ `sum^ ///---------------------------*/
+
+..XPT

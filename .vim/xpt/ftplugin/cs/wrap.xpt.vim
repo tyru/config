@@ -1,8 +1,8 @@
 if exists("b:__WRAP_CS_XPT_VIM__")
   finish
 endif
-
 let b:__WRAP_CS_XPT_VIM__ = 1
+
 
 call XPTemplate('try_', [
             \ 'try',
@@ -13,28 +13,14 @@ call XPTemplate('try_', [
             \ '{',
             \ '    `handler^',
             \ '}`...^',
-            \ 'catch',
+            \ '`catch...^catch',
             \ '{',
-            \ '    `cursor^',
-            \ '}',
-            \])
-
-call XPTemplate('tryf_', [
-            \ 'try',
+            \ '    \`\^',
+            \ '}^^',
+            \ '`finally...^finally',
             \ '{',
-            \ '    `wrapped^',
-            \ '}',
-            \ '`...^catch (`except^ e)',
-            \ '{',
-            \ '    `handler^',
-            \ '}`...^',
-            \ 'catch',
-            \ '{',
-            \ '    `cursor^',
-            \ '}',
-            \ 'finally',
-            \ '{',
-            \ '    `cleanup^^',
-            \ '}'
+            \ '    \`cursor\^',
+            \ '}^^',
+            \ ''
             \])
 

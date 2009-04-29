@@ -9,13 +9,14 @@ call XPTemplate('try_', [
             \ '{',
             \ '    `wrapped^',
             \ '}',
-            \ '`...^catch ( `except^ e )',
+            \ '`...^catch ( `except^ )',
             \ '{',
             \ '    `handler^',
             \ '}`...^',
-            \ 'catch ( `what^...^^ )',
+            \ '`catch...^catch ( ... )',
             \ '{',
-            \ '    `cursor^',
-            \ '}'
+            \ '    \`\^',
+            \ '}^^',
+            \ ''
             \])
 

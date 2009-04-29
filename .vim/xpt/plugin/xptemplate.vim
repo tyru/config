@@ -1,6 +1,6 @@
 " XPTEMPLATE ENGIE:
 "   code template engine
-" VERSION: 0.3.3
+" VERSION: 0.3.5.2
 " BY: drdr.xp | drdr.xp@gmail.com
 "
 " MARK USED:
@@ -17,13 +17,13 @@
 " "}}}
 "
 " TODOLIST: "{{{
+" TODO ordered item
+" TODO ontime filter
+" TODO lock key variables
 " TODO as function call template
 " TODO popup if multi keys with same prefix 
 " TODO popup hint
-" TODO steps chain
-" TODO reference function 'R'
 " TODO foldmethod=indent problem.
-" TODO indent option
 " TODO map stack
 " TODO when popup display, map <cr> to trigger template start 
 " TODO undo
@@ -36,7 +36,7 @@
 "
 
 if exists("g:__XPTEMPLATE_VIM__")
-  " finish
+  finish
 endif
 let g:__XPTEMPLATE_VIM__ = 1
 
@@ -54,6 +54,7 @@ let s:wrappedName  = "wrapped"
 let s:repeatPtn    = '...\d\*'
 let s:emptyctx     = {
       \'tmpl' : {}, 
+      \'evalCtx' : {}, 
       \'name' : '', 
       \'step': [], 
       \'namedStep':{}, 
@@ -87,15 +88,61 @@ let s:plugins.afterNextItem = []
 let s:plugins.beforeUpdate = []
 let s:plugins.afterUpdate = []
 
+let s:priorities = {'all' : 64, 'spec' : 48, 'like' : 32, 'lang' : 16, 'sub' : 0}
+let s:priPtn = 'all\|spec\|like\|lang\|sub\|\d\+'
+
 let s:f = {}
 let g:XPT = s:f
 
 
+fun! XPTinclude(...) "{{{
+  if a:0 < 1 
+    return
+  endif
+
+  let x = s:Data()
+  let prio = x.bufsetting.priority
+
+
+  let list = a:000
+  
+  for v in list
+    if type(v) == type([])
+      for s in v
+        call XPTinclude(s)
+      endfor
+    elseif type(v) == type('')
+      let cmd =  'runtime ftplugin/'.v.'.xpt.vim'
+      exe cmd
+    endif
+  endfor
+
+  let x.bufsetting.priority = prio
+
+endfunction "}}}
+
+com! -nargs=+ XPTinclude call XPTinclude(<f-args>)
+
+
+fun! XPTcontainer() "{{{
+  return [s:Data().vars, s:Data().vars]
+endfunction "}}}
+
+" deprecated
 fun! g:XPTvars() "{{{
   return s:Data().vars
 endfunction "}}}
+
+" deprecated
 fun! g:XPTfuncs() "{{{
   return s:Data().funcs
+endfunction "}}}
+
+fun! XPTemplatePriority(...) "{{{
+  let x = s:Data()
+  let p = a:0 == 0 ? 'lang' : a:1
+
+  let x.bufsetting.priority = s:ParsePriority(p)
 endfunction "}}}
 
 fun! XPTemplateMark(sl, sr) "{{{
@@ -105,8 +152,13 @@ fun! XPTemplateMark(sl, sr) "{{{
   call s:RedefinePattern()
 endfunction "}}}
 
-fun! s:XPTemplateIndent(p) "{{{
+fun! XPTemplateIndent(p) "{{{
   let x = s:Data().bufsetting.indent
+  call s:ParseIndent(x, a:p)
+endfunction "}}}
+
+fun! s:ParseIndent(x, p) "{{{
+  let x = a:x
 
   if a:p ==# "auto"
     let x.type = 'auto'
@@ -118,8 +170,9 @@ fun! s:XPTemplateIndent(p) "{{{
     let x.rate =split(str, '/\|\*')
   else
     " a:p == 'keep'
-    let  x.type ='keep'
+    let x.type = 'keep'
   endif
+
 endfunction "}}}
 
 
@@ -129,7 +182,7 @@ endfunction "}}}
 " @param String|List|FunCRef str	template string
 fun! XPTemplate(name, str_or_ctx, ...) " {{{
 
-  let xa = s:Data().tmplarr
+  let x = s:Data()
   let xt = s:Data().tmpls
   let xp = s:Data().bufsetting.ptn
 
@@ -138,7 +191,7 @@ fun! XPTemplate(name, str_or_ctx, ...) " {{{
   if a:0 == 0          " no syntax context
     let T_str = a:str_or_ctx
   elseif a:0 == 1      " with syntax context
-    let ctx = a:str_or_ctx
+    let ctx = deepcopy(a:str_or_ctx)
     let T_str = a:1
   endif
 
@@ -151,25 +204,176 @@ fun! XPTemplate(name, str_or_ctx, ...) " {{{
     let Str = T_str
   endif
 
-  if type(Str) == type('') 
-    " if Str !~# xp.cursorPattern
-      " let Str = Str . xp.l . s:cursorName . xp.r
-    " endif
+
+  let name = a:name
+
+  let istr = matchstr(name, '=[^!=]*')
+  let name = substitute(name, '=[^!=]*', '', 'g')
+
+  let idt = deepcopy(x.bufsetting.indent)
+  if istr != ""
+    call s:ParseIndent(idt, istr)
+  elseif has_key(ctx, 'indent')
+    call s:ParseIndent(idt, ctx.indent)
   endif
 
+  
 
-  if !has_key(xt, a:name)
-    call add(xa, a:name)
+  " priority 9999 is the lowest 
+  let pstr = matchstr(name, '\V!\zs\.\+\$')
+
+  if pstr != ""
+    let override_priority = s:ParsePriority(pstr)
+  elseif has_key(ctx, 'priority')
+    let override_priority = s:ParsePriority(ctx.priority)
+  else
+    let override_priority = s:ParsePriority("")
   endif
-  let xt[a:name] = {
-        \ 'name' : a:name, 
-        \ 'tmpl' : Str, 
-        \ 'ctx' : ctx,
-        \ 'ptn' : deepcopy(s:Data().bufsetting.ptn),
-        \ 'wrapped' : type(Str) != type(function("tr")) && Str =~ '\V' . xp.lft . s:wrappedName . xp.rt}
+
+  let name = pstr == "" ? name : matchstr(name, '[^!]*\ze!')
 
 
+  let hint = s:GetHint(ctx, Str)
+
+
+
+  if !has_key(xt, name) || xt[name].priority > override_priority
+    let xt[name] = {
+          \ 'name' : name, 
+          \ 'hint' : hint, 
+          \ 'tmpl' : Str, 
+          \ 'priority' : override_priority, 
+          \ 'ctx' : ctx,
+          \ 'ptn' : deepcopy(s:Data().bufsetting.ptn),
+          \ 'indent' : idt, 
+          \ 'wrapped' : type(Str) != type(function("tr")) && Str =~ '\V' . xp.lft . s:wrappedName . xp.rt}
+
+  endif
 endfunction " }}}
+
+
+fun! s:XPTemplateParse(lines)
+  let lines = a:lines
+
+  let p = split(lines[0], '\V'.s:ep.'\s\+')
+  let name = p[1]
+
+  let p = p[2:]
+
+  let ctx = {}
+  for v in p
+    let nv = split(v, '=')
+    if len(nv) > 1
+      let ctx[nv[0]] = substitute(join(nv[1:],'='), '\\\(.\)', '\1', 'g')
+    endif
+  endfor
+
+
+  let tmpl = lines[1:]
+
+  call XPTemplate(name, ctx, tmpl)
+
+endfunction
+
+fun! s:XPTemplate_def(fn)
+  let lines = readfile(a:fn)
+
+
+  " find the line where XPTemplateDef called
+  let [i, len] = [0, len(lines)]
+  while i < len
+    if lines[i] =~# '^XPTemplateDef'
+      break
+    endif
+
+    let i += 1
+  endwhile
+
+
+  " parse all lines
+  let [s, e] = [0, 0]
+  while i < len-1 | let i += 1
+
+    let v = lines[i]
+
+    if v =~ '^"' 
+      continue
+    endif
+
+    if v =~# '^XPT '
+      let s = i
+    endif
+
+    if v =~# '^\.\.XPT'
+      let e = i - 1
+      call s:XPTemplateParse(lines[s : e])
+      let [s, e] = [0, 0]
+    endif
+
+  endwhile
+
+endfunction
+
+com! XPTemplateDef call s:XPTemplate_def(expand("<sfile>")) | finish
+ 
+
+
+
+fun s:GetHint(ctx, str)
+  let xp = s:Data().bufsetting.ptn
+  let hint = a:str
+
+  if has_key(a:ctx, 'hint')
+    let hint = s:Eval(a:ctx.hint)
+  else
+    let hint = ""
+  endif
+
+  return hint
+endfunction
+
+fun! s:ParsePriority(s) "{{{
+  let x = s:Data()
+
+  let pstr = a:s
+  let prio = 0
+
+  if pstr == ""
+    let prio = x.bufsetting.priority
+  else 
+
+    let p = matchlist(pstr, '\V\^\(' . s:priPtn . '\)\%(\(\[+-]\)\(\d\+\)\?\)\?\$')
+
+    let base   = 0
+    let r      = 1
+    let offset = 0
+
+    if p[1] != "" 
+      if has_key(s:priorities, p[1]) 
+        let base = s:priorities[p[1]]
+      elseif p[1] =~ '^\d\+$'
+        let base = 0 + p[1]
+      else
+        let base = 0
+      endif
+    else
+      let base = 0
+    endif
+
+    let r = p[2] == '+' ? 1 : (p[2] == '-' ? -1 : 0)
+
+    if p[3] != ""
+      let offset = 0 + p[3]
+    else
+      let offset = 1
+    endif
+
+    let prio = base + offset * r
+
+  endif
+
+  return prio
+endfunction "}}}
 
 fun! XPTemplatePreWrap(wrap) "{{{
   let x = s:Data()
@@ -274,7 +478,7 @@ fun! s:XPTemplateFinish(...) "{{{
   let ctx = s:Ctx()
   let xp = s:Ctx().tmpl.ptn
 
-  " let nextchar
+  " call Log("XPTemplateFinish...........")
 
   match none
 
@@ -286,16 +490,17 @@ fun! s:XPTemplateFinish(...) "{{{
   exe "silent! %snomagic/\\V" .s:f.TmplRange() . xp.rt_e . '/' . xp.r . '/g'
 
   " format template text
-  call s:f.TmplRange()
-  exe "normal! gv="
+  call s:Format(1)
 
   call cursor(l, toEnd + len(getline(l)))
 
 
   if empty(x.stack)
+    " call Log("empty, finish all")
     let ctx.processing = 0
     call s:ClearMap()
   else
+    " call Log("pop up")
     call s:PopCtx()
   endif
 
@@ -317,10 +522,11 @@ fun! s:Popup(pref, coln) "{{{
     if val.wrapped && empty(x.wrap) || !val.wrapped && !empty(x.wrap) | continue | endif
     if has_key(val.ctx, "syn") && val.ctx.syn != '' && match(ctxs, '\c'.val.ctx.syn) == -1        | continue | endif
 
-    if key =~ "^_"
-      call add(cmpl2, key)
+    " buildins come last
+    if key =~# "^[A-Z]"
+      call add(cmpl2, {'word' : key, 'menu' : val.hint})
     else
-      call add(cmpl, key)
+      call add(cmpl, {'word' : key, 'menu' : val.hint})
     endif
   endfor
 
@@ -352,51 +558,74 @@ fun! s:RenderTemplate(l, c, tmpl) " {{{
   else
     let tmpl = a:tmpl
   endif
+  " call Log("1:::".tmpl)
 
+  " process indent
+  " call Log(col("."))
+  let preindent = repeat(" ", virtcol(".") - 1)
+  if ctx.tmpl.indent.type =~# 'keep\|rate'
+    if ctx.tmpl.indent.type ==# "rate"
+      let idtptn = repeat(' ', ctx.tmpl.indent.rate[0])
+      let idtrep = repeat(' ', ctx.tmpl.indent.rate[1])
+      let tmpl = substitute(tmpl, '\(^\|\n\)\zs'.idtptn, idtrep, 'g')
+    endif
+    let tmpl = substitute(tmpl, '\n', '&'.preindent, 'g')
+  endif
 
+  " call Log("2:::".tmpl)
+
+  " process repetition
+  "
   let bef = ""
+  let rest = ""
   let rp = xp.lft . s:repeatPtn . xp.rt
-  let repPtn =  rp . '\_.\{-}' . rp 
-  let repContPtn =  rp . '\zs\_.\{-}' . rp 
+  let repPtn     = '\V\(' . rp . '\)\_.\{-}' . '\1'
+  let repContPtn = '\V\(' . rp . '\)\zs\_.\{-}' . '\1'
 
+
+  let stack = []
+  let start = 0
   while 1
-
-    let hasmatch = match(tmpl, repPtn)
-
-    if hasmatch >= 0
-      let bef .= tmpl[:hasmatch-1]
-      let tmpl = tmpl[hasmatch : ]
-
-      let rpt = matchstr(tmpl, repContPtn)
-      let symbol = matchstr(tmpl, rp)
-
-      " '\\' used in replacing item
-      " let rpt = substitute(rpt, xp.lft, '\\'.xp.l, 'g')
-      " let rpt = substitute(rpt, xp.rt, '\\'.xp.r, 'g')
-      "
-      " default value or post filter text must NOT contains item quotation
-      " marks
-      " make nonescaped to escaped, escaped to nonescaped
-      " turned back when expression evaluated
-      let rpt = substitute(rpt, '\V'.xp.l, '\\'.xp.l, 'g')
-      let rpt = substitute(rpt, '\V'.xp.r, '\\'.xp.r, 'g')
-
-      let bef .= symbol . rpt . xp.r .xp.r 
-      let tmpl = substitute(tmpl, repPtn, '', '')
-    else
+    let smtc = match(tmpl, repPtn, start)
+    if smtc == -1
       break
     endif
+    let stack += [smtc]
+    let start = smtc + 1
+  endwhile
+
+
+  while stack != []
+
+    let hasmatch = stack[-1]
+    unlet stack[-1]
+
+    let bef = tmpl[:hasmatch-1]
+    let rest = tmpl[hasmatch : ]
+
+    let rpt = matchstr(rest, repContPtn)
+    let symbol = matchstr(rest, rp)
+
+    " default value or post filter text must NOT contains item quotation
+    " marks
+    " make nonescaped to escaped, escaped to nonescaped
+    " turned back when expression evaluated
+    let rpt = escape(rpt, '\')
+    let rpt = substitute(rpt, '\V'.xp.l, '\\'.xp.l, 'g')
+    let rpt = substitute(rpt, '\V'.xp.r, '\\'.xp.r, 'g')
+
+    let bef .= symbol . rpt . xp.r .xp.r 
+    let rest = substitute(rest, repPtn, '', '')
+    let tmpl = bef . rest
     
   endwhile
 
-  let tmpl = bef.tmpl
-
-
-
-
-
+  " call Log("2:::".tmpl)
 
   let tmpl = substitute(tmpl, '\V' . xp.lft . s:wrappedName . xp.rt, x.wrap, 'g')
+
+
+  " call Log("3:::".tmpl)
   let tmpl = tmpl.";"
   " remember the original position
   let p = [line("."), col(".")]
@@ -443,12 +672,9 @@ fun! s:RenderTemplate(l, c, tmpl) " {{{
 
   " open all folds
   call s:TopTmplRange()
-  exe "silent! normal! gvzO"
-  " format
-  let p0 = s:TL(x)
-  let p0[1] = p0[1] - len(getline(p0[0]))
-  exe "normal! gv="
-  let ctx.pos.tmplpos.l = p0[1] + len(getline(p0[0]))
+  silent! normal! gvzO
+
+  call s:Format(2)
 
   call s:TopTmplRange()
   silent! normal! gvzO
@@ -462,6 +688,7 @@ fun! s:BuildValues(isItemRange) "{{{
 
 
 
+
   let i = ctx.unnameInx
   while i < 1000
     let rt = a:isItemRange ? s:GetCurrentTypedRange() : s:f.TmplRange()
@@ -470,6 +697,7 @@ fun! s:BuildValues(isItemRange) "{{{
     while  search(rt.s:ItemPattern(i))
       let i = i + 1
     endwhile
+
     call cursor(_p)
 
 
@@ -510,8 +738,6 @@ fun! s:BuildValues(isItemRange) "{{{
       let pleft0[1] =pleft0[1]  + len(xp.l)
       let name = s:f.GetContentBetween(pleft0, pright0)
       let val = s:f.GetContentBetween([pright0[0], pright0[1]+len(xp.r)], pright1)
-
-
 
 
 
@@ -614,10 +840,10 @@ fun! s:ApplyPredefined() " {{{
     let name = p[2]
 
 
-    let v = s:Evaluate(name)
+    let v = s:Eval(name)
 
     if v != name
-      call s:ReplaceAllMark(name, escape(v, '\/'))
+      call s:ReplaceAllMark(name, escape(v, '\'))
       call cursor(p[0:1])
       continue
     endif
@@ -678,6 +904,8 @@ fun! s:f.TmplRange() "{{{
   let p = [line("."), col(".")]
 
   call s:f.GetRangeBetween(s:TL(x), s:BR(x))
+  " call Log("template range:".string([getpos("'<"), getpos("'>")]))
+  " call Log("template range:".string([s:TL(x), s:BR(x)]))
 
   call cursor(p)
   return s:vrange
@@ -778,11 +1006,11 @@ fun! s:ApplyDelayed() "{{{
 
   if has_key(vals, ctx.name) && vals[ctx.name][1]
 
-    if ctx.name =~ '^\.\.\.\d*$'
+    if ctx.name =~ '^\.\.\.\d*$' || ctx.name =~ '^\V\w\+...\$'
       let post = vals[ctx.name][0]
       let post = s:Unescape(post)
     else
-      let post = s:Evaluate(vals[ctx.name][0], typed)
+      let post = s:Eval(vals[ctx.name][0], {'typed' : typed})
 
     endif
 
@@ -828,6 +1056,7 @@ fun! s:SelectNextItem(fromln, fromcol) "{{{
   call cursor(ln, cur)
 
   let p = s:FindNextItem('c')
+  " call Log("found next:".string(p))
   if p[0:1] == [0, 0]
     call cursor(s:BR(x))
 
@@ -855,31 +1084,47 @@ fun! s:SelectNextItem(fromln, fromcol) "{{{
 endfunction "}}}
 
 
-fun! s:Format(isfull) "{{{
+fun! s:Format(range) "{{{
   let x = s:Data()
+  let ctx = x.curctx
+
+  if ctx.tmpl.indent.type !=# "auto"
+    return
+  endif
 
   let p = getpos(".")[1:2]
   let p[1] = p[1] - len(getline(p[0]))
 
   let pt = s:TL()
-  let pt[1] = pt[1] - len(getline(pt[1]))
+  let pt[1] = pt[1] - len(getline(pt[0]))
 
-  let pc = s:f.CTL()
-  let pc[1] = pc[1] - len(getline(pc[0]))
 
-  let bf = matchstr(x.curctx.lastBefore, s:stripPtn)
 
-  if a:isfull
+  " call Log("processing=".ctx.processing)
+  " call Log(string(ctx.pos.curpos))
+
+  if ctx.processing && ctx.pos.curpos != {}
+    let pc = s:f.CTL()
+    let pc[1] = pc[1] - len(getline(pc[0]))
+    let bf = matchstr(x.curctx.lastBefore, s:stripPtn)
+  endif
+
+  if a:range == 1
     call s:f.TmplRange()
+    normal! gv=
+  elseif a:range == 2
+    call s:TopTmplRange()
     normal! gv=
   else
     normal! ==
   endif
 
-  let x.curctx.pos.curpos.l = max([pc[1] + len(getline(pc[0])), 1])
   let x.curctx.pos.tmplpos.l = max([pt[1] + len(getline(pt[0])), 1])
+  if ctx.processing && ctx.pos.curpos != {}
+    let x.curctx.pos.curpos.l = max([pc[1] + len(getline(pc[0])), 1])
+    let x.curctx.lastBefore = matchstr(getline(p[0]), '\V\^\s\*'.escape(bf, '\'))
+  endif
 
-  let x.curctx.lastBefore = matchstr(getline(p[0]), '\V\^\s\*'.escape(bf, '\'))
 
   call cursor(p[0], p[1] + len(getline(".")))
 
@@ -957,6 +1202,7 @@ fun! s:BuildItemPosList(val) "{{{
 
   let xcp.b = p0[0] - line("$")
   let xcp.r = p0[1] - len(getline(p0[0]))
+  " call Log("after build pos:xcp.r = ".xcp.r)
 
   let ctx.lastAfter = getline(s:CB(x))[s:CR(x)-1:]
 
@@ -972,10 +1218,12 @@ fun! s:FindNextItem(flag) "{{{
 
 
   let ptn = s:Rng_to_TmplEnd() . xp.item
+  " call Log("range to end:".string([getpos("'<"), getpos("'>")]))
 
   let p = searchpos(ptn, "nw" . flag)
 
   if p == [0, 0]
+    " call Log("found nothing")
     let p = searchpos(s:f.TmplRange().xp.cursorPattern, 'n')
     let p += [s:GetName(p[0:1])]
     return p
@@ -983,9 +1231,11 @@ fun! s:FindNextItem(flag) "{{{
 
 
   if s:GetName(p[0:1]) ==# s:cursorName
+    " call Log("found curosr")
 
     call cursor(p)
     let ptn = s:Rng_to_TmplEnd() . xp.item
+    " call Log("range to end2:".string([getpos("'<"), getpos("'>")]))
 
     let p = searchpos(ptn, "n")
 
@@ -1003,7 +1253,6 @@ fun! s:InitItem() " {{{
   let xp = s:Ctx().tmpl.ptn
   let xcp = s:Ctx().pos.curpos
 
-
   let found = search(xp.lft, "cW")
   if !found
     throw "can not found xp.lft"
@@ -1016,6 +1265,7 @@ fun! s:InitItem() " {{{
 
   call search(xp.rt, "cW")
   let [xcp.b, xcp.r] = [line(".") - line("$"), col(".") + len(xp.r) - len(getline("."))]
+  " call Log("after init item:xcp.r = ".xcp.r)
 
   exe "normal! ".len(xp.r)."x"
 
@@ -1026,14 +1276,15 @@ fun! s:InitItem() " {{{
   if has_key(vals, ctx.name) && !vals[ctx.name][1] 
     let str = vals[ctx.name][0]
 
-    let str = s:Evaluate(str)
+    let str = s:Eval(str)
 
     call cursor(s:f.CTL(x))
-    exe 'normal! '.len(ctx.name).'x'
+    call s:Replace(s:f.CTL(x), ctx.name, str)
+    " exe 'normal! '.len(ctx.name).'x'
 
 
-    let @0 = str
-    normal! "0P
+    " let @0 = str
+    " normal! "0P
 
     call cursor(s:f.CTL(x))
     call s:BuildValues(1)
@@ -1074,12 +1325,12 @@ fun! s:Unescape(str)
 endfunction
 
 
-fun! s:Eval(s, evalCtx) "{{{
+fun! s:Eval(s, ...) "{{{
   let x = s:Data()
   let ctx = s:Ctx()
-  let xp = ctx.tmpl.ptn
   let xfunc = x.funcs
 
+  let evalCtx = a:0 >= 1 ? a:1 : {'typed' : ''}
   
 
   " non-escaped prefix
@@ -1122,12 +1373,16 @@ fun! s:Eval(s, evalCtx) "{{{
 
 
 
-  let xfunc._ctx = {'tmpl' : ctx.tmpl, 'step' : {}, 'namedStep' : {}, 'name' : '', 'value' : ''}
+  let xfunc._ctx = ctx.evalCtx
+  let xfunc._ctx.tmpl = ctx.tmpl
+  let xfunc._ctx.step = {}
+  let xfunc._ctx.namedStep = {}
+  let xfunc._ctx.value = ''
   if ctx.processing
     let xfunc._ctx.step = ctx.step
     let xfunc._ctx.namedStep = ctx.namedStep
     let xfunc._ctx.name = ctx.name
-    let xfunc._ctx.value = a:evalCtx.typed
+    let xfunc._ctx.value = evalCtx.typed
   endif
    
 
@@ -1193,6 +1448,7 @@ fun! s:Eval(s, evalCtx) "{{{
   fun! S2l(a, b)
     return a:a - a:b
   endfunction
+
   " let list = sort(items(plist))
   let list = sort(keys(plist), "S2l")
   for k in list
@@ -1202,9 +1458,9 @@ fun! s:Eval(s, evalCtx) "{{{
 
 
     " unescape \{ and \(
-    let tmp = substitute( (k == 0 ? "" : (str[last : kn-1])), '\V'.ep.'\\\(\[{(]\)', '\1', 'g')
-    let tmp = substitute(tmp, '\V\\'.xp.l, xp.l, 'g')
-    let tmp = substitute(tmp, '\V\\'.xp.r, xp.r, 'g')
+    " let tmp = substitute( (k == 0 ? "" : (str[last : kn-1])), '\V'.ep.'\\\(\[{(]\)', '\1', 'g')
+    let tmp = k == 0 ? "" : (str[last : kn-1])
+    let tmp = substitute(tmp, '\\\(.\)', '\1', 'g')
     let sp .= tmp
 
 
@@ -1215,12 +1471,10 @@ fun! s:Eval(s, evalCtx) "{{{
   endfor
 
   let tmp = str[last : ]
-  let tmp = substitute(tmp, '\V\\'.xp.l, xp.l, 'g')
-  let tmp = substitute(tmp, '\V\\'.xp.r, xp.r, 'g')
+  let tmp = substitute(tmp, '\\\(.\)', '\1', 'g')
   let sp .= tmp
 
   return sp
-
 
 endfunction "}}}
 
@@ -1245,95 +1499,6 @@ fun! s:EvalVariable(x, v) "{{{
 endfunction "}}}
 
 
-fun! s:Evaluate(str, ...) "{{{
-
-
-  let typed = a:0 >= 1 ? a:1 : ""
-
-  return s:Eval(a:str, {'typed' : typed})
-
-  " let varptn = '\V' . '\%(' . xp.item_var . '\)\|\%(' . xp.item_qvar . '\)'
-  " let funptn = '\V' . '\%(' . xp.item_func . '\)\|\%(' . xp.item_qfunc . '\)'
-" 
-  " let r = ""
-" 
-  " while 1
-" 
-    " let vs = matchstr(name, varptn)
-    " if vs != "" 
-      " let c = match(name, varptn)
-      " if c > 0
-        " let r .= s:Unescape(name[:c-1])
-      " endif
-" 
-      " " remove variable pattern
-      " let name = name[c + len(vs):]
-" 
-      " " strip '{}'
-      " let vs = matchstr(vs, xp.item_var)
-" 
-      " if  has_key(xvar, vs)
-        " let r .= xvar[vs]
-      " else
-        " throw "undefined variable:".vs
-      " endif
-" 
-      " continue
-" 
-    " endif
-" 
-" 
-    " let fs = matchstr(name, funptn)
-    " if fs != ""
-      " let c = match(name, funptn)
-      " if c > 0
-        " let r .= s:Unescape(name[:c-1])
-      " endif
-" 
-      " let name = name[c + len(fs):]
-" 
-      " let fs = matchstr(fs, xp.item_func)
-" 
-" 
-      " let funcname = matchstr(fs, '\V\^\.\{-}\ze(')
-      " let funcparam = matchstr(fs, '\V\^\.\{-}(\zs\.\*\ze)')
-" 
-" 
-      " if has_key(xfunc, funcname) 
-" 
-        " if !ctx.processing
-          " " predefined
-          " let tctx = {'tmpl' : ctx.tmpl, 'step' : ctx.step, 'namedStep' : ctx.namedStep}
-        " else
-          " " default value or post filter
-          " let tctx = {'tmpl' : ctx.tmpl, 'step' : ctx.step, 'namedStep' : ctx.namedStep, 'name' : ctx.name, 'value' : typed}
-        " endif
-" 
-        " if funcparam == ""
-          " let funcparam = "tctx"
-        " else
-          " let funcparam = "tctx, ".funcparam
-        " endif
-" 
-        " let fun = "xfunc.".funcname."(".funcparam.")"
-      " else
-        " let fun = fs
-      " endif
-" 
-      " let r .= eval(fun)
-" 
-      " continue
-" 
-    " endif
-" 
-    " let r .= s:Unescape(name)
-    " break
-" 
-  " endwhile
-" 
-  " return r
-
-endfunction "}}}
 
 
 " at the input area
@@ -1374,6 +1539,7 @@ fun! s:f.GetContentBetween(p1, p2) "{{{
   endif
 
   let [p1, p2] = [a:p1, a:p2]
+  " call Log("get content:".string([p1, p2]))
 
 
   if p1[0] == p2[0]
@@ -1385,12 +1551,18 @@ fun! s:f.GetContentBetween(p1, p2) "{{{
 
 
   if p1 == [1, 1] 
-    let r = ""
+    let r = []
   else
     let r = [getline(p1[0])[p1[1] - 1:]]
   endif
+
+
   let r += getline(p1[0]+1, p2[0]-1)
-  let r += [getline(p2[0])[:p2[1] - 2]]
+  if p2[1] > 1
+    let r += [ getline(p2[0])[:p2[1] - 2] ]
+  else
+    let r += ['']
+  endif
 
   return join(r, "\n")
 
@@ -1400,7 +1572,7 @@ fun! s:f.LeftPos(p) "{{{
   let p = a:p
   if p[1] == 1
     if p[0] > 1
-      let p = [p[0]-1, col([p[0]-1, "$"])-1]
+      let p = [p[0]-1, col([p[0]-1, "$"])]
     endif
   else
     let p = [p[0], p[1]-1]
@@ -1553,6 +1725,11 @@ fun! s:BR(...) "{{{
   return [l, tp.r + len(getline(l))]
 endfunction "}}}
 
+fun! g:X() "{{{
+  return s:Data()
+endfunction "}}}
+
+
 fun! s:Ctx(...) "{{{
   let x = a:0 == 1 ? a:1 : s:Data()
   return x.curctx
@@ -1564,7 +1741,12 @@ fun! s:Data() "{{{
     let b:xptemplateData.posStack = []
     let b:xptemplateData.stack = []
     let b:xptemplateData.curctx = deepcopy(s:emptyctx)
-    let b:xptemplateData.bufsetting = {'ptn' : {'l':'`', 'r':'^'}, 'indent' : {'type' : 'auto', 'rate' : []}}
+
+    let b:xptemplateData.bufsetting = {
+          \'ptn' : {'l':'`', 'r':'^'},
+          \'indent' : {'type' : 'auto', 'rate' : []}, 
+          \'priority' : s:priorities.lang
+          \}
 
     call s:RedefinePattern()
 
@@ -1815,10 +1997,17 @@ fun! s:XPTupdate() "{{{
 
 
 
+
   if cont0 ==# ctx.lastcont
     return
   endif
 
+  " call Log("-----------------------")
+  " call Log("tmpl    =".ctx.tmpl.name)
+  " call Log("lastcont=".ctx.lastcont)
+  " call Log("cont0   =".cont0)
+  " call Log("current =".string([s:f.CTL(x), s:f.CBR(x)]))
+  " call Log("cur     =".string(ctx.pos.curpos))
 
   let p0 = s:f.CBR(x)
 
@@ -1845,7 +2034,6 @@ fun! s:XPTupdate() "{{{
   endfor "}}}
 
 
-
   call cursor(pp)
 
   let ctx.lastcont = cont0
@@ -1856,6 +2044,7 @@ fun! s:XPTupdate() "{{{
     let p0[1] =  1
   endif
   let xcp.r = p0[1] - len(getline(p0[0]))
+  " call Log("after update:xcp.r = ".xcp.r)
 
 
 
@@ -1887,6 +2076,7 @@ augroup XPT "{{{
   au CursorHoldI * call <SID>XPTupdate()
   au CursorMovedI * call <SID>XPTupdate()
   au InsertEnter * call <SID>XPTcheck()
+
 augroup END "}}}
 
 fun! s:XPTuninstall() "{{{

@@ -3,91 +3,84 @@ if exists( "b:__HASKELL_XPT_VIM__")
 endif
 let b:__HASKELL_XPT_VIM__ = 1
 
-call XPTemplate( "class", [
-    \ "class `className^ `types^ where",
-    \ "    `ar^ :: `type^ `...^",
-    \ "    `methodName^ :: `methodType^`...^",
-    \ ""])
+" containers
+let [s:f, s:v] = XPTcontainer()
 
-call XPTemplate( "classcom", [
-    \ "-- | `classDescr^",
-    \ "class `className^ `types^ where",
-    \ "    -- | `methodDescr^",
-    \ "    `ar^ :: `type^ `...^",
-    \ "    -- | `method_Descr^",
-    \ "    `methodName^ :: `methodType^`...^",
-    \ ""])
+" inclusion
+XPTinclude
+      \ _common/common
 
-call XPTemplate( "datasum", [
-    \ "data `context^^ `typename^ `typeParams^^ =",
-    \ "    `Constructor^ `ctorParams^^ `...^",
-    \ "  | `Ctor^ `params^^`...^",
-    \ "  `cursor^" ])
+" ========================= Function and Varaibles =============================
 
-call XPTemplate( "datasumcom", [
-    \ "-- | `typeDescr^^^",
-    \ "data `context^^ `typename^ `typeParams^^ =",
-    \ "    -- | `ConstructorDescr^^^",
-    \ "    `Constructor^ `ctorParams^^ `...^",
-    \ "    -- | `Ctor descr^^",
-    \ "  | `Ctor^ `params^^`...^",
-    \ "  `cursor^" ])
+" ================================= Snippets ===================================
+call XPTemplate( 'class', [
+    \ 'class `context^^ `className^ `types^ where',
+    \ '    `ar^ :: `type^ `...^',
+    \ '    `methodName^ :: `methodType^`...^',
+    \ ''])
 
-call XPTemplate( "datarecord", [
-    \ "data `context^^ `typename^ `typeParams^^ =",
-    \ "     `Constructor^ {",
-    \ "       `field^ :: `type^ `...^",
-    \ "     , `fieldn^ :: `typen^`...^",
-    \ "     }",
-    \ "     `cursor^"])
+call XPTemplate( 'classcom', [
+    \ '-- | `classDescr^',
+    \ 'class `context^^ `className^ `types^ where',
+    \ '    -- | `methodDescr^',
+    \ '    `ar^ :: `type^ `...^',
+    \ '    -- | `method_Descr^',
+    \ '    `methodName^ :: `methodType^`...^',
+    \ ''])
 
-call XPTemplate( "datarecordcom", [
-    \ "-- | `typeDescr^",
-    \ "data `context^^ `typename^ `typeParams^^ =",
-    \ "     `Constructor^ {",
-    \ "       `field^ :: `type^^^ -- ^ `fieldDescr^ `...^",
-    \ "     , `fieldn^ :: `typen^^^ -- ^ `fielddescr^`...^",
-    \ "     }",
-    \ "     `cursor^"])
+call XPTemplate( 'datasum', [
+    \ 'data `context^^ `typename^ `typeParams^^ =',
+    \ '    `Constructor^ `ctorParams^^ `...^',
+    \ '  | `Ctor^ `params^^`...^',
+    \ '  `deriving...^deriving (\`cursor\^)^^' ])
 
-call XPTemplate( "instance", [
-    \ "instance `className^ `instanceTypes^ where",
-    \ "    `methodName^ `^ = `decl^ `...^",
-    \ "    `method^ `^ = `declaration^`...^",
-    \ "" ])
+call XPTemplate( 'datasumcom', [
+    \ '-- | `typeDescr^^^',
+    \ 'data `context^^ `typename^ `typeParams^^ =',
+    \ '    -- | `ConstructorDescr^^^',
+    \ '    `Constructor^ `ctorParams^^ `...^',
+    \ '    -- | `Ctor descr^^',
+    \ '  | `Ctor^ `params^^`...^',
+    \ '  `deriving...^deriving (\`cursor\^)^^' ])
 
-call XPTemplate( "if", [
-    \ "if `expr^",
-    \ "    then `thenCode^",
-    \ "    else `elseCode^",
-    \ "" ])
+call XPTemplate( 'datarecord', [
+    \ 'data `context^^ `typename^ `typeParams^^ =',
+    \ '     `Constructor^ {',
+    \ '       `field^ :: `type^ `...^',
+    \ '     , `fieldn^ :: `typen^`...^',
+    \ '     }',
+    \ '  `deriving...^deriving (\`cursor\^)^^'])
 
-let s:f = g:XPTfuncs()
-let s:v = g:XPTvars()
+call XPTemplate( 'datarecordcom', [
+    \ '-- | `typeDescr^',
+    \ 'data `context^^ `typename^ `typeParams^^ =',
+    \ '     `Constructor^ {',
+    \ '       `field^ :: `type^^^ -- ^ `fieldDescr^ `...^',
+    \ '     , `fieldn^ :: `typen^^^ -- ^ `fielddescr^`...^',
+    \ '     }',
+    \ '  `deriving...^deriving (\`cursor\^)^^'])
 
-function! s:f.hsSaveFunName(  ... )
-    let s:v['$hsFunName'] = self._ctx.value
-    return self._ctx.value
-endfunction
+call XPTemplate( 'instance', [
+    \ 'instance `className^ `instanceTypes^ where',
+    \ '    `methodName^ `^ = `decl^ `...^',
+    \ '    `method^ `^ = `declaration^`...^',
+    \ '' ])
 
-function! s:f.hsLoadFunName( ... )
-    return s:v['$hsFunName']
-endfunction
+call XPTemplate( 'if', [
+    \ 'if `expr^',
+    \ '    then `thenCode^',
+    \ '    else `elseCode^',
+    \ '' ])
 
-" That's the best snippet ever.
-" It can avoid SO much redundant (=> error prone) typing
-" even in a terse language like haskell. It's nice :'-)
 call XPTemplate('fun', [
-            \ "`funName^hsSaveFunName('.')^^ `pattern^ = `def^`...^",
-            \ '`$hsFunName^ `pattern^ = `def^`...^',
+            \ '`funName^ `pattern^ = `def^`...^',
+            \ '`name^R("funName")^ `pattern^ = `def^`...^',
             \ '' ])
 
-" Here the same, but for a more documented version...
-" still very nice :)
 call XPTemplate('funcom', [
-            \ "-- | `function_description^",
-            \ "`funName^hsSaveFunName('.')^^ :: `type^",
-            \ "`f^hsLoadFunName('.')^ `pattern^ = `def^`...^",
-            \ '`$hsFunName^ `pattern^ = `def^`...^',
+            \ '-- | `function_description^',
+            \ '`funName^ :: `type^',
+            \ '`name^R("funName")^ `pattern^ = `def^`...^',
+            \ '`name^R("funName")^ `pattern^ = `def^`...^',
             \ '' ])
 

@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: vimtemplate
 " Version: 0.0.1
 " Author:  tyru <tyru.exe+vim@gmail.com>
-" Last Change: 2009-04-24.
+" Last Change: 2009-04-28.
 "
 " Change Log: {{{2
 "   0.0.0: Initial upload.
@@ -298,6 +298,7 @@ func! s:show_files_list()
 
     """ settings """
 
+    setlocal bufhidden=unload
     setlocal buftype=nofile
     setlocal cursorline
     setlocal nobuflisted

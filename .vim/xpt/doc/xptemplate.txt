@@ -50,6 +50,7 @@
 	On time typing update
 	Popup hint					|xpt-hint|
 	Context sensitive template generation		|xpt-context|
+	Template priority				|xpt-priority|
 	High light currently typed item
 	Embedded functions and variables		|xpt-function|
 	Repeatable template generation			|xpt-repeatable|
@@ -60,6 +61,32 @@
 	Named item or anonymous item			|xpt-item|
 	Alternative item default value			|xpt-default-value|
 	and more......
+
+								*xpt-priority*
+	Template is defined with a certain priority. One buffer might load
+	templates with same name. Only the template with smallest priority can
+	work, others are ignored. 
+	Priority can be valued from 0 to +oo. 0 is the highest priority.
+	Some predefined symbols stand for number priority values : >
+		all	: 64
+		spec	: 48
+		like	: 32
+		diff	: 16
+		lang	: 0
+<	Default priority is "lang" or 0. 
+	
+	You can set priority for each template by using |xpt-priority-format|.
+	Or set priority for all templates in current file with
+	|XPTemplatePriority()|.
+
+							 *xpt-priority-format*
+	Priority setting format : "templateName[!priority[+/-offset]]".
+	Following format are all valid : >
+	call XPTemplate('name!3', '...')		3
+	call XPTemplate('name!lang', '...')		0
+	call XPTemplate('name!like+4', '...')		36 // like=32
+	call XPTemplate('name!all-', '...')		63 // all=64
+<
 
 						      *xpt-popup*   *xpt-hint*
 	If you type nothing or incompleted template key and press <C-\>, a
@@ -135,19 +162,6 @@
 	|XPTfuncs()|		get function container
 	|XPTvars()|		get variable container
 
-							  *xpt-template-files*
-	There are several files with XPTemplate : >
-	/_comment_c_like/cmt.template.vim	comment template
-	/_common/common.template.vim		commonly used template
-	/c/c.template.vim			c template
-	/c/wrap.template.vim			c wrapping template
-	/help/help.template.vim			vim help template
-	/html/html.template.vim			html template
-	/javascript/javascript.template.vim	js template
-	/sh/sh.template.vim			shell script template
-	/vim/vim.template.vim			vim script template
-	/vimtemplate/t.template.vim		for this plugin
-<
 
 								 *xpt-include*
 	You can include another template file in any *.template.vim file : >
@@ -360,7 +374,21 @@ S({pattern},{replace},[{flag}])
 		      \ "end `cursor^",
 		      \ "" ] )
 <
-	NOTE repetition part can NOT be recursive.
+	Repetition part can NOW be recursively defined. See *.html "table2"
+	template : >
+		call XPTemplate('table2', [
+		      \ '<table>',
+		      \ '  <tr>',
+		      \ '    <td>`text^^</td>`...2^', 
+		      \ '    <td>`text^^</td>`...2^', 
+		      \ '  </tr>`...0^', 
+		      \ '  <tr>',
+		      \ '    <td>`text^^</td>`...1^', 
+		      \ '    <td>`text^^</td>`...1^', 
+		      \ '  </tr>`...0^', 
+		      \ '</table>'
+		      \])
+<
 
 						   *`wrapped^*   *xpt-wrapped*
 	Define the template : >
@@ -502,12 +530,22 @@ XPTemplate({name}, [, {context}], {template})
 							    *XPTemplateMark()*
 XPTemplateMark({leftmark}, {rightmark})
 	XPTemplateMark defines what chars are used as item quoter. It only
-	takes effect to current buffer. See |xpt-mark|
+	takes effect to current buffer. See |xpt-mark|.
+
+	NOTE this function affects only to current script and current buffer.
+
+							*XPTemplatePriority()*
+XPTemplatePriority({priority})
+	XPTemplatePriority set default priority for only current *.xpt.vim
+	script and current buffer. See |xpt-priority|
+
+	NOTE this function affects only to current script and current buffer.
 
 
 
 
-							  *XPTemplateIndent()*
+
+					   *XPTemplateIndent()*   *xpt-indent*
 							      {default:"auto"}
 XPTemplateIndent({indentOption})
 	XPTemplateIndent set indent option to current buffer. {indentOption}
@@ -516,6 +554,11 @@ XPTemplateIndent({indentOption})
 	|indent.txt|.
 	"keep" : keep indent.
 	"/n*n" : multiple indent space
+
+	Indent setting can also be applied to a certain template by using this
+	format : >
+		call XPTemplate("main=/2*16", [...
+<
 
 
 
@@ -612,6 +655,12 @@ g:XPTfuncs()   g:XPTvars()
 
 							     *xpt-changes-log*
 : > <
+Fixed:2009 Apr 29	bug of default value at line end. Thanks to C. Coutinho
+Added:2009 Apr 29	new command format to define template
+Fixed:2009 Apr 27	bug of formatting making template a mess.
+Fixed:2009 Apr 27	bug of post-filter value ends with "\n"
+Added:2009 Apr 26	nested repetition
+Fixed:2009 Apr 26	bug of double escaped '/' when applying predefined.
 Added:2009 Apr 25	|xpt-expression| as default value or post filter 
 Fixed:2009 Apr 25	statusline reload bug
 Added:2009 Apr 23	function arguments

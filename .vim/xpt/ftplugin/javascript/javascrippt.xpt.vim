@@ -1,12 +1,27 @@
-if exists("b:__JAVASCRIPPT_XPT_VIM__")
+if exists("b:__JAVASCRIPT_JAVASCRIPPT_XPT_VIM__")
   finish
 endif
-let b:__JAVASCRIPPT_XPT_VIM__ = 1
+let b:__JAVASCRIPT_JAVASCRIPPT_XPT_VIM__ = 1
 
 
-runtime ftplugin/_comment_c_like/cmt.xpt.vim
+
+" containers
+let [s:f, s:v] = XPTcontainer()
+
+" constant definition
+call extend(s:v, {'$TRUE': 'true', '$FALSE' : 'false', '$NULL' : 'null', '$UNDEFINED' : 'undefined'})
+
+" inclusion
+XPTinclude
+      \ _common/common
+      \ _condition/ecma
+      \ _comment/c.like
+      \ _condition/c.like
 
 
+" ========================= Function and Varaibles =============================
+
+" ================================= Snippets ===================================
 call XPTemplate("bench", "
       \var t0 = new Date().getTime();\n
       \for (var i= 0; i < `times^; ++i){\n
@@ -36,7 +51,7 @@ call XPTemplate("for", "
       \  `cursor^\n
       \}")
 
-call XPTemplate("fin", "
+call XPTemplate("forin", "
       \for (var `i^ in `ar^){\n
       \  var `e^ = `ar^[`i^];\n
       \  `cursor^\n
@@ -93,7 +108,6 @@ call XPTemplate("fcmt", "
   \ *--------------------------\\\\\\ `sum^ ///---------------------------*/")
 
 
-call XPTemplate("dt", "`date^")
 
 
 

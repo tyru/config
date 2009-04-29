@@ -4,8 +4,16 @@ endif
 let b:__SH_XPT_VIM__ = 1
 
 
-runtime ftplugin/_common/common.xpt.vim
+" containers
+let [s:f, s:v] = XPTcontainer()
 
+" inclusion
+XPTinclude
+      \ _common/common
+
+" ========================= Function and Varaibles =============================
+
+" ================================= Snippets ===================================
 " in shell script '`' is used very widely 
 call XPTemplateMark('~', '^')
 

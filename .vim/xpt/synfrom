@@ -1,0 +1,4 @@
+#!/bin/bash
+
+
+rsync -Rauvz --delete --exclude=.svn/  ../xptftplugins/ftplugin/./  ./ftplugin

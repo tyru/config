@@ -13,28 +13,14 @@ call XPTemplate('try_', [
             \ '{',
             \ '    `handler^',
             \ '}`...^',
-            \ 'catch (Exception e)',
+            \ '`catch...^catch (Exception e)',
             \ '{',
-            \ '    `cursor^',
-            \ '}',
-            \])
-
-call XPTemplate('tryf_', [
-            \ 'try',
+            \ '    \`\^',
+            \ '}^^',
+            \ '`finally...^finally',
             \ '{',
-            \ '    `wrapped^',
-            \ '}',
-            \ '`...^catch (`except^ e)',
-            \ '{',
-            \ '    `handler^',
-            \ '}`...^',
-            \ 'catch (Exception e)',
-            \ '{',
-            \ '    `cursor^',
-            \ '}',
-            \ 'finally',
-            \ '{',
-            \ '    `cleanup^^',
-            \ '}'
+            \ '    \`cursor\^',
+            \ '}^^',
+            \ ''
             \])
 

@@ -4,6 +4,16 @@ endif
 
 let b:__OCAML_XPT_VIM__ = 1
 
+" containers
+let [s:f, s:v] = XPTcontainer()
+
+" inclusion
+XPTinclude
+      \ _common/common
+
+" ========================= Function and Varaibles =============================
+
+" ================================= Snippets ===================================
 call XPTemplate( "letin", [
                \"let `name^ `^^ =",
                \"    `what^ `...^",
@@ -20,11 +30,11 @@ call XPTemplate( "letrecin", [
                \"in",
                \""])
 
-call XPTemplate( "if", [
-               \ "if `cond^",
-               \ "    then `thenexpr^",
-               \ "    else `elseexpr^",
-               \ ""])
+call XPTemplate( 'if', [
+               \ 'if `cond^',
+               \ '    then `thenexpr^',
+               \ '`else...^    else \`cursor\^^^',
+               \ ''])
 
 call XPTemplate( "match", [
                \"match `expr^ with",

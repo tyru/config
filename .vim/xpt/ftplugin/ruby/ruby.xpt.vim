@@ -3,8 +3,16 @@ if exists("b:__RUBY_XPT_VIM__")
 endif
 let b:__RUBY_XPT_VIM__ = 1
 
+" containers
+let [s:f, s:v] = XPTcontainer()
 
+" inclusion
+XPTinclude
+      \ _common/common
 
+" ========================= Function and Varaibles =============================
+
+" ================================= Snippets ===================================
 call XPTemplate('atr', "attr_reader :`reader name^")
 
 call XPTemplate('atw', "attr_writer :`writer name^")
@@ -21,15 +29,29 @@ call XPTemplate('blk', "
   \`block^\n
   \end")
 
-call XPTemplate('cas', "
-  \case `target^\n
-  \when `comparison^\n
-  \`^\n
-  \`...^\n
-  \when `comparison^\n
-  \`^\n
-  \`...^\n
-  \end")
+call XPTemplate('begin', [
+            \ 'begin',
+            \ '   `expr^',
+            \ '`...^rescue `error_type^',
+            \ '    `expr^`...^',
+            \ '`else...^else',
+            \ '    \`expr\^^^',
+            \ '`ensure...^ensure',
+            \ '    \`expr\^^^',
+            \ ''])
+
+call XPTemplate('case', [
+  \ 'case `target^',
+  \ 'when `comparison^',
+  \ '`^',
+  \ '`...^',
+  \ 'when `comparison^',
+  \ '`^',
+  \ '`...^',
+  \ '`else...^else',
+  \ '    \`\^^^',
+  \ 'end',
+  \ '' ])
 
 call XPTemplate('con', "concat( `other_array^ )")
 
@@ -50,10 +72,16 @@ call XPTemplate('defs', "
 
 call XPTemplate('tif', "(`boolean exp^) ? `exp if true^ : `exp if false^")
 
-call XPTemplate('if', "
-  \if `boolean exp^\n
-  \`block^\n
-  \end")
+call XPTemplate('if', [
+  \ 'if `boolean exp^',
+  \ '`block^',
+  \ '`...^',
+  \ 'eslif `bool exp^',
+  \ '   `block^`...^',
+  \ '`else...^else',
+  \ '   \`block\^^^',
+  \ 'end',
+  \ ''])
 
 call XPTemplate('eli', "
   \elsif `boolean exp^\n

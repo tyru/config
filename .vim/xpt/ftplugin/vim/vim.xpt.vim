@@ -1,12 +1,22 @@
-if exists("b:__VIM_XPT_VIM__")
+if exists("b:__VIM_VIM_XPT_VIM__")
   finish
 endif
-let b:__VIM_XPT_VIM__ = 1
+let b:__VIM_VIM_XPT_VIM__ = 1
+
+" containers
+let [s:f, s:v] = XPTcontainer()
+
+" constant definition
+call extend(s:v, {'\$TRUE': '1', '\$FALSE' : '0', '\$NULL' : 'NULL', '\$UNDEFINED' : ''})
+
+" inclusion
+XPTinclude 
+      \ _common/common
+
+" ========================= Function and Varaibles =============================
 
 
-runtime ftplugin/_common/common.xpt.vim
-
-
+" ================================= Snippets ===================================
 call XPTemplate("once", [
       \'if exists("`g^:`i^headerSymbol()^")', 
       \'  finish', 
@@ -22,10 +32,9 @@ call XPTemplate("fun", "
       \")
 
 call XPTemplate('method', [
-      \ 'fun! `Dict^.`name^(`^) dict',
+      \ 'fun! `Dict^.`name^(`_^^)',
       \ '  `cursor^', 
-      \ 'endfunction', 
-      \ ''
+      \ 'endfunction'
       \])
 
 call XPTemplate('while', [
@@ -56,17 +65,27 @@ call XPTemplate('try', [
       \ '  `^', 
       \ 'catch /`^/', 
       \ '  `^', 
-      \ 'finally', 
-      \ '  `cursor^', 
+      \ '`finally...^finally', 
+      \ '  \`cursor\^^^', 
       \ 'endtry', 
       \ ''
       \])
 
-call XPTemplate('log', [ 'call Log(`txt^)' ])
+call XPTemplate('if', [
+      \ 'if `cond^', 
+      \ '  `_^', 
+      \ '`else...^else', 
+      \ '  \`cursor\^^^', 
+      \ 'endif " `cond^'
+      \])
 
+
+call XPTemplate('log', [ 'call Log(`_^)' ])
 call XPTemplate('string', [ 'string(`_^)' ])
+call XPTemplate('vimformat', [ 'vim:tw=78:ts=8:sw=2:sts=2:et:norl:fdm=marker:fmr={{{,}}}' ])
 
 
 call XPTemplate('str_', [
       \ 'string(`wrapped^)'
       \])
+
