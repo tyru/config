@@ -21,6 +21,7 @@
 	Copy files and directories into one of your |runtimepath|s.
 
 							       *xpt-uninstall*
+	Not implemented
 	:XPTuninstall
 
 								   *xpt-usage*
@@ -655,6 +656,11 @@ g:XPTfuncs()   g:XPTvars()
 
 							     *xpt-changes-log*
 : > <
+Fixed:2009 Apr 30	bug of line removed sometimes if folding is enabled
+			Thanks to C. Coutinho
+Fixed:2009 Apr 30	bug of weird 'cpo' option causes mapping not working
+Fixed:2009 Apr 29	bug of formatting line causes line removed. Thanks to 
+			C. Coutinho
 Fixed:2009 Apr 29	bug of default value at line end. Thanks to C. Coutinho
 Added:2009 Apr 29	new command format to define template
 Fixed:2009 Apr 27	bug of formatting making template a mess.

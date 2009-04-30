@@ -25,83 +25,86 @@ endfunction
 
 
 " ================================= Snippets ===================================
-call XPTemplate( "namespace", [
-      \ "namespace `name^",
-      \ "{",
-      \ "    `cursor^",
-      \ "}",
-      \ "" ])
 
-call XPTemplate( "class", [
-      \ "class `className^",
-      \ "{",
-      \ "public:",
-      \ "    `className^( `ctorParam^ );",
-      \ "    ~`className^();",
-      \ "    `className^( const `className^ &cpy );",
-      \ "    `cursor^",
-      \ "private:",
-      \ "};",
-      \ " ",
-      \ "\/\/ Scratch implementation",
-      \ "\/\/ feel free to copy/paste or destroy",
-      \ "`className^::`className^( `ctorParam^ )",
-      \ "{",
-      \ "}",
-      \ " ",
-      \ "`className^::~`className^()",
-      \ "{",
-      \ "}",
-      \ " ",
-      \ "`className^::`className^( const `className^ &cpy )",
-      \ "{",
-      \ "}",
-      \ "" ])
+XPTemplateDef
+
+XPT namespace hint=namespace {}
+namespace `name^
+{
+    `cursor^
+}
+..XPT
+
+XPT class   hint=class+ctor
+class `className^
+{
+public:
+    `className^( `ctorParam^ );
+    ~`className^();
+    `className^( const `className^ &cpy );
+    `cursor^
+private:
+};
+ 
+// Scratch implementation
+// feel free to copy/paste or destroy
+`className^::`className^( `ctorParam^ )
+{
+}
+ 
+`className^::~`className^()
+{
+}
+ 
+`className^::`className^( const `className^ &cpy )
+{
+}
+..XPT
 
 
-call XPTemplate( "templateclass", [
-      \ "template",
-      \ "    <`templateParam^>",
-      \ "class `className^",
-      \ "{",
-      \ "public:",
-      \ "    `className^( `ctorParam^^ );",
-      \ "    ~`className^();",
-      \ "    `className^( const `className^ &cpy );",
-      \ "    `cursor^",
-      \ "private:",
-      \ "};",
-      \ " ",
-      \ "\/\/ Scratch implementation",
-      \ "\/\/ feel free to copy/paste or destroy",
-      \ "template <`templateParam^>",
-      \ "`className^<`^cleanTempl(R('templateParam'))^^>::`className^( `ctorParam^ )",
-      \ "{",
-      \ "}",
-      \ " ",
-      \ "template <`templateParam^>",
-      \ "`className^<`^cleanTempl(R('templateParam'))^^>::~`className^()",
-      \ "{",
-      \ "}",
-      \ " ",
-      \ "template <`templateParam^>",
-      \ "`className^<`^cleanTempl(R('templateParam'))^^>::`className^( const `className^ &cpy )",
-      \ "{",
-      \ "}",
-      \ "" ])
+XPT templateclass   hint=template\ <>\ class
+template
+    <`templateParam^>
+class `className^
+{
+public:
+    `className^( `ctorParam^ );
+    ~`className^();
+    `className^( const `className^ &cpy );
+    `cursor^
+private:
+};
+ 
+// Scratch implementation
+// feel free to copy/paste or destroy
+template <`templateParam^>
+`className^<`^cleanTempl(R('templateParam'))^^>::`className^( `ctorParam^ )
+{
+}
+ 
+template <`templateParam^>
+`className^<`^cleanTempl(R('templateParam'))^^>::~`className^()
+{
+}
+ 
+template <`templateParam^>
+`className^<`^cleanTempl(R('templateParam'))^^>::`className^( const `className^ &cpy )
+{
+}
+..XPT
 
-call XPTemplate('try', [
-      \ 'try',
-      \ '{',
-      \ '    `what^',
-      \ '}',
-      \ '`...^catch ( `except^ )',
-      \ '{',
-      \ '    `handler^',
-      \ '}`...^',
-      \ '`catch...^catch ( ... )',
-      \ '{',
-      \ '    \`\^',
-      \ '}^^',
-      \ ''
-      \])
+XPT try hint=try\ ...\ catch...
+try
+{
+    `what^
+}`...^
+catch ( `except^ )
+{
+    `handler^
+}`...^
+`catch...^catch ( ... )
+{
+    \`cursor\^
+}^^
+..XPT
+

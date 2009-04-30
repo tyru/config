@@ -29,7 +29,7 @@ call s:Def('g:xptemplate_show_stack', 1)
 call s:Def('g:xptemplate_highlight', 1)
 " call s:Def('g:xptemplate_indent', 1)
 
-call s:Def('g:xptemplate_key', "<C-\\\\>")
+call s:Def('g:xptemplate_key', '<C-\\>')
 call s:Def('g:xptemplate_to_right', "<C-l>")
 
 call s:Def('g:xptemplate_fix', 1)
@@ -40,8 +40,14 @@ call s:Def('g:xptemplate_fix', 1)
 hi CurrentItem ctermbg=green gui=none guifg=#d59619 guibg=#efdfc1
 hi IgnoredMark cterm=none term=none ctermbg=black ctermfg=darkgrey gui=none guifg=#dddddd guibg=white
 
+
+" TODO Be very careful with 'cpo' option!
+"
+let oldcpo = &cpo
+set cpo-=<
 exe "inoremap ".g:xptemplate_key." <C-r>=XPTemplateStart(0)<cr>"
 exe "xnoremap ".g:xptemplate_key." \"0di<C-r>=XPTemplatePreWrap(@0)<cr>"
+let &cpo = oldcpo
 
 
 " checks critical setting:

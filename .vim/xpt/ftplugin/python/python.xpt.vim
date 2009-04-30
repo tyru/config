@@ -14,48 +14,51 @@ XPTinclude
 " ========================= Function and Varaibles =============================
 
 " ================================= Snippets ===================================
-call XPTemplate('if', [
-            \ 'if `cond^:',
-            \ '    `then^`...^',
-            \ 'elif `cond2^:',
-            \ '    `todo^`...^',
-            \ '`else...^else:',
-            \ '    \`cursor\^^^'
-            \])
+XPTemplateDef
+XPT if hint=if\ ..:\ ..\ else...
+if `cond^:
+    `then^`...^
+elif `cond2^:
+    `todo^`...^
+`else...^else:
+    \`cursor\^^^
+..XPT
 
-call XPTemplate('for', [
-            \ 'for `vars^ in `range^0)^:',
-            \ '    `cursor^'
-            \])
+XPT for hint=for\ ..\ in\ ..:\ ...
+for `vars^ in `range^0)^:
+    `cursor^
+..XPT
 
-call XPTemplate( 'def', [
-            \ 'def `fun_name^( `params^^ ):',
-            \ '    `cursor^'
-            \ ])
+XPT def hint=def\ ..(\ ..\ ):\ ...
+def `fun_name^( `params^^ ):
+    `cursor^
+..XPT
 
-call XPTemplate( 'lambda', ['(lambda `args^ : `expr^)'] )
+XPT lambda hint=(labmda\ ..\ :\ ..)
+(lambda `args^ : `expr^)
+..XPT
 
-call XPTemplate('try', [
-            \ 'try:',
-            \ '    `what^',
-            \ 'except `except^:',
-            \ '    `handler^`...^',
-            \ 'except `exc^:',
-            \ '    `handle^`...^',
-            \ '`else...^else:',
-            \ '    \`\^^^',
-            \ '`finally...^finally:',
-            \ '   \`\^^^'
-            \])
+XPT try hint=try:\ ..\ except:\ ...
+try:
+    `what^
+except `except^:
+    `handler^`...^
+except `exc^:
+    `handle^`...^
+`else...^else:
+    \`\^^^
+`finally...^finally:
+   \`\^^^
+..XPT
 
-call XPTemplate('class', [
-            \ 'class `className^ `inherit^^:',
-            \ '    def __init__( self `args^^):',
-            \ '        `cursor^'
-            \])
+XPT class hint=class\ ..\ :\ def\ __init__\ ...
+class `className^ `inherit^^:
+    def __init__( self `args^^):
+        `cursor^
+..XPT
 
-call XPTemplate('ifmain', [
-      \ 'if __name__ == "__main__" :',
-      \ '  `cursor^'
-      \])
+XPT ifmain hint=if\ __name__\ ==\ __main__
+if __name__ == "__main__" :
+  `cursor^
+..XPT
 

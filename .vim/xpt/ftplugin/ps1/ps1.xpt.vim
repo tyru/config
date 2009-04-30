@@ -10,81 +10,88 @@ let [s:f, s:v] = XPTcontainer()
 " inclusion
 XPTinclude
       \ _common/common
-      \ _conditon/perl.like
+      \ _condition/perl.like
 
 " ========================= Function and Varaibles =============================
 
 " ================================= Snippets ===================================
-call XPTemplate('cmdlet', [
-            \ 'Cmdlet `verb^-`noun^',
-            \ '{',
-            \ '    `Param...^Param\(',
-            \ '       \`\^',
-            \ '    \)^^',
-            \ '    `Begin...^Begin',
-            \ '    {',
-            \ '    }^^',
-            \ '    Process',
-            \ '    {',
-            \ '    }',
-            \ '    `End...^End',
-            \ '    {',
-            \ '    }^^',
-            \ '}',
-            \ ''
-            \])
+XPTemplateDef
+XPT cmdlet hint=cmdlet\ ..-..\ {}
+Cmdlet `verb^-`noun^
+{
+    `Param...^Param\(
+       \`\^
+    \)^^
+    `Begin...^Begin
+    {
+    }^^
+    Process
+    {
+    }
+    `End...^End
+    {
+    }^^
+}
 
-call XPTemplate( 'fun', [
-        \ 'function `funName^( `params^ )',
-        \ '{',
-        \ '   `cursor^',
-        \ '}',
-        \ '' ])
+..XPT
 
-call XPTemplate( 'function', [
-        \ 'function `funName^( `params^ )',
-        \ '{',
-        \ '    `Begin...^Begin',
-        \ '    {',
-        \ '        \`\^',
-        \ '    }^^',
-        \ '    `Process...^Process',
-        \ '    {',
-        \ '        \`\^',
-        \ '    }^^',
-        \ '    `End...^End',
-        \ '    {',
-        \ '        \`\^',
-        \ '    }^^',
-        \ '}',
-        \ '' ])
+XPT fun hint=function\ ..(..)\ {\ ..\ }
+function `funName^( `params^ )
+{
+   `cursor^
+}
+..XPT
 
-call XPTemplate('foreach', [
-            \ 'foreach ($`var^ in `other^)',
-            \ '{ `cursor^ }',
-            \ ''
-            \])
+XPT function hint=function\ {\ BEGIN\ PROCESS\ END\ }
+function `funName^( `params^ )
+{
+    `Begin...^Begin
+    {
+        \`\^
+    }^^
+    `Process...^Process
+    {
+        \`\^
+    }^^
+    `End...^End
+    {
+        \`\^
+    }^^
+}
+..XPT
 
-call XPTemplate('switch', [
-            \ 'switch `option^^ (`what^)',
-            \ '{',
-            \ ' `pattern^ { `action^ }`...^',
-            \ ' `pattern^ { `action^ }`...^',
-            \ ' `Default...^Default { \`action\^ }^^',
-            \ '}',
-            \ ''])
+XPT foreach hint=foreach\ (..\ in\ ..)
+foreach ($`var^ in `other^)
+    { `cursor^ }
+..XPT
 
-call XPTemplate('trap', [
-            \ 'trap [`exception^Exception^]',
-            \ '{',
-            \ '    `body^',
-            \ '}'
-            \])
+XPT switch hint=switch\ (){\ ..\ {..}\ }
+switch `option^^ (`what^)
+{
+ `pattern^ { `action^ }`...^
+ `pattern^ { `action^ }`...^
+ `Default...^Default { \`action\^ }^^
+}
+..XPT
 
-call XPTemplate( 'forr', [
-            \ 'for ($`var^i^ = `init^; $`var^ -ge `val^; $`var^--)',
-            \ '{',
-            \ '    `cursor^',
-            \ '}',
-            \ ''])
+XPT trap hint=trap\ [..]\ {\ ..\ }
+trap [`exception^Exception^]
+{
+    `body^
+}
+..XPT
+
+XPT for hint=for\ (..;..;++)
+for ($`var^i^ = `init^; $`var^ -ge `val^; $`var^--)
+{
+    `cursor^
+}
+..XPT
+
+XPT forr hint=for\ (..;..;--)
+for ($`var^i^ = `init^; $`var^ -ge `val^; $`var^--)
+{
+    `cursor^
+}
+..XPT
 

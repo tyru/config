@@ -29,24 +29,16 @@ if [ -d "${HOME}/bin" ] ; then
   PATH=${HOME}/bin:${PATH}
 fi
 
-# Set MANPATH so it includes users' private man if it exists
-# if [ -d "${HOME}/man" ]; then
-#   MANPATH=${HOME}/man:${MANPATH}
-# fi
-
-# Set INFOPATH so it includes users' private info if it exists
-# if [ -d "${HOME}/info" ]; then
-#   INFOPATH=${HOME}/info:${INFOPATH}
-# fi
-
 # cygwin, msys等に特有の設定
-export LESS=MrXEd
-export TERM=cygwin
-export CFLAGS="-I/usr/local/include -I/usr/include"
+OS=$(uname -o)
+if [ "$OS" = "Cygwin" ]; then
+    export LESS=MrXEd
+    export TERM=cygwin
+    export CFLAGS="-I/usr/local/include -I/usr/include"
 
-export LANG=ja_JP.SJIS
-export PSPDEV=/usr/local/pspdev
-export PATH=${PATH}:HOME/bin:$PSPDEV/bin
+    export LANG=ja_JP.SJIS
+fi
+
 export PS1="{\@} \u@\H being in [\W]\n \\$ "
 
 

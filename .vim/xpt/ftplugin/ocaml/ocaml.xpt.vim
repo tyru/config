@@ -14,104 +14,106 @@ XPTinclude
 " ========================= Function and Varaibles =============================
 
 " ================================= Snippets ===================================
-call XPTemplate( "letin", [
-               \"let `name^ `^^ =",
-               \"    `what^ `...^",
-               \"and `subname^ `^^ =",
-               \"    `subwhat^`...^",
-               \"in",
-               \""])
+XPTemplateDef
 
-call XPTemplate( "letrecin", [
-               \"let rec `name^ `^^ =",
-               \"    `what^ `...^",
-               \"and `subname^ `^^ =",
-               \"    `subwhat^`...^",
-               \"in",
-               \""])
+XPT letin hint=let\ ..\ =\ ..\ in
+let `name^ `^^ =
+    `what^ `...^
+and `subname^ `^^ =
+    `subwhat^`...^
+in
+..XPT
 
-call XPTemplate( 'if', [
-               \ 'if `cond^',
-               \ '    then `thenexpr^',
-               \ '`else...^    else \`cursor\^^^',
-               \ ''])
+XPT letrecin hint=let\ rec\ ..\ =\ ..\ in
+let rec `name^ `^^ =
+    `what^ `...^
+and `subname^ `^^ =
+    `subwhat^`...^
+in
+..XPT
 
-call XPTemplate( "match", [
-               \"match `expr^ with",
-               \"  | `what0^ -> `with0^ `...^",
-               \"  | `what^ -> `with^`...^",
-               \""])
+XPT if hint=if\ ..\ then\ ..\ else\ ..
+if `cond^
+    then `thenexpr^`else...^
+    else \`cursor\^^^
+..XPT
 
-call XPTemplate( "moduletype", [
-               \ "module type `name^ `^^ = sig",
-               \ "    `cursor^",
-               \ "end",
-               \ ""] )
+XPT match hint=match\ ..\ with\ ..\ ->\ ..\ |
+match `expr^ with
+  | `what0^ -> `with0^ `...^
+  | `what^ -> `with^`...^
+..XPT
 
-call XPTemplate( "module", [
-               \ "module `name^ `^^ = struct",
-               \ "    `cursor^",
-               \ "end",
-               \ ""] )
+XPT moduletype hint=module\ type\ ..\ =\ sig\ ..\ end
+module type `name^ `^^ = sig
+    `cursor^
+end
+..XPT
 
-call XPTemplate( "class", [
-               \ "class `^^ `name^ =",
-               \ "object (self)",
-               \ "    `cursor^",
-               \ "end",
-               \ ""] )
+XPT module hint=module\ ..\ =\ struct\ ..\ end
+module `name^ `^^ = struct
+    `cursor^
+end
+..XPT
 
-call XPTemplate( "classtype", [
-               \ "class type `name^ =",
-               \ "object",
-               \ "   method `field0^ : `type0^ `...^",
-               \ "   method `field^ : `type^`...^",
-               \ "end",
-               \ ""] )
+XPT class hint=class\ ..\ =\ object\ ..\ end
+class `^^ `name^ =
+object (self)
+    `cursor^
+end
+..XPT
+
+XPT classtype hint=class\ type\ ..\ =\ object\ ..\ end
+class type `name^ =
+object
+   method `field0^ : `type0^ `...^
+   method `field^ : `type^`...^
+end
+..XPT
             
 
-call XPTemplate( "classtypecom", [
-               \ "(** `class_descr^^ *)",
-               \ "class type `name^ =",
-               \ "object",
-               \ "   (** `method_descr^^ *)",
-               \ "   method `field0^ : `type0^ `...^",
-               \ "   (** `method_descr2^^ *)",
-               \ "   method `field^ : `type^`...^",
-               \ "end",
-               \ ""] )
+XPT classtypecom hint=(**\ ..\ *)\ class\ type\ ..\ =\ object\ ..\ end
+(** `class_descr^^ *)
+class type `name^ =(**\ ..\ *)\ class\ type\ ..\ =\ object\ ..\ end
+object
+   (** `method_descr^^ *)
+   method `field0^ : `type0^ `...^
+   (** `method_descr2^^ *)
+   method `field^ : `type^`...^
+end
+..XPT
 
-call XPTemplate( "typesum", [
-               \ "type `^ `typename^ =",
-               \ "  | `constructor^ `...^",
-               \ "  | `constructor2^`...^",
-               \ "" ])
+XPT typesum hint=type\ ..\ =\ ..\ |\ ..
+type `^ `typename^ =
+  | `constructor^ `...^
+  | `constructor2^`...^
+..XPT
             
-call XPTemplate( "typesumcom", [
-               \ "(** `typeDescr^ *)",
-               \ "type `^ `typename^ =",
-               \ "  | `constructor^ (** `ctordescr^ *) `...^",
-               \ "  | `constructor2^ (** `ctordescr^ *)`...^",
-               \ "" ])
+XPT typesumcom hint=(**\ ..\ *)\ type\ ..\ =\ ..\ |\ ..
+(** `typeDescr^ *)
+type `^ `typename^ =
+  | `constructor^ (** `ctordescr^ *) `...^
+  | `constructor2^ (** `ctordescr^ *)`...^
+..XPT
 
-call XPTemplate( "typerecord", [
-               \ "type `^ `typename^ =",
-               \ "    { `recordField^ : `fType^ `...^",
-               \ "    ; `otherfield^ : `othertype^`...^",
-               \ "    }",
-               \ "" ])
+XPT typerecord hint=type\ ..\ =\ {\ ..\ }
+type `^ `typename^ =
+    { `recordField^ : `fType^ `...^
+    ; `otherfield^ : `othertype^`...^
+    }
+..XPT
 
-call XPTemplate( "typerecordcom", [
-               \ "(** `type_descr^ *)",
-               \ "type `^ `typename^ =",
-               \ "    { `recordField^ : `fType^ (** `desc^ *) `...^",
-               \ "    ; `otherfield^ : `othertype^ (** `desc^ *)`...^",
-               \ "    }",
-               \ "" ])
+XPT typerecordcom hint=(**\ ..\ *)type\ ..\ =\ {\ ..\ }
+(** `type_descr^ *)
+type `^ `typename^ =
+    { `recordField^ : `fType^ (** `desc^ *) `...^
+    ; `otherfield^ : `othertype^ (** `desc^ *)`...^
+    }
+..XPT
             
-call XPTemplate('try', [
-            \ 'try `expr^',
-            \ 'with `exc^ -> `rez^`...^',
-            \ '   | `exc2^ -> `rez2^`...^'
-            \])
+XPT try hint=try\ ..\ with\ ..\ ->\ ..
+try `expr^
+with `exc^ -> `rez^`...^
+   | `exc2^ -> `rez2^`...^
+..XPT
 

@@ -1,6 +1,6 @@
 " XPTEMPLATE ENGIE:
 "   code template engine
-" VERSION: 0.3.5.2
+" VERSION: 0.3.5.5
 " BY: drdr.xp | drdr.xp@gmail.com
 "
 " MARK USED:
@@ -17,6 +17,7 @@
 " "}}}
 "
 " TODOLIST: "{{{
+" TODO do not show popup if only one entry matches.
 " TODO ordered item
 " TODO ontime filter
 " TODO lock key variables
@@ -478,7 +479,6 @@ fun! s:XPTemplateFinish(...) "{{{
   let ctx = s:Ctx()
   let xp = s:Ctx().tmpl.ptn
 
-  " call Log("XPTemplateFinish...........")
 
   match none
 
@@ -496,11 +496,9 @@ fun! s:XPTemplateFinish(...) "{{{
 
 
   if empty(x.stack)
-    " call Log("empty, finish all")
     let ctx.processing = 0
     call s:ClearMap()
   else
-    " call Log("pop up")
     call s:PopCtx()
   endif
 
@@ -558,10 +556,8 @@ fun! s:RenderTemplate(l, c, tmpl) " {{{
   else
     let tmpl = a:tmpl
   endif
-  " call Log("1:::".tmpl)
 
   " process indent
-  " call Log(col("."))
   let preindent = repeat(" ", virtcol(".") - 1)
   if ctx.tmpl.indent.type =~# 'keep\|rate'
     if ctx.tmpl.indent.type ==# "rate"
@@ -572,7 +568,6 @@ fun! s:RenderTemplate(l, c, tmpl) " {{{
     let tmpl = substitute(tmpl, '\n', '&'.preindent, 'g')
   endif
 
-  " call Log("2:::".tmpl)
 
   " process repetition
   "
@@ -620,12 +615,10 @@ fun! s:RenderTemplate(l, c, tmpl) " {{{
     
   endwhile
 
-  " call Log("2:::".tmpl)
 
   let tmpl = substitute(tmpl, '\V' . xp.lft . s:wrappedName . xp.rt, x.wrap, 'g')
 
 
-  " call Log("3:::".tmpl)
   let tmpl = tmpl.";"
   " remember the original position
   let p = [line("."), col(".")]
@@ -670,6 +663,7 @@ fun! s:RenderTemplate(l, c, tmpl) " {{{
   call s:ApplyPredefined()
 
 
+
   " open all folds
   call s:TopTmplRange()
   silent! normal! gvzO
@@ -678,6 +672,8 @@ fun! s:RenderTemplate(l, c, tmpl) " {{{
 
   call s:TopTmplRange()
   silent! normal! gvzO
+
+
 
 endfunction " }}}
 
@@ -904,8 +900,6 @@ fun! s:f.TmplRange() "{{{
   let p = [line("."), col(".")]
 
   call s:f.GetRangeBetween(s:TL(x), s:BR(x))
-  " call Log("template range:".string([getpos("'<"), getpos("'>")]))
-  " call Log("template range:".string([s:TL(x), s:BR(x)]))
 
   call cursor(p)
   return s:vrange
@@ -1056,7 +1050,6 @@ fun! s:SelectNextItem(fromln, fromcol) "{{{
   call cursor(ln, cur)
 
   let p = s:FindNextItem('c')
-  " call Log("found next:".string(p))
   if p[0:1] == [0, 0]
     call cursor(s:BR(x))
 
@@ -1100,8 +1093,6 @@ fun! s:Format(range) "{{{
 
 
 
-  " call Log("processing=".ctx.processing)
-  " call Log(string(ctx.pos.curpos))
 
   if ctx.processing && ctx.pos.curpos != {}
     let pc = s:f.CTL()
@@ -1122,7 +1113,7 @@ fun! s:Format(range) "{{{
   let x.curctx.pos.tmplpos.l = max([pt[1] + len(getline(pt[0])), 1])
   if ctx.processing && ctx.pos.curpos != {}
     let x.curctx.pos.curpos.l = max([pc[1] + len(getline(pc[0])), 1])
-    let x.curctx.lastBefore = matchstr(getline(p[0]), '\V\^\s\*'.escape(bf, '\'))
+    let x.curctx.lastBefore = matchstr(getline(pc[0]), '\V\^\s\*'.escape(bf, '\'))
   endif
 
 
@@ -1202,7 +1193,6 @@ fun! s:BuildItemPosList(val) "{{{
 
   let xcp.b = p0[0] - line("$")
   let xcp.r = p0[1] - len(getline(p0[0]))
-  " call Log("after build pos:xcp.r = ".xcp.r)
 
   let ctx.lastAfter = getline(s:CB(x))[s:CR(x)-1:]
 
@@ -1218,12 +1208,10 @@ fun! s:FindNextItem(flag) "{{{
 
 
   let ptn = s:Rng_to_TmplEnd() . xp.item
-  " call Log("range to end:".string([getpos("'<"), getpos("'>")]))
 
   let p = searchpos(ptn, "nw" . flag)
 
   if p == [0, 0]
-    " call Log("found nothing")
     let p = searchpos(s:f.TmplRange().xp.cursorPattern, 'n')
     let p += [s:GetName(p[0:1])]
     return p
@@ -1231,11 +1219,9 @@ fun! s:FindNextItem(flag) "{{{
 
 
   if s:GetName(p[0:1]) ==# s:cursorName
-    " call Log("found curosr")
 
     call cursor(p)
     let ptn = s:Rng_to_TmplEnd() . xp.item
-    " call Log("range to end2:".string([getpos("'<"), getpos("'>")]))
 
     let p = searchpos(ptn, "n")
 
@@ -1262,12 +1248,13 @@ fun! s:InitItem() " {{{
   let [xcp.t, xcp.l] = [line("."),  col(".")]
 
   exe "normal! ".len(xp.l)."x"
+  silent! normal! zO
 
   call search(xp.rt, "cW")
   let [xcp.b, xcp.r] = [line(".") - line("$"), col(".") + len(xp.r) - len(getline("."))]
-  " call Log("after init item:xcp.r = ".xcp.r)
 
   exe "normal! ".len(xp.r)."x"
+  silent! normal! zO
 
 
 
@@ -1280,14 +1267,11 @@ fun! s:InitItem() " {{{
 
     call cursor(s:f.CTL(x))
     call s:Replace(s:f.CTL(x), ctx.name, str)
-    " exe 'normal! '.len(ctx.name).'x'
-
-
-    " let @0 = str
-    " normal! "0P
 
     call cursor(s:f.CTL(x))
     call s:BuildValues(1)
+
+
     let str = s:f.GetContentBetween(s:f.CTL(x), s:f.CBR(x))
   else
     let str = ctx.name
@@ -1307,6 +1291,7 @@ fun! s:InitItem() " {{{
 
   call s:f.TmplRange()
   silent! normal! gvzO
+
 
 
   call s:f.GetRangeBetween(s:f.CTL(x), s:f.CBR(x))
@@ -1539,7 +1524,6 @@ fun! s:f.GetContentBetween(p1, p2) "{{{
   endif
 
   let [p1, p2] = [a:p1, a:p2]
-  " call Log("get content:".string([p1, p2]))
 
 
   if p1[0] == p2[0]
@@ -1550,11 +1534,11 @@ fun! s:f.GetContentBetween(p1, p2) "{{{
   endif
 
 
-  if p1 == [1, 1] 
-    let r = []
-  else
+  " if p1 == [1, 1] 
+    " let r = ['']
+  " else
     let r = [getline(p1[0])[p1[1] - 1:]]
-  endif
+  " endif
 
 
   let r += getline(p1[0]+1, p2[0]-1)
@@ -2002,12 +1986,6 @@ fun! s:XPTupdate() "{{{
     return
   endif
 
-  " call Log("-----------------------")
-  " call Log("tmpl    =".ctx.tmpl.name)
-  " call Log("lastcont=".ctx.lastcont)
-  " call Log("cont0   =".cont0)
-  " call Log("current =".string([s:f.CTL(x), s:f.CBR(x)]))
-  " call Log("cur     =".string(ctx.pos.curpos))
 
   let p0 = s:f.CBR(x)
 
@@ -2044,7 +2022,6 @@ fun! s:XPTupdate() "{{{
     let p0[1] =  1
   endif
   let xcp.r = p0[1] - len(getline(p0[0]))
-  " call Log("after update:xcp.r = ".xcp.r)
 
 
 
@@ -2079,21 +2056,21 @@ augroup XPT "{{{
 
 augroup END "}}}
 
-fun! s:XPTuninstall() "{{{
-  let path = expand("%:p:h:h")."/xpt.files.txt"
-
-  let fs = readfile(path)
-  let ok = confirm("uninstall xptemplate?", "&yes\n&no") == 1
-  if !ok 
-    return
-  endif
-
-  for f in fs
-    call delete(f)
-  endfor
-
-endfunction "}}}
-com! XPTuninstall call <SID>XPTuninstall()
+" fun! s:XPTuninstall() "{{{
+  " let path = expand("%:p:h:h")."/xpt.files.txt"
+" 
+  " let fs = readfile(path)
+  " let ok = confirm("uninstall xptemplate?", "&yes\n&no") == 1
+  " if !ok 
+    " return
+  " endif
+" 
+  " for f in fs
+    " call delete(f)
+  " endfor
+" 
+" endfunction "}}}
+" com! XPTuninstall call <SID>XPTuninstall()
 
 
 fun! g:XPTaddPlugin(event, func) "{{{

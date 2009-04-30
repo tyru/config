@@ -7,8 +7,8 @@
 # setup from updating it.
 
 
-set editing-mode vi
-# set editing-mode emacs
+# set editing-mode vi
+set editing-mode emacs
 
 
 # the following line is actually

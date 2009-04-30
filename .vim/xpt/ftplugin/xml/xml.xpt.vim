@@ -13,18 +13,24 @@ XPTinclude
 " ========================= Function and Varaibles =============================
 
 " ================================= Snippets ===================================
-call XPTemplate( 't', [
-            \ '<`tag^`...^ `name^="`val^"`...^>',
-            \ '    `cursor^',
-            \ '</`tag^>',
-            \ ])
+XPTemplateDef
+XPT t hint=<Tag>..</Tag>
+<`tag^`...^ `name^="`val^"`...^>
+    `cursor^
+</`tag^>
+..XPT
 
-call XPTemplate( 'ver', '<?xml version="`ver^1.0^" encoding="`enc^utf-8^" ?>' )
-call XPTemplate( 'style', '<?xml-stylesheet type="`style^text/css^" href="`from^">' )
+XPT ver hint=<?xml\ version=...
+<?xml version="`ver^1.0^" encoding="`enc^utf-8^" ?>
+..XPT
 
-call XPTemplate('CDATA_', [
-            \ '<![CDATA[',
-            \ '`cursor^',
-            \ ']]>'
-            \])
+XPT style hint=<?xml-stylesheet...
+<?xml-stylesheet type="`style^text/css^" href="`from^">
+..XPT
+
+XPT CDATA_ hint=<![CDATA[...
+<![CDATA[
+`cursor^
+]]>
+..XPT
 

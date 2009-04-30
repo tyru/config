@@ -34,6 +34,7 @@ fun! g:XPT.XPTprotect(x)
 
 
   if curpos[0] == ctl[0] && curpos[0] == cbr[0] && len(lt) < len(lastLine) 
+      " call Log("less than original line!!!!!!!!!!!!!!!!!!!!!")
 
       normal! 0d$
       let @0 = lastLine
@@ -46,6 +47,8 @@ fun! g:XPT.XPTprotect(x)
 
     if lastBefore0 != ctx.lastBefore && curpos[1] < ctl[1] && curpos[0] == ctl[0]
       " call Log("left changed!!!!!!!!!!!!!!!!!!!!!")
+      " call Log("last left:".ctx.lastBefore)
+      " call Log("curr left:".lastBefore0)
       normal! d0
       let @0 = ctx.lastBefore
       normal! "0P

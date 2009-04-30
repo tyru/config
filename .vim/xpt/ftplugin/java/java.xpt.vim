@@ -17,54 +17,56 @@ XPTinclude
 " ========================= Function and Varaibles =============================
 
 " ================================= Snippets ===================================
-call XPTemplate( "foreach", [
-      \ "for ( `type^ `var^ : `inWhat^ ) {",
-      \ "    `cursor^",
-      \ "}"
-      \ ])
+XPTemplateDef
 
-call XPTemplate( "class", [
-      \ "public class `className^ {",
-      \ "    public `className^( `ctorParam^^ ) {",
-      \ "        `cursor^",
-      \ "    }",
-      \ "}"
-      \ ])
+XPT foreach hint=for\ \(\ ..\ :\ ..\ \)
+for ( `type^ `var^ : `inWhat^ ) {
+    `cursor^
+}
+..XPT
 
-call XPTemplate( "main", [
-      \ "public static void main( String[] args )",
-      \ "{",
-      \ "    `cursor^",
-      \ "}"
-      \ ])
+XPT class hint=class\ ..\ ctor
+public class `className^ {
+    public `className^( `ctorParam^^ ) {
+        `cursor^
+    }
+}
+..XPT
 
-call XPTemplate('prop', [
-      \ '`type^ `varName^;',
-      \ '',
-      \ '`get...^public \`\^R("type")\^ get\`\^S(R("varName"),".","\\u&","")\^()',
-      \ '    { return \`\^R("varName")\^; }^^',
-      \ '',
-      \ '`set...^public void set\`\^S(R("varName"),".","\\u&","")\^( \`\^R("type")\^ val )',
-      \ '    { \`\^R("varName")\^ = val; }^^',
-      \ ''])
+XPT main hint=main\ (\ String\ )
+public static void main( String[] args )
+{
+    `cursor^
+}
+..XPT
 
-call XPTemplate('try', [
-      \ 'try',
-      \ '{',
-      \ '    `what^',
-      \ '}`...^',
-      \ 'catch (`except^ e)',
-      \ '{',
-      \ '    `handler^',
-      \ '}`...^',
-      \ '`catch...^catch (Exception e)',
-      \ '{',
-      \ '    \`\^',
-      \ '}^^',
-      \ '`finally...^finally',
-      \ '{',
-      \ '    \`cursor\^',
-      \ '}^^',
-      \ ''
-      \])
+XPT prop hint=var\ getVar\ ()\ setVar\ ()
+`type^ `varName^;
+
+`get...^public \`\^R("type")\^ get\`\^S(R("varName"),".","\\u&","")\^()
+    { return \`\^R("varName")\^; }^^
+
+`set...^public void set\`\^S(R("varName"),".","\\u&","")\^( \`\^R("type")\^ val )
+    { \`\^R("varName")\^ = val; }^^
+..XPT
+
+XPT try hint=try\ ..\ catch\ (..)\ ..\ finally
+try
+{
+    `what^
+}`...^
+catch (`except^ e)
+{
+    `handler^
+}`...^
+`catch...^catch (Exception e)
+{
+    \`\^
+}^^
+`finally...^finally
+{
+    \`cursor\^
+}^^
+
+..XPT
 

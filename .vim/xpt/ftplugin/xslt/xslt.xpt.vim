@@ -17,53 +17,78 @@ XPTinclude
 " ========================= Function and Varaibles =============================
 
 " ================================= Snippets ===================================
-call XPTemplate('sort','<xsl:sort select="`what^" />')
-call XPTemplate('valueof', '<xsl:value-of select="`what^" />' )
-call XPTemplate('apply', '<xsl:apply-templates select="`what^" />' )
-call XPTemplate('param', '<xsl:param name="`name^" `select...^select="\`expr\^"^^ />')
-call XPTemplate('import', '<xsl:import href="`URI^" />')
-call XPTemplate('include', '<xsl:include href="`URI^" />')
+XPTemplateDef
 
-call XPTemplate( "stylesheet", [
-		\ '<xsl:stylesheet version="1.0"',
-		\ '                xmlns:xsl="http://www.w3.org/1999/XSL/Transform" >',
-		\ '',
-		\ '    <xsl:output method="xml" indent="yes"/>',
-		\ '',
-		\ '    <xsl:template match="`cursor^/^">',
-		\ '    </xsl:template>',
-		\ '</xsl:stylesheet>'
-        \ ])
+XPT sort hint=<xsl:sort\ ...
+<xsl:sort select="`what^" />
+..XPT
 
-call XPTemplate('template', [
-            \ '<xsl:template match="`match^">',
-            \ '    `cursor^',
-            \ '</xsl:template>'
-            \])
+XPT valueof hint=<xsl:value-of\ ...
+<xsl:value-of select="`what^" />
+..XPT
 
-call XPTemplate('foreach', [
-            \ '<xsl:for-each select="`match^">',
-            \ '    `cursor^',
-            \ '</xsl:for-each>'
-            \])
+XPT apply hint=<xsl:apply-templates\ ...
+<xsl:apply-templates select="`what^" />
+..XPT
 
-call XPTemplate('if', [
-            \ '<xsl:if test="`test^">',
-            \ '    `cursor^',
-            \ '</xsl:if>'
-            \])
+XPT param hint=<xsl:param\ ...
+<xsl:param name="`name^" `select...^select="\`expr\^"^^ />
+..XPT
 
-call XPTemplate('choose', [
-            \ '<xsl:choose>',
-            \ '  <xsl:when test="`expr^">',
-            \ '    `^',
-            \ '  </xsl:when>`...^',
-            \ '  <xsl:when test="`ex^">',
-            \ '    `what^',
-            \ '  </xsl:when>`...^',
-            \ '  `otherwise...^<xsl:otherwise>',
-            \ '    \`cursor\^',
-            \ '  </xsl:otherwise>^^',
-            \ '</xsl:choose>'
-            \])
+XPT import hint=<xsl:import\ ...
+<xsl:import href="`URI^" />
+..XPT
+
+XPT include hint=<xsl:include\ ...
+<xsl:include href="`URI^" />
+..XPT
+
+XPT stylesheet hint=<xsl:stylesheet\ ...
+<xsl:stylesheet version="1.0"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform" >
+
+    <xsl:output method="xml" indent="yes"/>
+
+    <xsl:template match="`cursor^/^">
+    </xsl:template>
+</xsl:stylesheet>
+..XPT
+
+XPT template hint=<xsl:template\ match=\ ...
+<xsl:template match="`match^">
+    `cursor^
+</xsl:template>
+..XPT
+
+XPT foreach hint=<xsl:for-each\ select=\ ...
+<xsl:for-each select="`match^">
+    `cursor^
+</xsl:for-each>
+..XPT
+
+XPT if hint=<xsl:if\ test=\ ...
+<xsl:if test="`test^">
+    `cursor^
+</xsl:if>
+..XPT
+
+XPT choose hint=<xsl:choose\ ...
+<xsl:choose>
+  <xsl:when test="`expr^">
+    `^
+  </xsl:when>`...^
+  <xsl:when test="`ex^">
+    `what^
+  </xsl:when>`...^
+  `otherwise...^<xsl:otherwise>
+    \`cursor\^
+  </xsl:otherwise>^^
+</xsl:choose>
+..XPT
+
+XPT when hint=<xsl:when\ test=\ ...
+<xsl:when test="`ex^">
+  `what^
+</xsl:when>
+..XPT
 

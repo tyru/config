@@ -8,22 +8,24 @@ call XPTemplatePriority('like')
 " ========================= Function and Varaibles =============================
 
 " ================================= Snippets ===================================
-call XPTemplate( "if", [
-    \ '(if [`condition^]',
-    \ '    (`then^)',
-    \ '    `else...^\(\`cursor\^\)^^)',   
-    \ '' ])
+XPTemplateDef
 
-call XPTemplate( 'when', [
-    \ '(when (`cond^)',
-    \ '   (`todo0^) `...^',
-    \ '   (`todon^)`...^)',
-    \ '' ])
+XPT if hint=(if\ (then)\ (else))
+(if [`condition^]
+    (`then^)
+    `else...^\(\`cursor\^\)^^)
+..XPT
+
+XPT when hint=(when\ cond\ ..)
+(when (`cond^)
+   (`todo0^) `...^
+   (`todon^)`...^)
+..XPT
 
 
-call XPTemplate( 'unless', [
-    \ '(unless (`cond^)',
-    \ '   (`todo0^) `...^',
-    \ '   (`todon^)`...^)',
-    \ '' ])
+XPT unless hint=(unless\ cond\ ..)
+(unless (`cond^)
+   (`todo0^) `...^
+   (`todon^)`...^)
+..XPT
 

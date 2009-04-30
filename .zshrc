@@ -1,5 +1,4 @@
 
-# bindkey
 bindkey -v
 
 bindkey "^R" history-incremental-search-backward
@@ -61,8 +60,10 @@ unsetopt print_exit_value
 unsetopt promptcr
 
 
-# alias
-alias vi=vim
+if [ -x "$(which vim)" ]; then
+    alias vi=vim
+fi
+
 alias df='df -h'
 alias du='du -h'
 alias less='less -r'
@@ -70,23 +71,8 @@ alias l=ls
 alias ll='ls -l'
 alias ls='ls --color=tty --show-control-chars'
 alias la='ls -A'
-alias dir='ls --color=auto --format=vertical'
-alias vdir='ls --color=auto --format=long'
 
 
-# function
-# via http://www.q-eng.imat.eng.osaka-cu.ac.jp/~ippei/unix/zsh.html
-function psg() {
-    psa | head -n 1      # show label
-    # do not show grep process
-    psa | grep $* | grep -v "ps -auxww" | grep -v grep
-}
-
-function makevi() {
-    make 2>&1 > .make.tmp
-    vi .make.tmp
-    rm .make.tmp
-}
 
 function noizy() {
     while :; do
@@ -166,7 +152,7 @@ if [ $(uname -o) = 'Cygwin' ]; then
     function screen() {
         local conf="$HOME/.screenrc.cygwin"
         if [ $# = 0 -a -f $conf ]; then
-            command screen -c $conf
+            command screen -c $conf "$@"
         else
             command screen "$@"
         fi

@@ -4,15 +4,19 @@ endif
 let b:__XML_WRAP_XPT_VIM__= 1
 
 
-call XPTemplate( '_', [
-        \ '<`tag^`...^ `name^="`val^"`...^>',
-        \ '    `wrapped^',
-        \ '</`tag^>'
-        \ ])
+" ========================= Function and Varaibles =============================
 
-call XPTemplate('CDATA_', [
-            \ '<![CDATA[',
-            \ '`wrapped^',
-            \ ']]>'
-            \])
+" ================================= Snippets ===================================
+XPTemplateDef
+XPT _ hint=<Tag>\ SEL\ </Tag>
+<`tag^`...^ `name^="`val^"`...^>
+    `wrapped^
+</`tag^>
+..XPT
+
+XPT CDATA_ hint=<![CDATA[\ SEL\ ]]>
+<![CDATA[
+`wrapped^
+]]>
+..XPT
 

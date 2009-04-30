@@ -17,75 +17,79 @@ XPTinclude
 
 
 " ================================= Snippets ===================================
-call XPTemplate("once", [
-      \'if exists("`g^:`i^headerSymbol()^")', 
-      \'  finish', 
-      \'endif',
-      \'let `g^:`i^ = 1', 
-      \'`cursor^'
-      \])
-
-call XPTemplate("fun", "
-      \fun! `name^(`_^^) \"{{{\n
-      \  `cursor^\n
-      \endfunction \"}}}\n
-      \")
-
-call XPTemplate('method', [
-      \ 'fun! `Dict^.`name^(`_^^)',
-      \ '  `cursor^', 
-      \ 'endfunction'
-      \])
-
-call XPTemplate('while', [
-      \ 'while `cond^',
-      \ '  `cursor^',
-      \ 'endwhile'
-      \])
-
-call XPTemplate('while1', [
-      \ 'while 1',
-      \ '  `cursor^',
-      \ 'endwhile'
-      \])
-
-call XPTemplate('fordic', [
-      \ 'for [`k^, `v^] in items(`dic^)',
-      \ '  `cursor^',
-      \ 'endfor'
-      \])
-call XPTemplate("forin", [
-    \"for `v^ in `list^", 
-    \"  `cursor^", 
-    \"endfor"
-    \])
-
-call XPTemplate('try', [
-      \ 'try', 
-      \ '  `^', 
-      \ 'catch /`^/', 
-      \ '  `^', 
-      \ '`finally...^finally', 
-      \ '  \`cursor\^^^', 
-      \ 'endtry', 
-      \ ''
-      \])
-
-call XPTemplate('if', [
-      \ 'if `cond^', 
-      \ '  `_^', 
-      \ '`else...^else', 
-      \ '  \`cursor\^^^', 
-      \ 'endif " `cond^'
-      \])
-
-
-call XPTemplate('log', [ 'call Log(`_^)' ])
-call XPTemplate('string', [ 'string(`_^)' ])
 call XPTemplate('vimformat', [ 'vim:tw=78:ts=8:sw=2:sts=2:et:norl:fdm=marker:fmr={{{,}}}' ])
 
+XPTemplateDef
 
-call XPTemplate('str_', [
-      \ 'string(`wrapped^)'
-      \])
+call XPTemplate("once", [
+XPT once hint=if\ exists..\ finish\ ..\ let
+if exists("`g^:`i^headerSymbol()^")
+  finish
+endif
+let `g^:`i^ = 1
+`cursor^
+..XPT
+
+XPT log hint=call\ log\ on\ selection
+call Log(`_^)
+..XPT
+
+XPT fun hint=fun!\ ..(..)\ ..\ endfunction
+fun! `name^(`_^^) \"{{{
+  `cursor^
+endfunction \"}}}
+..XPT
+
+XPT method hint=fun!\ Dict.name\ ...\ endfunction
+fun! `Dict^.`name^(`_^^)
+  `cursor^
+endfunction
+..XPT
+
+XPT while hint=while\ ..\ ..\ endwhile
+while `cond^
+  `cursor^
+endwhile
+..XPT
+
+XPT while1 hint=while\ 1\ ..\ endwhile
+while 1
+  `cursor^
+endwhile
+..XPT
+
+XPT fordic hint=for\ [..,..]\ in\ ..\ ..\ endfor
+for [`k^, `v^] in items(`dic^)
+  `cursor^
+endfor
+..XPT
+
+XPT forin hint=for\ ..\ in\ ..\ ..\ endfor
+for `v^ in `list^
+  `cursor^
+endfor
+..XPT
+
+XPT try hint=try\ ..\ catch\ ..\ finally...
+try
+  `^
+catch /`^/
+  `^
+`finally...^finally
+  \`cursor\^^^
+endtry
+
+..XPT
+
+XPT if hint=if\ ..\ else\ ..
+if `cond^
+  `_^
+`else...^else
+  \`cursor\^^^
+endif 
+..XPT
+
+XPT str_ hint=transform\ SEL\ to\ string
+string(`wrapped^)
+..XPT
 

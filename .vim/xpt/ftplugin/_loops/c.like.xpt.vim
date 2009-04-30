@@ -17,32 +17,38 @@ call XPTemplatePriority('like')
 
 
 " ================================= Snippets ===================================
-call XPTemplate("while0", ""
-      \."do {\n"
-      \."  `cursor^\n"
-      \."} while (`$FALSE^)")
+XPTemplateDef
+XPT while0 hint=do\ {\ ..\ }\ while\ (..)
+do {\n
+  `cursor^\n
+} while (`$FALSE^)
+..XPT
 
-call XPTemplate("do", ""
-      \."do {\n"
-      \."  `cursor^\n"
-      \."} while (`$FALSE^)")
+XPT do hint=do\ {\ ..\ }\ while\ (..)
+do {\n
+  `cursor^\n
+} while (`$FALSE^)
+..XPT
 
-call XPTemplate("while1", [
-      \'while (`$TRUE^) {', 
-      \'  `cursor^',
-      \'}'
-      \])
+XPT while1 hint=while\ (..)\ {\ ..\ }
+while (`$TRUE^) {
+  `cursor^
+}
+..XPT
 
-call XPTemplate("for", ""
-      \."for (`i^ = `0^; `i^ < `len^; ++`i^){\n"
-      \."  `cursor^\n"
-      \."}")
+XPT for hint=for\ (..;..;++)
+for (`i^ = `0^; `i^ < `len^; ++`i^){\n
+  `cursor^\n
+}
+..XPT
 
-call XPTemplate("forr", ""
-      \."for (`i^ = `n^; `i^ >`^=^ `end^; --`i^){\n"
-      \."  `cursor^\n"
-      \."}")
+XPT forr hint=for\ (..;..;--)
+for (`i^ = `n^; `i^ >`^=^ `end^; --`i^){\n
+  `cursor^\n
+}
+..XPT
 
-call XPTemplate('forever', [
-      \ 'for (;;) `_^/* void */;^'
-      \])
+XPT forever hint=for\ (;;)\ ..
+for (;;) `_^/* void */;^
+..XPT
+

@@ -4,12 +4,17 @@ endif
 
 let b:__WRAP_OCAML_XPT_VIM__ = 1
 
-call XPTemplate('try_', [
-            \ 'try',
-            \ '    `wrapped^',
-            \ 'with `exc^ -> `rez^`...^',
-            \ '   | `exc2^ -> `rez2^`...^'
-            \])
+XPTemplateDef
 
-call XPTemplate( 'p_', ['(`wrapped^)' ] )
+XPT p_ hint=(SEL) 
+(`wrapped^)
+..XPT
+
+XPT try_ hint=try\ SEL\ with\ ..\ ->\ ..
+try
+    `wrapped^
+with `exc^ -> `rez^`...^
+   | `exc2^ -> `rez2^`...^
+..XPT
+
 

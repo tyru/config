@@ -11,69 +11,70 @@ XPTinclude
       \ _common/common
       \ _comment/c.like
       \ _condition/c.like
-      \ _loop/java.like
+      \ _loops/java.like
       \ c/wrap
 
 " ========================= Function and Varaibles =============================
 
 " ================================= Snippets ===================================
+XPTemplateDef
 
-call XPTemplate( 'foreach', [
-       \'foreach ( `var^var^ `e^ in `what^ )',
-       \'{',
-       \'    `cursor^',
-       \'}'
-       \])
+XPT foreach hint=foreach\ (..\ in\ ..)\ {..}
+foreach ( `var^var^ `e^ in `what^ )
+{
+    `cursor^
+}
+..XPT
 
-call XPTemplate( 'class', [
-    \ 'class `className^',
-    \ '{',
-    \ '    public `className^( `ctorParam^^ )',
-    \ '    {',
-    \ '        `cursor^',
-    \ '    }',
-    \ '}'
-    \ ])
+XPT class hint=class\ +ctor
+class `className^
+{
+    public `className^( `ctorParam^^ )
+    {
+        `cursor^
+    }
+}
+..XPT
 
-call XPTemplate( 'main', [
-    \ 'public static void Main( string[] args )',
-    \ '{',
-    \ '    `cursor^',
-    \ '}'
-    \ ])
+XPT main hint=static\ main\ string[]
+public static void Main( string[] args )
+{
+    `cursor^
+}
+..XPT
 
-call XPTemplate( 'prop', [
-    \ 'public `type^ `Name^',
-    \ '{',
-    \ '    `get...^get { return \`what\^; }^^',
-    \ '    `set...^set { \`what\^ = value; }^^',
-    \ '}'
-    \ ])
+XPT prop hint=..\ ..\ {get\ set}
+public `type^ `Name^
+{`get...^
+    get { return \`what\^; }^^`set...^
+    set { \`what\^ = value; }^^
+}
+..XPT
 
-call XPTemplate( 'namespace', [
-               \ 'namespace `name^',
-               \ '{',
-               \ '    `cursor^',
-               \ '}',
-               \ '' ])
+XPT namespace hint=namespace\ {}
+namespace `name^
+{
+    `cursor^
+}
+..XPT
 
-call XPTemplate('try', [
-            \ 'try',
-            \ '{',
-            \ '    `what^',
-            \ '}`...^',
-            \ 'catch (`except^ e)',
-            \ '{',
-            \ '    `handler^',
-            \ '}`...^',
-            \ '`catch...^catch',
-            \ '{',
-            \ '    \`\^',
-            \ '}^^',
-            \ '`finally...^finally',
-            \ '{',
-            \ '    \`cursor\^',
-            \ '}^^',
-            \ ''
-            \])
+XPT try hint=try\ ..\ catch\ ..\ finally
+try
+{
+    `what^
+}`...^
+catch (`except^ e)
+{
+    `handler^
+}`...^`catch...^
+catch
+{
+    \`_\^
+}^^`finally...^
+finally
+{
+    \`cursor\^
+}^^
+
+..XPT
 

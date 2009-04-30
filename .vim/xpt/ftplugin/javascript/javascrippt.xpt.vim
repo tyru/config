@@ -22,92 +22,102 @@ XPTinclude
 " ========================= Function and Varaibles =============================
 
 " ================================= Snippets ===================================
-call XPTemplate("bench", "
-      \var t0 = new Date().getTime();\n
-      \for (var i= 0; i < `times^; ++i){\n
-      \  `do^\n
-      \}\n
-      \var t1 = new Date().getTime();\n
-      \for (var i= 0; i < `times^; ++i){\n
-      \  `do^\n
-      \}\n
-      \var t2 = new Date().getTime();\n
-      \console.log(t1-t0, t2-t1);")
+XPTemplateDef
 
-call XPTemplate("asoe", "
-      \assertObjectEquals(`mess^,\n
-      \`arr^, \n
-      \`expr^);")
+XPT bench hint=
+var t0 = new Date().getTime();
+for (var i= 0; i < `times^; ++i){
+  `do^
+}
+var t1 = new Date().getTime();
+for (var i= 0; i < `times^; ++i){
+  `do^
+}
+var t2 = new Date().getTime();
+console.log(t1-t0, t2-t1);
+..XPT
 
-call XPTemplate("fun", "
-      \function `name^ (`param^) {\n
-      \  `cursor^\n
-      \  return;\n
-      \}")
+XPT asoe hint=assertObjectEquals
+assertObjectEquals(`mess^
+                  , `arr^
+                  , `expr^);
+..XPT
 
-call XPTemplate("for", "
-      \for (var `i^= 0; `i^ < `ar^.length; ++`i^){\n
-      \  var `e^ = `ar^[`i^];\n
-      \  `cursor^\n
-      \}")
+XPT fun hint=function\ ..(\ ..\ )\ {..}
+function `name^ (`param^) {
+  `cursor^
+  return;
+}
+..XPT
 
-call XPTemplate("forin", "
-      \for (var `i^ in `ar^){\n
-      \  var `e^ = `ar^[`i^];\n
-      \  `cursor^\n
-      \}")
+XPT for hint=for\ (var..;..;++)
+for (var `i^= 0; `i^ < `ar^.length; ++`i^){
+  var `e^ = `ar^[`i^];
+  `cursor^
+}
+..XPT
 
-call XPTemplate("if", "
-      \if (`i^){\n
-      \  `cursor^\n
-      \}")
+XPT forin hint=for\ (var\ ..\ in\ ..)\ {..}
+for (var `i^ in `ar^){
+  var `e^ = `ar^[`i^];
+  `cursor^
+}
+..XPT
 
-call XPTemplate("ife", "
-      \if (`i^){\n
-      \  `cursor^\n
-      \} else {\n
-      \}")
+XPT if hint=if\ (..)\ {..}
+if (`i^){
+  `cursor^
+}`else...^
+else {
+    `cursor^
+}^^
+..XPT
 
-call XPTemplate("try", "
-      \try {\n
-      \  `do^\n
-      \} catch (`err^) {\n
-      \  `dealError^\n
-      \} finally {\n
-      \  `cursor^\n
-      \}")
+XPT try hint=try\ {..}\ catch\ {..}\ finally
+try {
+  `do^
+}
+catch (`err^) {
+  `dealError^
+}`...^
+catch (`err^) {
+  `dealError^
+  }`...^`finally...^
+finally {
+  \`cursor\^
+}^^
+..XPT
 
-call XPTemplate("cmt", "
-      \/**\n
-      \* @author : `author^ | `email^\n
-      \* @description\n
-      \*     `cursor^\n
-      \* @return {`Object^} `desc^\n
-      \*/")
+XPT cmt hint=/**\ @auth...\ */
+/**
+* @author : `author^ | `email^
+* @description
+*     `cursor^
+* @return {`Object^} `desc^
+*/
+..XPT
 
-call XPTemplate("cpr", "
-      \@param {`Object^} `name^ `desc^")
+XPT cpr hint=@param
+@param {`Object^} `name^ `desc^
+..XPT
 
 " file comment
 " 4 back slash represent 1 after rendering.
-call XPTemplate("fcmt", "
-  \/**-------------------------/// `sum^ \\\\\\---------------------------\n
-  \ *\n
-  \ * <b>`function^</b>\n
-  \ * @version : `1.0^\n
-  \ * @since : `date^\n
-  \ * \n
-  \ * @description :\n
-  \ *   `cursor^\n
-  \ * @usage : \n
-  \ * \n
-  \ * @author : `$author^ | `$email^\n
-  \ * @copyright : \n
-  \ * @TODO : \n
-  \ * \n
-  \ *--------------------------\\\\\\ `sum^ ///---------------------------*/")
-
-
-
-
+XPT fcmt hint=full\ doxygen\ comment
+/**-------------------------/// `sum^ \\\\\\---------------------------
+ *
+ * <b>`function^</b>
+ * @version : `1.0^
+ * @since : `date^
+ * 
+ * @description :
+ *   `cursor^
+ * @usage : 
+ * 
+ * @author : `$author^ | `$email^
+ * @copyright : 
+ * @TODO : 
+ * 
+ *--------------------------\\\\\ `sum^ ///---------------------------*/
+..XPT
 

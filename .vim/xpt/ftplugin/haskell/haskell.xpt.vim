@@ -13,74 +13,79 @@ XPTinclude
 " ========================= Function and Varaibles =============================
 
 " ================================= Snippets ===================================
-call XPTemplate( 'class', [
-    \ 'class `context^^ `className^ `types^ where',
-    \ '    `ar^ :: `type^ `...^',
-    \ '    `methodName^ :: `methodType^`...^',
-    \ ''])
+XPTemplateDef
+XPT class hint=class\ ..\ where..
+class `context^^ `className^ `types^ where
+    `ar^ :: `type^ `...^
+    `methodName^ :: `methodType^`...^
+..XPT
 
-call XPTemplate( 'classcom', [
-    \ '-- | `classDescr^',
-    \ 'class `context^^ `className^ `types^ where',
-    \ '    -- | `methodDescr^',
-    \ '    `ar^ :: `type^ `...^',
-    \ '    -- | `method_Descr^',
-    \ '    `methodName^ :: `methodType^`...^',
-    \ ''])
+XPT classcom hint=--\ |\ class..
+-- | `classDescr^
+class `context^^ `className^ `types^ where
+    -- | `methodDescr^
+    `ar^ :: `type^ `...^
+    -- | `method_Descr^
+    `methodName^ :: `methodType^`...^
+..XPT
 
-call XPTemplate( 'datasum', [
-    \ 'data `context^^ `typename^ `typeParams^^ =',
-    \ '    `Constructor^ `ctorParams^^ `...^',
-    \ '  | `Ctor^ `params^^`...^',
-    \ '  `deriving...^deriving (\`cursor\^)^^' ])
+XPT datasum hint=data\ ..\ =\ ..|..|..
+data `context^^ `typename^ `typeParams^^ =
+    `Constructor^ `ctorParams^^ `...^
+  | `Ctor^ `params^^`...^
+  `deriving...^deriving (\`cursor\^)^^
+..XPT
 
-call XPTemplate( 'datasumcom', [
-    \ '-- | `typeDescr^^^',
-    \ 'data `context^^ `typename^ `typeParams^^ =',
-    \ '    -- | `ConstructorDescr^^^',
-    \ '    `Constructor^ `ctorParams^^ `...^',
-    \ '    -- | `Ctor descr^^',
-    \ '  | `Ctor^ `params^^`...^',
-    \ '  `deriving...^deriving (\`cursor\^)^^' ])
+XPT datasumcom hint=--\ |\ data\ ..\ =\ ..|..|..
+-- | `typeDescr^^^
+data `context^^ `typename^ `typeParams^^ =
+    -- | `ConstructorDescr^^^
+    `Constructor^ `ctorParams^^ `...^
+    -- | `Ctor descr^^
+  | `Ctor^ `params^^`...^
+  `deriving...^deriving (\`cursor\^)^^
+..XPT
 
-call XPTemplate( 'datarecord', [
-    \ 'data `context^^ `typename^ `typeParams^^ =',
-    \ '     `Constructor^ {',
-    \ '       `field^ :: `type^ `...^',
-    \ '     , `fieldn^ :: `typen^`...^',
-    \ '     }',
-    \ '  `deriving...^deriving (\`cursor\^)^^'])
+XPT datarecord hint=data\ ..\ ={}
+data `context^^ `typename^ `typeParams^^ =
+     `Constructor^ {
+       `field^ :: `type^ `...^
+     , `fieldn^ :: `typen^`...^
+     }
+     `deriving...^deriving (\`cursor\^)^^
+..XPT
 
-call XPTemplate( 'datarecordcom', [
-    \ '-- | `typeDescr^',
-    \ 'data `context^^ `typename^ `typeParams^^ =',
-    \ '     `Constructor^ {',
-    \ '       `field^ :: `type^^^ -- ^ `fieldDescr^ `...^',
-    \ '     , `fieldn^ :: `typen^^^ -- ^ `fielddescr^`...^',
-    \ '     }',
-    \ '  `deriving...^deriving (\`cursor\^)^^'])
+XPT datarecordcom hint=--\ |\ data\ ..\ ={}
+-- | `typeDescr^
+data `context^^ `typename^ `typeParams^^ =
+     `Constructor^ {
+       `field^ :: `type^^^ -- ^ `fieldDescr^ `...^
+     , `fieldn^ :: `typen^^^ -- ^ `fielddescr^`...^
+     }
+     `deriving...^deriving (\`cursor\^)^^
+..XPT
 
-call XPTemplate( 'instance', [
-    \ 'instance `className^ `instanceTypes^ where',
-    \ '    `methodName^ `^ = `decl^ `...^',
-    \ '    `method^ `^ = `declaration^`...^',
-    \ '' ])
+XPT instance hint=instance\ ..\ ..\ where
+instance `className^ `instanceTypes^ where
+    `methodName^ `^ = `decl^ `...^
+    `method^ `^ = `declaration^`...^
+..XPT
 
-call XPTemplate( 'if', [
-    \ 'if `expr^',
-    \ '    then `thenCode^',
-    \ '    else `elseCode^',
-    \ '' ])
+XPT if hint=if\ ..\ then\ ..\ else
+if `expr^
+    then `thenCode^
+    else `elseCode^
+..XPT
 
-call XPTemplate('fun', [
-            \ '`funName^ `pattern^ = `def^`...^',
-            \ '`name^R("funName")^ `pattern^ = `def^`...^',
-            \ '' ])
+XPT fun hint=fun\ pat\ =\ ..
+`funName^ `pattern^ = `def^`...^
+`name^R("funName")^ `pattern^ = `def^`...^
+..XPT
 
-call XPTemplate('funcom', [
-            \ '-- | `function_description^',
-            \ '`funName^ :: `type^',
-            \ '`name^R("funName")^ `pattern^ = `def^`...^',
-            \ '`name^R("funName")^ `pattern^ = `def^`...^',
-            \ '' ])
+XPT funcom hint=--\ |\ fun\ pat\ =\ ..
+-- | `function_description^
+`funName^ :: `type^
+`name^R("funName")^ `pattern^ = `def^`...^
+`name^R("funName")^ `pattern^ = `def^`...^
+..XPT
 

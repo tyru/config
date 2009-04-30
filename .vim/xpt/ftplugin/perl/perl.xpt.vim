@@ -16,61 +16,75 @@ XPTinclude
 " ================================= Snippets ===================================
 " Based on snipmate's perl templates
 
-call XPTemplate('sub', [
-            \ 'sub `fun_name^ {',
-            \ '    `cursor^',
-            \ '}'
-            \])
+XPTemplateDef
 
-call XPTemplate( 'xif', '`expr^ if `cond^;' )
-call XPTemplate( 'xwhile', '`expr^ while `cond^;' )
-call XPTemplate( 'xunless', '`expr^ unless `cond^;' )
-call XPTemplate( 'xforeach', '`expr^ foreach @`array^;' )
+XPT xif hint=..\ if\ ..;
+`expr^ if `cond^;
+..XPT
 
-call XPTemplate('while', [
-            \ 'while (`cond^) {',
-            \ '    `cursor^',
-            \ '}'
-            \])
-call XPTemplate('unless', [
-            \ 'unless (`cond^) {',
-            \ '    `cursor^',
-            \ '}'
-            \])
+XPT xwhile hint=..\ while\ ..;
+`expr^ while `cond^;
+..XPT
 
-call XPTemplate('eval', [
-            \ 'eval {',
-            \ '    `risky^',
-            \ '};',
-            \ 'if ($@) {',
-            \ '    `handle^',
-            \ '}'
-            \])
+XPT xunless hint=..\ unless\ ..;
+`expr^ unless `cond^;
+..XPT
 
-call XPTemplate('for', [
-            \ 'for (my $`var^ = 0; $`var^ < `count^; $`var^++) {',
-            \ '    `cursor^',
-            \ '}'
-            \])
+XPT xforeach hint=..\ foreach\ ..;
+`expr^ foreach @`array^;
+..XPT
 
-call XPTemplate('foreach', [
-            \ 'foreach my $`var^ (@`array^) {',
-            \ '    `cursor^',
-            \ '}'
-            \])
+XPT sub hint=sub\ ..\ {\ ..\ }
+sub `fun_name^ {
+    `cursor^
+}
+..XPT
 
-call XPTemplate( 'package', [
-            \ 'package `className^;',
-            \ '',
-            \ 'use base qw(`parent^);',
-            \ '',
-            \ 'sub new {',
-            \ '    my $class = shift;',
-            \ '    $class = ref $class if ref $class;',
-            \ '    my $self = bless {}, $class;',
-            \ '    $self;',
-            \ '}',
-            \ '',
-            \ '1;',
-            \ '' ])
+XPT while hint=while\ (\ ..\ )\ {\ ..\ }
+while (`cond^) {
+    `cursor^
+}
+..XPT
+
+XPT unless hint=unless\ (\ ..\ )\ {\ ..\ }
+unless (`cond^) {
+    `cursor^
+}
+..XPT
+
+XPT eval hint=eval\ {\ ..\ };if...
+eval {
+    `risky^
+};
+if ($@) {
+    `handle^
+}
+..XPT
+
+XPT for hint=for\ (my\ ..;..;++)
+for (my $`var^ = 0; $`var^ < `count^; $`var^++) {
+    `cursor^
+}
+..XPT
+
+XPT foreach hint=foreach\ my\ ..\ (..){}
+foreach my $`var^ (@`array^) {
+    `cursor^
+}
+..XPT
+
+XPT package hint=
+package `className^;
+
+use base qw(`parent^);
+
+sub new {
+    my $class = shift;
+    $class = ref $class if ref $class;
+    my $self = bless {}, $class;
+    $self;
+}
+
+1;
+..XPT
 

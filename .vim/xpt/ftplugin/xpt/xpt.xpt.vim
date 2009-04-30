@@ -24,56 +24,56 @@ fun! s:f.xptHeader() "{{{
 endfunction "}}}
 
 " ================================= Snippets ===================================
-call XPTemplate("once", [
-      \'if exists("b:`i^xptHeader()^")', 
-      \'  finish', 
-      \'endif',
-      \'let b:`i^ = 1', 
-      \'', 
-      \])
-call XPTemplate("xpt", [
-      \'if exists("b:`i^xptHeader()^")', 
-      \'  finish', 
-      \'endif',
-      \'let b:`i^ = 1', 
-      \'', 
-      \'" containers',
-      \'let [s:f, s:v] = XPTcontainer()', 
-      \'', 
-      \'" constant definition',
-      \"call extend(s:v, {'\\$TRUE': '1', '\\$FALSE' : '0', '\\$NULL' : 'NULL', '\\$UNDEFINED' : ''})", 
-      \'', 
-      \'" inclusion',
-      \ 'XPTinclude ',
-      \'', 
-      \'" ========================= Function and Varaibles =============================', 
-      \'', 
-      \'', 
-      \'" ================================= Snippets ===================================', 
-      \'', 
-      \])
-
-call XPTemplate('container', [
-      \'let [s:f, s:v] = XPTcontainer()', 
-      \''
-      \])
+XPTemplateDef
 
 " repeatable part or defualt value must be escaped
-call XPTemplate('tmpl', [
-      \ "call XPTemplate('`name^', [", 
-      \ "\\ `'^`text^`'^`...^,", 
-      \ "\\ `'^`text^`'^`...^", 
-      \ '\])'
-      \])
+XPT tmpl hint=call\ XPTemplate(\ ...
+call XPTemplate('`name^', [
+\ `'^`text^`'^`...^,
+\ `'^`text^`'^`...^
+\])'
+..XPT
 
+XPT tmpl_ hint=call\ XPTemplate(\ ..,\ SEL\ ...
+call XPTemplate('`name^', [ '`wrapped^'])
+..XPT
 
-call XPTemplate('tmpl_', [
-      \ "call XPTemplate('`name^', [ '`wrapped^'])"
-      \])
+XPT inc hint=XPTinclude\ ...
+XPTinclude 
+      \ `^E("%:p:h:t")^/`name^`...^
+      \ `^E("%:p:h:t")^/`name^`...^
+..XPT
 
-call XPTemplate('inc', [
-      \ 'XPTinclude ',
-      \ '      \ `^E("%:p:h:t")^/`name^`...^', 
-      \ '      \ `^E("%:p:h:t")^/`name^`...^', 
-      \])
+XPT once hint=if\ exists\ finish\ let\ b...
+if exists("b:`i^xptHeader()^")
+    finish
+endif
+let b:`i^ = 1
+..XPT
 
+XPT container hint=let\ [s:f,\ s:v]\ =...
+let [s:f, s:v] = XPTcontainer()
+..XPT
+
+call XPTemplate("xpt", [
+XPT xpt hint=start\ template\ to\ write\ template
+if exists("b:`i^xptHeader()^") 
+  finish 
+endif
+let b:`i^ = 1 
+ 
+" containers
+let [s:f, s:v] = XPTcontainer() 
+ 
+" constant definition
+call extend(s:v, {'\\$TRUE': '1 '\\$FALSE' : '0', '\\$NULL' : 'NULL', '\\$UNDEFINED' : ''})", 
+ 
+" inclusion
+'XPTinclude 
+ 
+" ========================= Function and Varaibles ============================= 
+ 
+ 
+" ================================= Snippets =================================== 
+ 
+..XPT

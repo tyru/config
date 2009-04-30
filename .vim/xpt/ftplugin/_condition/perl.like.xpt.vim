@@ -3,18 +3,25 @@ if exists("b:___CONDITION_PERL_LIKE_XPT_VIM__")
 endif
 let b:___CONDITION_PERL_LIKE_XPT_VIM__ = 1
 
-call XPTemplate( 'if', [
-            \ 'if ( `cond^ )',
-            \ '{',
-            \ '    `code^',
-            \ '}`...^',
-            \ 'elseif ( `cond2^ )',
-            \ '{',
-            \ '    `body^',
-            \ '}`...^`else...^',
-            \ 'else',
-            \ '{',
-            \ '    \`body\^',
-            \ '}^^',
-            \ '' ])
+call XPTemplatePriority('like')
+
+" ========================= Function and Varaibles =============================
+
+" ================================= Snippets ===================================
+XPTemplateDef
+
+XPT if hint=if\ (\ ..\ )\ {\ ..\ }\ ...
+if ( `cond^ )
+{
+    `code^
+}`...^
+elseif ( `cond2^ )
+{
+    `body^
+}`...^`else...^
+else
+{
+    \`body\^
+}^^
+..XPT
 

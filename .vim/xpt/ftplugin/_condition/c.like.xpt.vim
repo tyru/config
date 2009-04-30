@@ -17,62 +17,62 @@ XPTemplateDef
 
 
 XPT if		hint=if\ (..)\ {..}\ else...
-if (`condi^) {', 
-  `_^', 
-}', 
-`else...^else {', 
-  \`cursor\^', 
-}^^'
+if (`condi^) { 
+  `_^ 
+} 
+`else...^else { 
+  \`cursor\^ 
+}^^
 ..XPT
 
 
 XPT ifn		hint=if\ ($NULL\ ==\ ..)\ {..}\ else...
-if (`$NULL^ == `var^) {', 
-  `_^', 
-}', 
-`else...^else {', 
-  \`cursor\^', 
-}^^'
+if (`$NULL^ == `var^) { 
+  `_^ 
+} 
+`else...^else { 
+  \`cursor\^ 
+}^^
 ..XPT
 
 
 XPT ifnn	hint=if\ ($NULL\ !=\ ..)\ {..}\ else...
-if (`$NULL^ != `var^) {', 
-  `_^', 
-}', 
-`else...^else {', 
-  \`cursor\^', 
-}^^'
+if (`$NULL^ != `var^) { 
+  `_^ 
+} 
+`else...^else { 
+  \`cursor\^ 
+}^^
 ..XPT
 
 
 XPT if0		hint=if\ (0\ ==\ ..)\ {..}\ else...
-if (0 == `var^) {', 
-  `_^', 
-}', 
-`else...^else {', 
-  \`cursor\^', 
-}^^'
+if (0 == `var^) { 
+  `_^ 
+} 
+`else...^else { 
+  \`cursor\^ 
+}^^
 ..XPT
 
 
 XPT ifn0	hint=if\ (0\ !=\ ..)\ {..}\ else...
-if (0 != `var^) {', 
-  `_^', 
-}', 
-`else...^else {', 
-  \`cursor\^', 
-}^^'
+if (0 != `var^) { 
+  `_^ 
+} 
+`else...^else { 
+  \`cursor\^ 
+}^^
 ..XPT
 
 
 XPT ifee	hint=if\ (..)\ {..}\ elseif...
 if (`condition^) {
    `_^
-}', 
-`...^else if (`cond^R("condition")^) {', 
+} 
+`...^else if (`cond^R("condition")^) { 
   `_^
-}`...^'
+}`...^
 ..XPT
 
 
@@ -81,14 +81,14 @@ switch (`^) {
   case `_^ :
     `^
     break;
-  `...^', 
+  `...^
   case `_^ :
     `^
     break;
-  `...^', 
+  `...^ 
 
 `default...^default:
     \`cursor\^^^
-}'
+}
 ..XPT
 

@@ -16,22 +16,22 @@ call extend(s:v, {'\$TRUE': '1', '\$FALSE' : '0', '\$NULL' : 'NULL', '\$UNDEFINE
 
 
 " ================================= Snippets ===================================
-call XPTemplate('ifproc_', [
-            \ '#if `cond^0^',
-            \ '`wrapped^',
-            \ '`else...^#else',
-            \ '\`cursor\^^^',
-            \ '#endif'
-            \])
+XPTemplateDef
+XPT ifproc_ hint=#if\ ..\ SEL\ #endif
+#if `cond^0^
+`wrapped^
+`else...^#else
+\`cursor\^^^
+#endif
+..XPT
 
-call XPTemplate('if_', [
-      \ 'if (`condition^) {', 
-      \ '  `wrapped^', 
-      \ '}'
-      \])
+XPT if_ hint=if\ (..)\ {\ SEL\ }
+if (`condition^) {
+  `wrapped^
+}
+..XPT
 
-call XPTemplate('invoke_', [
-      \ '`name^(`wrapped^)'
-      \])
-
+XPT invoke_ hint=..(\ SEL\ )
+`name^(`wrapped^)
+..XPT
 

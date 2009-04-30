@@ -15,57 +15,58 @@ XPTinclude
 
 " ================================= Snippets ===================================
 " Based on snipmate's php templates
-call XPTemplate('while', [
-            \ 'while (`cond^)',
-            \ '{',
-            \ '    `body^',
-            \ '}'
-            \])
+XPTemplateDef
+XPT while hint=while\ (\ ..\ )\ {\ ..\ }
+while (`cond^)
+{
+    `body^
+}
+..XPT
 
-call XPTemplate( 'for', [
-            \ 'for ($`var^i^ = `init^; $`var^ < `val^; $`var^++)',
-            \ '{',
-            \ '    `cursor^',
-            \ '}',
-            \ ''])
+XPT for hint=for\ (..;..;++)
+for ($`var^i^ = `init^; $`var^ < `val^; $`var^++)
+{
+    `cursor^
+}
+..XPT
 
 
-call XPTemplate( 'forr', [
-            \ 'for ($`var^i^ = `init^; $`var^ >= `val^0^; $`var^--)',
-            \ '{',
-            \ '    `cursor^',
-            \ '}',
-            \ ''])
+XPT forr hint=for\ (..;..;--)
+for ($`var^i^ = `init^; $`var^ >= `val^0^; $`var^--)
+{
+    `cursor^
+}
+..XPT
 
-call XPTemplate('foreach', [
-            \ 'foreach ($`var^ as `container^)',
-            \ '{',
-            \ '    `body^',
-            \ '}'
-            \])
+XPT foreach hint=foreach\ (..\ as\ ..)\ {..}
+foreach ($`var^ as `container^)
+{
+    `body^
+}
+..XPT
 
-call XPTemplate( 'fun', [
-        \ 'function `funName^( `params^ )',
-        \ '{',
-        \ '   `cursor^',
-        \ '}',
-        \ '' ])
+XPT fun hint=function\ ..(\ ..\ )\ {..}
+function `funName^( `params^ )
+{
+   `cursor^
+}
+..XPT
 
-call XPTemplate('class', [
-            \ 'class `className^',
-            \ '{',
-            \ '    function __construct( `args^ )',
-            \ '    {',
-            \ '        `cursor^',
-            \ '    }',
-            \ '}',
-            \ ''
-            \])
+XPT class hint=class\ ..\ {\ ..\ }
+class `className^
+{
+    function __construct( `args^ )
+    {
+        `cursor^
+    }
+}
 
-call XPTemplate('interface', [
-            \ 'interface `interfaceName^',
-            \ '{',
-            \ '    `cursor^',
-            \ '}'
-            \])
+..XPT
+
+XPT interface hint=interface\ ..\ {\ ..\ }
+interface `interfaceName^
+{
+    `cursor^
+}
+..XPT
 

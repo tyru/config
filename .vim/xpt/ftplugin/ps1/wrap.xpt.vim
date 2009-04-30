@@ -3,19 +3,24 @@ if exists("b:__PS1_WRAPPED_XPT_VIM__")
 endif
 let b:__PS1_WRAPPED_XPT_VIM__ = 1
 
-runtime ftplugin/common/common.xpt.vim
+XPTinclude
+      \ _common/common
 
-call XPTemplate( 'if_', [
-            \ 'if ( `cond^ )',
-            \ '{',
-            \ '    `wrapped^',
-            \ '}`...^',
-            \ 'elseif ( `cond2^ )',
-            \ '{',
-            \ '    `body^',
-            \ '}`...^`else...^',
-            \ 'else',
-            \ '{',
-            \ '    \`body\^',
-            \ '}^^',
-            \ '' ])
+" ========================= Function and Varaibles =============================
+
+" ================================= Snippets ===================================
+XPTemplateDef
+XPT if_ hint=if\ (..)\ {\ SEL\ }\ ...
+if ( `cond^ )
+{
+    `wrapped^
+}`...^
+elseif ( `cond2^ )
+{
+    `body^
+}`...^`else...^
+else
+{
+    \`body\^
+}^^
+..XPT

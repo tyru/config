@@ -13,108 +13,115 @@ XPTinclude
 " ========================= Function and Varaibles =============================
 
 " ================================= Snippets ===================================
-call XPTemplate( "inc", "-include( \"`cursor^^.hrl\")." )
-call XPTemplate( "def", "-define( `what^, `def^ )." )
-call XPTemplate( "ifdef", [
-      \ '-ifdef( `what^ ).',
-      \ '  `thenmacro^',
-      \ '`else...^-else.',
-      \ '  \`cursor\^^^',
-      \ '-endif().',
-      \ '',
-      \ '' ] )
+XPTemplateDef
 
-call XPTemplate( 'ifndef', [
-      \ '-ifndef( `what^ ).',
-      \ '  `thenmacro^',
-      \ '`else...^-else.',
-      \ '  \`cursor\^^^',
-      \ '-endif().',
-      \ '' ] )
+XPT inc hint=-include\ ..
+-include( \"`cursor^^.hrl\").
+..XPT
 
-call XPTemplate( "record", [
-      \ "-record( `recordName^",
-      \ "       ,{ `field1^ `...^",
-      \ "        , `fieldn^`...^",
-      \ "        }).",
-      \ "" ] )
+XPT def hint=-define\ ..
+-define( `what^, `def^ ).
+..XPT
 
-call XPTemplate( "if", [
-      \"if",
-      \"   `cond^ ->",
-      \"       `body^ `...^;",
-      \"   `cond2^ ->",
-      \"       `bodyn^`...^",
-      \"end `cursor^",
-      \""])
+XPT ifdef hint=-ifdef\ ..\-endif..
+-ifdef( `what^ ).
+  `thenmacro^
+`else...^-else.
+  \`cursor\^^^
+-endif().
+..XPT
 
-call XPTemplate( 'case', [
-      \'case `matched^ of',
-      \'   `pattern^ ->',
-      \'       `body^ `...^;',
-      \'   `patternn^ ->',
-      \'       `bodyn^`...^',
-      \'end `cursor^',
-      \''])
+XPT ifndef hint=-ifndef\ ..\-endif
+-ifndef( `what^ ).
+  `thenmacro^
+`else...^-else.
+  \`cursor\^^^
+-endif().
+..XPT
 
-call XPTemplate( 'rcv', [
-      \'receive',
-      \'   `pattern^ ->',
-      \'       `body^ `...^;',
-      \'   `patternn^ ->',
-      \'       `bodyn^`...^',
-      \'`after...^after',
-      \'    \`afterBody\^^^',
-      \'end',
-      \''])
+XPT record hint=-record\ ..,{..}
+-record( `recordName^
+       ,{ `field1^`...^
+        , `fieldn^`...^
+        }).
+..XPT
+
+XPT if hint=if\ ..\ ->\ ..\ end
+if
+   `cond^ ->
+       `body^`...^;
+   `cond2^ ->
+       `bodyn^`...^
+end `cursor^
+..XPT
+
+XPT case hint=case\ ..\ of\ ..\ ->\ ..\ end
+case `matched^ of
+   `pattern^ ->
+       `body^`...^;
+   `patternn^ ->
+       `bodyn^`...^
+end `cursor^
+..XPT
+
+XPT rcv hint=receive\ ..\ ->\ ..\ end
+receive
+   `pattern^ ->
+       `body^ `...^;
+   `patternn^ ->
+       `bodyn^`...^`after...^
+after
+    \`afterBody\^^^
+end
+..XPT
 
 
-call XPTemplate( "receive", [
-      \'receive',
-      \'   `pattern^ ->',
-      \'       `body^ `...^;',
-      \'   `patternn^ ->',
-      \'       `bodyn^`...^',
-      \'`after...^after',
-      \'    \`afterBody\^^^',
-      \'end',
-      \''])
+XPT receive hint=receive\ ..\ ->\ ..\ end
+receive
+   `pattern^ ->
+       `body^ `...^;
+   `patternn^ ->
+       `bodyn^`...^`after...^
+after
+    \`afterBody\^^^
+end
+..XPT
 
-call XPTemplate( "fun", [
-      \"fun (`params^) `^ -> `body^ `...^;",
-      \"(`paramsn^) `^ -> `bodyn^`...^",
-      \"end `cursor^",
-      \"" ])
+XPT fun hint=fun\ ..\ ->\ ..\ end
+fun (`params^) `^ -> `body^ `...^;
+    (`paramsn^) `^ -> `bodyn^`...^
+end `cursor^
+..XPT
 
-call XPTemplate( 'try', [
-      \ 'try `what^',
-      \ 'catch',
-      \ '    `excep^ -> `toRet^ `...^;',
-      \ '    `except^ -> `toRet^`...^',
-      \ '`after...^after',
-      \ '    \`afterBody\^^^',
-      \ 'end `cursor^',
-      \ '' ] )
+XPT try hint=try\ ..\ catch\ ..\ end
+try `what^
+catch
+    `excep^ -> `toRet^ `...^;
+    `except^ -> `toRet^`...^
+`after...^after
+    \`afterBody\^^^
+end `cursor^
+..XPT
 
-call XPTemplate( 'tryof', [
-      \ 'try `what^ of',
-      \ '   `pattern^ ->',
-      \ '       `body^ `...0^;',
-      \ '   `patternn^ ->',
-      \ '       `bodyn^`...0^',
-      \ 'catch',
-      \ '    `excep^ -> `toRet^ `...1^;',
-      \ '    `except^ -> `toRet^`...1^',
-      \ '`after...^after',
-      \ '    \`afterBody\^^^',
-      \ 'end `cursor^',
-      \ '' ] )
+XPT tryof hint=try\ ..\ of\ ..
+try `what^ of
+   `pattern^ ->
+       `body^ `...0^;
+   `patternn^ ->
+       `bodyn^`...0^
+catch
+    `excep^ -> `toRet^ `...1^;
+    `except^ -> `toRet^`...1^
+`after...^after
+    \`afterBody\^^^
+end `cursor^
+..XPT
 
-call XPTemplate( 'function', [
-      \ '`funName^ ( `args0^ ) `^ ->',
-      \ '    `body0^ `...^;',
-      \ '`name^R('funName')^ ( `argsn^ ) `^ ->',
-      \ '    `bodyn^`...^',
-      \ '.',
-      \ '' ])
+XPT function hint=f\ \(\ ..\ \)\ ->\ ..
+`funName^ ( `args0^ ) `^ ->
+    `body0^ `...^;
+`name^R('funName')^ ( `argsn^ ) `^ ->
+    `bodyn^`...^
+.
+..XPT
 

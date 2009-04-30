@@ -19,23 +19,22 @@ call XPTemplatePriority('spec')
 
 
 " ================================= Snippets ===================================
-call XPTemplate('ifu', [
-      \ 'if (`$UNDEFINED^ === `var^) {',
-      \ '  `_^',
-      \ '}', 
-      \ '`else...^else {', 
-      \ '  \`cursor\^', 
-      \ '}^^'
-      \])
+XPTemplateDef
+XPT ifu hint=if\ (undefined\ ===\ ...)\ {...}...
+if (`$UNDEFINED^ === `var^) {
+  `_^
+}
+`else...^else {
+  \`cursor\^
+}^^
+..XPT
 
-call XPTemplate('ifnu', [
-      \ 'if (`$UNDEFINED^ !== `var^) {',
-      \ '  `_^',
-      \ '}', 
-      \ '`else...^else {', 
-      \ '  \`cursor\^', 
-      \ '}^^'
-      \])
-
-
+XPT ifnu hint=if\ (undefined\ !==\ ...)\ {...}...
+if (`$UNDEFINED^ !== `var^) {
+  `_^
+}
+`else...^else {
+  \`cursor\^
+}^^
+..XPT
 

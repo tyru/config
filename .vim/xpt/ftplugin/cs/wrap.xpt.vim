@@ -3,24 +3,25 @@ if exists("b:__WRAP_CS_XPT_VIM__")
 endif
 let b:__WRAP_CS_XPT_VIM__ = 1
 
+XPTemplateDef
 
-call XPTemplate('try_', [
-            \ 'try',
-            \ '{',
-            \ '    `wrapped^',
-            \ '}`...^',
-            \ 'catch (`except^ e)',
-            \ '{',
-            \ '    `handler^',
-            \ '}`...^',
-            \ '`catch...^catch',
-            \ '{',
-            \ '    \`\^',
-            \ '}^^',
-            \ '`finally...^finally',
-            \ '{',
-            \ '    \`cursor\^',
-            \ '}^^',
-            \ ''
-            \])
+XPT try_ hint=try\ {\ SEL\ }\ catch...
+try
+{
+    `wrapped^
+}`...^
+catch (`except^ e)
+{
+    `handler^
+}`...^
+`catch...^catch
+{
+    \`\^
+}^^
+`finally...^finally
+{
+    \`cursor\^
+}^^
+
+..XPT
 

@@ -10,6 +10,8 @@ let [s:f, s:v] = XPTcontainer()
 call extend(s:v, {'$TRUE': '1', '$FALSE' : '0', '$NULL' : 'NULL', '$UNDEFINED' : 'undefined'}, "keep")
 call extend(s:v, {'$CL': '/*', '$CM' : '*', '$CR' : '*/', '$CS' : '//'}, "keep")
 
+call extend(s:v, {'$author' : 'drdr.xp', '$email' : 'drdr.xp@gmail.com'}, 'keep')
+
 
 call XPTemplatePriority("all")
 
@@ -61,9 +63,10 @@ fun! s:f.R(name) "{{{
     return ctx.namedStep[a:name]
   endif
 
-  return a:ctx.name
+  return ""
 endfunction "}}}
 
+" black hole
 fun! s:f.VOID(...) "{{{
   return ""
 endfunction "}}}
@@ -101,6 +104,7 @@ fun! s:f.path(...) "{{{
 endfunction "}}}
 
 
+" draft increment implementation
 fun! s:f.CntD() "{{{
   let ctx = self._ctx
   if !has_key(ctx, '__counter')
@@ -126,9 +130,6 @@ fun! s:f.CntIncr(name, ...)"{{{
   return d[a:name]
 endfunction"}}}
 
-" variables
-let s:v['$author'] = "drdr.xp"
-let s:v['$email'] = "drdr.xp@gmail.com"
 
 
 " ================================= Snippets ===================================

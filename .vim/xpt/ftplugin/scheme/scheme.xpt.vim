@@ -14,57 +14,60 @@ XPTinclude
 " ========================= Function and Varaibles =============================
 
 " ================================= Snippets ===================================
-call XPTemplate( 'begin', [
-    \ '(begin',
-    \ '   (`todo0^) `...^',
-    \ '   (`todon^)`...^)',
-    \ '' ])
+XPTemplateDef
+XPT begin hint=(begin\ ..\ )
+(begin
+   (`todo0^) `...^
+   (`todon^)`...^)
+..XPT
 
-call XPTemplate( 'case', [
-    \ '(case (`of^)',
-    \ '      ({`match^} `expr1^) `...^',
-    \ '      ({`matchn^} `exprn^)`...^',
-    \ '      `else...^\(else \`cursor\^\)^^)',
-    \ '' ])
+XPT case hint=(case\ (of)\ ((match)\ (expr))\ ..)
+(case (`of^)
+      ({`match^} `expr1^) `...^
+      ({`matchn^} `exprn^)`...^
+      `else...^\(else \`cursor\^\)^^)
+..XPT
 
 
-call XPTemplate( 'cond', [
-    \ '(cond ([`condition^] `expr1^) `...^',
-    \ '      ([`condition^] `exprn^)`...^',
-    \ '      `else...^\(else \`cursor\^\)^^)',
-    \ '' ])
+XPT cond hint=(cond\ ([condi]\ (expr))\ ..)
+(cond ([`condition^] `expr1^) `...^
+      ([`condition^] `exprn^)`...^
+      `else...^\(else \`cursor\^\)^^)
+..XPT
 
-call XPTemplate( 'let', [
-    \ '(let [(`newVar^ `value^ `...^)',
-    \ '      (`newVarn^ `valuen^`...^)]',
-    \ '     (`cursor^))',
-    \ ''])
+XPT let hint=(let\ [(var\ (val))\ ..]\ (body))
+(let [(`newVar^ `value^ `...^)
+      (`newVarn^ `valuen^`...^)]
+     (`cursor^))
+..XPT
 
-call XPTemplate( 'letrec', [
-    \ '(letrec [(`newVar^ `value^ `...^)',
-    \ '         (`newVarn^ `valuen^`...^)]',
-    \ '     (`cursor^))',
-    \ ''])
+XPT letrec hint=(letrec\ [(var\ (val))\ ..]\ (body))
+(letrec [(`newVar^ `value^ `...^)
+         (`newVarn^ `valuen^`...^)]
+     (`cursor^))
+..XPT
 
-call XPTemplate( 'lambda', [
-    \ '(lambda [`params^]',
-    \ '        (`cursor^))'
-    \ ])
+XPT lambda hint=(lambda\ [params]\ (body))
+(lambda [`params^]
+        (`cursor^))
+..XPT
 
-call XPTemplate( 'defun', [
-    \ '(define `funName^',
-    \ '    (lambda [`params^]',
-    \ '        (`cursor^))',
-    \ ' )',
-    \ '' ])
+XPT defun hint=(define\ var\ (lambda\ ..))
+(define `funName^
+    (lambda [`params^]
+        (`cursor^))
+ )
+..XPT
 
-call XPTemplate( 'def', ['(define `varName^ `cursor^)'] )
+XPT def hint=(define\ var\ (ex))
+(define `varName^ `cursor^)
+..XPT
 
-call XPTemplate( 'do', [
-    \ '(do {(`var1^ `init1^ `step1^) `...0^',
-    \ '     (`varn^ `initn^ `stepn^)`...0^}',
-    \ '   ([`test^] `exprs^ `...1^ `exprs^`...1^^)',
-    \ '   (`command0^) `...2^^',
-    \ '   (`command1^)`...2^)',
-    \ '' ])
+XPT do hint=(do\ ..)
+(do {(`var1^ `init1^ `step1^) `...0^
+     (`varn^ `initn^ `stepn^)`...0^}
+   ([`test^] `exprs^ `...1^ `exprs^`...1^^)
+   (`command0^) `...2^^
+   (`command1^)`...2^)
+..XPT
 

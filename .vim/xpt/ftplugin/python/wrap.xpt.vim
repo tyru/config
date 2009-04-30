@@ -4,16 +4,17 @@ endif
 
 let b:__WRAP_PYTHON_XPT_VIM__ = 1
 
-call XPTemplate('try_', [
-            \ 'try:',
-            \ '    `wrapped^',
-            \ 'except `except^:',
-            \ '    `handler^`...^',
-            \ 'except `exc^:',
-            \ '    `handle^`...^',
-            \ '`else...^else:',
-            \ '    \`\^^^',
-            \ '`finally...^finally:',
-            \ '   \`\^^^'
-            \])
+XPTemplateDef
+XPT try_ hint=try:\ SEL\ except...
+try:
+    `wrapped^
+except `except^:
+    `handler^`...^
+except `exc^:
+    `handle^`...^
+`else...^else:
+    \`\^^^
+`finally...^finally:
+   \`\^^^
+..XPT
 

@@ -17,12 +17,17 @@ call XPTemplatePriority('like')
 
 
 " ================================= Snippets ===================================
-call XPTemplate("for", ""
-      \."for (`^int^ `i^ = `0^; `i^ < `len^; ++`i^) {\n"
-      \."  `cursor^\n"
-      \."}")
+"
+XPTemplateDef
+XPT for hint=for\ i++
+for (`^int^ `i^ = `0^; `i^ < `len^; ++`i^) {
+  `cursor^
+}
+..XPT
 
-call XPTemplate("forr", ""
-      \."for (`^int^ `i^ = `n^; `i^ >`^=^ `end^; --`i^) {\n"
-      \."  `cursor^\n"
-      \."}")
+XPT forr hint=for\ i--
+for (`^int^ `i^ = `n^; `i^ >`^=^ `end^; --`i^) {
+`cursor^
+}
+..XPT
+

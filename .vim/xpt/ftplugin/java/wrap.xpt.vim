@@ -4,23 +4,24 @@ endif
 
 let b:__WRAP_JAVA_XPT_VIM__ = 1
 
-call XPTemplate('try_', [
-            \ 'try',
-            \ '{',
-            \ '    `wrapped^',
-            \ '}`...^',
-            \ 'catch (`except^ e)',
-            \ '{',
-            \ '    `handler^',
-            \ '}`...^',
-            \ '`catch...^catch (Exception e)',
-            \ '{',
-            \ '    \`\^',
-            \ '}^^',
-            \ '`finally...^finally',
-            \ '{',
-            \ '    \`cursor\^',
-            \ '}^^',
-            \ ''
-            \])
+XPTemplateDef
+XPT try_ hint=try\ {\ SEL\ }\ catch...
+try
+{
+    `wrapped^
+}`...^
+catch (`except^ e)
+{
+    `handler^
+}`...^
+`catch...^catch (Exception e)
+{
+    \`\^
+}^^
+`finally...^finally
+{
+    \`cursor\^
+}^^
+
+..XPT
 
