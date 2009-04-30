@@ -8,9 +8,14 @@ export EDITOR="$(which vim)"
 if [ -d "${HOME}/bin" ] ; then
     export PATH=${HOME}/bin:${PATH}
 fi
-# if [ -d "${HOME}/perl5lib" ]; then
-#     export PERL5LIB="${HOME}/perl5lib"
-# fi
+
+
+export PKG_DBDIR="$HOME/local/var/db/pkg"
+export PORT_DBDIR="$HOME/local/var/db/pkg"
+export INSTALL_AS_USER
+export LD_LIBRARY_PATH="$HOME/local/lib"
+mkdir -p ~/local/var/db/pkg
+
 
 if [ -f "$HOME/.zshenv.local" ]; then
     # overwrite settings

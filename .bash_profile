@@ -42,3 +42,8 @@ fi
 export PS1="{\@} \u@\H being in [\W]\n \\$ "
 
 
+export PKG_DBDIR="$HOME/local/var/db/pkg"
+export PORT_DBDIR="$HOME/local/var/db/pkg"
+export INSTALL_AS_USER
+export LD_LIBRARY_PATH="$HOME/local/lib"
+mkdir -p ~/local/var/db/pkg
