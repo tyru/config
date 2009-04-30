@@ -1,5 +1,6 @@
 
-if [ -x "$(which zsh)" ]; then
+# root should use default /bin/bash.
+if [ $UID != 0 -a -x "$(which zsh)" ]; then
     exec zsh
 fi
 

@@ -139,6 +139,7 @@ fi
 if [ "$FLAG_COMMIT" = "true" ]; then
     git add .
     git commit -a
+    git gc
 fi
 
 # push to github server.
