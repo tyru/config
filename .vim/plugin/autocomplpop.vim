@@ -1,26 +1,26 @@
-"=============================================================================
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " autocomplpop.vim - Automatically open the popup menu for completion.
-"=============================================================================
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
-" Author:  Takeshi NISHIDA <ns9tks@DELETE-ME.gmail.com>
-" Version: 2.5, for Vim 7.1
-" Licence: MIT Licence
-" URL:     http://www.vim.org/scripts/script.php?script_id=1879
+" Author:       Takeshi Nishida <ns9tks(at)gmail.com>
+" Version:      1.7, for Vim 7.1
+" Licence:      MIT Licence
+" URL:          http://www.vim.org/scripts/script.php?script_id=1879
 "
-" GetLatestVimScripts: 1879 1 :AutoInstall: autocomplpop.vim
-"
-"=============================================================================
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " DOCUMENT: (Japanese: http://vim.g.hatena.ne.jp/keyword/autocomplpop.vim)
-"
-" Description: ---------------------------------------------------------- {{{1
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Description: {{{1
 "   Install this plugin and your vim comes to automatically opens the popup
-"   menu for completion when you enter characters or move the cursor in Insert
-"   mode.
+"   menu for completion when you input a few characters in a insert mode. This
+"   plugin works by mapping alphanumeric characters and some symbols.
 "
-" Installation: --------------------------------------------------------- {{{1
+"-----------------------------------------------------------------------------
+" Installation: {{{1
 "   Drop this file in your plugin directory.
 "
-" Usage: ---------------------------------------------------------------- {{{1
+"-----------------------------------------------------------------------------
+" Usage: {{{1
 "   If this plugin has been installed, the auto-popup is enabled at startup by
 "   default.
 "
@@ -29,35 +29,36 @@
 "
 "     1. The keyword completion is attempted if the text before the cursor
 "        consists of two keyword character.
-"     2. The filename completion is attempted if the text before the cursor
+"     2. The keyword completion is attempted in Scheme file if the text before
+"        the cursor consists of '(' + a keyword character.
+"     3. The filename completion is attempted if the text before the cursor
 "        consists of a filename character + a path separator + 0 or more
 "        filename characters.
-"     3. The omni completion is attempted in Ruby file if the text before the
-"        cursor consists of "." or "::". (Ruby interface is required.)
-"     4. The omni completion is attempted in Python file if the text before
-"        the cursor consists of ".". (Python interface is required.)
+"     4. The omni completion is attempted in Ruby file if the text before the
+"        cursor consists of '.' or '::'. (Ruby interface is required.)
 "     5. The omni completion is attempted in HTML/XHTML file if the text
-"        before the cursor consists of "<" or "</".
-"     6. The omni completion is attempted in CSS file if the text before the
-"        cursor consists of ":", ";", "{", "@", "!", or in the start of line
-"        with blank characters and keyword characters.
+"        before the cursor consists of '<' or '</'.
 "
 "   This behavior is customizable.
 "
 "   Commands:
 "     :AutoComplPopEnable
-"       - makes autocommands for the auto-popup.
+"       - makes mappings for the auto-popup.
 "     :AutoComplPopDisable
-"       - removes autocommands for the auto-popup.
+"       - removes mappings for the auto-popup.
+"     :AutoComplPopLock
+"       - suspends the auto-popup.
+"     :AutoComplPopUnlock
+"       - resumes the auto-popup after :AutoComplPopLock.
 "
-" Options: -------------------------------------------------------------- {{{1
+"-----------------------------------------------------------------------------
+" Options: {{{1
 "   g:AutoComplPop_NotEnableAtStartup:
-"     The auto-popup is not enabled at startup if non-zero is set.
+"     The auto-popup is not enabled at startup if this is non-zero.
 "
-"   g:AutoComplPop_MappingDriven:
-"     The auto-popup is triggered by key mappings instead of CursorMovedI
-"     event if non-zero is set. This is useful to avoid auto-popup by moving
-"     cursor in Insert mode.
+"   g:AutoComplPop_MapList:
+"     This is a list. Each string of this list is mapped as trigger to open
+"     the popup menu.
 "
 "   g:AutoComplPop_IgnoreCaseOption
 "     This is set to 'ignorecase' when the popup menu is opened.
@@ -66,53 +67,12 @@
 "     This is set to 'complete' when the popup menu is opened.
 "
 "   g:AutoComplPop_CompleteoptPreview:
-"     If non-zero is set, 'preview' is added to 'completeopt' when the popup
+"     If this is non-zero, 'preview' is added to 'completeopt' when the popup
 "     menu is opened.
 "
-"   g:AutoComplPop_BehaviorKeywordLength:
-"     This is the length of keyword characters before the cursor which are
-"     needed to attempt the keyword completion. If negative value is set, it
-"     will never attempt this completion.
-"
-"   g:AutoComplPop_BehaviorFileLength:
-"     This is the length of filename characters before the cursor which are
-"     needed to attempt the filename completion. If negative value is set, it
-"     will never attempt this completion.
-"
-"   g:AutoComplPop_BehaviorRubyOmniMethodLength:
-"     This is the length of keyword characters before the cursor which are
-"     needed to attempt the ruby omni-completion for methods. If negative
-"     value is set, it will never attempt this completion.
-"
-"   g:AutoComplPop_BehaviorRubyOmniSymbolLength:
-"     This is the length of keyword characters before the cursor which are
-"     needed to attempt the ruby omni-completion for symbols. If negative
-"     value is set, it will never attempt this completion.
-"
-"   g:AutoComplPop_BehaviorPythonOmniLength:
-"     This is the length of keyword characters before the cursor which are
-"     needed to attempt the python omni-completion. If negative value is set,
-"     it will never attempt this completion.
-"
-"   g:AutoComplPop_BehaviorHtmlOmniLength:
-"     This is the length of keyword characters before the cursor which are
-"     needed to attempt the HTML omni-completion. If negative value is set, it
-"     will never attempt this completion.
-"
-"   g:AutoComplPop_BehaviorCssOmniPropertyLength:
-"     This is the length of keyword characters before the cursor which are
-"     needed to attempt the CSS omni-completion for properties. If negative
-"     value is set, it will never attempt this completion.
-"
-"   g:AutoComplPop_BehaviorCssOmniValueLength:
-"     This is the length of keyword characters before the cursor which are
-"     needed to attempt the CSS omni-completion for values. If negative value
-"     is set, it will never attempt this completion.
-"
 "   g:AutoComplPop_Behavior:
-"     This option is for advanced users. This setting overrides other behavior
-"     options. This is a dictionary. Each key corresponds to a filetype. '*'
-"     is default. Each value is a list. These are attempted in sequence until
+"     This is a dictionary. Each key corresponds to a filetype. '*' is
+"     default. Each value is a list. These are attempted in sequence until
 "     completion item is found. Each element is a dictionary which has
 "     following items:
 "       ['command']:
@@ -123,51 +83,12 @@
 "       ['repeat']:
 "         It automatically repeats a completion if non-zero is set.
 "
-" Thanks: --------------------------------------------------------------- {{{1
+"-----------------------------------------------------------------------------
+" Thanks: {{{1
 "   vimtip #1386
 "
-" ChangeLog: ------------------------------------------------------------ {{{1
-"   2.5:
-"     - Added some options to customize behavior easily:
-"         g:AutoComplPop_BehaviorKeywordLength
-"         g:AutoComplPop_BehaviorFileLength
-"         g:AutoComplPop_BehaviorRubyOmniMethodLength
-"         g:AutoComplPop_BehaviorRubyOmniSymbolLength
-"         g:AutoComplPop_BehaviorPythonOmniLength
-"         g:AutoComplPop_BehaviorHtmlOmniLength
-"         g:AutoComplPop_BehaviorCssOmniPropertyLength
-"         g:AutoComplPop_BehaviorCssOmniValueLength
-"
-"   2.4:
-"     - Added g:AutoComplPop_MappingDriven option.
-"
-"   2.3.1:
-"     - Changed to set 'lazyredraw' while a popup menu is visible to avoid
-"       flickering.
-"     - Changed a behavior for CSS.
-"     - Added support for GetLatestVimScripts.
-"
-"   2.3:
-"     - Added a behavior for Python to support omni completion.
-"     - Added a behavior for CSS to support omni completion.
-"
-"   2.2:
-"     - Changed not to work when 'paste' option is set.
-"     - Fixed AutoComplPopEnable command and AutoComplPopDisable command to
-"       map/unmap "i" and "R".
-"
-"   2.1:
-"     - Fixed the problem caused by "." command in Normal mode.
-"     - Changed to map "i" and "R" to feed completion command after starting
-"       Insert mode.
-"     - Avoided the problem caused by Windows IME.
-"
-"   2.0:
-"     - Changed to use CursorMovedI event to feed a completion command instead
-"       of key mapping. Now the auto-popup is triggered by moving the cursor.
-"     - Changed to feed completion command after starting Insert mode.
-"     - Removed g:AutoComplPop_MapList option.
-"
+"-----------------------------------------------------------------------------
+" ChangeLog: {{{1
 "   1.7:
 "     - Added behaviors for HTML/XHTML. Now supports the omni completion for
 "       HTML/XHTML.
@@ -234,21 +155,19 @@
 "   0.1:
 "       - First release.
 "
+"-----------------------------------------------------------------------------
 " }}}1
-"=============================================================================
 
-" INCLUDE GUARD: ======================================================== {{{1
-if v:version < 701
-  echoerr "Sorry, Autocomplpop doesn't support this version of Vim."
-  finish
-elseif exists('loaded_autocomplpop')
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" INCLUDE GUARD: {{{1
+if exists('loaded_autocomplpop') || v:version < 700
   finish
 endif
 let loaded_autocomplpop = 1
 
 
-" FUNCTION: ============================================================= {{{1
-
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" FUNCTION: {{{1
 "-----------------------------------------------------------------------------
 function! s:GetSidPrefix()
   return matchstr(expand('<sfile>'), '<SNR>\d\+_')
@@ -259,177 +178,99 @@ function! s:GetPopupFeeder()
   return s:PopupFeeder
 endfunction
 
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" OBJECT: Mapper: manages global mappings {{{1
+let s:Mapper = { 'keys' :  [] }
 "-----------------------------------------------------------------------------
-function! s:Enable()
-  call s:Disable()
-
-  augroup AutoComplPopGlobalAutoCommand
-    autocmd!
-    autocmd InsertEnter * let s:PopupFeeder.last_pos = [] | unlet s:PopupFeeder.last_pos
-    autocmd InsertLeave * call s:PopupFeeder.finish()
-  augroup END
-
-  if g:AutoComplPop_MappingDriven
-    call s:FeedMapping.map()
-  else
-    autocmd AutoComplPopGlobalAutoCommand CursorMovedI * call s:PopupFeeder.feed()
-  endif
-
-  nnoremap <silent> i i<C-r>=<SID>GetPopupFeeder().feed()<CR>
-  nnoremap <silent> a a<C-r>=<SID>GetPopupFeeder().feed()<CR>
-  nnoremap <silent> R R<C-r>=<SID>GetPopupFeeder().feed()<CR>
-endfunction
 
 "-----------------------------------------------------------------------------
-function! s:Disable()
-  call s:FeedMapping.unmap()
-  augroup AutoComplPopGlobalAutoCommand
-    autocmd!
-  augroup END
-  nnoremap i <Nop> | nunmap i
-  nnoremap a <Nop> | nunmap a
-  nnoremap R <Nop> | nunmap R
+function! s:Mapper.map(keys)
+  call self.unmap()
+
+  let self.keys = copy(a:keys)
+
+  for key in self.keys
+    if key == ' '
+      execute 'inoremap <silent> <expr> <Space> '' '' . <SID>GetPopupFeeder().request_to_feed()'
+    else
+      execute printf('inoremap <silent> <expr> %s ''%s'' . <SID>GetPopupFeeder().request_to_feed()',
+            \        key, key)
+    endif
+  endfor
 endfunction
 
 
-" FUNCTION: BEHAVIOR ==================================================== {{{1
-
 "-----------------------------------------------------------------------------
-function! s:MakeDefaultBehavior()
-  let behavs = {
-        \   '*'      : [],
-        \   'ruby'   : [],
-        \   'python' : [],
-        \   'html'   : [],
-        \   'xhtml'  : [],
-        \   'css'    : [],
-        \ }
+function! s:Mapper.unmap()
+  for key in self.keys
+    if key == ' '
+      execute 'iunmap <Space>'
+    else
+      execute 'iunmap ' . key
+    endif
+  endfor
 
-  if g:AutoComplPop_BehaviorKeywordLength >= 0
-    for key in keys(behavs)
-      call add(behavs[key], {
-            \   'command'  : "\<C-n>",
-            \   'pattern'  : printf('\k\{%d,}$', g:AutoComplPop_BehaviorKeywordLength),
-            \   'repeat'   : 0,
-            \ })
-    endfor
-  endif
-
-  if g:AutoComplPop_BehaviorFileLength >= 0
-    for key in keys(behavs)
-      call add(behavs[key], {
-            \   'command'  : "\<C-x>\<C-f>",
-            \   'pattern'  : printf('\f[%s]\f\{%d,}$', (has('win32') || has('win64') ? '/\\' : '/'),
-            \                       g:AutoComplPop_BehaviorFileLength),
-            \   'excluded' : '[*/\\][/\\]\f*$\|[^[:print:]]\f*$',
-            \   'repeat'   : 1,
-            \ })
-    endfor
-  endif
-
-  if has('ruby') && g:AutoComplPop_BehaviorRubyOmniMethodLength >= 0
-    call add(behavs.ruby, {
-          \   'command'  : "\<C-x>\<C-o>",
-          \   'pattern'  : printf('[^. \t]\(\.\|::\)\k\{%d,}$', g:AutoComplPop_BehaviorRubyOmniMethodLength),
-          \   'repeat'   : 0,
-          \ })
-  endif
-
-  if has('ruby') && g:AutoComplPop_BehaviorRubyOmniSymbolLength >= 0
-    call add(behavs.ruby, {
-          \   'command'  : "\<C-x>\<C-o>",
-          \   'pattern'  : printf('\(^\|[^:]\):\k\{%d,}$', g:AutoComplPop_BehaviorRubyOmniSymbolLength),
-          \   'repeat'   : 0,
-          \ })
-  endif
-
-  if has('python') && g:AutoComplPop_BehaviorPythonOmniLength >= 0
-    call add(behavs.python, {
-          \   'command'  : "\<C-x>\<C-o>",
-          \   'pattern'  : printf('\k\.\k\{%d,}$', g:AutoComplPop_BehaviorPythonOmniLength),
-          \   'repeat'   : 0,
-          \ })
-  endif
-
-  if g:AutoComplPop_BehaviorHtmlOmniLength >= 0
-    let behav_html = {
-          \   'command'  : "\<C-x>\<C-o>",
-          \   'pattern'  : printf('\(<\|<\/\|<[^>]* \)\k\{%d,}$', g:AutoComplPop_BehaviorHtmlOmniLength),
-          \   'repeat'   : 1,
-          \ }
-    call add(behavs.html , behav_html)
-    call add(behavs.xhtml, behav_html)
-  endif
-
-  if g:AutoComplPop_BehaviorCssOmniPropertyLength >= 0
-    call add(behavs.css, {
-          \   'command'  : "\<C-x>\<C-o>",
-          \   'pattern'  : printf('\(^\s\|[;{]\)\s*\k\{%d,}$', g:AutoComplPop_BehaviorCssOmniPropertyLength),
-          \   'repeat'   : 0,
-          \ })
-  endif
-
-  if g:AutoComplPop_BehaviorCssOmniValueLength >= 0
-    call add(behavs.css, {
-          \   'command'  : "\<C-x>\<C-o>",
-          \   'pattern'  : printf('[:@!]\s*\k\{%d,}$', g:AutoComplPop_BehaviorCssOmniValueLength),
-          \   'repeat'   : 0,
-          \ })
-  endif
-
-  return behavs
+  let self.keys = []
 endfunction
 
-" OBJECT: PopupFeeder: ================================================== {{{1
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" OBJECT: PopupFeeder:  {{{1
 let s:PopupFeeder = { 'behavs' : [], 'lock_count' : 0 }
 "-----------------------------------------------------------------------------
-function! s:PopupFeeder.feed()
-  " NOTE: CursorMovedI is not triggered while the pupup menu is visible. And
-  "       it will be triggered when pupup menu is disappeared.
-
-  if self.lock_count > 0 || pumvisible() || &paste
+function! s:PopupFeeder.request_to_feed()
+  if self.lock_count != 0 || pumvisible()
     return ''
   endif
-
-  let cursor_moved = self.check_cursor_and_update()
-  if exists('self.behavs[0]') && self.behavs[0].repeat
-    let self.behavs = (self.behavs[0].repeat ? [ self.behavs[0] ] : [])
-  elseif cursor_moved 
-    let self.behavs = copy(exists('g:AutoComplPop_Behavior[&filetype]') ? g:AutoComplPop_Behavior[&filetype]
-          \                                                             : g:AutoComplPop_Behavior['*'])
-  else
-    let self.behavs = []
-  endif
-
-  let cur_text = strpart(getline('.'), 0, col('.') - 1)
-  call filter(self.behavs, 'cur_text =~ v:val.pattern && (!exists(''v:val.excluded'') || cur_text !~ v:val.excluded)')
-
-  if empty(self.behavs)
-    call self.finish()
-    return ''
-  endif
-
-  " In case of dividing words by symbols while a popup menu is visible,
-  " popup is not available unless input <C-e> or try popup once.
-  " (E.g. "for(int", "ab==cd") So duplicates first completion.
-  call insert(self.behavs, self.behavs[0])
 
   call s:OptionManager.set('completeopt', 'menuone' . (g:AutoComplPop_CompleteoptPreview ? ',preview' : ''))
   call s:OptionManager.set('complete', g:AutoComplPop_CompleteOption)
   call s:OptionManager.set('ignorecase', g:AutoComplPop_IgnoreCaseOption)
-  call s:OptionManager.set('lazyredraw', !g:AutoComplPop_MappingDriven)
-  " NOTE: With CursorMovedI driven, Set 'lazyredraw' to avoid flickering.
-  "       With Mapping driven, set 'nolazyredraw' to make a popup menu visible.
+  "call s:OptionManager.set('lazyredraw', 0)
+  let s:req_popup = 1
 
-  " use <Plug> for silence instead of <C-r>=
-  call feedkeys(self.behavs[0].command . "\<Plug>AutocomplpopOnPopupPost", 'm')
-  return '' " for <C-r>=
+  augroup AutoComplPop_PopupFeeder
+    autocmd!
+    autocmd  InsertLeave  * call s:PopupFeeder.on_insert_leave()
+  augroup END
+
+  " use <Plug> for silence instead of <C-r>
+  inoremap <silent> <expr> <Plug>AutocomplpopOnPopupPost <SID>GetPopupFeeder().on_popup_post()
+
+  return printf("\<C-r>=%sGetPopupFeeder().feed(" .
+        \       "  copy(exists('g:AutoComplPop_Behavior[&filetype]') " .
+        \       "       ? g:AutoComplPop_Behavior[&filetype] " .
+        \       "       : g:AutoComplPop_Behavior['*']))\<CR>", s:GetSidPrefix())
+endfunction
+
+"-----------------------------------------------------------------------------
+function! s:PopupFeeder.feed(behavs)
+  " NOTE: CursorMovedI is not triggered while the pupup menu is visible. And
+  "       it will be triggered when pupup menu is disappeared.
+
+  let text = strpart(getline('.'), 0, col('.') - 1)
+  let self.behavs = filter(a:behavs, 'text =~ v:val.pattern && text !~ v:val.excluded')
+
+  if exists('self.behavs[0]')
+    " In case of dividing words by symbols while popup menu is visible,
+    " popup is not available unless input <C-e> or try popup once.
+    " (E.g. "for(int", "ab==cd") So duplicates first completion.
+    call insert(self.behavs, self.behavs[0])
+
+    "call feedkeys(self.behavs[0].command . "\<C-r>=s:PopupFeeder.on_popup_post()\<CR>", 'n')
+    call feedkeys(self.behavs[0].command . "\<Plug>AutocomplpopOnPopupPost", 'm')
+  else
+    call self.finish()
+  endif
+  return ''
 endfunction
 
 "-----------------------------------------------------------------------------
 function! s:PopupFeeder.finish()
-  let self.behavs = []
+  autocmd! AutoComplPop_PopupFeeder
   call s:OptionManager.restore_all()
+  let self.behavs = []
 endfunction
 
 "-----------------------------------------------------------------------------
@@ -447,24 +288,29 @@ function! s:PopupFeeder.unlock()
 endfunction
 
 "-----------------------------------------------------------------------------
-function! s:PopupFeeder.check_cursor_and_update()
-  let prev_pos = (exists('self.last_pos') ? self.last_pos : [-1, -1, -1, -1])
-  let self.last_pos = getpos('.')
+function! s:PopupFeeder.initialize_lock()
+  let self.lock_count = 0
+endfunction
 
-  if has('multi_byte_ime')
-    return (prev_pos[1] != self.last_pos[1] || prev_pos[2] + 1 == self.last_pos[2] ||
-          \ prev_pos[2] > self.last_pos[2])
-  else
-    return (prev_pos != self.last_pos)
-  endif
+"-----------------------------------------------------------------------------
+function! s:PopupFeeder.on_insert_leave()
+  call self.finish()
+endfunction
+
+"-----------------------------------------------------------------------------
+function! s:PopupFeeder.on_cursor_moved_i_for_repeat()
+  autocmd! AutoComplPop_PopupFeeder CursorMovedI
+  call s:PopupFeeder.feed([ self.behavs[0] ])
 endfunction
 
 "-----------------------------------------------------------------------------
 function! s:PopupFeeder.on_popup_post()
   if pumvisible()
+    if self.behavs[0].repeat
+      autocmd AutoComplPop_PopupFeeder CursorMovedI * call s:PopupFeeder.on_cursor_moved_i_for_repeat()
+    endif
     " a command to restore to original text and select the first match
-    return "\<C-p>"
-    " return "\<C-p>\<Down>"
+    return "\<C-p>\<Down>"
   elseif exists('self.behavs[1]')
     call remove(self.behavs, 0)
     return printf("\<C-e>%s\<C-r>=%sGetPopupFeeder().on_popup_post()\<CR>",
@@ -476,7 +322,8 @@ function! s:PopupFeeder.on_popup_post()
 endfunction
 
 
-" OBJECT: OptionManager: sets or restores temporary options ============= {{{1
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" OBJECT: OptionManager: sets or restores temporary options {{{1
 let s:OptionManager = { 'originals' : {} }
 "-----------------------------------------------------------------------------
 function! s:OptionManager.set(name, value)
@@ -493,48 +340,21 @@ function! s:OptionManager.restore_all()
 endfunction
 
 
-" OBJECT: FeedMapping: manages global mappings ========================== {{{1
-let s:FeedMapping = { 'keys' :  [] }
-"-----------------------------------------------------------------------------
-function! s:FeedMapping.map()
-  call self.unmap()
-
-  let self.keys = [
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" INITIALIZATION: GLOBAL OPTIONS: {{{1
+"...........................................................................
+if !exists('g:AutoComplPop_NotEnableAtStartup')
+  let g:AutoComplPop_NotEnableAtStartup = 0
+endif
+".........................................................................
+if !exists('g:AutoComplPop_MapList')
+  let g:AutoComplPop_MapList = [
         \ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
         \ 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
         \ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
         \ 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
         \ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        \ '-', '_', '~', '^', '.', ',', ':', '!', '#', '=', '%', '$', '@', '<', '>', '/', '\',
-        \ '<Space>', '<C-h>', '<BS>', ]
-
-  for key in self.keys
-    execute printf('inoremap <silent> %s %s<C-r>=<SID>GetPopupFeeder().feed()<CR>',
-          \        key, key)
-  endfor
-endfunction
-
-
-"-----------------------------------------------------------------------------
-function! s:FeedMapping.unmap()
-  for key in self.keys
-    execute 'iunmap ' . key
-  endfor
-
-  let self.keys = []
-endfunction
-
-
-" }}}1
-
-" GLOBAL OPTIONS: ======================================================= {{{1
-"...........................................................................
-if !exists('g:AutoComplPop_NotEnableAtStartup')
-  let g:AutoComplPop_NotEnableAtStartup = 0
-endif
-"...........................................................................
-if !exists('g:AutoComplPop_MappingDriven')
-  let g:AutoComplPop_MappingDriven = 0
+        \ ' ', '-', '_', '~', '^', '.', ',', ':', '!', '#', '=', '%', '$', '@', '<', '>', '/', '\', ]
 endif
 ".........................................................................
 if !exists('g:AutoComplPop_IgnoreCaseOption')
@@ -544,61 +364,125 @@ endif
 if !exists('g:AutoComplPop_CompleteOption')
   let g:AutoComplPop_CompleteOption = '.,w,b,k'
 endif
+
 ".........................................................................
 if !exists('g:AutoComplPop_CompleteoptPreview')
   let g:AutoComplPop_CompleteoptPreview = 0
 endif
 ".........................................................................
-if !exists('g:AutoComplPop_BehaviorKeywordLength')
-  let g:AutoComplPop_BehaviorKeywordLength = 2
-endif
-".........................................................................
-if !exists('g:AutoComplPop_BehaviorFileLength')
-  let g:AutoComplPop_BehaviorFileLength = 0
-endif
-".........................................................................
-if !exists('g:AutoComplPop_BehaviorRubyOmniMethodLength')
-  let g:AutoComplPop_BehaviorRubyOmniMethodLength = 0
-endif
-".........................................................................
-if !exists('g:AutoComplPop_BehaviorRubyOmniSymbolLength')
-  let g:AutoComplPop_BehaviorRubyOmniSymbolLength = 1
-endif
-".........................................................................
-if !exists('g:AutoComplPop_BehaviorPythonOmniLength')
-  let g:AutoComplPop_BehaviorPythonOmniLength = 0
-endif
-".........................................................................
-if !exists('g:AutoComplPop_BehaviorHtmlOmniLength')
-  let g:AutoComplPop_BehaviorHtmlOmniLength = 0
-endif
-".........................................................................
-if !exists('g:AutoComplPop_BehaviorCssOmniPropertyLength')
-  let g:AutoComplPop_BehaviorCssOmniPropertyLength = 1
-endif
-".........................................................................
-if !exists('g:AutoComplPop_BehaviorCssOmniValueLength')
-  let g:AutoComplPop_BehaviorCssOmniValueLength = 0
-endif
-".........................................................................
 if !exists('g:AutoComplPop_Behavior')
   let g:AutoComplPop_Behavior = {}
 endif
-call extend(g:AutoComplPop_Behavior, s:MakeDefaultBehavior(), 'keep')
+call extend(g:AutoComplPop_Behavior, {
+      \   '*' : [
+      \     {
+      \       'command'  : "\<C-n>",
+      \       'pattern'  : '\k\k$',
+      \       'excluded' : '^$',
+      \       'repeat'   : 0,
+      \     },
+      \     {
+      \       'command'  : "\<C-x>\<C-f>",
+      \       'pattern'  : (has('win32') || has('win64') ? '\f[/\\]\f*$' : '\f[/]\f*$'),
+      \       'excluded' : '[*/\\][/\\]\f*$\|[^[:print:]]\f*$',
+      \       'repeat'   : 1,
+      \     },
+      \   ],
+      \   'ruby' : [
+      \     {
+      \       'command'  : "\<C-n>",
+      \       'pattern'  : '\k\k$',
+      \       'excluded' : '^$',
+      \       'repeat'   : 0,
+      \     },
+      \     {
+      \       'command'  : "\<C-x>\<C-f>",
+      \       'pattern'  : (has('win32') || has('win64') ? '\f[/\\]\f*$' : '\f[/]\f*$'),
+      \       'excluded' : '[*/\\][/\\]\f*$\|[^[:print:]]\f*$',
+      \       'repeat'   : 1,
+      \     },
+      \     {
+      \       'command'  : "\<C-x>\<C-o>",
+      \       'pattern'  : '\([^. \t]\.\|^:\|\W:\)$',
+      \       'excluded' : (has('ruby') ? '^$' : '.*'),
+      \       'repeat'   : 0,
+      \     },
+      \   ],
+      \   'scheme' : [
+      \     {
+      \       'command'  : "\<C-n>",
+      \       'pattern'  : '\k\k$',
+      \       'excluded' : '^$',
+      \       'repeat'   : 0,
+      \     },
+      \     {
+      \       'command'  : "\<C-n>",
+      \       'pattern'  : '(\k$',
+      \       'excluded' : '^$',
+      \       'repeat'   : 0,
+      \     },
+      \     {
+      \       'command'  : "\<C-x>\<C-f>",
+      \       'pattern'  : (has('win32') || has('win64') ? '\f[/\\]\f*$' : '\f[/]\f*$'),
+      \       'excluded' : '[*/\\][/\\]\f*$\|[^[:print:]]\f*$',
+      \       'repeat'   : 1,
+      \     },
+      \   ],
+      \   'html' : [
+      \     {
+      \       'command'  : "\<C-n>",
+      \       'pattern'  : '\k\k$',
+      \       'excluded' : '^$',
+      \       'repeat'   : 0,
+      \     },
+      \     {
+      \       'command'  : "\<C-x>\<C-f>",
+      \       'pattern'  : (has('win32') || has('win64') ? '\f[/\\]\f*$' : '\f[/]\f*$'),
+      \       'excluded' : '[*/\\][/\\]\f*$\|[^[:print:]]\f*$',
+      \       'repeat'   : 1,
+      \     },
+      \     {
+      \       'command'  : "\<C-x>\<C-o>",
+      \       'pattern'  : '\(<\k*\|<\/\k*\|<[^>]* \)$',
+      \       'excluded' : '^$',
+      \       'repeat'   : 1,
+      \     },
+      \   ],
+      \   'xhtml' : [
+      \     {
+      \       'command'  : "\<C-n>",
+      \       'pattern'  : '\k\k$',
+      \       'excluded' : '^$',
+      \       'repeat'   : 0,
+      \     },
+      \     {
+      \       'command'  : "\<C-x>\<C-f>",
+      \       'pattern'  : (has('win32') || has('win64') ? '\f[/\\]\f*$' : '\f[/]\f*$'),
+      \       'excluded' : '[*/\\][/\\]\f*$\|[^[:print:]]\f*$',
+      \       'repeat'   : 1,
+      \     },
+      \     {
+      \       'command'  : "\<C-x>\<C-o>",
+      \       'pattern'  : '\(<\k*\|<\/\k*\|<[^>]* \)$',
+      \       'excluded' : '^$',
+      \       'repeat'   : 1,
+      \     },
+      \   ],
+      \ } ,'keep')
 
-
-" COMMANDS/AUTOCOMMANDS/MAPPINGS/ETC.: ================================== {{{1
-command! -bar -narg=0 AutoComplPopEnable  call s:Enable()
-command! -bar -narg=0 AutoComplPopDisable call s:Disable()
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" INITIALIZATION: COMMANDS, AUTOCOMMANDS, MAPPINGS, ETC.: {{{1
+command! -bar -narg=0 AutoComplPopEnable  call s:Mapper.map(g:AutoComplPop_MapList) | call s:PopupFeeder.initialize_lock()
+command! -bar -narg=0 AutoComplPopDisable call s:Mapper.unmap()
 command! -bar -narg=0 AutoComplPopLock    call s:PopupFeeder.lock()
 command! -bar -narg=0 AutoComplPopUnlock  call s:PopupFeeder.unlock()
-
-inoremap <silent> <expr> <Plug>AutocomplpopOnPopupPost <SID>GetPopupFeeder().on_popup_post()
 
 if !g:AutoComplPop_NotEnableAtStartup
   AutoComplPopEnable
 endif
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " }}}1
-"=============================================================================
-" vim: set fdm=marker:
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" vim:fdm=marker
+

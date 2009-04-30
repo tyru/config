@@ -71,10 +71,6 @@ while getopts u:cpxh OPT; do
 done
 
 if [ "$FLAG_EXTRACT" != "true" ]; then
-    if [ "$OS" != "Cygwin" -a $UID != 0 ]; then
-        warn 'you are not root.'
-        exit 1
-    fi
     if [ -z $GITHUB_USER ]; then
         warn "Can't determine GITHUB_USER('git config github.user' is empty)."
         exit 1
