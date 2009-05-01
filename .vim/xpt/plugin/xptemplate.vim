@@ -1,6 +1,6 @@
 " XPTEMPLATE ENGIE:
 "   code template engine
-" VERSION: 0.3.5.5
+" VERSION: 0.3.5.6
 " BY: drdr.xp | drdr.xp@gmail.com
 "
 " MARK USED:
@@ -18,13 +18,11 @@
 "
 " TODOLIST: "{{{
 " TODO do not show popup if only one entry matches.
+" TODO popup if multi keys with same prefix 
 " TODO ordered item
 " TODO ontime filter
 " TODO lock key variables
 " TODO as function call template
-" TODO popup if multi keys with same prefix 
-" TODO popup hint
-" TODO foldmethod=indent problem.
 " TODO map stack
 " TODO when popup display, map <cr> to trigger template start 
 " TODO undo
@@ -291,27 +289,47 @@ fun! s:XPTemplate_def(fn)
   endwhile
 
 
-  " parse all lines
-  let [s, e] = [0, 0]
+  " parse lines
+  " start end and blank start
+  let [s, e, blk] = [-1, -1, 10000]
   while i < len-1 | let i += 1
 
     let v = lines[i]
 
-    if v =~ '^"' 
+    " blank line
+    if v =~ '^\s*$' || v =~ '^"[^"]*$'
+      let blk = min([blk, i - 1])
       continue
     endif
 
-    if v =~# '^XPT '
-      let s = i
-    endif
 
     if v =~# '^\.\.XPT'
+
       let e = i - 1
       call s:XPTemplateParse(lines[s : e])
-      let [s, e] = [0, 0]
+      let [s, e, blk] = [-1, -1, 10000]
+
+    elseif v =~# '^XPT\s'
+
+      if s != -1
+        " template with no end
+        let e = min([i - 1, blk])
+        call s:XPTemplateParse(lines[s : e])
+        let [s, e, blk] = [i, -1, 10000]
+      else
+        let s = i
+        let blk = i
+      endif
+
+    else
+      let blk = i
     endif
 
   endwhile
+
+  if s != -1
+    call s:XPTemplateParse(lines[s : min([blk, i])])
+  endif
 
 endfunction
 

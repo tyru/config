@@ -12,16 +12,26 @@ XPTinclude
 
 " ========================= Function and Varaibles =============================
 
+fun! s:f.RubyBlockArg() "{{{
+  return s:f.SV("\^[\^|]\\(.\\{-}\\)[\^|]$","|&|")
+endfunction "}}}
+
+fun! s:f.RubySnackCase() "{{{
+  return s:f.S(s:f.V(),'\<.',"\\u&")
+endfunction "}}}
+
+
 " ================================= Snippets ===================================
-call XPTemplate('atr', "attr_reader :`reader name^")
 
-call XPTemplate('atw', "attr_writer :`writer name^")
+call XPTemplate('atw', "attr_writer :`writer^`...^, :`writern^`...^")
+call XPTemplate('atr', "attr_reader :`reader^`...^, :`readern^`...^")
 
-call XPTemplate('ata', "attr_accessor :`accessor name^")
+
+call XPTemplate('ata', "attr_accessor :`accessor^`...^, :`accessorn^`...^")
 
 call XPTemplate('do', "
-  \do\n
-  \`block^\n
+  \do `|...|^RubyBlockArg()^^\n
+  \`cursor^\n
   \end")
 
 call XPTemplate('blk', "
@@ -238,11 +248,12 @@ call XPTemplate('tc', "
 
 call XPTemplate('deft', "
   \def test_`case name^\n
+  \`cursor^
   \end")
 
-call XPTemplate('ass', "assert(`boolean condition [, message]^)")
+call XPTemplate('ass', "assert(`boolean condition^ `message...^, \\`\\^^^)")
 
-call XPTemplate('ani', "assert_nil(`object [, message]^)")
+call XPTemplate('ani', "assert_nil(`object^ `message...^, \\`\\^^^)")
 
 call XPTemplate('ann', "assert_not_nil(`object [, message]^)")
 

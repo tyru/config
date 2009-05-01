@@ -656,6 +656,8 @@ g:XPTfuncs()   g:XPTvars()
 
 							     *xpt-changes-log*
 : > <
+Fixed:2009 May 01	simplify template definition : '..XPT' is no more
+			needed.
 Fixed:2009 Apr 30	bug of line removed sometimes if folding is enabled
 			Thanks to C. Coutinho
 Fixed:2009 Apr 30	bug of weird 'cpo' option causes mapping not working

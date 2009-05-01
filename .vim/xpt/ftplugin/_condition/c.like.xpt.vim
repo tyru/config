@@ -9,8 +9,7 @@ let s:v = g:XPTvars()
 
 
 call XPTemplatePriority('like')
-call extend(s:v, {'$TRUE': '1', '$FALSE' : '0', '$NULL' : 'NULL'})
-
+call extend(s:v, {'$TRUE': '1', '$FALSE' : '0', '$NULL' : 'NULL', '$INDENT_HELPER' : ';'})
 
 
 XPTemplateDef
@@ -23,7 +22,6 @@ if (`condi^) {
 `else...^else { 
   \`cursor\^ 
 }^^
-..XPT
 
 
 XPT ifn		hint=if\ ($NULL\ ==\ ..)\ {..}\ else...
@@ -33,7 +31,6 @@ if (`$NULL^ == `var^) {
 `else...^else { 
   \`cursor\^ 
 }^^
-..XPT
 
 
 XPT ifnn	hint=if\ ($NULL\ !=\ ..)\ {..}\ else...
@@ -43,7 +40,6 @@ if (`$NULL^ != `var^) {
 `else...^else { 
   \`cursor\^ 
 }^^
-..XPT
 
 
 XPT if0		hint=if\ (0\ ==\ ..)\ {..}\ else...
@@ -53,7 +49,6 @@ if (0 == `var^) {
 `else...^else { 
   \`cursor\^ 
 }^^
-..XPT
 
 
 XPT ifn0	hint=if\ (0\ !=\ ..)\ {..}\ else...
@@ -63,7 +58,6 @@ if (0 != `var^) {
 `else...^else { 
   \`cursor\^ 
 }^^
-..XPT
 
 
 XPT ifee	hint=if\ (..)\ {..}\ elseif...
@@ -73,7 +67,6 @@ if (`condition^) {
 `...^else if (`cond^R("condition")^) { 
   `_^
 }`...^
-..XPT
 
 
 XPT switch	hint=switch\ (..)\ {case..}
@@ -87,8 +80,9 @@ switch (`^) {
     break;
   `...^ 
 
-`default...^default:
+  `default...^default:
     \`cursor\^^^
 }
-..XPT
+
+
 
