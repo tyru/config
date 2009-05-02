@@ -832,6 +832,8 @@ augroup MyVimrc
                 \ setlocal ft=lua
     autocmd BufNewFile,BufReadPre *.avs
                 \ setlocal syntax=avs
+    autocmd BufNewFile,BufReadPre *.tmpl
+                \ setlocal ft=html
     " }}}3
 
 augroup END

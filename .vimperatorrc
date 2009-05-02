@@ -102,10 +102,10 @@ noremap <C-g>   YP
 " マッチしなかった場合元の位置に戻らない
 noremap /   mz/
 
-noremap ,b      :buffers<CR>
-noremap ,d      :dialog<Space>
-noremap ,gm     :gmset!<CR>
-noremap ,gf     :tab normal gf<CR>
+noremap <Leader>b      :buffers<CR>
+noremap <Leader>d      :dialog<Space>
+noremap <Leader>gm     :gmset!<CR>
+noremap <Leader>gf     :tab normal gf<CR>
 
 noremap !       :set invum<CR>
 
@@ -187,7 +187,7 @@ set hintmatching=custom
 
 " multi_requester.js
 noremap <C-k>   :mr<Space>
-noremap ,t    :mr twitter-timeline<CR>
+noremap <Leader>tw     :mr twitter-timeline<CR>
 
 
 " ime_controller.js
@@ -202,8 +202,8 @@ noremap <Leader>co      :copy<Space>
 
 
 " command_menu.js
-noremap g,t      :toolbar<Space>
-noremap g,m      :menu<Space>
+" noremap g,t      :toolbar<Space>
+" noremap g,m      :menu<Space>
 
 
 " stella.js & nicontroller.js
@@ -233,6 +233,23 @@ noremap <Leader>fs  :ftpause<CR>
 noremap <Leader>ff  :ftnext<CR>
 noremap <Leader>fb  :ftprevious<CR>
 noremap <Leader>fv  :ftvolume<Space>
+
+
+" toggler.js
+js <<EOM
+liberator.globalVariables.toggler = {
+  go: ["set go=nbr","set go=nbrmBT"],
+  sb: ["sbclose","sbar Add-ons","sbar Console","sbar Downloads","sbar Preferences"],
+  go_and_sb: [
+    ["set go=","sbclose"],
+    ["set go=mTb","sbar Console"]
+  ],
+};
+EOM
+
+noremap <Leader>tg      :toggle go<CR>
+noremap <Leader>ts      :toggle sb<CR>
+
 " }}}1
 "-----------------------------------------------------------------
 
