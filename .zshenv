@@ -21,6 +21,9 @@ if [ "$OS" = "Cygwin" ]; then
 fi
 
 
+export PATH="$HOME/local/bin:$PATH"
+export PERL5LIB="$HOME/local/lib/perl5:$HOME/local/lib/perl5/site_perl:$PERL5LIB"
+
 export PKG_DBDIR="$HOME/local/var/db/pkg"
 export PORT_DBDIR="$HOME/local/var/db/pkg"
 export INSTALL_AS_USER
