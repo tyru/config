@@ -119,9 +119,11 @@ function ppath() {
 
 function findbin() {
     IFS=:
-    for i in $PATH; do
-        find $PATH
-    done
+    for i in $PATH; do find $PATH; done | sort | uniq
+}
+
+function mkrand() {
+    perl -e '@a=(a..z, A..Z, 0..9); map { print $a[int rand @a] } 1..shift' $1
 }
 
 
