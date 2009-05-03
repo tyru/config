@@ -1,5 +1,5 @@
 
-bindkey -v
+bindkey -e
 
 bindkey "^R" history-incremental-search-backward
 # no response when pressed in command line and vim
@@ -117,6 +117,13 @@ function ppath() {
     perl -MFile::Spec -e 'print join qq(\n), File::Spec->path'
 }
 
+function findbin() {
+    IFS=:
+    for i in $PATH; do
+        find $PATH
+    done
+}
+
 
 # for cygwin
 if [ $(uname -o) = 'Cygwin' ]; then
@@ -151,8 +158,8 @@ if [ $(uname -o) = 'Cygwin' ]; then
     }
     function screen() {
         local conf="$HOME/.screenrc.cygwin"
-        if [ $# = 0 -a -f $conf ]; then
-            command screen -c $conf "$@"
+        if [ $# = 0 -a -f "$conf" ]; then
+            command screen -c "$conf" "$@"
         else
             command screen "$@"
         fi
