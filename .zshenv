@@ -21,17 +21,13 @@ if [ "$OS" = "Cygwin" ]; then
 fi
 
 
+# local::lib
 export PATH="$HOME/local/bin:$PATH"
 export PERL5LIB="$HOME/local/lib/perl5:$HOME/local/lib/perl5/site_perl:$PERL5LIB"
+export GISTY_DIR="$HOME/work/gist"
 
 export PKG_DBDIR="$HOME/local/var/db/pkg"
 export PORT_DBDIR="$HOME/local/var/db/pkg"
 export INSTALL_AS_USER
 export LD_LIBRARY_PATH="$HOME/local/lib"
 mkdir -p ~/local/var/db/pkg
-
-
-if [ -f "$HOME/.zshenv.local" ]; then
-    # overwrite settings
-    source "$HOME/.zshenv.local"
-fi
