@@ -18,18 +18,18 @@ XPTemplateDef
 
 XPT ln hint=\ ========...
 ==============================================================================
-..XPT
+
 
 XPT fmt hint=vim:\ options...
 vim:tw=78:ts=8:sw=8:sts=8:noet:ft=help:norl:
-..XPT
+
 
 XPT q hint=:\ >\ ...\ <
 : >
-	    `cursor^
+	`cursor^
 <
-..XPT
+
 
 XPT r hint=|...|
 |`content^|
-..XPT
+

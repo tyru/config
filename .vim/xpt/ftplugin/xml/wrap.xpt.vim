@@ -12,11 +12,11 @@ XPT _ hint=<Tag>\ SEL\ </Tag>
 <`tag^`...^ `name^="`val^"`...^>
     `wrapped^
 </`tag^>
-..XPT
+
 
 XPT CDATA_ hint=<![CDATA[\ SEL\ ]]>
 <![CDATA[
 `wrapped^
 ]]>
-..XPT
+
 

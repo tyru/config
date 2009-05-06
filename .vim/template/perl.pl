@@ -28,10 +28,7 @@ __END__
 
 =head1 SYNOPSIS
 
-    perl <%filename%> [args ...]
-    # or
-    ./<%filename%> [args ...]
-
 
 =head1 OPTIONS
+
 

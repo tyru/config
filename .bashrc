@@ -17,7 +17,11 @@ alias la='ls -A'
 alias l=ls
 
 if [ -x "$(which vim)" ]; then
-    alias vi=vim
+    if [ -x "/usr/local/bin/vim" ]; then
+        alias vi=/usr/local/bin/vim
+    else
+        alias vi=vim
+    fi
 fi
 
 

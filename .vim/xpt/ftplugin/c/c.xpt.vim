@@ -7,8 +7,11 @@ let b:__C_C_XPT_VIM__ = 1
 let [s:f, s:v] = XPTcontainer()
 
 " constant definition
-call extend(s:v, {'\$TRUE': '1', '\$FALSE' : '0', '\$NULL' : 'NULL', '\$UNDEFINED' : ''})
-" call XPTemplateIndent("/2*8")
+call extend(s:v, { '$TRUE': '1'
+                \, '$FALSE' : '0'
+                \, '$NULL' : 'NULL'
+                \, '$UNDEFINED' : ''
+                \, '$BRACKETSTYLE' : ''})
 
 " inclusion
 XPTinclude
@@ -16,8 +19,9 @@ XPTinclude
       \ _comment/c.like 
       \ _condition/c.like
       \ _loops/c.like
-
-
+      \ _loops/c.for.like
+      \ _structures/c.like
+      \ _preprocessor/c.like
 
 " ========================= Function and Varaibles =============================
 
@@ -29,68 +33,27 @@ XPTemplateDef
 " for (`i^ = 0; `i^ < `len^; ++`i^) {
 "   `cursor^
 " }
-" ..XPT
 
 
-XPT inc		hint=include\ <>
-include <`^.h>
-..XPT
 
-
-XPT ind		hint=include\ ""
-include "`_^fileRoot()^.h"
-..XPT
-
-
-XPT assert	hint=
+XPT assert	hint=assert\ (..,\ msg)
 assert(`isTrue^, "`text^");
-..XPT
 
-
-XPT once
-#ifndef `symbol^headerSymbol()^
-#define `symbol^
-`cursor^
-#endif /* `symbol^ */
-..XPT
-
-
-" Just Another Implementation
-" XPT once
-" #ifndef `symbol^__{S(S(E("%:t"),".","\\u&"),"\\.","_")}__^
-" #define `symbol^
-" `cursor^
-" #endif /* `symbol^ */
-" ..XPT
-
-
-XPT main
+XPT main hint=main\ (argc,\ argv)
   int
-main(int argv, char **args)
+main(int argc, char **argv)
 {
   `cursor^
   return 0;
 }
-..XPT
 
 
-XPT fun
+XPT fun=..\ ..\ (..)
   `int^
 `name^(`_^)
 {
   `cursor^
 }
-..XPT
-
-
-XPT ifndef
-ifndef `_^SV('.','\u&')^^ 
-#    define `_^ 
-
-`cursor^ 
-#endif /* `_^ */
-..XPT
-
 
 XPT cmt
 /**
@@ -99,12 +62,10 @@ XPT cmt
  *     `cursor^
  * @return {`int^} `desc^
  */
-..XPT
 
 
 XPT para syn=comment	hint=comment\ parameter
 @param {`Object^} `name^ `desc^
-..XPT
 
 
 XPT filehead
@@ -124,4 +85,3 @@ XPT filehead
  * 
  *--------------------------\\\ `sum^ ///---------------------------*/
 
-..XPT

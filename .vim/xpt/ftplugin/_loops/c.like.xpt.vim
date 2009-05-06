@@ -6,9 +6,6 @@ let b:___LOOPS_C_LIKE_XPT_VIM__ = 1
 " containers
 let [s:f, s:v] = XPTcontainer()
 
-" constant definition
-call extend(s:v, {'\$TRUE': '1', '\$FALSE' : '0', '\$NULL' : 'NULL', '\$UNDEFINED' : ''})
-
 " inclusion
 
 call XPTemplatePriority('like')
@@ -18,37 +15,22 @@ call XPTemplatePriority('like')
 
 " ================================= Snippets ===================================
 XPTemplateDef
-XPT while0 hint=do\ {\ ..\ }\ while\ (..)
-do {\n
-  `cursor^\n
+
+XPT while0 hint=do\ {\ ..\ }\ while\ ($FALSE)
+do `$BRACKETSTYLE^{
+  `cursor^
 } while (`$FALSE^)
-..XPT
+
 
 XPT do hint=do\ {\ ..\ }\ while\ (..)
-do {\n
-  `cursor^\n
-} while (`$FALSE^)
-..XPT
+do `$BRACKETSTYLE^{
+  `cursor^
+} while (`condition^)
 
-XPT while1 hint=while\ (..)\ {\ ..\ }
-while (`$TRUE^) {
+
+XPT while1 hint=while\ ($TRUE)\ {\ ..\ }
+while (`$TRUE^) `$BRACKETSTYLE^{
   `cursor^
 }
-..XPT
 
-XPT for hint=for\ (..;..;++)
-for (`i^ = `0^; `i^ < `len^; ++`i^){\n
-  `cursor^\n
-}
-..XPT
-
-XPT forr hint=for\ (..;..;--)
-for (`i^ = `n^; `i^ >`^=^ `end^; --`i^){\n
-  `cursor^\n
-}
-..XPT
-
-XPT forever hint=for\ (;;)\ ..
-for (;;) `_^/* void */;^
-..XPT
 

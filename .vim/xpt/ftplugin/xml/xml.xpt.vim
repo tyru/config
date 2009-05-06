@@ -18,19 +18,19 @@ XPT t hint=<Tag>..</Tag>
 <`tag^`...^ `name^="`val^"`...^>
     `cursor^
 </`tag^>
-..XPT
+
 
 XPT ver hint=<?xml\ version=...
 <?xml version="`ver^1.0^" encoding="`enc^utf-8^" ?>
-..XPT
+
 
 XPT style hint=<?xml-stylesheet...
 <?xml-stylesheet type="`style^text/css^" href="`from^">
-..XPT
+
 
 XPT CDATA_ hint=<![CDATA[...
 <![CDATA[
 `cursor^
 ]]>
-..XPT
+
 

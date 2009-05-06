@@ -22,21 +22,21 @@ elif `cond2^:
     `todo^`...^
 `else...^else:
     \`cursor\^^^
-..XPT
+
 
 XPT for hint=for\ ..\ in\ ..:\ ...
 for `vars^ in `range^0)^:
     `cursor^
-..XPT
+
 
 XPT def hint=def\ ..(\ ..\ ):\ ...
 def `fun_name^( `params^^ ):
     `cursor^
-..XPT
+
 
 XPT lambda hint=(labmda\ ..\ :\ ..)
 (lambda `args^ : `expr^)
-..XPT
+
 
 XPT try hint=try:\ ..\ except:\ ...
 try:
@@ -49,16 +49,16 @@ except `exc^:
     \`\^^^
 `finally...^finally:
    \`\^^^
-..XPT
+
 
 XPT class hint=class\ ..\ :\ def\ __init__\ ...
 class `className^ `inherit^^:
     def __init__( self `args^^):
         `cursor^
-..XPT
+
 
 XPT ifmain hint=if\ __name__\ ==\ __main__
 if __name__ == "__main__" :
   `cursor^
-..XPT
+
 

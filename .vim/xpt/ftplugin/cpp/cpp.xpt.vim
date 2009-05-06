@@ -7,14 +7,21 @@ let b:__CPP_CPP_XPT_VIM__ = 1
 let [s:f, s:v] = XPTcontainer()
 
 " constant definition
-call extend(s:v, {'\$TRUE': '1', '\$FALSE' : '0', '\$NULL' : 'NULL', '\$UNDEFINED' : ''})
+call extend(s:v, { '$TRUE': 'true'
+               \ , '$FALSE' : 'false'
+               \ , '$NULL' : 'NULL'
+               \ , '$UNDEFINED' : ''
+               \ , '$BRACKETSTYLE' : "\n"
+               \ , '$INDENT_HELPER' : ';'})
 
 " inclusion
 XPTinclude
       \ _common/common
-      \ _loop/java.like
-      \ c/c
+      \ _structures/c.like
+      \ _preprocessor/c.like
       \ c/wrap
+      \ _loops/c.like
+      \ _loops/java.like
 
 " ========================= Function and Varaibles =============================
 function! s:f.cleanTempl( ctx, ... )
@@ -28,12 +35,27 @@ endfunction
 
 XPTemplateDef
 
-XPT namespace hint=namespace {}
+XPT namespace hint=namespace\ {}
 namespace `name^
 {
     `cursor^
 }
-..XPT
+
+
+XPT main hint=main\ (argc,\ argv)
+int main(int argc, char *argv[])
+{
+    `cursor^
+    return 0;
+}
+
+
+XPT fun=..\ ..\ (..)
+`int^ `name^(`_^^)
+{
+    `cursor^
+}
+
 
 XPT class   hint=class+ctor
 class `className^
@@ -59,7 +81,6 @@ private:
 `className^::`className^( const `className^ &cpy )
 {
 }
-..XPT
 
 
 XPT templateclass   hint=template\ <>\ class
@@ -91,7 +112,7 @@ template <`templateParam^>
 `className^<`^cleanTempl(R('templateParam'))^^>::`className^( const `className^ &cpy )
 {
 }
-..XPT
+
 
 XPT try hint=try\ ...\ catch...
 try
@@ -106,5 +127,5 @@ catch ( `except^ )
 {
     \`cursor\^
 }^^
-..XPT
+
 

@@ -20,37 +20,37 @@ XPTemplateDef
 
 XPT xif hint=..\ if\ ..;
 `expr^ if `cond^;
-..XPT
+
 
 XPT xwhile hint=..\ while\ ..;
 `expr^ while `cond^;
-..XPT
+
 
 XPT xunless hint=..\ unless\ ..;
 `expr^ unless `cond^;
-..XPT
+
 
 XPT xforeach hint=..\ foreach\ ..;
 `expr^ foreach @`array^;
-..XPT
+
 
 XPT sub hint=sub\ ..\ {\ ..\ }
 sub `fun_name^ {
     `cursor^
 }
-..XPT
+
 
 XPT while hint=while\ (\ ..\ )\ {\ ..\ }
 while (`cond^) {
     `cursor^
 }
-..XPT
+
 
 XPT unless hint=unless\ (\ ..\ )\ {\ ..\ }
 unless (`cond^) {
     `cursor^
 }
-..XPT
+
 
 XPT eval hint=eval\ {\ ..\ };if...
 eval {
@@ -59,21 +59,21 @@ eval {
 if ($@) {
     `handle^
 }
-..XPT
+
 
 XPT for hint=for\ (my\ ..;..;++)
 for (my $`var^ = 0; $`var^ < `count^; $`var^++) {
     `cursor^
 }
-..XPT
+
 
 XPT foreach hint=foreach\ my\ ..\ (..){}
 foreach my $`var^ (@`array^) {
     `cursor^
 }
-..XPT
 
-XPT package hint=
+
+XPT package hint=new
 package `className^;
 
 use base qw(`parent^);
@@ -86,5 +86,5 @@ sub new {
 }
 
 1;
-..XPT
+
 

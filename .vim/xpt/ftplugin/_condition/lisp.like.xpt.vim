@@ -14,18 +14,15 @@ XPT if hint=(if\ (then)\ (else))
 (if [`condition^]
     (`then^)
     `else...^\(\`cursor\^\)^^)
-..XPT
 
 XPT when hint=(when\ cond\ ..)
 (when (`cond^)
    (`todo0^) `...^
    (`todon^)`...^)
-..XPT
 
 
 XPT unless hint=(unless\ cond\ ..)
 (unless (`cond^)
    (`todo0^) `...^
    (`todon^)`...^)
-..XPT
 

@@ -8,13 +8,13 @@ XPTemplateDef
 
 XPT p_ hint=(SEL) 
 (`wrapped^)
-..XPT
+
 
 XPT try_ hint=try\ SEL\ with\ ..\ ->\ ..
 try
     `wrapped^
 with `exc^ -> `rez^`...^
    | `exc2^ -> `rez2^`...^
-..XPT
+
 
 

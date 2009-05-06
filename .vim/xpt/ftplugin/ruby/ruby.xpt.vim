@@ -3,6 +3,8 @@ if exists("b:__RUBY_XPT_VIM__")
 endif
 let b:__RUBY_XPT_VIM__ = 1
 
+
+
 " containers
 let [s:f, s:v] = XPTcontainer()
 
@@ -12,278 +14,727 @@ XPTinclude
 
 " ========================= Function and Varaibles =============================
 
+" remove "||" if no args contained
 fun! s:f.RubyBlockArg() "{{{
-  return s:f.SV("\^[\^|]\\(.\\{-}\\)[\^|]$","|&|")
+  return s:f.SV("^\s*|\s*|\s*$","")
 endfunction "}}}
 
-fun! s:f.RubySnackCase() "{{{
-  return s:f.S(s:f.V(),'\<.',"\\u&")
+fun! s:f.RubyCamelCase(...) "{{{
+  let str = a:0 == 0 ? s:f.V() : a:1
+  let r = substitute(substitute(str, "[\/ _]", ' ', 'g'), '\<.', '\u&', 'g')
+  return substitute(r, " ", '', 'g')
+endfunction "}}}
+
+fun! s:f.RubySnakeCase(...) "{{{
+  let str = a:0 == 0 ? s:f.V() : a:1
+  return substitute(str," ",'_','g')
+endfunction "}}}
+
+fun! s:f.RubyMethodName() "{{{
+""""""
+" Function disable temporary
+""""""
+  " return s:f.V()
+
+""""""
+" Original function below
+"""""
+ let str = s:f.V()
+ let i = match(str,'(')
+ if i == -1
+   return s:f.RubySnakeCase(str)
+ else
+   let j = str[i-1] == " " ? i-2 : i-1
+   return s:f.RubySnakeCase(str[0 : j]) . str[i : -1]
+ endif
+endfunction "}}}
+
+let s:each_map = {
+      \'b' : 'byte',
+      \'c' : 'char',
+      \'co' : 'conc',
+      \'i' : 'index',
+      \'k' : 'key',
+      \'l' : 'line',
+      \'p' : 'pair',
+      \'s' : 'slice',
+      \'v' : 'value'
+      \}
+fun! s:f.RubyEachBrace()
+  let v = s:f.V()
+
+  if has_key(s:each_map, v)
+    let v = s:each_map[v]
+  endif
+
+  if v =~# 'slice\|conc'
+    return v.' (`var^) {'
+  else
+    return v.' {'
+  endif
+endfunction
+
+fun! s:f.RubyEachPair() "{{{
+  let v = s:f.R('what')
+  if v =~# 'pair'
+    return '`name^, `value^'
+  else
+    return '`var^'
+  endif
 endfunction "}}}
 
 
 " ================================= Snippets ===================================
+XPTemplateDef
+XPT BEG hint=BEGIN\ {\ ..\ }
+BEGIN {
+`cursor^
+}
 
-call XPTemplate('atw', "attr_writer :`writer^`...^, :`writern^`...^")
-call XPTemplate('atr', "attr_reader :`reader^`...^, :`readern^`...^")
-
-
-call XPTemplate('ata', "attr_accessor :`accessor^`...^, :`accessorn^`...^")
-
-call XPTemplate('do', "
-  \do `|...|^RubyBlockArg()^^\n
-  \`cursor^\n
-  \end")
-
-call XPTemplate('blk', "
-  \do |`arg^|\n
-  \`block^\n
-  \end")
-
-call XPTemplate('begin', [
-            \ 'begin',
-            \ '   `expr^',
-            \ '`...^rescue `error_type^',
-            \ '    `expr^`...^',
-            \ '`else...^else',
-            \ '    \`expr\^^^',
-            \ '`ensure...^ensure',
-            \ '    \`expr\^^^',
-            \ ''])
-
-call XPTemplate('case', [
-  \ 'case `target^',
-  \ 'when `comparison^',
-  \ '`^',
-  \ '`...^',
-  \ 'when `comparison^',
-  \ '`^',
-  \ '`...^',
-  \ '`else...^else',
-  \ '    \`\^^^',
-  \ 'end',
-  \ '' ])
-
-call XPTemplate('con', "concat( `other_array^ )")
-
-call XPTemplate('def', "
-  \def `^\n
-  \`^\n
-  \end")
 
-call XPTemplate('defi', "
-  \def initialize`^\n
-  \`^\n
-  \end")
+XPT Comp hint=include\ Comparable\ def\ <=>\ ...
+include Comparable
 
-call XPTemplate('defs', "
-  \def self.`^\n
-  \`^\n
-  \end")
+def <=>(other)
+`cursor^
+end
 
-call XPTemplate('tif', "(`boolean exp^) ? `exp if true^ : `exp if false^")
 
-call XPTemplate('if', [
-  \ 'if `boolean exp^',
-  \ '`block^',
-  \ '`...^',
-  \ 'eslif `bool exp^',
-  \ '   `block^`...^',
-  \ '`else...^else',
-  \ '   \`block\^^^',
-  \ 'end',
-  \ ''])
+XPT END hint=END\ {\ ..\ }
+END {
+`cursor^
+}
 
-call XPTemplate('eli', "
-  \elsif `boolean exp^\n
-  \`block^")
 
-call XPTemplate('unl', "
-  \unless `boolean exp^\n
-  \`block^\n
-  \end")
+XPT Enum hint=include\ Enumerable\ def\ each\ ...
+include Enumerable
 
-call XPTemplate('ali', "alias `new^ `old^")
+def each(&block)
+`cursor^
+end
 
-call XPTemplate('lam', "lambda { `block^ }")
 
-call XPTemplate('beg', "
-  \BEGIN {\n
-  \`code to run while file loading^\n
-  \}")
+XPT Forw hint=extend\ Forwardable
+extend Forwardable
 
-call XPTemplate('end', "
-  \END {\n
-  \`code to run after execution finished^\n
-  \}")
 
-call XPTemplate('war', "%w[`array of words^]")
+XPT Md hint=Marshall\ Dump
+File.open("`filename^", "wb") {|`file^file^| Marshal.dump(`obj^, `file^) }
 
-call XPTemplate('War', "%W[`array of words^]")
 
-call XPTemplate('sqs', "%q[`single quoted string^]")
+XPT Ml hint=Marshall\ Load
+File.open("`filename^", "rb") {|`file^file^| Marshal.load(`file^) }
 
-call XPTemplate('dqs', "%Q[`double quoted string^]")
 
-call XPTemplate('int', "#{`^}")
+XPT Pn hint=PStore.new\\(..)
+PStore.new("`filename^")
 
-call XPTemplate('mod', "
-  \module `module name^ \n
-  \end")
 
-call XPTemplate('cli', "
-  \class `^\n
-  \def initialize`^\n
-  \`^\n
-  \end\n
-  \end")
 
-call XPTemplate('cl', "
-  \class `^\n
-  \end")
 
-call XPTemplate('subcl', "
-  \class `^ < `parent^\n
-  \end")
+XPT Yd hint=YAML\ dump
+File.open("`filename^.yaml", "wb") {|`file^file^| YAML.dump(`obj^,`file^) }
 
-call XPTemplate('clstr', "
-  \class `^ < Struct.new(:`arg_to_constructor^)\n
-  \def initialize(*args)\n
-  \`^\n
-  \super\n
-  \end\n
-  \end")
 
-call XPTemplate('dow', "downto(`lbound^) {|`arg^| `block^ }")
+XPT Yl hint=YAML\ load
+File.open("`filename^.yaml") {|`file^file^| YAML.load(`file^) }
 
-call XPTemplate('ste', "step(`count^) {|`arg^| `block^ }")
 
-call XPTemplate('tim', "times {|`arg^| `block^ }")
+XPT _d hint=__DATA__
+__DATA__
 
-call XPTemplate('upt', "upto(`ubound^) {|`arg^| `block^ }")
 
-call XPTemplate('ea', "each {|`e^| `block^ }")
+XPT _e hint=__END__
+__END__
 
-call XPTemplate('eai', "each_index {|`index^| `block^ }")
 
-call XPTemplate('eak', "each_key {|`key^| `block^ }")
+XPT _f hint=__FILE__
+__FILE__
 
-call XPTemplate('eal', "each_line {|`line^| `block^ }")
 
-call XPTemplate('eav', "each_value {|`value^| `block^ }")
+XPT aeq hint=assert_equal\\(..)
+assert_equal(`expected^, `actual^ `message...^, \`\^^^)
 
-call XPTemplate('reve', "reverse_each {|`e^| `block^ }")
 
-call XPTemplate('eap', "each_pair {|`name^, `value^| `block^ }")
+XPT aid hint=assert_in_delta\\(..)
+assert_in_delta(`expected float^, `actual float^, `delta^ `message...^, \`\^^^)
 
-call XPTemplate('eab', "each_byte {|`byte^| `block^ }")
 
-call XPTemplate('eac', "each_char {|`char^| `block^ }")
+XPT aio hint=assert_instance_of\\(..)
+assert_instance_of(`class^, `object to compare^ `message...^, \`\^^^)
 
-call XPTemplate('eacon', "each_cons(`window size^) {|`cons^| `block^ }")
 
-call XPTemplate('easli', "each_slice(`slice size^) {|`slice^| `block^ }")
+XPT ako hint=assert_kind_of\\(..)
+assert_kind_of(`class^, `object to compare^ `message...^, \`\^^^)
 
-call XPTemplate('win', "with_index {|`record^, `index^| `block^ }")
 
-call XPTemplate('map', "map {|`arg^| `block^ }")
+XPT ali hint=alias\ :\ ..\ :\ ..
+alias :`new^ :`old^
 
-call XPTemplate('inj', "inject {|`accumulator^, `object^| `block^ }")
 
-call XPTemplate('inj0', "inject(0) {|`accumulator^, `object^| `block^ }")
+XPT all hint=all?\ {\ ..\ }
+all? {|`element^| `cursor^ }
 
-call XPTemplate('inji', "inject(`initial^) {|`accumulator^, `object^| `block^ }")
 
-call XPTemplate('dirg', "Dir.glob('`dir^') {|`d^| `block^ }")
+XPT ama hint=assert_match\\(..)
+assert_match(/`regexp^/`flags^, `string^ `message...^, \`\^^^)
 
-call XPTemplate('file', "File.foreach('`filename^') {|`line^| `block^ }")
 
-call XPTemplate('open', "open('`filename [,mode]^') {|io| `block^ }")
+XPT amm hint=alias_method\ :\ ..\ :\ ..
+alias_method :`new^, :`old^
 
-call XPTemplate('sor', "sort {|`el1^, `el2^| `el2^ <=> `el1^ }")
 
-call XPTemplate('sorb', "sort_by {|`arg^| `block^ }")
+XPT ane hint=assert_not_equal\\(..)
+assert_not_equal(`expected^, `actual^ `message...^, \`\^^^)
 
-call XPTemplate('all', "all? {|`element^| `condition^ }")
 
-call XPTemplate('any', "any? {|`element^| `condition^ }")
+XPT ani hint=assert_nil\\(..)
+assert_nil(`object^ `message...^, \`\^^^)
 
-call XPTemplate('cfy', "classify {|`element^| `condition^ }")
 
-call XPTemplate('col', "collect {|`obj^| `block^ }")
+XPT anm hint=assert_no_match\\(..)
+assert_no_match(/`regexp^/`flags^, `string^ `message...^, \`\^^^)
 
-call XPTemplate('det', "detect {|`obj^| `block^ }")
 
-call XPTemplate('fet', "fetch(`name^) {|`key^| `block^ }")
+XPT ann hint=assert_not_nil\\(..)
+assert_not_nil(`object^ `message...^, \`\^^^)
 
-call XPTemplate('fin', "find {|`element^| `block^ }")
 
-call XPTemplate('fina', "find_all {|`element^| `block^ }")
+XPT anr hint=assert_nothing_raised\\(..)
+assert_nothing_raised(`exception^) { `cursor^ }
 
-call XPTemplate('grep', "grep(/`pattern^/) {|`match^| `block^ }")
 
-call XPTemplate('max', "max {|`element1^, `element2^| `block^ }")
+XPT ans hint=assert_not_same\\(..)
+assert_not_same(`expected^, `actual^ `message...^, \`\^^^)
 
-call XPTemplate('min', "min {|`element1^, `element2^| `block^ }")
 
-call XPTemplate('par', "partition {|`element^| `block^ }")
+XPT any hint=any?\ {|..|\ ..\ }
+any? {|`element^| `cursor^ }
 
-call XPTemplate('rej', "reject {|`element^| `block^ }")
 
-call XPTemplate('sel', "select {|`element^| `block^ }")
 
-call XPTemplate('sub', "sub(/`pattern^/) {|`match^| `block^ }")
 
-call XPTemplate('gsub', "gsub(/`pattern^/) {|`match^| `block^ }")
+XPT aop hint=assert_operator\\(..)
+assert_operator(`obj1^, `operator^, `obj2^ `message...^, \`\^^^)
 
-call XPTemplate('scan', "scan(/`pattern^/) {|`match^| `block^ }")
 
-call XPTemplate('tc', "
-  \require 'test/unit'\n
-  \require '`module^'\n
-  \\n
-  \class Test`NameOfTestCases^ < Test::Unit:TestCase\n
-  \def test_`test case name^\n
-  \end\n
-  \end")
 
-call XPTemplate('deft', "
-  \def test_`case name^\n
-  \`cursor^
-  \end")
 
-call XPTemplate('ass', "assert(`boolean condition^ `message...^, \\`\\^^^)")
+XPT app hint=if\ __FILE__\ ==\ $PROGRAM_NAME\ ...
+if __FILE__ == $PROGRAM_NAME
+`cursor^
+end
 
-call XPTemplate('ani', "assert_nil(`object^ `message...^, \\`\\^^^)")
 
-call XPTemplate('ann', "assert_not_nil(`object [, message]^)")
+XPT ara hint=assert_raise\\(..)
+assert_raise(`exception^) { `cursor^ }
 
-call XPTemplate('aeq', "assert_equal(`expected^, `actual [, message]^)")
 
-call XPTemplate('ane', "assert_not_equal(`expected^, `actual [, message]^)")
+XPT array hint=Array.new\\(..)\ {\ ...\ }
+Array.new(`size^) {|`arg^i^| `cursor^ }
 
-call XPTemplate('aid', "assert_in_delta(`expected float^, `actual float^, `delta [, message]^)")
 
-call XPTemplate('ara', "assert_raise(`exception^) { `block^ }")
+XPT art hint=assert_respond_to\\(..)
+assert_respond_to(`object^, `resp. to this message^ `message...^, \`\^^^)
 
-call XPTemplate('anr', "assert_nothing_raised(`exception^) { `block^ }")
 
-call XPTemplate('aio', "assert_instance_of(`class^, `object to compare [, message]^)")
+XPT asa hint=assert_same\\(..)
+assert_same(`expected^, `actual^ `message...^, \`\^^^)
 
-call XPTemplate('ako', "assert_kind_of(`class^, `object to compare [, message]^)")
 
-call XPTemplate('art', "assert_respond_to(`object^, `resp. to this message [, message]^)")
+XPT ase hint=assert_send\\(..)
+assert_send(`send array (send array[1] to [0] with [x] as args; exp true).^ `message...^, \`\^^^)
 
-call XPTemplate('ama', "assert_match(/`regexp^/`flags^, `string [, message]^)")
 
-call XPTemplate('anm', "assert_no_match(/`regexp^/`flags^, `string [, message]^)")
+XPT ass hint=assert\\(..)
+assert(`boolean condition^ `message...^, \`\^^^)
 
-call XPTemplate('asa', "assert_same(`expected^, `actual [, message]^)")
 
-call XPTemplate('ans', "assert_not_same(`expected^, `actual [, message]^)")
+XPT ata hint=attr_accessor\ :\ ..
+attr_accessor :`accessor^`...^, :`accessorn^`...^
 
-call XPTemplate('aop', "assert_operator(`obj1^, `operator^, `obj2 [, message]^)")
 
-call XPTemplate('ath', "assert_throws(`expected symbol [, message]^) { `block^ }")
+XPT ath hint=assert_throws\\(..)
+assert_throws(`expected symbol^ `message...^, \\`\\^^^) { `cursor^ }
 
-call XPTemplate('ase', "assert_send(`send array (send array[1] to [0] with [x] as args; exp true). [, message]^)")
+
+XPT atr hint=attr_reader\ :\ ..
+attr_reader :`reader^`...^, :`readern^`...^
+
+
+XPT atw hint=attr_writer\ :\ ..
+attr_writer :`writer^`...^, :`writern^`...^
+
+
+XPT beg hint=BEGIN\ {..}
+BEGIN {
+`code to run while file loading^
+}
+
+
+XPT begin hint=begin\ ..\ rescue\ ..\ else\ ..\ end
+begin
+   `expr^
+`...^rescue `error_type^
+    `expr^
+`...^`else...^else
+    \`expr\^^^
+`ensure...^ensure
+    \`expr\^^^
+end
+
+
+XPT blk hint=do\ |..|\ ..\ end
+do |`arg^|
+`block^
+end
+
+
+XPT bm hint=Benchmark.bmbm\ do\ ...\ end
+TESTS = `times^10_000^
+Benchmark.bmbm do |result|
+`cursor^
+end
+
+
+XPT case hint=case\ ..\ when\ ..\ end
+case `target^
+when `comparison^
+`^
+`...^
+when `comparison^
+`^
+`...^
+`else...^else
+    \`\^^^
+end
+
+
+XPT cfy hint=classify\ {|..|\ ..\ }
+classify {|`element^| `cursor^ }
+
+
+XPT cl hint=class\ ..\ end
+class `^RubyCamelCase()^^
+`cursor^
+end
+
+
+XPT cld hint=class\ ..\ <\ DelegateClass\ ..\ end
+class `ClassName^RubyCamelCase()^^ < DelegateClass(`ParentClass^RubyCamelCase()^^)
+def initialize`^
+super(`delegate object^)
+
+`cursor^
+end
+end
+
+
+XPT cli hint=class\ ..\ def\initialize\ ..\ ...\ end
+class `^RubyCamelCase()^^
+def initialize`^
+`_^
+end`...^
+
+def `methodn^RubyMethodName()^^
+`_n^
+end`...^
+end
+
+
+XPT cls hint=class\ <<\ ..\ end
+class << `self^ self^
+`cursor^
+end
+
+
+XPT clstr hint=..\ =\ Struct.new\ ...
+`ClassName^RubyCamelCase()^^ = Struct.new(:`attr^`...0^, :`attrn^`...0^) do
+def `method^RubyMethodName()^^
+`_^
+end`...1^
+
+def `methodn^RubyMethodName()^^
+`_n^
+end`...1^
+end
+
+
+XPT col hint=collect\ {\ ..\ }
+collect {|`obj^| `cursor^ }
+
+
+XPT deec hint=Deep\ copy
+Marshal.load(Marshal.dump(`obj^))
+
+
+XPT def hint=def\ ..\ end
+def `^RubyMethodName()^^
+`cursor^
+end
+
+
+XPT defd hint=def_delegator\ :\ ...
+def_delegator :`del obj^, :`del meth^, :`new name^
+
+
+XPT defds hint=def_delegators\ :\ ...
+def_delegators :`del obj^, :`del methods^
+
+
+XPT defi hint=def\ initialize\ ..\ end
+def initialize`^
+`cursor^
+end
+
+
+XPT defmm hint=def\ method_missing\\(..)\ ..\ end
+def method_missing(meth, *args, &block)
+`cursor^
+end
+
+
+XPT defs hint=def\ self.\ ..\ end
+def self.`^RubyMethodName()^^
+`cursor^
+end
+
+
+XPT deft hint=def\ test_..\ ..\ end
+def test_`case name^RubyMethodName()^^
+`cursor^
+end
+
+
+XPT deli hint=delete_if\ {|..|\ ..\ }
+delete_if { |`arg^| `cursor^ }
+
+
+XPT det hint=detect\ {\ ..\ }
+detect {|`obj^| `cursor^ }
+
+
+XPT dir hint=Dir[..]
+Dir[`path^./**/*^]
+
+
+XPT dirg hint=Dir.glob\\(..)\ {|..|\ ..\ }
+Dir.glob('`dir^') {|`d^file^| `cursor^ }
+
+
+XPT do hint=do\ |..|\ ..\ end
+do `|`what`|^RubyBlockArg()^^
+`cursor^
+end
+
+
+XPT dow hint=downto\\(..)\ {\ ..\ }
+downto(`lbound^) {|`arg^i^| `cursor^ }
+
+
+XPT ea hint=each\ {\ ..\ }
+each {|`e^| `cursor^ }
+
+
+XPT ea_ hint=each_**\ {\ ..\ }
+each_`what^RubyEachBrace()^^|`_^RubyEachPair()^| `cursor^ }
+
+
+XPT eli hint=elsif\ ..
+elsif `boolean exp^
+`^ `...^elsif `boolean exp^
+`^`...^
+
+
+XPT end hint=END\ {..}
+END {
+`code to run after execution finished^
+}
+
+
+XPT fdir hint=File.dirname\\(..)
+File.dirname(`^)
+
+
+XPT fet hint=fetch\\(..)\ {|..|\ ..\ }
+fetch(`name^) {|`key^| `cursor^ }
+
+
+XPT file hint=File.foreach\\(..)\ ...
+File.foreach('`filename^') {|`line^line^| `cursor^ }
+
+
+XPT fin hint=find\ {|..|\ ..\ }
+find {|`element^| `cursor^ }
+
+
+XPT fina hint=find_all\ {|..|\ ..\ }
+find_all {|`element^| `cursor^ }
+
+
+XPT fjoin hint=File.join\\(..)
+File.join(`dir^, `path^)
+
+
+XPT fread hint=File.read\\(..)
+File.read('`filename^')
+
+
+XPT grep hint=grep\\(..)\ {|..|\ ..\ }
+grep(/`pattern^/) {|`match^m^| `cursor^ }
+
+
+XPT gsub hint=gsub\\(..)\ {|..|\ ..\ }
+gsub(/`pattern^/) {|`match^m^| `cursor^ }
+
+
+XPT hash hint=Hash.new\ {\ ...\ }
+Hash.new {|`hash^hash^,`key^key^| `hash^[`key^] = `cursor^ }
+
+
+XPT if hint=if\ ..\ elsif\ ..\ end
+if `boolean exp^
+`block^
+`...^
+elsif `bool exp^
+   `block^`...^
+`else...^else
+   \`block\^^^
+end
+
+
+XPT inj hint=inject\ {|..|\ ..\ }
+inject {|`accumulator^acc^, `element^el^| `cursor^ }
+
+
+XPT inj0 hint=inject\\(0)\ {|..|\ ..\ }
+inject(0) {|`accumulator^acc^, `element^el^| `cursor^ }
+
+
+XPT inji hint=inject\\(..)\ {|..|\ ..\ }
+inject(`initial^) {|`accumulator^acc^, `element^el^| `cursor^ }
+
+
+XPT int hint=#{..}
+#{`^}
+
+
+XPT kv hint=:...\ =>\ ...
+:`key^ => `value^`...^, :`keyn^ => `valuen^`...^
+
+
+XPT lam hint=lambda\ {\ ..\ }
+lambda {`|`what`|^RubyBlockArg()^^ `cursor^ }
+
+
+XPT map hint=map\ {|..|\ ..\ }
+map {|`arg^| `cursor^ }
+
+
+XPT max hint=max\ {|..|\ ..\ }
+max {|`element1^, `element2^| `cursor^ }
+
+
+XPT min hint=min\ {|..|\ ..\ }
+min {|`element1^, `element2^| `cursor^ }
+
+
+XPT mod hint=module\ ..\ ..\ end
+module `module name^RubyCamelCase()^^
+`cursor^
+end
+
+
+XPT modf hint=module\ ..\ module_function\ ..\ end
+module `module name^RubyCamelCase()^^
+module_function
+
+`cursor^
+end
+
+
+XPT nam hint=Rake\ Namespace
+namespace :`ns^fileRoot()^ do
+`cursor^
+end
+
+
+XPT new hint=Instanciate\ new\ object
+`var^ = `Object^RubyCamelCase()^^.new
+
+
+XPT open hint=open\\(..)\ {|..|\ ..\ }
+open("`filename^" `mode...^, "\`wb\^"^^) {|io| `cursor^ }
+
+
+XPT par hint=partition\ {|..|\ ..\ }
+partition {|`element^| `cursor^ }
+
+
+XPT pathf hint=Path\ from\ here
+File.join(File.dirname(__FILE__), "`path^../lib^")
+
+
+XPT rb hint=#!/usr/bin/env\ ruby\ -w
+#!/usr/bin/env ruby -w
+
+
+XPT rdoc hint=RDoc\ description
+=begin rdoc
+`cursor^
+=end
+
+
+XPT rej hint=reject\ {|..|\ ..\ }
+reject {|`element^| `cursor^ }
+
+
+XPT rep hint=Benchmark\ report
+result.report("`name^: ") { TESTS.times { `cursor^ } }
+
+
+XPT req hint=require\ ..
+require `lib^
+
+
+XPT reqs hint=%w[..].map\ {|lib|\ require\ lib\ }
+%w[`libs^].map {|lib| require lib}
+
+
+XPT reve hint=reverse_each\ {\ ..\ }
+reverse_each {|`e^| `cursor^ }
+
+
+XPT scan hint=scan\\(..)\ {|..|\ ..\ }
+scan(/`pattern^/) {|`match^m^| `cursor^ }
+
+
+XPT sel hint=select\ {|..|\ ..\ }
+select {|`element^| `cursor^ }
+
+
+XPT sinc hint=class\ <<\ self;\ self;\ end
+class << self; self; end
+
+
+XPT sor hint=sort\ {|..|\ ..\ }
+sort {|`el1^, `el2^| `el2^ <=> `el1^ }
+
+
+XPT sorb hint=sort_by\ {|..|\ ..\ }
+sort_by {`|`arg`|^RubyBlockArg()^^ `cursor^ }
+
+XPT qs hint=%*[..]
+%`q^[`_^]
+
+
+XPT ste hint=step\\(..)\ {\ ..\ }
+step(`count^) {|`arg^i^| `cursor^ }
+
+
+XPT sub hint=sub\\(..)\ {|..|\ ..\ }
+sub(/`pattern^/) {|`match^m^| `cursor^ }
+
+
+XPT subcl hint=class\ ..\ <\ ..\ end
+class `^RubyCamelCase()^^ < `parent^RubyCamelCase()^^
+`cursor^
+end
+
+
+XPT tas hint=Rake\ Task
+desc "`task description^"
+task :`task name^RubySnakeCase()^^ do
+`cursor^
+end
+
+
+XPT tc hint=require\ 'test/unit'\ ...\ class\ Test..\ <\ Test::Unit:TestCase\ ...
+require "test/unit"
+require "`module^"
+
+class Test`module^RubyCamelCase()^^ < Test::Unit:TestCase
+def test_`test case name^RubyMethodName()^^
+`^
+end `...^
+
+def test_`test_case_namen^RubyMethodName()^^
+`_n^
+end`...^
+end
+
+
+XPT tif hint=..\ ?\ ..\ :\ ..
+(`boolean exp^) ? `exp if true^ : `exp if false^
+
+
+XPT tim hint=times\ {\ ..\ }
+times {`|`what`|^RubyBlockArg()^^ `cursor^ }
+
+
+XPT tra hint=transaction\\(..)\ {\ ...\ }
+transaction(`^true^) { `cursor^ }
+
+
+XPT unif hint=Unix\ Filter
+ARGF.each_line do |`line^line^|
+`cursor^
+end
+
+
+XPT unless hint=unless\ ..\ end
+unless `boolean cond^
+`cursor^
+end
+
+
+XPT until hint=until\ ..\ end
+until `boolean cond^
+`cursor^
+end
+
+
+XPT upt hint=upto\\(..)\ {\ ..\ }
+upto(`ubound^) {|`arg^i^| `cursor^ }
+
+
+XPT usai hint=if\ ARGV..\ abort("Usage...
+if ARGV`^
+abort "Usage: #{$PROGRAM_NAME} `args^[options]^"
+end
+
+
+XPT usau hint=unless\ ARGV..\ abort("Usage...
+unless ARGV`^
+abort "Usage: #{$PROGRAM_NAME} `args^[options]^"
+end
+
+
+
+
+XPT while hint=while\ ..\ end
+while `boolean cond^
+`cursor^
+end
+
+
+XPT wid hint=with_index\ {\ ..\ }
+with_index {|`record^, `index^i^| `cursor^ }
+
+
+XPT win hint=with_index\ {|..|\ ..\ }
+with_index {|`record^, `index^| `block^ }
+
+
+XPT xml hint=REXML::Document.new\\(..)
+REXML::Document.new(File.read("`filename^"))
+
+
+XPT y hint=:yields:
+:yields:
+
+
+XPT zip hint=zip\\(..)\ {|..|\ ..\ }
+zip(`enum^) {|`row^row^| `cursor^ }
+
 

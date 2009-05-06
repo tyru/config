@@ -21,14 +21,14 @@ while (`cond^)
 {
     `body^
 }
-..XPT
+
 
 XPT for hint=for\ (..;..;++)
 for ($`var^i^ = `init^; $`var^ < `val^; $`var^++)
 {
     `cursor^
 }
-..XPT
+
 
 
 XPT forr hint=for\ (..;..;--)
@@ -36,21 +36,21 @@ for ($`var^i^ = `init^; $`var^ >= `val^0^; $`var^--)
 {
     `cursor^
 }
-..XPT
+
 
 XPT foreach hint=foreach\ (..\ as\ ..)\ {..}
 foreach ($`var^ as `container^)
 {
     `body^
 }
-..XPT
+
 
 XPT fun hint=function\ ..(\ ..\ )\ {..}
 function `funName^( `params^ )
 {
    `cursor^
 }
-..XPT
+
 
 XPT class hint=class\ ..\ {\ ..\ }
 class `className^
@@ -61,12 +61,12 @@ class `className^
     }
 }
 
-..XPT
+
 
 XPT interface hint=interface\ ..\ {\ ..\ }
 interface `interfaceName^
 {
     `cursor^
 }
-..XPT
+
 

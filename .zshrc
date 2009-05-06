@@ -1,4 +1,9 @@
 
+if [ -f "/etc/zshrc" ]; then
+    source /etc/zshrc
+fi
+
+
 bindkey -e
 
 bindkey "^R" history-incremental-search-backward
@@ -61,7 +66,11 @@ unsetopt promptcr
 
 
 if [ -x "$(which vim)" ]; then
-    alias vi=vim
+    if [ -x "/usr/local/bin/vim" ]; then
+        alias vi=/usr/local/bin/vim
+    else
+        alias vi=vim
+    fi
 fi
 
 alias df='df -h'
@@ -171,4 +180,10 @@ fi
 
 if [ -f "$HOME/.zshrc.local" ]; then
     source "$HOME/.zshrc.local"
+fi
+
+
+# duplicated path was deleted but order doesn't change
+if [ -x "$(which perl)" ]; then
+    export PATH="$(perl -e 'for(split /:/, $ENV{PATH}){$h{$_} or $h{$_}=++$i} $,=q(:); %h=reverse %h; print map { $h{$_} } sort { $a <=> $b } keys %h')"
 fi

@@ -34,35 +34,35 @@ for (var i= 0; i < `times^; ++i){
   `do^
 }
 var t2 = new Date().getTime();
-console.log(t1-t0, t2-t1);
-..XPT
+`log^console.log^(t1-t0, t2-t1);
+
 
 XPT asoe hint=assertObjectEquals
 assertObjectEquals(`mess^
                   , `arr^
                   , `expr^);
-..XPT
+
 
 XPT fun hint=function\ ..(\ ..\ )\ {..}
 function `name^ (`param^) {
   `cursor^
   return;
 }
-..XPT
+
 
 XPT for hint=for\ (var..;..;++)
 for (var `i^= 0; `i^ < `ar^.length; ++`i^){
   var `e^ = `ar^[`i^];
   `cursor^
 }
-..XPT
+
 
 XPT forin hint=for\ (var\ ..\ in\ ..)\ {..}
 for (var `i^ in `ar^){
   var `e^ = `ar^[`i^];
   `cursor^
 }
-..XPT
+
 
 XPT if hint=if\ (..)\ {..}
 if (`i^){
@@ -71,7 +71,7 @@ if (`i^){
 else {
     `cursor^
 }^^
-..XPT
+
 
 XPT try hint=try\ {..}\ catch\ {..}\ finally
 try {
@@ -86,7 +86,7 @@ catch (`err^) {
 finally {
   \`cursor\^
 }^^
-..XPT
+
 
 XPT cmt hint=/**\ @auth...\ */
 /**
@@ -95,11 +95,11 @@ XPT cmt hint=/**\ @auth...\ */
 *     `cursor^
 * @return {`Object^} `desc^
 */
-..XPT
+
 
 XPT cpr hint=@param
 @param {`Object^} `name^ `desc^
-..XPT
+
 
 " file comment
 " 4 back slash represent 1 after rendering.
@@ -119,5 +119,5 @@ XPT fcmt hint=full\ doxygen\ comment
  * @TODO : 
  * 
  *--------------------------\\\\\ `sum^ ///---------------------------*/
-..XPT
+
 

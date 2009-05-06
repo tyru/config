@@ -19,15 +19,14 @@ call XPTemplatePriority('like')
 " ================================= Snippets ===================================
 "
 XPTemplateDef
-XPT for hint=for\ i++
-for (`^int^ `i^ = `0^; `i^ < `len^; ++`i^) {
+
+XPT for priority=0 hint=for\ i++
+for (`^int^ `i^ = `0^; `i^ < `len^; ++`i^) `$BRACKETSTYLE^{
   `cursor^
 }
-..XPT
 
-XPT forr hint=for\ i--
-for (`^int^ `i^ = `n^; `i^ >`^=^ `end^; --`i^) {
+XPT forr priority=0 hint=for\ i--
+for (`^int^ `i^ = `n^; `i^ >`^=^ `end^; --`i^) `$BRACKETSTYLE^{
 `cursor^
 }
-..XPT
 

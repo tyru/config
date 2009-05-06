@@ -16,5 +16,4 @@ except `exc^:
     \`\^^^
 `finally...^finally:
    \`\^^^
-..XPT
 

@@ -19,49 +19,49 @@ XPT begin hint=(begin\ ..\ )
 (begin
    (`todo0^) `...^
    (`todon^)`...^)
-..XPT
+
 
 XPT case hint=(case\ (of)\ ((match)\ (expr))\ ..)
 (case (`of^)
       ({`match^} `expr1^) `...^
       ({`matchn^} `exprn^)`...^
       `else...^\(else \`cursor\^\)^^)
-..XPT
+
 
 
 XPT cond hint=(cond\ ([condi]\ (expr))\ ..)
 (cond ([`condition^] `expr1^) `...^
       ([`condition^] `exprn^)`...^
       `else...^\(else \`cursor\^\)^^)
-..XPT
+
 
 XPT let hint=(let\ [(var\ (val))\ ..]\ (body))
 (let [(`newVar^ `value^ `...^)
       (`newVarn^ `valuen^`...^)]
      (`cursor^))
-..XPT
+
 
 XPT letrec hint=(letrec\ [(var\ (val))\ ..]\ (body))
 (letrec [(`newVar^ `value^ `...^)
          (`newVarn^ `valuen^`...^)]
      (`cursor^))
-..XPT
+
 
 XPT lambda hint=(lambda\ [params]\ (body))
 (lambda [`params^]
         (`cursor^))
-..XPT
+
 
 XPT defun hint=(define\ var\ (lambda\ ..))
 (define `funName^
     (lambda [`params^]
         (`cursor^))
  )
-..XPT
+
 
 XPT def hint=(define\ var\ (ex))
 (define `varName^ `cursor^)
-..XPT
+
 
 XPT do hint=(do\ ..)
 (do {(`var1^ `init1^ `step1^) `...0^
@@ -69,5 +69,5 @@ XPT do hint=(do\ ..)
    ([`test^] `exprs^ `...1^ `exprs^`...1^^)
    (`command0^) `...2^^
    (`command1^)`...2^)
-..XPT
+
 

@@ -1379,8 +1379,8 @@ nnoremap <silent>   <LocalLeader>na     :Narrow<CR>
 nnoremap <silent>   <LocalLeader>nw     :Widen<CR>
 
 " skk {{{2
-let skk_jisyo = "~/.skk-jisyo"
-let skk_large_jisyo = '~/.vim/skk/SKK-JISYO.L'
+let skk_jisyo = "~/.skk/skk-jisyo"
+let skk_large_jisyo = '~/.skk/SKK-JISYO.L'
 let skk_auto_save_jisyo = 1
 let skk_show_candidates_count = 3
 let skk_use_face = 1

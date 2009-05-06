@@ -110,78 +110,78 @@ XPT html hint=<html><head>..<head><body>...
     `cursor^
   </body>
 </html>
-..XPT
+
 
 XPT div hint=<div>\ ..\ </div>
 <div`^>`cursor^</div>
-..XPT
+
 
 XPT p hint=<p>\ ..\ </p>
 <p`^>`cursor^</p>
-..XPT
+
 
 XPT br hint=<br\ />
 <br/>
-..XPT
+
 
 XPT h1 hint=<h1>\ ..\ <h1>
 <h1>`cr^^`cursor^`cr^^</h1>
-..XPT
+
 
 XPT h2 hint=<h2>\ ..\ <h2>
 <h2>`cursor^</h2>
-..XPT
+
 
 XPT h3 hint=<h3>\ ..\ <h3>
 <h3>`cursor^</h3>
-..XPT
+
 
 XPT h4 hint=<h4>\ ..\ <h4>
 <h4>`cursor^</h4>
-..XPT
+
 
 XPT h5 hint=<h5>\ ..\ <h5>
 <h5>`cursor^</h5>
-..XPT
+
 
 XPT h6 hint=<h6>\ ..\ <h6>
 <h6>`cursor^</h6>
-..XPT
+
 
 XPT h7 hint=<h7>\ ..\ <h7>
 <h7>`cursor^</h7>
-..XPT
+
 
 XPT h8 hint=<h8>\ ..\ <h8>
 <h8>`cursor^</h8>
-..XPT
+
 
 XPT p_ hint=
 <p>`wrapped^</p>
-..XPT
+
 XPT div_ hint=
 <div>`wrapped^</div>
-..XPT
+
 XPT h1_ hint=
 <h1>`wrapped^</h1>
-..XPT
+
 XPT h2_ hint=
 <h2>`wrapped^</h2>
-..XPT
+
 XPT h3_ hint=
 <h3>`wrapped^</h3>
-..XPT
+
 XPT h4_ hint=
 <h4>`wrapped^</h4>
-..XPT
+
 XPT h5_ hint=
 <h5>`wrapped^</h5>
-..XPT
+
 XPT h6_ hint=
 <h6>`wrapped^</h6>
-..XPT
+
 
 XPT a_ hint=<a\ href="">\ SEL\ </a>
 <a href="">`wrapped^</a>
-..XPT
+
 

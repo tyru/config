@@ -17,11 +17,11 @@ XPTemplateDef
 
 XPT inc hint=-include\ ..
 -include( \"`cursor^^.hrl\").
-..XPT
+
 
 XPT def hint=-define\ ..
 -define( `what^, `def^ ).
-..XPT
+
 
 XPT ifdef hint=-ifdef\ ..\-endif..
 -ifdef( `what^ ).
@@ -29,7 +29,7 @@ XPT ifdef hint=-ifdef\ ..\-endif..
 `else...^-else.
   \`cursor\^^^
 -endif().
-..XPT
+
 
 XPT ifndef hint=-ifndef\ ..\-endif
 -ifndef( `what^ ).
@@ -37,14 +37,14 @@ XPT ifndef hint=-ifndef\ ..\-endif
 `else...^-else.
   \`cursor\^^^
 -endif().
-..XPT
+
 
 XPT record hint=-record\ ..,{..}
 -record( `recordName^
        ,{ `field1^`...^
         , `fieldn^`...^
         }).
-..XPT
+
 
 XPT if hint=if\ ..\ ->\ ..\ end
 if
@@ -53,7 +53,7 @@ if
    `cond2^ ->
        `bodyn^`...^
 end `cursor^
-..XPT
+
 
 XPT case hint=case\ ..\ of\ ..\ ->\ ..\ end
 case `matched^ of
@@ -62,7 +62,7 @@ case `matched^ of
    `patternn^ ->
        `bodyn^`...^
 end `cursor^
-..XPT
+
 
 XPT rcv hint=receive\ ..\ ->\ ..\ end
 receive
@@ -73,7 +73,7 @@ receive
 after
     \`afterBody\^^^
 end
-..XPT
+
 
 
 XPT receive hint=receive\ ..\ ->\ ..\ end
@@ -85,13 +85,13 @@ receive
 after
     \`afterBody\^^^
 end
-..XPT
+
 
 XPT fun hint=fun\ ..\ ->\ ..\ end
 fun (`params^) `^ -> `body^ `...^;
     (`paramsn^) `^ -> `bodyn^`...^
 end `cursor^
-..XPT
+
 
 XPT try hint=try\ ..\ catch\ ..\ end
 try `what^
@@ -101,7 +101,7 @@ catch
 `after...^after
     \`afterBody\^^^
 end `cursor^
-..XPT
+
 
 XPT tryof hint=try\ ..\ of\ ..
 try `what^ of
@@ -115,7 +115,7 @@ catch
 `after...^after
     \`afterBody\^^^
 end `cursor^
-..XPT
+
 
 XPT function hint=f\ \(\ ..\ \)\ ->\ ..
 `funName^ ( `args0^ ) `^ ->
@@ -123,5 +123,5 @@ XPT function hint=f\ \(\ ..\ \)\ ->\ ..
 `name^R('funName')^ ( `argsn^ ) `^ ->
     `bodyn^`...^
 .
-..XPT
+
 

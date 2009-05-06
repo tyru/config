@@ -28,47 +28,47 @@ if exists("`g^:`i^headerSymbol()^")
 endif
 let `g^:`i^ = 1
 `cursor^
-..XPT
+
 
 XPT log hint=call\ log\ on\ selection
 call Log(`_^)
-..XPT
+
 
 XPT fun hint=fun!\ ..(..)\ ..\ endfunction
-fun! `name^(`_^^) \"{{{
+fun! `name^(`_^^) "{{{
   `cursor^
-endfunction \"}}}
-..XPT
+endfunction "}}}
+
 
 XPT method hint=fun!\ Dict.name\ ...\ endfunction
 fun! `Dict^.`name^(`_^^)
   `cursor^
 endfunction
-..XPT
+
 
 XPT while hint=while\ ..\ ..\ endwhile
 while `cond^
   `cursor^
 endwhile
-..XPT
+
 
 XPT while1 hint=while\ 1\ ..\ endwhile
 while 1
   `cursor^
 endwhile
-..XPT
+
 
 XPT fordic hint=for\ [..,..]\ in\ ..\ ..\ endfor
 for [`k^, `v^] in items(`dic^)
   `cursor^
 endfor
-..XPT
+
 
 XPT forin hint=for\ ..\ in\ ..\ ..\ endfor
 for `v^ in `list^
   `cursor^
 endfor
-..XPT
+
 
 XPT try hint=try\ ..\ catch\ ..\ finally...
 try
@@ -79,7 +79,7 @@ catch /`^/
   \`cursor\^^^
 endtry
 
-..XPT
+
 
 XPT if hint=if\ ..\ else\ ..
 if `cond^
@@ -87,9 +87,9 @@ if `cond^
 `else...^else
   \`cursor\^^^
 endif 
-..XPT
+
 
 XPT str_ hint=transform\ SEL\ to\ string
 string(`wrapped^)
-..XPT
+
 

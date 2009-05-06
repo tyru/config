@@ -7,7 +7,9 @@ let b:___CONDITION_ECMA_XPT_VIM__ = 1
 let [s:f, s:v] = XPTcontainer()
 
 " constant definition
-call extend(s:v, {'$TRUE': 'true', '$FALSE' : 'false', '$NULL' : 'null', '$UNDEFINED' : 'undefined'})
+call extend(s:v, {'$TRUE': 'true', '$FALSE' : 'false',
+      \ '$NULL' : 'null', '$UNDEFINED' : 'undefined' 
+      \ '$INDENT_HELPER' : ';'}, 'keep')
 
 " inclusion
 XPTinclude
@@ -20,21 +22,19 @@ call XPTemplatePriority('spec')
 
 " ================================= Snippets ===================================
 XPTemplateDef
-XPT ifu hint=if\ (undefined\ ===\ ...)\ {...}...
+XPT ifu		hint=if\ (undefined\ ===\ ..)\ {..} ..
 if (`$UNDEFINED^ === `var^) {
-  `_^
+  `job^$INDENT_HELPER^
 }
 `else...^else {
   \`cursor\^
 }^^
-..XPT
 
-XPT ifnu hint=if\ (undefined\ !==\ ...)\ {...}...
+XPT ifnu 	hint=if\ (undefined\ !==\ ..)\ {..} ..
 if (`$UNDEFINED^ !== `var^) {
-  `_^
+  `job^$INDENT_HELPER^
 }
 `else...^else {
   \`cursor\^
 }^^
-..XPT
 

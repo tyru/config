@@ -33,14 +33,14 @@ Cmdlet `verb^-`noun^
     }^^
 }
 
-..XPT
+
 
 XPT fun hint=function\ ..(..)\ {\ ..\ }
 function `funName^( `params^ )
 {
    `cursor^
 }
-..XPT
+
 
 XPT function hint=function\ {\ BEGIN\ PROCESS\ END\ }
 function `funName^( `params^ )
@@ -58,12 +58,12 @@ function `funName^( `params^ )
         \`\^
     }^^
 }
-..XPT
+
 
 XPT foreach hint=foreach\ (..\ in\ ..)
 foreach ($`var^ in `other^)
     { `cursor^ }
-..XPT
+
 
 XPT switch hint=switch\ (){\ ..\ {..}\ }
 switch `option^^ (`what^)
@@ -72,26 +72,26 @@ switch `option^^ (`what^)
  `pattern^ { `action^ }`...^
  `Default...^Default { \`action\^ }^^
 }
-..XPT
+
 
 XPT trap hint=trap\ [..]\ {\ ..\ }
 trap [`exception^Exception^]
 {
     `body^
 }
-..XPT
+
 
 XPT for hint=for\ (..;..;++)
 for ($`var^i^ = `init^; $`var^ -ge `val^; $`var^--)
 {
     `cursor^
 }
-..XPT
+
 
 XPT forr hint=for\ (..;..;--)
 for ($`var^i^ = `init^; $`var^ -ge `val^; $`var^--)
 {
     `cursor^
 }
-..XPT
+
 

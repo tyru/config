@@ -30,6 +30,7 @@ call s:Def('g:xptemplate_highlight', 1)
 " call s:Def('g:xptemplate_indent', 1)
 
 call s:Def('g:xptemplate_key', '<C-\\>')
+" call s:Def('g:xptemplate_key', '')
 call s:Def('g:xptemplate_to_right', "<C-l>")
 
 call s:Def('g:xptemplate_fix', 1)

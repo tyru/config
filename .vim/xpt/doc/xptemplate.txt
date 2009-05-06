@@ -36,6 +36,10 @@
 <	"i" being selected is the current item you are editing. `0^ is next
 	item,  and you can navigate to it by typing <Tab> |xpt-navigate-key|.
 
+	NOTE in some European keyboard, <C-\> does NOT work. If it does not
+	work, you need to specify another key for triggering snippets, see
+	|g:xptemplate_key|.
+
 	Now type "abcdefg", this snippet result in : >
 		for (abcdefg = `0^; abcdefg < `len^; ++abcdefg){
 		  `cursor^
@@ -201,6 +205,18 @@
 	never need mixed item :).
 	Before you can jump to the first item, all items of |xpt-variable|
 	and |xpt-function| will be evaluated.
+
+						*```*   *xpt-```*   *xpt-edge*
+	|xpt-item-name| can be defined with "edge". Edge is some text around
+	item name that is not selected when cursor <tab> to this item. But it
+	still can be edit. For example : >
+		`(`xpt`)^
+<	This item named of "xpt" and the edges are "(" and ")", When cursor
+	jumps onto it : >
+		(xpt)
+		 ***------ only xpt is selected
+<	Edge helps on formatting expandable items.
+	
 
 							   *xpt-format-normal*
 	Normal format is |`| |xpt-item-name| |^|. As you navigate to such an
@@ -554,11 +570,13 @@ XPTemplateIndent({indentOption})
 	"auto" : indent lines in snippet with default indent options. see
 	|indent.txt|.
 	"keep" : keep indent.
-	"/n*n" : multiple indent space
+	"/n[*n]" : multiple indent space. If "*n" not presented, 'shiftwidth'
+	is used.
 
 	Indent setting can also be applied to a certain template by using this
 	format : >
 		call XPTemplate("main=/2*16", [...
+		call XPTemplate("main=/2", [...       // using shiftwidth
 <
 
 
@@ -656,6 +674,18 @@ g:XPTfuncs()   g:XPTvars()
 
 							     *xpt-changes-log*
 : > <
+Fixed:2009 May 05	bug that left mark is deleted if touched the previous
+			right mark
+Fixed:2009 May 05	bug that anonymous item swallow default value.
+Fixed:2009 May 05	bug of ';' left if cursor followed by space
+Added:2009 May 04	apply predefined in expanded araa
+Fixed:2009 May 04	for compatibility, changing vim setting is only affect
+			locally
+Fixed:2009 May 04	indent bug of indenting make item can not be found
+Added:2009 May 03	item edge element
+Fixed:2009 May 03	items content does not change if <cr> pressed
+Fixed:2009 May 01	items in default value can be selected.
+Fixed:2009 May 01	Don't show popup if only 1 key matches
 Fixed:2009 May 01	simplify template definition : '..XPT' is no more
 			needed.
 Fixed:2009 Apr 30	bug of line removed sometimes if folding is enabled

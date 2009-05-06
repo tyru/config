@@ -32,28 +32,28 @@ call XPTemplate('`name^', [
 \ `'^`text^`'^`...^,
 \ `'^`text^`'^`...^
 \])'
-..XPT
+
 
 XPT tmpl_ hint=call\ XPTemplate(\ ..,\ SEL\ ...
 call XPTemplate('`name^', [ '`wrapped^'])
-..XPT
+
 
 XPT inc hint=XPTinclude\ ...
 XPTinclude 
       \ `^E("%:p:h:t")^/`name^`...^
       \ `^E("%:p:h:t")^/`name^`...^
-..XPT
+
 
 XPT once hint=if\ exists\ finish\ let\ b...
 if exists("b:`i^xptHeader()^")
     finish
 endif
 let b:`i^ = 1
-..XPT
+
 
 XPT container hint=let\ [s:f,\ s:v]\ =...
 let [s:f, s:v] = XPTcontainer()
-..XPT
+
 
 call XPTemplate("xpt", [
 XPT xpt hint=start\ template\ to\ write\ template
@@ -76,4 +76,4 @@ call extend(s:v, {'\\$TRUE': '1 '\\$FALSE' : '0', '\\$NULL' : 'NULL', '\\$UNDEFI
  
 " ================================= Snippets =================================== 
  
-..XPT
+
