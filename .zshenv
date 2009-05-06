@@ -7,7 +7,13 @@ export HISTFILE=~/.zsh_history
 export HISTSIZE=1000
 export SAVESIZE=1000
 export LISTMAX=0
-export EDITOR="$(which vi)"
+if [ -x "/usr/local/bin/vim" ]; then
+    export EDITOR="/usr/local/bin/vim"
+elif [ -x "/usr/bin/vim" ]; then
+    export EDITOR="/usr/bin/vim"
+elif [ -x "$(which vi)" ]; then
+    export EDITOR="$(which vi)"
+fi
 export PATH=${HOME}/bin:${PATH}
 
 
