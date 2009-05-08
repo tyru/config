@@ -6,10 +6,16 @@ let b:__PHP_XPT_VIM__ = 1
 " containers
 let [s:f, s:v] = XPTcontainer()
 
+call extend(s:v, { '$TRUE': 'true'
+                \, '$FALSE' : 'false'
+                \, '$BRACKETSTYLE' : "\n"
+                \, '$NULL' : 'NULL'
+                \})
 " inclusion
 XPTinclude
       \ _common/common
       \ _condition/c.like
+      \ _loops/c.like
 
 " ========================= Function and Varaibles =============================
 

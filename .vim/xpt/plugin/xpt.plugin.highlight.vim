@@ -58,5 +58,5 @@ fun! g:XPT.XPTupdateHigh(x) "{{{
   return 1
 endfunction "}}}
 
-call g:XPTaddPlugin("afterUpdate", "XPTupdateHigh")
-call g:XPTaddPlugin("afterInitItem", "XPTupdateHigh")
+" call g:XPTaddPlugin("afterUpdate", "XPTupdateHigh")
+" call g:XPTaddPlugin("afterInitItem", "XPTupdateHigh")

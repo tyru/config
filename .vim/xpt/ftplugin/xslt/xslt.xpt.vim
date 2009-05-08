@@ -75,7 +75,7 @@ XPT if hint=<xsl:if\ test=\ ...
 XPT choose hint=<xsl:choose\ ...
 <xsl:choose>
   <xsl:when test="`expr^">
-    `^
+    `_^^
   </xsl:when>`...^
   <xsl:when test="`ex^">
     `what^

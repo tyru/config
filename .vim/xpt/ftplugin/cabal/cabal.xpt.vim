@@ -17,14 +17,17 @@ XPTinclude
 XPTemplateDef
 
 XPT infos hint=Name:\ Version\: Synopsys:\ Descr:\ Author:\ ...
+XSET Description...|post=\nDescription: `_^
+XSET Author...|post=\nAuthor: `_^
+XSET Maintainer...|post=\nMaintainer: `_^
 Name:       `name^
 Version:    `ver^
 Synopsis:   `synop^ 
 Build-Type: `Simple^
-Cabal-Version: >= `v^1.2^`Description...^
-Description: \`_\^ ^^`Author...^
-Author: \`_\^^^`Maintainer...^
-Maintainer: \`_\^ ^^
+Cabal-Version: >= `ver^1.2^`
+`Description...^`
+`Author...^`
+`Maintainer...^
 
 XPT if hint=if\ ...\ else\ ...
 if `cond^

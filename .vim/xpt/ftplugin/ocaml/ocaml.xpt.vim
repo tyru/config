@@ -17,17 +17,17 @@ XPTinclude
 XPTemplateDef
 
 XPT letin hint=let\ ..\ =\ ..\ in
-let `name^ `^^ =
+let `name^ `_^^ =
     `what^ `...^
-and `subname^ `^^ =
+and `subname^ `_^^ =
     `subwhat^`...^
 in
 
 
 XPT letrecin hint=let\ rec\ ..\ =\ ..\ in
-let rec `name^ `^^ =
+let rec `name^ `_^^ =
     `what^ `...^
-and `subname^ `^^ =
+and `subname^ `_^^ =
     `subwhat^`...^
 in
 
@@ -57,7 +57,7 @@ end
 
 
 XPT class hint=class\ ..\ =\ object\ ..\ end
-class `^^ `name^ =
+class `_^^ `name^ =
 object (self)
     `cursor^
 end
@@ -84,20 +84,20 @@ end
 
 
 XPT typesum hint=type\ ..\ =\ ..\ |\ ..
-type `^ `typename^ =
+type `_^^ `typename^ =
   | `constructor^ `...^
   | `constructor2^`...^
 
             
 XPT typesumcom hint=(**\ ..\ *)\ type\ ..\ =\ ..\ |\ ..
 (** `typeDescr^ *)
-type `^ `typename^ =
+type `_^^ `typename^ =
   | `constructor^ (** `ctordescr^ *) `...^
   | `constructor2^ (** `ctordescr^ *)`...^
 
 
 XPT typerecord hint=type\ ..\ =\ {\ ..\ }
-type `^ `typename^ =
+type `_^^ `typename^ =
     { `recordField^ : `fType^ `...^
     ; `otherfield^ : `othertype^`...^
     }
@@ -105,7 +105,7 @@ type `^ `typename^ =
 
 XPT typerecordcom hint=(**\ ..\ *)type\ ..\ =\ {\ ..\ }
 (** `type_descr^ *)
-type `^ `typename^ =
+type `_^^ `typename^ =
     { `recordField^ : `fType^ (** `desc^ *) `...^
     ; `otherfield^ : `othertype^ (** `desc^ *)`...^
     }

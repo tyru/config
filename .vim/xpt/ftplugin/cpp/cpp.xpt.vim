@@ -1,27 +1,31 @@
 if exists("b:__CPP_CPP_XPT_VIM__")
   finish
 endif
+" To avoid loading the C version...
+let b:__C_C_XPT_VIM__ = 1
 let b:__CPP_CPP_XPT_VIM__ = 1
 
 " containers
 let [s:f, s:v] = XPTcontainer()
 
-" constant definition
+
 call extend(s:v, { '$TRUE': 'true'
-               \ , '$FALSE' : 'false'
-               \ , '$NULL' : 'NULL'
-               \ , '$UNDEFINED' : ''
-               \ , '$BRACKETSTYLE' : "\n"
-               \ , '$INDENT_HELPER' : ';'})
+                \, '$FALSE' : 'false'
+                \, '$NULL' : 'NULL'
+                \, '$UNDEFINED' : ''
+                \, '$BRACKETSTYLE' : "\n"
+                \, '$INDENT_HELPER' : ';' }, 'force')
 
 " inclusion
 XPTinclude
       \ _common/common
+      \ _comment/c.like
+      \ _condition/c.like
+      \ _loops/c.like
+      \ _loops/java.like
       \ _structures/c.like
       \ _preprocessor/c.like
       \ c/wrap
-      \ _loops/c.like
-      \ _loops/java.like
 
 " ========================= Function and Varaibles =============================
 function! s:f.cleanTempl( ctx, ... )
@@ -32,7 +36,6 @@ endfunction
 
 
 " ================================= Snippets ===================================
-
 XPTemplateDef
 
 XPT namespace hint=namespace\ {}
@@ -99,17 +102,17 @@ private:
 // Scratch implementation
 // feel free to copy/paste or destroy
 template <`templateParam^>
-`className^<`^cleanTempl(R('templateParam'))^^>::`className^( `ctorParam^ )
+`className^<`_^cleanTempl(R('templateParam'))^^>::`className^( `ctorParam^ )
 {
 }
  
 template <`templateParam^>
-`className^<`^cleanTempl(R('templateParam'))^^>::~`className^()
+`className^<`_^cleanTempl(R('templateParam'))^^>::~`className^()
 {
 }
  
 template <`templateParam^>
-`className^<`^cleanTempl(R('templateParam'))^^>::`className^( const `className^ &cpy )
+`className^<`_^cleanTempl(R('templateParam'))^^>::`className^( const `className^ &cpy )
 {
 }
 

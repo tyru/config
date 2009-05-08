@@ -6,6 +6,9 @@ let b:__STRUCTURES_C_LIKE_XPT_VIM__ = 1
 " containers
 let [s:f, s:v] = XPTcontainer() 
 
+" constant definition
+call extend(s:v, {'$TRUE': '1', '$FALSE' : '0', '$NULL' : 'NULL', '$INDENT_HELPER' : '/* void */;'}, 'keep')
+
 " inclusion
 XPTemplateDef
 

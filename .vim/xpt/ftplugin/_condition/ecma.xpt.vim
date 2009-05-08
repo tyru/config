@@ -8,8 +8,8 @@ let [s:f, s:v] = XPTcontainer()
 
 " constant definition
 call extend(s:v, {'$TRUE': 'true', '$FALSE' : 'false',
-      \ '$NULL' : 'null', '$UNDEFINED' : 'undefined' 
-      \ '$INDENT_HELPER' : ';'}, 'keep')
+      \ '$NULL' : 'null', '$UNDEFINED' : 'undefined', 
+      \ '$INDENT_HELPER' : '/* */;'}, 'keep')
 
 " inclusion
 XPTinclude
@@ -23,18 +23,22 @@ call XPTemplatePriority('spec')
 " ================================= Snippets ===================================
 XPTemplateDef
 XPT ifu		hint=if\ (undefined\ ===\ ..)\ {..} ..
+XSET job=$INDENT_HELPER
 if (`$UNDEFINED^ === `var^) {
-  `job^$INDENT_HELPER^
-}
-`else...^else {
+  `job^
+}`
+`else...^
+else {
   \`cursor\^
 }^^
 
 XPT ifnu 	hint=if\ (undefined\ !==\ ..)\ {..} ..
+XSET job=$INDENT_HELPER
 if (`$UNDEFINED^ !== `var^) {
-  `job^$INDENT_HELPER^
-}
-`else...^else {
+  `job^
+}`
+`else...^
+else {
   \`cursor\^
 }^^
 

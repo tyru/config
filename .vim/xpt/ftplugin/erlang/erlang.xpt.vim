@@ -88,8 +88,8 @@ end
 
 
 XPT fun hint=fun\ ..\ ->\ ..\ end
-fun (`params^) `^ -> `body^ `...^;
-    (`paramsn^) `^ -> `bodyn^`...^
+fun (`params^) `_^^ -> `body^ `...^;
+    (`paramsn^) `_^^ -> `bodyn^`...^
 end `cursor^
 
 
@@ -118,9 +118,9 @@ end `cursor^
 
 
 XPT function hint=f\ \(\ ..\ \)\ ->\ ..
-`funName^ ( `args0^ ) `^ ->
+`funName^ ( `args0^ ) `_^^ ->
     `body0^ `...^;
-`name^R('funName')^ ( `argsn^ ) `^ ->
+`name^R('funName')^ ( `argsn^ ) `_^^ ->
     `bodyn^`...^
 .
 

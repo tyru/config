@@ -14,7 +14,7 @@ catch (`except^ e)
 {
     `handler^
 }`...^
-`catch...^catch (Exception e)
+`catchAllOther...^catch (Exception e)
 {
     \`\^
 }^^

@@ -1,6 +1,6 @@
 " XPTEMPLATE ENGIE:
 "   code template engine
-" VERSION: 0.3.7.2
+" VERSION: 0.3.7.7
 " BY: drdr.xp | drdr.xp@gmail.com
 "
 " MARK USED:
@@ -17,7 +17,9 @@
 " "}}}
 "
 " TODOLIST: "{{{
-" TODO xpt.c:bug of if leaves a ; and indent.
+" TODO mechanism to set personal variables
+" TODO laststatus!=2 cause cursor protection failed.
+" TODO auto crash
 " TODO $BRACKETSTYLE caused indent problem
 " TODO more g: option
 " TODO nested repetition in expandable
@@ -64,7 +66,6 @@ let s:emptyctx     = {
       \'namedStep':{}, 
       \'processing' : 0, 
       \'pos' : {'tmplpos' : {}, 'curpos' : {}, 'editpos' : {} }, 
-      \'vals' : {}, 
       \'inplist' : [],  
       \'lastcont' : '', 
       \'lastBefore' : '', 
@@ -92,7 +93,7 @@ let s:plugins.afterNextItem = []
 let s:plugins.beforeUpdate = []
 let s:plugins.afterUpdate = []
 
-let s:priorities = {'all' : 64, 'spec' : 48, 'like' : 32, 'lang' : 16, 'sub' : 0}
+let s:priorities = {'all' : 64, 'spec' : 48, 'like' : 32, 'lang' : 16, 'sub' : 8, 'personal' : 0}
 let s:priPtn = 'all\|spec\|like\|lang\|sub\|\d\+'
 
 let s:f = {}
@@ -235,7 +236,8 @@ fun! XPTemplate(name, str_or_ctx, ...) " {{{
   elseif has_key(ctx, 'priority')
     let override_priority = s:ParsePriority(ctx.priority)
   else
-    let override_priority = s:ParsePriority("")
+    " let override_priority = s:ParsePriority("")
+    let override_priority = x.bufsetting.priority
   endif
 
   let name = pstr == "" ? name : matchstr(name, '[^!]*\ze!')
@@ -276,8 +278,50 @@ fun! s:XPTemplateParse(lines) "{{{
     endif
   endfor
 
+  let def = {}
+  let post = {}
+  let start = 1
+  while start < len(lines)
+    if lines[start] =~# '^XSET\s\+'
+      let item = matchstr(lines[start], '^XSET\s\+\zs.*')
 
-  let tmpl = lines[1:]
+      let key = matchstr(item, '[^=]*\ze=')
+      let val = matchstr(item, '=\zs.*')
+      let val = substitute(val, '\\n', "\n", 'g')
+
+      let keytype = matchstr(key, '\V'.s:ep.'|\zs\.\{-}\$')
+      if keytype == ""
+        let keytype = matchstr(key, '\V'.s:ep.'.\zs\.\{-}\$')
+      endif
+
+      let keyname = keytype == "" ? key :  key[ : - len(keytype) - 2 ]
+      let keyname = substitute(keyname, '\V\\\(\[.|\\]\)', '\1', 'g')
+
+
+      if keytype == "" || keytype ==# 'def'
+        let def[keyname] = val
+      elseif keytype ==# 'post'
+        let post[keyname] = val
+      else
+        throw "unknown key type:".keytype
+      endif
+
+    elseif lines[start] =~# '^\\XSET'
+      let lines[start] = lines[start][1:]
+      break
+    else
+      break
+    endif
+
+    let start += 1
+  endwhile
+
+
+  let ctx.vdef = def
+  let ctx.vpost = post
+
+
+  let tmpl = lines[start : ]
 
   call XPTemplate(name, ctx, tmpl)
 
@@ -399,6 +443,7 @@ fun! s:ParsePriority(s) "{{{
     let prio = base + offset * r
 
   endif
+
 
   return prio
 endfunction "}}}
@@ -688,7 +733,6 @@ fun! s:RenderTemplate(l, c, tmpl) " {{{
   silent! normal! gvzO
 
 
-  let ctx.vals = {}
   call cursor(p)
   call s:BuildValues(0)
 
@@ -852,10 +896,11 @@ fun! s:BuildValues(isItemRange) "{{{
 
 
       " [default_value, is_delayed]
+      let dic = isdelayed ? 'vpost' : 'vdef'
       if name == ""
-        let ctx.vals[i] = [val, isdelayed]
+        let ctx.tmpl.ctx[dic][i] = val
       else 
-        let ctx.vals[name] = [val, isdelayed]
+        let ctx.tmpl.ctx[dic][name] = val
       endif
 
 
@@ -1114,19 +1159,19 @@ endfunction " }}}
 fun! s:ApplyDelayed() "{{{
   let x = s:Data()
   let ctx = s:Ctx()
-  let vals = s:Ctx().vals
+
 
   " let typed = s:f.GetContentBetween(s:f.CTL(x), s:f.CBR(x))
   let typed = s:f.GetContentBetween(s:Xtl(ctx.pos.curpos), s:Xbr(ctx.pos.curpos))
 
 
-  if has_key(vals, ctx.name) && vals[ctx.name][1]
+  if has_key(ctx.tmpl.ctx.vpost, ctx.name)
 
     if ctx.name =~ '^\.\.\.\d*$' || ctx.name =~ s:expandablePtn
-      let post = vals[ctx.name][0]
+      let post = ctx.tmpl.ctx.vpost[ctx.name]
       let post = s:Unescape(post)
     else
-      let post = s:Eval(vals[ctx.name][0], {'typed' : typed})
+      let post = s:Eval(ctx.tmpl.ctx.vpost[ctx.name], {'typed' : typed})
     endif
 
 
@@ -1142,8 +1187,6 @@ fun! s:ApplyDelayed() "{{{
 
     if isrep
 
-      " call s:Xtl(ctx.pos.editpos, s:Xtl(ctx.pos.curpos))
-      " call s:Xbr(ctx.pos.editpos, s:Xbr(ctx.pos.curpos))
       call s:Replace(s:Xtl(ctx.pos.curpos), typed, post)
       call s:ApplyPredefined('typed')
       call cursor(s:Xtl(ctx.pos.curpos))
@@ -1168,14 +1211,9 @@ fun! s:SelectNextItem(...) "{{{
   let ctx = s:Ctx()
   let xp = s:Ctx().tmpl.ptn
 
-  if a:0 == 1
-    let [ln, cur] = a:1
-  else
-    let [ln, cur] = [a:1, a:2]
-  endif
+  let pos = a:0 == 1 ? a:1 : [a:1, a:2]
 
-
-  call cursor(ln, cur)
+  call cursor(pos)
 
   let p = s:FindNextItem('c')
   if p[0:1] == [0, 0]
@@ -1284,7 +1322,11 @@ fun! s:BuildItemPosList(val) "{{{
   let ctx.lastcont = a:val
   let ctx.inplist = []
 
-  let ctx.lastBefore = getline(s:CT(x))[:max([s:CL(x)-2, 0])]
+  if s:CL(x) == 1
+    let ctx.lastBefore = ""
+  else
+    let ctx.lastBefore = getline(s:CT(x))[:max([s:CL(x)-2, 0])]
+  endif
 
   if ctx.name =~ '\V\^...\d\*\$' || ctx.name == ''
     let ctx.lastAfter = getline(s:CB(x))[s:CR(x)-1:]
@@ -1436,7 +1478,6 @@ fun! s:GetTypeArea() "{{{
 
   try
     let [ctl, cbr] = [s:Xtl(xpos.curpos), s:Xbr(xpos.curpos)]
-
     let cbrn = cbr[0] * 10000 + cbr[1]
 
     " set default
@@ -1457,6 +1498,10 @@ fun! s:GetTypeArea() "{{{
     " delete left mark
     exe 'silent! normal! '.len(xp.l).'xzO'
 
+    " cbr is changed since last deletion of right mark
+    let [ctl, cbr] = [s:Xtl(xpos.curpos), s:Xbr(xpos.curpos)]
+    let cbrn = cbr[0] * 10000 + cbr[1]
+
     " only 1 mark
     let markRight = searchpos(ptn, 'cW')
     if markRight == [0, 0] || markRight[0] * 10000 + markRight[1] >= cbrn
@@ -1476,7 +1521,6 @@ endfunction "}}}
 fun! s:InitItem() " {{{
   let x = s:Data()
   let ctx = s:Ctx()
-  let vals = s:Ctx().vals
   let xpos = ctx.pos
   let xp = s:Ctx().tmpl.ptn
   let xcp = s:Ctx().pos.curpos
@@ -1490,11 +1534,13 @@ fun! s:InitItem() " {{{
 
   call s:Xtl(xpos.curpos, getpos(".")[1:2])
 
+
   exe "normal! ".len(xp.l)."x"
   silent! normal! zO
 
   call search(xp.rt, "cW")
   call s:Xbr(xpos.curpos, line("."), col(".") + len(xp.r))
+
 
 
   exe "normal! ".len(xp.r)."x"
@@ -1506,8 +1552,8 @@ fun! s:InitItem() " {{{
 
 
   " apply default value
-  if has_key(vals, ctx.name) && !vals[ctx.name][1] 
-    let str = vals[ctx.name][0]
+  if has_key(ctx.tmpl.ctx.vdef, ctx.name)
+    let str = ctx.tmpl.ctx.vdef[ctx.name]
 
     let str = s:Eval(str)
 
@@ -1908,11 +1954,11 @@ endfunction " }}}
 
 fun! s:StartAppend() " {{{
 
-    return ""
+  " return ""
 
   let emptyline = (getline(".") =~ '^\s*$')
   if emptyline
-    return ";\<C-c>==A\<BS>"
+    return "\<END>;\<C-c>==A\<BS>"
     try
       startinsert!
       call feedkeys(';'."\<C-c>==A\<BS>", 'n')
@@ -2149,6 +2195,7 @@ fun! XPTemplate_cursorLimit() "{{{
 
   if g:xptemplate_limit_curosr 
 
+
     let m = mode()
     if m =~ "i"
 
@@ -2242,9 +2289,6 @@ fun! s:Replace(p, c, rep) "{{{
       let cptn = '\V'.substitute(cptn, "\n", '\\n', 'g')
     endif
 
-    let rptn = escape(a:rep, '\/')
-    let rptn = '\V'.substitute(rptn, "\n", '\\n', 'g')
-
 
     call cursor(a:p)
 
@@ -2280,6 +2324,7 @@ fun! s:Replace(p, c, rep) "{{{
       let start[1] = start[1] + len(getline(start[0]))
       let end[0] = end[0] + line("$")
       let end[1] = end[1] + len(getline(end[0]))
+
       
       call cursor(start)
       normal! v
@@ -2289,6 +2334,7 @@ fun! s:Replace(p, c, rep) "{{{
     else
       let cmd = 's/\V\%'.col(".").'c'.cptn.'//'
       exe cmd
+      silent! normal! zO
     endif
 
     return pl
@@ -2440,7 +2486,7 @@ fun! s:CallPlugin(ev) "{{{
 
 endfunction "}}}
 
-" runtime plugin/xpt.plugin.highlight.vim
-" runtime plugin/xpt.plugin.protect.vim
+runtime plugin/xpt.plugin.highlight.vim
+runtime plugin/xpt.plugin.protect.vim
 
 

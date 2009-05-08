@@ -11,7 +11,8 @@ let [s:f, s:v] = XPTcontainer()
 
 " inclusion
 
-call XPTemplatePriority('like')
+call XPTemplatePriority('like-')
+
 
 " ========================= Function and Varaibles =============================
 
@@ -20,13 +21,13 @@ call XPTemplatePriority('like')
 "
 XPTemplateDef
 
-XPT for priority=0 hint=for\ i++
-for (`^int^ `i^ = `0^; `i^ < `len^; ++`i^) `$BRACKETSTYLE^{
-  `cursor^
+XPT for hint=for\ i++
+for (`int^ `i^ = `0^; `i^ < `len^; ++`i^) `$BRACKETSTYLE^{
+    `cursor^
 }
 
-XPT forr priority=0 hint=for\ i--
-for (`^int^ `i^ = `n^; `i^ >`^=^ `end^; --`i^) `$BRACKETSTYLE^{
-`cursor^
+XPT forr hint=for\ i--
+for (`int^ `i^ = `n^; `i^ >`=^ `end^; --`i^) `$BRACKETSTYLE^{
+    `cursor^
 }
 

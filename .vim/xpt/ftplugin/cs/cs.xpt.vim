@@ -27,7 +27,7 @@ XPTinclude
 XPTemplateDef
 
 XPT foreach hint=foreach\ (..\ in\ ..)\ {..}
-foreach ( `var^var^ `e^ in `what^ )
+foreach ( `var^ `e^ in `what^ )
 {
     `cursor^
 }

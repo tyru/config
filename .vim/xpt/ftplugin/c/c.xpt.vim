@@ -7,11 +7,7 @@ let b:__C_C_XPT_VIM__ = 1
 let [s:f, s:v] = XPTcontainer()
 
 " constant definition
-call extend(s:v, { '$TRUE': '1'
-                \, '$FALSE' : '0'
-                \, '$NULL' : 'NULL'
-                \, '$UNDEFINED' : ''
-                \, '$BRACKETSTYLE' : ''})
+call extend(s:v, {'$TRUE': '1', '$FALSE' : '0', '$NULL' : 'NULL', '$INDENT_HELPER' : '/* void */;'})
 
 " inclusion
 XPTinclude
@@ -19,22 +15,32 @@ XPTinclude
       \ _comment/c.like 
       \ _condition/c.like
       \ _loops/c.like
-      \ _loops/c.for.like
       \ _structures/c.like
       \ _preprocessor/c.like
 
 " ========================= Function and Varaibles =============================
 
+function! s:f.showLst()
+   call complete(col('.'), ["xx-small", "x-small", "small", "medium", "large", "x-large", "xx-large", "larger", "smaller"])
+endfunction
 " ================================= Snippets ===================================
 XPTemplateDef
 
+
+" XPT fs
+" font-size: `size^showLst()^
+
 " " sample:
-" XPT for indent=/2*8 priority=sub hint=this\ is\ for
+" XPT for indent=/2*8 hint=this\ is\ for
 " for (`i^ = 0; `i^ < `len^; ++`i^) {
 "   `cursor^
 " }
 
 
+" XPT ff
+" if (`if^) {
+"
+" }
 
 XPT assert	hint=assert\ (..,\ msg)
 assert(`isTrue^, "`text^");

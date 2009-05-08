@@ -170,7 +170,7 @@ noremap s       :gsearch<Space>
 
 " direct_bookmark.js
 let direct_sbm_use_services_by_tag  = "d"
-let direct_sbm_use_services_by_post = "hd"
+let direct_sbm_use_services_by_post = "hdg"
 let direct_sbm_is_use_migemo = 1
 noremap a   :sbm<Space>
 noremap B   :tab bentry<CR>

@@ -6,10 +6,16 @@ let b:___LOOPS_C_LIKE_XPT_VIM__ = 1
 " containers
 let [s:f, s:v] = XPTcontainer()
 
+" constant definition
+call extend(s:v, {'$TRUE': '1', '$FALSE' : '0', '$NULL' : 'NULL', '$INDENT_HELPER' : '/* void */;'}, 'keep')
+
 " inclusion
 
-call XPTemplatePriority('like')
+XPTinclude
+      \ _loops/c.for.like
 
+
+call XPTemplatePriority('like')
 " ========================= Function and Varaibles =============================
 
 
@@ -19,13 +25,13 @@ XPTemplateDef
 XPT while0 hint=do\ {\ ..\ }\ while\ ($FALSE)
 do `$BRACKETSTYLE^{
   `cursor^
-} while (`$FALSE^)
+} `$BRACKETSTYLE^while (`$FALSE^)
 
 
 XPT do hint=do\ {\ ..\ }\ while\ (..)
 do `$BRACKETSTYLE^{
   `cursor^
-} while (`condition^)
+} `$BRACKETSTYLE^while (`condition^)
 
 
 XPT while1 hint=while\ ($TRUE)\ {\ ..\ }

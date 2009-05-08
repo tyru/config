@@ -34,6 +34,15 @@ for ( `type^ `var^ : `inWhat^ ) {
 }
 
 
+XPT private hint=private\ ..\ ..
+private `type^ `varName^;
+
+XPT public hint=private\ ..\ ..
+public `type^ `varName^;
+
+XPT protected hint=private\ ..\ ..
+protected `type^ `varName^;
+
 XPT class hint=class\ ..\ ctor
 public class `className^ {
     public `className^( `ctorParam^^ ) {
@@ -60,11 +69,11 @@ XPT enum hint=public\ enum\ {\ ..\ }
 XPT prop hint=var\ getVar\ ()\ setVar\ ()
 `type^ `varName^;
 
-`get...^public \`\^R("type")\^ get\`\^S(R("varName"),".","\\u&","")\^()
-    { return \`\^R("varName")\^; }^^
+`get...^public \`R("type")\^ get\`S(R("varName"),".",'\\u&',"")\^()
+    { return \`R("varName")\^; }^^
 
-`set...^public void set\`\^S(R("varName"),".","\\u&","")\^( \`\^R("type")\^ val )
-    { \`\^R("varName")\^ = val; }^^
+`set...^public void set\`S(R("varName"),".",'\\u&',"")\^( \`R("type")\^ val )
+    { \`R("varName")\^ = val; }^^
 
 
 XPT try hint=try\ ..\ catch\ (..)\ ..\ finally

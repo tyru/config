@@ -73,11 +73,12 @@
 	work, others are ignored. 
 	Priority can be valued from 0 to +oo. 0 is the highest priority.
 	Some predefined symbols stand for number priority values : >
-		all	: 64
-		spec	: 48
-		like	: 32
-		diff	: 16
-		lang	: 0
+		all		: 64
+		spec		: 48
+		like		: 32
+		lang		: 16
+		sub		: 8
+		personal	: 0
 <	Default priority is "lang" or 0. 
 	
 	You can set priority for each template by using |xpt-priority-format|.

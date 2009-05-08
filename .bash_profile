@@ -29,6 +29,14 @@ export PATH="$HOME/local/bin:$PATH"
 export PERL5LIB="$HOME/local/lib/perl5:$HOME/local/lib/perl5/site_perl"
 export GISTY_DIR="$HOME/work/gist"
 
+if [ -x "/usr/local/bin/vim" ]; then
+    export EDITOR="/usr/etc/local/bin/vim"
+elif [ -x "/usr/bin/vim" ]; then
+    export EDITOR="/usr/bin/vim"
+elif [ -x "$(which vi)" ]; then
+    export EDITOR="$(which vi)"
+fi
+
 export PKG_DBDIR="$HOME/local/var/db/pkg"
 export PORT_DBDIR="$HOME/local/var/db/pkg"
 export INSTALL_AS_USER

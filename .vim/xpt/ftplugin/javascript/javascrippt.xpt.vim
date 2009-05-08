@@ -9,7 +9,7 @@ let b:__JAVASCRIPT_JAVASCRIPPT_XPT_VIM__ = 1
 let [s:f, s:v] = XPTcontainer()
 
 " constant definition
-call extend(s:v, {'$TRUE': 'true', '$FALSE' : 'false', '$NULL' : 'null', '$UNDEFINED' : 'undefined'})
+call extend(s:v, {'$TRUE': 'true', '$FALSE' : 'false', '$NULL' : 'null', '$UNDEFINED' : 'undefined', '$INDENT_HELPER' : '/* */;'})
 
 " inclusion
 XPTinclude
@@ -65,11 +65,13 @@ for (var `i^ in `ar^){
 
 
 XPT if hint=if\ (..)\ {..}
-if (`i^){
-  `cursor^
-}`else...^
+XSET job=$INDENT_HELPER
+if (`condition^){
+  `job^
+}`
+`else...^
 else {
-    `cursor^
+  \`cursor\^
 }^^
 
 

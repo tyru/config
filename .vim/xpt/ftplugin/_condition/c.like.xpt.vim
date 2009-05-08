@@ -3,21 +3,22 @@ if exists("b:___CONDITION_C_LIKE_XPT_VIM__")
 endif
 let b:___CONDITION_C_LIKE_XPT_VIM__ = 1
 
+" containers
+let [s:f, s:v] = XPTcontainer()
 
-let s:f = g:XPTfuncs()
-let s:v = g:XPTvars()
-
-
-call XPTemplatePriority('like')
+" constant definition
 call extend(s:v, {'$TRUE': '1', '$FALSE' : '0', '$NULL' : 'NULL', '$INDENT_HELPER' : '/* void */;'}, 'keep')
 
 
+call XPTemplatePriority('like')
+
+" ================================= Snippets ===================================
 XPTemplateDef
 
-
 XPT if		hint=if\ (..)\ {..}\ else...
+XSET job=$INDENT_HELPER
 if (`condi^) `$BRACKETSTYLE^{ 
-  `job^$INDENT_HELPER^
+  `job^
 }` 
 `else...`^\`$BRACKETSTYLE\^ else \`$BRACKETSTYLE\^{ 
   \`cursor\^ 
@@ -25,8 +26,9 @@ if (`condi^) `$BRACKETSTYLE^{
 
 
 XPT ifn		hint=if\ ($NULL\ ==\ ..)\ {..}\ else...
+XSET job=$INDENT_HELPER
 if (`$NULL^ == `var^) `$BRACKETSTYLE^{ 
-  `job^$INDENT_HELPER^
+  `job^
 }` 
 `else...`^\`$BRACKETSTYLE\^ else \`$BRACKETSTYLE\^{ 
   \`cursor\^ 
@@ -34,8 +36,9 @@ if (`$NULL^ == `var^) `$BRACKETSTYLE^{
 
 
 XPT ifnn	hint=if\ ($NULL\ !=\ ..)\ {..}\ else...
+XSET job=$INDENT_HELPER
 if (`$NULL^ != `var^) `$BRACKETSTYLE^{ 
-  `job^$INDENT_HELPER^
+  `job^
 }` 
 `else...`^\`$BRACKETSTYLE\^ else \`$BRACKETSTYLE\^{ 
   \`cursor\^ 
@@ -43,8 +46,9 @@ if (`$NULL^ != `var^) `$BRACKETSTYLE^{
 
 
 XPT if0		hint=if\ (0\ ==\ ..)\ {..}\ else...
+XSET job=$INDENT_HELPER
 if (0 == `var^) `$BRACKETSTYLE^{ 
-  `job^$INDENT_HELPER^
+  `job^
 }` 
 `else...`^\`$BRACKETSTYLE\^ else \`$BRACKETSTYLE\^{ 
   \`cursor\^ 
@@ -52,8 +56,9 @@ if (0 == `var^) `$BRACKETSTYLE^{
 
 
 XPT ifn0	hint=if\ (0\ !=\ ..)\ {..}\ else...
+XSET job=$INDENT_HELPER
 if (0 != `var^) `$BRACKETSTYLE^{ 
-  `job^$INDENT_HELPER^
+  `job^
 }` 
 `else...`^\`$BRACKETSTYLE\^ else \`$BRACKETSTYLE\^{ 
   \`cursor\^ 
@@ -61,23 +66,25 @@ if (0 != `var^) `$BRACKETSTYLE^{
 
 
 XPT ifee	hint=if\ (..)\ {..}\ elseif...
+XSET job=$INDENT_HELPER
 if (`condition^) `$BRACKETSTYLE^{
-  `job^$INDENT_HELPER^
-} 
-`...^\`$BRACKETSTYLE\^ else if (`cond^R("condition")^) `$BRACKETSTYLE^{ 
-  `job^$INDENT_HELPER^
-}
+  `job^
+}`
+`...^`$BRACKETSTYLE^else if (`cond^R("condition")^) `$BRACKETSTYLE^{ 
+  `job^
+}`
 `...^
 
 
 XPT switch	hint=switch\ (..)\ {case..}
+XSET job=$INDENT_HELPER
 switch (`var^) `$BRACKETSTYLE^{
   case `_^ :
-    `job^$INDENT_HELPER^
+    `job^
     break;
   `...^
   case `_^ :
-    `job^$INDENT_HELPER^
+    `job^
     break;
   `...^ 
 

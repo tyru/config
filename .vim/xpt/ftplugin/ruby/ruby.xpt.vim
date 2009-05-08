@@ -31,14 +31,6 @@ fun! s:f.RubySnakeCase(...) "{{{
 endfunction "}}}
 
 fun! s:f.RubyMethodName() "{{{
-""""""
-" Function disable temporary
-""""""
-  " return s:f.V()
-
-""""""
-" Original function below
-"""""
  let str = s:f.V()
  let i = match(str,'(')
  if i == -1
@@ -52,7 +44,7 @@ endfunction "}}}
 let s:each_map = {
       \'b' : 'byte',
       \'c' : 'char',
-      \'co' : 'conc',
+      \'co' : 'cons',
       \'i' : 'index',
       \'k' : 'key',
       \'l' : 'line',
@@ -60,19 +52,20 @@ let s:each_map = {
       \'s' : 'slice',
       \'v' : 'value'
       \}
-fun! s:f.RubyEachBrace()
+
+fun! s:f.RubyEachBrace() "{{{
   let v = s:f.V()
 
   if has_key(s:each_map, v)
     let v = s:each_map[v]
   endif
 
-  if v =~# 'slice\|conc'
+  if v =~# 'slice\|cons'
     return v.' (`var^) {'
   else
     return v.' {'
   endif
-endfunction
+endfunction "}}}
 
 fun! s:f.RubyEachPair() "{{{
   let v = s:f.R('what')
@@ -266,12 +259,6 @@ XPT atw hint=attr_writer\ :\ ..
 attr_writer :`writer^`...^, :`writern^`...^
 
 
-XPT beg hint=BEGIN\ {..}
-BEGIN {
-`code to run while file loading^
-}
-
-
 XPT begin hint=begin\ ..\ rescue\ ..\ else\ ..\ end
 begin
    `expr^
@@ -283,13 +270,6 @@ begin
     \`expr\^^^
 end
 
-
-XPT blk hint=do\ |..|\ ..\ end
-do |`arg^|
-`block^
-end
-
-
 XPT bm hint=Benchmark.bmbm\ do\ ...\ end
 TESTS = `times^10_000^
 Benchmark.bmbm do |result|
@@ -300,10 +280,10 @@ end
 XPT case hint=case\ ..\ when\ ..\ end
 case `target^
 when `comparison^
-`^
+`_^^
 `...^
 when `comparison^
-`^
+`_^^
 `...^
 `else...^else
     \`\^^^
@@ -322,7 +302,7 @@ end
 
 XPT cld hint=class\ ..\ <\ DelegateClass\ ..\ end
 class `ClassName^RubyCamelCase()^^ < DelegateClass(`ParentClass^RubyCamelCase()^^)
-def initialize`^
+def initialize`_^^
 super(`delegate object^)
 
 `cursor^
@@ -332,8 +312,8 @@ end
 
 XPT cli hint=class\ ..\ def\initialize\ ..\ ...\ end
 class `^RubyCamelCase()^^
-def initialize`^
-`_^
+def initialize`_^^
+`block^
 end`...^
 
 def `methodn^RubyMethodName()^^
@@ -343,7 +323,7 @@ end
 
 
 XPT cls hint=class\ <<\ ..\ end
-class << `self^ self^
+class << `self^self^
 `cursor^
 end
 
@@ -383,7 +363,7 @@ def_delegators :`del obj^, :`del methods^
 
 
 XPT defi hint=def\ initialize\ ..\ end
-def initialize`^
+def initialize`_^^
 `cursor^
 end
 
@@ -423,7 +403,7 @@ Dir.glob('`dir^') {|`d^file^| `cursor^ }
 
 
 XPT do hint=do\ |..|\ ..\ end
-do `|`what`|^RubyBlockArg()^^
+do `|`args`|^RubyBlockArg()^^
 `cursor^
 end
 
@@ -442,18 +422,12 @@ each_`what^RubyEachBrace()^^|`_^RubyEachPair()^| `cursor^ }
 
 XPT eli hint=elsif\ ..
 elsif `boolean exp^
-`^ `...^elsif `boolean exp^
-`^`...^
-
-
-XPT end hint=END\ {..}
-END {
-`code to run after execution finished^
-}
+`_^^ `...^elsif `boolean exp^
+`_^^`...^
 
 
 XPT fdir hint=File.dirname\\(..)
-File.dirname(`^)
+File.dirname(`_^^)
 
 
 XPT fet hint=fetch\\(..)\ {|..|\ ..\ }
@@ -516,7 +490,7 @@ inject(`initial^) {|`accumulator^acc^, `element^el^| `cursor^ }
 
 
 XPT int hint=#{..}
-#{`^}
+#{`_^^}
 
 
 XPT kv hint=:...\ =>\ ...
@@ -524,8 +498,11 @@ XPT kv hint=:...\ =>\ ...
 
 
 XPT lam hint=lambda\ {\ ..\ }
-lambda {`|`what`|^RubyBlockArg()^^ `cursor^ }
+lambda {`|`args`|^RubyBlockArg()^^ `cursor^ }
 
+
+XPT lit hint=%*[..]
+%`_^^[`content^^]
 
 XPT map hint=map\ {|..|\ ..\ }
 map {|`arg^| `cursor^ }
@@ -624,9 +601,6 @@ sort {|`el1^, `el2^| `el2^ <=> `el1^ }
 XPT sorb hint=sort_by\ {|..|\ ..\ }
 sort_by {`|`arg`|^RubyBlockArg()^^ `cursor^ }
 
-XPT qs hint=%*[..]
-%`q^[`_^]
-
 
 XPT ste hint=step\\(..)\ {\ ..\ }
 step(`count^) {|`arg^i^| `cursor^ }
@@ -644,7 +618,7 @@ end
 
 XPT tas hint=Rake\ Task
 desc "`task description^"
-task :`task name^RubySnakeCase()^^ do
+task :`task name^RubySnakeCase()^^ `depends of...^=> [:\`task\^\`...\^, :\\\`taskn\\\^\\\`...\\\^\^\^]^^ do
 `cursor^
 end
 
@@ -653,9 +627,9 @@ XPT tc hint=require\ 'test/unit'\ ...\ class\ Test..\ <\ Test::Unit:TestCase\ ..
 require "test/unit"
 require "`module^"
 
-class Test`module^RubyCamelCase()^^ < Test::Unit:TestCase
+class Test`^RubyCamelCase(R("module"))^ < Test::Unit:TestCase
 def test_`test case name^RubyMethodName()^^
-`^
+`_^^
 end `...^
 
 def test_`test_case_namen^RubyMethodName()^^
@@ -669,11 +643,11 @@ XPT tif hint=..\ ?\ ..\ :\ ..
 
 
 XPT tim hint=times\ {\ ..\ }
-times {`|`what`|^RubyBlockArg()^^ `cursor^ }
+times {`|`index`|^RubyBlockArg()^^ `cursor^ }
 
 
 XPT tra hint=transaction\\(..)\ {\ ...\ }
-transaction(`^true^) { `cursor^ }
+transaction(`_^true^) { `cursor^ }
 
 
 XPT unif hint=Unix\ Filter
@@ -699,13 +673,13 @@ upto(`ubound^) {|`arg^i^| `cursor^ }
 
 
 XPT usai hint=if\ ARGV..\ abort("Usage...
-if ARGV`^
+if ARGV`_^^
 abort "Usage: #{$PROGRAM_NAME} `args^[options]^"
 end
 
 
 XPT usau hint=unless\ ARGV..\ abort("Usage...
-unless ARGV`^
+unless ARGV`_^^
 abort "Usage: #{$PROGRAM_NAME} `args^[options]^"
 end
 
@@ -720,10 +694,6 @@ end
 
 XPT wid hint=with_index\ {\ ..\ }
 with_index {|`record^, `index^i^| `cursor^ }
-
-
-XPT win hint=with_index\ {|..|\ ..\ }
-with_index {|`record^, `index^| `block^ }
 
 
 XPT xml hint=REXML::Document.new\\(..)

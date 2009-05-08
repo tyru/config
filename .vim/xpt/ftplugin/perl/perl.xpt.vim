@@ -73,7 +73,7 @@ foreach my $`var^ (@`array^) {
 }
 
 
-XPT package hint=new
+XPT package hint=
 package `className^;
 
 use base qw(`parent^);

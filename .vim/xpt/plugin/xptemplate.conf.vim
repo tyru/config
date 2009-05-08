@@ -48,6 +48,12 @@ let oldcpo = &cpo
 set cpo-=<
 exe "inoremap ".g:xptemplate_key." <C-r>=XPTemplateStart(0)<cr>"
 exe "xnoremap ".g:xptemplate_key." \"0di<C-r>=XPTemplatePreWrap(@0)<cr>"
+if &sel == 'inclusive'
+  exe "snoremap ".g:xptemplate_key." <C-c>`>a<C-r>=XPTemplateStart(0)<cr>"
+else
+  exe "snoremap ".g:xptemplate_key." <C-c>`>i<C-r>=XPTemplateStart(0)<cr>"
+endif
+
 let &cpo = oldcpo
 
 
