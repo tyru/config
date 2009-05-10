@@ -5,46 +5,46 @@ let g:__XPTEMPLATE_CONF_VIM__ = 1
 
 
 
+let s:escapeHead   = '\v(\\*)\V'
+let s:unescapeHead = '\v(\\*)\1\\?\V'
+let s:ep           = '\%(' . '\%(\[^\\]\|\^\)' . '\%(\\\\\)\*' . '\)' . '\@<='
 
 
 
 fun! s:Def(k, v) "{{{
   if !exists(a:k)
-    let cmd = "let ".a:k."="
-    if type(a:v) == type("")
-      let cmd = cmd . '"' .a:v. '"'
-    elseif type(a:v) == type(1)
-      let cmd = cmd . a:v
-    else
-      echoerr a:k." set with illegal value :".a:v
-      return
-    endif
-    exe cmd
+    exe "let ".a:k."=".string(a:v)
   endif
 endfunction "}}}
 
-call s:Def('g:xptemplate_strip_left', 1)
-call s:Def('g:xptemplate_limit_curosr', 1)
-call s:Def('g:xptemplate_show_stack', 1)
-call s:Def('g:xptemplate_highlight', 1)
+
+
 " call s:Def('g:xptemplate_indent', 1)
 
-call s:Def('g:xptemplate_key', '<C-\\>')
-" call s:Def('g:xptemplate_key', '')
-call s:Def('g:xptemplate_to_right', "<C-l>")
+call s:Def('g:xptemplate_strip_left',   1)
+call s:Def('g:xptemplate_limit_curosr', 1)
+call s:Def('g:xptemplate_show_stack',   1)
+call s:Def('g:xptemplate_highlight',    1)
+call s:Def('g:xptemplate_key',          '<C-\>')
+call s:Def('g:xptemplate_nav_next',     '<tab>')
+call s:Def('g:xptemplate_nav_cancel',   '<cr>')
+call s:Def('g:xptemplate_to_right',     "<C-l>")
+call s:Def('g:xptemplate_fix',          1)
+call s:Def('g:xptemplate_vars',         '')
 
-call s:Def('g:xptemplate_fix', 1)
+let g:XPTpvs = {}
 
 
 
-"for high light current editing item
+"for high lighting current editing item
 hi CurrentItem ctermbg=green gui=none guifg=#d59619 guibg=#efdfc1
 hi IgnoredMark cterm=none term=none ctermbg=black ctermfg=darkgrey gui=none guifg=#dddddd guibg=white
 
 
 " TODO Be very careful with 'cpo' option!
 "
-let oldcpo = &cpo
+let s:oldcpo = &cpo
+" enable <key> encoding
 set cpo-=<
 exe "inoremap ".g:xptemplate_key." <C-r>=XPTemplateStart(0)<cr>"
 exe "xnoremap ".g:xptemplate_key." \"0di<C-r>=XPTemplatePreWrap(@0)<cr>"
@@ -53,8 +53,41 @@ if &sel == 'inclusive'
 else
   exe "snoremap ".g:xptemplate_key." <C-c>`>i<C-r>=XPTemplateStart(0)<cr>"
 endif
+let &cpo = s:oldcpo
 
-let &cpo = oldcpo
+
+
+" parse personal variable
+let s:pvs = split(g:xptemplate_vars, '\V'.s:ep.'&')
+
+for s:v in s:pvs
+  let s:key = matchstr(s:v, '\V\^\[^=]\*\ze=')
+  if s:key == ''
+    continue
+  endif
+
+  if s:key !~ '^\$'
+    let s:key = '$'.s:key
+  endif
+
+  let s:val = matchstr(s:v, '\V\^\[^=]\*=\zs\.\*')
+  let g:XPTpvs[s:key] = substitute(s:val, s:unescapeHead.'&', '\1\&', 'g')
+  " call Log(s:key.'==='.g:XPTpvs[s:key])
+endfor
+
+
+fun! s:ApplyPersonalVariables() "{{{
+  let f = g:XPTfuncs()
+  for [k, v] in items(g:XPTpvs)
+    let f[k] = v
+  endfor
+endfunction "}}}
+
+augroup XPTpvs
+  au!
+  au FileType * call <SID>ApplyPersonalVariables()
+augroup END
+
 
 
 " checks critical setting:

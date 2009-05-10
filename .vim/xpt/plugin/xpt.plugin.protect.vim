@@ -8,7 +8,7 @@ endif
 let g:__XPT_PLUGIN_PROTECT_VIM__ = 1
 
 
-fun! g:XPT.XPTprotect(x)
+fun! s:XPTprotect(x) "{{{
   let x = a:x
   let ctx = x.curctx
 
@@ -74,6 +74,10 @@ fun! g:XPT.XPTprotect(x)
 
 
   return 1
+endfunction "}}}
+
+fun! g:XPT.XPTprotect(x)
+  return s:XPTprotect(a:x)
 endfunction
 
-call g:XPTaddPlugin("beforeUpdate", "XPTprotect")
+" call g:XPTaddPlugin("beforeUpdate", "XPTprotect")

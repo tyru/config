@@ -216,7 +216,9 @@
 	jumps onto it : >
 		(xpt)
 		 ***------ only xpt is selected
-<	Edge helps on formatting expandable items.
+<	Edge helps on formatting expandable items. 
+
+	NOTE only |\_W| characters are acceptable in edge.
 	
 
 							   *xpt-format-normal*
@@ -425,7 +427,14 @@ S({pattern},{replace},[{flag}])
 					       *xpt-function*   *xpt-variable*
 	You can use 2 global function |XPTfuncs()| |XPTvars()| to get function
 	or variable container for defining functions or variables used as
-	|xpt-predefined|, |xpt-default-value| or |xpt-post-filter|.
+	|xpt-predefined|, |xpt-default-value| or |xpt-post-filter|. as : >
+
+<	Normally variables are template-relevent and used format helper like
+	"$CL" and "$CR" defined as "/*" and "*/" for c language.
+
+	Personal information variables should be defined by using
+	|g:xptemplate_vars|. Variables defined with |g:xptemplate_vars|
+	override variables defined in *.xpt.vim.
 
 	Functions used in |xpt-default-value| or |xpt-post-filter| are invoked
 	with 1 parameter more, than parameters specified in template.
@@ -443,11 +452,11 @@ S({pattern},{replace},[{flag}])
 		  return substitute(self.V(), a:ptn, a:rep, flg)
 		endfunction
 
-<	It accept upto 3 arguments. An example is as follow : >
+<	It accepts upto 3 arguments. An example is as follow : >
 		call XPTemplate("ifndef", [
 		      \"ifndef `_^SV('.','\\u&')^^", 
 		      ......
-<	It change typed text to upper case.
+<	It converts typed text to upper case.
 
 
 				      *xpt-{}*  *xpt-mixed*   *xpt-expression*
@@ -643,6 +652,19 @@ g:XPTfuncs()   g:XPTvars()
 							       {default:<C-\>}
 	The key to trigger template. See |i_CTRL-\| |v_CTRL-\|.
 
+						       *g:xptemplate_nav_next*
+							       {default:<tab>}
+	After template triggerred, to press which key to navigate to next.
+
+						     *g:xptemplate_nav_cancel*
+								{default:<cr>}
+	After template triggerred, to press which key to clear current item
+	and jump to next.
+
+						       *g:xptemplate_to_right*
+							     {default:"<C-l>"}
+	Change the default key |s_CTRL-l| to jump to item end in |Select-mode|.
+
 						     *g:xptemplate_strip_left*
 								   {default:1}
 	When set, wrapping template |xpt-wrapped| removes space before line.
@@ -664,9 +686,23 @@ g:XPTfuncs()   g:XPTvars()
 		XPT:for[len] > if[]
 <	Indicate rendering template "if" inside template "for".
 
-						       *g:xptemplate_to_right*
-							     {default:"<C-l>"}
-	Change the default key |s_CTRL-l| to jump to item end in |Select-mode|.
+				      *xpt-personal-var*   *g:xptemplate_vars*
+	Set personal variables used in template, see |xpt-variable|. Variable
+	set with g:xptemplate_vars has the highest priority and override any
+	other variables set in *.xpt.vim.  Variables
+	format : >
+	let g:xptemplate_vars = '$author=xp\ \&\\\&123&$email=bal@bla'
+	let g:xptemplate_vars = 'author=xp\ \&\\\&123&email=bal@bla'
+
+<	both result in : >
+
+	'xp\ &\&123' and 'bal@bla'
+
+<	Or : >
+		let g:xptemplate_vars = exists('g:xptemplate_vars') ? 
+			\ g:xptemplate_vars . '&' . '$other=bla'
+			\ : '$other=bla'
+<	Entries are separated with '&'
 
 
 
@@ -675,6 +711,14 @@ g:XPTfuncs()   g:XPTvars()
 
 							     *xpt-changes-log*
 : > <
+Added:2009 May 10	item edge now can contains \W chars
+Fixed:2009 May 09	case bug of popup
+Fixed:2009 May 09	bug of laststatus=0 causes cursor limit not working
+Fixed:2009 May 09	bug of template range exceed template end if following
+			content contains '^'
+Fixed:2009 May 09	On finishing template, unescape bug
+Added:2009 May 09	personal variable setting
+Added:2009 May 09	navigation key mapping config.
 Fixed:2009 May 05	bug that left mark is deleted if touched the previous
 			right mark
 Fixed:2009 May 05	bug that anonymous item swallow default value.

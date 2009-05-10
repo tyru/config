@@ -30,7 +30,7 @@ XSET symbol=headerSymbol()
 
 XPT ifndef	hint=#ifndef\ ..
 XSET symbol=fileRoot()
-XSET symbol.post=SV('.','\u&')
+XSET symbol|post=SV('.','\u&')
 ifndef `symbol^ 
 #    define `symbol^ 
 

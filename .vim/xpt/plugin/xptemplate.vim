@@ -1,6 +1,6 @@
 " XPTEMPLATE ENGIE:
 "   code template engine
-" VERSION: 0.3.7.7
+" VERSION: 0.3.7.8
 " BY: drdr.xp | drdr.xp@gmail.com
 "
 " MARK USED:
@@ -17,11 +17,10 @@
 " "}}}
 "
 " TODOLIST: "{{{
-" TODO mechanism to set personal variables
-" TODO laststatus!=2 cause cursor protection failed.
+" TODO default value popup list
+" TODO in windows & in select mode to trigger wrapped or normal?
 " TODO auto crash
 " TODO $BRACKETSTYLE caused indent problem
-" TODO more g: option
 " TODO nested repetition in expandable
 " TODO change on previous item
 " TODO ordered item
@@ -48,18 +47,30 @@ let g:__XPTEMPLATE_VIM__ = 1
 runtime plugin/mapstack.vim
 runtime plugin/xptemplate.conf.vim
 
+" 0 a
+" 1 \a
+" 3 \\\a
+" 7 \\\\\\\a
+" 2 \\a
+" 5 \\\\\a
+"
+" 2*n + 1
 
+let s:escapeHead      =   '\v(\\*)\V'
+let s:unescapeHead      =   '\v(\\*)\1\\?\V'
 let s:ep      =   '\%(' . '\%(\[^\\]\|\^\)' . '\%(\\\\\)\*' . '\)' . '\@<='
 let s:escaped =   '\%(' . '\%(\[^\\]\|\^\)' . '\%(\\\\\)\*' . '\)' . '\@<=' . '\\'
 
 let s:stripPtn     = '\V\^\s\*\zs\.\*'
 let s:cursorName   = "cursor"
 let s:wrappedName  = "wrapped"
-let s:expandablePtn= '\V\^\_s\*'.'\w\+'. '...' . '\_s\*\$'
+let s:expandablePtn= '\v^(\_.*\_W+)?' . '\w+\V...'
 let s:repeatPtn    = '...\d\*'
+let s:tmplctx      = {'vdef' : {}, 'vpost' : {}}
 let s:emptyctx     = {
       \'tmpl' : {}, 
       \'evalCtx' : {}, 
+      \'phase' : 'uninit', 
       \'name' : '', 
       \'fullname' : '', 
       \'step': [], 
@@ -195,22 +206,21 @@ fun! XPTemplate(name, str_or_ctx, ...) " {{{
   let xt = s:Data().tmpls
   let xp = s:Data().bufsetting.ptn
 
-  let ctx = {}
-
   if a:0 == 0          " no syntax context
-    let T_str = a:str_or_ctx
+    let ctx = deepcopy(s:tmplctx)
+    let TmplObj = a:str_or_ctx
   elseif a:0 == 1      " with syntax context
     let ctx = deepcopy(a:str_or_ctx)
-    let T_str = a:1
+    let TmplObj = a:1
   endif
 
 
-  if type(T_str) == type([])
-    let Str = join(T_str, "\n")
-  elseif type(T_str) == type(function("tr"))
-    let Str = T_str
+  if type(TmplObj) == type([])
+    let Str = join(TmplObj, "\n")
+  elseif type(TmplObj) == type(function("tr"))
+    let Str = TmplObj
   else 
-    let Str = T_str
+    let Str = TmplObj
   endif
 
 
@@ -243,8 +253,7 @@ fun! XPTemplate(name, str_or_ctx, ...) " {{{
   let name = pstr == "" ? name : matchstr(name, '[^!]*\ze!')
 
 
-  let hint = s:GetHint(ctx, Str)
-
+  let hint = s:GetHint(ctx)
 
 
   if !has_key(xt, name) || xt[name].priority > override_priority
@@ -260,6 +269,10 @@ fun! XPTemplate(name, str_or_ctx, ...) " {{{
 
   endif
 endfunction " }}}
+
+fun! XPTgetAllTemplates()
+  return s:Data().tmpls
+endfunction
 
 
 fun! s:XPTemplateParse(lines) "{{{
@@ -391,9 +404,8 @@ com! XPTemplateDef call s:XPTemplate_def(expand("<sfile>")) | finish
 
 
 
-fun! s:GetHint(ctx, str) "{{{
+fun! s:GetHint(ctx) "{{{
   let xp = s:Data().bufsetting.ptn
-  let hint = a:str
 
   if has_key(a:ctx, 'hint')
     let hint = s:Eval(a:ctx.hint)
@@ -509,7 +521,9 @@ fun! XPTemplateStart(pos) " {{{
 
 
   " new context
-  let ctx = s:Ctx()
+  let ctx = s:NewCtx()
+
+  let ctx.phase = 'inited'
 
   let ctx.tmpl = x.tmpls[tmplname]
 
@@ -524,6 +538,7 @@ fun! XPTemplateStart(pos) " {{{
 
   call s:RenderTemplate(lnn, coln, ctx.tmpl.tmpl)
 
+  let ctx.phase = 'rendered'
   let ctx.processing = 1
 
   " remove the last
@@ -560,8 +575,10 @@ fun! s:XPTemplateFinish(...) "{{{
   let toEnd = col(".") - len(getline("."))
 
   " unescape
-  exe "silent! %snomagic/\\V" .s:f.TmplRange() . xp.lft_e . '/' . xp.l . '/g'
-  exe "silent! %snomagic/\\V" .s:f.TmplRange() . xp.rt_e . '/' . xp.r . '/g'
+  " exe "silent! %snomagic/\\V" .s:f.TmplRange() . xp.lft_e . '/' . xp.l . '/g'
+  " exe "silent! %snomagic/\\V" .s:f.TmplRange() . xp.rt_e . '/' . xp.r . '/g'
+  exe "silent! %snomagic/\\V" .s:f.TmplRange() . s:unescapeHead . xp.l . '/\1' . xp.l . '/g'
+  exe "silent! %snomagic/\\V" .s:f.TmplRange() . s:unescapeHead . xp.r . '/\1' . xp.r . '/g'
 
   " format template text
   call s:Format(1)
@@ -571,6 +588,7 @@ fun! s:XPTemplateFinish(...) "{{{
 
   if empty(x.stack)
     let ctx.processing = 0
+    let ctx.phase = 'finished'
     call s:ClearMap()
   else
     call s:PopCtx()
@@ -591,7 +609,7 @@ fun! s:Popup(pref, coln) "{{{
   for [key, val] in items(dic)
 
     " TODO filter
-    if a:pref != "" && key !~ "^".a:pref | continue | endif
+    if a:pref != "" && key !~# "^".a:pref | continue | endif
     if val.wrapped && empty(x.wrap) || !val.wrapped && !empty(x.wrap) | continue | endif
     if has_key(val.ctx, "syn") && val.ctx.syn != '' && match(ctxs, '\c'.val.ctx.syn) == -1 | continue | endif
 
@@ -608,7 +626,7 @@ fun! s:Popup(pref, coln) "{{{
   let cmpl = cmpl + cmpl2
 
 
-  if len(cmpl) == 1 || len(cmpl) > 0 && a:pref == cmpl[0].word
+  if len(cmpl) == 1 || len(cmpl) > 0 && a:pref ==# cmpl[0].word
     return cmpl[0].word
   endif
 
@@ -819,10 +837,11 @@ fun! s:GetValueInfo(end) "{{{
   let r0 = getpos(".")[1:2]
 
   let l0 = searchpos(xp.lft, 'nW')
-  let l0n = min([l0[0] * 10000 + l0[1], endn])
-  if l0n == 0
-    let l0n = 10000 * 10000
+  if l0 == [0, 0]
+    let l0 = a:end
   endif
+  let l0n = min([l0[0] * 10000 + l0[1], endn])
+
 
   let r1 = searchpos(xp.rt, 'W')
   if r1 == [0, 0] || r1[0] * 10000 + r1[1] > l0n
@@ -999,7 +1018,7 @@ fun! s:ApplyPredefined(flag) " {{{
     let v = s:Eval(name)
 
     if v != name
-      call s:ReplaceAllMark(name, escape(v, '\'), a:flag)
+      call s:ReplaceAllMark(name, v, a:flag)
       call cursor(p[0:1])
       continue
     endif
@@ -1127,6 +1146,8 @@ fun! s:NextItem(flag) " {{{
   let ctx = s:Ctx()
   let xpos = ctx.pos
 
+  let ctx.phase = 'post'
+
   let p0 = s:f.CTL(x)
 
   let p = [line("."), col(".")]
@@ -1178,8 +1199,10 @@ fun! s:ApplyDelayed() "{{{
     let isrep = 0
 
 
-    if ctx.name =~ '^\.\.\.\d*$' || ctx.name =~ s:expandablePtn
+    if ctx.name =~ '^\.\.\.\d*$'
       let isrep = typed =~# '\V\^\_s\*' . ctx.name . '\_s\*\$'
+    elseif ctx.name =~ s:expandablePtn
+      let isrep = typed =~# substitute(s:expandablePtn, '\V\\w+\\V...',  '\\V'.ctx.name, '')
     else
       let isrep = 1
     endif
@@ -1236,9 +1259,11 @@ fun! s:SelectNextItem(...) "{{{
   call cursor(p[0:1])
   
   if s:InitItem()
+    let ctx.phase = 'fillin'
     return "\<esc>gv\<C-g>"
   else
     call cursor(s:f.CBR(x))
+    let ctx.phase = 'fillin'
     return ""
   endif
 
@@ -1639,7 +1664,7 @@ fun! s:Eval(s, ...) "{{{
   let ptn = fptn . '\|' . vptn
 
 
-  " create mask hidden all string literal
+  " create mask hiding all string literal
   let mask = substitute(a:s, '[ *]', '+', 'g')
   while 1 "{{{
     let d = match(mask, dptn)
@@ -1707,7 +1732,6 @@ fun! s:Eval(s, ...) "{{{
     endif
 
 
-
     let q = pre . mtc . suf
     let ql = len(q)
 
@@ -1731,7 +1755,6 @@ fun! s:Eval(s, ...) "{{{
 
 
 
-  " remove unused parameter string
   let sp = ""
   let last = 0
 
@@ -1748,7 +1771,6 @@ fun! s:Eval(s, ...) "{{{
 
 
     " unescape \{ and \(
-    " let tmp = substitute( (k == 0 ? "" : (str[last : kn-1])), '\V'.ep.'\\\(\[{(]\)', '\1', 'g')
     let tmp = k == 0 ? "" : (str[last : kn-1])
     let tmp = substitute(tmp, '\\\(.\)', '\1', 'g')
     let sp .= tmp
@@ -1767,29 +1789,6 @@ fun! s:Eval(s, ...) "{{{
   return sp
 
 endfunction "}}}
-
-
-
-fun! s:EvalFunction(x, f) "{{{
-  let xfunc = a:x.funcs
-  if has_key(xfunc, matchstr(a:f, '^\w\+'))
-    return eval("xfunc.".a:f)
-  else
-    return eval(a:f)
-  endif
-endfunction "}}}
-
-fun! s:EvalVariable(x, v) "{{{
-  let xvar = a:x.vars
-  if has_key(xvar, v)
-    return xvar[v]
-  else
-    return a:v
-  endif
-endfunction "}}}
-
-
-
 
 " at the input area
 fun! s:GetName(pos) " {{{
@@ -1916,21 +1915,17 @@ fun! s:ApplyMap() " {{{
   inoremap <buffer> <bs> <C-r>=<SID>CheckAndBS("bs")<cr>
   inoremap <buffer> <C-w> <C-r>=<SID>CheckAndBS("C-w")<cr>
   inoremap <buffer> <Del> <C-r>=<SID>CheckAndDel("Del")<cr>
-  " inoremap <buffer> <C-u> <C-r>=<SID>CheckAndDel("C-u")<cr>
-  inoremap <buffer> <tab> <C-r>=<SID>NextItem('')<cr>
-  snoremap <buffer> <tab> <Esc>`>a<C-r>=<SID>NextItem('')<cr>
+
+  exe 'inoremap <buffer> '.g:xptemplate_nav_next  .' <C-r>=<SID>NextItem("")<cr>'
+  exe 'snoremap <buffer> '.g:xptemplate_nav_next  .' <Esc>`>a<C-r>=<SID>NextItem("")<cr>'
+  exe 'smap     <buffer> '.g:xptemplate_nav_cancel.' <Del><C-r>=<SID>NextItem("clear")<cr>'
+
   snoremap <buffer> <Del> <Del>i
   snoremap <buffer> <bs> <esc>`>a<bs>
-
-
-  " smap     <buffer> <CR> <Del><Tab>
-  smap     <buffer> <CR> <Del><C-r>=<SID>NextItem('clear')<cr>
-  
-
   exe "snoremap ".g:xptemplate_to_right." <esc>`>a"
-
   exe "inoremap <buffer> ".xp.l.' \'.xp.l
   exe "inoremap <buffer> ".xp.r.' \'.xp.r
+  inoremap <buffer> \ \\
 
 endfunction " }}}
 
@@ -1940,16 +1935,16 @@ fun! s:ClearMap() " {{{
   iunmap <buffer> <bs>
   iunmap <buffer> <C-w>
   iunmap <buffer> <Del>
-  iunmap <buffer> <tab>
-  sunmap <buffer> <tab>
+  exe 'iunmap <buffer> '.g:xptemplate_nav_next
+  exe 'sunmap <buffer> '.g:xptemplate_nav_next
+  exe 'sunmap <buffer> '.g:xptemplate_nav_cancel
+
   sunmap <buffer> <Del>
   sunmap <buffer> <bs>
-  sunmap <buffer> <CR>
-
   exe "sunmap ".g:xptemplate_to_right
-
   exe "iunmap <buffer> ".xp.l
   exe "iunmap <buffer> ".xp.r
+  iunmap <buffer> \
 endfunction " }}}
 
 fun! s:StartAppend() " {{{
@@ -2058,6 +2053,11 @@ fun! g:X() "{{{
 endfunction "}}}
 
 
+fun! s:NewCtx() "{{{
+  let x = s:Data()
+  let x.curctx = deepcopy(s:emptyctx)
+  return x.curctx
+endfunction "}}}
 fun! s:Ctx(...) "{{{
   let x = a:0 == 1 ? a:1 : s:Data()
   return x.curctx
@@ -2185,6 +2185,55 @@ fun! s:CurSynNameStack() "{{{
   return SynNameStack(line("."), col("."))
 endfunction "}}}
 
+let s:postCorrect = 0
+fun! s:CorrectCorsorPosition(x, expectedMode) "{{{
+  if !a:x.curctx.processing || !g:xptemplate_limit_curosr 
+    return 
+  endif
+
+  let x = a:x
+
+
+  let m = mode()
+  if m =~ a:expectedMode
+    call s:PushSetting('&l:ve')
+    let &l:ve = 'all'
+
+    let [t, l, b, r] = s:f.CTL(x) + s:f.CBR(x)
+
+    let [ln, c] = [line("."), col(".")]
+    if ln < t || ln == t && c < l
+      call cursor(t, l)
+    elseif ln > b || ln == b && c > r
+      call cursor(b, r)
+    endif
+
+    call s:PopSetting()
+  endif
+
+endfunction "}}}
+
+
+fun! s:PushSetting(key) "{{{
+  if !exists('b:SettingStack')
+    let b:SettingStack = []
+  endif
+
+  let b:SettingStack += [{'key' : a:key, 'val' : eval(a:key)}]
+endfunction "}}}
+
+fun! s:PopSetting() "{{{
+  if !exists('b:SettingStack')
+    return
+  endif
+
+  let d = b:SettingStack[-1]
+  exe 'let '.d.key.'='.string(d.val)
+  
+  call remove(b:SettingStack, -1)
+endfunction "}}}
+
+
 fun! XPTemplate_cursorLimit() "{{{
   let x = s:Data()
   let ctx = s:Ctx()
@@ -2193,31 +2242,21 @@ fun! XPTemplate_cursorLimit() "{{{
     return ""
   endif
 
+
   if g:xptemplate_limit_curosr 
-
-
-    let m = mode()
-    if m =~ "i"
-
-      let [l, c] = [line("."), col(".")]
-      if l < s:CT(x) || l == s:CT(x) && c < s:CL(x)
-        call cursor(s:CT(x), s:CL(x))
-      elseif l > s:CB(x) || l == s:CB(x) && c > s:CR(x)
-        call cursor(s:CB(x), s:CR(x))
-      endif
-
-    endif
-
+    call s:CorrectCorsorPosition(x, '.') " any mode is acceptable
   endif
 
+
   let res = ""
+
   if g:xptemplate_show_stack
     let res = "XPT:"
     for v in x.stack
-      let res = res. v.tmpl.name.'['.v.name.']'." > "
+      let res .= v.tmpl.name.'['.substitute(v.name, "\n", ' ', 'g').']'." > "
     endfor
 
-    let res = res . ctx.tmpl.name.'['.ctx.name.']'." "
+    let res .= ctx.tmpl.name.'['.substitute(ctx.name, "\n", ' ', 'g').']'." "
   endif
 
   return res
@@ -2327,7 +2366,7 @@ fun! s:Replace(p, c, rep) "{{{
 
       
       call cursor(start)
-      normal! v
+      XPTvisual
       call cursor(end)
       normal! d
       silent! normal! zO
@@ -2349,7 +2388,7 @@ fun! s:Replace(p, c, rep) "{{{
 
 endfunction "}}}
 
-fun! s:XPTupdate() "{{{
+fun! s:XPTupdate(...) "{{{
   let x = s:Data()
   let ctx = s:Ctx()
   let xcp = s:Ctx().pos.curpos
@@ -2359,7 +2398,12 @@ fun! s:XPTupdate() "{{{
     return
   endif
 
+
+  call s:CorrectCorsorPosition(x, 'i')
+
+
   let pp = getpos(".")[1:2]
+
 
   call s:CallPlugin("beforeUpdate")
 
@@ -2438,9 +2482,13 @@ endfunction "}}}
 
 augroup XPT "{{{
   au! XPT
+  au InsertEnter * call <SID>XPTcheck()
+
   au CursorHoldI * call <SID>XPTupdate()
   au CursorMovedI * call <SID>XPTupdate()
-  au InsertEnter * call <SID>XPTcheck()
+  " InsertEnter is called in normal mode
+  " au InsertEnter * call <SID>XPTupdate('n') 
+
 
 augroup END "}}}
 

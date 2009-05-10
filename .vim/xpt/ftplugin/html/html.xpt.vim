@@ -13,6 +13,8 @@ call extend(s:v, {'\$TRUE': '1', '\$FALSE' : '0', '\$NULL' : 'NULL', '\$UNDEFINE
 XPTinclude 
       \ _common/common
       \ _comment/xml
+      \ xml/xml
+      \ xml/wrap
 " ========================= Function and Varaibles =============================
 fun! s:f.createTable(...) "{{{
   let nrow_str = inputdialog("num of row:")
@@ -34,6 +36,7 @@ endfunction "}}}
 
 
 " ================================= Snippets ===================================
+call XPTemplatePriority('lang')
 call XPTemplate('doctype_html3', [
       \'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">'])
 call XPTemplate('doctype_html4_frameset', [ 
@@ -57,7 +60,6 @@ call XPTemplate('doctype_xhtml1_transitional', [
 call XPTemplate('doctype_xhtml11', [ 
       \'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/1999/xhtml">'])
 
-call XPTemplate('t', [ '<`name^span^ `attr^>`cursor^</`name^>' ])
 call XPTemplate("id", {'syn' : 'tag'}, 'id="`^"')
 call XPTemplate("class", {'syn' : 'tag'}, 'class="`^"')
 call XPTemplate('a', '<a href="`href^">`cursor^</a>')
@@ -124,36 +126,12 @@ XPT br hint=<br\ />
 <br/>
 
 
-XPT h1 hint=<h1>\ ..\ <h1>
-<h1>`cr^^`cursor^`cr^^</h1>
+" <h1>`cr^^`cursor^`cr^^</h1>
+XPT h hint=<h?>\ ..\ <h?>
+XSET n=1
+<h`n^>`cursor^</h`n^>
 
 
-XPT h2 hint=<h2>\ ..\ <h2>
-<h2>`cursor^</h2>
-
-
-XPT h3 hint=<h3>\ ..\ <h3>
-<h3>`cursor^</h3>
-
-
-XPT h4 hint=<h4>\ ..\ <h4>
-<h4>`cursor^</h4>
-
-
-XPT h5 hint=<h5>\ ..\ <h5>
-<h5>`cursor^</h5>
-
-
-XPT h6 hint=<h6>\ ..\ <h6>
-<h6>`cursor^</h6>
-
-
-XPT h7 hint=<h7>\ ..\ <h7>
-<h7>`cursor^</h7>
-
-
-XPT h8 hint=<h8>\ ..\ <h8>
-<h8>`cursor^</h8>
 
 
 XPT p_ hint=
@@ -162,23 +140,10 @@ XPT p_ hint=
 XPT div_ hint=
 <div>`wrapped^</div>
 
-XPT h1_ hint=
-<h1>`wrapped^</h1>
+XPT h_ hint=<h?>\ ..\ </h?>
+XSET n=1
+<h`n^>`wrapped^</h`n^>
 
-XPT h2_ hint=
-<h2>`wrapped^</h2>
-
-XPT h3_ hint=
-<h3>`wrapped^</h3>
-
-XPT h4_ hint=
-<h4>`wrapped^</h4>
-
-XPT h5_ hint=
-<h5>`wrapped^</h5>
-
-XPT h6_ hint=
-<h6>`wrapped^</h6>
 
 
 XPT a_ hint=<a\ href="">\ SEL\ </a>

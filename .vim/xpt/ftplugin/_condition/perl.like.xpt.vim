@@ -14,11 +14,14 @@ XPT if hint=if\ (\ ..\ )\ {\ ..\ }\ ...
 if ( `cond^ )
 {
     `code^
-}`...^
+}`
+`...^
 elseif ( `cond2^ )
 {
     `body^
-}`...^`else...^
+}`
+`...^`
+`else...^
 else
 {
     \`body\^

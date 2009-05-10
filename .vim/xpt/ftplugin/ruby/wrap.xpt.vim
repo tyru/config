@@ -9,40 +9,41 @@ XPTinclude
 "================ Wrapped Items ================"
 XPTemplateDef
 
-XPT comment_ hint=#\ SEL
-# `wrapped^
-
-
 XPT invoke_ hint=..(SEL)
+XSET name.post=RubySnakeCase()
 `name^(`wrapped^)
 
 
 XPT def_ hint=def\ ..()\ SEL\ end
-def `^RubyMethodName()^^
+XSET _.post=RubySnakeCase()
+def `_^`(`args`)^
 `wrapped^
 end
 
 
 XPT class_ hint=class\ ..\ SEL\ end
-class `^RubyCamelCase()^^
+XSET _.post=RubyCamelCase()
+class `_^
 `wrapped^
 end
 
 
 XPT module_ hint=module\ ..\ SEL\ end
-module `^RubyCamelCase()^^
+XSET _.post=RubyCamelCase()
+module `_^
 `wrapped^
 end
 
 
 XPT begin_ hint=begin\ SEL\ rescue\ ...
+XSET exception=Exception
+XSET block=# block
+XSET rescue...|post=\nrescue `exception^\n  `block^`\n`rescue...^
+XSET else...|post=\nelse\n  `block^
+XSET ensure...|post=\nensure\n  `cursor^
 begin
-`wrapped^
-rescue `ex^Exception^ => `e^e^
-`block^  `...^
-rescue `exn^ => `e^e^
-`blockn^  `...^ `ensure...^
-ensure
-\`cursor\^^^
+`wrapped^`
+`rescue...^`
+`else...^`
+`ensure...^
 end
-

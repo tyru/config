@@ -13,6 +13,7 @@ XPTinclude
 " ========================= Function and Varaibles =============================
 
 " ================================= Snippets ===================================
+call XPTemplatePriority('spec')
 XPTemplateDef
 XPT t hint=<Tag>..</Tag>
 <`tag^`...^ `name^="`val^"`...^>

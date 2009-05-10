@@ -39,7 +39,11 @@ XPTemplateDef
 
 " XPT ff
 " if (`if^) {
-"
+"   `bla`exp1...^what^^
+"   `bla `exp2...^what^^
+"   `
+"   `exp3...^what^^
+"   `&(@$)`exp4...^what^^
 " }
 
 XPT assert	hint=assert\ (..,\ msg)

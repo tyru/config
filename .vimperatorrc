@@ -14,8 +14,8 @@ set! browser.urlbar.maxRichResults=50
 " open bookmarks in background
 set! browser.tabs.loadBookmarksInBackground=true
 
-set! ui.caretWidth=4
-set! ui.caretBlinkTime=250
+set! ui.caretWidth=1
+set! ui.caretBlinkTime=1000
 
 
 " ScrapBook

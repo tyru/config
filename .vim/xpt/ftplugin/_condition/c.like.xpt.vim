@@ -70,7 +70,7 @@ XSET job=$INDENT_HELPER
 if (`condition^) `$BRACKETSTYLE^{
   `job^
 }`
-`...^`$BRACKETSTYLE^else if (`cond^R("condition")^) `$BRACKETSTYLE^{ 
+`...^ `$BRACKETSTYLE^else if (`cond^R("condition")^) `$BRACKETSTYLE^{ 
   `job^
 }`
 `...^

@@ -15,24 +15,30 @@ XPTemplateDef
 XPT enum hint=enum\ {\ ..\ }
 enum `enumName^
 {
-    `elem^`...^,
-    `subElem^`...^
-}`cursor^;
+    `elem^`
+    `...^,
+    `subElem^`
+    `...^
+} `var^^;
 
 
 XPT struct hint=struct\ {\ ..\ }
 struct `structName^
 {
-    `type^ `field^;`...^
-    `type^ `field^;`...^
-}`cursor^;
+    `type^ `field^;`
+    `...^
+    `type^ `field^;`
+    `...^
+} `var^^;
 
 
 XPT bitfield hint=struct\ {\ ..\ :\ n\ }
 struct `structName^
 {
-    `type^ `field^ : `bits^;`...^
-    `type^ `field^ : `bits^;`...^
-}`cursor^;
+    `type^ `field^ : `bits^;`
+    `...^
+    `type^ `field^ : `bits^;`
+    `...^
+} `var^^;
 
 
