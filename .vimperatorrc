@@ -4,15 +4,18 @@ so $HOME/.vimperatorrc.local
 colorscheme vimplight
 
 "-----------------------------------------------------------------
-" いろいろ {{{1
+" set!とかいろいろ {{{1
 
 " via http://retlet.net/log/2008/06/awesomebar-bookmarklet.html
 set! browser.urlbar.filter.javascript=false
 set! browser.urlbar.maxRichResults=50
 " disable accesskey
-set! ui.key.generalAccessKey=0
+" set! ui.key.generalAccessKey=0
 " open bookmarks in background
 set! browser.tabs.loadBookmarksInBackground=true
+
+set! ui.caretWidth=4
+set! ui.caretBlinkTime=250
 
 
 " ScrapBook
@@ -20,18 +23,6 @@ set! browser.tabs.loadBookmarksInBackground=true
 "
 " command! AutoScrap         :autocmd  PageLoad .* menu ScrapBook-ページの取り込み
 " command! DisableAutoScrap  :autocmd! PageLoad .*
-
-
-" organize icons of status bar
-" style -name statusbar chrome://* <<EOM
-" #status-bar statusbarpanel {
-"     padding: 1px !important;
-" }
-" statusbarpanel > * {
-"     margin: 0 !important;
-"     padding:0 !important;
-" }
-" EOM
 
 " }}}1
 "-----------------------------------------------------------------
@@ -170,7 +161,7 @@ noremap s       :gsearch<Space>
 
 " direct_bookmark.js
 let direct_sbm_use_services_by_tag  = "d"
-let direct_sbm_use_services_by_post = "hdg"
+let direct_sbm_use_services_by_post = "hd"
 let direct_sbm_is_use_migemo = 1
 noremap a   :sbm<Space>
 noremap B   :tab bentry<CR>
@@ -250,6 +241,16 @@ EOM
 
 noremap <Leader>tg      :toggle go<CR>
 noremap <Leader>ts      :toggle sb<CR>
+
+
+" feedSomeKeys_2.js
+
+autocmd LocationChange .* :fmapc
+
+" add !
+autocmd LocationChange 'mail\.google\.com/mail' :fmap -depth 4 c / j k n p o u e x s r a # [ ] z ! ? gi gs gt gd ga gc
+" add J K N P
+autocmd LocationChange 'www\.google\.co\.jp/reader' :fmap! -vkey j k J K n p N P m s t v A r S N P X O gh ga gs gt gu u / ?
 
 " }}}1
 "-----------------------------------------------------------------

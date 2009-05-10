@@ -83,59 +83,6 @@ alias la='ls -A'
 
 
 
-function noizy() {
-    while :; do
-        echo "\a"
-        sleep 0.1
-    done
-}
-
-function catjp() {
-    local encoding
-    if [ $(uname -o) = "Cygwin" ]; then
-        encoding="windows"
-    else
-        encoding="unix"
-    fi
-
-    while getopts e: opt; do
-        case $opt in
-            "e" ) encoding="$OPTARG" ;;
-            *   ) usage ; exit 0 ;;
-        esac
-    done
-
-    cat $* | nkf --$encoding
-}
-
-function ccgl() {
-    gcc "$@" -lglut32 -lglu32 -lopengl32
-}
-
-function cpan-inst() {
-    for i in "$*"; do
-        yes '' | cpan -i $i
-    done
-}
-
-function title() {
-    screen -X eval "title '$1'"
-}
-
-function ppath() {
-    perl -MFile::Spec -e 'print join qq(\n), File::Spec->path'
-}
-
-function findbin() {
-    IFS=:
-    for i in $PATH; do find $PATH; done | sort | uniq
-}
-
-function mkrand() {
-    perl -e '@a=(a..z, A..Z, 0..9); map { print $a[int rand @a] } 1..shift' $1
-}
-
-
 # for cygwin
 if [ $(uname -o) = 'Cygwin' ]; then
     alias gvim='/cygdrive/c/WINDOWS/system32/cmd.exe /c E:/usr/bin/gvim.bat'
@@ -164,12 +111,9 @@ if [ $(uname -o) = 'Cygwin' ]; then
     function wpwd() {
         /usr/bin/cygpath -w -a .
     }
-    function ccgl() {
-        gcc "$@" -DWIN32 -lglut32 -lglu32 -lopengl32
-    }
     function screen() {
         local conf="$HOME/.screenrc.cygwin"
-        if [ $# = 0 -a -f "$conf" ]; then
+        if [ -f "$conf" ]; then
             command screen -c "$conf" "$@"
         else
             command screen "$@"

@@ -8,7 +8,7 @@ export HISTSIZE=1000
 export SAVESIZE=1000
 export LISTMAX=0
 if [ -x "/usr/local/bin/vim" ]; then
-    export EDITOR="/usr/etc/local/bin/vim"
+    export EDITOR="/usr/local/bin/vim"
 elif [ -x "/usr/bin/vim" ]; then
     export EDITOR="/usr/bin/vim"
 elif [ -x "$(which vi)" ]; then

@@ -1000,9 +1000,38 @@ endfunc
 " }}}1
 "-----------------------------------------------------------------
 " Mappings or Abbreviation {{{1
-"
-"
-" <silent>を付けるのは完結する動作のみ
+
+
+augroup RunAfterVimEnter
+    autocmd!
+
+    autocmd VimEnter .* call <SID>RegistMap()
+augroup END
+
+
+" Vim起動後に呼ばれないと正しく動かないもの
+" (プラグインのコマンドが存在している必要がある場合など)
+func! s:RegistMap()
+
+    " autocomplpop
+    if exists(':AutoComplPopLock')
+        let s:autocomplpop_enabled = 0
+
+        func! s:ToggleAutoComplPop()
+            if s:autocomplpop_enabled
+                :AutoComplPopLock
+                let s:autocomplpop_enabled = 0
+            else
+                :AutoComplPopUnLock
+                let s:autocomplpop_enabled = 1
+            endif
+        endfunc
+
+        nnoremap <silent> <LocalLeader>ta   :call <SID>ToggleAutoComplPop()<CR>
+    endif
+
+endfunc
+
 
 " ~~ map ~~ {{{2
 "
@@ -1028,7 +1057,6 @@ nnoremap <silent> *     :call <SID>Srch( 0, '*' )<CR>
 nnoremap <silent> #     :call <SID>Srch( 0, '#' )<CR>
 nnoremap <silent> g*    :call <SID>Srch( 1, '*' )<CR>
 nnoremap <silent> g#    :call <SID>Srch( 1, '#' )<CR>
-
 " XXX
 func! s:EscapeRegexp( regexp )
     let regexp = a:regexp
@@ -1337,7 +1365,7 @@ endfunc
 " }}}2
 
 " howm-mode {{{2
-let howm_dir = "~/howm"
+let howm_dir = "~/work/howm"
 let howm_instantpreview = 1
 let howm_grepprg = ""
 let howm_findprg = ""
