@@ -27,7 +27,7 @@ call RandomColorScheme()
 
 " }}}1
 "-----------------------------------------------------------------
-" 基本設定＆KaoriYa版についてきたもの {{{1
+" 基本設定＆KaoriYa版についてきたもの＆その他色々コピペ {{{1
 
 " set options {{{2
 
@@ -38,55 +38,57 @@ set nocompatible  " Use Vim defaults (much better!)
 " set matchpairs+=<:>       " これがあると->を入力したとき画面が点滅する
 " set spell      " すげーけどキモい
 set autoindent
-set autoread        " ファイルに外部で変更があった場合再読み込み
+set autoread
 set backspace=indent,eol,start
-set browsedir=buffer          " browseで開くディレクトリをファイルと同じにする
+set browsedir=buffer
 set clipboard=
 set complete+=k,U,d
 set diffopt=filler,vertical
-set directory=$HOME/.vim/backup " スワップファイルの設定
+set directory=$HOME/.vim/backup
 set expandtab
 set formatoptions-=atc
 set guioptions-=T
 set guioptions-=m
-set history=50    " keep 50 lines of command line history
+set history=50
 set hlsearch
 set ignorecase
 set incsearch
-set infercase                 " <C-n>とか<C-p>のとき小・大文字を無視
+set infercase
 set keywordprg=
 set laststatus=2
-set list                      " 行末、タブなどを表示
+set list
 set listchars=tab:>-,extends:<
 set noshowcmd
-set nosplitright            " :vs で左側に開く
+set nosplitright
 set notimeout
 set nowrap
-set nrformats-=octal    " <C-a>で、007を010ではなく、008にする
+set nrformats-=octal
 set ruler
 set scroll=5
 set scrolloff=15
 set shiftround
 set shiftwidth=4
-set shortmess+=I    " 最初のメッセージを表示しない
+set shortmess+=I
 set showmatch
 set smartcase
 set smartindent
 set smarttab
-set splitbelow    " :sp で下に開く
+set splitbelow
 set tabstop=4
 set updatetime=10000
 set viminfo='50,h,f1,n$HOME/.viminfo
 set visualbell
 set whichwrap=
 set wildchar=<Tab>
-" set wildignore=*.o,*.obj,*.la,*.a,*.exe,*.com,*.tds    " :e とかのファイル補完で無視される
+" set wildignore=*.o,*.obj,*.la,*.a,*.exe,*.com,*.tds
 set wildmenu
 set wrapscan
 
 set backup
-set backupdir=$HOME/.vim/backup " バックアップファイルのディレクトリ
-silent! call mkdir(&backupdir)
+set backupdir=$HOME/.vim/backup
+if !isdirectory(&backupdir)
+    call mkdir(&backupdir)
+endif
 
 " タイトル表示するかしないか
 if has('gui')
@@ -132,10 +134,10 @@ func! StatusLine( path, maxwidth )
 endfunc
 
 
-if has( "migemo" )
+if has("migemo")
     set migemo
 endif
-if exists( '+shellslash' )
+if exists('+shellslash')
     set shellslash
 endif
 
@@ -166,9 +168,10 @@ for dir in s:runtime_dirs
         let &runtimepath .= ',' . expand(dir)
     endif
 endfor
+unlet s:runtime_dirs
 " }}}2
 
-" vimbackupの中の、古いやつを削除する {{{2
+" vimbackupの中の古いやつを削除する {{{2
 func! s:DeleteBackUp()
     let f = $HOME .'/.vim/.vimbackup_deleted'
     if !filereadable( f )
@@ -200,59 +203,58 @@ EOF
 endfunc
 
 call s:DeleteBackUp()
+delfunc s:DeleteBackUp
 " }}}2
 
 " 文字コードの設定 {{{2
 
-if &encoding !=# 'utf-8'
-    set encoding=japan
-    set fileencoding=japan
-endif
-if has('iconv')
-    let s:enc_euc = 'euc-jp'
-    let s:enc_jis = 'iso-2022-jp'
-    " iconvがeucJP-msに対応しているかをチェック
-    if iconv("\x87\x64\x87\x6a", 'cp932', 'eucjp-ms') ==# "\xad\xc5\xad\xcb"
-        let s:enc_euc = 'eucjp-ms'
-        let s:enc_jis = 'iso-2022-jp-3'
-        " iconvがJISX0213に対応しているかをチェック
-    elseif iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
-        let s:enc_euc = 'euc-jisx0213'
-        let s:enc_jis = 'iso-2022-jp-3'
-    endif
-    " fileencodingsを構築
-    if &encoding ==# 'utf-8'
-        let s:fileencodings_default = &fileencodings
-        let &fileencodings = s:enc_jis .','. s:enc_euc .',cp932'
-        let &fileencodings = &fileencodings .','. s:fileencodings_default
-        unlet s:fileencodings_default
-    else
-        let &fileencodings = &fileencodings .','. s:enc_jis
-        set fileencodings+=utf-8,ucs-2le,ucs-2
-        if &encoding =~# '^\(euc-jp\|euc-jisx0213\|eucjp-ms\)$'
-            set fileencodings+=cp932
-            set fileencodings-=euc-jp
-            set fileencodings-=euc-jisx0213
-            set fileencodings-=eucjp-ms
-            let &encoding = s:enc_euc
-            let &fileencoding = s:enc_euc
-        else
-            let &fileencodings = &fileencodings .','. s:enc_euc
-        endif
-    endif
-    " 定数を処分
-    unlet s:enc_euc
-    unlet s:enc_jis
-endif
+" if &encoding !=# 'utf-8'
+"     set encoding=japan
+"     set fileencoding=japan
+" endif
+" if has('iconv')
+"     let s:enc_euc = 'euc-jp'
+"     let s:enc_jis = 'iso-2022-jp'
+"     " iconvがeucJP-msに対応しているかをチェック
+"     if iconv("\x87\x64\x87\x6a", 'cp932', 'eucjp-ms') ==# "\xad\xc5\xad\xcb"
+"         let s:enc_euc = 'eucjp-ms'
+"         let s:enc_jis = 'iso-2022-jp-3'
+"         " iconvがJISX0213に対応しているかをチェック
+"     elseif iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
+"         let s:enc_euc = 'euc-jisx0213'
+"         let s:enc_jis = 'iso-2022-jp-3'
+"     endif
+"     " fileencodingsを構築
+"     if &encoding ==# 'utf-8'
+"         let s:fileencodings_default = &fileencodings
+"         let &fileencodings = s:enc_jis .','. s:enc_euc .',cp932'
+"         let &fileencodings = &fileencodings .','. s:fileencodings_default
+"         unlet s:fileencodings_default
+"     else
+"         let &fileencodings = &fileencodings .','. s:enc_jis
+"         set fileencodings+=utf-8,ucs-2le,ucs-2
+"         if &encoding =~# '^\(euc-jp\|euc-jisx0213\|eucjp-ms\)$'
+"             set fileencodings+=cp932
+"             set fileencodings-=euc-jp
+"             set fileencodings-=euc-jisx0213
+"             set fileencodings-=eucjp-ms
+"             let &encoding = s:enc_euc
+"             let &fileencoding = s:enc_euc
+"         else
+"             let &fileencodings = &fileencodings .','. s:enc_euc
+"         endif
+"     endif
+" endif
 " 日本語を含まない場合は fileencoding に encoding を使うようにする
-if has('autocmd')
-    function! AU_ReCheck_FENC()
-        if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
-            let &fileencoding=&encoding
-        endif
-    endfunction
-    autocmd BufReadPost * call AU_ReCheck_FENC()
-endif
+" if has('autocmd')
+"     function! AU_ReCheck_FENC()
+"         if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
+"             let &fileencoding=&encoding
+"         endif
+"     endfunction
+"     autocmd BufReadPost * call AU_ReCheck_FENC()
+" endif
+
 " 改行コードの自動認識
 set fileformats=unix,dos,mac
 " □とか○の文字があってもカーソル位置がずれないようにする
@@ -263,7 +265,7 @@ endif
 " }}}2
 
 " メニューファイルが存在しない場合は予め'guioptions'を調整しておく {{{2
-if 1 && !filereadable($VIMRUNTIME . '/menu.vim') && has('gui_running')
+if !filereadable($VIMRUNTIME . '/menu.vim') && has('gui_running')
     set guioptions+=M
 endif
 
@@ -325,7 +327,7 @@ command! -range BSlash2Slash
     \ s/\\/\//g
 
 " Chalice用 画像収集
-if has(':M')
+if exists(':M')
     command! SrchImageUri
         \ :M/h?ttp:\/\/.+\.(jpe?g|png|gif|bmp)\c
 endif
@@ -334,24 +336,6 @@ endif
 if has( 'gui_running' )
     command! Session       browse mksession
 endif
-
-" フォント切り替え {{{2
-if has( "gui_running" ) && has( "win32" )
-    " TODO: フォントサイズも保持する
-    let s:fonts = [
-        \ "MS_Gothic",
-        \ "Osaka?等幅",
-        \ "M+2VM+IPAG_circle",
-        \ "きろ字",
-        \ "ゆたぽん（コーディング）Bold"
-    \ ]
-    let s:fmt = 'set guifont=%embed% printfont=%embed%'
-    command! ToggleFont
-        \ call s:ListAndExecute( s:fonts, s:fmt )
-    unlet s:fonts
-    unlet s:fmt
-endif
-" }}}2
 
 " CurFilePath {{{2
 command! -register -nargs=? CurFilePath
@@ -377,28 +361,6 @@ func! s:HelpTagAll()
             silent! exe 'helptags ' . path . '/doc'
         endif
     endfor
-endfunc
-" }}}2
-
-" Reload {{{2
-"     ちょっとだけVimの設定を変えたとき再起動がめんどい
-"     (そういう時に限っていっぱいタブ開いてたりして)
-" XXX: 保存しようとするとなんかエラーが出る
-command! Reload
-    \ call s:Reload()
-
-func! s:Reload()
-    comclear
-    abclear
-    mapclear
-    mapclear!
-
-    for rc in ['.vimrc', '.gvimrc']
-        if filereadable($HOME . '/' . rc)
-            silent! execute 'source ' . $HOME . '/' . rc
-        endif
-    endfor
-    silent! runtime! plugin/*.vim
 endfunc
 " }}}2
 
@@ -466,7 +428,6 @@ func s:Dir( ... )
         let dir = shellescape( dir )
         call system( 'gnome-open '. dir )
     endif
-
 endfunc
 " }}}2
 
@@ -478,7 +439,8 @@ else
     command! GoDesktop   lcd '~/Desktop'
 endif
 
-func s:DosEscape( str )
+" NOTE: 使ってない
+func s:DosEscape(str)
     return escape( a:str, "&()[]{}^=;!'+,`~ " )
 endfunc
 " }}}2
@@ -779,8 +741,7 @@ nnoremap <silent> <F3>    :call <SID>ChangeFileEncoding()<CR>
 
 " set ff=... {{{2
 func! <SID>ChangeNL()
-    let result = s:ListAndExecute( [ 'dos', 'unix', 'mac' ],
-                \ 'set ff=%embed%' )
+    let result = s:ListAndExecute( [ 'dos', 'unix', 'mac' ], 'set ff=%embed%' )
     if result != ''
         echo 'Converting newline...' . result
     endif
@@ -921,9 +882,6 @@ func! s:LoadWhenFileType()
 endfunc
 " }}}2
 
-func! s:LoadWhenBufNewFile()
-endfunc
-
 " }}}1
 "-----------------------------------------------------------------
 " For Lisp(Scheme,Gauche) {{{1
@@ -1005,7 +963,7 @@ endfunc
 augroup RunAfterVimEnter
     autocmd!
 
-    autocmd VimEnter .* call <SID>RegistMap()
+    autocmd VimEnter .* call s:RegistMap()<CR>delfunc s:RegistMap
 augroup END
 
 
@@ -1021,9 +979,11 @@ func! s:RegistMap()
             if s:autocomplpop_enabled
                 :AutoComplPopLock
                 let s:autocomplpop_enabled = 0
+                echo 'disabled.'
             else
                 :AutoComplPopUnLock
                 let s:autocomplpop_enabled = 1
+                echo 'enabled.'
             endif
         endfunc
 
@@ -1185,6 +1145,10 @@ nnoremap <silent> <LocalLeader>nn   :call <SID>NarrowWidely()<CR>
 
 nnoremap <silent> <LocalLeader>cd   :CdCurrent<CR>
 
+
+nnoremap <silent> gn    :cn<CR>
+nnoremap <silent> gN    :cN<CR>
+
 " }}}2
 
 " ~~ o ~~ {{{2
@@ -1252,26 +1216,15 @@ let plugin_cmdex_disable = 1
 " :CdCurrent - Change current directory to current file's one.
 command! -nargs=0 CdCurrent lcd %:p:h
 
-" matchit
-let b:match_ignorecase = 1
-
 " AutoDate
 let g:autodate_format = "%Y-%m-%d"
 
 " FencView
 let g:fencview_autodetect = 0
 
-" taglist
-if ! executable('ctags')
-    let loaded_taglist = 1
-endif
-
 " Netrw
 let g:netrw_liststyle = 1
 let g:netrw_cygwin    = 1
-
-" VimExplorer
-nnoremap <silent> <S-F5>    :VE .<CR>
 
 " FuzzyFinder {{{2
 nnoremap <silent> <LocalLeader>fb       :FuzzyFinderBuffer<CR>
@@ -1371,32 +1324,13 @@ let howm_grepprg = ""
 let howm_findprg = ""
 let howm_mapleader = 'g'
 
-" ~/howm/tags.howmを開く(空白行を含むパスには多分未対応)
-func! <SID>OpenHowmTagsFile()
-    let howm_tags_file = expand( g:howm_dir ) .'/tags.howm'
-    if !filereadable( howm_tags_file )
-        echohl WarningMsg
-        echo 'Not found howm tags file.'
-        echohl None
-        return
-    endif
-
-    if &modified
-        execute 'sp '. howm_tags_file
-    else
-        execute 'edit '. howm_tags_file
-    endif
-endfunc
-
-execute 'nnoremap <unique><silent> '.
-            \ g:howm_mapleader .',l   :call <SID>OpenHowmTagsFile()<CR>'
 " }}}2
 
 " QuickBuf
 let qb_hotkey = '<LocalLeader>b'
 
 " changelog
-" let changelog_username = ""
+let changelog_username = "tyru"
 
 " autocomplpop
 inoremap <expr> <CR> pumvisible() ? "\<C-Y>\<CR>" : "\<CR>"
@@ -1406,258 +1340,9 @@ let g:AutoComplPop_MappingDriven = 1
 nnoremap <silent>   <LocalLeader>na     :Narrow<CR>
 nnoremap <silent>   <LocalLeader>nw     :Widen<CR>
 
-" skk {{{2
-let skk_jisyo = "~/.skk/skk-jisyo"
-let skk_large_jisyo = '~/.skk/SKK-JISYO.L'
-let skk_auto_save_jisyo = 1
-let skk_show_candidates_count = 3
-let skk_use_face = 1
-let skk_egg_like_newline = 1
-let skk_rom_kana_rules = ""
-    \. "a   あ  ア\<NL>"
-    \. "bb  っ  ッ  b\<NL>"
-    \. "ba  ば  バ\<NL>"
-    \. "be  べ  ベ\<NL>"
-    \. "bi  び  ビ\<NL>"
-    \. "bo  ぼ  ボ\<NL>"
-    \. "bu  ぶ  ブ\<NL>"
-    \. "bya びゃ    ビャ\<NL>"
-    \. "bye びぇ    ビェ\<NL>"
-    \. "byi びぃ    ビィ\<NL>"
-    \. "byo びょ    ビョ\<NL>"
-    \. "byu びゅ    ビュ\<NL>"
-    \. "cc  っ  ッ  c\<NL>"
-    \. "cha ちゃ    チャ\<NL>"
-    \. "che ちぇ    チェ\<NL>"
-    \. "chi ち  チ\<NL>"
-    \. "cho ちょ    チョ\<NL>"
-    \. "chu ちゅ    チュ\<NL>"
-    \. "cya ちゃ    チャ\<NL>"
-    \. "cye ちぇ    チェ\<NL>"
-    \. "cyi ちぃ    チィ\<NL>"
-    \. "cyo ちょ    チョ\<NL>"
-    \. "cyu ちゅ    チュ\<NL>"
-    \. "dd  っ  ッ  d\<NL>"
-    \. "da  だ  ダ\<NL>"
-    \. "de  で  デ\<NL>"
-    \. "dha でゃ    デャ\<NL>"
-    \. "dhe でぇ    デェ\<NL>"
-    \. "dhi でぃ    ディ\<NL>"
-    \. "dho でょ    デョ\<NL>"
-    \. "dhu でゅ    デュ\<NL>"
-    \. "di  ぢ  ヂ\<NL>"
-    \. "do  ど  ド\<NL>"
-    \. "du  づ  ヅ\<NL>"
-    \. "dya ぢゃ    ヂャ\<NL>"
-    \. "dye ぢぇ    ヂェ\<NL>"
-    \. "dyi ぢぃ    ヂィ\<NL>"
-    \. "dyo ぢょ    ヂョ\<NL>"
-    \. "dyu ぢゅ    ヂュ\<NL>"
-    \. "e   え  エ\<NL>"
-    \. "ff  っ  ッ  f\<NL>"
-    \. "fa  ふぁ    ファ\<NL>"
-    \. "fe  ふぇ    フェ\<NL>"
-    \. "fi  ふぃ    フィ\<NL>"
-    \. "fo  ふぉ    フォ\<NL>"
-    \. "fu  ふ  フ\<NL>"
-    \. "fya ふゃ    フャ\<NL>"
-    \. "fye ふぇ    フェ\<NL>"
-    \. "fyi ふぃ    フィ\<NL>"
-    \. "fyo ふょ    フョ\<NL>"
-    \. "fyu ふゅ    フュ\<NL>"
-    \. "gg  っ  ッ  g\<NL>"
-    \. "ga  が  ガ\<NL>"
-    \. "ge  げ  ゲ\<NL>"
-    \. "gi  ぎ  ギ\<NL>"
-    \. "go  ご  ゴ\<NL>"
-    \. "gu  ぐ  グ\<NL>"
-    \. "gya ぎゃ    ギャ\<NL>"
-    \. "gye ぎぇ    ギェ\<NL>"
-    \. "gyi ぎぃ    ギィ\<NL>"
-    \. "gyo ぎょ    ギョ\<NL>"
-    \. "gyu ぎゅ    ギュ\<NL>"
-    \. "ha  は  ハ\<NL>"
-    \. "he  へ  ヘ\<NL>"
-    \. "hi  ひ  ヒ\<NL>"
-    \. "ho  ほ  ホ\<NL>"
-    \. "hu  ふ  フ\<NL>"
-    \. "hya ひゃ    ヒャ\<NL>"
-    \. "hye ひぇ    ヒェ\<NL>"
-    \. "hyi ひぃ    ヒィ\<NL>"
-    \. "hyo ひょ    ヒョ\<NL>"
-    \. "hyu ひゅ    ヒュ\<NL>"
-    \. "i   い  イ\<NL>"
-    \. "jj  っ  ッ  j\<NL>"
-    \. "ja  じゃ    ジャ\<NL>"
-    \. "je  じぇ    ジェ\<NL>"
-    \. "ji  じ  ジ\<NL>"
-    \. "jo  じょ    ジョ\<NL>"
-    \. "ju  じゅ    ジュ\<NL>"
-    \. "jya じゃ    ジャ\<NL>"
-    \. "jye じぇ    ジェ\<NL>"
-    \. "jyi じぃ    ジィ\<NL>"
-    \. "jyo じょ    ジョ\<NL>"
-    \. "jyu じゅ    ジュ\<NL>"
-    \. "kk  っ  ッ  k\<NL>"
-    \. "ka  か  カ\<NL>"
-    \. "ke  け  ケ\<NL>"
-    \. "ki  き  キ\<NL>"
-    \. "ko  こ  コ\<NL>"
-    \. "ku  く  ク\<NL>"
-    \. "kya きゃ    キャ\<NL>"
-    \. "kye きぇ    キェ\<NL>"
-    \. "kyi きぃ    キィ\<NL>"
-    \. "kyo きょ    キョ\<NL>"
-    \. "kyu きゅ    キュ\<NL>"
-    \. "ma  ま  マ\<NL>"
-    \. "me  め  メ\<NL>"
-    \. "mi  み  ミ\<NL>"
-    \. "mo  も  モ\<NL>"
-    \. "mu  む  ム\<NL>"
-    \. "mya みゃ    ミャ\<NL>"
-    \. "mye みぇ    ミェ\<NL>"
-    \. "myi みぃ    ミィ\<NL>"
-    \. "myo みょ    ミョ\<NL>"
-    \. "myu みゅ    ミュ\<NL>"
-    \. "n   ん  ン\<NL>"
-    \. "n'  ん  ン\<NL>"
-    \. "na  な  ナ\<NL>"
-    \. "ne  ね  ネ\<NL>"
-    \. "ni  に  ニ\<NL>"
-    \. "nn  ん  ン\<NL>"
-    \. "no  の  ノ\<NL>"
-    \. "nu  ぬ  ヌ\<NL>"
-    \. "nya にゃ    ニャ\<NL>"
-    \. "nye にぇ    ニェ\<NL>"
-    \. "nyi にぃ    ニィ\<NL>"
-    \. "nyo にょ    ニョ\<NL>"
-    \. "nyu にゅ    ニュ\<NL>"
-    \. "o   お  オ\<NL>"
-    \. "pp  っ  ッ  p\<NL>"
-    \. "pa  ぱ  パ\<NL>"
-    \. "pe  ぺ  ペ\<NL>"
-    \. "pi  ぴ  ピ\<NL>"
-    \. "po  ぽ  ポ\<NL>"
-    \. "pu  ぷ  プ\<NL>"
-    \. "pya ぴゃ    ピャ\<NL>"
-    \. "pye ぴぇ    ピェ\<NL>"
-    \. "pyi ぴぃ    ピィ\<NL>"
-    \. "pyo ぴょ    ピョ\<NL>"
-    \. "pyu ぴゅ    ピュ\<NL>"
-    \. "rr  っ  ッ  r\<NL>"
-    \. "ra  ら  ラ\<NL>"
-    \. "re  れ  レ\<NL>"
-    \. "ri  り  リ\<NL>"
-    \. "ro  ろ  ロ\<NL>"
-    \. "ru  る  ル\<NL>"
-    \. "rya りゃ    リャ\<NL>"
-    \. "rye りぇ    リェ\<NL>"
-    \. "ryi りぃ    リィ\<NL>"
-    \. "ryo りょ    リョ\<NL>"
-    \. "ryu りゅ    リュ\<NL>"
-    \. "ss  っ  ッ  s\<NL>"
-    \. "sa  さ  サ\<NL>"
-    \. "se  せ  セ\<NL>"
-    \. "sha しゃ    シャ\<NL>"
-    \. "she しぇ    シェ\<NL>"
-    \. "shi し  シ\<NL>"
-    \. "sho しょ    ショ\<NL>"
-    \. "shu しゅ    シュ\<NL>"
-    \. "si  し  シ\<NL>"
-    \. "so  そ  ソ\<NL>"
-    \. "su  す  ス\<NL>"
-    \. "sya しゃ    シャ\<NL>"
-    \. "sye しぇ    シェ\<NL>"
-    \. "syi しぃ    シィ\<NL>"
-    \. "syo しょ    ショ\<NL>"
-    \. "syu しゅ    シュ\<NL>"
-    \. "tt  っ  ッ  t\<NL>"
-    \. "ta  た  タ\<NL>"
-    \. "te  て  テ\<NL>"
-    \. "tha てぁ    テァ\<NL>"
-    \. "the てぇ    テェ\<NL>"
-    \. "thi てぃ    ティ\<NL>"
-    \. "tho てょ    テョ\<NL>"
-    \. "thu てゅ    テュ\<NL>"
-    \. "ti  ち  チ\<NL>"
-    \. "to  と  ト\<NL>"
-    \. "tsu つ  ツ\<NL>"
-    \. "tu  つ  ツ\<NL>"
-    \. "tya ちゃ    チャ\<NL>"
-    \. "tye ちぇ    チェ\<NL>"
-    \. "tyi ちぃ    チィ\<NL>"
-    \. "tyo ちょ    チョ\<NL>"
-    \. "tyu ちゅ    チュ\<NL>"
-    \. "u   う  ウ\<NL>"
-    \. "vv  っ  ッ  v\<NL>"
-    \. "va  う゛ぁ  ヴァ\<NL>"
-    \. "ve  う゛ぇ  ヴェ\<NL>"
-    \. "vi  う゛ぃ  ヴィ\<NL>"
-    \. "vo  う゛ぉ  ヴォ\<NL>"
-    \. "vu  う゛    ヴ\<NL>"
-    \. "ww  っ  ッ  w\<NL>"
-    \. "wa  わ  ワ\<NL>"
-    \. "we  うぇ    ウェ\<NL>"
-    \. "wi  うぃ    ウィ\<NL>"
-    \. "wo  を  ヲ\<NL>"
-    \. "wu  う  ウ\<NL>"
-    \. "xx  っ  ッ  x\<NL>"
-    \. "xa  ぁ  ァ\<NL>"
-    \. "xe  ぇ  ェ\<NL>"
-    \. "xi  ぃ  ィ\<NL>"
-    \. "xka か  ヵ\<NL>"
-    \. "xke け  ヶ\<NL>"
-    \. "xo  ぉ  ォ\<NL>"
-    \. "xtsu    っ  ッ\<NL>"
-    \. "xtu っ  ッ\<NL>"
-    \. "xu  ぅ  ゥ\<NL>"
-    \. "xwa ゎ  ヮ\<NL>"
-    \. "xwe ゑ  ヱ\<NL>"
-    \. "xwi ゐ  ヰ\<NL>"
-    \. "xya ゃ  ャ\<NL>"
-    \. "xyo ょ  ョ\<NL>"
-    \. "xyu ゅ  ュ\<NL>"
-    \. "yy  っ  ッ  y\<NL>"
-    \. "ya  や  ヤ\<NL>"
-    \. "ye  いぇ    イェ\<NL>"
-    \. "yo  よ  ヨ\<NL>"
-    \. "yu  ゆ  ユ\<NL>"
-    \. "zz  っ  ッ  z\<NL>"
-    \. "z,  ‥\<NL>"
-    \. "z-  ～\<NL>"
-    \. "z.  …\<NL>"
-    \. "z/  ・\<NL>"
-    \. "z[  『\<NL>"
-    \. "z]  』\<NL>"
-    \. "za  ざ  ザ\<NL>"
-    \. "ze  ぜ  ゼ\<NL>"
-    \. "zh  ←\<NL>"
-    \. "zi  じ  ジ\<NL>"
-    \. "zj  ↓\<NL>"
-    \. "zk  ↑\<NL>"
-    \. "zl  →\<NL>"
-    \. "zo  ぞ  ゾ\<NL>"
-    \. "zu  ず  ズ\<NL>"
-    \. "zya じゃ    ジャ\<NL>"
-    \. "zye じぇ    ジェ\<NL>"
-    \. "zyi じぃ    ジィ\<NL>"
-    \. "zyo じょ    ジョ\<NL>"
-    \. "zyu じゅ    ジュ\<NL>"
-    \. "-   ー\<NL>"
-    \. ":   ：\<NL>"
-    \. ";   ；\<NL>"
-    \. "!   ！\<NL>"
-    \. "?   ？\<NL>"
-    \. "[   「\<NL>"
-    \. "]   」\<NL>"
-    \. "z   　\<NL>"
-" }}}2
-
 " gtags
 nnoremap <silent> g<C-i>    :Gtags -f %<CR>
 nnoremap <silent> g<C-j>    :GtagsCursor<CR>
-nnoremap <silent> gn    :cn<CR>
-nnoremap <silent> gN    :cN<CR>
 
 " xptemplate {{{2
 let g:xptemplate_key = '<C-k>'
@@ -1712,17 +1397,9 @@ let s:vt_filetype_files = [
 let g:vt_filetype_files = join(s:vt_filetype_files, ',')
 unlet s:vt_filetype_files
 
-let s:vt_files_using_template = [
-    \ 'csharp.cs',
-    \ 'javasrc.java',
-    \ 'perl.pl',
-    \ 'perlmodule.pm',
-    \ 'header.h',
-    \ 'scala.scala',
-    \ 'vimscript.vim'
-\ ]
-let g:vt_files_using_template = join(s:vt_files_using_template, ',')
-unlet s:vt_files_using_template
+if isdirectory(expand("$HOME/.vim/template"))
+    let g:vt_files_using_template = substitute(expand("$HOME/.vim/template/*"), "\n", ",", "g")
+endif
 
 " }}}1
 "-----------------------------------------------------------------
