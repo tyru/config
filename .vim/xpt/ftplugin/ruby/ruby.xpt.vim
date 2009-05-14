@@ -12,7 +12,7 @@ let [s:f, s:v] = XPTcontainer()
 XPTinclude
       \ _common/common
 
-" ========================= Function and Varaibles =============================
+" ========================= Function and Variables =============================
 
 fun! s:f.RubyCamelCase(...) "{{{
   let str = a:0 == 0 ? s:f.V() : a:1
@@ -25,6 +25,7 @@ fun! s:f.RubySnakeCase(...) "{{{
   return substitute(str," ",'_','g')
 endfunction "}}}
 
+" Multiple each snippet {{{
 let s:each_map = {
       \'b' : 'byte',
       \'c' : 'char',
@@ -59,39 +60,18 @@ fun! s:f.RubyEachPair() "{{{
     return '`var^'
   endif
 endfunction "}}}
+" End multiple each snippet }}}
 
-fun! s:f.RubyClassAttr() "{{{
-  let v = s:f.V()
-  let attr = {
-        \'a' : 'accessor',
-        \'r' : 'reader',
-        \'w' : 'writer',
-        \}
-  if has_key(attr, v)
-    let r = attr[v]
-    return r
-  else
-    return ''
-  endif
-endfunction "}}}
-
-fun! s:f.Concat(...) "{{{
-  let r = ''
-  for v in a:000
-    let r = r . v
-  endfor
-  return r
-endfunction "}}}
-
+" Multiple assert snippet {{{
 let s:assert_map = {
       \'eq' : {'name': 'equals', 'body' : '`expected^, `actual^'},
       \'id' : {'name' : 'in_delta', 'body' : '`expected float^, `actual float^, `delta^'},
       \'io' : {'name' : 'instance_of', 'body' : '`class^, `object to compare^'},
       \'ko' : {'name' : 'kind_of', 'body' : '`class^, `object to compare^'},
-      \'m' : {'name' : 'match', 'body' : '/`regexp^/`flags^, `string^'},
+      \'m' : {'name' : 'match', 'body' : '/`regexp^/`^, `string^'},
       \'ne' : {'name' : 'not_equal', 'body' : '`expected^, `actual^'},
       \'ni' : {'name' : 'nil', 'body' : '`object^'},
-      \'nm' : {'name' : 'no_match', 'body' : '/`regexp^/`flags^, `string^'},
+      \'nm' : {'name' : 'no_match', 'body' : '/`regexp^/`^, `string^'},
       \'nn' : {'name' : 'not_nil', 'body' : '`object^'},
       \'nr' : {'name' : 'nothing_raised', 'body' : '`exception^'},
       \'ns' : {'name' : 'not_same', 'body' : '`expected^, `actual^'},
@@ -134,6 +114,22 @@ fun! RubyAssertArgs() "{{{
   endif 
 
   return r
+endfunction "}}}
+" End multiple assert snippet }}}
+
+fun! s:f.RubyClassAttr() "{{{
+  let v = s:f.V()
+  let attr = {
+        \'a' : 'accessor',
+        \'r' : 'reader',
+        \'w' : 'writer',
+        \}
+  if has_key(attr, v)
+    let r = attr[v]
+    return r
+  else
+    return ''
+  endif
 endfunction "}}}
 
 " ================================= Snippets ===================================
@@ -208,7 +204,7 @@ __FILE__
 
 XPT ali hint=alias\ :\ ..\ :\ ..
 XSET new.post=RubySnakeCase()
-XSET old=Concat("old_",R('new'))
+XSET old=old_{R("new")}
 XSET old.post=RubySnakeCase()
 alias :`new^ :`old^
 
@@ -219,7 +215,7 @@ all? { |`element^| `cursor^ }
 
 XPT amm hint=alias_method\ :\ ..\ :\ ..
 XSET new.post=RubySnakeCase()
-XSET old=Concat("old_",R('new'))
+XSET old=old_{R("new")}
 XSET old.post=RubySnakeCase()
 alias_method :`new^, :`old^
 
@@ -241,13 +237,12 @@ Array.new(`size^) { |`arg^| `cursor^ }
 
 XPT ass hint=assert\\(..)
 XSET message...|post=, `_^
-assert(`boolean condition^` `message...^)
+assert(`boolean condition^`, `message...^)
 
 XPT ass_ hint=assert_**\\(..)\ ...
 XSET what|post=RubyAssertMethod()
 XSET _=RubyAssertArgs()
 XSET block=RubyAssertBlock()
-XSET flags=
 assert_`what^`_^
 
 
@@ -255,7 +250,8 @@ XPT attr hint=attr_**\ :...
 XSET what=r
 XSET what.post=RubyClassAttr()
 XSET attr=
-attr_`what^ :`attr^`...^, :`attr^`...^
+XSET attrn...|post=, :`attr^`, :`attrn...^
+attr_`what^ :`attr^`, :`attrn...^
 
 XPT begin hint=begin\ ..\ rescue\ ..\ else\ ..\ end
 XSET exception=Exception
@@ -382,7 +378,7 @@ detect { |`obj^| `cursor^ }
 
 
 XPT dir hint=Dir[..]
-XSET _=/**/*
+XSET _='/**/*'
 Dir[`_^]
 
 
@@ -542,7 +538,7 @@ XPT open hint=open\\(..)\ {\ |..|\ ..\ }
 XSET mode...|post=, '`wb^'
 XSET wb=wb
 XSET io=io
-open("`filename^"` `mode...^) { |`io^| `cursor^ }
+open("`filename^"`, `mode...^) { |`io^| `cursor^ }
 
 
 XPT par hint=partition\ {\ |..|\ ..\ }
@@ -608,9 +604,7 @@ sort_by {` |`arg`|^ `cursor^ }
 XPT ste hint=step\\(..)\ {\ ..\ }
 XSET arg=i
 XSET count=10
-XSET step...|post=, `step^
-XSET step=2
-step(`count^` `step...^) { |`arg^| `cursor^ }
+step(`count^`, `step^) { |`arg^| `cursor^ }
 
 
 XPT sub hint=sub\\(..)\ {\ |..|\ ..\ }
@@ -628,10 +622,10 @@ end
 
 XPT tas hint=Rake\ Task
 XSET task name|post=RubySnakeCase()
-XSET taskn...|post=, :`task^` `taskn...^
-XSET deps...|post==> [:`task^` `taskn...^]
+XSET taskn...|post=, :`task^`, `taskn...^
+XSET deps...|post= => [:`task^`, `taskn...^]
 desc "`task description^"
-task :`task name^` `deps...^ do
+task :`task name^` => [`deps...`]^ do
 `cursor^
 end
 

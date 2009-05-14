@@ -282,10 +282,13 @@ fuzzyfinder-adding-bookmark	fuzzyfinder.txt	/*fuzzyfinder-adding-bookmark*
 fuzzyfinder-author	fuzzyfinder.txt	/*fuzzyfinder-author*
 fuzzyfinder-bookmark-mode	fuzzyfinder.txt	/*fuzzyfinder-bookmark-mode*
 fuzzyfinder-cache	fuzzyfinder.txt	/*fuzzyfinder-cache*
+fuzzyfinder-callbackfile-mode	fuzzyfinder.txt	/*fuzzyfinder-callbackfile-mode*
+fuzzyfinder-callbackitem-mode	fuzzyfinder.txt	/*fuzzyfinder-callbackitem-mode*
 fuzzyfinder-changelog	fuzzyfinder.txt	/*fuzzyfinder-changelog*
 fuzzyfinder-command-arg	fuzzyfinder.txt	/*fuzzyfinder-command-arg*
 fuzzyfinder-commands	fuzzyfinder.txt	/*fuzzyfinder-commands*
 fuzzyfinder-contact	fuzzyfinder.txt	/*fuzzyfinder-contact*
+fuzzyfinder-dot-sequence	fuzzyfinder.txt	/*fuzzyfinder-dot-sequence*
 fuzzyfinder-hiding-menu	fuzzyfinder.txt	/*fuzzyfinder-hiding-menu*
 fuzzyfinder-highlighting	fuzzyfinder.txt	/*fuzzyfinder-highlighting*
 fuzzyfinder-information-file	fuzzyfinder.txt	/*fuzzyfinder-information-file*

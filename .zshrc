@@ -1,20 +1,19 @@
 
+### load global conf ###
 if [ -f "/etc/zshrc" ]; then
-    source /etc/zshrc
+    source "/etc/zshrc"
 fi
+
 
 
 bindkey -e
 
-bindkey "^R" history-incremental-search-backward
-# no response when pressed in command line and vim
-# bindkey "^S" history-incremental-search-forward
 
-# compinit
+### compinit ###
 autoload -U compinit
 compinit -u
 
-# promptinit
+### promptinit ###
 if [ $UID != 0 ]; then
     autoload promptinit
     promptinit
@@ -22,20 +21,23 @@ if [ $UID != 0 ]; then
     # prompt elite2
 fi
 
-# colorize
+### colorize ###
 export LS_COLORS='di=36:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # ignore alphabet case when completion,
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
-# history-search-end
+### search history ###
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
+bindkey "^R" history-incremental-search-backward
+# no response when pressed in command line and vim
+# bindkey "^S" history-incremental-search-forward
 
-# setopt
+### setopt ###
 setopt always_last_prompt
 setopt auto_menu
 setopt auto_name_dirs
@@ -65,6 +67,8 @@ unsetopt print_exit_value
 unsetopt promptcr
 
 
+
+### alias ###
 if [ -x "$(which vim)" ]; then
     if [ -x "/usr/local/bin/vim" ]; then
         alias vi=/usr/local/bin/vim
@@ -78,14 +82,29 @@ alias du='du -h'
 alias less='less -r'
 alias l=ls
 alias ll='ls -l'
-alias ls='ls --color=tty --show-control-chars'
 alias la='ls -A'
+alias l.='ls -d .*'
+
+OS="$(uname -o)"
+if [ "$OS" = "Cygwin" ]; then
+    alias less='less -r'
+    alias ls='ls --color=tty --show-control-chars'
+else
+    alias ls='ls --color=tty'
+fi
+
+if [ -x "$(which vim)" ]; then
+    if [ -x "/usr/local/bin/vim" ]; then
+        alias vi=/usr/local/bin/vim
+    else
+        alias vi=vim
+    fi
+fi
 
 
 
-# for cygwin
-if [ $(uname -o) = 'Cygwin' ]; then
-    alias gvim='/cygdrive/c/WINDOWS/system32/cmd.exe /c E:/usr/bin/gvim.bat'
+### cygwin ###
+if [ "$OS" = 'Cygwin' ]; then
 
     function explorer() {
         local path
@@ -122,12 +141,14 @@ if [ $(uname -o) = 'Cygwin' ]; then
 fi
 
 
-if [ -f "$HOME/.zshrc.local" ]; then
-    source "$HOME/.zshrc.local"
+# delete duplicated paths
+if [ -x "$(which perl)" ]; then
+    export PATH="$(perl -e 'for(split /:/, $ENV{PATH}){$h{$_} or $h{$_}=++$i} $,=q(:); %h=reverse %h; print map { $h{$_} } sort { $a <=> $b } keys %h')"
 fi
 
 
-# duplicated path was deleted but order doesn't change
-if [ -x "$(which perl)" ]; then
-    export PATH="$(perl -e 'for(split /:/, $ENV{PATH}){$h{$_} or $h{$_}=++$i} $,=q(:); %h=reverse %h; print map { $h{$_} } sort { $a <=> $b } keys %h')"
+
+### load local conf ###
+if [ -f "$HOME/.zshrc.local" ]; then
+    source "$HOME/.zshrc.local"
 fi

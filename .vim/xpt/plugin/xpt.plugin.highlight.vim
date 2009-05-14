@@ -7,6 +7,9 @@ if exists("g:__XPT_PLUGIN_HIGHLIGHT_VIM__")
 endif
 let g:__XPT_PLUGIN_HIGHLIGHT_VIM__ = 1
 
+if !g:xptemplate_hl 
+  finish
+endif
 
 
 fun! g:XPT.XPTupdateHigh(x) "{{{
@@ -51,12 +54,12 @@ fun! g:XPT.XPTupdateHigh(x) "{{{
 
 
 
-  exe 'match CurrentItem  /'. r . '/'
+  exe 'match XPTCurrentItem  /'. r . '/'
 
   call cursor(pp)
 
   return 1
 endfunction "}}}
 
-" call g:XPTaddPlugin("afterUpdate", "XPTupdateHigh")
-" call g:XPTaddPlugin("afterInitItem", "XPTupdateHigh")
+call g:XPTaddPlugin("afterUpdate", "XPTupdateHigh")
+call g:XPTaddPlugin("afterInitItem", "XPTupdateHigh")

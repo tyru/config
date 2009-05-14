@@ -11,7 +11,7 @@ let s:ep           = '\%(' . '\%(\[^\\]\|\^\)' . '\%(\\\\\)\*' . '\)' . '\@<='
 
 
 
-fun! s:Def(k, v) "{{{
+fun! s:Default(k, v) "{{{
   if !exists(a:k)
     exe "let ".a:k."=".string(a:v)
   endif
@@ -19,26 +19,32 @@ endfunction "}}}
 
 
 
-" call s:Def('g:xptemplate_indent', 1)
-
-call s:Def('g:xptemplate_strip_left',   1)
-call s:Def('g:xptemplate_limit_curosr', 1)
-call s:Def('g:xptemplate_show_stack',   1)
-call s:Def('g:xptemplate_highlight',    1)
-call s:Def('g:xptemplate_key',          '<C-\>')
-call s:Def('g:xptemplate_nav_next',     '<tab>')
-call s:Def('g:xptemplate_nav_cancel',   '<cr>')
-call s:Def('g:xptemplate_to_right',     "<C-l>")
-call s:Def('g:xptemplate_fix',          1)
-call s:Def('g:xptemplate_vars',         '')
+call s:Default('g:xptemplate_strip_left',   1)
+" TODO 
+call s:Default('g:xptemplate_protect',      1) 
+call s:Default('g:xptemplate_limit_curosr', 1)
+call s:Default('g:xptemplate_show_stack',   1)
+call s:Default('g:xptemplate_highlight',    1)
+call s:Default('g:xptemplate_key',          '<C-\>')
+call s:Default('g:xptemplate_nav_next',     '<tab>')
+call s:Default('g:xptemplate_nav_cancel',   '<cr>')
+call s:Default('g:xptemplate_to_right',     "<C-l>")
+call s:Default('g:xptemplate_fix',          1)
+call s:Default('g:xptemplate_vars',         '')
+call s:Default('g:xptemplate_hl',           1)
 
 let g:XPTpvs = {}
 
 
 
 "for high lighting current editing item
-hi CurrentItem ctermbg=green gui=none guifg=#d59619 guibg=#efdfc1
-hi IgnoredMark cterm=none term=none ctermbg=black ctermfg=darkgrey gui=none guifg=#dddddd guibg=white
+if !hlID('XPTCurrentItem') && g:xptemplate_hl
+  hi XPTCurrentItem ctermbg=darkgreen gui=none guifg=#d59619 guibg=#efdfc1
+endif
+if !hlID('XPTIgnoredMark') && g:xptemplate_hl
+  hi XPTIgnoredMark cterm=none term=none ctermbg=black ctermfg=darkgrey gui=none guifg=#dddddd guibg=white
+endif
+
 
 
 " TODO Be very careful with 'cpo' option!
@@ -72,7 +78,6 @@ for s:v in s:pvs
 
   let s:val = matchstr(s:v, '\V\^\[^=]\*=\zs\.\*')
   let g:XPTpvs[s:key] = substitute(s:val, s:unescapeHead.'&', '\1\&', 'g')
-  " call Log(s:key.'==='.g:XPTpvs[s:key])
 endfor
 
 

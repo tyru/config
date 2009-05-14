@@ -5275,9 +5275,12 @@ fuzzyfinder-alt-tagjump	fuzzyfinder.jax	/*fuzzyfinder-alt-tagjump*
 fuzzyfinder-author	fuzzyfinder.jax	/*fuzzyfinder-author*
 fuzzyfinder-bookmark-mode	fuzzyfinder.jax	/*fuzzyfinder-bookmark-mode*
 fuzzyfinder-cache	fuzzyfinder.jax	/*fuzzyfinder-cache*
+fuzzyfinder-callbackfile-mode	fuzzyfinder.jax	/*fuzzyfinder-callbackfile-mode*
+fuzzyfinder-callbackitem-mode	fuzzyfinder.jax	/*fuzzyfinder-callbackitem-mode*
 fuzzyfinder-command-arg	fuzzyfinder.jax	/*fuzzyfinder-command-arg*
 fuzzyfinder-commands	fuzzyfinder.jax	/*fuzzyfinder-commands*
 fuzzyfinder-contact	fuzzyfinder.jax	/*fuzzyfinder-contact*
+fuzzyfinder-dot-sequence	fuzzyfinder.jax	/*fuzzyfinder-dot-sequence*
 fuzzyfinder-hiding-menu	fuzzyfinder.jax	/*fuzzyfinder-hiding-menu*
 fuzzyfinder-highlighting	fuzzyfinder.jax	/*fuzzyfinder-highlighting*
 fuzzyfinder-information-file	fuzzyfinder.jax	/*fuzzyfinder-information-file*

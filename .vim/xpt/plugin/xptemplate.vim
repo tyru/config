@@ -1,6 +1,6 @@
 " XPTEMPLATE ENGIE:
 "   code template engine
-" VERSION: 0.3.7.8
+" VERSION: 0.3.7.10
 " BY: drdr.xp | drdr.xp@gmail.com
 "
 " MARK USED:
@@ -43,6 +43,10 @@ endif
 let g:__XPTEMPLATE_VIM__ = 1
 
 
+com! TT let s:sid =  matchstr("<SID>", '\zs\d\+_\ze')
+TT
+delc TT
+
 
 runtime plugin/mapstack.vim
 runtime plugin/xptemplate.conf.vim
@@ -56,10 +60,10 @@ runtime plugin/xptemplate.conf.vim
 "
 " 2*n + 1
 
-let s:escapeHead      =   '\v(\\*)\V'
-let s:unescapeHead      =   '\v(\\*)\1\\?\V'
-let s:ep      =   '\%(' . '\%(\[^\\]\|\^\)' . '\%(\\\\\)\*' . '\)' . '\@<='
-let s:escaped =   '\%(' . '\%(\[^\\]\|\^\)' . '\%(\\\\\)\*' . '\)' . '\@<=' . '\\'
+let s:escapeHead   = '\v(\\*)\V'
+let s:unescapeHead = '\v(\\*)\1\\?\V'
+let s:ep           = '\%(' . '\%(\[^\\]\|\^\)' . '\%(\\\\\)\*' . '\)' . '\@<='
+let s:escaped      = '\%(' . '\%(\[^\\]\|\^\)' . '\%(\\\\\)\*' . '\)' . '\@<=' . '\\'
 
 let s:stripPtn     = '\V\^\s\*\zs\.\*'
 let s:cursorName   = "cursor"
@@ -105,12 +109,79 @@ let s:plugins.beforeUpdate = []
 let s:plugins.afterUpdate = []
 
 let s:priorities = {'all' : 64, 'spec' : 48, 'like' : 32, 'lang' : 16, 'sub' : 8, 'personal' : 0}
-let s:priPtn = 'all\|spec\|like\|lang\|sub\|\d\+'
+let s:priPtn = 'all\|spec\|like\|lang\|sub\|personal\|\d\+'
 
 let s:f = {}
 let g:XPT = s:f
 
 
+
+fun! s:XPTemplateInit( filename, ... ) "{{{
+  if !exists( 'b:xpt_loaded' )
+    let b:xpt_loaded = {}
+  endif
+
+  if has_key( b:xpt_loaded, a:filename )
+    echom b:xpt_loaded[ a:filename ]
+    return 'finish'
+  endif
+
+  let b:xpt_loaded[a:filename] = 1
+
+
+  for pair in a:000
+
+    let kv = split( pair, '=' )
+    if len( kv ) == 1
+      let kv += [ '' ]
+    endif
+
+    let key = kv[ 0 ]
+    let val = join( kv[ 1 : ], '=' )
+
+
+    if key =~ 'prio\%[rity]'
+      call XPTemplatePriority(val)
+
+    elseif key =~ 'mark'
+      call XPTemplateMark( val[ 0 : 0 ], val[ 1 : 1 ] )
+
+    elseif key =~ 'indent'
+      call XPTemplateIndent(val)
+
+    endif
+
+  endfor
+
+  return 'doit'
+endfunction "}}}
+
+
+com! -nargs=* XPTemplate 
+      \ if <SID>XPTemplateInit( expand( "<sfile>" ), <f-args> ) == 'finish' 
+      \ |   finish 
+      \ | endif
+      " \ | else 
+      " \ |   let [ s:f, s:v ] = XPTcontainer()
+
+fun! s:SetVar( n ) "{{{
+  let x = s:Data()
+  
+  let name = matchstr(a:n, '^\S\+\ze\s')
+  let val  = matchstr(a:n, '\s\+\zs.*')
+
+  let priority = x.bufsetting.priority
+
+  if !has_key( x.varPriority, name ) || priority < x.varPriority[ name ]
+    let [ x.vars[ name ], x.varPriority[ name ] ] = [ val, priority ]
+  endif
+endfunction "}}}
+
+com! -nargs=* XPTvar call <SID>SetVar( <q-args> )
+
+
+" 
+" Snippet API
 fun! XPTinclude(...) "{{{
   if a:0 < 1 
     return
@@ -166,6 +237,11 @@ fun! XPTemplateMark(sl, sr) "{{{
   let x.l = a:sl
   let x.r = a:sr
   call s:RedefinePattern()
+endfunction "}}}
+
+fun! XPTmark() "{{{
+  let x = s:Data().bufsetting.ptn
+  return [ x.l, x.r ]
 endfunction "}}}
 
 fun! XPTemplateIndent(p) "{{{
@@ -258,28 +334,28 @@ fun! XPTemplate(name, str_or_ctx, ...) " {{{
 
   if !has_key(xt, name) || xt[name].priority > override_priority
     let xt[name] = {
-          \ 'name' : name, 
-          \ 'hint' : hint, 
-          \ 'tmpl' : Str, 
+          \ 'name' : name,
+          \ 'hint' : hint,
+          \ 'tmpl' : Str,
           \ 'priority' : override_priority, 
           \ 'ctx' : ctx,
           \ 'ptn' : deepcopy(s:Data().bufsetting.ptn),
           \ 'indent' : idt, 
-          \ 'wrapped' : type(Str) != type(function("tr")) && Str =~ '\V' . xp.lft . s:wrappedName . xp.rt}
+          \ 'wrapped' : type(Str) != type(function("tr")) && Str =~ '\V' . xp.lft . s:wrappedName . xp.rt }
 
   endif
 endfunction " }}}
 
-fun! XPTgetAllTemplates()
+fun! XPTgetAllTemplates() "{{{
   return s:Data().tmpls
-endfunction
-
+endfunction "}}}
 
 fun! s:XPTemplateParse(lines) "{{{
   let lines = a:lines
 
   let p = split(lines[0], '\V'.s:ep.'\s\+')
   let name = p[1]
+
 
   let p = p[2:]
 
@@ -575,10 +651,10 @@ fun! s:XPTemplateFinish(...) "{{{
   let toEnd = col(".") - len(getline("."))
 
   " unescape
-  " exe "silent! %snomagic/\\V" .s:f.TmplRange() . xp.lft_e . '/' . xp.l . '/g'
-  " exe "silent! %snomagic/\\V" .s:f.TmplRange() . xp.rt_e . '/' . xp.r . '/g'
-  exe "silent! %snomagic/\\V" .s:f.TmplRange() . s:unescapeHead . xp.l . '/\1' . xp.l . '/g'
-  exe "silent! %snomagic/\\V" .s:f.TmplRange() . s:unescapeHead . xp.r . '/\1' . xp.r . '/g'
+  " exe "silent! %snomagic/\\V" .s:TmplRange() . xp.lft_e . '/' . xp.l . '/g'
+  " exe "silent! %snomagic/\\V" .s:TmplRange() . xp.rt_e . '/' . xp.r . '/g'
+  exe "silent! %snomagic/\\V" .s:TmplRange() . s:unescapeHead . xp.l . '/\1' . xp.l . '/g'
+  exe "silent! %snomagic/\\V" .s:TmplRange() . s:unescapeHead . xp.r . '/\1' . xp.r . '/g'
 
   " format template text
   call s:Format(1)
@@ -606,7 +682,7 @@ fun! s:Popup(pref, coln) "{{{
 
   let ctxs = s:SynNameStack(line("."), a:coln)
 
-  for [key, val] in items(dic)
+  for [ key, val ] in items(dic)
 
     " TODO filter
     if a:pref != "" && key !~# "^".a:pref | continue | endif
@@ -819,7 +895,7 @@ fun! s:GetNameInfo(end) "{{{
   else
     " only left edge
     return [l0, l1, r0, r0]
-    " throw "unmatch item edge mark, at:".string([l0, r0])."=".s:f.GetContentBetween(l0, r0)
+    " throw "unmatch item edge mark, at:".string([l0, r0])."=".s:GetContentBetween(l0, r0)
   endif
 
 endfunction "}}}
@@ -864,7 +940,7 @@ fun! s:BuildValues(isItemRange) "{{{
 
   let i = ctx.unnameInx
   while i < 1000
-    let rt = a:isItemRange ? s:GetCurrentTypedRange() : s:f.TmplRange()
+    let rt = a:isItemRange ? s:GetCurrentTypedRange() : s:TmplRange()
 
     " TODO count from back to identify anonymous item
     " TODO not reliable for ```^ item
@@ -877,7 +953,7 @@ fun! s:BuildValues(isItemRange) "{{{
 
 
 
-    " let rt = a:isItemRange ? s:GetCurrentTypedRange() : s:f.TmplRange()
+    " let rt = a:isItemRange ? s:GetCurrentTypedRange() : s:TmplRange()
 
     let poso = a:isItemRange ? ctx.pos.curpos : ctx.pos.tmplpos
 
@@ -908,10 +984,10 @@ fun! s:BuildValues(isItemRange) "{{{
 
       let np1 = [ninfo[1][0], ninfo[1][1] + len(xp.l)]
       let np2 = [ninfo[2][0], ninfo[2][1]]
-      let fullname = s:f.GetContentBetween([ninfo[0][0], ninfo[0][1] + len(xp.l)], ninfo[3])
+      let fullname = s:GetContentBetween([ninfo[0][0], ninfo[0][1] + len(xp.l)], ninfo[3])
       " let fullname = substitute(fullname, xp.lft, '', 'g')
-      let name = s:f.GetContentBetween(np1, np2)
-      let val = s:f.GetContentBetween([vinfo[0][0], vinfo[0][1]+len(xp.r)], vinfo[1])
+      let name = s:GetContentBetween(np1, np2)
+      let val = s:GetContentBetween([vinfo[0][0], vinfo[0][1]+len(xp.r)], vinfo[1])
 
 
       " [default_value, is_delayed]
@@ -927,7 +1003,7 @@ fun! s:BuildValues(isItemRange) "{{{
       call cursor(vinfo[2])
       call s:PushBackPos()
       let fullname = name == "" ? i : fullname
-      call s:Replace(ninfo[0], s:f.GetContentBetween(ninfo[0], vinfo[2]), xp.l . fullname)
+      call s:Replace(ninfo[0], s:GetContentBetween(ninfo[0], vinfo[2]), xp.l . fullname)
       call s:PopBackPos()
 
     else
@@ -940,7 +1016,7 @@ fun! s:BuildValues(isItemRange) "{{{
 
 endfunction "}}}
 
-fun! s:f.GetStaticRange(p, q) "{{{
+fun! s:GetStaticRange(p, q) "{{{
   let tl = a:p
   let br = a:q
 
@@ -971,14 +1047,62 @@ fun! s:HighLightItem(name, switchon) " {{{
     let ptn = substitute(xp.itemContentPattern, "NAME", a:name, "")
 
     let ptn = xp.itemMarkLPattern
-    exe "2match IgnoredMark /". ptn ."/"
+    exe "2match XPTIgnoredMark /". ptn ."/"
 
     let ptn = xp.itemMarkRPattern
-    exe "3match IgnoredMark /". ptn ."/"
+    exe "3match XPTIgnoredMark /". ptn ."/"
   else
     exe "2match none"
     exe "3match none"
   endif
+endfunction " }}}
+
+fun! s:ApplyPredefinedOnce(flag) " {{{
+  let x = s:Data()
+  let xp = s:Ctx().tmpl.ptn
+  let xpos = x.curctx.pos
+  let xvar = s:Data().vars
+  let xfunc = s:Data().funcs
+
+
+
+  if a:flag == 'typed'
+    let start = s:Xtl(xpos.curpos)
+    let end = s:Xbr(xpos.curpos)
+  else
+    let start = s:Xtl(xpos.tmplpos)
+    let end = s:Xbr(xpos.tmplpos)
+  endif
+
+  let endn = end[0] * 10000 + end[1]
+
+  call cursor(start)
+
+  let i = 0
+  while i < 100
+    let i = i + 1
+
+    let p = s:FindNextItem('cW')
+
+    if p[0:1] == [0, 0] || p[2] ==# s:cursorName || p[0] * 10000 + p[1] >= endn
+      break
+    endif
+
+    let name = p[3]
+
+    
+    let v = s:Eval(name)
+
+    if v != name
+      call s:ReplaceAllMark(name, v, a:flag)
+      call cursor(p[0:1])
+      continue
+    endif
+
+    " to find next
+    call cursor(p[0], p[1] + 1)
+  endwhile
+
 endfunction " }}}
 
 fun! s:ApplyPredefined(flag) " {{{
@@ -1031,18 +1155,18 @@ endfunction " }}}
 
 fun! s:Rng_to_TmplEnd() "{{{
   let x = s:Data()
-  call s:f.GetRangeBetween(getpos(".")[1:2], s:BR(x), 1)
+  call s:GetRangeBetween(getpos(".")[1:2], s:BR(x), 1)
   return s:vrange
 endfunction "}}}
 
 fun! s:TopTmplRange() "{{{
   let x = s:Data()
   if empty(x.stack)
-    return s:f.TmplRange()
+    return s:TmplRange()
   else 
     let old = x.curctx
     let x.curctx = x.stack[0]
-    let r = s:f.TmplRange()
+    let r = s:TmplRange()
     let x.curctx = old
   endif
   return r
@@ -1074,11 +1198,11 @@ fun! s:TmplRange_static() "{{{
 
 endfunction "}}}
 
-fun! s:f.TmplRange() "{{{
+fun! s:TmplRange() "{{{
   let x = s:Data()
   let p = [line("."), col(".")]
 
-  call s:f.GetRangeBetween(s:TL(x), s:BR(x))
+  call s:GetRangeBetween(s:TL(x), s:BR(x))
 
   call cursor(p)
   return s:vrange
@@ -1088,7 +1212,7 @@ fun! s:GetCurrentTypedRange() "{{{
   let x = s:Data()
   let p = [line("."), col(".")]
 
-  call s:f.GetRangeBetween(s:f.CTL(x), s:f.CBR(x))
+  call s:GetRangeBetween(s:CTL(x), s:CBR(x))
 
 
   call cursor(p)
@@ -1109,7 +1233,7 @@ else
   com! XPToldVisual normal! gv
 endif
 
-fun! s:f.GetRangeBetween(p1, p2, ...) "{{{
+fun! s:GetRangeBetween(p1, p2, ...) "{{{
   let pre = a:0 == 1 && a:1 
 
   if pre
@@ -1124,7 +1248,7 @@ fun! s:f.GetRangeBetween(p1, p2, ...) "{{{
     
   " TODO &selection == 'old'
   if &selection == "inclusive"
-    let p2 = s:f.LeftPos(p2)
+    let p2 = s:LeftPos(p2)
   endif
 
   call cursor(p1)
@@ -1148,7 +1272,7 @@ fun! s:NextItem(flag) " {{{
 
   let ctx.phase = 'post'
 
-  let p0 = s:f.CTL(x)
+  let p0 = s:CTL(x)
 
   let p = [line("."), col(".")]
   let name = ctx.name
@@ -1182,8 +1306,8 @@ fun! s:ApplyDelayed() "{{{
   let ctx = s:Ctx()
 
 
-  " let typed = s:f.GetContentBetween(s:f.CTL(x), s:f.CBR(x))
-  let typed = s:f.GetContentBetween(s:Xtl(ctx.pos.curpos), s:Xbr(ctx.pos.curpos))
+  " let typed = s:GetContentBetween(s:CTL(x), s:CBR(x))
+  let typed = s:GetContentBetween(s:Xtl(ctx.pos.curpos), s:Xbr(ctx.pos.curpos))
 
 
   if has_key(ctx.tmpl.ctx.vpost, ctx.name)
@@ -1262,7 +1386,7 @@ fun! s:SelectNextItem(...) "{{{
     let ctx.phase = 'fillin'
     return "\<esc>gv\<C-g>"
   else
-    call cursor(s:f.CBR(x))
+    call cursor(s:CBR(x))
     let ctx.phase = 'fillin'
     return ""
   endif
@@ -1292,13 +1416,13 @@ fun! s:Format(range) "{{{
     let pi = s:Xtl(ctx.pos.editpos)
     let pi[1] = pi[1] - len(getline(pi[0]))
 
-    let pc = s:f.CTL()
+    let pc = s:CTL(x)
     let pc[1] = pc[1] - len(getline(pc[0]))
     let bf = matchstr(x.curctx.lastBefore, s:stripPtn)
   endif
 
   if a:range == 1
-    call s:f.TmplRange()
+    call s:TmplRange()
     normal! gv=
   elseif a:range == 2
     call s:TopTmplRange()
@@ -1358,10 +1482,10 @@ fun! s:BuildItemPosList(val) "{{{
     return
   endif
 
-  let p0 =s:f.CBR(x)
+  let p0 =s:CBR(x)
   let pitem =s:Xbr(xpos.editpos)
 
-  let last = s:f.CBR(x)
+  let last = s:CBR(x)
 
   call cursor(s:TL(x))
 
@@ -1369,7 +1493,7 @@ fun! s:BuildItemPosList(val) "{{{
   while i < 100
     let i = i + 1
 
-    let p = searchpos(s:f.TmplRange().ptn, 'cW')
+    let p = searchpos(s:TmplRange().ptn, 'cW')
 
     if p == [0, 0]
       break
@@ -1392,7 +1516,7 @@ fun! s:BuildItemPosList(val) "{{{
     " TODO
     let [cl, cr] = [p, right]
 
-    let rng = s:f.GetRangeBetween(p, right)
+    let rng = s:GetRangeBetween(p, right)
 
     call cursor(p)
     let left1 = searchpos(rng . xp.lft, 'cW') " cursor moved
@@ -1406,7 +1530,7 @@ fun! s:BuildItemPosList(val) "{{{
       let right = cr
       call s:PushBackPos()
 
-      let rng = s:f.GetRangeBetween(p, right)
+      let rng = s:GetRangeBetween(p, right)
 
       call cursor(cl)
       let left2 = searchpos(rng . xp.lft, 'W')
@@ -1467,7 +1591,7 @@ fun! s:FindNextItem(flag) "{{{
   let p = searchpos(ptn, "nw" . flag)
 
   if p == [0, 0]
-    let p = searchpos(s:f.TmplRange().xp.cursorPattern, 'n')
+    let p = searchpos(s:TmplRange().xp.cursorPattern, 'n')
     if p == [0, 0]
       let p += ["", ""]
     else
@@ -1510,7 +1634,7 @@ fun! s:GetTypeArea() "{{{
     call s:Xbr(xpos.editpos, cbr)
 
 
-    let ptn = s:f.GetRangeBetween(ctl, cbr) . xp.lft
+    let ptn = s:GetRangeBetween(ctl, cbr) . xp.lft
 
     call cursor(ctl)
 
@@ -1580,28 +1704,54 @@ fun! s:InitItem() " {{{
   if has_key(ctx.tmpl.ctx.vdef, ctx.name)
     let str = ctx.tmpl.ctx.vdef[ctx.name]
 
-    let str = s:Eval(str)
+    " popup list or string
+    let obj = s:Eval(str)
 
-    " TODO needed?
-    call cursor(s:Xtl(xpos.curpos))
-    call s:Replace(s:Xtl(xpos.curpos), ctx.name, str)
+    if type(obj) == type([]) " popup list
+
+      if len(obj) == 0
+        let str = ''
+      else
+
+        if type(obj[0]) == type({})
+          let str = obj[0].word
+        else
+          let str = obj[0]
+        endif
+
+      endif
+
+    else " string
+      let str = obj
+    endif
 
 
-    " TODO needed?
-    call cursor(s:Xtl(xpos.curpos))
+      " TODO needed?
+      " call cursor(s:Xtl(xpos.curpos))
+      call s:Replace(s:Xtl(xpos.curpos), ctx.name, str)
 
-    " recursively search
-    " TODO predefined does not take in place yet
-    if str =~ '\V'.xp.lft.'\.\*'.xp.rt
-      call s:BuildValues(1)
-      return s:SelectNextItem(s:f.CTL(x)) != ""
+
+    if type(obj) == type('')
+
+      " TODO needed?
+      call cursor(s:Xtl(xpos.curpos))
+
+      " recursively search
+      " TODO predefined does not take in place yet
+      if str =~ '\V'.xp.lft.'\.\*'.xp.rt
+        call s:BuildValues(1)
+        return s:SelectNextItem(s:CTL(x)) != ""
+      endif
+
     endif
 
 
 
-    let str = s:f.GetContentBetween(s:f.CTL(x), s:f.CBR(x))
+    " let str = s:GetContentBetween(s:CTL(x), s:CBR(x))
+
   else
     let str = ctx.name
+    let obj = str
   endif
 
 
@@ -1611,26 +1761,31 @@ fun! s:InitItem() " {{{
   " call s:Format(0)
 
 
-
-
   call s:HighLightItem(ctx.name, 1)
   call s:CallPlugin('afterInitItem')
 
-  call s:f.TmplRange()
+  call s:TmplRange()
   silent! normal! gvzO
 
   call s:XPTupdate()
 
 
-  " call s:f.GetRangeBetween(s:f.CTL(x), s:f.CBR(x))
-  call s:f.GetRangeBetween(s:Xtl(xpos.editpos), s:Xbr(xpos.editpos))
+  " call s:GetRangeBetween(s:CTL(x), s:CBR(x))
+  call s:GetRangeBetween(s:Xtl(xpos.editpos), s:Xbr(xpos.editpos))
 
 
   " does it need to select?
 
-  let ctl = s:f.CTL(x)
-  let cbr = s:f.CBR(x)
-  return ctl[0] < cbr[0] || ctl[0] == cbr[0] && ctl[1] < cbr[1]
+  if type(obj) == type([])
+    call s:Replace(s:Xtl(xpos.curpos), str, '')
+    call cursor(s:Xtl(xpos.curpos))
+    call complete(s:Xtl(xpos.curpos)[1], obj)
+    return 0
+  else
+    let ctl = s:CTL(x)
+    let cbr = s:CBR(x)
+    return ctl[0] < cbr[0] || ctl[0] == cbr[0] && ctl[1] < cbr[1]
+  endif
 
 endfunction " }}}
 
@@ -1776,7 +1931,15 @@ fun! s:Eval(s, ...) "{{{
     let sp .= tmp
 
 
-    let sp .= eval(str[kn : vn-1])
+    " popup list support
+    let obj = eval(str[kn : vn-1])
+
+    if type(obj) == type([])
+      " discard anything else
+      return obj
+    endif
+
+    let sp .= obj
 
 
     let last = vn
@@ -1808,7 +1971,7 @@ fun! s:GetName(pos) " {{{
 
   let p1[1] += len(xp.l)
 
-  let name = s:f.GetContentBetween(p1, p2)
+  let name = s:GetContentBetween(p1, p2)
   
   let rname = matchstr(name, xp.lft . '\zs\_.\{-}\ze\%(' . xp.lft . '\|\$\)')
   if rname == ''
@@ -1833,10 +1996,10 @@ endfunction " }}}
 
 fun! s:GetTypedContent() " {{{
   let x = s:Data()
-  return s:f.GetContentBetween(s:f.CTL(x), s:f.CBR(x))
+  return s:GetContentBetween(s:CTL(x), s:CBR(x))
 endfunction " }}}
 
-fun! s:f.GetContentBetween(p1, p2) "{{{
+fun! s:GetContentBetween(p1, p2) "{{{
   if a:p1[0] > a:p2[0] || a:p1[0] == a:p2[0] && a:p1[1] >= a:p2[1]
     return ""
   endif
@@ -1866,7 +2029,7 @@ fun! s:f.GetContentBetween(p1, p2) "{{{
 
 endfunction "}}}
 
-fun! s:f.LeftPos(p) "{{{
+fun! s:LeftPos(p) "{{{
   let p = a:p
   if p[1] == 1
     if p[0] > 1
@@ -1884,7 +2047,7 @@ fun! s:CheckAndBS(k) "{{{
   let x = s:Data()
   
   let p = getpos(".")[1:2]
-  let ctl = s:f.CTL(x)
+  let ctl = s:CTL(x)
 
   if p[0] == ctl[0] && p[1] == ctl[1]
     return ""
@@ -1897,7 +2060,7 @@ fun! s:CheckAndDel(k) "{{{
   let x = s:Data()
   
   let p = getpos(".")[1:2]
-  let cbr = s:f.CBR(x)
+  let cbr = s:CBR(x)
 
   if p[0] == cbr[0] && p[1] == cbr[1]
     return ""
@@ -1979,16 +2142,17 @@ fun! s:ReplaceAllMark(name, rep, flag) " {{{
   if a:flag == 'typed'
     exe '%snomagic/\V' . s:GetCurrentTypedRange() . ptn . '/' . escape(rep, '/\') . "/g"
   else
-    exe '%snomagic/\V' . s:f.TmplRange() . ptn . '/' . escape(rep, '/\') . "/g"
+    exe '%snomagic/\V' . s:TmplRange() . ptn . '/' . escape(rep, '/\') . "/g"
   endif
 endfunction " }}}
 
-fun! s:f.CTL(...) "{{{
+fun! s:CTL(...) "{{{
   let x = a:0 == 1 ? a:1 : s:Data()
   let cp = x.curctx.pos.curpos
   return [cp.t, cp.l]
 endfunction "}}}
-fun! s:f.CBR(...) "{{{
+
+fun! s:CBR(...) "{{{
   let x = a:0 == 1 ? a:1 : s:Data()
   let cp = x.curctx.pos.curpos
   let l = line("$") + cp.b
@@ -2066,6 +2230,7 @@ fun! s:Data() "{{{
   if !exists("b:xptemplateData")
     let b:xptemplateData = {'tmplarr' : [], 'tmpls' : {}, 'funcs' : {}, 'vars' : {}, 'wrapStartPos' : 0, 'wrap' : '', 'functionContainer' : {}}
     let b:xptemplateData.funcs = b:xptemplateData.vars
+    let b:xptemplateData.varPriority = {}
     let b:xptemplateData.posStack = []
     let b:xptemplateData.stack = []
     let b:xptemplateData.curctx = deepcopy(s:emptyctx)
@@ -2199,7 +2364,7 @@ fun! s:CorrectCorsorPosition(x, expectedMode) "{{{
     call s:PushSetting('&l:ve')
     let &l:ve = 'all'
 
-    let [t, l, b, r] = s:f.CTL(x) + s:f.CBR(x)
+    let [t, l, b, r] = s:CTL(x) + s:CBR(x)
 
     let [ln, c] = [line("."), col(".")]
     if ln < t || ln == t && c < l
@@ -2288,7 +2453,7 @@ if g:xptemplate_limit_curosr || g:xptemplate_show_stack
   endif
 endif
 
-fun! s:f.RelToAbs(last, v) "{{{
+fun! s:RelToAbs(last, v) "{{{
   if a:v.t == 0 " same line
     let p = [a:last[0] + a:v.t, a:last[1] + a:v.l]
   else
@@ -2409,7 +2574,7 @@ fun! s:XPTupdate(...) "{{{
 
   " update items
 
-  let cont0 = s:f.GetContentBetween(s:f.CTL(x), s:f.CBR(x))
+  let cont0 = s:GetContentBetween(s:CTL(x), s:CBR(x))
 
 
 
@@ -2419,7 +2584,7 @@ fun! s:XPTupdate(...) "{{{
   endif
 
 
-  let p0 = s:f.CBR(x)
+  let p0 = s:CBR(x)
 
 
 
@@ -2428,7 +2593,7 @@ fun! s:XPTupdate(...) "{{{
   let ptn = escape(ptn, '\/')
   let ptn = substitute(ptn, "\n", '\\n', 'g')
 
-  let last = s:f.CBR(x)
+  let last = s:CBR(x)
 
   for v in ctx.inplist "{{{
 
@@ -2534,7 +2699,16 @@ fun! s:CallPlugin(ev) "{{{
 
 endfunction "}}}
 
-runtime plugin/xpt.plugin.highlight.vim
-runtime plugin/xpt.plugin.protect.vim
+fun! s:Link(fs) "{{{
+  let list = split(a:fs, ' ')
+  for v in list
+    let s:f[v] = function('<SNR>'.s:sid . v)
+  endfor
+endfunction "}}}
+
+call <SID>Link('CTL CBR TmplRange GetRangeBetween GetContentBetween GetStaticRange LeftPos RelToAbs')
+
+" runtime plugin/xpt.plugin.highlight.vim
+" runtime plugin/xpt.plugin.protect.vim
 
 

@@ -686,6 +686,10 @@ g:XPTfuncs()   g:XPTvars()
 		XPT:for[len] > if[]
 <	Indicate rendering template "if" inside template "for".
 
+							     *g:xptemplate_hl*
+								   {default:1}
+	Whether to highlight currently editing item. See |xpt-highlight|.
+
 				      *xpt-personal-var*   *g:xptemplate_vars*
 	Set personal variables used in template, see |xpt-variable|. Variable
 	set with g:xptemplate_vars has the highest priority and override any
@@ -704,6 +708,18 @@ g:XPTfuncs()   g:XPTvars()
 			\ : '$other=bla'
 <	Entries are separated with '&'
 
+	       *XPTCurrentItem*   *XPTIgnoredMark*   *xpt-hl*  *xpt-highlight*
+	As you can disable or enable highlight for current editing item, you
+	can specify the highlight color.
+	In your .vimrc file, Two highlight color can be specified : >
+	hi XPTCurrentItem 
+		\ctermbg=darkgreen 
+		\gui=none guifg=#d59619 guibg=#efdfc1
+	hi XPTIgnoredMark 
+		\cterm=none term=none ctermbg=black ctermfg=darkgrey 
+		\gui=none guifg=#dddddd guibg=white
+<	"XPTCurrentItem" is the color of current editing item.
+	"XPTIgnoredMark" is the color of mark |`| and |^|.
 
 
 
@@ -711,11 +727,13 @@ g:XPTfuncs()   g:XPTvars()
 
 							     *xpt-changes-log*
 : > <
-Added:2009 May 10	item edge now can contains \W chars
+Added:2009 May 12	More simple snippet file format
+Added:2009 May 11	highlight options
+Added:2009 May 10	item edge now can contain \W chars
 Fixed:2009 May 09	case bug of popup
-Fixed:2009 May 09	bug of laststatus=0 causes cursor limit not working
-Fixed:2009 May 09	bug of template range exceed template end if following
-			content contains '^'
+Fixed:2009 May 09	bug of laststatus=0 causing cursor limit not working
+Fixed:2009 May 09	bug of template range exceeding template end if
+			following content contains '^'
 Fixed:2009 May 09	On finishing template, unescape bug
 Added:2009 May 09	personal variable setting
 Added:2009 May 09	navigation key mapping config.

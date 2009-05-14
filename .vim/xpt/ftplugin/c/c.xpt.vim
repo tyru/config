@@ -21,7 +21,15 @@ XPTinclude
 " ========================= Function and Varaibles =============================
 
 function! s:f.showLst()
-   call complete(col('.'), ["xx-small", "x-small", "small", "medium", "large", "x-large", "xx-large", "larger", "smaller"])
+   call complete( col('.'), [ "xx-small", "x-small", "small", "medium", "large", "x-large", "xx-large", "larger", "smaller" ] )
+endfunction
+
+fun! s:f.expandIfNotEmpty(sep, item)
+  let v = self.V()
+  
+  let t = v == '' ? '' : v . '`' . a:sep . '`' . a:item . '^'
+
+  return t
 endfunction
 " ================================= Snippets ===================================
 XPTemplateDef
@@ -37,14 +45,22 @@ XPTemplateDef
 " }
 
 
-" XPT ff
-" if (`if^) {
-"   `bla`exp1...^what^^
-"   `bla `exp2...^what^^
-"   `
-"   `exp3...^what^^
-"   `&(@$)`exp4...^what^^
-" }
+" JUST A TEST
+"
+" Super Repetition. saves 1 key pressing. without needing expanding repetition
+" For small repetition usage. Such as parameter list
+" 
+"   type first, then <tab>
+" NOT <tab> then type
+"
+" NOTE that "exp" followed by only 2 dot. distinction from expandable
+"
+XPT superrepetition
+XSET exp..|post=expandIfNotEmpty(', ', 'exp..')
+`exp..^
+
+
+
 
 XPT assert	hint=assert\ (..,\ msg)
 assert(`isTrue^, "`text^");

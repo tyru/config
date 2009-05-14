@@ -34,13 +34,16 @@ call RandomColorScheme()
 set nocompatible  " Use Vim defaults (much better!)
 
 
+
 " set clipboard=unnamed         " レジスタをWindowsのクリップボードと同期
 " set matchpairs+=<:>       " これがあると->を入力したとき画面が点滅する
 " set spell      " すげーけどキモい
+" set wildignore=*.o,*.obj,*.la,*.a,*.exe,*.com,*.tds
 set autoindent
 set autoread
 set backspace=indent,eol,start
 set browsedir=buffer
+set bufhidden=hide
 set clipboard=
 set complete+=k,U,d
 set diffopt=filler,vertical
@@ -80,7 +83,6 @@ set viminfo='50,h,f1,n$HOME/.viminfo
 set visualbell
 set whichwrap=
 set wildchar=<Tab>
-" set wildignore=*.o,*.obj,*.la,*.a,*.exe,*.com,*.tds
 set wildmenu
 set wrapscan
 
@@ -963,7 +965,7 @@ endfunc
 augroup RunAfterVimEnter
     autocmd!
 
-    autocmd VimEnter .* call s:RegistMap()<CR>delfunc s:RegistMap
+    autocmd VimEnter *  call s:RegistMap()
 augroup END
 
 

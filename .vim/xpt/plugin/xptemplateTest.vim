@@ -10,46 +10,38 @@ let g:__XPTEMPLATETEST_VIM__ = 1
 " test suite support
 " 
 
-com! Slow redraw! | sleep 100m
+com! XPTSlow redraw! | sleep 100m
 
-fun s:XPTinsert()
+fun s:XPTinsert() "{{{
   call feedkeys("i", 'mt')
-endfunction
-
-
-fun s:XPTtrigger(name)
+endfunction "}}}
+fun s:XPTtrigger(name) "{{{
   call feedkeys(a:name . "", 'mt')
-endfunction
-
-fun s:XPTtype(...)
+endfunction "}}}
+fun s:XPTtype(...) "{{{
   for v in a:000
     call feedkeys(v, 'nt')
     call feedkeys("\<tab>", 'mt')
   endfor
-endfunction
-
-fun s:XPTcancel(...)
+endfunction "}}}
+fun s:XPTcancel(...) "{{{
   call feedkeys("\<cr>", 'mt')
-endfunction
-
-
+endfunction "}}}
 fun! s:LastLine() "{{{
   call feedkeys("\<C-c>G:silent a\<cr>\<cr>.\<cr>G", 'nt')
 endfunction "}}}
-
-fun s:XPTnew(name)
+fun s:XPTnew(name) "{{{
   call s:XPTinsert()
   call s:XPTtrigger(a:name)
-endfunction
-
-fun s:XPTwrapNew(name)
+endfunction "}}}
+fun s:XPTwrapNew(name) "{{{
   call feedkeys("iWRAPPED_TEXT\<C-c>V", 'nt')
   if &slm =~ 'cmd'
     call feedkeys("\<C-g>", 'nt')
   endif
   call feedkeys("\<C-w>".a:name."", 'mt')
 
-endfunction
+endfunction "}}}
 
 
 fun! XPTtest(ft) "{{{
@@ -58,13 +50,12 @@ fun! XPTtest(ft) "{{{
   set buftype=nofile
   wincmd o
   let &ft = a:ft
-  Slow
 
   let b:list = []
-  let b:ctx = {}
+  let b:currentTmpl = {}
   let b:testProcessing = 0
   let b:useDefault = 1
-  let b:names = []
+  let b:itemNames = []
 
   let cmt = &cms
   let b:cmt = split(cmt, '\V%s')
@@ -90,7 +81,7 @@ fun! XPTtest(ft) "{{{
 
 endfunction "}}}
 
-fun s:TestFinish()
+fun s:TestFinish() "{{{
   augroup XPTtestGroup
     au!
   augroup END
@@ -105,8 +96,7 @@ fun s:TestFinish()
     diffupdate
     normal! zM
   endif
-endfunction
-
+endfunction "}}}
 
 fun! s:TestProcess(mode) "{{{
   let x = g:X()
@@ -116,7 +106,7 @@ fun! s:TestProcess(mode) "{{{
   if b:testProcessing == 0
 
     let b:testProcessing = 1
-    let b:names = []
+    let b:itemNames = []
 
     if len(b:list) == 0 
       call s:TestFinish()
@@ -124,77 +114,84 @@ fun! s:TestProcess(mode) "{{{
     endif
 
 
-    let b:ctx = b:list[0]
+    " Each template is rendered 2 times.
+    " The 1st time(useDefault = 1) use all default value for each item. 
+    " The 2nd time(useDefault = 0) render it with  some pseudo typed value.
+
+    let b:currentTmpl = b:list[0]
     if !b:useDefault
       call remove(b:list, 0)
     endif
 
-    let v = b:ctx
-
+    
     call s:LastLine()
 
+    " if no comment string found, do not risk to draw template in comment.
     if b:useDefault && b:cmt != ['', '']
-      " first time rendering, show template
+      " first time rendering the template, show original template content
 
-      let head = ' -------------'.v.name.'---------------'
+      let tmpl0 = [ ' ' . '-------------' . b:currentTmpl.name . '---------------' ] 
+            \+ split( b:currentTmpl.tmpl , "\n" )
 
-      let tmpl0 = [head] + split( v.tmpl , "\n")
-
-      let max = 0
+      let maxLength = 0
       for line in tmpl0
-        let max = max([len(line), max])
+        let maxLength = max( [ len(line), maxLength ] )
       endfor
-
-      " let max += len(b:cmt[0]) + 1 " space
 
       let tmpl = []
       for line in tmpl0
-        if b:cmt[1] != ''
-          let line = substitute(line, '\V'.b:cmt[1], '_cmt_', 'g')
+        if b:cmt[ 1 ] != ''
+          let line = substitute( line, '\V'.b:cmt[ 1 ], '_cmt_', 'g' )
         endif
-        let line = b:cmt[0] . ' ' . line . repeat(' ', max - len(line)) . ' ' . b:cmt[1]
-        let tmpl += [line]
+        let line = b:cmt[0] . ' ' . line . repeat( ' ', maxLength - len( line ) ) . ' ' . b:cmt[ 1 ]
+        let tmpl += [ line ]
       endfor
 
-      call feedkeys(":silent a\n" . join(tmpl, "\n") . "\n\n\n\n", 'nt')
+      call feedkeys( ":silent a\n" . join( tmpl, "\n" ) . "\n\n\n\n", 'nt' )
       call s:LastLine()
-
     endif
 
-
-    if b:ctx.wrapped
-      call s:XPTwrapNew(b:ctx.name)
+    " render template
+    if b:currentTmpl.wrapped
+      call s:XPTwrapNew( b:currentTmpl.name )
     else
-      call s:XPTnew(v.name)
+      call s:XPTnew( b:currentTmpl.name )
     endif
+
 
   else
     " b:testProcessing = 1
 
-    " maybe do in normal mode and do something else
+    " Insert mode or select mode
+    " If it is in normal mode, maybe something else is going.
     if mode() =~? "[is]"
       if ctx.phase == 'fillin' 
-        " Slow
 
-        if ctx.name =~ '\V...'
-          let b:names += [ctx.name]
-          if len(b:names) > 5 
-            call remove(b:names, 0)
+        " XPTSlow
+
+        " repitition, expandable or super repetition
+        if ctx.name =~ '\V..'
+          let b:itemNames += [ ctx.name ]
+
+          " keep at most 5 steps
+          if len( b:itemNames ) > 5 
+            call remove(b:itemNames, 0)
           endif
         endif
 
-        if b:useDefault
-          if len(b:names) >= 3 && b:names[-3] == ctx.name
-            " repetition
-            call s:XPTcancel()
-          else
-            call s:XPTtype('')
-          endif
+
+        if len(b:itemNames) >= 3 && b:itemNames[-3] == ctx.name
+          " repetition 
+          call s:XPTcancel()
+        elseif b:useDefault
+          " next
+          call s:XPTtype('')
         else
+          " pseudo type
           call s:XPTtype(substitute(ctx.name, '\W', '', 'g')."_TYPED")
         endif
 
-        " Slow
+        " XPTSlow
 
       elseif ctx.phase == 'finished'
         " template finished
@@ -203,7 +200,9 @@ fun! s:TestProcess(mode) "{{{
         let b:testProcessing = 0
         call feedkeys("\<C-c>Go\<C-c>", 'nt')
       endif
+
     endif
+
   endif
 endfunction "}}}
 
