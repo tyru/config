@@ -106,16 +106,6 @@ fi
 ### cygwin ###
 if [ "$OS" = 'Cygwin' ]; then
 
-    function explorer() {
-        local path
-        if [ $# = 0 ]; then
-            path="."
-        else
-            path="$1"
-        fi
-        /cygdrive/c/WINDOWS/explorer.exe \
-            "$(/usr/bin/cygpath.exe -w -a $path)"
-    }
     function cmd() {
         if [ $# != 0 ]; then
             /cygdrive/c/WINDOWS/system32/cmd.exe /c \

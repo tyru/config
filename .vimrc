@@ -1151,6 +1151,10 @@ nnoremap <silent> <LocalLeader>cd   :CdCurrent<CR>
 nnoremap <silent> gn    :cn<CR>
 nnoremap <silent> gN    :cN<CR>
 
+
+nnoremap <silent> <C-Tab>       gt
+nnoremap <silent> <C-S-Tab>     gT
+
 " }}}2
 
 " ~~ o ~~ {{{2

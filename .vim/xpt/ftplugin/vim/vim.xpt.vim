@@ -21,9 +21,9 @@ call XPTemplate('vimformat', [ 'vim:tw=78:ts=8:sw=2:sts=2:et:norl:fdm=marker:fmr
 
 XPTemplateDef
 
-call XPTemplate("once", [
 XPT once hint=if\ exists..\ finish\ ..\ let
-if exists("`g^:`i^headerSymbol()^")
+XSET i=headerSymbol()
+if exists("`g^:`i^")
   finish
 endif
 let `g^:`i^ = 1
@@ -35,13 +35,15 @@ call Log(`_^)
 
 
 XPT fun hint=fun!\ ..(..)\ ..\ endfunction
-fun! `name^(`_^^) "{{{
+XSET arg..|post=ExpandIfNotEmpty(', ', 'arg..')
+fun! `name^(`arg..^) "{{{
   `cursor^
 endfunction "}}}
 
 
 XPT method hint=fun!\ Dict.name\ ...\ endfunction
-fun! `Dict^.`name^(`_^^)
+XSET arg..|post=ExpandIfNotEmpty(', ', 'arg..')
+fun! `Dict^.`name^(`arg..^)
   `cursor^
 endfunction
 
@@ -82,11 +84,11 @@ endtry
 
 
 XPT if hint=if\ ..\ else\ ..
+XSET else...|post=\nelse\n  `cursor^
 if `cond^
-  `_^
-`else...^else
-  \`cursor\^^^
-endif 
+  `_^`
+`else...^
+endif
 
 
 XPT str_ hint=transform\ SEL\ to\ string

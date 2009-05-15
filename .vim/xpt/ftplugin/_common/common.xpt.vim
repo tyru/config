@@ -11,7 +11,8 @@ call extend(s:v, {'$TRUE': '1', '$FALSE' : '0', '$NULL' : 'NULL', '$UNDEFINED' :
 call extend(s:v, {'$CL': '/*', '$CM' : '*', '$CR' : '*/', '$CS' : '//'}, "keep")
 
 
-call extend(s:v, {'$author' : 'drdr.xp', '$email' : 'drdr.xp@gmail.com'}, 'keep')
+call extend(s:v, {'$author' : '$author is not set, you need set g:xptemplate_vars="$author=your_name"',
+      \'$email' : '$email is not set, you need set g:xptemplate_vars="$author=your_email@com"'}, 'keep')
 
 
 call XPTemplatePriority("all")
@@ -21,6 +22,15 @@ call XPTemplatePriority("all")
 fun! s:f.N() "{{{
   if has_key(self._ctx, 'name')
     return self._ctx.name
+  else
+    return ""
+  endif
+endfunction "}}}
+
+" name with edge
+fun! s:f.NN() "{{{
+  if has_key(self._ctx, 'fullname')
+    return self._ctx.fullname
   else
     return ""
   endif
@@ -72,6 +82,16 @@ fun! s:f.VOID(...) "{{{
   return ""
 endfunction "}}}
 
+" trigger nested template
+fun! s:f.Trigger(name) "{{{
+  return {'action' : 'expandTmpl', 'tmplName' : a:name}
+endfunction "}}}
+
+" This function is intented to be used for popup selection :
+" XSET bidule=Choose([' ','dabadi','dabada'])
+fun! s:f.Choose( lst ) "{{{
+    return a:lst
+endfunction "}}}
 
 fun! s:f.headerSymbol(...) "{{{
   let h = expand('%:t')
@@ -133,10 +153,30 @@ endfunction"}}}
 
 
 
+" {{{ Quick Repetition
+" If something typed, <tab>ing to next generate another item other than the
+" typed.
+"
+" If nothing typed but only <tab> to next, clear it.
+"
+" Normal clear typed, also clear it
+" }}}
+fun! s:f.ExpandIfNotEmpty(sep, item) "{{{
+  let v = self.V()
+
+  let marks = XPTmark()
+  
+  let t = ( v == '' || v == a:item || v == ( a:sep . a:item ) )
+        \ ? ''
+        \ : ( v . marks[0] . a:sep . marks[0] . a:item . marks[1] )
+
+  return t
+endfunction "}}}
+
 " ================================= Snippets ===================================
 call XPTemplateMark('`', '^')
 
-" shortcuts
+" Shortcuts
 call XPTemplate('Author', '`$author^')
 call XPTemplate('Email', '`$email^')
 call XPTemplate("Date", "`date()^")

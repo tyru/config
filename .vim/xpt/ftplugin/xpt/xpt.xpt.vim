@@ -7,7 +7,7 @@ let b:__XPT_XPT_XPT_VIM__ = 1
 let [s:f, s:v] = XPTcontainer()
 
 " constant definition
-call extend(s:v, {'\$TRUE': '1', '\$FALSE' : '0', '\$NULL' : '', '\$UNDEFINED' : ''})
+call extend(s:v, {'$TRUE': '1', '$FALSE': '0', '$NULL': '', '$UNDEFINED': ''})
 " call XPTemplatePriority('sub')
 
 " inclusion
@@ -15,9 +15,11 @@ call extend(s:v, {'\$TRUE': '1', '\$FALSE' : '0', '\$NULL' : '', '\$UNDEFINED' :
 " ========================= Function and Varaibles =============================
 fun! s:f.xptHeader() "{{{
   let symbol = expand("%:p")
-  let symbol = matchstr(symbol, '/ftplugin/\zs.*')
+  "let symbol = matchstr(symbol, '/ftplugin/\zs.*')
+  let symbol = matchstr(symbol, '[/\\]ftplugin[/\\]\zs.*')
   let symbol = substitute(symbol, '/', '_', 'g')
   let symbol = substitute(symbol, '\.', '_', 'g')
+  let symbol = substitute(symbol, '\\', '_', 'g')
   let symbol = substitute(symbol, '.', '\u&', 'g')
   
   return '__'.symbol.'__'
@@ -55,7 +57,6 @@ XPT container hint=let\ [s:f,\ s:v]\ =...
 let [s:f, s:v] = XPTcontainer()
 
 
-call XPTemplate("xpt", [
 XPT xpt hint=start\ template\ to\ write\ template
 if exists("b:`i^xptHeader()^") 
   finish 
@@ -66,14 +67,14 @@ let b:`i^ = 1
 let [s:f, s:v] = XPTcontainer() 
  
 " constant definition
-call extend(s:v, {'\\$TRUE': '1 '\\$FALSE' : '0', '\\$NULL' : 'NULL', '\\$UNDEFINED' : ''})", 
- 
-" inclusion
-'XPTinclude 
- 
-" ========================= Function and Varaibles ============================= 
- 
- 
-" ================================= Snippets =================================== 
- 
+call extend(s:v, {'$TRUE': '1', '$FALSE': '0', '$NULL': 'NULL', '$UNDEFINED': '', '$BRACKETSTYLE': "\n"})
 
+" inclusion
+XPTinclude
+
+" ========================= Function and Variables =============================
+
+ 
+" ================================= Snippets ===================================
+XPTemplateDef 
+`cursor^

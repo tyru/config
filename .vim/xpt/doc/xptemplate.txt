@@ -727,6 +727,13 @@ g:XPTfuncs()   g:XPTvars()
 
 							     *xpt-changes-log*
 : > <
+==== 0.3.7.11 ====
+Added:2009 May 15	fullname and name both for tepmlate functions
+Added:2009 May 15	mechanism to expand template in item. 'Trigger("name")'
+Fixed:2009 May 15	cursor at last causes it deletes 1 char before.
+Fixed:2009 May 14	bug of item edge with default value
+Added:2009 May 14	popup hint for item value, which is defined as default
+			value returning a list instead of string
 Added:2009 May 12	More simple snippet file format
 Added:2009 May 11	highlight options
 Added:2009 May 10	item edge now can contain \W chars

@@ -1,15 +1,12 @@
-if exists("b:__C_C_XPT_VIM__")
-  finish
-endif
-let b:__C_C_XPT_VIM__ = 1
+XPTemplate priority=lang 
 
-" containers
-let [s:f, s:v] = XPTcontainer()
 
-" constant definition
-call extend(s:v, {'$TRUE': '1', '$FALSE' : '0', '$NULL' : 'NULL', '$INDENT_HELPER' : '/* void */;'})
+XPTvar $TRUE          1
+XPTvar $FALSE         0
+XPTvar $NULL          NULL
+XPTvar $INDENT_HELPER /* void */;
 
-" inclusion
+
 XPTinclude
       \ _common/common 
       \ _comment/c.like 
@@ -18,25 +15,33 @@ XPTinclude
       \ _structures/c.like
       \ _preprocessor/c.like
 
+
 " ========================= Function and Varaibles =============================
 
+let s:f = XPTcontainer()[ 0 ]
+
 function! s:f.showLst()
-   call complete( col('.'), [ "xx-small", "x-small", "small", "medium", "large", "x-large", "xx-large", "larger", "smaller" ] )
+   return [ "xx-small", "x-small", "small", "medium", "large", "x-large", "xx-large", "larger", "smaller" ]
 endfunction
 
-fun! s:f.expandIfNotEmpty(sep, item)
-  let v = self.V()
-  
-  let t = v == '' ? '' : v . '`' . a:sep . '`' . a:item . '^'
-
-  return t
-endfunction
 " ================================= Snippets ===================================
 XPTemplateDef
 
 
 " XPT fs
-" font-size: `size^showLst()^
+" font-size: `--`size`==^showLst()^
+" `size^
+" ..XPT
+" 
+" XPT tt
+" XSET to=Trigger("fs")
+" "`~~~`to`***^"
+" ..XPT
+" 
+" XPT yy
+" `-`w`=^~NN()~^
+" ..XPT
+
 
 " " sample:
 " XPT for indent=/2*8 hint=this\ is\ for
@@ -45,19 +50,20 @@ XPTemplateDef
 " }
 
 
-" JUST A TEST
-"
-" Super Repetition. saves 1 key pressing. without needing expanding repetition
-" For small repetition usage. Such as parameter list
-" 
-"   type first, then <tab>
-" NOT <tab> then type
-"
-" NOTE that "exp" followed by only 2 dot. distinction from expandable
-"
-XPT superrepetition
-XSET exp..|post=expandIfNotEmpty(', ', 'exp..')
-`exp..^
+" " JUST A TEST
+" "
+" " Super Repetition. saves 1 key pressing. without needing expanding repetition
+" " For small repetition usage. Such as parameter list
+" " 
+" "   type first, then <tab>
+" " NOT <tab> then type
+" "
+" " NOTE that "exp" followed by only 2 dot. distinction from normal
+" " expandable. For normal expandable does not evaluate expression.
+" "
+" XPT superrepetition
+" XSET exp..|post=ExpandIfNotEmpty(', ', 'exp..')
+" `exp..^
 
 
 
@@ -73,10 +79,11 @@ main(int argc, char **argv)
   return 0;
 }
 
-
-XPT fun=..\ ..\ (..)
+" Quick-Repetition parameters list
+XPT fun		hint=func..\ (\ ..\ )\ {...
+XSET p..|post=ExpandIfNotEmpty(', ', 'p..')
   `int^
-`name^(`_^)
+`name^(`p..^)
 {
   `cursor^
 }

@@ -45,8 +45,31 @@ endfunction "}}}
 
 
 fun! XPTtest(ft) "{{{
+  augroup XPTtestGroup
+    au!
+    au CursorHoldI * call <SID>TestProcess('i')
+    au CursorMoved * call <SID>TestProcess('n')
+    au CursorMovedI * call <SID>TestProcess('i')
+  augroup END
 
-  exe 'e '.tempname().'/test.page'
+  let subft = matchstr(a:ft, '[^.]*')
+  let tempPath = globpath(&rtp, 'ftplugin/_common/common.xpt.vim')
+  " echom "tempPath=".tempPath
+  let tempPath = split(tempPath, "\n")[0]
+  " echom "tempPath=".tempPath
+
+  let tempPath = matchstr(tempPath, '.*\ze[\\/]_common[\\/]common.xpt.vim') . '/' . subft . '/.test'
+
+  " echom tempPath
+  try
+	  call mkdir(tempPath, 'p')
+  catch /.*/
+  endtry
+  let s:tempPath = tempPath
+  " echom tempPath
+
+  exe 'e '.tempPath.'/test.page'
+
   set buftype=nofile
   wincmd o
   let &ft = a:ft
@@ -68,16 +91,14 @@ fun! XPTtest(ft) "{{{
 
   let tmpls = XPTgetAllTemplates()
 
+  " remove 'Path' template
   unlet tmpls.Path
+
   let b:list = values(tmpls)
 
+  " trigger test to start
+  normal o
 
-  augroup XPTtestGroup
-    au!
-    au CursorHoldI * call <SID>TestProcess('i')
-    au CursorMoved * call <SID>TestProcess('n')
-    au CursorMovedI * call <SID>TestProcess('i')
-  augroup END
 
 endfunction "}}}
 
@@ -96,6 +117,17 @@ fun s:TestFinish() "{{{
     diffupdate
     normal! zM
   endif
+  " echom "to delete:" . s:tempPath
+  " echom delete(s:tempPath)
+
+  try
+    if has('win32')
+      exe 'silent! !rd /s/q "'.s:tempPath.'"'
+    else
+      exe 'silent! !rm -rf "'.s:tempPath.'"'
+    end
+  catch /.*/
+  endtry
 endfunction "}}}
 
 fun! s:TestProcess(mode) "{{{

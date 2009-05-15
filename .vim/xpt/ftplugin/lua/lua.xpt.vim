@@ -24,7 +24,8 @@ do
 end
 
 XPT fn hint=function\ \\(..) .. end
-function () `cursor^ end
+XSET arg..|post=ExpandIfNotEmpty(', ', 'arg..')
+function (`arg..^) `cursor^ end
 
 XPT for hint=for\ ..=..,..\ do\ ...\ end
 for `var^=`start^, `end^ `step...^,\`step\^^^ do
@@ -37,49 +38,57 @@ for `var^ in `expr^ do
 end
 
 XPT forip hint=for\ ..,..\ in\ ipairs\\(..)\ do\ ...\ end
-for `var1^i^,`var2^v^ in ipairs(`table^) do
+XSET var1=i
+XSET var2=v
+for `var1^,`var2^ in ipairs(`table^) do
 `cursor^
 end
 
 XPT forp hint=for\ ..,..\ in\ pairs\\(..)\ do\ ...\ end
-for `var1^k^,`var2^v^ in pairs(`table^) do
+XSET var1=k
+XSET var2=v
+for `var1^,`var2^ in pairs(`table^) do
 `cursor^
 end
 
 XPT fun hint=function\ ..\\(..)\ ..\ end
-function `name^(`args^)
+XSET arg..|post=ExpandIfNotEmpty(', ', 'arg..')
+function `name^(`arg..^)
 `cursor^
 end
 
 XPT if hint=if\ ..\ then\ ..\ else\ ..\ end
+XSET elseif...|post=\nelseif `condn^ then\n`^`\n`elseif...^
+XSET else...|post=\nelse\n`cursor^
 if `cond^ then
-`_^ `...^
-elseif `condn^ then
-`_n^ `...^
-`else...^else
-\`cursor\^^^
+`^`
+`elseif...^`
+`else...^
 end
 
 XPT locf hint=local\ function\ ..\\(..)\ ...\ end
-local function `name^(`args^)
+XSET arg..|post=ExpandIfNotEmpty(', ', 'arg..')
+local function `name^(`arg..^)
 `cursor^
 end
 
+" !!! snippet ends with a space !!!
 XPT locv hint=local\ ..\ =\ ..
-local `var^ = `cursor^
+local `var^ = 
 
 XPT p hint=print\\(..)
 print(`cursor^)
 
+" !!! snippet ends with a space !!!
 XPT repeat hint=repeat\ ..\ until\ ..
 repeat
 `_^
-until `cursor^
+until 
 
 XPT tab hint={\ ...\ }
 {
-`var^ = `_^^ `...^,
-`var^ = `_^^ `...^
+`var^ = `^ `...^,
+`var^ = `^ `...^
 }
 
 XPT while hint=while\ ..\ do\ ...\ end

@@ -26,110 +26,107 @@ fun! s:f.RubySnakeCase(...) "{{{
 endfunction "}}}
 
 " Multiple each snippet {{{
-let s:each_map = {
-      \'b' : 'byte',
-      \'c' : 'char',
-      \'co' : 'cons',
-      \'i' : 'index',
-      \'k' : 'key',
-      \'l' : 'line',
-      \'p' : 'pair',
-      \'s' : 'slice',
-      \'v' : 'value'
-      \}
+let s:each_list = [
+      \'each_byte',
+      \'each_char',
+      \'each_cons',
+      \'each_index',
+      \'each_key',
+      \'each_line',
+      \'each_pair',
+      \'each_slice',
+      \'each_value'
+      \]
+
+fun! s:f.RubyEachPopup() "{{{
+  return s:each_list
+endfunction "}}}
 
 fun! s:f.RubyEachBrace() "{{{
   let v = s:f.V()
 
-  if has_key(s:each_map, v)
-    let v = s:each_map[v]
-  endif
-
-  if v =~# 'slice\|cons'
-    return v.'(`var^) {'
+  if v =~# 'each_slice\|each_cons'
+    return v.'(`val^3^)'
   else
-    return v.' {'
+    return v
   endif
 endfunction "}}}
 
 fun! s:f.RubyEachPair() "{{{
-  let v = s:f.R('what')
-  if v =~# 'pair'
-    return '`name^, `value^'
+  let v = s:f.R('each_what')
+  if v =~# 'each_pair'
+    return '`el1^, `el2^'
   else
-    return '`var^'
+    let r = substitute(v[5:-1], "(.\\{-})", '', '')
+    return '`' . r . '^'
   endif
 endfunction "}}}
 " End multiple each snippet }}}
 
 " Multiple assert snippet {{{
 let s:assert_map = {
-      \'eq' : {'name': 'equals', 'body' : '`expected^, `actual^'},
-      \'id' : {'name' : 'in_delta', 'body' : '`expected float^, `actual float^, `delta^'},
-      \'io' : {'name' : 'instance_of', 'body' : '`class^, `object to compare^'},
-      \'ko' : {'name' : 'kind_of', 'body' : '`class^, `object to compare^'},
-      \'m' : {'name' : 'match', 'body' : '/`regexp^/`^, `string^'},
-      \'ne' : {'name' : 'not_equal', 'body' : '`expected^, `actual^'},
-      \'ni' : {'name' : 'nil', 'body' : '`object^'},
-      \'nm' : {'name' : 'no_match', 'body' : '/`regexp^/`^, `string^'},
-      \'nn' : {'name' : 'not_nil', 'body' : '`object^'},
-      \'nr' : {'name' : 'nothing_raised', 'body' : '`exception^'},
-      \'ns' : {'name' : 'not_same', 'body' : '`expected^, `actual^'},
-      \'op' : {'name' : 'operator', 'body' : '`obj1^, `operator^, `obj2^'},
-      \'ra' : {'name' : 'raise', 'body' : '`exception^'},
-      \'rt' : {'name' : 'respond_to', 'body' : '`object^, `respond to this message^'},
-      \'sa' : {'name' : 'same', 'body' : '`expected^, `actual^'},
-      \'se' : {'name' : 'send', 'body' : '`send array^'},
-      \'th' : {'name' : 'throws', 'body' : '`expected symbol^'}
+      \'equals'         : '(`expected^, `actual^)'                      . '',
+      \'in_delta'       : '(`expected float^, `actual float^, `delta^)' . '',
+      \'instance_of'    : '(`class^, `object to compare^)'              . '',
+      \'kind_of'        : '(`class^, `object to compare^)'              . '',
+      \'match'          : '(/`regexp^/`^, `string^)'                    . '',
+      \'not_equal'      : '(`expected^, `actual^)'                      . '',
+      \'nil'            : '(`object^)'                                  . '',
+      \'no_match'       : '(/`regexp^/`^, `string^)'                    . '',
+      \'not_nil'        : '(`object^)'                                  . '',
+      \'nothing_raised' : '(`exception^)'                               . '',
+      \'not_same'       : '(`expected^, `actual^)'                      . '',
+      \'operator'       : '(`obj1^, `operator^, `obj2^)'                . '',
+      \'raise'          : '(`exception^, `message^)'                    . ' { `cursor^ } ',
+      \'respond_to'     : '(`object^, `respond to this message^)'       . '',
+      \'same'           : '(`expected^, `actual^)'                      . '',
+      \'send'           : '(`send array^)'                              . '',
+      \'throws'         : '(`expected symbol^)'                         . ' { `cursor^ } ',
       \}
 
-let s:assert_expected_body = ''
+
+fun! RubyAssertPopupSort(a, b)
+  return a:a.word > a:b.word
+endfunction
+
+fun! s:f.RubyAssertPopup() "{{{
+  let list = []
+  for [k, v] in items(s:assert_map)
+    let list += [{ 'word' : k, 'menu' : 'assert_' . k . substitute(v, '`.\{-}^', '..', 'g') }]
+  endfor
+  return sort(list, 'RubyAssertPopupSort')
+endfunction "}}}
 
 fun! RubyAssertMethod() "{{{
   let v = s:f.V()
-  let s:assert_expected_body = ''
   if has_key(s:assert_map, v)
-    let s:assert_expected_body = s:assert_map[v]['body']
-    return s:assert_map[v]['name'] . '('
+    return v . s:assert_map[v]
   else
     return ''
   endif
-endfunction "}}}
-
-fun! RubyAssertArgs() "{{{
-  let r = ''
-
-  if !empty(s:assert_expected_body)
-    let r = r . s:assert_expected_body
-  endif
-
-  if s:f.R('what') =~# 'raise'
-    let r = r . ', `message^'
-  endif 
-
-  let r = r . ')'
-
-  if s:f.R('what') =~ 'raise\|throws'
-    let r = r . ' { `cursor^ }'
-  endif 
-
-  return r
 endfunction "}}}
 " End multiple assert snippet }}}
 
-fun! s:f.RubyClassAttr() "{{{
+fun! s:f.RubyClassAttrPopup() "{{{
+  return ["_accessor", "_reader", "_writer"]
+endfunction "}}}
+
+fun! s:f.RubyBlockArgs() "{{{
   let v = s:f.V()
-  let attr = {
-        \'a' : 'accessor',
-        \'r' : 'reader',
-        \'w' : 'writer',
-        \}
-  if has_key(attr, v)
-    let r = attr[v]
-    return r
-  else
+  if v == ''
     return ''
-  endif
+  else
+    return ' |' . s:f.S(s:f.S(v,"^ ", ''), "|", "", 'g') . "`, `arg..^ExpandIfNotEmpty(', ', 'arg..')^^" . '|'
+  endif 
+endfunction "}}}
+
+fun! s:f.RubyMethodArgs() "{{{
+  let v = s:f.V()
+  if v == ''
+    return ''
+  else
+    return '(' . s:f.S(v, "\[(\|)\]","") . "`, `arg..^ExpandIfNotEmpty(', ', 'arg..')^^" . ')'
+  endif 
 endfunction "}}}
 
 " ================================= Snippets ===================================
@@ -239,24 +236,22 @@ XPT ass hint=assert\\(..)
 XSET message...|post=, `_^
 assert(`boolean condition^`, `message...^)
 
+
 XPT ass_ hint=assert_**\\(..)\ ...
+XSET what=RubyAssertPopup()
 XSET what|post=RubyAssertMethod()
-XSET _=RubyAssertArgs()
-XSET block=RubyAssertBlock()
-assert_`what^`_^
+assert_`what^
 
 
 XPT attr hint=attr_**\ :...
-XSET what=r
-XSET what.post=RubyClassAttr()
-XSET attr=
-XSET attrn...|post=, :`attr^`, :`attrn...^
-attr_`what^ :`attr^`, :`attrn...^
+XSET what=RubyClassAttrPopup()
+XSET attr..|post=ExpandIfNotEmpty(', :', 'attr..')
+attr`what^ :`attr..^
 
 XPT begin hint=begin\ ..\ rescue\ ..\ else\ ..\ end
 XSET exception=Exception
 XSET block=# block
-XSET rescue...|post=\nrescue `exception^\n  `block^`\n`rescue...^
+XSET rescue...|post=\nrescue `exception^` => `e^\n  `block^`\n`rescue...^
 XSET else...|post=\nelse\n  `block^
 XSET ensure...|post=\nensure\n  `cursor^
 begin
@@ -267,7 +262,8 @@ begin
 end
 
 XPT bm hint=Benchmark.bmbm\ do\ ...\ end
-TESTS = `times^10_000^
+XSET times=10_000
+TESTS = `times^
 
 Benchmark.bmbm do |result|
 `cursor^
@@ -298,12 +294,28 @@ end
 XPT cld hint=class\ ..\ <\ DelegateClass\ ..\ end
 XSET ClassName.post=RubyCamelCase()
 XSET ParentClass.post=RubyCamelCase()
+XSET args|post=RubyMethodArgs()
 class `ClassName^ < DelegateClass(`ParentClass^)
   def initialize`(`args`)^
     super(`delegate object^)
 
     `cursor^
   end
+end
+
+
+XPT cli hint=class\ ..\ def\ initialize\\(..)\ ...
+XSET ClassName.post=RubyCamelCase()
+XSET args|post=RubyMethodArgs()
+XSET block=# block
+XSET def...|post=\n\n  def `name^`(`args`)^\n    `block^\n  end`\n\n  `def...^
+XSET name|post=RubySnakeCase()
+class `ClassName^
+  def initialize`(`args`)^
+    `block^
+  end`
+
+  `def...^
 end
 
 
@@ -315,9 +327,10 @@ end
 
 
 XPT clstr hint=..\ =\ Struct.new\ ...
-XSET do...|post=do\n`cursor^\nend
+XSET do...|post= do\n`cursor^\nend
 XSET ClassName|post=RubyCamelCase()
-`ClassName^ = Struct.new(:`attr^`...^, :`attrn^`...^) `do...^
+XSET attr..|post=ExpandIfNotEmpty(', :', 'attr..')
+`ClassName^ = Struct.new(:`attr..^)` `do...^
 
 
 XPT col hint=collect\ {\ ..\ }
@@ -330,6 +343,7 @@ Marshal.load(Marshal.dump(`obj^))
 
 XPT def hint=def\ ..\ end
 XSET method|post=RubySnakeCase()
+XSET args|post=RubyMethodArgs()
 def `method^`(`args`)^
 `cursor^
 end
@@ -344,6 +358,7 @@ def_delegators :`del obj^, :`del methods^
 
 
 XPT defi hint=def\ initialize\ ..\ end
+XSET args|post=RubyMethodArgs()
 def initialize`(`args`)^
 `cursor^
 end
@@ -355,8 +370,9 @@ def method_missing(meth, *args, &block)
 end
 
 
-XPT defs hint=def\ self.\ ..\ end
+XPT defs hint=def\ self...\ end
 XSET method.post=RubySnakeCase()
+XSET args|post=RubyMethodArgs()
 def self.`method^`(`args`)^
 `cursor^
 end
@@ -364,6 +380,7 @@ end
 
 XPT deft hint=def\ test_..\ ..\ end
 XSET name|post=RubySnakeCase()
+XSET args|post=RubyMethodArgs()
 def test_`name^`(`args`)^
 `cursor^
 end
@@ -388,6 +405,7 @@ Dir.glob('`dir^') { |`f^| `cursor^ }
 
 
 XPT do hint=do\ |..|\ ..\ end
+XSET args|post=RubyBlockArgs()
 do` |`args`|^
 `cursor^
 end
@@ -403,10 +421,11 @@ XPT ea hint=each\ {\ ..\ }
 each { |`e^| `cursor^ }
 
 
-XPT ea_ hint=each_**\ {\ ..\ }
-XSET what.post=RubyEachBrace()
-XSET _=RubyEachPair()
-each_`what^|`_^| `cursor^ }
+XPT each hint=each_**\ {\ ..\ }
+XSET each_what=RubyEachPopup()
+XSET each_what|post=RubyEachBrace()
+XSET vars=RubyEachPair()
+`each_what^ { |`vars^| `cursor^ }
 
 
 XPT fdir hint=File.dirname\\(..)
@@ -477,15 +496,20 @@ XSET _=
 
 
 XPT kv hint=:...\ =>\ ...
-:`key^ => `value^`...^, :`keyn^ => `valuen^`...^
+XSET _=\ 
+:`key^ => `value^`...^,`_^:`keyn^ => `valuen^`...^
 
+XPT foo
+XSET foo=`world^
+Hello `foo^
 
 XPT lam hint=lambda\ {\ ..\ }
+XSET args|post=RubyBlockArgs()
 lambda {` |`args`|^ `cursor^ }
 
 
 XPT lit hint=%**[..]
-XSET _=w
+XSET _=Q
 XSET content=
 %`_^[`content^]
 
@@ -531,6 +555,7 @@ end
 
 XPT new hint=Instanciate\ new\ object
 XSET Object|post=RubyCamelCase()
+XSET args|post=RubyMethodArgs()
 `var^ = `Object^.new`(`args`)^
 
 
@@ -573,7 +598,8 @@ require '`lib^'
 
 
 XPT reqs hint=%w[..].map\ {\ |lib|\ require\ lib\ }
-%w[`libs^].map { |lib| require lib }
+XSET lib..|post=ExpandIfNotEmpty(' ', 'lib..')
+%w[`lib..^].map { |lib| require lib }
 
 
 XPT reve hint=reverse_each\ {\ ..\ }
@@ -635,6 +661,7 @@ XSET block=# block
 XSET name|post=RubySnakeCase()
 XSET ClassName=RubyCamelCase(R("module"))
 XSET ClassName.post=RubyCamelCase()
+XSET args|post=RubyMethodArgs()
 XSET def...|post=\n\n  def test_`name^`(`args`)^\n    `block^\n  end`\n\n  `def...^
 require "test/unit"
 require "`module^"
@@ -700,8 +727,6 @@ XSET args=[options]
 unless ARGV`_^
   abort "Usage: #{$PROGRAM_NAME} `args^"
 end
-
-
 
 
 XPT while hint=while\ ..\ end

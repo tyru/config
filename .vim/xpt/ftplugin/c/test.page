@@ -1,4 +1,6 @@
 
+
+
 /*  -------------cmt---------------  */
 /* /**                               */
 /*  * @author : `$author^ | `$email^ */
@@ -86,7 +88,7 @@ include "me_TYPED.h"
 
 /*  -------------fun--------------- */
 /*   `int^                          */
-/* `name^(`_^)                      */
+/* `name^(`p..^)                    */
 /* {                                */
 /*   `cursor^                       */
 /* }                                */
@@ -94,15 +96,15 @@ include "me_TYPED.h"
 
 
   int
-name(_)
+name()
 {
-  
+
 }
 
   int_TYPED
-name_TYPED(__TYPED)
+name_TYPED(p_TYPED, p_TYPED)
 {
-  
+
 }
 
 
@@ -151,19 +153,19 @@ name_TYPED(WRAPPED_TEXT)
 
 
 
-/*  -------------forr---------------                        */
-/* for (`i^ = `n^; `i^ >`^=^ `end^; --`i^) `$BRACKETSTYLE^{ */
-/*   `cursor^                                               */
-/* }                                                        */
+  /*  -------------forr---------------                        */
+  /* for (`i^ = `n^; `i^ >`^=^ `end^; --`i^) `$BRACKETSTYLE^{ */
+  /*   `cursor^                                               */
+  /* }                                                        */
 
 
 
   for (i = n; i >= end; --i) {
-    
+
   }
 
 for (i_TYPED = n_TYPED; i_TYPED >0_TYPED end_TYPED; --i_TYPED) {
-  
+
 }
 
 
@@ -180,7 +182,7 @@ for (i_TYPED = n_TYPED; i_TYPED >0_TYPED end_TYPED; --i_TYPED) {
 if (condi) { 
   /* void */;
 } else { 
-  
+
 }
 
 if (condi_TYPED) { 
@@ -194,9 +196,9 @@ else_TYPED
 
 
 
-2009 May 10
+2009 May 15
 
-2009 May 10
+2009 May 15
 
 
 /*  -------------ifee---------------                                      */
@@ -247,7 +249,7 @@ _TYPED
 if (0 == var) { 
   /* void */;
 } else { 
-  
+
 }
 
 if (0 == var_TYPED) { 
@@ -291,14 +293,14 @@ ifndef SYMBOL_TYPED
   int
 main(int argc, char **argv)
 {
-  
+
   return 0;
 }
 
   int
 main(int argc, char **argv)
 {
-  
+
   return 0;
 }
 
@@ -326,7 +328,7 @@ main(int argc, char **argv)
  *
  * <b>function</b>
  * @version : 1.0
- * @since : 2009 May 10
+ * @since : 2009 May 15
  * 
  * @description :
  *   
@@ -342,7 +344,7 @@ main(int argc, char **argv)
  *
  * <b>function_TYPED</b>
  * @version : 10_TYPED
- * @since : 2009 May 10
+ * @since : 2009 May 15
  * 
  * @description :
  *   
@@ -363,11 +365,11 @@ main(int argc, char **argv)
 
 
 do {
-  
+
 } while (0)
 
 do {
-  
+
 } while (0)
 
 
@@ -389,11 +391,11 @@ bal@bla
 
 
 do {
-  
+
 } while (condition)
 
 do {
-  
+
 } while (condition_TYPED)
 
 
@@ -405,11 +407,11 @@ do {
 
 
 for (i = 0; i < len; ++i) {
-  
+
 }
 
 for (i_TYPED = 0_TYPED; i_TYPED < len_TYPED; ++i_TYPED) {
-  
+
 }
 
 
@@ -445,7 +447,7 @@ switch (var) {
 
 
   default:
-    
+
 }
 
 switch (var_TYPED) {
@@ -471,7 +473,7 @@ switch (var_TYPED) {
 if (0 != var) { 
   /* void */;
 } else { 
-  
+
 }
 
 if (0 != var_TYPED) { 
@@ -488,11 +490,11 @@ else_TYPED
 
 
 while (1) {
-  
+
 }
 
 while (1) {
-  
+
 }
 
 
@@ -509,7 +511,7 @@ while (1) {
 if (NULL == var) { 
   /* void */;
 } else { 
-  
+
 }
 
 if (NULL == var_TYPED) { 
@@ -552,7 +554,7 @@ else_TYPED
 if (NULL != var) { 
   /* void */;
 } else { 
-  
+
 }
 
 if (NULL != var_TYPED) { 
