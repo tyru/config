@@ -43,7 +43,6 @@ set autoindent
 set autoread
 set backspace=indent,eol,start
 set browsedir=buffer
-set bufhidden=hide
 set clipboard=
 set complete+=k,U,d
 set diffopt=filler,vertical
@@ -162,7 +161,6 @@ let s:runtime_dirs = [
     \ '$HOME/.vim/mine',
     \ '$HOME/.vim/chalice',
     \ '$HOME/.vim/hatena',
-    \ '$HOME/.vim/howm_vim',
     \ '$HOME/.vim/xpt'
 \ ]
 for dir in s:runtime_dirs
@@ -410,7 +408,7 @@ endfunc
 command! -nargs=? -complete=dir Dir
     \ call s:Dir( <f-args> )
 
-func s:Dir( ... )
+func! s:Dir( ... )
     let dir =   a:0 == 1 ? a:1 : '.'
 
     if !isdirectory( dir )
@@ -442,7 +440,7 @@ else
 endif
 
 " NOTE: 使ってない
-func s:DosEscape(str)
+func! s:DosEscape(str)
     return escape( a:str, "&()[]{}^=;!'+,`~ " )
 endfunc
 " }}}2
@@ -610,7 +608,7 @@ command! FastEdit
     \ call s:FastEdit() 
 
 let s:fast_editing = 0
-func s:FastEdit()
+func! s:FastEdit()
     call garbagecollect()
 
     if s:fast_editing
@@ -689,6 +687,18 @@ func! s:Mkdir(...)
 endfunc
 command! -nargs=+ -complete=dir Mkdir
     \ call s:Mkdir(<f-args>)
+" }}}2
+
+" WhoseCommand {{{2
+func! s:WhoseCommand(cmd)
+    set verbose=7
+    execute 'com ' . a:cmd
+    set verbose=0
+endfunc
+
+command! -nargs=1 -complete=command
+            \ WhoseCommand
+            \ call s:WhoseCommand(<f-args>)
 " }}}2
 
 " }}}1
@@ -1034,7 +1044,7 @@ func! s:EscapeRegexp( regexp )
 endfunc
 
 " ただ'\C'をつけるだけ
-func s:Srch( g, vect )
+func! s:Srch( g, vect )
     if a:g
         let word = s:EscapeRegexp( expand( '<cword>' ) ) .'\C'
     else
@@ -1158,8 +1168,8 @@ nnoremap <silent> <C-S-Tab>     gT
 " }}}2
 
 " ~~ o ~~ {{{2
-" onoremap うZEEEEEEEEEEEEE
-func s:ClearOmap()
+" onoremapがうざいので
+func! s:ClearOmap()
     omapclear
     execute 'onoremap '. g:maplocalleader .'y  "*y'
 endfunc
@@ -1214,6 +1224,8 @@ cabbrev   h@     tab help
 "-----------------------------------------------------------------
 " For Plugins {{{1
 
+" Many Helpful Plugins {{{2
+
 " dicwin
 let plugin_dicwin_disable = 1
 
@@ -1232,7 +1244,7 @@ let g:fencview_autodetect = 0
 let g:netrw_liststyle = 1
 let g:netrw_cygwin    = 1
 
-" FuzzyFinder {{{2
+" FuzzyFinder {{{3
 nnoremap <silent> <LocalLeader>fb       :FuzzyFinderBuffer<CR>
 nnoremap <silent> <LocalLeader>fd       :FuzzyFinderDir<CR>
 nnoremap <silent> <LocalLeader>ff       :FuzzyFinderFile<CR>
@@ -1280,13 +1292,13 @@ else
                 \     '~/Desktop/'
                 \ ]
 endif
-" }}}2
+" }}}3
 
 " MRU
 nnoremap <silent> <C-h>     :MRU<CR>
 let MRU_Max_Entries   = 100
 let MRU_Add_Menu      = 0
-let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\c\|\.howm-keys$'
+let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\c\'
 
 " Align
 let Align_xstrlen    = 3       "マルチバイト
@@ -1294,7 +1306,7 @@ let DrChipTopLvlMenu = ""
 command! -nargs=0 AlignReset call Align#AlignCtrl( "default" )
 cabbrev   al    Align
 
-" Chalice {{{2
+" Chalice {{{
 "
 " プレビュー機能無効
 let chalice_preview      = 0
@@ -1321,16 +1333,7 @@ func! Chalice_ThreadCopy( open_to )
     1delete
     set ft=2ch_thread
 endfunc
-" }}}2
-
-" howm-mode {{{2
-let howm_dir = "~/work/howm"
-let howm_instantpreview = 1
-let howm_grepprg = ""
-let howm_findprg = ""
-let howm_mapleader = 'g'
-
-" }}}2
+" }}}
 
 " QuickBuf
 let qb_hotkey = '<LocalLeader>b'
@@ -1350,11 +1353,12 @@ nnoremap <silent>   <LocalLeader>nw     :Widen<CR>
 nnoremap <silent> g<C-i>    :Gtags -f %<CR>
 nnoremap <silent> g<C-j>    :GtagsCursor<CR>
 
-" xptemplate {{{2
+" xptemplate
 let g:xptemplate_key = '<C-k>'
+
 " }}}2
 
-" ----------- 自分の -----------------------
+" My Plugins {{{2
 
 " DictionarizeBuffer
 let g:loaded_dictionarize_buffer = 1
@@ -1362,7 +1366,7 @@ let g:loaded_dictionarize_buffer = 1
 " shell-mode
 let loaded_shell_mode = 1
 
-" CommentAnyWay {{{2
+" CommentAnyWay {{{
 let g:ca_prefix  = maplocalleader . 'c'
 let g:ca_verbose = 1    " debug
 let g:ca_oneline_comment = "//"
@@ -1380,13 +1384,14 @@ let g:ca_filetype_table = {
 " nnoremapじゃダメ
 nmap go      <LocalLeader>co
 nmap gO      <LocalLeader>cO
-" }}}2
+" }}}
 
-" nextfile {{{2
+" nextfile {{{
 let nf_include_dotfiles = 1
 let nf_loop_files = 1
-" }}}2
+" }}}
 
+" vimtemplate {{{
 let s:vt_filetype_files = [
     \ 'cppsrc.cpp=cpp',
     \ 'header.h=cpp',
@@ -1406,6 +1411,16 @@ unlet s:vt_filetype_files
 if isdirectory(expand("$HOME/.vim/template"))
     let g:vt_files_using_template = substitute(expand("$HOME/.vim/template/*"), "\n", ",", "g")
 endif
+" }}}
+
+" winmove {{{
+let g:wm_move_down  = '<C-M-j>'
+let g:wm_move_up    = '<C-M-k>'
+let g:wm_move_left  = '<C-M-h>'
+let g:wm_move_right = '<C-M-l>'
+" }}}
+
+" }}}2
 
 " }}}1
 "-----------------------------------------------------------------

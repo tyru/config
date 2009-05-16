@@ -1,6 +1,6 @@
 " XPTEMPLATE ENGIE:
 "   code template engine
-" VERSION: 0.3.7.12
+" VERSION: 0.3.7.13
 " BY: drdr.xp | drdr.xp@gmail.com
 "
 " MARK USED:
@@ -117,6 +117,13 @@ let s:f = {}
 let g:XPT = s:f
 
 
+fun! s:SelectAction() "{{{
+    if &l:slm =~ 'cmd'
+        return "\<esc>gv"
+    else
+        return "\<esc>gv\<C-g>"
+    endif
+endfunction "}}}
 
 fun! s:XPTemplateInit( filename, ... ) "{{{
     if !exists( 'b:xpt_loaded' )
@@ -616,6 +623,7 @@ fun! XPTemplateStart(pos, ...) " {{{
 
 
     call s:PushSetting('&l:ve')
+    let &l:ve = "all"
 
     " leave 1 char at last to avoid the bug when 'virtualedit' is not set with
     " 'onemore'
@@ -1243,6 +1251,15 @@ else
     " noop
     com! XPTrmLast echo
 endif
+
+fun! s:XPTvisual()
+    if &l:slm =~ 'cmd'
+	normal! v\<C-g>
+    else
+	normal! v
+    endif
+endfunction
+
 if &selectmode =~ 'cmd'
     com! XPTvisual normal! v\<C-g>
     com! XPToldVisual normal! gv\<C-g>
@@ -1270,7 +1287,7 @@ fun! s:GetRangeBetween(p1, p2, ...) "{{{
     endif
 
     call cursor(p1)
-    XPTvisual
+    call s:XPTvisual()
     call cursor(p2)
     normal! v
 
@@ -1412,7 +1429,6 @@ fun! s:SelectNextItem(...) "{{{
 
     if postaction != ''
         return postaction
-        " return s:selectAction
 
     else
         call cursor(s:Xbr(ctx.pos.editpos))
@@ -1824,7 +1840,7 @@ fun! s:InitItem() " {{{
     else
         let ctl = s:CTL(x)
         let cbr = s:CBR(x)
-        return ( ctl[0] < cbr[0] || ctl[0] == cbr[0] && ctl[1] < cbr[1] ) ? s:selectAction : ''
+        return ( ctl[0] < cbr[0] || ctl[0] == cbr[0] && ctl[1] < cbr[1] ) ? s:SelectAction() : ''
     endif
 
 endfunction " }}}
@@ -2579,7 +2595,7 @@ fun! s:Replace(p, c, rep) "{{{
 
 
             call cursor(start)
-            XPTvisual
+            call s:XPTvisual()
             call cursor(end)
             normal! d
             silent! normal! zO

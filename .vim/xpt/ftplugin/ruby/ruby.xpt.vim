@@ -499,9 +499,6 @@ XPT kv hint=:...\ =>\ ...
 XSET _=\ 
 :`key^ => `value^`...^,`_^:`keyn^ => `valuen^`...^
 
-XPT foo
-XSET foo=`world^
-Hello `foo^
 
 XPT lam hint=lambda\ {\ ..\ }
 XSET args|post=RubyBlockArgs()

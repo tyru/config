@@ -9,12 +9,12 @@ let b:__CPP_CPP_XPT_VIM__ = 1
 let [s:f, s:v] = XPTcontainer()
 
 
-call extend(s:v, { '$TRUE': 'true'
-                \, '$FALSE' : 'false'
-                \, '$NULL' : 'NULL'
-                \, '$UNDEFINED' : ''
-                \, '$BRACKETSTYLE' : "\n"
-                \, '$INDENT_HELPER' : ';' }, 'force')
+" call extend(s:v, { '$TRUE': 'true'
+"                 \, '$FALSE' : 'false'
+"                 \, '$NULL' : 'NULL'
+"                 \, '$UNDEFINED' : ''
+"                 \, '$BRACKETSTYLE' : "\n"
+"                 \, '$INDENT_HELPER' : ';' }, 'force')
 
 " inclusion
 XPTinclude
@@ -54,15 +54,13 @@ int main(int argc, char *argv[])
 
 
 XPT fun=..\ ..\ (..)
-`int^ `name^(`_^^)
-{
+`int^ `name^(`_^^) {
     `cursor^
 }
 
 
 XPT class   hint=class+ctor
-class `className^
-{
+class `className^ {
 public:
     `className^( `ctorParam^ );
     ~`className^();
@@ -73,24 +71,19 @@ private:
  
 // Scratch implementation
 // feel free to copy/paste or destroy
-`className^::`className^( `ctorParam^ )
-{
+`className^::`className^( `ctorParam^ ) {
 }
  
-`className^::~`className^()
-{
+`className^::~`className^() {
 }
  
-`className^::`className^( const `className^ &cpy )
-{
+`className^::`className^( const `className^ &cpy ) {
 }
 
 
 XPT templateclass   hint=template\ <>\ class
-template
-    <`templateParam^>
-class `className^
-{
+template <`templateParam^>
+class `className^ {
 public:
     `className^( `ctorParam^ );
     ~`className^();
@@ -118,16 +111,13 @@ template <`templateParam^>
 
 
 XPT try hint=try\ ...\ catch...
-try
-{
+try {
     `what^
 }`...^
-catch ( `except^ )
-{
+catch ( `except^ ) {
     `handler^
 }`...^
-`catch...^catch ( ... )
-{
+`catch...^catch ( ... ) {
     \`cursor\^
 }^^
 
