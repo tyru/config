@@ -8,7 +8,11 @@ endif
 let g:__XPTEMPLATETEST_VIM__ = 1
 
 " test suite support
-" 
+
+let s:phases = [ 1, 2, 3, 4, 5 ]
+let [ s:DEFAULT, s:TYPED, s:CHAR_BEFORE, s:CHAR_AFTER, s:NESTED ] = s:phases
+let s:FIRST_PHASE = s:phases[ 0 ]
+let s:LAST_PHASE = s:phases[ -1 ]
 
 com! XPTSlow redraw! | sleep 100m
 
@@ -77,7 +81,8 @@ fun! XPTtest(ft) "{{{
   let b:list = []
   let b:currentTmpl = {}
   let b:testProcessing = 0
-  let b:useDefault = 1
+  let b:phaseIndex = 0
+  let b:testPhase = s:phases[ b:phaseIndex ]
   let b:itemNames = []
 
   let cmt = &cms
@@ -146,12 +151,10 @@ fun! s:TestProcess(mode) "{{{
     endif
 
 
-    " Each template is rendered 2 times.
-    " The 1st time(useDefault = 1) use all default value for each item. 
-    " The 2nd time(useDefault = 0) render it with  some pseudo typed value.
+    " Each template is rendered multi times.
 
     let b:currentTmpl = b:list[0]
-    if !b:useDefault
+    if b:testPhase == s:LAST_PHASE
       call remove(b:list, 0)
     endif
 
@@ -159,7 +162,7 @@ fun! s:TestProcess(mode) "{{{
     call s:LastLine()
 
     " if no comment string found, do not risk to draw template in comment.
-    if b:useDefault && b:cmt != ['', '']
+    if b:testPhase == s:FIRST_PHASE && b:cmt != ['', '']
       " first time rendering the template, show original template content
 
       let tmpl0 = [ ' ' . '-------------' . b:currentTmpl.name . '---------------' ] 
@@ -215,12 +218,16 @@ fun! s:TestProcess(mode) "{{{
         if len(b:itemNames) >= 3 && b:itemNames[-3] == ctx.name
           " repetition 
           call s:XPTcancel()
-        elseif b:useDefault
+
+        elseif b:testPhase == s:DEFAULT
           " next
           call s:XPTtype('')
-        else
+        elseif b:testPhase == s:TYPED
           " pseudo type
           call s:XPTtype(substitute(ctx.name, '\W', '', 'g')."_TYPED")
+        else
+          " not implemented yet
+          call s:XPTtype('')
         endif
 
         " XPTSlow
@@ -228,7 +235,8 @@ fun! s:TestProcess(mode) "{{{
       elseif ctx.phase == 'finished'
         " template finished
 
-        let b:useDefault = !b:useDefault
+        let b:phaseIndex = (b:phaseIndex + 1) % len(s:phases)
+        let b:testPhase = s:phases[ b:phaseIndex ]
         let b:testProcessing = 0
         call feedkeys("\<C-c>Go\<C-c>", 'nt')
       endif
