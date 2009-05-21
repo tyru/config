@@ -1,6 +1,6 @@
 "        File: lastchange.vim
 "      Author: Srinath Avadhanula <srinath@fastmail.fm>
-" Last Change: 木 5 21 12:00 午前 2009 J
+" Last Change: 木 5 21 09:00 午後 2009 J
 " Description: sets the last modification time of the current file.
 "              the modification time is truncated to the last hour.  and the
 "              next time the time stamp is changed, it is checked against the

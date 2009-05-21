@@ -122,10 +122,7 @@ cnoremap <C-p>      <Up>
 " }}}1
 "-----------------------------------------------------------------
 " qmark {{{1
-qmark D http://delicious.com/tyru/
-qmark a bml-hatena-bookmark
-qmark b http://b.hatena.ne.jp/tyru/?mode=detail
-qmark d http://d.hatena.ne.jp/tyru/
+qmark d http://delicious.com/tyru/
 qmark f http://tyru.web.fc2.com/
 qmark h http://www.hatena.ne.jp/
 qmark i http://tyru.hp.infoseek.co.jp/
