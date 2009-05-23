@@ -1158,8 +1158,8 @@ nnoremap <silent> <LocalLeader>nn   :call <SID>NarrowWidely()<CR>
 nnoremap <silent> <LocalLeader>cd   :CdCurrent<CR>
 
 
-nnoremap <silent> gn    :cn<CR>
-nnoremap <silent> gN    :cN<CR>
+nnoremap <silent> <LocalLeader>n    :cn<CR>
+nnoremap <silent> <LocalLeader>N    :cN<CR>
 
 
 nnoremap <silent> <C-Tab>       gt
@@ -1303,7 +1303,7 @@ let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\c\'
 " Align
 let Align_xstrlen    = 3       "マルチバイト
 let DrChipTopLvlMenu = ""
-command! -nargs=0 AlignReset call Align#AlignCtrl( "default" )
+command! -nargs=0 AlignReset call Align#AlignCtrl("default")
 cabbrev   al    Align
 
 " Chalice {{{

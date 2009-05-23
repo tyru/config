@@ -3,7 +3,7 @@ syntax match TemplateItem /`.\{-}\^/ contains=TemplateMark containedin=ALL
 syntax match TemplateLine /^XPT\s\+.*$/ containedin=ALL
 
 
-syntax keyword TemplateKey XPT XSET indent hint syn priority containedin=TemplateLine
+syntax keyword TemplateKey XPT XSET XSETm indent hint syn priority containedin=TemplateLine
 " syntax match TemplateName /^XPT\s\+\w\+/ containedin=TemplateLine
 
 hi XPTregion ctermbg=yellow

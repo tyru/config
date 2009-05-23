@@ -3,9 +3,8 @@ if exists("b:__PERL_XPT_VIM__")
 endif
 let b:__PERL_XPT_VIM__ = 1
 
-
-XPTvar $BODY    # some code here ...
-
+" containers
+let [s:f, s:v] = XPTcontainer()
 
 " inclusion
 XPTinclude
@@ -36,23 +35,20 @@ XPT xforeach hint=..\ foreach\ ..;
 
 
 XPT sub hint=sub\ ..\ {\ ..\ }
-XSET body=$BODY
 sub `fun_name^ {
-    `body^
+    `cursor^
 }
 
 
 XPT while hint=while\ (\ ..\ )\ {\ ..\ }
-XSET body=$BODY
 while (`cond^) {
-    `body^
+    `cursor^
 }
 
 
 XPT unless hint=unless\ (\ ..\ )\ {\ ..\ }
-XSET body=$BODY
 unless (`cond^) {
-    `body^
+    `cursor^
 }
 
 
@@ -66,18 +62,15 @@ if ($@) {
 
 
 XPT for hint=for\ (my\ ..;..;++)
-XSET body=$BODY
 for (my $`var^ = 0; $`var^ < `count^; $`var^++) {
-    `body^
+    `cursor^
 }
 
 
 XPT foreach hint=foreach\ my\ ..\ (..){}
-XSET body=$BODY
 foreach my $`var^ (@`array^) {
-    `body^
+    `cursor^
 }
-
 
 
 XPT package hint=

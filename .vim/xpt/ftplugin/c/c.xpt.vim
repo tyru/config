@@ -71,7 +71,6 @@ XPTemplateDef
 XPT assert	hint=assert\ (..,\ msg)
 assert(`isTrue^, "`text^");
 
-
 XPT main hint=main\ (argc,\ argv)
   int
 main(int argc, char **argv)

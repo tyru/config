@@ -33,6 +33,8 @@ call s:Default('g:xptemplate_fix',          1)
 call s:Default('g:xptemplate_vars',         '')
 call s:Default('g:xptemplate_hl',           1)
 
+" for test script
+call s:Default('g:xpt_post_action',         '')
 let g:XPTpvs = {}
 
 
@@ -52,13 +54,26 @@ endif
 let s:oldcpo = &cpo
 " enable <key> encoding
 set cpo-=<
-exe "inoremap ".g:xptemplate_key." <C-r>=XPTemplateStart(0)<cr>"
-exe "xnoremap ".g:xptemplate_key." \"0di<C-r>=XPTemplatePreWrap(@0)<cr>"
-if &sel == 'inclusive'
-  exe "snoremap ".g:xptemplate_key." <C-c>`>a<C-r>=XPTemplateStart(0)<cr>"
-else
-  exe "snoremap ".g:xptemplate_key." <C-c>`>i<C-r>=XPTemplateStart(0)<cr>"
-endif
+
+" 'selTrigger' used in select mode trigger, but if 'selection' changed after this
+" script loaded, incSelTrigger or excSelTrigger should be used according to
+" runtime settings.
+let g:XPTkeys = {
+      \ 'popup'       : "<C-r>=XPTemplateStart(0,{'popupOnly':1})<cr>", 
+      \ 'trigger'       : "<C-r>=XPTemplateStart(0)<cr>", 
+      \ 'wrapTrigger'   : "\"0di<C-r>=XPTemplatePreWrap(@0)<cr>", 
+      \ 'incSelTrigger' : "<C-c>`>a<C-r>=XPTemplateStart(0)<cr>", 
+      \ 'excSelTrigger' : "<C-c>`>i<C-r>=XPTemplateStart(0)<cr>", 
+      \ 'selTrigger'    : (&selection == 'inclusive') ?
+      \                       "<C-c>`>a<C-r>=XPTemplateStart(0)<cr>" 
+      \                     : "<C-c>`>i<C-r>=XPTemplateStart(0)<cr>", 
+      \ }
+
+
+exe "inoremap ".g:xptemplate_key." " . g:XPTkeys.trigger
+exe "xnoremap ".g:xptemplate_key." " . g:XPTkeys.wrapTrigger
+exe "snoremap ".g:xptemplate_key." " . g:XPTkeys.selTrigger
+
 let &cpo = s:oldcpo
 
 
@@ -95,7 +110,7 @@ augroup END
 
 
 
-" checks critical setting:
+" check critical setting:
 "
 " backspace	>2 or with start
 " nocompatible

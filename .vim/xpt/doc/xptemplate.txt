@@ -79,7 +79,7 @@
 		lang		: 16
 		sub		: 8
 		personal	: 0
-<	Default priority is "lang" or 0. 
+<	Default priority is "lang" or 16. 
 	
 	You can set priority for each template by using |xpt-priority-format|.
 	Or set priority for all templates in current file with
@@ -727,7 +727,30 @@ g:XPTfuncs()   g:XPTvars()
 
 							     *xpt-changes-log*
 : > <
-==== 0.3.7.11 ====
+==== 0.3.7.20 ====
+Fixed:2009 May 23	avoiding popup fall back into line complete mode
+==== 0.3.7.19 ====
+Added:2009 May 23	protect buffer local mapping from being broken by xpt
+==== 0.3.7.18 ====
+Added:2009 May 23	smart case sensitive matching of template name
+Fixed:2009 May 23	map stack bug of failed to backup mapping
+Added:2009 May 22	for template name, other keywords can be specified
+==== 0.3.7.17 ====
+Fixed:2009 May 20	redraw only for language indenting depending on syntax
+Fixed:2009 May 18	unescape \XPT in template body
+Added:2009 May 18	much more nice template popup hint : longest match, <tab> to trigger template
+Fixed:2009 May 17	escaping moved to post-filter phase
+Fixed:2009 May 17	select none when popup shown
+Fixed:2009 May 17	bug of first line indent
+Fixed:2009 May 17	bug of predefined not applying if snippet contains $BRACKETSTYLE.
+==== 0.3.7.15 ====
+Fixed:2009 May 17	bug of nowrapscan setting causing unexpected expanding.
+==== 0.3.7.14 ====
+Fixed:2009 May 17	indent problem with perl. caused by perl indent expression.
+Fixed:2009 May 16	fix indent for default value and post filter
+Added:2009 May 16	multi line XSET : XSETm varname= {lines of codes} XSETm END. Get away annoying "\n"
+Fixed:2009 May 16	bug of typing '\' becoming '\\'
+==== 0.3.7.13 ====
 Added:2009 May 15	fullname and name both for tepmlate functions
 Added:2009 May 15	mechanism to expand template in item. 'Trigger("name")'
 Fixed:2009 May 15	cursor at last causes it deletes 1 char before.

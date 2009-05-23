@@ -9,12 +9,12 @@ let b:__CPP_CPP_XPT_VIM__ = 1
 let [s:f, s:v] = XPTcontainer()
 
 
-" call extend(s:v, { '$TRUE': 'true'
-"                 \, '$FALSE' : 'false'
-"                 \, '$NULL' : 'NULL'
-"                 \, '$UNDEFINED' : ''
-"                 \, '$BRACKETSTYLE' : "\n"
-"                 \, '$INDENT_HELPER' : ';' }, 'force')
+call extend(s:v, { '$TRUE': 'true'
+                \, '$FALSE' : 'false'
+                \, '$NULL' : 'NULL'
+                \, '$UNDEFINED' : ''
+                \, '$BRACKETSTYLE' : "\n"
+                \, '$INDENT_HELPER' : ';' }, 'force')
 
 " inclusion
 XPTinclude
@@ -38,29 +38,23 @@ endfunction
 " ================================= Snippets ===================================
 XPTemplateDef
 
-XPT namespace hint=namespace\ {}
-namespace `name^
-{
-    `cursor^
-}
+XPT all  hint=...begin,\ ...end,
+`v^.begin(), `v^.end(), `cursor^
+ 
+
+XPT vector hint=std::vector<..>\ ..;
+std::vector<`type^> `var^;
+`cursor^
 
 
-XPT main hint=main\ (argc,\ argv)
-int main(int argc, char *argv[])
-{
-    `cursor^
-    return 0;
-}
-
-
-XPT fun=..\ ..\ (..)
-`int^ `name^(`_^^) {
-    `cursor^
-}
+XPT map hint=std::map<..,..>\ ..;
+std::map<`typeKey^,`val^>   `name^;
+`cursor^
 
 
 XPT class   hint=class+ctor
-class `className^ {
+class `className^
+{
 public:
     `className^( `ctorParam^ );
     ~`className^();
@@ -71,19 +65,45 @@ private:
  
 // Scratch implementation
 // feel free to copy/paste or destroy
-`className^::`className^( `ctorParam^ ) {
+`className^::`className^( `ctorParam^ )
+{
 }
  
-`className^::~`className^() {
+`className^::~`className^()
+{
 }
  
-`className^::`className^( const `className^ &cpy ) {
+`className^::`className^( const `className^ &cpy )
+{
+}
+..XPT
+
+XPT fun=..\ ..\ (..)
+`int^ `name^(`_^^)
+{
+    `cursor^
 }
 
+
+XPT namespace hint=namespace\ {}
+namespace `name^
+{
+    `cursor^
+}
+..XPT
+
+XPT main hint=main\ (argc,\ argv)
+int main(int argc, char *argv[])
+{
+    `cursor^
+    return 0;
+}
 
 XPT templateclass   hint=template\ <>\ class
-template <`templateParam^>
-class `className^ {
+template
+    <`templateParam^>
+class `className^
+{
 public:
     `className^( `ctorParam^ );
     ~`className^();
@@ -108,16 +128,19 @@ template <`templateParam^>
 `className^<`_^cleanTempl(R('templateParam'))^^>::`className^( const `className^ &cpy )
 {
 }
-
+..XPT
 
 XPT try hint=try\ ...\ catch...
-try {
+try
+{
     `what^
 }`...^
-catch ( `except^ ) {
+catch ( `except^ )
+{
     `handler^
 }`...^
-`catch...^catch ( ... ) {
+`catch...^catch ( ... )
+{
     \`cursor\^
 }^^
 
