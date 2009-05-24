@@ -11,19 +11,11 @@ call XPTemplatePriority('like')
 XPTemplateDef
 
 XPT if hint=if\ (\ ..\ )\ {\ ..\ }\ ...
-if ( `cond^ )
-{
+if (`cond^) {
     `code^
-}`
-`...^
-elseif ( `cond2^ )
-{
+}``...^ elsif (`cond2^) {
     `body^
-}`
-`...^`
-`else...^
-else
-{
-    \`body\^
+}``...^` `else...^ else {
+    \`cursor\^
 }^^
 

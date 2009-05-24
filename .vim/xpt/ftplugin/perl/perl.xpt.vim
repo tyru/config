@@ -19,19 +19,19 @@ XPTinclude
 XPTemplateDef
 
 XPT xif hint=..\ if\ ..;
-`expr^ if `cond^;
+`expr^ if `cursor^;
 
 
 XPT xwhile hint=..\ while\ ..;
-`expr^ while `cond^;
+`expr^ while `cursor^;
 
 
 XPT xunless hint=..\ unless\ ..;
-`expr^ unless `cond^;
+`expr^ unless `cursor^;
 
 
 XPT xforeach hint=..\ foreach\ ..;
-`expr^ foreach @`array^;
+`expr^ foreach @`cursor^;
 
 
 XPT sub hint=sub\ ..\ {\ ..\ }
@@ -57,7 +57,7 @@ eval {
     `risky^
 };
 if ($@) {
-    `handle^
+    `cursor^
 }
 
 
@@ -76,7 +76,7 @@ foreach my $`var^ (@`array^) {
 XPT package hint=
 package `className^;
 
-use base qw(`parent^);
+use base qw(`cursor^);
 
 sub new {
     my $class = shift;
