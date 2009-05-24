@@ -102,12 +102,3 @@ XPT funcom hint=--\ |\ fun\ pat\ =\ ..
 `name~R("funName")~ `pattern~ = `def~`...~
 `cursor~
 
-XPT funtype hint=..\ ::\ ..\ =>\ ..\ ->\ .. ->
-`funName~ :: `context...~(\`ctxt\~)
-          =>~~ `type~ -- ^ `is~`...~
-          -> `type~ -- ^ `is~`...~
-
-
-XPT lang hint={-#\ LANGUAGE\ ..\ #-}
-{-# LANGUAGE `cursor~ #-}
-

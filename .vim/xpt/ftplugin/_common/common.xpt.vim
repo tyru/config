@@ -151,18 +151,7 @@ fun! s:f.CntIncr(name, ...)"{{{
   return d[a:name]
 endfunction"}}}
 
-" Return Item Edges
-fun! s:f.ItemEdges() "{{{
-  let lft_m = XPTmark()[0]
-  let r = split(self.NN(), lft_m, 1)
-  if len(r) == 1
-    return ['','']
-  elseif len(r) == 2
-    return [r[0],'']
-  else
-    return [r[0],r[-1]]
-  endif
-endfunction "}}}
+
 
 " {{{ Quick Repetition
 " If something typed, <tab>ing to next generate another item other than the

@@ -3,8 +3,9 @@ if exists("b:__PERL_XPT_VIM__")
 endif
 let b:__PERL_XPT_VIM__ = 1
 
-" containers
-let [s:f, s:v] = XPTcontainer()
+
+XPTvar $BODY    # some code here ...
+
 
 " inclusion
 XPTinclude
@@ -19,36 +20,39 @@ XPTinclude
 XPTemplateDef
 
 XPT xif hint=..\ if\ ..;
-`expr^ if `cursor^;
+`expr^ if `cond^;
 
 
 XPT xwhile hint=..\ while\ ..;
-`expr^ while `cursor^;
+`expr^ while `cond^;
 
 
 XPT xunless hint=..\ unless\ ..;
-`expr^ unless `cursor^;
+`expr^ unless `cond^;
 
 
 XPT xforeach hint=..\ foreach\ ..;
-`expr^ foreach @`cursor^;
+`expr^ foreach @`array^;
 
 
 XPT sub hint=sub\ ..\ {\ ..\ }
+XSET body=$BODY
 sub `fun_name^ {
-    `cursor^
+    `body^
 }
 
 
 XPT while hint=while\ (\ ..\ )\ {\ ..\ }
+XSET body=$BODY
 while (`cond^) {
-    `cursor^
+    `body^
 }
 
 
 XPT unless hint=unless\ (\ ..\ )\ {\ ..\ }
+XSET body=$BODY
 unless (`cond^) {
-    `cursor^
+    `body^
 }
 
 
@@ -57,26 +61,29 @@ eval {
     `risky^
 };
 if ($@) {
-    `cursor^
+    `handle^
 }
 
 
 XPT for hint=for\ (my\ ..;..;++)
+XSET body=$BODY
 for (my $`var^ = 0; $`var^ < `count^; $`var^++) {
-    `cursor^
+    `body^
 }
 
 
 XPT foreach hint=foreach\ my\ ..\ (..){}
+XSET body=$BODY
 foreach my $`var^ (@`array^) {
-    `cursor^
+    `body^
 }
+
 
 
 XPT package hint=
 package `className^;
 
-use base qw(`cursor^);
+use base qw(`parent^);
 
 sub new {
     my $class = shift;

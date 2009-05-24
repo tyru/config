@@ -1158,8 +1158,8 @@ nnoremap <silent> <LocalLeader>nn   :call <SID>NarrowWidely()<CR>
 nnoremap <silent> <LocalLeader>cd   :CdCurrent<CR>
 
 
-nnoremap <silent> <LocalLeader>n    :cn<CR>
-nnoremap <silent> <LocalLeader>N    :cN<CR>
+nnoremap <silent> gn    :cn<CR>
+nnoremap <silent> gN    :cN<CR>
 
 
 nnoremap <silent> <C-Tab>       gt
@@ -1303,7 +1303,7 @@ let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\c\'
 " Align
 let Align_xstrlen    = 3       "マルチバイト
 let DrChipTopLvlMenu = ""
-command! -nargs=0 AlignReset call Align#AlignCtrl("default")
+command! -nargs=0 AlignReset call Align#AlignCtrl( "default" )
 cabbrev   al    Align
 
 " Chalice {{{
@@ -1408,8 +1408,9 @@ let s:vt_filetype_files = [
 let g:vt_filetype_files = join(s:vt_filetype_files, ',')
 unlet s:vt_filetype_files
 
-if isdirectory(expand("$HOME/.vim/template"))
-    let g:vt_files_using_template = substitute(expand("$HOME/.vim/template/*"), "\n", ",", "g")
+let g:vt_template_dir_path = "$HOME/.vim/template"
+if isdirectory(expand(g:vt_template_dir_path))
+    let g:vt_files_using_template = substitute(expand(g:vt_template_dir_path . "/*"), "\n", ",", "g")
 endif
 " }}}
 

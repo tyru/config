@@ -1,11 +1,4 @@
 
-### load global conf ###
-if [ -f "/etc/zshrc" ]; then
-    source "/etc/zshrc"
-fi
-
-
-
 bindkey -e
 
 
@@ -128,12 +121,6 @@ if [ "$OS" = 'Cygwin' ]; then
             command screen "$@"
         fi
     }
-fi
-
-
-# delete duplicated paths
-if [ -x "$(which perl)" ]; then
-    export PATH="$(perl -e 'for(split /:/, $ENV{PATH}){$h{$_} or $h{$_}=++$i} $,=q(:); %h=reverse %h; print map { $h{$_} } sort { $a <=> $b } keys %h')"
 fi
 
 

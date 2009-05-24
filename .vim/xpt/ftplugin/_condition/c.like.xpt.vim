@@ -7,7 +7,7 @@ let b:___CONDITION_C_LIKE_XPT_VIM__ = 1
 let [s:f, s:v] = XPTcontainer()
 
 " constant definition
-call extend(s:v, {'$TRUE': '1', '$FALSE' : '0', '$NULL' : 'NULL', '$INDENT_HELPER' : '/* void */;'}, 'keep')
+call extend(s:v, {'$TRUE': '1', '$FALSE' : '0', '$NULL' : 'NULL', '$INDENT_HELPER' : '/* void */;', '$BRACKETSTYLE' : ''}, 'keep')
 
 
 call XPTemplatePriority('like')
@@ -17,11 +17,12 @@ XPTemplateDef
 
 XPT if		hint=if\ (..)\ {..}\ else...
 XSET job=$INDENT_HELPER
-if (`condi^) `$BRACKETSTYLE^{ 
-  `job^
-}` 
-`else...`^\`$BRACKETSTYLE\^ else \`$BRACKETSTYLE\^{ 
-  \`cursor\^ 
+if (`cond^) {
+    `code^
+}``...^ else if (`cond2^) {
+    `body^
+}``...^``else...^ else {
+    \`body\^
 }^^
 
 

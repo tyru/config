@@ -36,12 +36,6 @@ subgraph `clusterName^
 }
 ..XPT
 
-XPT node hint=..\ [...]
-XSET shape=Choose(['box',  'polygon',  'ellipse',  'circle',  'point',  'egg',  'triangle',  'plaintext',  'diamond',  'trapezium',  'parallelogram',  'house',  'pentagon',  'hexagon',  'septagon',  'octagon',  'doublecircle',  'doubleoctagon',  'tripleoctagon',  'invtriangle',  'invtrapezium',  'invhouse',  'Mdiamond',  'Msquare',  'Mcircle',  'rect',  'rectangle',  'none',  'note',  'tab',  'folder',  'box3d',  'component'])
-`node^ `details...^[shape=\`shape\^, label="\`lbl\^"]^^
-
-..XPT
-
 XPT circle hint=..\[shape="circle"..]
 `node^ [shape=circle`label...^, label="\`lbl\^"^^]
 
@@ -69,6 +63,12 @@ XPT record hint=..\[shape="record",\ label=".."]
 
 XPT triangle hint=..\[shape="triangle",\ label=".."]
 `node^ [shape=triangle, label="`<`id`>^ `lbl^`...^| `<`id`>^ `lbl^`...^"]
+
+..XPT
+
+
+XPT node hint=..\[shape="triangle",\ label=".."]
+`node^ [shape=node, label="`<`id`>^ `lbl^`...^| `<`id`>^ `lbl^`...^"]
 
 ..XPT
 
