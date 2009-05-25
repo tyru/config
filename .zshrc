@@ -96,6 +96,19 @@ fi
 
 
 
+### function ###
+# via http://blog.s21g.com/articles/602
+function _git-svn () {
+    `git-svn --help \
+    | grep "^ \w" \
+    | sed "s/^ //" \
+    | sed "s/ .*//" \
+    | sed 's/^/ compadd /'`
+}
+
+compdef _git-svn git-svn 
+
+
 ### cygwin ###
 if [ "$OS" = 'Cygwin' ]; then
 
