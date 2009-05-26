@@ -36,3 +36,7 @@ XSET body=$INDENT_HELPER
 for (;;) `body^
 
 
+XPT foreach hint=for\ (..::iterator\ it\ =\ ..)
+for (`type^::iterator it = `orig^.begin(); it != `orig^.end(); ++it) `$BRACKETSTYLE^{
+    `cursor^
+}

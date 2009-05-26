@@ -245,7 +245,7 @@ noremap <Leader>ts      :toggle sb<CR>
 autocmd LocationChange .* :fmapc
 
 " add !
-autocmd LocationChange 'mail\.google\.com/mail' :fmap -depth 4 c / j k n p o u e x s r a # [ ] z ! ? gi gs gt gd ga gc
+autocmd LocationChange 'mail\.google\.com/mail' :fmap -depth 4 c / j k n p o u e x s r a # [ ] z ! ? gi gs gt gd ga gc gl <C-s>
 " add J K N P
 autocmd LocationChange 'www\.google\.co\.jp/reader' :fmap! -vkey j k J K n p N P m s t v A r S N P X O gh ga gs gt gu u / ?
 

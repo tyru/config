@@ -11,7 +11,7 @@ let [s:f, s:v] = XPTcontainer()
 XPTemplateDef
 
 XPT inc		hint=include\ <>
-#include <`^.h>
+#include <`^>
 
 
 XPT ind		hint=include\ ""

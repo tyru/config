@@ -22,6 +22,12 @@ call XPTemplatePriority('like')
 " ================================= Snippets ===================================
 XPTemplateDef
 
+XPT while hint=while\ (..)\ {\ ..\ }
+while (`^) `$BRACKETSTYLE^{
+    `cursor^
+}
+
+
 XPT while0 hint=do\ {\ ..\ }\ while\ ($FALSE)
 do `$BRACKETSTYLE^{
   `cursor^
