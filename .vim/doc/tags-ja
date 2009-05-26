@@ -5281,6 +5281,9 @@ fuzzyfinder-command-arg	fuzzyfinder.jax	/*fuzzyfinder-command-arg*
 fuzzyfinder-commands	fuzzyfinder.jax	/*fuzzyfinder-commands*
 fuzzyfinder-contact	fuzzyfinder.jax	/*fuzzyfinder-contact*
 fuzzyfinder-dot-sequence	fuzzyfinder.jax	/*fuzzyfinder-dot-sequence*
+fuzzyfinder-givencmd-mode	fuzzyfinder.jax	/*fuzzyfinder-givencmd-mode*
+fuzzyfinder-givendir-mode	fuzzyfinder.jax	/*fuzzyfinder-givendir-mode*
+fuzzyfinder-givenfile-mode	fuzzyfinder.jax	/*fuzzyfinder-givenfile-mode*
 fuzzyfinder-hiding-menu	fuzzyfinder.jax	/*fuzzyfinder-hiding-menu*
 fuzzyfinder-highlighting	fuzzyfinder.jax	/*fuzzyfinder-highlighting*
 fuzzyfinder-information-file	fuzzyfinder.jax	/*fuzzyfinder-information-file*

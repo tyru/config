@@ -289,6 +289,9 @@ fuzzyfinder-command-arg	fuzzyfinder.txt	/*fuzzyfinder-command-arg*
 fuzzyfinder-commands	fuzzyfinder.txt	/*fuzzyfinder-commands*
 fuzzyfinder-contact	fuzzyfinder.txt	/*fuzzyfinder-contact*
 fuzzyfinder-dot-sequence	fuzzyfinder.txt	/*fuzzyfinder-dot-sequence*
+fuzzyfinder-givencmd-mode	fuzzyfinder.txt	/*fuzzyfinder-givencmd-mode*
+fuzzyfinder-givendir-mode	fuzzyfinder.txt	/*fuzzyfinder-givendir-mode*
+fuzzyfinder-givenfile-mode	fuzzyfinder.txt	/*fuzzyfinder-givenfile-mode*
 fuzzyfinder-hiding-menu	fuzzyfinder.txt	/*fuzzyfinder-hiding-menu*
 fuzzyfinder-highlighting	fuzzyfinder.txt	/*fuzzyfinder-highlighting*
 fuzzyfinder-information-file	fuzzyfinder.txt	/*fuzzyfinder-information-file*
