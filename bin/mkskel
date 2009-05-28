@@ -1,0 +1,14 @@
+#!/bin/sh
+
+function usage () {
+    echo <<EOF
+    Usage: mkskel dirname   # will copy ~/.skel/dirname to current dir
+EOF
+}
+
+
+if [ $# != 1 -o !-d "~/.skel/$1" ]; then
+    usage
+fi
+
+command cp "~/.skel/$1" .

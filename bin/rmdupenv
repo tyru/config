@@ -1,0 +1,15 @@
+#! /bin/sh
+
+if [ $# = 0 ]; then return; fi
+env="$1"
+sep="$2"
+
+eval "export $env=$(perl -e 'my ($e, $s) = (shift, shift || q(:)); #\
+                        for(split $s, $ENV{$e}) { #\
+                            $h{$_} or $h{$_}=++$i #\
+                        } #\
+                        $,=$s; #\
+                        %h=reverse %h; #\
+                        print map { $h{$_} } #\
+                                sort { $a <=> $b } keys %h' \
+                    $env $sep)"

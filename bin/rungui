@@ -1,0 +1,3 @@
+#!/bin/sh
+
+command "$@" >/dev/null 2>/dev/null &

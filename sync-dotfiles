@@ -48,7 +48,7 @@ function install_dotfiles() {
 
     if [ ! -e "$dest" ]; then
         echo "$src -> $dest"
-        cp -R "$src" "$dest"
+        cp -LR "$src" "$dest"
     fi
     if [ "$OS" = "Cygwin" ]; then
         chown -R "$user" "$dest"
