@@ -4,13 +4,17 @@ scriptencoding utf-8
 " DOCUMENT {{{1
 "==================================================
 " Name: vimtemplate
-" Version: 0.0.1
+" Version: 0.0.2
 " Author:  tyru <tyru.exe+vim@gmail.com>
-" Last Change: 木  5月 28 06:00 午後 2009 J
+" Last Change: 2009-05-28.
 "
 " Change Log: {{{2
 "   0.0.0: Initial upload.
 "   0.0.1: implement g:vt_files_using_template and its template syntax.
+"   0.0.2: fix bug that vimtemplate won't inline
+"   and delete g:vt_support_command and g:vt_support_mapping.
+"   not to define/map command/mapping.
+"   let g:vt_command/g:vt_mapping be empty.
 " }}}2
 "
 " Usage: {{{2
@@ -33,14 +37,8 @@ scriptencoding utf-8
 "           see TEMPLATE SYNTAX.
 "           e.g.: "java_template.java,cpp_template.cpp"
 "
-"       g:vt_support_command (default:1)
-"           make command if this is true.
-"
 "       g:vt_command (default:"VimTemplate")
 "           command name.
-"
-"       g:vt_support_mapping (default:1)
-"           make mapping if this is true.
 "
 "       g:vt_mapping (default:"gt")
 "           mapping.
@@ -107,14 +105,8 @@ endif
 if !exists('g:vt_files_using_template')
     let g:vt_files_using_template = ""
 endif
-if !exists('g:vt_support_command')
-    let g:vt_support_command = 1
-endif
 if !exists('g:vt_command')
     let g:vt_command = 'VimTemplate'
-endif
-if !exists('g:vt_support_mapping')
-    let g:vt_support_mapping = 1
 endif
 if !exists('g:vt_mapping')
     let g:vt_mapping = 'gt'
@@ -314,13 +306,13 @@ endfunc
 " }}}1
 
 " COMMAND {{{1
-if g:vt_support_command
+if g:vt_command != ''
     execute 'command! ' . g:vt_command . ' call <SID>show_files_list()'
 endif
 " }}}1
 
 " MAPPING {{{1
-if g:vt_support_mapping
+if g:vt_mapping != ''
     execute 'nnoremap <silent><unique> ' . g:vt_mapping
                 \ . ' :call <SID>show_files_list()<CR>'
 endif
