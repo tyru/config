@@ -1,10 +1,4 @@
 
-
-### load global conf ###
-if [ -f "/etc/bashrc" ]; then
-    source "/etc/bashrc"
-fi
-
 # root should use /bin/bash
 if [ $UID != 0 -a -x "$(which zsh)" ]; then
     exec zsh
@@ -19,14 +13,6 @@ shopt -s cdspell
 
 
 ### alias ###
-if [ -x "$(which vim)" ]; then
-    if [ -x "/usr/local/bin/vim" ]; then
-        alias vi=/usr/local/bin/vim
-    else
-        alias vi=vim
-    fi
-fi
-
 alias df='df -h'
 alias du='du -h'
 alias less='less -r'
@@ -44,34 +30,13 @@ else
 fi
 
 if [ -x "$(which vim)" ]; then
-    if [ -x "/usr/local/bin/vim" ]; then
-        alias vi=/usr/local/bin/vim
-    else
-        alias vi=vim
-    fi
+    alias vi=vim
 fi
 
 
 
 ### cygwin ###
 if [ "$OS" = 'Cygwin' ]; then
-
-    function explorer() {
-        local path
-        if [ $# = 0 ]; then
-            path="."
-        else
-            path="$1"
-        fi
-        /cygdrive/c/WINDOWS/explorer.exe \
-            "$(/usr/bin/cygpath.exe -w -a $path)"
-    }
-    function cmd() {
-        if [ $# != 0 ]; then
-            /cygdrive/c/WINDOWS/system32/cmd.exe /c \
-                "$(/usr/bin/cygpath.exe -w -a $*)"
-        fi
-    }
     function wwhich() {
         if [ $# != 0 ]; then
             cygpath -w -a $(which $1)

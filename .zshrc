@@ -63,11 +63,7 @@ unsetopt promptcr
 
 ### alias ###
 if [ -x "$(which vim)" ]; then
-    if [ -x "/usr/local/bin/vim" ]; then
-        alias vi=/usr/local/bin/vim
-    else
-        alias vi=vim
-    fi
+    alias vi=vim
 fi
 
 alias df='df -h'
@@ -84,14 +80,6 @@ if [ "$OS" = "Cygwin" ]; then
     alias ls='ls --color=tty --show-control-chars'
 else
     alias ls='ls --color=tty'
-fi
-
-if [ -x "$(which vim)" ]; then
-    if [ -x "/usr/local/bin/vim" ]; then
-        alias vi=/usr/local/bin/vim
-    else
-        alias vi=vim
-    fi
 fi
 
 
@@ -112,12 +100,6 @@ compdef _git-svn git-svn
 ### cygwin ###
 if [ "$OS" = 'Cygwin' ]; then
 
-    function cmd() {
-        if [ $# != 0 ]; then
-            /cygdrive/c/WINDOWS/system32/cmd.exe /c \
-                "$(/usr/bin/cygpath.exe -w -a $*)"
-        fi
-    }
     function wwhich() {
         if [ $# != 0 ]; then
             cygpath -w -a $(which $1)
@@ -135,7 +117,6 @@ if [ "$OS" = 'Cygwin' ]; then
         fi
     }
 fi
-
 
 
 ### load local conf ###

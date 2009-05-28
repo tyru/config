@@ -29,10 +29,8 @@ export PATH="$HOME/local/bin:$PATH"
 export PERL5LIB="$HOME/local/lib/perl5:$HOME/local/lib/perl5/site_perl"
 export GISTY_DIR="$HOME/work/gist"
 
-if [ -x "/usr/local/bin/vim" ]; then
-    export EDITOR="/usr/etc/local/bin/vim"
-elif [ -x "/usr/bin/vim" ]; then
-    export EDITOR="/usr/bin/vim"
+if [ -x "$(which vim)" ]; then
+    export EDITOR="$(which vim)"
 elif [ -x "$(which vi)" ]; then
     export EDITOR="$(which vi)"
 fi

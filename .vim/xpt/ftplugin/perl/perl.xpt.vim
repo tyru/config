@@ -10,8 +10,7 @@ XPTvar $BODY    # some code here ...
 " inclusion
 XPTinclude
       \ _common/common
-      \ _condition/perl.like
-
+      \ _condition/perl.like 
 " ========================= Function and Varaibles =============================
 
 " ================================= Snippets ===================================
@@ -20,39 +19,39 @@ XPTinclude
 XPTemplateDef
 
 XPT xif hint=..\ if\ ..;
-`expr^ if `cond^;
+`expr^ if `cursor^;
 
 
 XPT xwhile hint=..\ while\ ..;
-`expr^ while `cond^;
+`expr^ while `cursor^;
 
 
 XPT xunless hint=..\ unless\ ..;
-`expr^ unless `cond^;
+`expr^ unless `cursor^;
 
 
 XPT xforeach hint=..\ foreach\ ..;
-`expr^ foreach @`array^;
+`expr^ foreach @`cursor^;
 
 
 XPT sub hint=sub\ ..\ {\ ..\ }
 XSET body=$BODY
 sub `fun_name^ {
-    `body^
+    `cursor^
 }
 
 
 XPT while hint=while\ (\ ..\ )\ {\ ..\ }
 XSET body=$BODY
 while (`cond^) {
-    `body^
+    `cursor^
 }
 
 
 XPT unless hint=unless\ (\ ..\ )\ {\ ..\ }
 XSET body=$BODY
 unless (`cond^) {
-    `body^
+    `cursor^
 }
 
 
@@ -61,21 +60,21 @@ eval {
     `risky^
 };
 if ($@) {
-    `handle^
+    `cursor^
 }
 
 
 XPT for hint=for\ (my\ ..;..;++)
 XSET body=$BODY
 for (my $`var^ = 0; $`var^ < `count^; $`var^++) {
-    `body^
+    `cursor^
 }
 
 
 XPT foreach hint=foreach\ my\ ..\ (..){}
 XSET body=$BODY
 foreach my $`var^ (@`array^) {
-    `body^
+    `cursor^
 }
 
 
