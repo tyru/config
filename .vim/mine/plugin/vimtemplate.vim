@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: vimtemplate
 " Version: 0.0.1
 " Author:  tyru <tyru.exe+vim@gmail.com>
-" Last Change: 2009-04-28.
+" Last Change: 木  5月 28 06:00 午後 2009 J
 "
 " Change Log: {{{2
 "   0.0.0: Initial upload.
@@ -166,11 +166,12 @@ func! s:apply_template(text, path)
     let text = a:text
     let path = expand('%') == '' ? a:path : expand('%')
     let vsp_regex = '\m<%\s*\(eval:\)\=\s*\(.*\)\s*%>'
-    
-    let i = 0
+    let [i, len] = [0, len(text)]
 
-    while i < len(text)
+    while i < len
         let lis = matchlist(text[i], vsp_regex)
+        call filter(lis, 'v:val != ""')
+
         if !empty(lis)
             let replaced = ''
 
@@ -200,10 +201,9 @@ endfunc
 
 " s:paste_into_main_buffer(template_path) {{{2
 func! s:paste_into_main_buffer(template_path)
-    let template_fname = fnamemodify(a:template_path, ':t')
     let will_apply_template = 0
     for i in split(g:vt_files_using_template, ',')
-        if i == template_fname
+        if i ==# a:template_path
             let will_apply_template = 1
             break
         endif
