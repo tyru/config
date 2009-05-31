@@ -1364,7 +1364,6 @@ let g:xptemplate_key = '<C-k>'
 let g:loaded_dictionarize_buffer = 1
 
 " shell-mode
-let loaded_shell_mode = 1
 
 " CommentAnyWay {{{
 let g:ca_prefix  = maplocalleader . 'c'
