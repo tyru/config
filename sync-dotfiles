@@ -3,7 +3,7 @@
 OS=$(uname -o)
 CMDNAME=$(basename $0)
 CWD=$(cd $(dirname $0) && pwd)
-FILES="bin .vim .vimrc .gvimrc .vimperator .vimperatorrc .bash_profile .bashrc .screenrc .inputrc .zshrc .zshenv .skel"
+FILES="bin .vim .vimrc .gvimrc .vimperator .vimperatorrc .bash_profile .bashrc .screenrc .inputrc .zshrc .zshenv .zsh .skel"
 INFO_FILES=".vim/backup .vim/.vimbackup_deleted .vim/chalice/cache .vim/chalice/*.bmk .vimperator/info"
 GITHUB_USER=$(cd $CWD && git config github.user)
 
@@ -34,13 +34,10 @@ function install_dotfiles() {
         warn "$src: No such a file"
         return
     fi
+    command rm -rf $dest
 
     echo "$src -> $dest"
-    if [ -d "$src" ]; then
-        rsync -aL --delete $src/ $dest
-    else
-        rsync -aL --delete $src $dest
-    fi
+    command cp -RL  $src $dest
 
     if [ "$OS" = "Cygwin" ]; then
         chown -R "$user" "$dest"

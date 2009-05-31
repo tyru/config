@@ -1,16 +1,10 @@
 
-if [ -f "/etc/zshenv" ]; then
-    source "/etc/zshenv"
-fi
-
 export HISTFILE=~/.zsh_history
 export HISTSIZE=1000
 export SAVESIZE=1000
 export LISTMAX=0
-if [ -x "/usr/local/bin/vim" ]; then
-    export EDITOR="/usr/local/bin/vim"
-elif [ -x "/usr/bin/vim" ]; then
-    export EDITOR="/usr/bin/vim"
+if [ -x "$(which vim)" ]; then
+    export EDITOR="$(which vim)"
 elif [ -x "$(which vi)" ]; then
     export EDITOR="$(which vi)"
 fi
