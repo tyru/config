@@ -8,16 +8,6 @@ INFO_FILES=".vim/backup .vim/.vimbackup_deleted .vim/chalice/cache .vim/chalice/
 GITHUB_USER=$(cd $CWD && git config github.user)
 
 # don't adapt alias.
-function rm() {
-    command rm "$@"
-}
-function cp() {
-    command cp "$@"
-}
-function mkdir() {
-    command mkdir "$@"
-}
-
 function usage() {
     cat <<EOF
     Usage: $CMDNAME [-cpxh] [-u user]
@@ -44,12 +34,14 @@ function install_dotfiles() {
         warn "$src: No such a file"
         return
     fi
-    rm -rf "$dest"
 
-    if [ ! -e "$dest" ]; then
-        echo "$src -> $dest"
-        cp -LR "$src" "$dest"
+    echo "$src -> $dest"
+    if [ -d "$src" ]; then
+        rsync -aL --delete $src/ $dest
+    else
+        rsync -aL --delete $src $dest
     fi
+
     if [ "$OS" = "Cygwin" ]; then
         chown -R "$user" "$dest"
     else
@@ -133,7 +125,7 @@ done
 
 # delete info files.
 if [ "$FLAG_EXTRACT" != "true" ]; then
-    rm -rf $INFO_FILES
+    command rm -rf $INFO_FILES
 fi
 
 
