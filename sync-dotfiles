@@ -3,7 +3,7 @@
 OS=$(uname -o)
 CMDNAME=$(basename $0)
 CWD=$(cd $(dirname $0) && pwd)
-FILES=".vim .vimrc .gvimrc .vimperator .vimperatorrc .bash_profile .bashrc .screenrc .inputrc .zshrc .zshenv bin"
+FILES="bin .vim .vimrc .gvimrc .vimperator .vimperatorrc .bash_profile .bashrc .screenrc .inputrc .zshrc .zshenv .skel"
 INFO_FILES=".vim/backup .vim/.vimbackup_deleted .vim/chalice/cache .vim/chalice/*.bmk .vimperator/info"
 GITHUB_USER=$(cd $CWD && git config github.user)
 

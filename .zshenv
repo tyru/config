@@ -1,4 +1,8 @@
 
+if [ -f "/etc/zshenv" ]; then
+    source "/etc/zshenv"
+fi
+
 export HISTFILE=~/.zsh_history
 export HISTSIZE=1000
 export SAVESIZE=1000
@@ -10,8 +14,18 @@ elif [ -x "/usr/bin/vim" ]; then
 elif [ -x "$(which vi)" ]; then
     export EDITOR="$(which vi)"
 fi
-
+export LESS="--LONG-PROMPT --RAW-CONTROL-CHARS --quit-if-one-screen"
 export PATH=${HOME}/bin:${PATH}
+
+# for cygwin
+OS=$(uname -o)
+if [ "$OS" = "Cygwin" ]; then
+    export LESS="$LESS --dumb"
+    export TERM=cygwin
+    export CFLAGS="-I/usr/local/include -I/usr/include"
+
+    export LANG=ja_JP.SJIS
+fi
 
 
 # local::lib
@@ -24,16 +38,6 @@ export LD_LIBRARY_PATH="$HOME/local/lib"
 mkdir -p ~/local/var/db/pkg
 
 export GISTY_DIR="$HOME/work/gist"
-
-# for cygwin
-OS=$(uname -o)
-if [ "$OS" = "Cygwin" ]; then
-    export LESS=MrXEd
-    export TERM=cygwin
-    export CFLAGS="-I/usr/local/include -I/usr/include"
-
-    export LANG=ja_JP.SJIS
-fi
 
 
 # delete duplicated paths

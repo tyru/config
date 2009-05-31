@@ -1,11 +1,11 @@
 
 # source the system wide bashrc if it exists
-if [ -e /etc/bashrc ] ; then
-  source /etc/bashrc
+if [ -f "/etc/bashrc" ] ; then
+  source "/etc/bashrc"
 fi
 
 # source the users bashrc if it exists
-if [ -e "${HOME}/.bashrc" ] ; then
+if [ -f "${HOME}/.bashrc" ] ; then
   source "${HOME}/.bashrc"
 fi
 
