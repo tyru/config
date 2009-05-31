@@ -5,8 +5,8 @@ scriptencoding utf-8
 "==================================================
 " Name: DictionarizeBuffer
 " Version: 0.0.0
-" Author:  tyru <tyru.exe+vim@gmail.com>
-" Last Change: 2009-04-09.
+" Author:  tyru <tyru.exe@gmail.com>
+" Last Change: 2009-05-31.
 "
 " Usage: this is setting up your 'dictionary' option automatically.
 "

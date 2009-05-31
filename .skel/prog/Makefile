@@ -1,7 +1,7 @@
+.PHONY: all depend clean
 
 CC       = g++
-INCLUDES = 
-DEBUG    =
+INCLUDES = -g
 CFLAGS   = $(INCLUDES) -Wall -Wsign-compare
 LIBS     = 
 
@@ -15,14 +15,17 @@ all: $(EXE)
 
 # link
 $(EXE): $(OBJS)
-	$(CC) $(DEBUG) -o $(EXE) $(OBJS) $(LIBS)
+	$(CC) $(LIBS) -o $(EXE) $(OBJS) $(LIBS)
 
 # compile
 .cpp.o:
-	$(CC) $(DEBUG) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 depend:
 	\makedepend -- $(CFLAGS) -- $(CPP)
 
 clean:
 	\rm -f $(OBJS) $(EXE)
+# DO NOT DELETE
+
+main.o: main.h

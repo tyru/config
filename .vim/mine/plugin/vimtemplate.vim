@@ -55,12 +55,6 @@ scriptencoding utf-8
 "       g:vt_email
 "           expand <%email%> to this value.
 "
-"       g:vt_find_filetype (default:0)
-"           if true, find template's filetype.
-"           useful but slow because this plugin finds filetype
-"           by setlocal filetype after exec :silent e <template file>.
-"           of course its opened buffer is deleted instantly.
-"
 "   TEMPLATE SYNTAX:
 "       please open the list buffer
 "       after naming current buffer by
@@ -137,9 +131,6 @@ endif
 if !exists('g:vt_email')
     let g:vt_email = ''
 endif
-if !exists('g:vt_find_filetype')
-    let g:vt_find_filetype = 0
-endif
 " }}}1
 
 " FUNCTION DEFINITION {{{1
@@ -163,22 +154,16 @@ endfunc
 
 " s:get_filetype_of(path) {{{2
 func! s:get_filetype_of(path)
-    if g:vt_find_filetype
-        silent! split a:path
-        let filetype = &filetype
-        bwipeout
-        echoerr a:path
-        return filetype
-    else
-        for pair in split(g:vt_filetype_files, ',')
-            let [fname; filetype] = split(pair, '=')
-            if ! empty(filetype) && fnamemodify(a:path, ':t') ==# fname
-                return filetype[0]
-            endif
-        endfor
+    for pair in split(g:vt_filetype_files, ',')
+        let [fname; filetype] = split(pair, '=')
+        if empty(filetype) | continue | endif
 
-        return ''
-    endif
+        if get(split(a:path, '/'), -1, 123) ==# fname
+            return filetype[0]
+        endif
+    endfor
+
+    return ''
 endfunc
 " }}}2
 
@@ -296,7 +281,9 @@ func! s:open_file()
     call s:multi_setline(text)
 
     let ftype = s:get_filetype_of(template_path)
-    execute 'setlocal ft=' . ftype
+    if ftype != ''
+        execute 'setlocal ft=' . ftype
+    endif
 endfunc
 " }}}2
 

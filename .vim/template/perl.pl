@@ -3,18 +3,22 @@ use strict;
 use warnings;
 use utf8;
 
-use Getopt::Long qw(:config auto_help gnu_compat);
+use Getopt::Long;
 use Perl6::Say;
 use Pod::Usage;
 
 ### sub ###
+sub usage () {
+    pod2usage(-verbose => 2);
+}
 
 
 ### main ###
-
+my ($needhelp);
 GetOptions(
-    # some options here ...
-) or pod2usage(-verbose => 2);
+    'help' => \$needhelp,
+) or usage;
+usage   if $needhelp;
 
 
 

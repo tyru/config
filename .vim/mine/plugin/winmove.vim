@@ -5,8 +5,8 @@ scriptencoding utf-8
 "==================================================
 " Name: WinMove
 " Version: 0.0.1
-" Author:  tyru <tyru.exe+vim@gmail.com>
-" Last Change: 2009-04-09.
+" Author:  tyru <tyru.exe@gmail.com>
+" Last Change: 2009-05-31.
 "
 " Change Log: {{{2
 "   1.0.0: Initial upload.
