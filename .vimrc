@@ -1392,7 +1392,11 @@ let nf_loop_files = 1
 " }}}
 
 " vimtemplate {{{
-let s:vt_filetype_files = [
+let g:vt_command = ''
+let g:vt_author = "tyru"
+let g:vt_email = "tyru.exe@gmail.com"
+
+let s:tmp = [
     \ 'cppsrc.cpp=cpp',
     \ 'header.h=cpp',
     \ 'csrc.c=c',
@@ -1405,13 +1409,8 @@ let s:vt_filetype_files = [
     \ 'scala.scala=scala',
     \ 'vimscript.vim=vim'
 \ ]
-let g:vt_filetype_files = join(s:vt_filetype_files, ',')
-unlet s:vt_filetype_files
-
-let g:vt_template_dir_path = "$HOME/.vim/template"
-if isdirectory(expand(g:vt_template_dir_path))
-    let g:vt_files_using_template = substitute(expand(g:vt_template_dir_path . "/*"), "\n", ",", "g")
-endif
+let g:vt_filetype_files = join(s:tmp, ',')
+unlet s:tmp    " for memory
 " }}}
 
 " winmove {{{

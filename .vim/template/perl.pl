@@ -32,3 +32,6 @@ __END__
 =head1 OPTIONS
 
 
+=head1 AUTHOR
+
+tyru <<%email%>>
