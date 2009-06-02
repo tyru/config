@@ -604,8 +604,7 @@ endfunc
 
 " FastEdit {{{2
 "   遅いときは役に立つかも
-command! FastEdit
-    \ call s:FastEdit() 
+nnoremap <LocalLeader>fe        :call <SID>FastEdit()<CR>
 
 let s:fast_editing = 0
 func! s:FastEdit()
@@ -613,7 +612,7 @@ func! s:FastEdit()
 
     if s:fast_editing
         " autocomplpop
-        if exists( ':AutoComplPopUnLock' )
+        if exists(':AutoComplPopUnLock')
             AutoComplPopUnLock
         endif
         " let &statusline = g:toggle_statusline[1]
@@ -625,7 +624,7 @@ func! s:FastEdit()
         echo 'slow but high ability.'
     else
         " autocomplpop
-        if exists( ':AutoComplPopLock' )
+        if exists(':AutoComplPopLock')
             AutoComplPopLock
         endif
         " let &statusline = g:toggle_statusline[0]
@@ -975,34 +974,8 @@ endfunc
 augroup RunAfterVimEnter
     autocmd!
 
-    autocmd VimEnter *  call s:RegistMap()
+    " autocmd VimEnter *  call s:RegistMap()
 augroup END
-
-
-" Vim起動後に呼ばれないと正しく動かないもの
-" (プラグインのコマンドが存在している必要がある場合など)
-func! s:RegistMap()
-
-    " autocomplpop
-    if exists(':AutoComplPopLock')
-        let s:autocomplpop_enabled = 0
-
-        func! s:ToggleAutoComplPop()
-            if s:autocomplpop_enabled
-                :AutoComplPopLock
-                let s:autocomplpop_enabled = 0
-                echo 'disabled.'
-            else
-                :AutoComplPopUnLock
-                let s:autocomplpop_enabled = 1
-                echo 'enabled.'
-            endif
-        endfunc
-
-        nnoremap <silent> <LocalLeader>ta   :call <SID>ToggleAutoComplPop()<CR>
-    endif
-
-endfunc
 
 
 " ~~ map ~~ {{{2
@@ -1224,7 +1197,7 @@ cabbrev   h@     tab help
 "-----------------------------------------------------------------
 " For Plugins {{{1
 
-" Many Helpful Plugins {{{2
+" プラグイン {{{2
 
 " dicwin
 let plugin_dicwin_disable = 1
@@ -1343,7 +1316,7 @@ let changelog_username = "tyru"
 
 " autocomplpop
 inoremap <expr> <CR> pumvisible() ? "\<C-Y>\<CR>" : "\<CR>"
-let g:AutoComplPop_MappingDriven = 1
+let AutoComplPop_IgnoreCaseOption = 0
 
 " Narrow
 nnoremap <silent>   <LocalLeader>na     :Narrow<CR>
@@ -1358,7 +1331,7 @@ let g:xptemplate_key = '<C-k>'
 
 " }}}2
 
-" My Plugins {{{2
+" 自分の {{{2
 
 " DictionarizeBuffer
 let g:loaded_dictionarize_buffer = 1

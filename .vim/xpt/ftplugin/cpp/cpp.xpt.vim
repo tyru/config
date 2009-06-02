@@ -62,23 +62,21 @@ XPT fun=..\ ..\ (..)
 XPT class   hint=class+ctor
 class `className^ {
 public:
-    `className^( `ctorParam^ );
-    ~`className^();
-    `className^( const `className^ &cpy );
+    `className^(`ctorParam^) {
+    }
+    `className^(const `className^& cpy) {
+        `copy_code^
+    }
+    `className^&
+    operator=(const `className^& cpy) {
+        `copy_code^
+        return *this;
+    }
+    virtual ~`className^() {
+    }
+
     `cursor^
-private:
 };
- 
-// Scratch implementation
-// feel free to copy/paste or destroy
-`className^::`className^( `ctorParam^ ) {
-}
- 
-`className^::~`className^() {
-}
- 
-`className^::`className^( const `className^ &cpy ) {
-}
 
 
 XPT templateclass   hint=template\ <>\ class
