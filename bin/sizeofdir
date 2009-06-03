@@ -1,4 +1,4 @@
 #!/bin/sh
 
-command du $1 | \
+command du -b $1 | \
     perl -le 'while (<>) { $total += (split /\s/)[0] } print $total'
