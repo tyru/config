@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: vimtemplate
 " Version: 0.0.4
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-05-31.
+" Last Change: 2009-06-02.
 "
 " Change Log: {{{2
 "   0.0.0: Initial upload.
@@ -93,6 +93,10 @@ scriptencoding utf-8
 "       <%email%>
 "           same as <% eval: g:vt_email %>.
 "
+" }}}2
+"
+" TODO: {{{2
+"   implement auto loading file(autocmd)
 " }}}2
 "==================================================
 " }}}1

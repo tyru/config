@@ -10,6 +10,8 @@ fi
 shopt -s nocaseglob
 shopt -s cdspell
 
+set bell-style visible
+xset -b
 
 
 ### alias ###

@@ -6,7 +6,7 @@ CFLAGS   = $(INCLUDES) -Wall -Wsign-compare
 LIBS     = 
 
 EXE      = 
-CPP      = main.cpp
+CPP      = Main.cpp
 OBJS     = $(CPP:.cpp=.o)
 
 
@@ -21,11 +21,10 @@ $(EXE): $(OBJS)
 .cpp.o:
 	$(CC) $(CFLAGS) -c $< -o $@
 
+# depend
 depend:
 	\makedepend -- $(CFLAGS) -- $(CPP)
 
+# clean
 clean:
 	\rm -f $(OBJS) $(EXE)
-# DO NOT DELETE
-
-main.o: main.h

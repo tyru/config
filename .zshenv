@@ -33,9 +33,6 @@ mkdir -p ~/local/var/db/pkg
 
 export GISTY_DIR="$HOME/work/gist"
 
-# scala
-export PATH="$PATH:/usr/local/scala-2.7.4.final/bin"
-
 
 # delete duplicated paths
 if [ -x "$(which perl)" ]; then

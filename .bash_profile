@@ -41,5 +41,7 @@ export INSTALL_AS_USER
 export LD_LIBRARY_PATH="$HOME/local/lib"
 mkdir -p ~/local/var/db/pkg
 
-# scala
-export PATH="$PATH:/usr/local/scala-2.7.4.final/bin"
+
+if [ -f "$HOME/.bash_profile.local" ]; then
+    source"$HOME/.bash_profile.local"
+fi

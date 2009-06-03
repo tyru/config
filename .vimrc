@@ -854,14 +854,14 @@ func! s:LoadWhenFileType()
         call s:SetDict('html', 'javascript', 'css')
 
     elseif &filetype == 'java'
-        TabChange 4
+        TabChange 2
         " for javadoc
         setlocal iskeyword+=@-@
         compiler javac
         setlocal makeprg=javac\ %
 
     elseif &filetype == 'scala'
-        TabChange 4
+        TabChange 2
         " for javadoc
         setlocal iskeyword+=@-@
         setlocal includeexpr=substitute(v:fname,'\\.','/','g')

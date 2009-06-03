@@ -57,6 +57,7 @@ while getopts u:cpxh OPT; do
         "c" ) FLAG_COMMIT="true" ;;
         "p" ) FLAG_PUSH="true" ;;
         "x" ) FLAG_EXTRACT="true" ;;
+        "C" ) FLAG_COMPRESS="true" ;;
         *   ) usage ;;
     esac
 done
@@ -130,6 +131,9 @@ fi
 if [ "$FLAG_COMMIT" = "true" ]; then
     git add .
     git commit -a
+fi
+
+if [ "$FLAG_COMPRESS" = "true" ]; then
     git gc
 fi
 

@@ -68,3 +68,5 @@ set output-meta on
   # a history expansion in the line
   #Space: magic-space
 #$endif
+
+set prefer-visible-bell

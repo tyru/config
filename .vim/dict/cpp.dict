@@ -59,6 +59,7 @@ flags
 flip
 flush
 for_each
+friend
 front
 front_insert_iterator
 front_inserter
