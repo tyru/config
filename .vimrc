@@ -1223,8 +1223,8 @@ nnoremap <silent> <LocalLeader>fd       :FuzzyFinderDir<CR>
 nnoremap <silent> <LocalLeader>ff       :FuzzyFinderFile<CR>
 nnoremap <silent> <LocalLeader>fh       :FuzzyFinderMruFile<CR>
 
-let g:FuzzyFinderOptions = { 'Base':{}, 'Buffer':{}, 'File':{}, 'Dir':{}, 'MruFile':{}, 'MruCmd':{}, 'Tag':{}, 'TaggedFile':{}}
 
+let g:FuzzyFinderOptions = { 'Base':{}, 'Buffer':{}, 'File':{}, 'MruFile':{}, 'Dir':{}, 'Tag':{}, 'TaggedFile':{}}
 " let g:FuzzyFinderOptions.Base.migemo_support   = 1    " よくSEGVる
 let g:FuzzyFinderOptions.Base.key_open_tab     = '<C-CR>'
 let g:FuzzyFinderOptions.Base.key_next_mode    = '<C-l>'

@@ -9,11 +9,6 @@ if [ -f "${HOME}/.bashrc" ] ; then
   source "${HOME}/.bashrc"
 fi
 
-# Set PATH so it includes user's private bin if it exists
-if [ -d "${HOME}/bin" ] ; then
-  PATH=${HOME}/bin:${PATH}
-fi
-
 # for cygwin
 OS=$(uname -o)
 if [ "$OS" = "Cygwin" ]; then
@@ -25,7 +20,6 @@ if [ "$OS" = "Cygwin" ]; then
 fi
 
 export PS1="{\@} \u@\H being in [\W]\n \\$ "
-export PATH="$HOME/local/bin:$PATH"
 export PERL5LIB="$HOME/local/lib/perl5:$HOME/local/lib/perl5/site_perl"
 export GISTY_DIR="$HOME/work/gist"
 
@@ -41,7 +35,9 @@ export INSTALL_AS_USER
 export LD_LIBRARY_PATH="$HOME/local/lib"
 mkdir -p ~/local/var/db/pkg
 
+export PATH="$HOME/bin:$HOME/local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+rmdupenv PATH
 
 if [ -f "$HOME/.bash_profile.local" ]; then
-    source"$HOME/.bash_profile.local"
+    source "$HOME/.bash_profile.local"
 fi

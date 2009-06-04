@@ -1,5 +1,4 @@
 
-xset -b
 # root should use /bin/bash
 if [ $UID != 0 -a -x "$(which zsh)" ]; then
     exec zsh

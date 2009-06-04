@@ -1,7 +1,7 @@
 
 export HISTFILE=~/.zsh_history
-export HISTSIZE=1000
-export SAVESIZE=1000
+export HISTSIZE=10000
+export SAVESIZE=10000
 export LISTMAX=0
 if [ -x "$(which vim)" ]; then
     export EDITOR="$(which vim)"
@@ -9,7 +9,6 @@ elif [ -x "$(which vi)" ]; then
     export EDITOR="$(which vi)"
 fi
 export LESS="--LONG-PROMPT --RAW-CONTROL-CHARS --quit-if-one-screen"
-export PATH=${HOME}/bin:${PATH}
 
 # for cygwin
 OS=$(uname -o)
@@ -23,7 +22,6 @@ fi
 
 
 # local::lib
-export PATH="$HOME/local/bin:$PATH"
 export PERL5LIB="$HOME/local/lib/perl5:$HOME/local/lib/perl5/site_perl:$PERL5LIB"
 export PKG_DBDIR="$HOME/local/var/db/pkg"
 export PORT_DBDIR="$HOME/local/var/db/pkg"
@@ -36,24 +34,7 @@ export GISTY_DIR="$HOME/work/gist"
 
 # delete duplicated paths
 if [ -x "$(which perl)" ]; then
-
-    function rmdupenv() {
-        if [ $# = 0 ]; then return; fi
-        local env="$1"
-        local sep="$2"
-
-        eval "export $env=$(perl -e 'my ($e, $s) = (shift, shift || q(:)); #\
-                                for(split $s, $ENV{$e}) { #\
-                                    $h{$_} or $h{$_}=++$i #\
-                                } #\
-                                $,=$s; #\
-                                %h=reverse %h; #\
-                                print map { $h{$_} } #\
-                                      sort { $a <=> $b } keys %h' \
-                            $env $sep)"
-    }
-
-    export PATH="/bin:/usr/bin:$PATH"
+    export PATH="$HOME/bin:$HOME/local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
     rmdupenv PATH
     rmdupenv PERL5LIB
 fi
