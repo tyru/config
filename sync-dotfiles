@@ -129,15 +129,16 @@ fi
 
 # commit all.
 if [ "$FLAG_COMMIT" = "true" ]; then
-    git add .
-    git commit -a
+    command git rm -fr --cached .
+    command git add .
+    command git commit
 fi
 
 if [ "$FLAG_COMPRESS" = "true" ]; then
-    git gc
+    command git gc
 fi
 
 # push to github server.
 if [ "$FLAG_PUSH" = "true" ]; then
-    git push origin master
+    command git push origin master
 fi

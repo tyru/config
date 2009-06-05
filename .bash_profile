@@ -36,7 +36,9 @@ export LD_LIBRARY_PATH="$HOME/local/lib"
 mkdir -p ~/local/var/db/pkg
 
 export PATH="$HOME/bin:$HOME/local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
-rmdupenv PATH
+if [ "$OS" != "Cygwin" ]; then
+    rmdupenv PATH
+fi
 
 if [ -f "$HOME/.bash_profile.local" ]; then
     source "$HOME/.bash_profile.local"

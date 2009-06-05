@@ -103,9 +103,9 @@ let mapleader = ','
 let maplocalleader = ';'
 
 
-set statusline=%f%m%r%h%w\ [%{&fenc}][%{&ff}]\ [%p%%][%l/%L]\ [%{StatusLine('%:p:h',20)}]
+set statusline=%f%m%r%h%w\ [%{&fenc}][%{&ff}]\ [%p%%][%l/%L]\ [%{ShrinkPath('%:p:h',20)}]
 
-func! StatusLine( path, maxwidth )
+func! ShrinkPath( path, maxwidth )
     let path = expand( a:path )
 
     " split current directory into 'dirs'.
@@ -611,11 +611,6 @@ func! s:FastEdit()
     call garbagecollect()
 
     if s:fast_editing
-        " autocomplpop
-        if exists(':AutoComplPopUnLock')
-            AutoComplPopUnLock
-        endif
-        " let &statusline = g:toggle_statusline[1]
 
         " ファイルタイプ(カラーとかインデントとか)
         filetype on
@@ -623,11 +618,6 @@ func! s:FastEdit()
 
         echo 'slow but high ability.'
     else
-        " autocomplpop
-        if exists(':AutoComplPopLock')
-            AutoComplPopLock
-        endif
-        " let &statusline = g:toggle_statusline[0]
 
         " ファイルタイプ
         filetype off
@@ -1313,10 +1303,6 @@ let qb_hotkey = '<LocalLeader>b'
 
 " changelog
 let changelog_username = "tyru"
-
-" autocomplpop
-inoremap <expr> <CR> pumvisible() ? "\<C-Y>\<CR>" : "\<CR>"
-let AutoComplPop_IgnoreCaseOption = 0
 
 " Narrow
 nnoremap <silent>   <LocalLeader>na     :Narrow<CR>

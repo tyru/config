@@ -123,17 +123,18 @@ cnoremap <C-p>      <Up>
 "-----------------------------------------------------------------
 " qmark {{{1
 qmark d http://delicious.com/tyru/
-qmark f http://tyru.web.fc2.com/
-qmark h http://www.hatena.ne.jp/
-qmark i http://tyru.hp.infoseek.co.jp/
 qmark m http://mail.google.com/mail?hl=ja
-qmark n http://www.nicovideo.jp/
+qmark r http://www.google.co.jp/reader/view/
+
+qmark f http://tyru.web.fc2.com/
+qmark n http://tyru.yu-nagi.com/
+qmark i http://tyru.hp.infoseek.co.jp/
+
+qmark h http://www.hatena.ne.jp/
 qmark p http://www.pixiv.net/mypage.php
 qmark P http://pipes.yahoo.com/pipes/
-qmark r http://www.google.co.jp/reader/view/
 qmark t http://twitter.com/
 qmark T http://tyru.tumblr.com/
-qmark v http://nanasi.jp/code.html
 qmark z bml-niconico-mp3
 " }}}1
 "-----------------------------------------------------------------
@@ -247,7 +248,10 @@ autocmd LocationChange .* :fmapc
 " add !
 autocmd LocationChange 'mail\.google\.com/mail' :fmap -depth 4 c / j k n p o u e x s r a # [ ] z ! ? gi gs gt gd ga gc gl <C-s>
 " add J K N P
-autocmd LocationChange 'www\.google\.co\.jp/reader' :fmap! -vkey j k J K n p N P m s t v A r S N P X O gh ga gs gt gu u / ?
+autocmd LocationChange 'www\.google\.co\.jp/reader' :fmap -vkey j k J K n p N P m s t v A r S N P X O gh ga gs gt gu u / ?
+" remove f <Esc> i d + - <Tab> <S-Tab>
+autocmd LocationChange 'www\.rememberthemilk\.com\/home\/tyru\/' :fmap -vkey a m c n p r g s h t u j y <Del> k z l 1 2 3 4 <C-S-Left> <C-S-Right> <C-S-0> <C-S-6> <C-S-7> <C-S-8> <C-S-9> <C-S-l> <Left> <Right> <Up> <Down> <PageUp> <PageDown> <Home> <End> <C-S-/>
+
 
 " }}}1
 "-----------------------------------------------------------------
