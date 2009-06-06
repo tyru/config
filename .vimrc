@@ -813,8 +813,8 @@ endfunc
 " s:LoadWhenFileType() {{{2
 func! s:LoadWhenFileType()
 
-    " 辞書ファイル
-    call s:SetDict(&filetype)
+    call s:SetDict(&filetype)    " dict
+
     " デフォルト(ftplugin/*.vimで用意されていない場合)のomnifunc
     if exists("+omnifunc") && &omnifunc == ""
         setlocal omnifunc=syntaxcomplete#Complete
@@ -839,9 +839,16 @@ func! s:LoadWhenFileType()
     elseif &filetype == 'css'
         TabChange 2
 
+    elseif &filetype == 'xml'
+        TabChange 2
+        inoremap <buffer>   </    </<C-x><C-o>
+
     elseif &filetype == 'html' || &filetype == 'javascript' || &filetype == 'css'
         TabChange 2
         call s:SetDict('html', 'javascript', 'css')
+        if &filetype == 'html'
+            inoremap <buffer>   </    </<C-x><C-o>
+        endif
 
     elseif &filetype == 'java'
         TabChange 2
