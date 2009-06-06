@@ -191,7 +191,7 @@ func! s:DeleteBackUp()
 endfunc
 
 call s:DeleteBackUp()
-delfunc s:DeleteBackUp()
+delfunc s:DeleteBackUp
 " }}}2
 
 " 文字コードの設定 {{{2
