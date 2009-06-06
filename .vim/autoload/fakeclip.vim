@@ -1,6 +1,6 @@
 " fakeclip - pseude clipboard register for non-GUI version of Vim
-" Version: 0.2.1
-" Copyright (C) 2008 kana <http://whileimautomaton.net/>
+" Version: 0.2.3
+" Copyright (C) 2008-2009 kana <http://whileimautomaton.net/>
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -23,7 +23,7 @@
 " }}}
 " Platform detection  "{{{1
 
-if has('macunix') || system('uname -o') =~? '^darwin'
+if has('macunix') || system('uname') =~? '^darwin'
   let s:PLATFORM = 'mac'
 elseif has('win32unix')
   let s:PLATFORM = 'cygwin'
@@ -143,7 +143,7 @@ endfunction
 function! s:read_screen()  "{{{2
   if s:SCREEN_AVAILABLE_P
     let _ = tempname()
-    call system('screen -X writebuf ' . fnameescape(_))
+    call system('screen -X writebuf ' . shellescape(_))
     let content = join(readfile(_, 'b'), "\n")
     call delete(_)
     return content
@@ -187,7 +187,7 @@ function! s:write_screen(text)  "{{{2
   if s:SCREEN_AVAILABLE_P
     let _ = tempname()
     call writefile([a:text], _, 'b')
-    call system('screen -X readbuf ' . fnameescape(_))
+    call system('screen -X readbuf ' . shellescape(_))
     call delete(_)
   else
     echoerr 'GNU screen is not available'

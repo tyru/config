@@ -44,7 +44,7 @@ set autoread
 set backspace=indent,eol,start
 set browsedir=buffer
 set clipboard=
-set complete+=k,U,d
+set complete+=k,d
 set diffopt=filler,vertical
 set directory=$HOME/.vim/backup
 set expandtab
@@ -55,7 +55,6 @@ set history=50
 set hlsearch
 set ignorecase
 set incsearch
-set infercase
 set keywordprg=
 set laststatus=2
 set list
@@ -173,37 +172,26 @@ unlet s:runtime_dirs
 
 " vimbackupの中の古いやつを削除する {{{2
 func! s:DeleteBackUp()
-    let f = $HOME .'/.vim/.vimbackup_deleted'
-    if !filereadable( f )
-        call writefile( [localtime()], f )
+    if !exists('$HOME') | return | endif
+    let stamp_file = $HOME .'/.vimbackup_deleted'
+    if !filereadable( stamp_file )
+        call writefile( [localtime()], stamp_file )
         return
     endif
 
-    let [line] = readfile( f, '', 1 )
+    let [line] = readfile(stamp_file)
     let one_day_sec = 60 * 60 * 24    " 1日に何回も削除しようとしない
-    if line =~# '^\d\+\n\=$' && str2nr( line ) - localtime() > one_day_sec
-        if has( 'perl' )
-            perl << EOF
-            # globが使えない
-            my $d = $HOME .'/.vim/backup/';
-            return unless -d $d;
-            for( readdir opendir( my $dh, $d ) ) {
-                my $f = $d . $_;
-                unlink $f   if -M $f > 30;    # 30日以上経過したファイル削除
-            }
-            closedir( $dh );
-EOF
-        elseif executable( 'perl' )
-            call system( 'perl "'. $HOME .'/.vim/clean.pl"' )
-        else
-            return
+    if localtime() - str2nr( line ) > one_day_sec
+        if executable( 'perl' )
+            let cmd = "perl -e 'map { unlink } grep { -M > 30 } glob q(%s/*)'"
+            call system( printf(cmd, expand(&backupdir)) )
+            call writefile( [localtime()], stamp_file )
         endif
-        call writefile( [localtime()], f )
     endif
 endfunc
 
 call s:DeleteBackUp()
-delfunc s:DeleteBackUp
+delfunc s:DeleteBackUp()
 " }}}2
 
 " 文字コードの設定 {{{2
@@ -876,8 +864,12 @@ func! s:LoadWhenFileType()
     elseif &filetype == 'perl'
         TabChange 4
         compiler perl
-        " モジュールをサーチしない(はず)
-        setlocal path=
+        if exists('$PERL5LIB')
+            for i in split(expand('$PERL5LIB'), ':')
+                execute 'setlocal path+=' . i
+            endfor
+        endif
+        setlocal suffixesadd=.pm
         setlocal makeprg=perl\ -c\ %
 
     elseif &filetype == 'yaml'
@@ -966,14 +958,6 @@ endfunc
 " }}}1
 "-----------------------------------------------------------------
 " Mappings or Abbreviation {{{1
-
-
-augroup RunAfterVimEnter
-    autocmd!
-
-    " autocmd VimEnter *  call s:RegistMap()
-augroup END
-
 
 " ~~ map ~~ {{{2
 "
@@ -1320,7 +1304,7 @@ nnoremap <silent> g<C-i>    :Gtags -f %<CR>
 nnoremap <silent> g<C-j>    :GtagsCursor<CR>
 
 " xptemplate
-let g:xptemplate_key = '<C-k>'
+let xptemplate_key = '<C-k>'
 
 " }}}2
 
