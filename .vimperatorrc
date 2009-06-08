@@ -93,9 +93,6 @@ noremap <C-g>   YP
 " マッチしなかった場合元の位置に戻らない
 noremap /   mz/
 
-noremap <Leader>b      :buffers<CR>
-noremap <Leader>d      :dialog<Space>
-noremap <Leader>gm     :gmset!<CR>
 noremap <Leader>gf     :tab normal gf<CR>
 
 noremap !       :set invum<CR>
@@ -152,10 +149,6 @@ autocmd VimperatorEnter .* pluginmanager update
 " }}}1
 "-----------------------------------------------------------------
 " プラグイン {{{1
-
-" google-search.js
-noremap s       :gsearch<Space>
-
 
 " direct_bookmark.js
 let direct_sbm_use_services_by_tag  = "d"

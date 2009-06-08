@@ -172,21 +172,38 @@ unlet s:runtime_dirs
 
 " vimbackupの中の古いやつを削除する {{{2
 func! s:DeleteBackUp()
-    if !exists('$HOME') | return | endif
-    let stamp_file = $HOME .'/.vimbackup_deleted'
-    if !filereadable( stamp_file )
-        call writefile( [localtime()], stamp_file )
+    if has('win32')
+        if exists('$TMP')
+            let stamp_file = $TMP . '/.vimbackup_deleted'
+        elseif exists('$TEMP')
+            let stamp_file = $TEMP . '/.vimbackup_deleted'
+        else
+            return
+        endif
+    else
+        let stamp_file = '/tmp/.vimbackup_deleted'
+    endif
+
+    if !filereadable(stamp_file)
+        call writefile([localtime()], stamp_file)
         return
     endif
 
     let [line] = readfile(stamp_file)
     let one_day_sec = 60 * 60 * 24    " 1日に何回も削除しようとしない
-    if localtime() - str2nr( line ) > one_day_sec
-        if executable( 'perl' )
-            let cmd = "perl -e 'map { unlink } grep { -M > 30 } glob q(%s/*)'"
-            call system( printf(cmd, expand(&backupdir)) )
-            call writefile( [localtime()], stamp_file )
-        endif
+
+    if localtime() - str2nr(line) > one_day_sec
+        let backup_files = split(expand(&backupdir . '/*'), "\n")
+        let thirty_days_sec = one_day_sec * 30
+        call filter(backup_files, 'localtime() - getftime(v:val) > thirty_days_sec')
+        for i in backup_files
+            if delete(i) != 0
+                echohl WarningMsg
+                echo "can't delete " . i
+                echohl None
+            endif
+        endfor
+        call writefile([localtime()], stamp_file)
     endif
 endfunc
 
@@ -798,6 +815,7 @@ func! s:SetDict(...)
         \ . join(map(copy(a:000), '"$HOME/.vim/dict/" . v:val . ".dict"'), ',')
 endfunc
 
+
 " s:LoadWhenFileType() {{{2
 func! s:LoadWhenFileType()
 
@@ -815,10 +833,14 @@ func! s:LoadWhenFileType()
         TabChange 4
         compiler gcc
         if &filetype == 'c'
+            let gcc = 'gcc'
             call s:SetDict('c')
         elseif &filetype == 'cpp'
+            let gcc = 'g++'
             call s:SetDict('c', 'cpp')
         endif
+
+        let &l:makeprg = gcc . ' -Wall -W -pedantic -fsyntax-only %%'
 
     elseif &filetype == 'cs'
         TabChange 4
@@ -871,6 +893,7 @@ func! s:LoadWhenFileType()
         endif
         setlocal suffixesadd=.pm
         setlocal makeprg=perl\ -c\ %
+        setlocal complete=.,w,b,k
 
     elseif &filetype == 'yaml'
         TabChange 2

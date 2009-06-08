@@ -2,11 +2,11 @@
 
 CC       = g++
 INCLUDES = -g
-CFLAGS   = $(INCLUDES) -Wall -Wsign-compare
+CFLAGS   = $(INCLUDES) -Wall -W -pedantic
 LIBS     = 
 
 EXE      = 
-CPP      = Main.cpp
+CPP      = main.cpp
 OBJS     = $(CPP:.cpp=.o)
 
 

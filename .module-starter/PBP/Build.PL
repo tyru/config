@@ -9,6 +9,8 @@ Module::Build->new(
     dist_version_from   => '<MAIN PM FILE>',
     requires => {
         'Test::More' => 0,
+        'Test::Pod' => 0,
+        'Test::Perl::Critic' => 0,
         'version'    => 0,
     },
     add_to_cleanup      => [ '<DISTRO>-*' ],
