@@ -435,120 +435,39 @@ endif
 " }}}2
 
 " s:ListAndExecute() {{{2
-"
-" TODO:
-"     <C-a> or <C-x>(それか<Tab> or <S-Tab>)で
-"     選択肢をインクリメント / デクリメント
-" TODO:
-"     Migemo対応
 func! s:ListAndExecute( lis, template )
-
-    " テンプレートのリスト(番号)を表示
+    " リスト表示
     let i = 0
-    let num_len = len( a:lis ) / 10 + 1
     while i < len( a:lis )
-        echo printf( '%' . num_len . 'd: ' . a:lis[i], i + 1 )
+        echo printf('%d: %s', i + 1, a:lis[i])
         let i = i + 1
     endwhile
 
-    " プロンプト
     while 1
-        echo "\nPut the number:"
-        let num = 0
-        let continue_again = 0
+        echon "\n:"
+        let ch = getchar()
+        if ch == char2nr( "\<ESC>" )
+            return ""
+        endif
+        let num = ch - 48
 
-        try
-
-            " 候補があるあいだ
-            while 1
-                let tmp = s:GetNum()
-                if tmp == -1
-                    if num == 0
-                        return ''
-                    else
-                        break
-                    endif
-                elseif tmp == 0 && num == 0
-                    call s:Warn( 'out of id number. Try again.' )
-                    let continue_again = 1
-                    break
-                endif
-
-                let num = num * 10 + tmp
-                if len( a:lis ) / ( num * 10 ) == 0
-                    break
-                endif
-
-                " 絞り込まれた候補を表示
-                call s:ListWithNumber( a:lis, num )
-                " 取得した文字表示
-                echon "\n:" . num
-
-            endwhile
-
-            if continue_again | continue | endif
-
-
-
-            if string( num ) == ''
-                return ''
-            elseif string( num ) =~ '^\d\+$'
-                " 数字の場合
-                "
-
-                if num < 1 || len( a:lis ) < num
-                    " 範囲外
-                    call s:Warn( 'out of num number. Try again.' )
-                    continue
-                endif
-
-                " OK if reach here
-                break
+        " 数字の場合
+        if string( num ) =~ '^\d\+$'
+            if num < 1 || len( a:lis ) < num
+                " 範囲外
+                call s:Warn( 'out of num number. Try again.' )
             else
-                call s:Warn( 'non-digit characters found. Try again.' )
-                continue
+                break
             endif
-        catch /^escape/
-            " ESCキーが押された
-            return ''
-        endtry
+        else
+            call s:Warn( 'non-digit characters found. Try again.' )
+        endif
     endwhile
 
-    exe substitute( a:template, '%embed%', a:lis[num - 1], 'g' )
+    execute substitute( a:template, '%embed%', a:lis[num - 1], 'g' )
     redraw
 
     return a:lis[num - 1]
-endfunc
-" }}}2
-
-" s:GetNum() {{{2
-func! s:GetNum()
-    let char = getchar()
-    if char == char2nr( "\<ESC>" )
-        throw 'escape!'
-    elseif char == char2nr( "\<CR>" )
-        return -1
-    endif
-    return char - 48
-endfunc
-" }}}2
-
-" s:ListWithNumber( list ) {{{2
-"     テンプレートのリスト(番号)を表示
-func! s:ListWithNumber( templ_list, id )
-    let num_len = len( a:templ_list ) / 10 + 1
-    let i       = 0
-
-    if a:id != -1
-        echo printf( '%' . num_len . 'd: ' . a:templ_list[a:id - 1], a:id )
-    endif
-
-    while i < len( a:templ_list )
-        if a:id == -1 || i + 1 >= a:id * 10
-            echo printf( '%' . num_len . 'd: ' . a:templ_list[i], i + 1 )
-        endif
-        let i = i + 1
-    endwhile
 endfunc
 " }}}2
 
@@ -725,6 +644,7 @@ augroup MyVimrc
 
     " autocmd CursorHold,CursorHoldI *   silent! update
     autocmd QuickfixCmdPost make,grep,grepadd,vimgrep,helpgrep   copen
+
     " ftpluginディレクトリ作るのめんどい
     autocmd FileType *   call s:LoadWhenFileType()
 
@@ -765,10 +685,6 @@ augroup MyVimrc
 
 augroup END
 " }}}2
-
-" 全角スペースを視覚化
-" highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=#666666
-" match ZenkakuSpace /　/
 
 func! s:SetDict(...)
     execute "setlocal dict="
