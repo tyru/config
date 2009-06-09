@@ -25,20 +25,27 @@ fun! s:f.xptHeader() "{{{
   return '__'.symbol.'__'
 endfunction "}}}
 
+fun! s:f.hintEncode( str, ... ) "{{{
+    let s = substitute( a:str, '\([^\\]\) ', '\1\\ ', 'ge' )
+    return s
+endfunction "}}}
+
 " ================================= Snippets ===================================
 XPTemplateDef
 
 " repeatable part or defualt value must be escaped
 XPT tmpl hint=call\ XPTemplate(\ ...
-call XPTemplate('`name^', [
-\ `'^`text^`'^`...^,
-\ `'^`text^`'^`...^
-\])'
+XSET funName=XPT
+XSET tips|post=hintEncode(V())
+`funName^ `name^ hint=`tips^
+`cursor^
 
 
 XPT tmpl_ hint=call\ XPTemplate(\ ..,\ SEL\ ...
-call XPTemplate('`name^', [ '`wrapped^'])
-
+XSET funName=XPT
+XSET tips|post=hintEncode(V())
+`funName^ `name^_ hint=`hint^
+`wrapped^
 
 XPT inc hint=XPTinclude\ ...
 XPTinclude 
@@ -67,7 +74,12 @@ let b:`i^ = 1
 let [s:f, s:v] = XPTcontainer() 
  
 " constant definition
-call extend(s:v, {'$TRUE': '1', '$FALSE': '0', '$NULL': 'NULL', '$UNDEFINED': '', '$BRACKETSTYLE': "\n"})
+XPTvar $TRUE          1
+XPTvar $FALSE         0
+XPTvar $NULL          NULL
+XPTvar $INDENT_HELPER /* void */;
+XPTVar $UNDEFINED     ''
+XPTVar $BRACKETSTYLE  "\n"
 
 " inclusion
 XPTinclude

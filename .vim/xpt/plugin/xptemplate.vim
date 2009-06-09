@@ -172,7 +172,7 @@ fun! s:XPTemplateInit( filename, ... ) "{{{
     endif
 
     if has_key( b:xpt_loaded, a:filename )
-        " echom b:xpt_loaded[ a:filename ]
+        echom b:xpt_loaded[ a:filename ]
         return 'finish'
     endif
 

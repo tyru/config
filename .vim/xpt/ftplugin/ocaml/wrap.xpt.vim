@@ -17,4 +17,6 @@ with `exc^ -> `rez^`...^
    | `exc2^ -> `rez2^`...^
 
 
+XPT cmt_ hint=(*\ SEL\ *)
+(* `wrapped^ *)
 

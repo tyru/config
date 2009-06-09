@@ -10,7 +10,6 @@ let [s:f, s:v] = XPTcontainer()
 " inclusion
 XPTinclude
       \ _common/common
-      \ _condition/perl.like
 
 " ========================= Function and Varaibles =============================
 
@@ -33,6 +32,23 @@ Cmdlet `verb^-`noun^
     }^^
 }
 
+
+XPT if hint=if\ (\ ..\ )\ {\ ..\ }\ ...
+if ( `cond^ )
+{
+    `code^
+}`
+`...^
+elseif ( `cond2^ )
+{
+    `body^
+}`
+`...^`
+`else...^
+else
+{
+    \`body\^
+}^^
 
 
 XPT fun hint=function\ ..(..)\ {\ ..\ }

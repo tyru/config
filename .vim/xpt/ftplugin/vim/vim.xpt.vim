@@ -31,7 +31,7 @@ let `g^:`i^ = 1
 
 
 XPT log hint=call\ log\ on\ selection
-call Log(`_^)
+call Log(`_^^)
 
 
 XPT fun hint=fun!\ ..(..)\ ..\ endfunction
@@ -74,9 +74,9 @@ endfor
 
 XPT try hint=try\ ..\ catch\ ..\ finally...
 try
-  `^
+  `_^^
 catch /`^/
-  `^
+  `_^^
 `finally...^finally
   \`cursor\^^^
 endtry
@@ -84,10 +84,9 @@ endtry
 
 
 XPT if hint=if\ ..\ else\ ..
-XSET else...|post=\nelse\n  `cursor^
+XSET else...|post=else\n  `cursor^
 if `cond^
-  `_^`
-`else...^
+  `_^^`else...^
 endif
 
 

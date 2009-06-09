@@ -11,12 +11,12 @@ let [s:f, s:v] = XPTcontainer()
 XPTemplateDef
 
 XPT inc		hint=include\ <>
-#include <`^>
+include <`^.h>
 
 
 XPT ind		hint=include\ ""
 XSET me=fileRoot()
-#include "`me^.h"
+include "`me^.h"
 
 
 " TODO use comment variable instead
@@ -31,7 +31,7 @@ XSET symbol=headerSymbol()
 XPT ifndef	hint=#ifndef\ ..
 XSET symbol=S(fileRoot(),'\.','_','g')
 XSET symbol|post=SV('.','\u&')
-#ifndef `symbol^ 
+ifndef `symbol^ 
 #    define `symbol^ 
 
 `cursor^ 

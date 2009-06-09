@@ -55,6 +55,7 @@
 :GetLatestVimScripts_dat	pi_getscript.txt	/*:GetLatestVimScripts_dat*
 :Hexplore	pi_netrw.txt	/*:Hexplore*
 :MkVimball	pi_vimball.txt	/*:MkVimball*
+:Narrow	narrow.txt	/*:Narrow*
 :NetrwClean	pi_netrw.txt	/*:NetrwClean*
 :Nexplore	pi_netrw.txt	/*:Nexplore*
 :Pexplore	pi_netrw.txt	/*:Pexplore*
@@ -87,6 +88,7 @@
 :UseVimball	pi_vimball.txt	/*:UseVimball*
 :Vexplore	pi_netrw.txt	/*:Vexplore*
 :VimballList	pi_vimball.txt	/*:VimballList*
+:Widen	narrow.txt	/*:Widen*
 <Plug>(fakeclip-P)	fakeclip.txt	/*<Plug>(fakeclip-P)*
 <Plug>(fakeclip-Y)	fakeclip.txt	/*<Plug>(fakeclip-Y)*
 <Plug>(fakeclip-[P)	fakeclip.txt	/*<Plug>(fakeclip-[P)*
@@ -267,6 +269,7 @@ alignmap-t~	Align.txt	/*alignmap-t~*
 alignmaps	Align.txt	/*alignmaps*
 alignusage	Align.txt	/*alignusage*
 any-item-example	yankring.txt	/*any-item-example*
+b:narrow_original_state	narrow.txt	/*b:narrow_original_state*
 b:netrw_lastfile	pi_netrw.txt	/*b:netrw_lastfile*
 c_<Plug>(fakeclip-insert)	fakeclip.txt	/*c_<Plug>(fakeclip-insert)*
 c_<Plug>(fakeclip-insert-o)	fakeclip.txt	/*c_<Plug>(fakeclip-insert-o)*
@@ -413,6 +416,7 @@ g:FuzzyFinderOptions.TaggedFile.smart_bs	fuzzyfinder.txt	/*g:FuzzyFinderOptions.
 g:FuzzyFinderOptions.TaggedFile.switch_order	fuzzyfinder.txt	/*g:FuzzyFinderOptions.TaggedFile.switch_order*
 g:NetrwTopLvlMenu	pi_netrw.txt	/*g:NetrwTopLvlMenu*
 g:fakeclip_no_default_key_mappings	fakeclip.txt	/*g:fakeclip_no_default_key_mappings*
+g:narrow_allow_overridingp	narrow.txt	/*g:narrow_allow_overridingp*
 g:netrw_alto	pi_netrw.txt	/*g:netrw_alto*
 g:netrw_altv	pi_netrw.txt	/*g:netrw_altv*
 g:netrw_browse_split	pi_netrw.txt	/*g:netrw_browse_split*
@@ -537,6 +541,18 @@ i_CTRL-G_s	surround.txt	/*i_CTRL-G_s*
 local_markfilelist	pi_netrw.txt	/*local_markfilelist*
 markfilelist	pi_netrw.txt	/*markfilelist*
 multiple-items-example	yankring.txt	/*multiple-items-example*
+narrow	narrow.txt	/*narrow*
+narrow#Narrow()	narrow.txt	/*narrow#Narrow()*
+narrow#Widen()	narrow.txt	/*narrow#Widen()*
+narrow-bugs	narrow.txt	/*narrow-bugs*
+narrow-changelog	narrow.txt	/*narrow-changelog*
+narrow-commands	narrow.txt	/*narrow-commands*
+narrow-contents	narrow.txt	/*narrow-contents*
+narrow-customizing	narrow.txt	/*narrow-customizing*
+narrow-functions	narrow.txt	/*narrow-functions*
+narrow-interface	narrow.txt	/*narrow-interface*
+narrow-introduction	narrow.txt	/*narrow-introduction*
+narrow.txt	narrow.txt	/*narrow.txt*
 netreadfixup	pi_netrw.txt	/*netreadfixup*
 netrw	pi_netrw.txt	/*netrw*
 netrw--	pi_netrw.txt	/*netrw--*

@@ -10,6 +10,7 @@ let [s:f, s:v] = XPTcontainer()
 " inclusion
 XPTinclude
       \ _common/common
+      \ _comment/xml
       \ html/html
       \ xml/xml
       \ xml/wrap

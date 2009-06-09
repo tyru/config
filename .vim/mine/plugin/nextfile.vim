@@ -4,13 +4,14 @@ scriptencoding utf-8
 " DOCUMENT {{{1
 "==================================================
 " Name: nextfile
-" Version: 0.0.1
-" Author:  tyru <tyru.exe+vim@gmail.com>
-" Last Change: 2009-04-10.
+" Version: 0.0.2
+" Author:  tyru <tyru.exe@gmail.com>
+" Last Change: 2009-06-10.
 "
 " Change Log: {{{2
 "   0.0.0: Initial upload.
 "   0.0.1: add g:nf_ignore_dir
+"   0.0.2: implement g:nf_ignore_ext.
 " }}}2
 "
 "
@@ -22,26 +23,28 @@ scriptencoding utf-8
 "           <Leader>p - open the previous file
 "
 "   GLOBAL VARIABLES:
-"       g:loaded_nextfile
-"           if you don't want use this, you may delete this :)
-"
 "       g:nf_map_next (default: '<Leader>n')
-"           open next file.
+"           open the next file.
 "
 "       g:nf_map_previous (default: '<Leader>p')
-"           open previous file.
+"           open the previous file.
 "
 "       g:nf_include_dotfiles (default: 0)
-"           let this true if you want to include dotfiles.
+"           if true, open the next dotfile.
+"           if false, skip the next dotfile.
 "
 "       g:nf_open_command (default: 'edit')
 "           open the (next|previous) file with this command.
 "
 "       g:nf_loop_files (default: 0)
-"           loop when reached the end.
+"           if true, loop when reached the end.
 "
 "       g:nf_ignore_dir (default: 1)
-"           ignore directory
+"           if true, skip directory.
+"
+"       g:nf_ignore_ext (default: [])
+"           ignore files of these extensions.
+"           e.g.: "o", "obj", "exe"
 "
 "
 "==================================================
@@ -75,6 +78,9 @@ endif
 if ! exists('g:nf_ignore_dir')
     let g:nf_ignore_dir = 1
 endif
+if ! exists('g:nf_ignore_ext') || type(g:nf_ignore_ext) != type([])
+    let g:nf_ignore_ext = []
+endif
 " }}}1
 
 
@@ -94,7 +100,7 @@ func! s:GetListIdx(lis, elem)
         endif
         let i = i + 1
     endwhile
-    return -1
+    throw "not found"
 endfunc
 
 func! s:GlobPath(path, expr)
@@ -119,11 +125,13 @@ func! s:OpenNextFile(advance)
         if g:nf_ignore_dir
             call filter(files, '! isdirectory(v:val)')
         endif
+        for ext in g:nf_ignore_ext
+            call filter(files, 'fnamemodify(v:val, ":e") !=# ext')
+        endfor
 
         " get current file idx
         let tailed = map(copy(files), 'fnamemodify(v:val, ":t")')
         let idx = s:GetListIdx(tailed, expand('%:t'))
-        if idx ==# -1 | throw "not found" | endif
 
     catch /^not found$/
         return s:Warn('not found current file')

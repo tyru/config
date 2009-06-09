@@ -3,14 +3,13 @@ if exists("b:__PERL_XPT_VIM__")
 endif
 let b:__PERL_XPT_VIM__ = 1
 
-
-XPTvar $BODY    # some code here ...
-
+" containers
+let [s:f, s:v] = XPTcontainer()
 
 " inclusion
 XPTinclude
       \ _common/common
-      \ _condition/perl.like 
+
 " ========================= Function and Varaibles =============================
 
 " ================================= Snippets ===================================
@@ -19,37 +18,34 @@ XPTinclude
 XPTemplateDef
 
 XPT xif hint=..\ if\ ..;
-`expr^ if `cursor^;
+`expr^ if `cond^;
 
 
 XPT xwhile hint=..\ while\ ..;
-`expr^ while `cursor^;
+`expr^ while `cond^;
 
 
 XPT xunless hint=..\ unless\ ..;
-`expr^ unless `cursor^;
+`expr^ unless `cond^;
 
 
 XPT xforeach hint=..\ foreach\ ..;
-`expr^ foreach @`cursor^;
+`expr^ foreach @`array^;
 
 
 XPT sub hint=sub\ ..\ {\ ..\ }
-XSET body=$BODY
 sub `fun_name^ {
     `cursor^
 }
 
 
 XPT while hint=while\ (\ ..\ )\ {\ ..\ }
-XSET body=$BODY
 while (`cond^) {
     `cursor^
 }
 
 
 XPT unless hint=unless\ (\ ..\ )\ {\ ..\ }
-XSET body=$BODY
 unless (`cond^) {
     `cursor^
 }
@@ -60,24 +56,37 @@ eval {
     `risky^
 };
 if ($@) {
-    `cursor^
+    `handle^
 }
 
 
 XPT for hint=for\ (my\ ..;..;++)
-XSET body=$BODY
 for (my $`var^ = 0; $`var^ < `count^; $`var^++) {
     `cursor^
 }
 
 
 XPT foreach hint=foreach\ my\ ..\ (..){}
-XSET body=$BODY
 foreach my $`var^ (@`array^) {
     `cursor^
 }
 
-
+XPT if hint=if\ (\ ..\ )\ {\ ..\ }\ ...
+if ( `cond^ )
+{
+    `code^
+}`
+`...^
+elif ( `cond2^ )
+{
+    `body^
+}`
+`...^`
+`else...^
+else
+{
+    \`body\^
+}^^
 
 XPT package hint=
 package `className^;

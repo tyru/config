@@ -40,7 +40,7 @@ if `cond^
 
 XPT match hint=match\ ..\ with\ ..\ ->\ ..\ |
 match `expr^ with
-  | `what0^ -> `with0^ `...^
+  | `what0^ -> `with0^`...^
   | `what^ -> `with^`...^
 
 
@@ -66,7 +66,7 @@ end
 XPT classtype hint=class\ type\ ..\ =\ object\ ..\ end
 class type `name^ =
 object
-   method `field0^ : `type0^ `...^
+   method `field0^ : `type0^`...^
    method `field^ : `type^`...^
 end
 
@@ -77,27 +77,27 @@ XPT classtypecom hint=(**\ ..\ *)\ class\ type\ ..\ =\ object\ ..\ end
 class type `name^ =
 object
    (** `method_descr^^ *)
-   method `field0^ : `type0^ `...^
+   method `field0^ : `type0^`...^
    (** `method_descr2^^ *)
    method `field^ : `type^`...^
 end
 
 
 XPT typesum hint=type\ ..\ =\ ..\ |\ ..
-type `_^^ `typename^ =
-  | `constructor^ `...^
+type `typeParams...^\`a\^ ^^`typename^ =
+  | `constructor^`...^
   | `constructor2^`...^
 
             
 XPT typesumcom hint=(**\ ..\ *)\ type\ ..\ =\ ..\ |\ ..
 (** `typeDescr^ *)
-type `_^^ `typename^ =
-  | `constructor^ (** `ctordescr^ *) `...^
+type `typeParams...^\`a\^ ^^`typename^ =
+  | `constructor^ (** `ctordescr^ *)`...^
   | `constructor2^ (** `ctordescr^ *)`...^
 
 
 XPT typerecord hint=type\ ..\ =\ {\ ..\ }
-type `_^^ `typename^ =
+type `typeParams...^\`a\^ ^^`typename^ =
     { `recordField^ : `fType^ `...^
     ; `otherfield^ : `othertype^`...^
     }
@@ -106,7 +106,7 @@ type `_^^ `typename^ =
 XPT typerecordcom hint=(**\ ..\ *)type\ ..\ =\ {\ ..\ }
 (** `type_descr^ *)
 type `_^^ `typename^ =
-    { `recordField^ : `fType^ (** `desc^ *) `...^
+    { `recordField^ : `fType^ (** `desc^ *)`...^
     ; `otherfield^ : `othertype^ (** `desc^ *)`...^
     }
 

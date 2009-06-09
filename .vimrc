@@ -12,11 +12,10 @@ set cpo&vim
 " eveningはdesertに文字列ハイライト足した感じ
 " でもdesertも好きだったりする
 
-" TODO: localtime()とか使ってrand()実装
 fun! RandomColorScheme()
     if has( 'gui' )
         " GUI版の設定
-        colorscheme evening
+        colorscheme desert
     else
         " ターミナル版の設定
         colorscheme evening
@@ -198,9 +197,7 @@ func! s:DeleteBackUp()
         call filter(backup_files, 'localtime() - getftime(v:val) > thirty_days_sec')
         for i in backup_files
             if delete(i) != 0
-                echohl WarningMsg
-                echo "can't delete " . i
-                echohl None
+                call s:Warn("can't delete " . i)
             endif
         endfor
         call writefile([localtime()], stamp_file)
@@ -213,52 +210,52 @@ delfunc s:DeleteBackUp
 
 " 文字コードの設定 {{{2
 
-" if &encoding !=# 'utf-8'
-"     set encoding=japan
-"     set fileencoding=japan
-" endif
-" if has('iconv')
-"     let s:enc_euc = 'euc-jp'
-"     let s:enc_jis = 'iso-2022-jp'
-"     " iconvがeucJP-msに対応しているかをチェック
-"     if iconv("\x87\x64\x87\x6a", 'cp932', 'eucjp-ms') ==# "\xad\xc5\xad\xcb"
-"         let s:enc_euc = 'eucjp-ms'
-"         let s:enc_jis = 'iso-2022-jp-3'
-"         " iconvがJISX0213に対応しているかをチェック
-"     elseif iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
-"         let s:enc_euc = 'euc-jisx0213'
-"         let s:enc_jis = 'iso-2022-jp-3'
-"     endif
-"     " fileencodingsを構築
-"     if &encoding ==# 'utf-8'
-"         let s:fileencodings_default = &fileencodings
-"         let &fileencodings = s:enc_jis .','. s:enc_euc .',cp932'
-"         let &fileencodings = &fileencodings .','. s:fileencodings_default
-"         unlet s:fileencodings_default
-"     else
-"         let &fileencodings = &fileencodings .','. s:enc_jis
-"         set fileencodings+=utf-8,ucs-2le,ucs-2
-"         if &encoding =~# '^\(euc-jp\|euc-jisx0213\|eucjp-ms\)$'
-"             set fileencodings+=cp932
-"             set fileencodings-=euc-jp
-"             set fileencodings-=euc-jisx0213
-"             set fileencodings-=eucjp-ms
-"             let &encoding = s:enc_euc
-"             let &fileencoding = s:enc_euc
-"         else
-"             let &fileencodings = &fileencodings .','. s:enc_euc
-"         endif
-"     endif
-" endif
+if &encoding !=# 'utf-8'
+    set encoding=japan
+    set fileencoding=japan
+endif
+if has('iconv')
+    let s:enc_euc = 'euc-jp'
+    let s:enc_jis = 'iso-2022-jp'
+    " iconvがeucJP-msに対応しているかをチェック
+    if iconv("\x87\x64\x87\x6a", 'cp932', 'eucjp-ms') ==# "\xad\xc5\xad\xcb"
+        let s:enc_euc = 'eucjp-ms'
+        let s:enc_jis = 'iso-2022-jp-3'
+        " iconvがJISX0213に対応しているかをチェック
+    elseif iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
+        let s:enc_euc = 'euc-jisx0213'
+        let s:enc_jis = 'iso-2022-jp-3'
+    endif
+    " fileencodingsを構築
+    if &encoding ==# 'utf-8'
+        let s:fileencodings_default = &fileencodings
+        let &fileencodings = s:enc_jis .','. s:enc_euc .',cp932'
+        let &fileencodings = &fileencodings .','. s:fileencodings_default
+        unlet s:fileencodings_default
+    else
+        let &fileencodings = &fileencodings .','. s:enc_jis
+        set fileencodings+=utf-8,ucs-2le,ucs-2
+        if &encoding =~# '^\(euc-jp\|euc-jisx0213\|eucjp-ms\)$'
+            set fileencodings+=cp932
+            set fileencodings-=euc-jp
+            set fileencodings-=euc-jisx0213
+            set fileencodings-=eucjp-ms
+            let &encoding = s:enc_euc
+            let &fileencoding = s:enc_euc
+        else
+            let &fileencodings = &fileencodings .','. s:enc_euc
+        endif
+    endif
+endif
 " 日本語を含まない場合は fileencoding に encoding を使うようにする
-" if has('autocmd')
-"     function! AU_ReCheck_FENC()
-"         if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
-"             let &fileencoding=&encoding
-"         endif
-"     endfunction
-"     autocmd BufReadPost * call AU_ReCheck_FENC()
-" endif
+if has('autocmd')
+    function! AU_ReCheck_FENC()
+        if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
+            let &fileencoding=&encoding
+        endif
+    endfunction
+    autocmd BufReadPost * call AU_ReCheck_FENC()
+endif
 
 " 改行コードの自動認識
 set fileformats=unix,dos,mac
@@ -328,29 +325,23 @@ endif
 "-----------------------------------------------------------------
 " Commands {{{1
 
-command! -range BSlash2Slash
-    \ s/\\/\//g
+" s:Warn() {{{2
+func! s:Warn( msg )
+    echohl WarningMsg
+    echo a:msg
+    echohl None
+endfunc
+" }}}2
 
-" Chalice用 画像収集
-if exists(':M')
-    command! SrchImageUri
-        \ :M/h?ttp:\/\/.+\.(jpe?g|png|gif|bmp)\c
-endif
+command! -range BSlashToSlash
+    \ s/\\/\//g
+command! -range SlashToBSlash
+    \ s/\//\\/g
 
 " セッション保存 GUI 版
 if has( 'gui_running' )
     command! Session       browse mksession
 endif
-
-" CurFilePath {{{2
-command! -register -nargs=? CurFilePath
-    \ call s:CurFilePath(<reg>)
-
-func! s:CurFilePath(...)
-    let regname = a:0 == 0 ? '"' : a:1
-    call setreg(regname, expand('%:p'))
-endfunc
-" }}}2
 
 " HelpTagAll {{{2
 "     runtimepathの全てのdocディレクトリに
@@ -417,9 +408,7 @@ func! s:Dir( ... )
     let dir =   a:0 == 1 ? a:1 : '.'
 
     if !isdirectory( dir )
-        echohl WarningMsg
-        echo   dir .': No such a directory...'
-        echohl None
+        call s:Warn(dir .': No such a directory')
         return
     endif
 
@@ -443,19 +432,6 @@ if has( 'gui_running' ) && has( 'win32' )
 else
     command! GoDesktop   lcd '~/Desktop'
 endif
-
-" NOTE: 使ってない
-func! s:DosEscape(str)
-    return escape( a:str, "&()[]{}^=;!'+,`~ " )
-endfunc
-" }}}2
-
-" s:Warn() {{{2
-func! s:Warn( msg )
-    echohl WarningMsg
-    echo a:msg
-    echohl None
-endfunc
 " }}}2
 
 " s:ListAndExecute() {{{2
@@ -576,23 +552,6 @@ func! s:ListWithNumber( templ_list, id )
 endfunc
 " }}}2
 
-" MsSleep {{{2
-command! -nargs=1 MsSleep
-    \ call s:MsSleep( <f-args> )
-
-func! s:MsSleep( ms )
-    if has( 'win32' )
-        echo "good night..."
-        call libcallnr( 'kernel32.dll', 'Sleep', string( a:ms ) )
-        echo "good morning!"
-    else
-        echohl WarningMsg
-        echo "Not available yet."
-        echohl None
-    endif
-endfunc
-" }}}2
-
 " s:ListChars() {{{2
 command! ListChars
     \ call s:ListChars()
@@ -686,6 +645,7 @@ command! -nargs=+ -complete=dir Mkdir
 " WhoseCommand {{{2
 func! s:WhoseCommand(cmd)
     set verbose=7
+    " show 'Last set from ...'
     execute 'com ' . a:cmd
     set verbose=0
 endfunc
@@ -910,7 +870,6 @@ endfunc
 " For Lisp(Scheme,Gauche) {{{1
 
 
-" Schemeでもないかなコレ
 let g:lisp_rainbow = 1
 
 command! LispSetup            call s:LispSetup()
@@ -918,13 +877,13 @@ command! LispSetup            call s:LispSetup()
 " s:EvalItNormal() {{{2
 func! s:EvalItNormal()
     " カーソル下の１文字をyank
-    norm "zyl
+    normal! "zyl
     " 閉じ括弧じゃなかったらそれ以前の括弧を探す
     if @z != ')' || @z != '('
         call search( '(\|)', 'Wb' )
     endif
     " 選択
-    norm v%
+    normal! v%
     " eval
     call s:EvalItVisual()
 endfunc
@@ -932,14 +891,14 @@ endfunc
 
 " s:EvalItVisual() {{{2
 func! s:EvalItVisual() range
-    norm "zy
+    normal! "zy
 
     let lines = ['(print', @z, ')']
 
     call writefile( lines, $HOME . '/.vimgosh.temp' )
     echo system( 'gosh "' . $HOME . '/.vimgosh.temp"' )
     call delete( $HOME . '/.vimgosh.temp' )
-    exe "norm \<Esc>"
+    exe "normal! \<Esc>"
 
 endfunc
 " }}}2
@@ -953,13 +912,13 @@ func! s:LispSetup()
     nnoremap <silent> <LocalLeader>z        %%mz%x`zx
     " <LocalLeader><C-e> でスクリプトの結果表示
     nnoremap <LocalLeader><C-e>
-                \ :echo system( "gosh " . escape( expand('%:p:h') . '/' . @%, ' &\' ) )<CR>
+                \ :echo system("gosh " . escape(expand('%'), ' \&'))<CR>
     " <LocalLeader>e でリストを評価
     vnoremap <LocalLeader>e       :call <SID>EvalItVisual()<CR>
     nnoremap <LocalLeader>e       :call <SID>EvalItNormal()<CR>
 
     " Gauche(scheme)
-    if @% =~? '\.scm$' || @% ==# '.gaucherc'
+    if fnamemodify(expand('%'), ':e') == 'scm'
         let g:is_gauche = 1
     endif
 
@@ -989,8 +948,6 @@ noremap <silent> k          gk
 
 noremap <silent> <LocalLeader><LocalLeader>         <LocalLeader>
 noremap <silent> <Leader><Leader>                   <Leader>
-noremap <silent> ;;        ;
-noremap <silent> ,,        ,
 
 " クリップボードにコピー
 noremap <LocalLeader>y     "+y
@@ -1006,7 +963,6 @@ nnoremap <silent> *     :call <SID>Srch( 0, '*' )<CR>
 nnoremap <silent> #     :call <SID>Srch( 0, '#' )<CR>
 nnoremap <silent> g*    :call <SID>Srch( 1, '*' )<CR>
 nnoremap <silent> g#    :call <SID>Srch( 1, '#' )<CR>
-" XXX
 func! s:EscapeRegexp( regexp )
     let regexp = a:regexp
     " escape '-' between '[' and ']'.
@@ -1020,7 +976,7 @@ func! s:EscapeRegexp( regexp )
     endif
 endfunc
 
-" ただ'\C'をつけるだけ
+" ただ'\C'をつけるだけなのに・・・
 func! s:Srch( g, vect )
     if a:g
         let word = s:EscapeRegexp( expand( '<cword>' ) ) .'\C'
@@ -1037,25 +993,11 @@ endfunc
 " 全部インデント
 nnoremap <silent> =<Space>    mqgg=G`qzz<CR>
 
-" 現在のバッファを新しいタブで開く
-" (2つ以上のバッファがウィンドウ内にない場合はなにもしない)
-nnoremap <silent> <LocalLeader>tn         :call <SID>CurrentInNewTab()<CR>
-" XXX
-func! <SID>CurrentInNewTab()
-    if winnr( '$' ) != 1
-        let cur_bufnr = bufnr( '%' )
-        hide
-        tabnew
-        exe cur_bufnr . 'buffer'
-    endif
-endfunc
-
 " ハイライトを消す(silentはつけない)
 nnoremap /       :nohls<CR>/
 
 " レジスタに記憶しない
 nnoremap <silent> x       "_x
-
 
 " ウインドウサイズ変更
 nnoremap <C-Right>    :set columns+=5<CR>
@@ -1070,44 +1012,15 @@ nnoremap <S-Up>     <C-w>+
 nnoremap <S-Down>   <C-w>-
 
 " タブ移動
-nnoremap <C-n>          gt
-nnoremap <C-p>          gT
+nnoremap <silent> <C-n>         gt
+nnoremap <silent> <C-p>         gT
+nnoremap <silent> <C-Tab>       gt
+nnoremap <silent> <C-S-Tab>     gT
 
 " 保存ダイアログ
 if has( 'gui_running' )
     nnoremap <C-s>      :browse confirm saveas<CR>
 endif
-
-" フルスクリーン/ウインドウ
-nnoremap <silent> <F11>   :call <SID>ToggleFullScr()<CR>
-
-let s:fullscr = 0
-func! <SID>ToggleFullScr()
-    if s:fullscr == 0
-        Revert
-        let s:fullscr = 1
-    elseif s:fullscr == 1
-        ScreenMode 4
-        let s:fullscr = 2
-    else
-        ScreenMode 7
-        let s:fullscr = 0
-    endif
-endfunc
-
-" メニューバー表示/非表示
-nnoremap <silent> <F5>    :call <SID>ToggleMenuBar()<CR>
-
-let s:menu_bar_toggled = 0
-func! <SID>ToggleMenuBar()
-    if s:menu_bar_toggled == 0
-        set guioptions+=m
-        let s:menu_bar_toggled = 1
-    else
-        set guioptions-=m
-        let s:menu_bar_toggled = 0
-    endif
-endfunc
 
 " 先頭が \S の行に飛ぶ
 noremap <silent> ]k        m`:call search( '^\S', 'W' )<CR>
@@ -1121,26 +1034,17 @@ nnoremap <silent>  <C-o>              <C-i>
 nnoremap <silent>   gm      :make<CR>
 nnoremap <silent>   gc      :cclose<CR>
 
-nnoremap <silent> <C-w><C-t>    :tabedit<CR>
-
-
-func! s:NarrowWidely()
+func! s:FoldAllExpand()
     %foldclose
     silent! %foldclose!
     normal zvzz
 endfunc
-nnoremap <silent> <LocalLeader>nn   :call <SID>NarrowWidely()<CR>
-
+nnoremap <silent> <LocalLeader>nn   :call <SID>FoldAllExpand()<CR>
 
 nnoremap <silent> <LocalLeader>cd   :CdCurrent<CR>
 
-
 nnoremap <silent> gn    :cn<CR>
 nnoremap <silent> gN    :cN<CR>
-
-
-nnoremap <silent> <C-Tab>       gt
-nnoremap <silent> <C-S-Tab>     gT
 
 " }}}2
 
@@ -1273,7 +1177,7 @@ endif
 
 " MRU
 nnoremap <silent> <C-h>     :MRU<CR>
-let MRU_Max_Entries   = 100
+let MRU_Max_Entries   = 500
 let MRU_Add_Menu      = 0
 let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\c\'
 
@@ -1288,6 +1192,12 @@ cabbrev   al    Align
 " プレビュー機能無効
 let chalice_preview      = 0
 let chalice_startupflags = "bookmark"
+
+" 画像収集
+if exists(':M')
+    command! SrchImageUri
+        \ :M/h?ttp:\/\/.+\.(jpe?g|png|gif|bmp)\c
+endif
 
 nnoremap <silent> ,cv    :call Chalice_ThreadCopy( 'v' )<CR>
 nnoremap <silent> ,cs    :call Chalice_ThreadCopy( 's' )<CR>
@@ -1361,6 +1271,7 @@ nmap gO      <LocalLeader>cO
 " nextfile {{{
 let nf_include_dotfiles = 1
 let nf_loop_files = 1
+let nf_ignore_ext = ['o']
 " }}}
 
 " vimtemplate {{{
