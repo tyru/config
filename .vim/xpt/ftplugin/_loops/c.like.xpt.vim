@@ -23,19 +23,19 @@ call XPTemplatePriority('like')
 XPTemplateDef
 
 XPT while0 hint=do\ {\ ..\ }\ while\ ($FALSE)
-do `$BRACKETSTYLE^{
+do {
   `cursor^
-} `$BRACKETSTYLE^while (`$FALSE^)
+} while (`$FALSE^)
 
 
 XPT do hint=do\ {\ ..\ }\ while\ (..)
-do `$BRACKETSTYLE^{
+do {
   `cursor^
-} `$BRACKETSTYLE^while (`condition^)
+} while (`condition^)
 
 
 XPT while1 hint=while\ ($TRUE)\ {\ ..\ }
-while (`$TRUE^) `$BRACKETSTYLE^{
+while (`$TRUE^) {
   `cursor^
 }
 

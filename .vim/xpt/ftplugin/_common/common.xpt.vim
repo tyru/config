@@ -98,7 +98,7 @@ fun! s:f.headerSymbol(...) "{{{
   let h = substitute(h, '\.', '_', 'g') " replace . with _
   let h = substitute(h, '.', '\U\0', 'g') " make all characters upper case
 
-  return '__'.h.'__'
+  return h
 endfunction
  "}}}
  "

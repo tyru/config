@@ -1,23 +1,30 @@
+escape ^Jj
+
 autodetach on
 bell_msg "^G"
-bind ^E encoding euc
-bind ^U encoding utf-8
-bind h prev
-bind j next
-bind l windowlist
-bind n screen
-# blanker
-# blankerprg /usr/bin/fortune -s
-caption always "%{= wb} %-w%{=bu dr}%n %t%{-}%+w %= %{=b wk} [%l] %{=b wb}%y/%m/%d(%D) %{=b wm}%c"
+startup_message off
+
+encoding utf-8
 defencoding utf-8
 defkanji utf-8
+
+bind ^E encoding euc
+bind ^U encoding utf-8
+
+bind ^L windowlist
+
+# idle 600
+# blanker
+# blankerprg /usr/bin/fortune -s
+
+caption always "%{= wb} %-w%{=bu dr}%n %t%{-}%+w %= %{=b wk} [%l] %{=b wb}%y/%m/%d(%D) %{=b wm}%c"
+bind a  caption splitonly
+bind ^A caption always
+
 deflogin off
 defscrollback 10000
-encoding utf-8
-escape ^Jj
-idle 600
+
 shell -$SHELL
-startup_message off
 term xterm-color
 vbell off
 

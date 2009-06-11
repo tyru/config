@@ -13,7 +13,7 @@ call extend(s:v, { '$TRUE': 'true'
                 \, '$FALSE' : 'false'
                 \, '$NULL' : 'NULL'
                 \, '$UNDEFINED' : ''
-                \, '$BRACKETSTYLE' : "\n"
+                \, '$BRACKETSTYLE' : ""
                 \, '$INDENT_HELPER' : ';' }, 'force')
 
 " inclusion
@@ -42,68 +42,56 @@ XPT all  hint=...begin,\ ...end,
 `v^.begin(), `v^.end(), `cursor^
  
 
-XPT vector hint=std::vector<..>\ ..;
-std::vector<`type^> `var^;
+XPT vector hint=vector<..>\ ..;
+vector<`type^> `var^;
 `cursor^
 
 
-XPT map hint=std::map<..,..>\ ..;
-std::map<`typeKey^,`val^>   `name^;
+XPT map hint=map<..,..>\ ..;
+map<`typeKey^,`val^>   `name^;
 `cursor^
 
 
 XPT class   hint=class+ctor
-class `className^
-{
+class `className^ {
 public:
-    `className^( `ctorParam^ );
-    ~`className^();
-    `className^( const `className^ &cpy );
+    `className^(`ctorParam^) {
+    }
+    ~`className^() {
+    }
+    `className^(const `className^ &cpy) {
+    }
     `cursor^
 private:
 };
- 
-// Scratch implementation
-// feel free to copy/paste or destroy
-`className^::`className^( `ctorParam^ )
-{
-}
- 
-`className^::~`className^()
-{
-}
- 
-`className^::`className^( const `className^ &cpy )
-{
-}
 ..XPT
 
+
 XPT fun=..\ ..\ (..)
-`int^ `name^(`_^^)
-{
+`int^
+`name^(`_^^) {
     `cursor^
 }
 
 
 XPT namespace hint=namespace\ {}
-namespace `name^
-{
+namespace `name^ {
     `cursor^
 }
 ..XPT
 
+
 XPT main hint=main\ (argc,\ argv)
-int main(int argc, char *argv[])
-{
+int
+main(int argc, char *argv[]) {
     `cursor^
     return 0;
 }
 
+
 XPT templateclass   hint=template\ <>\ class
-template
-    <`templateParam^>
-class `className^
-{
+template <`templateParam^>
+class `className^ {
 public:
     `className^( `ctorParam^ );
     ~`className^();
@@ -129,19 +117,4 @@ template <`templateParam^>
 {
 }
 ..XPT
-
-XPT try hint=try\ ...\ catch...
-try
-{
-    `what^
-}`...^
-catch ( `except^ )
-{
-    `handler^
-}`...^
-`catch...^catch ( ... )
-{
-    \`cursor\^
-}^^
-
 

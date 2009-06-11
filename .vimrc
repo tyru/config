@@ -716,7 +716,7 @@ func! s:LoadWhenFileType()
             call s:SetDict('c', 'cpp')
         endif
 
-        let &l:makeprg = gcc . ' -Wall -W -pedantic -fsyntax-only %%'
+        let &l:makeprg = gcc . ' -Wall -W -pedantic -fsyntax-only %'
 
     elseif &filetype == 'cs'
         TabChange 4

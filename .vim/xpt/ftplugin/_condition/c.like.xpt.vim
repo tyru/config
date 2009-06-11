@@ -7,7 +7,13 @@ let b:___CONDITION_C_LIKE_XPT_VIM__ = 1
 let [s:f, s:v] = XPTcontainer()
 
 " constant definition
-call extend(s:v, {'$TRUE': '1', '$FALSE' : '0', '$NULL' : 'NULL', '$INDENT_HELPER' : '/* void */;'}, 'keep')
+call extend(s:v, {'$TRUE': '1',
+            \     '$FALSE' : '0',
+            \     '$NULL' : 'NULL',
+            \     '$INDENT_HELPER' : '/* void */;',
+            \     '$BRACKETSTYLE' : ''
+            \     },
+            \     'keep')
 
 
 call XPTemplatePriority('like')
@@ -16,12 +22,14 @@ call XPTemplatePriority('like')
 XPTemplateDef
 
 XPT if		hint=if\ (..)\ {..}\ else...
-XSET job=$INDENT_HELPER
-if (`condi^) `$BRACKETSTYLE^{ 
-  `job^
-}` 
-`else...`^\`$BRACKETSTYLE\^ else \`$BRACKETSTYLE\^{ 
-  \`cursor\^ 
+XSET code=$INDENT_HELPER
+XSET body=$INDENT_HELPER
+if (`cond^) {
+    `code^
+}` `...^ else if (`cond2^) {
+    `body^
+}` `...^` `else...^ else {
+    \`body\^
 }^^
 
 
@@ -29,8 +37,7 @@ XPT ifn		hint=if\ ($NULL\ ==\ ..)\ {..}\ else...
 XSET job=$INDENT_HELPER
 if (`$NULL^ == `var^) `$BRACKETSTYLE^{ 
   `job^
-}` 
-`else...`^\`$BRACKETSTYLE\^ else \`$BRACKETSTYLE\^{ 
+}` `else...`^\`$BRACKETSTYLE\^ else \`$BRACKETSTYLE\^{ 
   \`cursor\^ 
 }^^
 
@@ -47,7 +54,7 @@ if (`$NULL^ != `var^) `$BRACKETSTYLE^{
 
 XPT if0		hint=if\ (0\ ==\ ..)\ {..}\ else...
 XSET job=$INDENT_HELPER
-if (0 == `var^) `$BRACKETSTYLE^{ 
+if (`var^ == 0) `$BRACKETSTYLE^{ 
   `job^
 }` 
 `else...`^\`$BRACKETSTYLE\^ else \`$BRACKETSTYLE\^{ 
@@ -57,7 +64,7 @@ if (0 == `var^) `$BRACKETSTYLE^{
 
 XPT ifn0	hint=if\ (0\ !=\ ..)\ {..}\ else...
 XSET job=$INDENT_HELPER
-if (0 != `var^) `$BRACKETSTYLE^{ 
+if (`var^ != 0) `$BRACKETSTYLE^{ 
   `job^
 }` 
 `else...`^\`$BRACKETSTYLE\^ else \`$BRACKETSTYLE\^{ 

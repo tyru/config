@@ -6,18 +6,11 @@ let b:__WRAP_CPP_XPT_VIM__ = 1
 
 XPTemplateDef
 XPT try_ hint=try\ {\ SEL\ }\ catch...
-try
-{
+try {
     `wrapped^
-}
-`...^catch ( `except^ )
-{
+} `...^catch ( `except^ ) {
     `handler^
-}`...^
-`catch...^catch ( ... )
-{
+}`...^ `catch...^catch ( ... ) {
     \`cursor\^
 }^^
-
-..XPT
 

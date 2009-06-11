@@ -10,6 +10,7 @@ let [s:f, s:v] = XPTcontainer()
 XPTinclude
       \ _common/common
 
+
 " ========================= Function and Varaibles =============================
 
 " ================================= Snippets ===================================
@@ -72,19 +73,11 @@ foreach my $`var^ (@`array^) {
 }
 
 XPT if hint=if\ (\ ..\ )\ {\ ..\ }\ ...
-if ( `cond^ )
-{
+if (`cond^) {
     `code^
-}`
-`...^
-elif ( `cond2^ )
-{
+}` `...^ elsif (`cond2^) {
     `body^
-}`
-`...^`
-`else...^
-else
-{
+}` `...^` `else...^ else {
     \`body\^
 }^^
 
