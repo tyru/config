@@ -240,8 +240,8 @@ autocmd LocationChange .* :fmapc
 
 " add !
 autocmd LocationChange 'mail\.google\.com/mail' :fmap -depth 4 c / j k n p o u e x s r a # [ ] z ! ? gi gs gt gd ga gc gl <C-s>
-" add J K N P
-autocmd LocationChange 'www\.google\.co\.jp/reader' :fmap -vkey j k J K n p N P m s t v A r S N P X O gh ga gs gt gu u / ?
+" add J K N P a
+autocmd LocationChange 'www\.google\.co\.jp/reader' :fmap -vkey a j k J K n p N P m s t v A r S N P X O gh ga gs gt gu u / ?
 " remove f <Esc> i d + - <Tab> <S-Tab>
 autocmd LocationChange 'www\.rememberthemilk\.com\/home\/tyru\/' :fmap -vkey a m c n p r g s h t u j y <Del> k z l 1 2 3 4 <C-S-Left> <C-S-Right> <C-S-0> <C-S-6> <C-S-7> <C-S-8> <C-S-9> <C-S-l> <Left> <Right> <Up> <Down> <PageUp> <PageDown> <Home> <End> <C-S-/>
 

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+dir="$1"
+shift
+
+IFS=:
+for i in $PATH; do
+    [ -d "$i" ] && find "$i" $@
+    [ -d "$i/$dir" ] && find "$i/$dir" $@
+done | sort | uniq

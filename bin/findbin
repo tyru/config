@@ -1,8 +1,0 @@
-#!/bin/sh
-
-IFS=:
-for i in $PATH; do
-    if [ -d $i ]; then
-        find $i
-    fi
-done | sort | uniq

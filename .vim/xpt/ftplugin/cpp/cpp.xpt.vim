@@ -27,6 +27,7 @@ XPTinclude
       \ _preprocessor/c.like
       \ c/wrap
 
+
 " ========================= Function and Varaibles =============================
 function! s:f.cleanTempl( ctx, ... )
   let notypename = substitute( a:ctx,"\\s*typename\\s*","","g" )
@@ -52,8 +53,9 @@ map<`typeKey^,`val^>   `name^;
 `cursor^
 
 
-XPT class   hint=class+ctor
-class `className^ {
+XPT class   hint=class or struct
+XSet class_or_struct=struct
+`class_or_struct^ `className^ {
 public:
     `className^(`ctorParam^) {
     }
@@ -63,7 +65,7 @@ public:
     }
     `cursor^
 private:
-};
+}; /* `class_or_struct^ `className^ */
 ..XPT
 
 

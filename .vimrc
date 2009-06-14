@@ -1,4 +1,5 @@
 scriptencoding utf-8
+set nocompatible
 let s:save_cpo = &cpo
 set cpo&vim
 
@@ -29,10 +30,6 @@ call RandomColorScheme()
 " 基本設定＆KaoriYa版についてきたもの＆その他色々コピペ {{{1
 
 " set options {{{2
-
-set nocompatible  " Use Vim defaults (much better!)
-
-
 
 " set clipboard=unnamed         " レジスタをWindowsのクリップボードと同期
 " set matchpairs+=<:>       " これがあると->を入力したとき画面が点滅する
@@ -333,6 +330,12 @@ func! s:Warn( msg )
 endfunc
 " }}}2
 
+func! s:System(command, ...)
+    let args = [a:command] + map(copy(a:000), 'shellescape(v:val)')
+    return system(join(args, ' '))
+endfunc
+
+
 command! -range BSlashToSlash
     \ s/\\/\//g
 command! -range SlashToBSlash
@@ -417,20 +420,22 @@ func! s:Dir( ... )
             let dir = '"'. dir .'"'
         endif
         let dir = substitute( dir, '/', '\', 'g' )
-        call system( 'explorer '. dir )
+        call s:Sysmtem('explorer', dir)
     else
         let dir = shellescape( dir )
-        call system( 'gnome-open '. dir )
+        call s:Sysmtem('gnome-open', dir)
     endif
 endfunc
 " }}}2
 
 " 環境によって動作が異なるコマンド {{{2
-if has( 'gui_running' ) && has( 'win32' )
-    command! GoDesktop   execute 'lcd C:' . $HOMEPATH . '\デスクトップ'
-    command! SH          !start cmd.exe
-else
-    command! GoDesktop   lcd '~/Desktop'
+if has('gui_running')
+    if has( 'win32' )
+        command! GoDesktop   execute 'lcd C:' . $HOMEPATH . '\デスクトップ'
+        command! SH          !start cmd.exe
+    else
+        command! GoDesktop   lcd '~/Desktop'
+    endif
 endif
 " }}}2
 
@@ -790,67 +795,95 @@ let g:lisp_rainbow = 1
 
 command! LispSetup            call s:LispSetup()
 
-" s:EvalItNormal() {{{2
-func! s:EvalItNormal()
-    " カーソル下の１文字をyank
-    normal! "zyl
-    " 閉じ括弧じゃなかったらそれ以前の括弧を探す
-    if @z != ')' || @z != '('
-        call search( '(\|)', 'Wb' )
-    endif
-    " 選択
-    normal! v%
-    " eval
-    call s:EvalItVisual()
+" s:EvalFileNormal(eval_main) {{{2
+func! s:EvalFileNormal(eval_main)
+    normal! %v%
+    call s:EvalFileVisual(a:eval_main)
 endfunc
 " }}}2
 
-" s:EvalItVisual() {{{2
-func! s:EvalItVisual() range
+" s:EvalFileVisual(eval_main) {{{2
+func! s:EvalFileVisual(eval_main) range
+    let z_val = getreg('z', 1)
+    let z_type = getregtype('z')
     normal! "zy
 
-    let lines = ['(print', @z, ')']
+    try
+        let curfile = expand('%')
+        if !filereadable(curfile)
+            call s:Warn("can't load " . curfile . "...")
+            return
+        endif
 
-    call writefile( lines, $HOME . '/.vimgosh.temp' )
-    echo system( 'gosh "' . $HOME . '/.vimgosh.temp"' )
-    call delete( $HOME . '/.vimgosh.temp' )
-    exe "normal! \<Esc>"
+        echo @z
+        echo string(split(@z, "\0"))
+        if a:eval_main ==# 'C-e'
+            let lines = ['(print'] + split(@z, "\n") + [')']
+        else
+            let lines = readfile(curfile) + ['(print'] + split(@z, "\n") + [')']
+        endif
 
+        let tmpfile = tempname() . localtime()
+        call writefile(lines, tmpfile)
+
+        if filereadable(tmpfile)
+            if a:eval_main ==# 'e'
+                " ファイル全体を評価し、mainを実行する
+                echo s:System('gosh', tmpfile)
+            elseif a:eval_main ==# 'E'
+                " ファイル全体を評価する
+                echo system(printf('cat %s | gosh', shellescape(tmpfile)))
+            else
+                " 選択されたS式を評価する
+                echo s:System('gosh', tmpfile)
+            endif
+        else
+            call s:Warn("cannot write to " . tmpfile . "...")
+        endif
+    finally
+        call setreg('z', z_val, z_type)
+    endtry
 endfunc
 " }}}2
 
 " s:LispSetup() {{{2
 func! s:LispSetup()
-    set lisp
-    set nocindent
+    if exists('b:LispSetup') && b:LispSetup != 0 | return | endif
+
+    setlocal lisp
+    setlocal nocindent
     nnoremap <silent> <LocalLeader>a        %%i(<Esc>l%a)<Esc>%a
     nnoremap <silent> <LocalLeader>A        %%mz%s]<Esc>`zs[<Esc>
     nnoremap <silent> <LocalLeader>z        %%mz%x`zx
-    " <LocalLeader><C-e> でスクリプトの結果表示
-    nnoremap <LocalLeader><C-e>
-                \ :echo system("gosh " . escape(expand('%'), ' \&'))<CR>
-    " <LocalLeader>e でリストを評価
-    vnoremap <LocalLeader>e       :call <SID>EvalItVisual()<CR>
-    nnoremap <LocalLeader>e       :call <SID>EvalItNormal()<CR>
 
-    " Gauche(scheme)
-    if fnamemodify(expand('%'), ':e') == 'scm'
-        let g:is_gauche = 1
-    endif
+    nnoremap <buffer> <LocalLeader>e       :call <SID>EvalFileNormal('e')<CR>
+    vnoremap <buffer> <LocalLeader>e       :call <SID>EvalFileVisual('e')<CR>
+    nnoremap <buffer> <LocalLeader>E       :call <SID>EvalFileNormal('E')<CR>
+    vnoremap <buffer> <LocalLeader>E       :call <SID>EvalFileVisual('E')<CR>
+    nnoremap <buffer> <LocalLeader><C-e>   :call <SID>EvalFileNormal('C-e')<CR>
+    vnoremap <buffer> <LocalLeader><C-e>   :call <SID>EvalFileVisual('C-e')<CR>
 
-    set lispwords+=and-let*,begin0,call-with-client-socket,call-with-input-conversion,call-with-input-file
-    set lispwords+=call-with-input-process,call-with-input-string,call-with-iterator,call-with-output-conversion,call-with-output-file
-    set lispwords+=call-with-output-string,call-with-temporary-file,call-with-values,dolist,dotimes
-    set lispwords+=if-match,let*-values,let-args,let-keywords*,let-match
-    set lispwords+=let-optionals*,let-syntax,let-values,let/cc,let1
-    set lispwords+=letrec-syntax,make,match,match-lambda,match-let
-    set lispwords+=match-let*,match-letrec,match-let1,match-define,multiple-value-bind
-    set lispwords+=parameterize,parse-options,receive,rxmatch-case,rxmatch-cond
-    set lispwords+=rxmatch-if,rxmatch-let,syntax-rules,unless,until
-    set lispwords+=when,while,with-builder,with-error-handler,with-error-to-port
-    set lispwords+=with-input-conversion,with-input-from-port,with-input-from-process,with-input-from-string,with-iterator
-    set lispwords+=with-module,with-output-conversion,with-output-to-port,with-output-to-process,with-output-to-string
-    set lispwords+=with-port-locking,with-string-io,with-time-counter,with-signal-handlers 
+    inoremap <buffer> <C-z>                <C-o>di(
+    inoremap <buffer> <C-S-z>              <C-o>da(
+
+    let g:is_gauche = 1
+
+    setlocal lispwords+=and-let*,begin0,call-with-client-socket,call-with-input-conversion,call-with-input-file
+    setlocal lispwords+=call-with-input-process,call-with-input-string,call-with-iterator,call-with-output-conversion,call-with-output-file
+    setlocal lispwords+=call-with-output-string,call-with-temporary-file,call-with-values,dolist,dotimes
+    setlocal lispwords+=if-match,let*-values,let-args,let-keywords*,let-match
+    setlocal lispwords+=let-optionals*,let-syntax,let-values,let/cc,let1
+    setlocal lispwords+=letrec-syntax,make,match,match-lambda,match-let
+    setlocal lispwords+=match-let*,match-letrec,match-let1,match-define,multiple-value-bind
+    setlocal lispwords+=parameterize,parse-options,receive,rxmatch-case,rxmatch-cond
+    setlocal lispwords+=rxmatch-if,rxmatch-let,syntax-rules,unless,until
+    setlocal lispwords+=when,while,with-builder,with-error-handler,with-error-to-port
+    setlocal lispwords+=with-input-conversion,with-input-from-port,with-input-from-process,with-input-from-string,with-iterator
+    setlocal lispwords+=with-module,with-output-conversion,with-output-to-port,with-output-to-process,with-output-to-string
+    setlocal lispwords+=with-port-locking,with-string-io,with-time-counter,with-signal-handlers 
+
+
+    let b:LispSetup = 1
 endfunc
 " }}}2
 " }}}1
@@ -994,6 +1027,8 @@ inoremap <C-CR>  <C-o>o
 
 inoremap <C-r><C-o>  <C-r><C-p>"
 inoremap <C-r><C-r>  <C-r><C-p>+
+
+inoremap <C-l>  <Space><BS><C-o><C-l>
 " }}}2
 
 " ~~ c ~~ {{{2
@@ -1134,7 +1169,7 @@ func! Chalice_ThreadCopy( open_to )
     exe new_reg_name
     put y
     1delete
-    set ft=2ch_thread
+    setlocal ft=2ch_thread
 endfunc
 " }}}
 
