@@ -815,13 +815,7 @@ func! s:EvalFileVisual(eval_main) range
             return
         endif
 
-        echo @z
-        echo string(split(@z, "\0"))
-        if a:eval_main ==# 'C-e'
-            let lines = ['(print'] + split(@z, "\n") + [')']
-        else
-            let lines = readfile(curfile) + ['(print'] + split(@z, "\n") + [')']
-        endif
+        let lines = readfile(curfile) + ['(print'] + split(@z, "\n") + [')']
 
         let tmpfile = tempname() . localtime()
         call writefile(lines, tmpfile)
@@ -834,8 +828,7 @@ func! s:EvalFileVisual(eval_main) range
                 " ファイル全体を評価する
                 echo system(printf('cat %s | gosh', shellescape(tmpfile)))
             else
-                " 選択されたS式を評価する
-                echo s:System('gosh', tmpfile)
+                call s:Warn("this block never reached")
             endif
         else
             call s:Warn("cannot write to " . tmpfile . "...")
@@ -860,8 +853,7 @@ func! s:LispSetup()
     vnoremap <buffer> <LocalLeader>e       :call <SID>EvalFileVisual('e')<CR>
     nnoremap <buffer> <LocalLeader>E       :call <SID>EvalFileNormal('E')<CR>
     vnoremap <buffer> <LocalLeader>E       :call <SID>EvalFileVisual('E')<CR>
-    nnoremap <buffer> <LocalLeader><C-e>   :call <SID>EvalFileNormal('C-e')<CR>
-    vnoremap <buffer> <LocalLeader><C-e>   :call <SID>EvalFileVisual('C-e')<CR>
+    nnoremap <buffer> <LocalLeader><C-e>   :echo <SID>System('gosh', expand('%'))<CR>
 
     inoremap <buffer> <C-z>                <C-o>di(
     inoremap <buffer> <C-S-z>              <C-o>da(
