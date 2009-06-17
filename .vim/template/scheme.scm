@@ -3,16 +3,19 @@
 ;;; <%filename%> - DESCRIPTION HERE
 ;;; 
 ;;; Written By: <%author%> <<%email%>>
-;;; Last Change: 2009-05-31.
+;;; Last Change: 2009-06-17.
 
 
 (use srfi-1)
-(use ggc.debug.trace)
+(use slib)
+(require 'trace)
 (use gauche.interactive)
 
-(define (main args)
+(define main
+  (lambda (args)
 
-  (if (pair? (cdr args))
-    (print (cons "args:" (cdr args)) "\n"))
+    (if (pair? (cdr args))
+      (print (cons "args:" (cdr args)) "\n"))
 
-  0)
+
+    0))

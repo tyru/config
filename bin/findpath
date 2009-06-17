@@ -1,0 +1,13 @@
+#!/bin/sh
+
+dir="$1"
+[ -z $dir ] && exit
+
+shift
+
+IFS=:
+for i in $PATH; do
+    search_dir="$i/.."
+    search_dir="$(cd $search_dir && pwd)"    # full path
+    [ -d "$search_dir/$dir" ] && find "$search_dir/$dir" $@
+done | sort | uniq
