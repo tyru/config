@@ -3,7 +3,7 @@ scriptencoding euc-jp
 
 " カラースキーマ等 {{{1
 
-call RandomColorScheme()
+call SetColorScheme()
 set t_vb=
 
 " }}}1

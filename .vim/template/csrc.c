@@ -1,15 +1,16 @@
 /* vim:<% eval: printf("ts=%s:sw=%s:sts=%s:tw=%s:set %s", &ts, &sw, &sts, &tw, &expandtab ? "et" : "noet") %>: */
 /* 
- * <%filename%> - DESCRIPTION HERE
+ * <%filename%> - 
  *
  * Written By: <%author%> <<%email%>>
- * Last Change: 2009-05-31.
+ * Last Change: 2009-06-17.
  *
  */
 
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
 #define STREQ(s1, s2)   (*(s1) == *(s2) && strcmp((s1), (s2)) == 0)

@@ -3,6 +3,9 @@ set nocompatible
 let s:save_cpo = &cpo
 set cpo&vim
 
+" TODO
+" com! ReadAllFiles
+
 "-----------------------------------------------------------------
 " Colorscheme {{{1
 "
@@ -13,7 +16,7 @@ set cpo&vim
 " eveningはdesertに文字列ハイライト足した感じ
 " でもdesertも好きだったりする
 
-fun! RandomColorScheme()
+fun! SetColorScheme()
     if has( 'gui' )
         " GUI版の設定
         colorscheme desert
@@ -23,7 +26,7 @@ fun! RandomColorScheme()
     endif
 endfun
 
-call RandomColorScheme()
+call SetColorScheme()
 
 " }}}1
 "-----------------------------------------------------------------
@@ -31,7 +34,6 @@ call RandomColorScheme()
 
 " set options {{{2
 
-" set clipboard=unnamed         " レジスタをWindowsのクリップボードと同期
 " set matchpairs+=<:>       " これがあると->を入力したとき画面が点滅する
 " set spell      " すげーけどキモい
 " set wildignore=*.o,*.obj,*.la,*.a,*.exe,*.com,*.tds
@@ -40,7 +42,7 @@ set autoread
 set backspace=indent,eol,start
 set browsedir=buffer
 set clipboard=
-set complete+=k,d
+set complete=.,w,b,k
 set diffopt=filler,vertical
 set directory=$HOME/.vim/backup
 set expandtab
@@ -58,7 +60,6 @@ set listchars=tab:>-,extends:<
 set noshowcmd
 set nosplitright
 set notimeout
-set nowrap
 set nrformats-=octal
 set ruler
 set scroll=5
@@ -66,11 +67,13 @@ set scrolloff=15
 set shiftround
 set shiftwidth=4
 set shortmess+=I
+set showfulltag
 set showmatch
 set smartcase
 set smartindent
 set smarttab
 set splitbelow
+set switchbuf="useopen,usetab"
 set tabstop=4
 set updatetime=10000
 set viminfo='50,h,f1,n$HOME/.viminfo
@@ -78,7 +81,13 @@ set visualbell
 set whichwrap=
 set wildchar=<Tab>
 set wildmenu
+set wrap
 set wrapscan
+
+if has('unix')
+    set nofsync
+    set swapsync=
+endif
 
 set backup
 set backupdir=$HOME/.vim/backup
@@ -152,12 +161,12 @@ if has( "win32" ) && isdirectory( $HOME .'/.vim' )
     set runtimepath+=$HOME/.vim
 endif
 let s:runtime_dirs = [
-    \ '$HOME/.vim/after',
-    \ '$HOME/.vim/mine',
-    \ '$HOME/.vim/chalice',
-    \ '$HOME/.vim/hatena',
-    \ '$HOME/.vim/xpt'
-\ ]
+            \ '$HOME/.vim/after',
+            \ '$HOME/.vim/mine',
+            \ '$HOME/.vim/chalice',
+            \ '$HOME/.vim/hatena',
+            \ '$HOME/.vim/xpt'
+            \ ]
 for dir in s:runtime_dirs
     if isdirectory(expand(dir))
         let &runtimepath .= ',' . expand(dir)
@@ -322,24 +331,28 @@ endif
 "-----------------------------------------------------------------
 " Commands {{{1
 
-" s:Warn() {{{2
-func! s:Warn( msg )
+" Util Commands {{{
+" s:Warn {{{
+func! s:Warn(msg)
     echohl WarningMsg
     echo a:msg
     echohl None
 endfunc
-" }}}2
+" }}}
 
+" s:System {{{
 func! s:System(command, ...)
     let args = [a:command] + map(copy(a:000), 'shellescape(v:val)')
     return system(join(args, ' '))
 endfunc
+" }}}
+" }}}
 
 
 command! -range BSlashToSlash
-    \ s/\\/\//g
+            \ s/\\/\//g
 command! -range SlashToBSlash
-    \ s/\//\\/g
+            \ s/\//\\/g
 
 " セッション保存 GUI 版
 if has( 'gui_running' )
@@ -350,7 +363,7 @@ endif
 "     runtimepathの全てのdocディレクトリに
 "     helptagsする
 command! HelpTagAll
-    \ call s:HelpTagAll()
+            \ call s:HelpTagAll()
 
 func! s:HelpTagAll()
     for path in split( &runtimepath, ',' )
@@ -366,7 +379,7 @@ endfunc
 " ToggleEol {{{2
 " 末尾の$を表示したりしなかったり
 command! ToggleEol
-    \ call s:ToggleEol()
+            \ call s:ToggleEol()
 
 let s:listchars_eol_toggled = 0
 func! s:ToggleEol()
@@ -383,7 +396,7 @@ endfunc
 " MTest {{{2
 "     Perlの正規表現をVimの正規表現に
 command! -nargs=? MTest
-    \ call s:MTest( <q-args> )
+            \ call s:MTest( <q-args> )
 
 func! s:MTest( ... )
 
@@ -405,7 +418,7 @@ endfunc
 
 " Dir {{{2
 command! -nargs=? -complete=dir Dir
-    \ call s:Dir( <f-args> )
+            \ call s:Dir( <f-args> )
 
 func! s:Dir( ... )
     let dir =   a:0 == 1 ? a:1 : '.'
@@ -478,7 +491,7 @@ endfunc
 
 " s:ListChars() {{{2
 command! ListChars
-    \ call s:ListChars()
+            \ call s:ListChars()
 
 func! s:ListChars()
     call s:ListAndExecute( [  '',
@@ -524,7 +537,7 @@ endfunc
 
 " DelFile {{{2
 command! -complete=file -nargs=+ DelFile
-    \ call s:DelFile(<f-args>)
+            \ call s:DelFile(<f-args>)
 
 func! s:DelFile(...)
     if a:0 == 0 | return | endif
@@ -548,7 +561,7 @@ endfunc
 
 " TabChange {{{2
 command! -nargs=1 TabChange
-    \ call s:TabChange( <f-args> )
+            \ call s:TabChange( <f-args> )
 
 func! s:TabChange( width )
     if a:width =~ '^\d\+$'
@@ -563,7 +576,7 @@ func! s:Mkdir(...)
     for i in a:000 | call mkdir(i, 'p') | endfor
 endfunc
 command! -nargs=+ -complete=dir Mkdir
-    \ call s:Mkdir(<f-args>)
+            \ call s:Mkdir(<f-args>)
 " }}}2
 
 " WhoseCommand {{{2
@@ -577,6 +590,41 @@ endfunc
 command! -nargs=1 -complete=command
             \ WhoseCommand
             \ call s:WhoseCommand(<f-args>)
+" }}}2
+
+" s:GccSyntaxCheck(...) {{{2
+func! s:GccSyntaxCheck(...)
+    if expand('%') ==# '' | return | endif
+
+    " compiler
+    if &filetype ==# 'c'
+        let gcc = 'gcc'
+    elseif &filetype ==# 'cpp'
+        let gcc = 'g++'
+    else
+        return
+    endif
+
+    " options
+    let opt = {}
+    for i in a:000
+        let opt[i] = 1
+    endfor
+
+    let makeprg = &l:makeprg
+    let &l:makeprg = gcc . ' -Wall -W -pedantic -fsyntax-only %'
+
+    if has_key(opt, '-q') && opt['-q']
+        silent make
+    else
+        make
+    endif
+
+    let &l:makeprg = makeprg
+endfunc
+
+command! -nargs=* GccSyntaxCheck
+            \ call s:GccSyntaxCheck(<f-args>)
 " }}}2
 
 " }}}1
@@ -693,7 +741,7 @@ augroup END
 
 func! s:SetDict(...)
     execute "setlocal dict="
-        \ . join(map(copy(a:000), '"$HOME/.vim/dict/" . v:val . ".dict"'), ',')
+                \ . join(map(copy(a:000), '"$HOME/.vim/dict/" . v:val . ".dict"'), ',')
 endfunc
 
 
@@ -721,7 +769,12 @@ func! s:LoadWhenFileType()
             call s:SetDict('c', 'cpp')
         endif
 
-        let &l:makeprg = gcc . ' -Wall -W -pedantic -fsyntax-only %'
+        let curdir = expand('%:p:h') . '/'
+        if curdir . filereadable('Makefile') || filereadable('makefile')
+            let &l:makeprg = 'make'
+        else
+            let &l:makeprg = gcc . ' -Wall -W -pedantic -fsyntax-only %'
+        endif
 
     elseif &filetype == 'cs'
         TabChange 4
@@ -774,7 +827,6 @@ func! s:LoadWhenFileType()
         endif
         setlocal suffixesadd=.pm
         setlocal makeprg=perl\ -c\ %
-        setlocal complete=.,w,b,k
 
     elseif &filetype == 'yaml'
         TabChange 2
@@ -791,7 +843,10 @@ endfunc
 " For Lisp(Scheme,Gauche) {{{1
 
 
-let g:lisp_rainbow = 1
+" 端末の時だと見づらくなる
+if has('gui_running')
+    let g:lisp_rainbow = 1
+endif
 
 command! LispSetup            call s:LispSetup()
 
@@ -845,18 +900,12 @@ func! s:LispSetup()
 
     setlocal lisp
     setlocal nocindent
-    nnoremap <silent> <LocalLeader>a        %%i(<Esc>l%a)<Esc>%a
-    nnoremap <silent> <LocalLeader>A        %%mz%s]<Esc>`zs[<Esc>
-    nnoremap <silent> <LocalLeader>z        %%mz%x`zx
 
     nnoremap <buffer> <LocalLeader>e       :call <SID>EvalFileNormal('e')<CR>
     vnoremap <buffer> <LocalLeader>e       :call <SID>EvalFileVisual('e')<CR>
     nnoremap <buffer> <LocalLeader>E       :call <SID>EvalFileNormal('E')<CR>
     vnoremap <buffer> <LocalLeader>E       :call <SID>EvalFileVisual('E')<CR>
     nnoremap <buffer> <LocalLeader><C-e>   :echo <SID>System('gosh', expand('%'))<CR>
-
-    inoremap <buffer> <C-z>                <C-o>di(
-    inoremap <buffer> <C-S-z>              <C-o>da(
 
     let g:is_gauche = 1
 
@@ -967,10 +1016,6 @@ endif
 noremap <silent> ]k        m`:call search( '^\S', 'W' )<CR>
 noremap <silent> [k        m`:call search( '^\S', 'Wb' )<CR>
 
-" ^i と ^o を逆にする
-nnoremap <silent>  <C-i>              <C-o>
-nnoremap <silent>  <C-o>              <C-i>
-
 " make
 nnoremap <silent>   gm      :make<CR>
 nnoremap <silent>   gc      :cclose<CR>
@@ -986,6 +1031,12 @@ nnoremap <silent> <LocalLeader>cd   :CdCurrent<CR>
 
 nnoremap <silent> gn    :cn<CR>
 nnoremap <silent> gN    :cN<CR>
+
+" for lisp ?
+nnoremap <silent> <LocalLeader>a        %%i(<Esc>l%a)<Esc>%a
+nnoremap <silent> <LocalLeader>A        %%mz%s]<Esc>`zs[<Esc>
+nnoremap <silent> <LocalLeader>z        %%mz%x`zx
+nnoremap <silent> <LocalLeader>Z        %%da(h"_da(P
 
 " }}}2
 
@@ -1021,6 +1072,9 @@ inoremap <C-r><C-o>  <C-r><C-p>"
 inoremap <C-r><C-r>  <C-r><C-p>+
 
 inoremap <C-l>  <Space><BS><C-o><C-l>
+
+inoremap <buffer> <C-z>                <C-o>di(
+inoremap <buffer> <C-S-z>              <C-o>da(
 " }}}2
 
 " ~~ c ~~ {{{2
@@ -1093,7 +1147,7 @@ let g:FuzzyFinderOptions.Base.abbrev_map  = {
             \ }
 if isdirectory( $HOME .'/.vim/mine/plugin' )
     let g:FuzzyFinderOptions.Base.abbrev_map['^plug'] += [
-                    \ '~/.vim/mine/plugin/'
+                \ '~/.vim/mine/plugin/'
                 \ ]
 endif
 
@@ -1139,7 +1193,7 @@ let chalice_startupflags = "bookmark"
 " 画像収集
 if exists(':M')
     command! SrchImageUri
-        \ :M/h?ttp:\/\/.+\.(jpe?g|png|gif|bmp)\c
+                \ :M/h?ttp:\/\/.+\.(jpe?g|png|gif|bmp)\c
 endif
 
 nnoremap <silent> ,cv    :call Chalice_ThreadCopy( 'v' )<CR>
@@ -1197,14 +1251,14 @@ let g:ca_verbose = 1    " debug
 let g:ca_oneline_comment = "//"
 
 let g:ca_filetype_table = {
-    \ 'oneline' : {
-        \ 'dosbatch' : 'rem ###'
-    \ },
-    \ 'wrapline' : {
-        \ 'html' : [ "<!-- ", " -->" ],
-        \ 'css' : [ "/* ", " */" ]
-    \ }
-\ }
+            \ 'oneline' : {
+            \ 'dosbatch' : 'rem ###'
+            \ },
+            \ 'wrapline' : {
+            \ 'html' : [ "<!-- ", " -->" ],
+            \ 'css' : [ "/* ", " */" ]
+            \ }
+            \ }
 
 " nnoremapじゃダメ
 nmap go      <LocalLeader>co
@@ -1223,18 +1277,18 @@ let g:vt_author = "tyru"
 let g:vt_email = "tyru.exe@gmail.com"
 
 let s:tmp = [
-    \ 'cppsrc.cpp=cpp',
-    \ 'header.h=cpp',
-    \ 'csrc.c=c',
-    \ 'csharp.cs=cs',
-    \ 'hina.html=html',
-    \ 'javasrc.java=java',
-    \ 'perl.pl=perl',
-    \ 'perlmodule.pm=perl',
-    \ 'python.py=python',
-    \ 'scala.scala=scala',
-    \ 'vimscript.vim=vim'
-\ ]
+            \ 'cppsrc.cpp=cpp',
+            \ 'header.h=cpp',
+            \ 'csrc.c=c',
+            \ 'csharp.cs=cs',
+            \ 'hina.html=html',
+            \ 'javasrc.java=java',
+            \ 'perl.pl=perl',
+            \ 'perlmodule.pm=perl',
+            \ 'python.py=python',
+            \ 'scala.scala=scala',
+            \ 'vimscript.vim=vim'
+            \ ]
 let g:vt_filetype_files = join(s:tmp, ',')
 unlet s:tmp    " for memory
 " }}}
