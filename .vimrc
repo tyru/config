@@ -542,19 +542,21 @@ command! -complete=file -nargs=+ DelFile
 func! s:DelFile(...)
     if a:0 == 0 | return | endif
 
-    for f in map(copy(a:000), 'expand(v:val)')
-        if filereadable(f)
-            call delete(f)
-        else
-            call s:Warn(f . ": No such a file")
-        endif
+    for i in map(copy(a:000), 'expand(v:val)')
+        for j in split(i, "\n")
+            if filereadable(j)
+                call delete(j)
+            else
+                call s:Warn(j . ": No such a file")
+            endif
 
-        if filereadable(f)
-            call s:Warn(printf("Can't delete '%s'", f))
-        elseif f ==# expand('%')
-            " 現在開いているファイルを削除する場合現在のバッファを削除する
-            bwipeout
-        endif
+            if filereadable(j)
+                call s:Warn(printf("Can't delete '%s'", j))
+            elseif j ==# expand('%')
+                " 現在開いているファイルを削除する場合現在のバッファを削除する
+                bwipeout
+            endif
+        endfor
     endfor
 endfunc
 " }}}2
@@ -1052,6 +1054,10 @@ call s:ClearOmap()
 " -- map! -- {{{2
 noremap! <C-f>   <Right>
 noremap! <C-b>   <Left>
+noremap! <M-f>   <C-Right>
+noremap! <M-b>   <C-Left>
+noremap! <C-a>   <Home>
+noremap! <C-e>   <End>
 
 " 括弧
 noremap! <M-(>         ()<Left>
