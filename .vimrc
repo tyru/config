@@ -113,7 +113,7 @@ func! ShrinkPath( path, maxwidth )
     let path = expand( a:path )
 
     " split current directory into 'dirs'.
-    if exists( '+shellslash' )
+    if has( 'win32' )
         let sep = "\\"
     else
         let sep = "/"
@@ -1129,14 +1129,14 @@ let g:netrw_liststyle = 1
 let g:netrw_cygwin    = 1
 
 " FuzzyFinder {{{3
-nnoremap <silent> <LocalLeader>fb       :FuzzyFinderBuffer<CR>
+nnoremap <silent> <LocalLeader>b       :FuzzyFinderBuffer<CR>
 nnoremap <silent> <LocalLeader>fd       :FuzzyFinderDir<CR>
 nnoremap <silent> <LocalLeader>ff       :FuzzyFinderFile<CR>
 nnoremap <silent> <LocalLeader>fh       :FuzzyFinderMruFile<CR>
 
 
 let g:FuzzyFinderOptions = { 'Base':{}, 'Buffer':{}, 'File':{}, 'MruFile':{}, 'Dir':{}, 'Tag':{}, 'TaggedFile':{}}
-" let g:FuzzyFinderOptions.Base.migemo_support   = 1    " よくSEGVる
+" let g:FuzzyFinderOptions.Base.migemo_support   = 1    " 何故かSEGVる
 let g:FuzzyFinderOptions.Base.key_open_tab     = '<C-CR>'
 let g:FuzzyFinderOptions.Base.key_next_mode    = '<C-l>'
 let g:FuzzyFinderOptions.Base.key_prev_mode    = '<C-h>'
@@ -1224,9 +1224,6 @@ func! Chalice_ThreadCopy( open_to )
     setlocal ft=2ch_thread
 endfunc
 " }}}
-
-" QuickBuf
-let qb_hotkey = '<LocalLeader>b'
 
 " changelog
 let changelog_username = "tyru"
