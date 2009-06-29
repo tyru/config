@@ -83,6 +83,10 @@ else
 fi
 
 
+if [ -f "$HOME/.alias.local" ]; then
+    source "$HOME/.alias.local"
+fi
+
 
 ### function ###
 # via http://blog.s21g.com/articles/602
@@ -118,8 +122,3 @@ if [ "$OS" = 'Cygwin' ]; then
     }
 fi
 
-
-### load local conf ###
-if [ -f "$HOME/.zshrc.local" ]; then
-    source "$HOME/.zshrc.local"
-fi

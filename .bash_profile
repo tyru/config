@@ -35,11 +35,15 @@ export INSTALL_AS_USER
 export LD_LIBRARY_PATH="$HOME/local/lib"
 mkdir -p ~/local/var/db/pkg
 
+
+# delete duplicated paths
 export PATH="$HOME/bin:$HOME/local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
-if [ "$OS" != "Cygwin" ]; then
+if [ -x "$(which rmdupenv)" ]; then
     rmdupenv PATH
+    rmdupenv PERL5LIB
 fi
 
-if [ -f "$HOME/.bash_profile.local" ]; then
-    source "$HOME/.bash_profile.local"
+
+if [ -f "$HOME/.env.local" ]; then
+    source "$HOME/.env.local"
 fi

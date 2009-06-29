@@ -716,11 +716,11 @@ augroup MyVimrc
                 \ setlocal ft=java
     autocmd BufNewFile,BufReadPre *.js
                 \ setlocal ft=javascript
-    autocmd BufNewFile,BufReadPre *.pl
+    autocmd BufNewFile,BufReadPre *.pl,*.pm
                 \ setlocal ft=perl
     autocmd BufNewFile,BufReadPre *.ps1
                 \ setlocal ft=powershell
-    autocmd BufNewFile,BufReadPre *.py
+    autocmd BufNewFile,BufReadPre *.py,*.pyc
                 \ setlocal ft=python
     autocmd BufNewFile,BufReadPre *.rb
                 \ setlocal ft=ruby
@@ -942,7 +942,7 @@ noremap <silent> <LocalLeader><LocalLeader>         <LocalLeader>
 noremap <silent> <Leader><Leader>                   <Leader>
 
 " クリップボードにコピー
-noremap <LocalLeader>y     "+y
+noremap <LocalLeader>y     "*y
 
 " }}}2
 
@@ -1129,13 +1129,32 @@ let g:netrw_liststyle = 1
 let g:netrw_cygwin    = 1
 
 " FuzzyFinder {{{3
-nnoremap <silent> <LocalLeader>b       :FuzzyFinderBuffer<CR>
+nnoremap <silent> <LocalLeader>b        :FuzzyFinderBuffer<CR>
 nnoremap <silent> <LocalLeader>fd       :FuzzyFinderDir<CR>
 nnoremap <silent> <LocalLeader>ff       :FuzzyFinderFile<CR>
 nnoremap <silent> <LocalLeader>fh       :FuzzyFinderMruFile<CR>
+nnoremap <silent> <LocalLeader>ft       :FuzzyFinderTag<CR>
+nnoremap <silent> <LocalLeader>fT       :FuzzyFinderTaggedFile<CR>
+nnoremap <silent> <LocalLeader>t        :FuzzyFinderTagWithCursorWord<CR>
 
 
-let g:FuzzyFinderOptions = { 'Base':{}, 'Buffer':{}, 'File':{}, 'MruFile':{}, 'Dir':{}, 'Tag':{}, 'TaggedFile':{}}
+let g:FuzzyFinderOptions = {
+    \ 'Base':{},
+    \ 'Buffer':{ "mode_available" : 1 },
+    \ 'File':{ "mode_available" : 1 },
+    \ 'Dir':{ "mode_available" : 1 },
+    \ 'MruFile':{ "mode_available" : 1 },
+    \ 'MruCmd':{ "mode_available" : 0 },
+    \ 'Bookmark':{ "mode_available" : 0 },
+    \ 'Tag':{ "mode_available" : 1 },
+    \ 'TaggedFile':{ "mode_available" : 1 },
+    \ 'GivenFile':{ "mode_available" : 0 },
+    \ 'GivenDir':{ "mode_available" : 0 },
+    \ 'GivenCmd':{ "mode_available" : 0 },
+    \ 'CallbackFile':{ "mode_available" : 0 },
+    \ 'CallbackItem':{ "mode_available" : 0 },
+\ }
+
 " let g:FuzzyFinderOptions.Base.migemo_support   = 1    " 何故かSEGVる
 let g:FuzzyFinderOptions.Base.key_open_tab     = '<C-CR>'
 let g:FuzzyFinderOptions.Base.key_next_mode    = '<C-l>'
@@ -1233,8 +1252,27 @@ nnoremap <silent>   <LocalLeader>na     :Narrow<CR>
 nnoremap <silent>   <LocalLeader>nw     :Widen<CR>
 
 " gtags
+let s:gtags_found = 0
+func! s:JumpTags()
+    if expand('%') == '' | return | endif
+
+    let gtags = expand('%:h') . '/GTAGS'
+    if exists(':GtagsCursor') && filereadable(gtags)
+        if ! s:gtags_found
+            echo "found GTAGS. use gtags for jumping..."
+            sleep 2
+            let s:gtags_found = 1
+        endif
+        lcd %:p:h
+        GtagsCursor
+        lcd -
+    else
+        execute "normal! \<C-]>"
+    endif
+endfunc
+
 nnoremap <silent> g<C-i>    :Gtags -f %<CR>
-nnoremap <silent> g<C-j>    :GtagsCursor<CR>
+nnoremap <silent> <C-]>    :call <SID>JumpTags()<CR>
 
 " xptemplate
 let xptemplate_key = '<C-k>'

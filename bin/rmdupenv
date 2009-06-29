@@ -1,5 +1,7 @@
 #! /bin/sh
 
+[ -x "$(which perl)" -a "$OS" != "Cygwin" ] || exit
+
 if [ $# = 0 ]; then return; fi
 env="$1"
 sep="$2"

@@ -38,7 +38,6 @@ set ignorecase
 set incsearch
 set nextpattern+=\b次
 set noinsertmode
-set nopreload
 set previouspattern+=\b前
 set scroll=8
 set smartcase

@@ -35,6 +35,10 @@ if [ -x "$(which vim)" ]; then
 fi
 
 
+if [ -f "$HOME/.alias.local" ]; then
+    source "$HOME/.alias.local"
+fi
+
 
 ### cygwin ###
 if [ "$OS" = 'Cygwin' ]; then
@@ -54,16 +58,4 @@ if [ "$OS" = 'Cygwin' ]; then
             command screen "$@"
         fi
     }
-fi
-
-
-# delete duplicated paths
-if [ -x "$(which perl)" ]; then
-    export PATH="$(perl -e 'for(split /:/, $ENV{PATH}){$h{$_} or $h{$_}=++$i} $,=q(:); %h=reverse %h; print map { $h{$_} } sort { $a <=> $b } keys %h')"
-fi
-
-
-### load local conf ###
-if [ -f "$HOME/.bashrc.local" ]; then
-    source "$HOME/.bashrc.local"
 fi

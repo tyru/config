@@ -34,12 +34,12 @@ export GISTY_DIR="$HOME/work/gist"
 
 # delete duplicated paths
 export PATH="$HOME/bin:$HOME/local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
-if [ -x "$(which perl)" -a "$OS" != "Cygwin" ]; then
+if [ -x "$(which rmdupenv)" ]; then
     rmdupenv PATH
     rmdupenv PERL5LIB
 fi
 
 
-if [ -f "$HOME/.zshenv.local" ]; then
-    source "$HOME/.zshenv.local"
+if [ -f "$HOME/.env.local" ]; then
+    source "$HOME/.env.local"
 fi
