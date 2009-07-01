@@ -3,7 +3,7 @@
  * <%filename%> - 
  *
  * Written By: <%author%> <<%email%>>
- * Last Change: 2009-06-17.
+ * Last Change: 2009-06-30.
  *
  */
 
@@ -19,7 +19,8 @@
 
 
 int
-main(int argc, char *argv[]) {
+main(int argc, char *argv[])
+{
 
 
     return EXIT_SUCCESS;

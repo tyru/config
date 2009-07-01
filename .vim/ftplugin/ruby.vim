@@ -48,7 +48,7 @@ setlocal suffixesadd=.rb
 
 " The problem with the usual tag browsing is that it doesn't know about
 " namespaces. i.e. ABC::def and def may be the same thing.
-map <buffer><unique><silent> <C-]> :exec ":tag /".expand("<cword>")<CR>
+" map <buffer><unique><silent> <C-]> :exec ":tag /".expand("<cword>")<CR>
 
 " Change the browse dialog on Win32 or Motif to show mainly Ruby-related files
 if (has("gui_win32") || has("gui_motif")) && !exists("b:browsefilter")

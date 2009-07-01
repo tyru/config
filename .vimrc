@@ -1,10 +1,6 @@
 scriptencoding utf-8
-set nocompatible
 let s:save_cpo = &cpo
 set cpo&vim
-
-" TODO
-" com! ReadAllFiles
 
 "-----------------------------------------------------------------
 " Colorscheme {{{1
@@ -505,7 +501,7 @@ endfunc
 
 " FastEdit {{{2
 "   遅いときは役に立つかも
-nnoremap <LocalLeader>fe        :call <SID>FastEdit()<CR>
+nnoremap <silent> <LocalLeader>fe        :call <SID>FastEdit()<CR>
 
 let s:fast_editing = 0
 func! s:FastEdit()
@@ -514,24 +510,26 @@ func! s:FastEdit()
     if s:fast_editing
 
         " ファイルタイプ(カラーとかインデントとか)
-        filetype on
+        syntax on
         filetype plugin indent on
 
+        redraw
+        let s:fast_editing = 0
         echo 'slow but high ability.'
     else
 
         " ファイルタイプ
-        filetype off
+        syntax off
         filetype plugin indent off
 
         " 不可逆
         " autocmd! CursorMoved
         " autocmd! CursorMovedI
 
+        redraw
+        let s:fast_editing = 1
         echo 'fast browsing.'
     endif
-
-    let s:fast_editing = s:fast_editing ? 0 : 1
 endfunc
 " }}}2
 
@@ -1071,16 +1069,19 @@ noremap! <M-}>         \{\}<Left><Left>
 " }}}2
 
 " ~~ i ~~ {{{2
+inoremap <C-j>  <Esc>
+
 inoremap <S-CR>  <C-o>O
 inoremap <C-CR>  <C-o>o
 
 inoremap <C-r><C-o>  <C-r><C-p>"
 inoremap <C-r><C-r>  <C-r><C-p>+
 
+" <Space><BS>は現在行のインデントを保つため
 inoremap <C-l>  <Space><BS><C-o><C-l>
 
-inoremap <buffer> <C-z>                <C-o>di(
-inoremap <buffer> <C-S-z>              <C-o>da(
+inoremap <C-z>                <C-o>di(
+inoremap <C-S-z>              <C-o>da(
 " }}}2
 
 " ~~ c ~~ {{{2
@@ -1129,7 +1130,7 @@ let g:netrw_liststyle = 1
 let g:netrw_cygwin    = 1
 
 " FuzzyFinder {{{3
-nnoremap <silent> <LocalLeader>b        :FuzzyFinderBuffer<CR>
+nnoremap <silent> <LocalLeader>fb       :FuzzyFinderBuffer<CR>
 nnoremap <silent> <LocalLeader>fd       :FuzzyFinderDir<CR>
 nnoremap <silent> <LocalLeader>ff       :FuzzyFinderFile<CR>
 nnoremap <silent> <LocalLeader>fh       :FuzzyFinderMruFile<CR>
@@ -1276,6 +1277,9 @@ nnoremap <silent> <C-]>    :call <SID>JumpTags()<CR>
 
 " xptemplate
 let xptemplate_key = '<C-k>'
+
+" (QuickBuf)qbuf
+let g:qb_hotkey = '<LocalLeader>b'
 
 " }}}2
 
