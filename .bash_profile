@@ -19,15 +19,16 @@ if [ "$OS" = "Cygwin" ]; then
     export LANG=ja_JP.SJIS
 fi
 
-export PS1="{\@} \u@\H being in [\W]\n \\$ "
-export PERL5LIB="$HOME/local/lib/perl5:$HOME/local/lib/perl5/site_perl"
-export GISTY_DIR="$HOME/work/gist"
-
+export LESS="--LONG-PROMPT --RAW-CONTROL-CHARS --quit-if-one-screen"
+export PAGER=less
 if [ -x "$(which vim)" ]; then
     export EDITOR="$(which vim)"
 elif [ -x "$(which vi)" ]; then
     export EDITOR="$(which vi)"
 fi
+export PS1="{\@} \u@\H being in [\W]\n \\$ "
+export PERL5LIB="$HOME/local/lib/perl5:$HOME/local/lib/perl5/site_perl"
+export GISTY_DIR="$HOME/work/gist"
 
 export PKG_DBDIR="$HOME/local/var/db/pkg"
 export PORT_DBDIR="$HOME/local/var/db/pkg"

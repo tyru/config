@@ -9,6 +9,7 @@ elif [ -x "$(which vi)" ]; then
     export EDITOR="$(which vi)"
 fi
 export LESS="--LONG-PROMPT --RAW-CONTROL-CHARS --quit-if-one-screen"
+export PAGER=less
 
 # for cygwin
 OS=$(uname -o)
