@@ -762,19 +762,12 @@ func! s:LoadWhenFileType()
         TabChange 4
         compiler gcc
         if &filetype == 'c'
-            let gcc = 'gcc'
             call s:SetDict('c')
         elseif &filetype == 'cpp'
-            let gcc = 'g++'
             call s:SetDict('c', 'cpp')
         endif
 
-        let curdir = expand('%:p:h') . '/'
-        if curdir . filereadable('Makefile') || filereadable('makefile')
-            let &l:makeprg = 'make'
-        else
-            let &l:makeprg = gcc . ' -Wall -W -pedantic -fsyntax-only %'
-        endif
+        setlocal makeprg&
 
     elseif &filetype == 'cs'
         TabChange 4

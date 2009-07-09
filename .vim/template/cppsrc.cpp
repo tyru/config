@@ -3,7 +3,7 @@
  * <%filename%> -
  *
  * Written By: <%author%> <<%email%>>
- * Last Change: 2009-06-30.
+ * Last Change: 2009-07-09.
  *
  */
 
@@ -13,8 +13,7 @@
 #include <string>
 
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 
 

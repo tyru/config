@@ -6,7 +6,7 @@ if !exists("g:qb_hotkey") || g:qb_hotkey == ""
 	let g:qb_hotkey = "<F4>"
 endif
 exe "nnoremap <unique>" g:qb_hotkey " :cal <SID>init(1)<cr>:cal SBRun()<cr>"
-exe "cnoremap <unique>" g:qb_hotkey "<Esc>"
+" exe "cnoremap <unique>" g:qb_hotkey "<Esc>"
 
 if exists("g:qb_loaded") && g:qb_loaded
 	finish

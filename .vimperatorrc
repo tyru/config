@@ -17,6 +17,8 @@ set! browser.tabs.loadBookmarksInBackground=true
 set! ui.caretWidth=1
 set! ui.caretBlinkTime=1000
 
+set! browser.tabs.closeWindowWithLastTab=false
+
 
 " ScrapBook
 " (:menuで選択したものが次回起動時に消える)
