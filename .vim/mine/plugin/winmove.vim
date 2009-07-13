@@ -6,14 +6,14 @@ scriptencoding utf-8
 " Name: WinMove
 " Version: 0.0.1
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-05-31.
+" Last Change: 2009-07-13.
 "
 " Change Log: {{{2
 "   1.0.0: Initial upload.
 " }}}2
 "
 " Description:
-"   Move your gVim around.
+"   Move your gVim from mappings.
 "
 " Usage:
 "   MAPPING:

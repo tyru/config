@@ -1,65 +1,62 @@
 " vim:foldmethod=marker:fen:
 scriptencoding utf-8
 
-" DOCUMENT {{{1
+" Document {{{
 "==================================================
 " Name: <% eval: expand('%:t:r') %>
 " Version: 0.0.0
 " Author:  tyru <tyru.exe+vim@gmail.com>
-" Last Change: 2009-04-24.
+" Last Change: 2009-07-12.
 "
-" Change Log: {{{2
-"   0.0.0: Initial upload.
-" }}}2
+" Change Log: {{{
+" }}}
 "
 " Usage:
-"   COMMANDS:
+"   Commands:
 "
-"   MAPPING:
+"   Mappings:
 "
-"   GLOBAL VARIABLES:
+"   Global Variables:
 "
 "
 "
 "==================================================
-" }}}1
+" }}}
 
-" INCLUDE GUARD {{{1
-if exists('g:loaded_<%filename_noext%>') && g:loaded_<%filename_noext%> != 0 | finish | endif
+" Load Once {{{
+if exists('g:loaded_<%filename_noext%>') && g:loaded_<%filename_noext%> != 0
+    finish
+endif
 let g:loaded_<%filename_noext%> = 1
-" }}}1
-" SAVING CPO {{{1
+" }}}
+" Saving 'cpoptions' {{{
 let s:save_cpo = &cpo
 set cpo&vim
-" }}}1
+" }}}
 
-" SCOPED VARIABLES {{{1
-" }}}1
-" GLOBAL VARIABLES {{{1
-" }}}1
+" Scope Variables {{{
+" }}}
+" Global Variables {{{
+" }}}
 
-" FUNCTION DEFINITION {{{1
+" Functions {{{
 
-" s:warn(msg) {{{2
+" s:warn {{{
 func! s:warn(msg)
     echohl WarningMsg
     echo a:msg
     echohl None
 endfunc
-" }}}2
+" }}}
 
-" }}}1
+" }}}
+" Commands {{{
+" }}}
+" Mappings {{{
+" }}}
+" Autocmd {{{
+" }}}
 
-" COMMAND {{{1
-" }}}1
-
-" MAPPING {{{1
-" }}}1
-
-" AUTOCOMMAND {{{1
-" }}}1
-
-" RESTORE CPO {{{1
+" Restore 'cpoptions' {{{
 let &cpo = s:save_cpo
-" }}}1
-
+" }}}

@@ -247,6 +247,10 @@ autocmd LocationChange 'www\.google\.co\.jp/reader' :fmap -vkey a j k J K n p N 
 autocmd LocationChange 'www\.rememberthemilk\.com\/home\/tyru\/' :fmap -vkey a m c n p r g s h t u j y <Del> k z l 1 2 3 4 <C-S-Left> <C-S-Right> <C-S-0> <C-S-6> <C-S-7> <C-S-8> <C-S-9> <C-S-l> <Left> <Right> <Up> <Down> <PageUp> <PageDown> <Home> <End> <C-S-/>
 
 
+" hatena-bookmark-search.js
+let g:hatena_bookmark_no_migemo = 'true';
+" let g:hatena_bookmark_suffix_array = 'true';
+
 " }}}1
 "-----------------------------------------------------------------
 

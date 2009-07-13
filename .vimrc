@@ -40,9 +40,8 @@ set browsedir=buffer
 set clipboard=
 set complete=.,w,b,k
 set diffopt=filler,vertical
-set directory=$HOME/.vim/backup
 set expandtab
-set formatoptions-=atc
+set formatoptions=mMcroqnl2
 set guioptions-=T
 set guioptions-=m
 set history=50
@@ -52,10 +51,11 @@ set incsearch
 set keywordprg=
 set laststatus=2
 set list
-set listchars=tab:>-,extends:<
+set listchars=tab:>-,extends:>,precedes:<,eol:.
 set noshowcmd
 set nosplitright
 set notimeout
+set nowrap
 set nrformats-=octal
 set ruler
 set scroll=5
@@ -71,22 +71,28 @@ set smarttab
 set splitbelow
 set switchbuf="useopen,usetab"
 set tabstop=4
-set updatetime=10000
+set textwidth=80
 set viminfo='50,h,f1,n$HOME/.viminfo
 set visualbell
-set whichwrap=
+set whichwrap=b,s
 set wildchar=<Tab>
 set wildmenu
-set wrap
-set wrapscan
+
+" Life Changing
+if has('virtualedit')
+    " set selection=exclusive
+    set virtualedit=all
+endif
 
 if has('unix')
     set nofsync
     set swapsync=
 endif
 
+
 set backup
 set backupdir=$HOME/.vim/backup
+set directory=$HOME/.vim/backup
 if !isdirectory(&backupdir)
     call mkdir(&backupdir)
 endif
@@ -144,12 +150,6 @@ endif
 
 syntax on
 filetype plugin indent on
-
-
-" テキスト挿入中の自動折り返しを日本語に対応させる
-set formatoptions+=mM
-" 日本語整形スクリプト(by. 西岡拓洋さん)用の設定
-let format_allow_over_tw = 1    " ぶら下り可能幅
 
 
 " ランタイムパスの設定
@@ -372,21 +372,17 @@ func! s:HelpTagAll()
 endfunc
 " }}}2
 
-" ToggleEol {{{2
+" ShowEol {{{2
 " 末尾の$を表示したりしなかったり
-command! ToggleEol
-            \ call s:ToggleEol()
-
-let s:listchars_eol_toggled = 0
-func! s:ToggleEol()
-    if s:listchars_eol_toggled
-        set listchars=tab:>-,extends:<
-        let s:listchars_eol_toggled = 0
-    else
-        set listchars=tab:>-,eol:$,extends:<
-        let s:listchars_eol_toggled = 1
-    endif
-endfunc
+" command! ShowEol
+"             \ call s:ShowEol()
+" 
+" func! s:ShowEol()
+"     setlocal listchars+=eol:$
+"     redraw
+"     sleep 2
+"     setlocal listchars-=eol:$
+" endfunc
 " }}}2
 
 " MTest {{{2
@@ -579,19 +575,6 @@ command! -nargs=+ -complete=dir Mkdir
             \ call s:Mkdir(<f-args>)
 " }}}2
 
-" WhoseCommand {{{2
-func! s:WhoseCommand(cmd)
-    set verbose=7
-    " show 'Last set from ...'
-    execute 'com ' . a:cmd
-    set verbose=0
-endfunc
-
-command! -nargs=1 -complete=command
-            \ WhoseCommand
-            \ call s:WhoseCommand(<f-args>)
-" }}}2
-
 " s:GccSyntaxCheck(...) {{{2
 func! s:GccSyntaxCheck(...)
     if expand('%') ==# '' | return | endif
@@ -626,6 +609,17 @@ endfunc
 command! -nargs=* GccSyntaxCheck
             \ call s:GccSyntaxCheck(<f-args>)
 " }}}2
+
+command! -nargs=1 ToggleOption
+            \ call s:ToggleOption(<f-args>)
+
+func! s:ToggleOption(opt)
+    let val = getbufvar('%', '&'.a:opt)
+    if val ==# '' | return | endif
+    if type(val) ==# type(0)
+        call setbufvar('%', '&'.a:opt, !val)
+    endif
+endfunc
 
 " }}}1
 "-----------------------------------------------------------------
@@ -935,6 +929,8 @@ noremap <silent> <Leader><Leader>                   <Leader>
 " クリップボードにコピー
 noremap <LocalLeader>y     "*y
 
+noremap <silent> H  5h
+noremap <silent> L  5l
 " }}}2
 
 " ~~ n ~~ {{{2
@@ -1031,6 +1027,7 @@ nnoremap <silent> <LocalLeader>A        %%mz%s]<Esc>`zs[<Esc>
 nnoremap <silent> <LocalLeader>z        %%mz%x`zx
 nnoremap <silent> <LocalLeader>Z        %%da(h"_da(P
 
+nnoremap <silent> Q     gQ
 " }}}2
 
 " ~~ o ~~ {{{2
@@ -1049,6 +1046,7 @@ noremap! <M-f>   <C-Right>
 noremap! <M-b>   <C-Left>
 noremap! <C-a>   <Home>
 noremap! <C-e>   <End>
+noremap! <C-d>   <Del>
 
 " 括弧
 noremap! <M-(>         ()<Left>
@@ -1086,6 +1084,11 @@ cnoremap <C-z>   <C-r>%
 
 cnoremap <C-r><C-o>  <C-r>"
 cnoremap <C-r><C-r>  <C-r>+
+
+if &wildmenu
+    cnoremap <C-f> <Space><BS><Right>
+    cnoremap <C-b> <Space><BS><Left>
+endif
 " }}}2
 
 " abbr {{{2
@@ -1278,11 +1281,6 @@ let g:qb_hotkey = '<LocalLeader>b'
 
 " 自分の {{{2
 
-" DictionarizeBuffer
-let g:loaded_dictionarize_buffer = 1
-
-" shell-mode
-
 " CommentAnyWay {{{
 let g:ca_prefix  = maplocalleader . 'c'
 let g:ca_verbose = 1    " debug
@@ -1310,25 +1308,14 @@ let nf_ignore_ext = ['o']
 " }}}
 
 " vimtemplate {{{
+let g:vt_template_dir_path = expand("$HOME/.vim/template")
 let g:vt_command = ''
 let g:vt_author = "tyru"
 let g:vt_email = "tyru.exe@gmail.com"
 
-let s:tmp = [
-            \ 'cppsrc.cpp=cpp',
-            \ 'header.h=cpp',
-            \ 'csrc.c=c',
-            \ 'csharp.cs=cs',
-            \ 'hina.html=html',
-            \ 'javasrc.java=java',
-            \ 'perl.pl=perl',
-            \ 'perlmodule.pm=perl',
-            \ 'python.py=python',
-            \ 'scala.scala=scala',
-            \ 'vimscript.vim=vim'
-            \ ]
+let s:tmp = split(glob(g:vt_template_dir_path.'/*'), "\n")
 let g:vt_filetype_files = join(s:tmp, ',')
-unlet s:tmp    " for memory
+unlet s:tmp
 " }}}
 
 " winmove {{{
@@ -1337,6 +1324,9 @@ let g:wm_move_up    = '<C-M-k>'
 let g:wm_move_left  = '<C-M-h>'
 let g:wm_move_right = '<C-M-l>'
 " }}}
+
+" sign-diff
+" let g:SD_debug = 1
 
 " }}}2
 

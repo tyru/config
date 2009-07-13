@@ -1,4 +1,21 @@
-#!/bin/sh
+#!/bin/bash
 
-command du -b $1 | \
-    perl -le 'while (<>) { $total += (split /\s/)[0] } print $total'
+myself=`basename $0`
+function usage () {
+    cat <<EOF
+Usage: $myself <options> <dir>
+EOF
+    exit
+}
+
+divide_by=1
+while getopts kmh OPT; do
+    case $OPT in
+        "k" ) divide_by=1024 ;;
+        "m" ) divide_by=$((1024 * 1024)) ;;
+        *   ) usage ;;
+    esac
+done
+
+
+command du -b $1 | perl -e "while (<>) { \$total += (split /\s/)[0] } printf(qq(%d %s\n), \$total / $divide_by, $divide_by == 1 ? 'Byte' : $divide_by == 1024 ? 'KiB' : 'MiB')"
