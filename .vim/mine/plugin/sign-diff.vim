@@ -270,6 +270,7 @@ func! s:warn(...)
     echohl WarningMsg
     echo msg
     sleep 1
+    redraw
     echohl None
 
     let s:debug_errmsg += [msg]
@@ -280,12 +281,12 @@ endfunc
 func! s:run_with_local_opt(cmd, options, ...)
     let is_expr = a:0 == 0 ? 0 : a:1
     let saved_opt = {}
-    let curfile = expand('%')
+    let curpath = expand('%')
 
     " save
     for var in keys(a:options)
-        let saved_opt[var] = getbufvar(curfile, var)
-        call setbufvar(curfile, var, a:options[var])
+        let saved_opt[var] = getbufvar(curpath, var)
+        call setbufvar(curpath, var, a:options[var])
     endfor
 
     try
@@ -304,7 +305,7 @@ func! s:run_with_local_opt(cmd, options, ...)
 
     " restore
     for var in keys(saved_opt)
-        call setbufvar(curfile, var, saved_opt[var])
+        call setbufvar(curpath, var, saved_opt[var])
     endfor
 
     if is_expr
@@ -564,9 +565,9 @@ func! s:update_diff_marks()
         let [orig_lt, new_lt, output_lt] =
                     \ map([orig.file, new.file, output_file], 's:literal(v:val)')
 
-        " build literals to call s:diff_two_files
+        " build literals to call s:do_diff_two_files
         let cmd = s:apply('printf',
-                    \ ['s:diff_two_files(%s, %s, %s)',
+                    \ ['s:do_diff_two_files(%s, %s, %s)',
                     \ orig_lt, new_lt, output_lt])
 
         let opt = {
@@ -633,7 +634,7 @@ func! s:update_diff_marks()
         return
     endtry
 
-    call s:sign_marks(diffed_lines)
+    call s:sign_marks(curpath, diffed_lines)
 endfunc
 " }}}
 
@@ -648,7 +649,6 @@ func! s:diffed_two_files(filename)
     for i in g:SD_comp_with
         let cur = copy(skel)
         let two += [cur]
-        call s:debugmsg(cur)
 
         if i ==# 'written'
             let cur.revision = 'written'
@@ -677,8 +677,8 @@ func! s:diffed_two_files(filename)
 endfunc
 " }}}
 
-" s:diff_two_files {{{
-func! s:diff_two_files(orig, new, output)
+" s:do_diff_two_files {{{
+func! s:do_diff_two_files(orig, new, output)
     if !filereadable(a:orig) || !filereadable(a:new)
         call s:debugmsg('readable %s:%d, readable %s:%d',
                     \ a:orig, filereadable(a:orig),
@@ -715,7 +715,7 @@ endfunc
 " }}}
 
 " s:sign_marks {{{
-func! s:sign_marks(lines)
+func! s:sign_marks(curpath, lines)
 
     call s:clear_marks()
 
@@ -725,7 +725,7 @@ func! s:sign_marks(lines)
     " TODO
     " ShowMarksとidがかぶらないようにする
     " ShowMarksのマークを上書きしないようにする
-    let signed_ids = s:files[expand('%:t')].signed_ids
+    let signed_ids = s:files[fnamemodify(a:curpath, ':t')].signed_ids
     let id = 12345
     let i = 0
     while i < len(a:lines)
@@ -745,10 +745,8 @@ func! s:sign_marks(lines)
         let [begin, mode, end] = m[1:3]
         call s:debugmsg('[%s][%s][%s]', begin, mode, end)
 
-        let keepempty = 1
         " let b = begin =~ '\m,' ? split(begin, ',') : [begin, '']
         let e = end   =~ '\m,' ? split(end, ',')   : [end, '']
-
 
         if mode ==# 'a'
             let name = 'SD_sign_add'
@@ -766,17 +764,14 @@ func! s:sign_marks(lines)
             continue
         endif
 
-        if from > to
-            let [from, to] = [to, from]
-            call s:debugmsg(line)
-        endif
+        let signed_ids[id] = {'lnums':[], 'name':name}
 
-        let signed_ids[id] = {'lines':[], 'name':name}
         for j in range(from, to)
-            let fmt = 'sign place %d name=%s line=%d file=%s'
-            execute printf(fmt, id, name, j, expand('%:p'))
-            let signed_ids[id].lines += [j]
+            execute printf('sign place %d name=%s line=%d file=%s',
+                        \ id, name, j, fnamemodify(a:curpath, ':p'))
+            let signed_ids[id].lnums += [j]
         endfor
+
         " one id each mode
         let id += 1
 
@@ -794,7 +789,7 @@ func! s:clear_marks()
     let signed_ids = s:files[curpath_tail].signed_ids
     for [id, info] in items(signed_ids)
         let i = 0
-        while i < len(info.lines)
+        while i < len(info.lnums)
             execute printf('sign unplace %s file=%s', id, expand('%:p'))
             let i += 1
         endwhile
