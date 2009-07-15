@@ -6,30 +6,31 @@ scriptencoding utf-8
 " Name: sign-diff
 " Version: 0.0.0
 " Author:  tyru <tyru.exe+vim@gmail.com>
-" Last Change: 2009-07-13.
+" Last Change: 2009-07-16.
+"
+" Description:
+"   show the diff status at left sidebar
 "
 " Change Log: {{{
 "   0.0.0: Initial Upload
 " }}}
-"
-" Description:
-"   Show diffed status at left side bar
-"
 " Usage: {{{
 "   Commands: {{{
+"       SDAdd
+"           add current file to diff list.
+"           current buffer will be diffed with
+"           the written file's buffer.
+"           if you want to change that, see g:SD_comp_with.
 "       SDUpdate
-"           update sign diff.
+"           update signs.
 "       SDEnable
-"           enable sign diff.
+"           start showing signs.
 "       SDDisable
-"           disable sign diff.
+"           stop showing signs.
 "       SDToggle
-"           toggle sign diff.
-"   }}}
-"
-"   Mappings: {{{
-"       <C-l>
-"           update diff marks and :redraw.
+"           toggle showing signs.
+"       SDList
+"           list all signs in current file
 "   }}}
 "
 "   Global Variables: {{{
@@ -49,11 +50,11 @@ scriptencoding utf-8
 "       g:SD_hl_diffchange (default:'DiffChange')
 "           highlight group of the changed line(s).
 "
-"       g:SD_mark_add (default:'+')
-"           mark of the added line.
+"       g:SD_sign_add (default:'+')
+"           sign of the added line.
 "
-"       g:SD_mark_change (default:'*')
-"           mark of the changed line.
+"       g:SD_sign_change (default:'*')
+"           sign of the changed line.
 "
 "       g:SD_comp_with (default:['written', 'buffer'])
 "           g:SD_comp_with is List of two items.
@@ -64,14 +65,20 @@ scriptencoding utf-8
 "           $ diff written buffer > output
 "
 "       g:SD_autocmd_add (default:['BufReadPost'])
-"           do autocmd for adding marks with these group
+"           do autocmd for adding signs with these group
 "
-"       g:SD_autocmd_update (default:['CursorHold', 'InsertLeave', 'FocusLost'])
-"           do autocmd for updating marks with these group
+"       g:SD_autocmd_update (default:['CursorHold', 'InsertLeave'])
+"           do autocmd for updating signs with these group
 "
-"       g:SD_delete_files_vimleave (default: 1)
+"       g:SD_delete_files_vimleave (default:1)
 "           when starting VimLeave event,
 "           delete all files under g:SD_backupdir.
+"
+"       g:SD_no_update_within_seconds (default:3)
+"           won't update within this seconds.
+"           0 to update each autocmd.
+"           see g:SD_autocmd_add and g:SD_autocmd_update
+"           about timing to throw event.
 "   }}}
 "
 "   Tips: {{{
@@ -79,10 +86,9 @@ scriptencoding utf-8
 "           nnoremap <C-l>  :SDUpdate<CR><C-l>
 "   }}}
 " }}}
-"
-"   TODO:
+"   TODO: {{{
 "       - SDDiffThis, SDDiffPatch, etc...
-"       - show diff ordinary style (:diff*)
+"       - show diff also ordinary style (:diff*)
 "       - How should I highlight the deleted line(s)?
 "       - if the global variable is enabled,
 "       have only two files to be diffed for full HDD.
@@ -90,8 +96,12 @@ scriptencoding utf-8
 "       - support for Windows
 "       (diff program won't create output file...)
 "       - jumping to the added/changed/deleted line.
-"       this is easy to implemenet.
-"       but can't decide user interface...
+"       this may be easy to implemenet.
+"       but can't decide the interface...
+"       - update signs at only changed lines
+"       (now clear all signs and re-sign all)
+"       - update signs when undo?
+"   }}}
 "==================================================
 " }}}
 
@@ -130,6 +140,7 @@ let s:files = {}
 let s:enabled = 1
 let s:lockfile = ''
 let s:backupdir = {}
+let s:previous_time = 0
 " }}}
 " Global Variables {{{
 if !exists('g:SD_debug')
@@ -137,9 +148,7 @@ if !exists('g:SD_debug')
 endif
 
 if !exists('g:SD_backupdir')
-    let g:SD_backupdir = expand('~/.vim-sign-diff')
-else
-    let g:SD_backupdir = expand(g:SD_backupdir)
+    let g:SD_backupdir = '~/.vim-sign-diff'
 endif
 if !exists('g:SD_diffopt')
     let g:SD_diffopt = &diffopt
@@ -153,21 +162,21 @@ endif
 if !exists('g:SD_hl_diffchange')
     let g:SD_hl_diffchange = "DiffChange"
 endif
-" if !exists('g:SD_hl_diffdelete')    " TODO
-"     let g:SD_hl_diffdelete = "DiffDelete"
-" endif
-" if !exists('g:SD_hl_difftext')    " TODO
-"     let g:SD_hl_difftext = "DiffText"
-" endif
-if !exists('g:SD_mark_add')
-    let g:SD_mark_add = '+'
+if !exists('g:SD_hl_diffdelete')
+    let g:SD_hl_diffdelete = "DiffDelete"
 endif
-if !exists('g:SD_mark_change')
-    let g:SD_mark_change = '*'
+if !exists('g:SD_hl_difftext')    " TODO
+    let g:SD_hl_difftext = "DiffText"
 endif
-" if !exists('g:SD_mark_delete')    " TODO
-"     let g:SD_mark_delete = '-'
-" endif
+if !exists('g:SD_sign_add')
+    let g:SD_sign_add = '+'
+endif
+if !exists('g:SD_sign_change')
+    let g:SD_sign_change = '*'
+endif
+if !exists('g:SD_sign_delete')
+    let g:SD_sign_delete = '-'
+endif
 if !exists('g:SD_comp_with')
     let g:SD_comp_with = ['written', 'buffer']
 else
@@ -194,13 +203,16 @@ if !exists('g:SD_autocmd_add')
     let g:SD_autocmd_add = ['BufReadPost']
 endif
 if !exists('g:SD_autocmd_update')
-    let g:SD_autocmd_update = ['CursorHold', 'InsertLeave', 'BufWritePost', 'FocusLost']
+    let g:SD_autocmd_update = ['CursorHold', 'InsertLeave', 'BufWritePost']
 endif
 if !exists('g:SD_delete_files_vimleave')
     let g:SD_delete_files_vimleave = 1
 endif
 if !exists('g:SD_show_signs_always')    " TODO
     let g:SD_show_signs_always = 0
+endif
+if !exists('g:SD_no_update_within_seconds')    " TODO
+    let g:SD_no_update_within_seconds = 3
 endif
 " }}}
 
@@ -217,13 +229,13 @@ if g:SD_debug
             let g:SD_debug = 1
         elseif a:cmd ==# 'off'
             let g:SD_debug = 0
-        elseif a:cmd ==# 'err'
+        elseif a:cmd ==# 'msg'
             for i in s:debug_errmsg
                 echo i
             endfor
         elseif a:cmd ==# 'eval'
             redraw
-            echo eval(join(a:000, ' '))
+            execute join(a:000, ' ')
         endif
     endfunc
 
@@ -247,9 +259,9 @@ func! s:apply(funcname, args)
     let i = 0
     while i < len(a:args)
         if args_str == ''
-            let args_str = s:literal(a:args[0])
+            let args_str = s:uneval(a:args[0])
         else
-            let args_str .= ', ' . s:literal(a:args[i])
+            let args_str .= ', ' . s:uneval(a:args[i])
         endif
         let i += 1
     endwhile
@@ -273,7 +285,7 @@ func! s:warn(...)
     redraw
     echohl None
 
-    let s:debug_errmsg += [msg]
+    call add(s:debug_errmsg, msg)
 endfunc
 " }}}
 
@@ -291,10 +303,8 @@ func! s:run_with_local_opt(cmd, options, ...)
 
     try
         if is_expr
-            call s:debugmsg('eval(%s)', a:cmd)
             let retval = eval(a:cmd)
         else
-            call s:debugmsg('execute '.a:cmd)
             execute a:cmd
         endif
 
@@ -316,8 +326,8 @@ func! s:run_with_local_opt(cmd, options, ...)
 endfunc
 " }}}
 
-" s:literal {{{
-func! s:literal(expr)
+" s:uneval {{{
+func! s:uneval(expr)
     let expr = a:expr
 
     if type(expr) == type(0)
@@ -345,12 +355,12 @@ func! s:literal(expr)
         return printf("function('%s')", string(expr))
 
     elseif type(expr) == type([])
-        let lis = map(copy(expr), 's:literal(v:val)')
+        let lis = map(copy(expr), 's:uneval(v:val)')
         return '['.join(lis, ',').']'
 
     elseif type(expr) == type({})
         let keys = keys(expr)
-        let pairs = map(keys, 's:literal(copy(v:val)).":".s:literal(copy(expr[v:val]))')
+        let pairs = map(keys, 's:uneval(copy(v:val)).":".s:uneval(copy(expr[v:val]))')
         return '{'.join(pairs, ',').'}'
 
     else
@@ -391,6 +401,29 @@ func! s:mkdir(path, ...)
 endfunc
 " }}}
 
+" s:fix_within_range {{{
+func! s:fix_within_range(val, range)
+    if empty(a:range) | return | endif
+    let val = a:val < a:range[0] ? a:range[0] : a:val
+    let val = a:val > a:range[-1] ? a:range[-1] : a:val
+    return val
+endfunc
+" }}}
+
+" s:is_available_buffer {{{
+func! s:is_available_buffer(buf)
+    if a:buf == '' | return 0 | endif
+    if bufname(a:buf) == '' | return 0 | endif
+    if !(0+getbufvar(a:buf, '&modifiable')) | return 0 | endif
+    if getbufvar(a:buf, '&bufhidden') == ''
+        if getbufvar(a:buf, '&hidden') | return 0 | endif
+    else
+        return 0
+    endif
+    return filereadable(a:buf)
+endfunc
+" }}}
+
 " }}}
 
 
@@ -399,49 +432,47 @@ func! s:init()
     " signs
     let defs = [
         \ {
-            \ 'name' : 'SD_sign_add',
+            \ 'name' : 'SD_group_add',
             \ 'texthl' : g:SD_hl_diffadd,
-            \ 'mark' : g:SD_mark_add
+            \ 'text' : g:SD_sign_add
         \ },
         \ {
-            \ 'name' : 'SD_sign_change',
+            \ 'name' : 'SD_group_change',
             \ 'texthl' : g:SD_hl_diffchange,
-            \ 'mark' : g:SD_mark_change
+            \ 'text' : g:SD_sign_change
+        \ },
+        \ {
+            \ 'name' : 'SD_group_delete',
+            \ 'texthl' : g:SD_hl_diffdelete,
+            \ 'text' : g:SD_sign_delete
         \ }
     \ ]
-        " \ {
-        "     \ 'name' : 'SD_sign_delete',
-        "     \ 'texthl' : g:SD_hl_diffdelete,
-        "     \ 'mark' : g:SD_mark_delete
-        " \ }
-    " \ ]
     for i in defs
-        let text = strpart(i.mark, 0, 2)
-        let hl = i.texthl == '' ? '' : 'texthl='.i.texthl
+        let text = strpart(i.text, 0, 2)
+        let hl = i.texthl == '' ? '' : 'texthl='. i.texthl
         execute printf('sign define %s text=%s %s',
                 \ i.name, text, hl)
     endfor
 
+    let dir = expand(g:SD_backupdir)
     let s:backupdir = {
-        \ 'root':g:SD_backupdir,
-        \ 'backup':g:SD_backupdir.'/backup',
-        \ 'patch':g:SD_backupdir.'/patch',
-        \ 'lock':g:SD_backupdir.'/lock'
+        \ 'root'   : dir,
+        \ 'backup' : dir.'/backup',
+        \ 'patch'  : dir.'/patch',
+        \ 'lock'   : dir.'/lock'
     \ }
 
-    " mkdir if doesn't exist g:SD_backupdir
-    if !isdirectory(s:backupdir.backup)
-        call s:mkdir(s:backupdir.backup, 'p')
-    endif
-    if !isdirectory(s:backupdir.patch)
-        call s:mkdir(s:backupdir.patch, 'p')
-    endif
-    if !isdirectory(s:backupdir.lock)
-        call s:mkdir(s:backupdir.lock, 'p')
-        let tempname = fnamemodify(tempname(), ':t')
-        let s:lockfile = s:backupdir.lock . '/' . localtime().'-'.tempname)
-        call writefile([], s:lockfile)
-    endif
+    " mkdir if doesn't exist
+    unlet i
+    for i in values(s:backupdir)
+        if !isdirectory(i)
+            call s:mkdir(i, 'p')
+        endif
+    endfor
+
+    let tempname = fnamemodify(tempname(), ':t')
+    let s:lockfile = printf("%s/%s-%s", s:backupdir.lock, localtime(), tempname)
+    call writefile([], s:lockfile)
 
     call s:clean_up(0)
 endfunc
@@ -456,7 +487,9 @@ endfunc
 " s:revision_to_filename {{{
 func! s:revision_to_filename(revision, filename)
     return printf('%s/backup/%s-%s',
-                \ g:SD_backupdir, a:revision, a:filename)
+                \ expand(g:SD_backupdir),
+                \ a:revision,
+                \ fnamemodify(a:filename, ':t'))
 endfunc
 " }}}
 
@@ -466,21 +499,21 @@ func! s:commit_file(filename)
     let revision = s:get_revision()
     let revname = s:revision_to_filename(revision, filename)
 
-    let cmd = 'silent write! '.revname
+    let cmd = 'silent write '.revname
     let opt = { '&writebackup':0, '&backup':0, '&swapfile':0 }
     if !s:run_with_local_opt(cmd, opt)
-        let v:errmsg = "can't write to ".revname
+        " let v:errmsg = "can't write to ".revname
         return 0
     endif
-    call s:debugmsg('wrote '.revname)
 
     if has_key(s:files, filename)
-        let s:files[filename].revision += [revision]
+        call add(s:files[filename].revision, revision)
     else
         let s:files[filename] = {
             \ 'revision':[revision],
             \ 'patch':[],
-            \ 'signed_ids':{}
+            \ 'signed_lines':{},
+            \ 'fullpath':fnamemodify(a:filename, ':p')
         \ }
     endif
 
@@ -489,68 +522,78 @@ endfunc
 " }}}
 
 " s:add_diff {{{
-func! s:add_diff(file)
+func! s:add_diff(filename)
     if !s:enabled | return | endif
+    let curpath_tail = fnamemodify(a:filename, ':t')
 
-    if a:file == ''
+    if !s:is_available_buffer(a:filename)
         return
     endif
 
-    if has_key(s:files, a:file)
+    if has_key(s:files, curpath_tail)
         " added already
         return
     endif
-    call s:debugmsg('add %s to s:files...', a:file)
 
-    " create backup file.
-    " this file will be diffed with latest file.
-    if !s:commit_file(a:file)
+    " write backup and
+    " add current buffer to the list
+    if !s:commit_file(a:filename)
         call s:warn(v:errmsg)
     endif
 endfunc
 " }}}
 
-" s:update_diff_marks {{{
-func! s:update_diff_marks()
-    if !s:enabled | return | endif
-    let curpath_tail = expand('%:t')
-    let curpath      = expand('%')
-    if curpath == '' | return | endif
+" s:update_diff_signs {{{
+func! s:update_diff_signs(filename)
+    if !s:enabled
+        return
+    endif
+    let curpath_tail = fnamemodify(a:filename, ':t')
+
+    if !s:is_available_buffer(a:filename)
+        if has_key(s:files, curpath_tail)
+            " delete current buffer from the list
+            unlet s:files[curpath_tail]
+        endif
+        return
+    endif
 
     try
-        if filereadable(curpath)
-            " add current buffer
-            let v:errmsg = ""
-            call s:add_diff(curpath)
-            if v:errmsg != "" | throw 'clear_marks' | endif
-        else
-            if has_key(s:files, curpath_tail)
-                call s:debugmsg('delete %s from s:files...', curpath_tail)
-                unlet s:files[curpath_tail]
-            endif
-            throw 'clear_marks'
+        let v:errmsg = ""
+        call s:add_diff(a:filename)
+        if v:errmsg != ""
+            throw 'clear_signs'
         endif
+
+        if localtime() - s:previous_time < g:SD_no_update_within_seconds
+            " no update
+            return
+        endif
+        let s:previous_time = localtime()
 
         " in order not to run diff unnecessarily
         let comp_with = map(copy(g:SD_comp_with), 'v:val == -1 ? "buffer" : v:val')
         if s:has_elem(comp_with, 'written')
         \ && s:has_elem(comp_with, 'buffer')
         \ && !&modified
-            call s:debugmsg('no difference. (diff %s %s)', comp_with[0], comp_with[1])
-            throw 'clear_marks'
+            " not modified
+            throw 'clear_signs'
         endif
 
-        let [orig, new] = s:diffed_two_files(curpath)
+        call s:commit_file(a:filename)
+        " new.file is the committed file.
+        " orig.file is the previous.
+        let [orig, new] = s:diffed_two_files(a:filename)
 
         if orig.file ==# new.file
             call s:warn('trying to diff same file...(diff %s %s)',
                                         \ orig.file, new.file)
-            throw 'clear_marks'
+            throw 'clear_signs'
         endif
 
 
-        let output_file = printf('%s/patch/%s-%s-%s',
-                    \ g:SD_backupdir, orig.revision, new.revision, curpath_tail)
+        let output_file = printf('%s/%s-%s-%s',
+                    \ s:backupdir.patch, orig.revision, new.revision, curpath_tail)
 
         " '/' -> '\'
         if has('win32')
@@ -563,7 +606,7 @@ func! s:update_diff_marks()
 
         " convert to literal
         let [orig_lt, new_lt, output_lt] =
-                    \ map([orig.file, new.file, output_file], 's:literal(v:val)')
+                    \ map([orig.file, new.file, output_file], 's:uneval(v:val)')
 
         " build literals to call s:do_diff_two_files
         let cmd = s:apply('printf',
@@ -598,43 +641,44 @@ func! s:update_diff_marks()
                 endif
                 call s:warn(msg)
             endif
-            throw 'clear_marks'
+            throw 'clear_signs'
         endif
 
 
-        let patches = s:files[curpath_tail].patch
-        let patches += [output_file]
+        let patch = s:files[curpath_tail].patch
+        call add(patch, output_file)
 
-        try
-            let v:errmsg = ""
-            let diffed_lines = readfile(patches[-1])
-            let prev_diffed = get(patches, -2, -1)
-            if prev_diffed !=# -1
-                let prev_diffed_lines = readfile(prev_diffed)
-            endif
-        catch
-            call s:warn('error:'.v:errmsg)
-            throw 'clear_marks'
-        endtry
+        if len(patch) >= 2
+            try
+                let v:errmsg = ""
+                let diffed_lines = readfile(patch[-1])
+                let prev_diffed_lines = readfile(patch[-2])
+            catch
+                call s:warn('error:'.v:errmsg)
+                throw 'clear_signs'
+            endtry
+            " XXX
+            " if prev_diffed !=# -1 && diffed_lines ==# prev_diffed_lines
+            "     call s:debugmsg("no change between %s..%s", patch[-2], patch[-1])
+            "     " doesn't change signs
+            "     return
+            " endif
+        else
+            let diffed_lines = readfile(patch[-1])
+        endif
 
         if empty(diffed_lines)
-            call s:debugmsg('no difference.')
-            throw 'clear_marks'
+            " no difference
+            throw 'clear_signs'
         endif
-        " XXX
-        " if prev_diffed !=# -1 && diffed_lines ==# prev_diffed_lines
-        "     call s:debugmsg("no change between %s..%s", patches[-2], patches[-1])
-        "     " doesn't change marks
-        "     return
-        " endif
 
-    catch /^clear_marks$/
-        " clear all marks
-        call s:clear_marks()
-        return
+        " parse normal diff format and make signs
+        call s:make_signs(a:filename, diffed_lines)
+
+    catch /^clear_signs$/
+        " clear all signs
+        call s:clear_signs(a:filename)
     endtry
-
-    call s:sign_marks(curpath, diffed_lines)
 endfunc
 " }}}
 
@@ -648,7 +692,7 @@ func! s:diffed_two_files(filename)
 
     for i in g:SD_comp_with
         let cur = copy(skel)
-        let two += [cur]
+        call add(two, cur)
 
         if i ==# 'written'
             let cur.revision = 'written'
@@ -657,19 +701,19 @@ func! s:diffed_two_files(filename)
             let cur.revision = get(revisions, -1, -1)
             if cur.revision ==# -1
                 call s:warn("couldn't get revision number of -1")
-                throw 'clear_marks'
+                throw 'clear_signs'
             endif
             let cur.file = s:revision_to_filename(cur.revision, curpath_tail)
         elseif i =~# '\m^\d*$'
             let cur.revision = get(revisions, -i, -1)
             if cur.revision == -1
                 call s:warn("couldn't get revision number of %d", -i)
-                throw 'clear_marks'
+                throw 'clear_signs'
             endif
             let cur.file = s:revision_to_filename(cur.revision, curpath_tail)
         else
             call s:warn(i.": unknown g:SD_comp_with option value")
-            throw 'clear_marks'
+            throw 'clear_signs'
         endif
     endfor
 
@@ -679,10 +723,11 @@ endfunc
 
 " s:do_diff_two_files {{{
 func! s:do_diff_two_files(orig, new, output)
+    " NOTE:
+    " can't be readable file
+    " if did shellescape() before s:do_diff_two_files().
+    " (at least win32 environment)
     if !filereadable(a:orig) || !filereadable(a:new)
-        call s:debugmsg('readable %s:%d, readable %s:%d',
-                    \ a:orig, filereadable(a:orig),
-                    \ a:new, filereadable(a:new))
         return 0    " didn't run system()
     endif
 
@@ -690,17 +735,16 @@ func! s:do_diff_two_files(orig, new, output)
         " from diff-diffexpr
         let opt = []
         if &diffopt =~# "icase"
-            let opt += ['-i']
+            call add(opt, '-i')
         endif
         if &diffopt =~# "iwhite"
-            let opt += ['-b']
+            call add(opt, '-b')
         endif
 
         let args = [join(opt, ' '), a:orig, a:new, a:output]
         let exec = s:apply('printf',
                     \ ['diff %s %s %s > %s'] +
                     \ map(args, 'v:val == "" ? "" : shellescape(v:val)'))
-        call s:debugmsg('shell exec [%s]', exec)
         call system(exec)
         return 1
     else
@@ -714,126 +758,121 @@ func! s:do_diff_two_files(orig, new, output)
 endfunc
 " }}}
 
-" s:sign_marks {{{
-func! s:sign_marks(curpath, lines)
+" s:make_signs {{{
+func! s:make_signs(filename, lines)
 
-    call s:clear_marks()
+    call s:clear_signs(a:filename)
 
+    let id = 12345    " begin with this value
     let mode = ''
     let begin = ''
     let end = ''
+
     " TODO
     " ShowMarksとidがかぶらないようにする
     " ShowMarksのマークを上書きしないようにする
-    let signed_ids = s:files[fnamemodify(a:curpath, ':t')].signed_ids
-    let id = 12345
-    let i = 0
-    while i < len(a:lines)
+    let signed_lines = s:files[fnamemodify(a:filename, ':t')].signed_lines
+
+
+    for i in range(0, len(a:lines) - 1)
         let line = a:lines[i]
 
-        let m = matchlist(line, '\m\([^acd]\+\)\([acd]\)\([^acd]\+\)')
+        let m = matchlist(line, '\m\(\d\+\(,\d\+\)\=\)\([acd]\)\(\d\+\(,\d\+\)\=\)')
         if empty(m)
-            let i += 1
             continue
         endif
 
-        if m[1] == '' || m[2] == '' || m[3] == ''
+        if m[1] == '' || m[3] == '' || m[4] == ''
             call s:warn('parse error 002: line %d', i+1)
-            return
+            throw 'clear_signs'
         endif
 
-        let [begin, mode, end] = m[1:3]
-        call s:debugmsg('[%s][%s][%s]', begin, mode, end)
+        let [begin, mode, end] = [m[1], m[3], m[4]]
 
-        " let b = begin =~ '\m,' ? split(begin, ',') : [begin, '']
+        let b = begin =~ '\m,' ? split(begin, ',') : [begin, '']
         let e = end   =~ '\m,' ? split(end, ',')   : [end, '']
 
         if mode ==# 'a'
-            let name = 'SD_sign_add'
+            let hl_name = 'SD_group_add'
             let from = e[0]
             let to   = e[1] == '' ? e[0] : e[1]
 
         elseif mode ==# 'c'
-            let name = 'SD_sign_change'
+            " TODO difftext
+            " if len(e) == 1
+            " endif
+            let hl_name = 'SD_group_add'
             let from = e[0]
             let to   = e[1] == '' ? e[0] : e[1]
+
         elseif mode ==# 'd'
-            " TODO: deleted lines are not highlighted.
-            " let name = 'SD_sign_delete'
-            let i += 1
-            continue
+            let hl_name = 'SD_group_delete'
+            let from = e[0]
+            let to   = e[1] == '' ? e[0] : e[1]
+
+            " some settings
+            let from += 1
+            let to   += 1
+            let from = s:fix_within_range(from, range(1, line('$')))
+            let to   = s:fix_within_range(to, range(1, line('$')))
+
+        else
+            call s:warn('parse error: unknown error at '.(i+1))
+            throw 'clear_signs'
         endif
 
-        let signed_ids[id] = {'lnums':[], 'name':name}
+        " TODO add different signs for
+        " the most top of lines or the most bottom of lines.
 
         for j in range(from, to)
-            execute printf('sign place %d name=%s line=%d file=%s',
-                        \ id, name, j, fnamemodify(a:curpath, ':p'))
-            let signed_ids[id].lnums += [j]
+            " override even if the line is signed
+            let signed_lines[j] = {'hl':hl_name, 'id':id}
+            let exec = printf('sign place %d name=%s line=%d file=%s',
+                        \ id, hl_name, j, fnamemodify(a:filename, ':p'))
+            execute exec
         endfor
-
         " one id each mode
         let id += 1
-
-        let i += 1
-    endwhile
+    endfor
 endfunc
 " }}}
 
-" s:clear_marks {{{
-func! s:clear_marks()
-    let curpath_tail = expand('%:t')
-    if curpath_tail == '' || !has_key(s:files, curpath_tail)
+" s:clear_signs {{{
+func! s:clear_signs(filename)
+    let filename = a:filename
+    let curpath_tail = fnamemodify(filename, ':t')
+    let curpath_full = fnamemodify(filename, ':p')
+    if !s:is_available_buffer(a:filename) || !has_key(s:files, curpath_tail)
         return
     endif
-    let signed_ids = s:files[curpath_tail].signed_ids
-    for [id, info] in items(signed_ids)
-        let i = 0
-        while i < len(info.lnums)
-            execute printf('sign unplace %s file=%s', id, expand('%:p'))
-            let i += 1
-        endwhile
+
+    let signed_lines = s:files[curpath_tail].signed_lines
+    for lnum in keys(signed_lines)
+        " delete all signs of id in curpath_full each line
+        execute printf('sign unplace %s file=%s', signed_lines[lnum].id, curpath_full)
     endfor
-    let s:files[curpath_tail].signed_ids = {}
+    let s:files[curpath_tail].signed_lines = {}
 endfunc
 " }}}
 
 " s:clean_up {{{
 func! s:clean_up(vimleave)
+    " return if other vims are running
     let vims = split(glob(s:backupdir.lock . '/*'), "\n")
     call filter(vims, 'filereadable(v:val)')
-    if len(vims) != 1 | return | endif
+    if len(vims) > 1 | return | endif
 
-    for dir in keys(s:backupdir)
-        if !isdirectory(dir) | continue | endif
-        let files = split(glob(dir.'/*'), "\n")
-        " let files += split(glob(dir.'/.*'), "\n")
-        " call filter(files, 'fnamemodify(v:val, ":t") != ".."')
-        for file in files
-            if !filereadable(file) | continue | endif
-            let lang = v:lang
-            lang mes C
-            redir => swappath
-            swapname
-            redir END
-            execute 'lang mes '.lang
-
-            call s:debugmsg(swappath)
-            let swappath = get(
-                \ matchlist(swappath, '\m\(swapname\n*\)\=\(\p\+\)'),
-                \ 1,
-                \ -1)
-            if swappath ==# -1
-                call s:warn(file.": couldn't get swap file name")
-                return
-            endif
-
-            " don't delete file if swap file exists
-            if swappath =~# 'No swap file' || !filereadable(swappath)
-                call s:debugmsg("unlink %s...", file)
-                call delete(file)
-            endif
-        endfor
+    for f in split(glob(s:backupdir.backup . '/*'), "\n")
+        let m = matchlist(fnamemodify(f, ':t'), '\m^\(\d\+\)-\(.\+\)$')
+        if !empty(m)
+        \ && has_key(s:files, m[2])
+        \ && bufexists(s:files[m[2]].fullpath)
+            " delete original file
+            call delete(f)
+        endif
+    endfor
+    for f in split(glob(s:backupdir.patch . '/*'), "\n")
+        call delete(f)
     endfor
 
     if a:vimleave
@@ -842,8 +881,8 @@ func! s:clean_up(vimleave)
 endfunc
 " }}}
 
-" s:toggle_marks {{{
-func! s:toggle_marks()
+" s:toggle_signs {{{
+func! s:toggle_signs()
     if s:enabled
         SDDisable
     else
@@ -852,19 +891,31 @@ func! s:toggle_marks()
 endfunc
 " }}}
 
+" s:list_signs {{{
+func! s:list_signs(filename)
+    if s:is_available_buffer(a:filename)
+        execute 'sign place file=' . a:filename
+    endif
+endfunc
+" }}}
+
 " }}}
 
 " Commands {{{
+command! SDAdd
+            \ call s:add_diff(expand('%'))
 command! SDUpdate
-            \ call s:update_diff_marks()
+            \ call s:update_diff_signs(expand('%'))
 command! SDEnable
-            \ let s:enabled = 1 | 
-            \ call s:update_diff_marks()
+            \ call s:update_diff_signs(expand('%'))
+            \ let s:enabled = 1
 command! SDDisable
-            \ call s:clear_marks() |
+            \ call s:clear_signs(expand('%')) |
             \ let s:enabled = 0
 command! SDToggle
-            \ call s:toggle_marks()
+            \ call s:toggle_signs()
+command! SDList
+            \ call s:list_signs(expand('%'))
 " }}}
 " Mappings {{{
 " if !hasmapto('<C-l>', 'n')
@@ -877,7 +928,7 @@ augroup SignDiffGroup
     autocmd!
 
     for i in g:SD_autocmd_add
-        execute printf("autocmd %s * call s:add_diff(expand('%%:t'))", i)
+        execute printf("autocmd %s * SDAdd", i)
     endfor
 
     for i in g:SD_autocmd_update

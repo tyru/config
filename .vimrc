@@ -1325,8 +1325,10 @@ let g:wm_move_left  = '<C-M-h>'
 let g:wm_move_right = '<C-M-l>'
 " }}}
 
-" sign-diff
+" sign-diff {{{
 " let g:SD_debug = 1
+nnoremap <silent> <C-l>     :SDUpdate<CR><C-l>
+" }}}
 
 " }}}2
 
