@@ -13,6 +13,9 @@ scriptencoding utf-8
 "
 " Change Log: {{{
 "   0.0.0: Initial Upload
+"   0.0.1:
+"   - strict check the global options.
+"   - fix some bugs
 " }}}
 " Usage: {{{
 "   Commands: {{{
@@ -89,7 +92,6 @@ scriptencoding utf-8
 "   TODO: {{{
 "       - SDDiffThis, SDDiffPatch, etc...
 "       - show diff also ordinary style (:diff*)
-"       - How should I highlight the deleted line(s)?
 "       - if the global variable is enabled,
 "       have only two files to be diffed for full HDD.
 "       (have patch data as hidden buffer?)
@@ -101,6 +103,9 @@ scriptencoding utf-8
 "       - update signs at only changed lines
 "       (now clear all signs and re-sign all)
 "       - update signs when undo?
+"       - save only patches,
+"       do not write whole current buffer
+"       - show signs at foldcolumn?(option)
 "   }}}
 "==================================================
 " }}}
@@ -138,9 +143,10 @@ set cpo&vim
 " Scope Variables {{{
 let s:files = {}
 let s:enabled = 1
-let s:lockfile = ''
 let s:backupdir = {}
 let s:previous_time = 0
+let s:check_comp_with = 0
+let s:def_comp_with = ['written', 'buffer']
 " }}}
 " Global Variables {{{
 if !exists('g:SD_debug')
@@ -178,26 +184,9 @@ if !exists('g:SD_sign_delete')
     let g:SD_sign_delete = '-'
 endif
 if !exists('g:SD_comp_with')
-    let g:SD_comp_with = ['written', 'buffer']
+    let g:SD_comp_with = s:def_comp_with
 else
-    let msg = "invalid g:SD_comp_with. use default."
-
-    if len(g:SD_comp_with) != 2
-        echohl WarningMsg
-        echo msg
-        echohl None
-            let g:SD_comp_with = ['written', 'buffer']
-    endif
-    for i in g:SD_comp_with
-        if i !=# 'buffer' && i !=# 'written' && i !~# '\m^\d+$'
-            echohl WarningMsg
-            echo msg
-            echohl None
-            let g:SD_comp_with = ['written', 'buffer']
-        endif
-    endfor
-
-    unlet msg
+    let s:check_comp_with = 1
 endif
 if !exists('g:SD_autocmd_add')
     let g:SD_autocmd_add = ['BufReadPost']
@@ -290,15 +279,14 @@ endfunc
 " }}}
 
 " s:run_with_local_opt {{{
-func! s:run_with_local_opt(cmd, options, ...)
-    let is_expr = a:0 == 0 ? 0 : a:1
+func! s:run_with_local_opt(cmd, options, is_expr, bufname)
+    let is_expr = a:is_expr
     let saved_opt = {}
-    let curpath = expand('%')
 
     " save
     for var in keys(a:options)
-        let saved_opt[var] = getbufvar(curpath, var)
-        call setbufvar(curpath, var, a:options[var])
+        let saved_opt[var] = getbufvar(a:bufname, var)
+        call setbufvar(a:bufname, var, a:options[var])
     endfor
 
     try
@@ -315,7 +303,7 @@ func! s:run_with_local_opt(cmd, options, ...)
 
     " restore
     for var in keys(saved_opt)
-        call setbufvar(curpath, var, saved_opt[var])
+        call setbufvar(a:bufname, var, saved_opt[var])
     endfor
 
     if is_expr
@@ -458,9 +446,9 @@ func! s:init()
     let s:backupdir = {
         \ 'root'   : dir,
         \ 'backup' : dir.'/backup',
-        \ 'patch'  : dir.'/patch',
-        \ 'lock'   : dir.'/lock'
+        \ 'patch'  : dir.'/patch'
     \ }
+    let lock = dir.'/lock'
 
     " mkdir if doesn't exist
     unlet i
@@ -469,12 +457,30 @@ func! s:init()
             call s:mkdir(i, 'p')
         endif
     endfor
+    if isdirectory(lock)
+        echohl WarningMsg
+        echomsg 'directory %s is deprecated. please remove it manually.'
+        echohl None
+    endif
 
-    let tempname = fnamemodify(tempname(), ':t')
-    let s:lockfile = printf("%s/%s-%s", s:backupdir.lock, localtime(), tempname)
-    call writefile([], s:lockfile)
-
-    call s:clean_up(0)
+    if s:check_comp_with
+        let integer = '\m^\d\+$'
+        let expr    = 'v:val ==# "buffer" || v:val ==# "written" || v:val =~# integer'
+        let tests = [
+            \ 'type(g:SD_comp_with) == type([])',
+            \ 'len(g:SD_comp_with) == 2',
+            \ 'g:SD_comp_with[0] !=# g:SD_comp_with[1]',
+            \ 'filter(g:SD_comp_with, expr) ==# g:SD_comp_with'
+        \ ]
+        for i in tests
+            if !eval(i)
+                call s:warn("invalid g:SD_comp_with. use default."
+                            \ . ":failed test %s, g:SD_comp_with %s",
+                            \ i, string(g:SD_comp_with))
+                let g:SD_comp_with = s:def_comp_with
+            endif
+        endfor
+    endif
 endfunc
 " }}}
 
@@ -486,30 +492,40 @@ endfunc
 
 " s:revision_to_filename {{{
 func! s:revision_to_filename(revision, filename)
-    return printf('%s/backup/%s-%s',
-                \ expand(g:SD_backupdir),
+    return printf('%s/%s-%s',
+                \ s:backupdir.backup,
                 \ a:revision,
                 \ fnamemodify(a:filename, ':t'))
 endfunc
 " }}}
 
 " s:commit_file {{{
-func! s:commit_file(filename)
-    let filename = fnamemodify(a:filename, ':t')
-    let revision = s:get_revision()
-    let revname = s:revision_to_filename(revision, filename)
+func! s:commit_file(filename, ...)
+    let path_tail = fnamemodify(a:filename, ':t')
+    let path_full = fnamemodify(a:filename, ':p')
+    let opt      = {'with_no_revision':0}
+    if a:0 != 0
+        call extend(opt, a:1, 'force')
+    endif
 
-    let cmd = 'silent write '.revname
+    if opt.with_no_revision
+        let revision = 0
+    else
+        let revision = s:get_revision()
+    endif
+    let revname = s:revision_to_filename(revision, path_tail)
+
+    let cmd = 'silent write! '.revname
     let opt = { '&writebackup':0, '&backup':0, '&swapfile':0 }
-    if !s:run_with_local_opt(cmd, opt)
-        " let v:errmsg = "can't write to ".revname
+    let is_expr = 0
+    if !s:run_with_local_opt(cmd, opt, is_expr, path_full)
         return 0
     endif
 
-    if has_key(s:files, filename)
-        call add(s:files[filename].revision, revision)
+    if has_key(s:files, path_tail)
+        call add(s:files[path_tail].revision, revision)
     else
-        let s:files[filename] = {
+        let s:files[path_tail] = {
             \ 'revision':[revision],
             \ 'patch':[],
             \ 'signed_lines':{},
@@ -524,13 +540,13 @@ endfunc
 " s:add_diff {{{
 func! s:add_diff(filename)
     if !s:enabled | return | endif
-    let curpath_tail = fnamemodify(a:filename, ':t')
+    let path_tail = fnamemodify(a:filename, ':t')
 
     if !s:is_available_buffer(a:filename)
         return
     endif
 
-    if has_key(s:files, curpath_tail)
+    if has_key(s:files, path_tail)
         " added already
         return
     endif
@@ -548,12 +564,17 @@ func! s:update_diff_signs(filename)
     if !s:enabled
         return
     endif
-    let curpath_tail = fnamemodify(a:filename, ':t')
+    let path_tail = fnamemodify(a:filename, ':t')
+    let path_full = fnamemodify(a:filename, ':p')
+    let comp_with = map(copy(g:SD_comp_with), 'v:val == -1 ? "buffer" : v:val')
+    let s:cmp_curfile_and_buffer =
+                \ s:has_elem(comp_with, 'written')
+                \ && s:has_elem(comp_with, 'buffer')
 
     if !s:is_available_buffer(a:filename)
-        if has_key(s:files, curpath_tail)
+        if has_key(s:files, path_tail)
             " delete current buffer from the list
-            unlet s:files[curpath_tail]
+            unlet s:files[path_tail]
         endif
         return
     endif
@@ -572,15 +593,25 @@ func! s:update_diff_signs(filename)
         let s:previous_time = localtime()
 
         " in order not to run diff unnecessarily
-        let comp_with = map(copy(g:SD_comp_with), 'v:val == -1 ? "buffer" : v:val')
-        if s:has_elem(comp_with, 'written')
-        \ && s:has_elem(comp_with, 'buffer')
-        \ && !&modified
+        if s:cmp_curfile_and_buffer && !&modified
             " not modified
             throw 'clear_signs'
         endif
 
-        call s:commit_file(a:filename)
+        if s:cmp_curfile_and_buffer
+            " save the space of HDD :D
+            " always writes <backupdir>/0-<filename>
+            if !s:commit_file(a:filename, {'with_no_revision':1})
+                call s:warn(v:errmsg)
+                throw 'clear_signs'
+            endif
+        else
+            if !s:commit_file(a:filename)
+                call s:warn(v:errmsg)
+                throw 'clear_signs'
+            endif
+        endif
+
         " new.file is the committed file.
         " orig.file is the previous.
         let [orig, new] = s:diffed_two_files(a:filename)
@@ -593,7 +624,7 @@ func! s:update_diff_signs(filename)
 
 
         let output_file = printf('%s/%s-%s-%s',
-                    \ s:backupdir.patch, orig.revision, new.revision, curpath_tail)
+                    \ s:backupdir.patch, orig.revision, new.revision, path_tail)
 
         " '/' -> '\'
         if has('win32')
@@ -625,7 +656,7 @@ func! s:update_diff_signs(filename)
         endif
 
         " diff orig.file new.file > output_file
-        let ran_shell = s:run_with_local_opt(cmd, opt, is_expr)
+        let ran_shell = s:run_with_local_opt(cmd, opt, is_expr, path_full)
 
         " 'diff' program's return value(from 'man diff')
         "   0: no differences were found
@@ -645,32 +676,19 @@ func! s:update_diff_signs(filename)
         endif
 
 
-        let patch = s:files[curpath_tail].patch
+        let patch = s:files[path_tail].patch
         call add(patch, output_file)
 
-        if len(patch) >= 2
-            try
-                let v:errmsg = ""
-                let diffed_lines = readfile(patch[-1])
-                let prev_diffed_lines = readfile(patch[-2])
-            catch
-                call s:warn('error:'.v:errmsg)
+        try
+            let diffed_lines = readfile(output_file)
+            if empty(diffed_lines)
+                " no difference
                 throw 'clear_signs'
-            endtry
-            " XXX
-            " if prev_diffed !=# -1 && diffed_lines ==# prev_diffed_lines
-            "     call s:debugmsg("no change between %s..%s", patch[-2], patch[-1])
-            "     " doesn't change signs
-            "     return
-            " endif
-        else
-            let diffed_lines = readfile(patch[-1])
-        endif
-
-        if empty(diffed_lines)
-            " no difference
+            endif
+        catch
+            " read error or throwing 'clear_signs'
             throw 'clear_signs'
-        endif
+        endtry
 
         " parse normal diff format and make signs
         call s:make_signs(a:filename, diffed_lines)
@@ -678,17 +696,25 @@ func! s:update_diff_signs(filename)
     catch /^clear_signs$/
         " clear all signs
         call s:clear_signs(a:filename)
+
+    catch /^nop$/
+        " nop
+        " (maybe not reached)
     endtry
 endfunc
 " }}}
 
 " s:diffed_two_files {{{
 func! s:diffed_two_files(filename)
-    let curpath      = a:filename
-    let curpath_tail = fnamemodify(a:filename, ':t')
+    let path      = a:filename
+    let path_tail = fnamemodify(a:filename, ':t')
     let skel         = {'revision' : '', 'file' : ''}
     let two          = []
-    let revisions    = s:files[curpath_tail].revision
+    if has_key(s:files, path_tail)
+        let revisions    = s:files[path_tail].revision
+    else
+        throw 'clear_signs'
+    endif
 
     for i in g:SD_comp_with
         let cur = copy(skel)
@@ -696,24 +722,30 @@ func! s:diffed_two_files(filename)
 
         if i ==# 'written'
             let cur.revision = 'written'
-            let cur.file     = curpath
+            let cur.file     = path
         elseif i ==# 'buffer'
             let cur.revision = get(revisions, -1, -1)
             if cur.revision ==# -1
                 call s:warn("couldn't get revision number of -1")
                 throw 'clear_signs'
             endif
-            let cur.file = s:revision_to_filename(cur.revision, curpath_tail)
+            let cur.file = s:revision_to_filename(cur.revision, path_tail)
         elseif i =~# '\m^\d*$'
             let cur.revision = get(revisions, -i, -1)
             if cur.revision == -1
                 call s:warn("couldn't get revision number of %d", -i)
                 throw 'clear_signs'
             endif
-            let cur.file = s:revision_to_filename(cur.revision, curpath_tail)
+            let cur.file = s:revision_to_filename(cur.revision, path_tail)
         else
             call s:warn(i.": unknown g:SD_comp_with option value")
             throw 'clear_signs'
+        endif
+
+        if !filereadable(cur.file)
+            " for the next time
+            " to be able to read two files committed
+            throw 'nop'
         endif
     endfor
 
@@ -840,28 +872,23 @@ endfunc
 " s:clear_signs {{{
 func! s:clear_signs(filename)
     let filename = a:filename
-    let curpath_tail = fnamemodify(filename, ':t')
-    let curpath_full = fnamemodify(filename, ':p')
-    if !s:is_available_buffer(a:filename) || !has_key(s:files, curpath_tail)
+    let path_tail = fnamemodify(filename, ':t')
+    let path_full = fnamemodify(filename, ':p')
+    if !s:is_available_buffer(a:filename) || !has_key(s:files, path_tail)
         return
     endif
 
-    let signed_lines = s:files[curpath_tail].signed_lines
+    let signed_lines = s:files[path_tail].signed_lines
     for lnum in keys(signed_lines)
-        " delete all signs of id in curpath_full each line
-        execute printf('sign unplace %s file=%s', signed_lines[lnum].id, curpath_full)
+        " delete all signs of id in path_full each line
+        execute printf('sign unplace %s file=%s', signed_lines[lnum].id, path_full)
     endfor
-    let s:files[curpath_tail].signed_lines = {}
+    let s:files[path_tail].signed_lines = {}
 endfunc
 " }}}
 
 " s:clean_up {{{
-func! s:clean_up(vimleave)
-    " return if other vims are running
-    let vims = split(glob(s:backupdir.lock . '/*'), "\n")
-    call filter(vims, 'filereadable(v:val)')
-    if len(vims) > 1 | return | endif
-
+func! s:clean_up()
     for f in split(glob(s:backupdir.backup . '/*'), "\n")
         let m = matchlist(fnamemodify(f, ':t'), '\m^\(\d\+\)-\(.\+\)$')
         if !empty(m)
@@ -874,10 +901,6 @@ func! s:clean_up(vimleave)
     for f in split(glob(s:backupdir.patch . '/*'), "\n")
         call delete(f)
     endfor
-
-    if a:vimleave
-        call delete(s:lockfile)
-    endif
 endfunc
 " }}}
 
@@ -936,7 +959,7 @@ augroup SignDiffGroup
     endfor
 
     if g:SD_delete_files_vimleave
-        autocmd VimLeave * call s:clean_up(1)
+        autocmd VimLeave * call s:clean_up()
     endif
 augroup END
 " }}}
