@@ -21,26 +21,10 @@ if [ "$OS" = "Cygwin" ]; then
     export LANG=ja_JP.SJIS
 fi
 
-
-# local::lib
-export PERL5LIB="$HOME/local/lib/perl5:$HOME/local/lib/perl5/site_perl:$PERL5LIB"
-export PKG_DBDIR="$HOME/local/var/db/pkg"
-export PORT_DBDIR="$HOME/local/var/db/pkg"
-export INSTALL_AS_USER
-export LD_LIBRARY_PATH="$HOME/local/lib"
-mkdir -p ~/local/var/db/pkg
-
-export GISTY_DIR="$HOME/work/gist"
-
-
-# delete duplicated paths
 export PATH="$HOME/bin:$HOME/local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
-if [ -x "$(which rmdupenv)" ]; then
-    rmdupenv PATH
-    rmdupenv PERL5LIB
-fi
 
 
+# load local environment variables
 if [ -f "$HOME/.env.local" ]; then
     source "$HOME/.env.local"
 fi

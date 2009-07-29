@@ -1,144 +1,189 @@
-#!/bin/bash
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use utf8;
 
-OS=$(uname -o)
-CMDNAME=$(basename $0)
-CWD=$(cd $(dirname $0) && pwd)
-FILES="bin .vim .vimrc .gvimrc .vimperator .vimperatorrc .bash_profile .bashrc .screenrc .inputrc .zshrc .zshenv .zsh .skel .module-starter .emacs .emacs.d"
-INFO_FILES=".vim/backup .vim/.vimbackup_deleted .vim/chalice/cache .vim/chalice/*.bmk .vimperator/info"
-GITHUB_USER=$(cd $CWD && git config github.user)
+use FindBin qw($Bin);
+# gnu_compat: --opt="..." is allowed.
+# no_bundling: single character option is not bundled.
+# no_ignore_case: no ignore case on long option.
+use Getopt::Long qw(:config gnu_compat no_bundling no_ignore_case);
+use File::Path qw(rmtree);
+use IO::Handle;
+use File::Spec::Functions qw(catfile);
 
-# don't adapt alias.
-function usage() {
-    cat <<EOF
-    Usage: $CMDNAME [-cpxh] [-u user]
+
+
+### sub ###
+
+sub usage () {
+    die <<EOF;
+    Usage: $0 [[-u|--username <user>] [-c|--commit] [-p|--push] [-x|--extract] [--gc]]
 EOF
-    exit
 }
-function warn() {
-    echo $* >&2
-}
-function ask() {
-    echo "$@"
-    local YN
-    read YN
-    if [ "$YN" != "y" -a "$YN" != "yes" ]; then
-        exit
-    fi
-}
-function install_dotfiles() {
-    local src="$1"
-    local dest="$2"
-    local user="$3"
 
-    if [ ! -e "$src" ]; then
-        warn "$src: No such a file"
-        return
-    fi
-    command rm -rf $dest
-
-    echo "$src -> $dest"
-    command cp -RL  $src $dest
-
-    if [ "$OS" = "Cygwin" ]; then
-        chown -R "$user" "$dest"
-    else
-        chown -R "$user:$user" "$dest"
-    fi
+sub puts {
+    print @_, "\n";
 }
+
+sub install {
+    # install $src to $dest as $user.
+    my ($src, $dest, $user) = @_;
+
+    unless (-e $src) {
+        warn "$src:$!\n";
+        return;
+    }
+    rmtree($dest);
+
+    puts("$src -> $dest");
+    system('cp', '-RL', $src, $dest);
+
+    if ($^O eq 'cygwin') {
+        system('chown', '-R', $user, $dest);
+    } else {
+        system('chown', '-R', "$user:$user", $dest);
+    }
+}
+
+sub ask {
+    my ($msg) = @_;
+    STDERR->print("$msg [y/n]:");
+    chomp(my $ans = <STDIN>);
+    exit unless $ans =~ /^y(es)?$/i;
+}
+
 
 
 ### main ###
 
-# arguments
-OPT_USER="$USER"
-while getopts u:cpxh OPT; do
-    case $OPT in
-        "u" ) OPT_USER="$OPTARG" ;;
-        "c" ) FLAG_COMMIT="true" ;;
-        "p" ) FLAG_PUSH="true" ;;
-        "x" ) FLAG_EXTRACT="true" ;;
-        "C" ) FLAG_COMPRESS="true" ;;
-        *   ) usage ;;
-    esac
-done
-
-if [ "$FLAG_EXTRACT" != "true" ]; then
-    if [ -z $GITHUB_USER ]; then
-        warn "Can't determine GITHUB_USER('git config github.user' is empty)."
-        exit 1
-    fi
-fi
+# chdir parent directory of this script
+chdir $Bin or die "$Bin:$!";
 
 
-cd $CWD
-if [ $? != 0 ]; then
-    warn "you can't chdir to '$CWD'."
-    exit 1
-fi
+my @files = qw(
+    bin
+    .vim
+    .vimrc
+    .gvimrc
+    .vimperator
+    .vimperatorrc
+    .bash_profile
+    .bashrc
+    .screenrc
+    .inputrc
+    .zshrc
+    .zshenv
+    .zsh
+    .skel
+    .module-starter
+    .emacs
+    .emacs.d
+);
+my @info_files = qw(
+    .vim/backup
+    .vim/.vimbackup_deleted
+    .vim/chalice/cache
+    .vim/chalice/*.bmk
+    .vimperator/info
+);
+
+my $username;
+my $auto_commit;
+my $auto_push;
+my $extract;
+my $auto_gc;
+my $github_user = qx(git config github.user);
+
+if (defined $ENV{USER}) {
+    $username = $ENV{USER};
+} else {
+    die "env 'USER' is not set.\n";
+}
+
+my $help;
+GetOptions(
+    h => \$help,
+    help => \$help,
+    'u=s' => \$username,
+    'username=s' => \$username,
+    c => \$auto_commit,
+    commit => \$auto_commit,
+    p => \$auto_push,
+    push => \$auto_push,
+    x => \$extract,
+    extract => \$extract,
+    gc => \$auto_gc,
+) or usage;
+usage if $help;
 
 
-# determine user's home
-if [ "$OPT_USER" = "root" ]; then
-    HOME_DIR="/root"
-else
-    HOME_DIR="/home/$OPT_USER"
-fi
-if [ ! -d $HOME_DIR ]; then
-    warn "home directory($HOME_DIR) doesn't exist."
-    exit 1
-fi
+if (! $extract && ! defined $github_user) {
+    warn "Can't determine GITHUB_USER('git config github.user' is empty).\n";
+}
 
+my $home;
+if ($username eq 'root') {
+    $home = "/root";
+} else {
+    $home = "/home/$username";
+    unless (-d $home) {
+        die "$home:$!"
+    }
+}
 
-if [ "$FLAG_EXTRACT" = "true" ]; then
-    ask -n "may I replace the dotfiles in '$HOME_DIR'?[y/n]:"
-fi
+if ($extract) {
+    ask("may I replace the dotfiles in '$home'?");
+}
 
+for my $file (@files) {
+    my ($src, $dest);
 
-# replace dotfiles in home directory.
-for i in $FILES; do
-    if [ "$FLAG_EXTRACT" = "true" ]; then
-        if [ "$OS" = "Cygwin" -a "$i" = ".vimperator" ]; then
-            src="vimperator"
-            dest="$HOME_DIR/vimperator"
-        else
-            src="$i"
-            dest="$HOME_DIR/$i"
-        fi
+    if ($extract) {
+        if ($^O eq 'cygwin' && $file eq '.vimperator') {
+            $src  = $file;
+            $dest = catfile($home, 'vimperator');
+        } else {
+            $src  = $file;
+            $dest = catfile($home, $file);
+        }
 
-        # install as $OPT_USER.
-        install_dotfiles $src $dest $OPT_USER
-    else
-        if [ "$OS" = "Cygwin" -a "$i" = ".vimperator" ]; then
-            src="$HOME_DIR/vimperator"
-            dest=".vimperator"
-        else
-            src="$HOME_DIR/$i"
-            dest="$i"
-        fi
+        install($src, $dest, $username);
 
-        # install as $GITHUB_USER.
-        install_dotfiles $src $dest $GITHUB_USER
-    fi
-done
+    } else {
+        if ($^O eq 'cygwin' && $file eq '.vimperator') {
+            $src  = catfile($home, 'vimperator');
+            $dest = $file;
+        } else {
+            $src  = catfile($home, $file);
+            $dest = $file;
+        }
+
+        install($src, $dest, $username);
+    }
+}
 
 # delete info files.
-if [ "$FLAG_EXTRACT" != "true" ]; then
-    command rm -rf $INFO_FILES
-fi
+unless ($extract) {
+    # paths are expanded by 'glob'.
+    for (map { glob } @info_files) {
+        rmtree($_);
+    }
+}
 
+# update trees and commit all.
+if ($auto_commit) {
+    system(qw(git rm -fr --cached .));
+    system(qw(git add .));
+    system(qw(git commit));
+}
 
-# commit all.
-if [ "$FLAG_COMMIT" = "true" ]; then
-    command git rm -fr --cached .
-    command git add .
-    command git commit
-fi
+# git gc
+if ($auto_gc) {
+    system(qw(git gc));
+}
 
-if [ "$FLAG_COMPRESS" = "true" ]; then
-    command git gc
-fi
-
-# push to github server.
-if [ "$FLAG_PUSH" = "true" ]; then
-    command git push origin master
-fi
+# git push origin master
+if ($auto_push) {
+    system(qw(git push origin master));
+}

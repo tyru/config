@@ -122,3 +122,9 @@ if [ "$OS" = 'Cygwin' ]; then
     }
 fi
 
+
+# delete duplicated elements
+if [ -x "$(which rmdupenv)" ]; then
+    rmdupenv PATH
+    rmdupenv PERL5LIB
+fi

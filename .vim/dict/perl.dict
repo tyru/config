@@ -13,6 +13,7 @@ UNIVERSAL
 __DATA__
 __DIE__
 __END__
+__FILE__
 __PACKAGE__
 __WARN__
 abs

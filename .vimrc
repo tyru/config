@@ -80,8 +80,9 @@ set wildmenu
 
 " Life Changing
 if has('virtualedit')
+    " unstable yet...
     " set selection=exclusive
-    set virtualedit=all
+    " set virtualedit=all
 endif
 
 if has('unix')
@@ -1327,6 +1328,7 @@ let g:wm_move_right = '<C-M-l>'
 
 " sign-diff {{{
 let g:SD_debug = 1
+let g:SD_disable = 1
 nnoremap <silent> <C-l>     :SDUpdate<CR><C-l>
 " }}}
 
