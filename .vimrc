@@ -55,7 +55,7 @@ set listchars=tab:>-,extends:>,precedes:<,eol:.
 set noshowcmd
 set nosplitright
 set notimeout
-set nowrap
+set wrap
 set nrformats-=octal
 set ruler
 set scroll=5
@@ -71,7 +71,7 @@ set smarttab
 set splitbelow
 set switchbuf="useopen,usetab"
 set tabstop=4
-set textwidth=80
+set textwidth=0
 set viminfo='50,h,f1,n$HOME/.viminfo
 set visualbell
 set whichwrap=b,s
@@ -426,10 +426,10 @@ func! s:Dir( ... )
             let dir = '"'. dir .'"'
         endif
         let dir = substitute( dir, '/', '\', 'g' )
-        call s:Sysmtem('explorer', dir)
+        call s:System('explorer', dir)
     else
         let dir = shellescape( dir )
-        call s:Sysmtem('gnome-open', dir)
+        call s:System('gnome-open', dir)
     endif
 endfunc
 " }}}2
@@ -731,6 +731,11 @@ augroup MyVimrc
                 \ setlocal ft=html
     " }}}3
 
+    " gVim起動時に前画面にする (http://d.hatena.ne.jp/amachang/20090731/1249047638)
+    if has('win32')
+        au GUIEnter * simalt ~x
+    endif
+
 augroup END
 " }}}2
 
@@ -755,7 +760,6 @@ func! s:LoadWhenFileType()
 
     elseif &filetype == 'c' || &filetype == 'cpp'
         TabChange 4
-        compiler gcc
         if &filetype == 'c'
             call s:SetDict('c')
         elseif &filetype == 'cpp'
@@ -763,6 +767,7 @@ func! s:LoadWhenFileType()
         endif
 
         setlocal makeprg&
+        compiler gcc
 
     elseif &filetype == 'cs'
         TabChange 4
@@ -786,8 +791,8 @@ func! s:LoadWhenFileType()
         TabChange 2
         " for javadoc
         setlocal iskeyword+=@-@
-        compiler javac
         setlocal makeprg=javac\ %
+        compiler javac
 
     elseif &filetype == 'scala'
         TabChange 2
@@ -807,7 +812,7 @@ func! s:LoadWhenFileType()
 
     elseif &filetype == 'perl'
         TabChange 4
-        compiler perl
+        " add perl's path. 'gf' on module name opens its module.
         if exists('$PERL5LIB')
             for i in split(expand('$PERL5LIB'), ':')
                 execute 'setlocal path+=' . i
@@ -815,6 +820,7 @@ func! s:LoadWhenFileType()
         endif
         setlocal suffixesadd=.pm
         setlocal makeprg=perl\ -c\ %
+        compiler perl
 
     elseif &filetype == 'yaml'
         TabChange 2
@@ -1073,7 +1079,6 @@ inoremap <C-r><C-r>  <C-r><C-p>+
 inoremap <C-l>  <Space><BS><C-o><C-l>
 
 inoremap <C-z>                <C-o>di(
-inoremap <C-S-z>              <C-o>da(
 " }}}2
 
 " ~~ c ~~ {{{2

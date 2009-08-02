@@ -6,7 +6,10 @@ scriptencoding utf-8
 " Name: nextfile
 " Version: 0.0.2
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-06-10.
+" Last Change: 2009-07-29.
+"
+" Description:
+"   open the next or previous file
 "
 " Change Log: {{{2
 "   0.0.0: Initial upload.

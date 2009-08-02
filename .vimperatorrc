@@ -104,18 +104,23 @@ noremap <C-o>   <C-i>
 " }}}2
 
 " ~ c ~ {{{2
-cnoremap <C-a>          <C-v><C-a>
-cnoremap <C-c>          <C-v><C-c>
+cnoremap <C-c>          <C-v><C-c><Home><S-End><Del>echo "yank!"<CR>
 cnoremap <C-x>          <C-v><C-x>
 cnoremap <C-v>          <S-Insert>
 cnoremap <C-r><C-r>     <S-Insert>
-" 移動
-cnoremap <C-f>      <Right>
-cnoremap <C-b>      <Left>
 " 履歴
 cnoremap <C-n>      <Down>
 cnoremap <C-p>      <Up>
 " }}}2
+
+" ~ ! ~ {{{
+" 移動
+noremap! <C-a>      <Home>
+noremap! <C-e>      <End>
+noremap! <C-d>      <Del>
+noremap! <C-f>      <Right>
+noremap! <C-b>      <Left>
+" }}}
 
 " }}}1
 "-----------------------------------------------------------------

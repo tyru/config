@@ -6,7 +6,10 @@ scriptencoding utf-8
 " Name: vimtemplate
 " Version: 0.0.4
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-06-02.
+" Last Change: 2009-07-29.
+"
+" Description:
+"   MRU-like simple template management plugin
 "
 " Change Log: {{{2
 "   0.0.0: Initial upload.

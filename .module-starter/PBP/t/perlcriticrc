@@ -2,7 +2,7 @@
 # for mkdir $dir, 0777
 [-ValuesAndExpressions::ProhibitLeadingZeros]
 
-# we do eval $asset_pl a lot
+# eval $string
 [-BuiltinFunctions::ProhibitStringyEval]
 
 # no strict 'refs'
