@@ -38,7 +38,7 @@ let PLUGIN_INFO =
   <name lang="ja">メインクーン</name>
   <description>Make the screen larger</description>
   <description lang="ja">なるべくでかい画面で使えるように</description>
-  <version>2.2.2</version>
+  <version>2.2.3</version>
   <author mail="anekos@snca.net" homepage="http://d.hatena.ne.jp/nokturnalmortum/">anekos</author>
   <minVersion>2.0pre</minVersion>
   <maxVersion>2.0pre</maxVersion>
@@ -343,6 +343,14 @@ let tagetIDs = (liberator.globalVariables.maine_coon_targets || '').split(/\s+/)
     });
   }
 
+  {
+    // for multiline input
+    let cmdline = document.getElementById("liberator-commandline");
+    messageBox.inputField.__defineGetter__("scrollWidth", function() {
+        return cmdline.clientWidth;
+    });
+  }
+
   around(commandline, 'open', function (next, args) {
     messageBox.collapsed = false;
     return next();
@@ -356,7 +364,7 @@ let tagetIDs = (liberator.globalVariables.maine_coon_targets || '').split(/\s+/)
 
   options.add(
     ['mainecoon'],
-    'Make big screen like a Maine Coone',
+    'Make big screen like a Maine Coon',
     'charlist',
     '',
     {

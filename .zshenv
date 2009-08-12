@@ -21,10 +21,4 @@ if [ "$OS" = "Cygwin" ]; then
     export LANG=ja_JP.SJIS
 fi
 
-export PATH="$HOME/bin:$HOME/local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
-
-
-# load local environment variables
-if [ -f "$HOME/.env.local" ]; then
-    source "$HOME/.env.local"
-fi
+export PATH="$HOME/bin:$HOME/local/bin:/usr/local/bin:$PATH"

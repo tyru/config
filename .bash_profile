@@ -29,9 +29,5 @@ fi
 export PS1="{\@} \u@\H being in [\W]\n \\$ "
 
 # delete duplicated paths
-export PATH="$HOME/bin:$HOME/local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+export PATH="$HOME/bin:$HOME/local/bin:/usr/local/bin:$PATH"
 
-
-if [ -f "$HOME/.env.local" ]; then
-    source "$HOME/.env.local"
-fi

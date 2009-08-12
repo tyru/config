@@ -38,7 +38,7 @@ set autoread
 set backspace=indent,eol,start
 set browsedir=buffer
 set clipboard=
-set complete=.,w,b,k
+set complete=.,w,b,k,t
 set diffopt=filler,vertical
 set expandtab
 set formatoptions=mMcroqnl2
@@ -77,6 +77,11 @@ set visualbell
 set whichwrap=b,s
 set wildchar=<Tab>
 set wildmenu
+
+if has('emacs_tags') && has('path_extra')
+    " ディレクトリを遡ってtagsを探す
+    set tags+=.;
+endif
 
 " Life Changing
 if has('virtualedit')
@@ -162,7 +167,8 @@ let s:runtime_dirs = [
             \ '$HOME/.vim/mine',
             \ '$HOME/.vim/chalice',
             \ '$HOME/.vim/hatena',
-            \ '$HOME/.vim/xpt'
+            \ '$HOME/.vim/xpt',
+            \ '$HOME/.vim/neocomplcache'
             \ ]
 for dir in s:runtime_dirs
     if isdirectory(expand(dir))
@@ -275,14 +281,6 @@ if !filereadable($VIMRUNTIME . '/menu.vim') && has('gui_running')
 endif
 
 " }}}2
-
-" ファイル名に大文字小文字の区別がないシステム用の設定 {{{2
-"   (例: DOS/Windows/MacOS)
-
-if filereadable($VIM . '/vimrc') && filereadable($VIM . '/ViMrC')
-    " tagsファイルの重複防止
-    set tags=./tags,tags
-endif
 
 " }}}2
 
@@ -734,6 +732,8 @@ augroup MyVimrc
     " gVim起動時に前画面にする (http://d.hatena.ne.jp/amachang/20090731/1249047638)
     if has('win32')
         au GUIEnter * simalt ~x
+    else
+        " au GUIEnter * winpos 100 50
     endif
 
 augroup END
@@ -1054,6 +1054,7 @@ noremap! <M-b>   <C-Left>
 noremap! <C-a>   <Home>
 noremap! <C-e>   <End>
 noremap! <C-d>   <Del>
+noremap! <C-k>   <C-o>D
 
 " 括弧
 noremap! <M-(>         ()<Left>
@@ -1067,8 +1068,6 @@ noremap! <M-}>         \{\}<Left><Left>
 " }}}2
 
 " ~~ i ~~ {{{2
-inoremap <C-j>  <Esc>
-
 inoremap <S-CR>  <C-o>O
 inoremap <C-CR>  <C-o>o
 
@@ -1278,9 +1277,9 @@ nnoremap <silent> g<C-i>    :Gtags -f %<CR>
 nnoremap <silent> <C-]>    :call <SID>JumpTags()<CR>
 
 " xptemplate
-let xptemplate_key = '<C-k>'
+let xptemplate_key = '<C-t>'
 
-" (QuickBuf)qbuf
+" QuickBuf
 let g:qb_hotkey = '<LocalLeader>b'
 
 " }}}2

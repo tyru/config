@@ -111,16 +111,13 @@ cnoremap <C-r><C-r>     <S-Insert>
 " 履歴
 cnoremap <C-n>      <Down>
 cnoremap <C-p>      <Up>
-" }}}2
-
-" ~ ! ~ {{{
 " 移動
-noremap! <C-a>      <Home>
-noremap! <C-e>      <End>
-noremap! <C-d>      <Del>
-noremap! <C-f>      <Right>
-noremap! <C-b>      <Left>
-" }}}
+cnoremap <C-a>      <Home>
+cnoremap <C-e>      <End>
+cnoremap <C-d>      <Del>
+cnoremap <C-f>      <Right>
+cnoremap <C-b>      <Left>
+" }}}2
 
 " }}}1
 "-----------------------------------------------------------------

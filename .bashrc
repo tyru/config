@@ -35,11 +35,6 @@ if [ -x "$(which vim)" ]; then
 fi
 
 
-if [ -f "$HOME/.alias.local" ]; then
-    source "$HOME/.alias.local"
-fi
-
-
 ### cygwin ###
 if [ "$OS" = 'Cygwin' ]; then
     function wwhich() {
@@ -60,9 +55,3 @@ if [ "$OS" = 'Cygwin' ]; then
     }
 fi
 
-
-# delete duplicated elements
-if [ -x "$(which rmdupenv)" ]; then
-    rmdupenv PATH
-    rmdupenv PERL5LIB
-fi

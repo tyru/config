@@ -83,10 +83,6 @@ else
 fi
 
 
-if [ -f "$HOME/.alias.local" ]; then
-    source "$HOME/.alias.local"
-fi
-
 
 ### function ###
 # via http://blog.s21g.com/articles/602
@@ -122,9 +118,3 @@ if [ "$OS" = 'Cygwin' ]; then
     }
 fi
 
-
-# delete duplicated elements
-if [ -x "$(which rmdupenv)" ]; then
-    rmdupenv PATH
-    rmdupenv PERL5LIB
-fi
