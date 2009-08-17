@@ -1,7 +1,7 @@
 escape ^Jj
 
 autodetach on
-bell_msg "^G"
+# bell_msg "^G"
 startup_message off
 
 encoding utf-8

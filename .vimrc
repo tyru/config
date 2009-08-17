@@ -609,6 +609,7 @@ command! -nargs=* GccSyntaxCheck
             \ call s:GccSyntaxCheck(<f-args>)
 " }}}2
 
+" ToggleOption {{{
 command! -nargs=1 ToggleOption
             \ call s:ToggleOption(<f-args>)
 
@@ -619,6 +620,31 @@ func! s:ToggleOption(opt)
         call setbufvar('%', '&'.a:opt, !val)
     endif
 endfunc
+" }}}
+
+" BDelUnlisted {{{
+command! BDelUnlisted
+            \ call s:BDelUnlisted()
+
+func! s:BDelUnlisted()
+    " ls!の出力をoutputに保存
+    redir => output
+    ls!
+    redir END
+
+    for b in split(output, "\n")
+        if b =~# '^\s*$' | continue | endif
+
+        let splitted = split(b, '\s\+')
+        let m = matchlist(splitted[0], '^\(\d\+\)u')
+
+        if ! empty(m)
+            " バッファ削除
+            execute 'bwipeout '.m[1]
+        endif
+    endfor
+endfunc
+" }}}
 
 " }}}1
 "-----------------------------------------------------------------

@@ -22,3 +22,11 @@ if [ "$OS" = "Cygwin" ]; then
 fi
 
 export PATH="$HOME/bin:$HOME/local/bin:/usr/local/bin:$PATH"
+
+
+
+### local ###
+
+if [ -e "$HOME/.env.local" ]; then
+    source "$HOME/.env.local"
+fi

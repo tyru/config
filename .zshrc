@@ -97,6 +97,7 @@ function _git-svn () {
 compdef _git-svn git-svn 
 
 
+
 ### cygwin ###
 if [ "$OS" = 'Cygwin' ]; then
 
@@ -118,3 +119,10 @@ if [ "$OS" = 'Cygwin' ]; then
     }
 fi
 
+
+
+### local ###
+
+if [ -e "$HOME/.alias.local" ]; then
+    source "$HOME/.alias.local"
+fi

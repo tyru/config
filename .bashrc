@@ -55,3 +55,10 @@ if [ "$OS" = 'Cygwin' ]; then
     }
 fi
 
+
+
+### local ###
+
+if [ -e "$HOME/.alias.local" ]; then
+    source "$HOME/.alias.local"
+fi
