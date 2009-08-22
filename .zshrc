@@ -84,21 +84,48 @@ fi
 
 
 
+### abbrev ###
+
+# via http://homepage1.nifty.com/blankspace/zsh/zsh.html
+typeset -A myabbrev
+myabbrev=(
+    "ll" "| less"
+    "lg" "| grep"
+    "lp" "| perl"
+)
+
+my-expand-abbrev() {
+    local left prefix
+    left=$(echo -nE "$LBUFFER" | sed -e "s/[_a-zA-Z0-9]*$//")
+    prefix=$(echo -nE "$LBUFFER" | sed -e "s/.*[^_a-zA-Z0-9]\([_a-zA-Z0-9]*\)$/\1/")
+    LBUFFER=$left${myabbrev[$prefix]:-$prefix}" "
+}
+zle -N my-expand-abbrev
+
+# スペースで展開？
+bindkey     " "         my-expand-abbrev
+
+
+
+
 ### function ###
+
 # via http://blog.s21g.com/articles/602
-function _git-svn () {
+_git-svn () {
     `git-svn --help \
     | grep "^ \w" \
     | sed "s/^ //" \
     | sed "s/ .*//" \
     | sed 's/^/ compadd /'`
 }
-
 compdef _git-svn git-svn 
 
+# カレントディレクトリが変わると実行される
+chpwd () { ls }
 
 
 ### cygwin ###
+
 if [ "$OS" = 'Cygwin' ]; then
 
     function wwhich() {

@@ -1,67 +1,67 @@
 
 scriptencoding euc-jp
 
-" ¥«¥é¡¼¥¹¥­¡¼¥ŞÅù {{{1
+" ã‚«ãƒ©ãƒ¼ã‚¹ã‚­ãƒ¼ãƒç­‰ {{{1
 
 call SetColorScheme()
 set t_vb=
 
 " }}}1
 
-""" ¥Õ¥©¥ó¥ÈÀßÄê {{{1
+""" ãƒ•ã‚©ãƒ³ãƒˆè¨­å®š {{{1
 "
 if has('win32')
-  " WindowsÍÑ
+  " Windowsç”¨
   set guifont=M+2VM+IPAG_circle:h13
   set printfont=M+2VM+IPAG_circle:h13
-"   set guifont=Osaka¡İÅùÉı:h13
-  " ¹Ô´Ö³Ö¤ÎÀßÄê
+"   set guifont=Osakaï¼ç­‰å¹…:h13
+  " è¡Œé–“éš”ã®è¨­å®š
   set linespace=1
-  " °ìÉô¤ÎUCSÊ¸»ú¤ÎÉı¤ò¼«Æ°·×Â¬¤·¤Æ·è¤á¤ë
+  " ä¸€éƒ¨ã®UCSæ–‡å­—ã®å¹…ã‚’è‡ªå‹•è¨ˆæ¸¬ã—ã¦æ±ºã‚ã‚‹
   if has('kaoriya')
     set ambiwidth=auto
   endif
 elseif has('mac')
-  set guifont=Osaka¡İÅùÉı:h14
+  set guifont=Osakaï¼ç­‰å¹…:h14
 elseif has('xfontset')
-  " UNIXÍÑ (xfontset¤ò»ÈÍÑ)
+  " UNIXç”¨ (xfontsetã‚’ä½¿ç”¨)
 "   set guifontset=a14,r14,k14
   set guifont=Monospace\ 12
 endif
 
 """ }}}1
 
-""" ¥¦¥¤¥ó¥É¥¦¤Ë´Ø¤¹¤ëÀßÄê {{{1
+""" ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã«é–¢ã™ã‚‹è¨­å®š {{{1
 "
-" ¥¦¥¤¥ó¥É¥¦¤ÎÉı
+" ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã®å¹…
 set columns=90
-" ¥¦¥¤¥ó¥É¥¦¤Î¹â¤µ
+" ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã®é«˜ã•
 set lines=45
-" ¥³¥Ş¥ó¥É¥é¥¤¥ó¤Î¹â¤µ(GUI»ÈÍÑ»ş)
+" ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã®é«˜ã•(GUIä½¿ç”¨æ™‚)
 set cmdheight=1
 
 """ }}}1
 
-""" ÆüËÜ¸ìÆşÎÏ¤Ë´Ø¤¹¤ëÀßÄê {{{1
+""" æ—¥æœ¬èªå…¥åŠ›ã«é–¢ã™ã‚‹è¨­å®š {{{1
 "
 if has('multi_byte_ime') || has('xim')
-  " IME ON»ş¤Î¥«¡¼¥½¥ë¤Î¿§¤òÀßÄê(ÀßÄêÎã:»ç)
+  " IME ONæ™‚ã®ã‚«ãƒ¼ã‚½ãƒ«ã®è‰²ã‚’è¨­å®š(è¨­å®šä¾‹:ç´«)
   highlight CursorIM guibg=Purple guifg=NONE
-  " ÁŞÆş¥â¡¼¥É¡¦¸¡º÷¥â¡¼¥É¤Ç¤Î¥Ç¥Õ¥©¥ë¥È¤ÎIME¾õÂÖÀßÄê
+  " æŒ¿å…¥ãƒ¢ãƒ¼ãƒ‰ãƒ»æ¤œç´¢ãƒ¢ãƒ¼ãƒ‰ã§ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®IMEçŠ¶æ…‹è¨­å®š
   set iminsert=0 imsearch=0
   if has('xim') && has('GUI_GTK')
-    " XIM¤ÎÆşÎÏ³«»Ï¥­¡¼¤òÀßÄê:
-    " ²¼µ­¤Î s-space ¤ÏShift+Space¤Î°ÕÌ£¤Çkinput2+cannaÍÑÀßÄê
+    " XIMã®å…¥åŠ›é–‹å§‹ã‚­ãƒ¼ã‚’è¨­å®š:
+    " ä¸‹è¨˜ã® s-space ã¯Shift+Spaceã®æ„å‘³ã§kinput2+cannaç”¨è¨­å®š
     "set imactivatekey=s-space
   endif
-  " ÁŞÆş¥â¡¼¥É¤Ç¤ÎIME¾õÂÖ¤òµ­²±¤µ¤»¤Ê¤¤¾ì¹ç¡¢¼¡¹Ô¤Î¥³¥á¥ó¥È¤ò²ò½ü
+  " æŒ¿å…¥ãƒ¢ãƒ¼ãƒ‰ã§ã®IMEçŠ¶æ…‹ã‚’è¨˜æ†¶ã•ã›ãªã„å ´åˆã€æ¬¡è¡Œã®ã‚³ãƒ¡ãƒ³ãƒˆã‚’è§£é™¤
   "inoremap <silent> <ESC> <ESC>:set iminsert=0<CR>
 endif
 
 """ }}}1
 
-""" ¥Ğ¥¤¥Ê¥êÊÔ½¸(xxd)¥â¡¼¥É {{{1
-"¡Êvim -b ¤Ç¤Îµ¯Æ°¡¢¤â¤·¤¯¤Ï *.bin ¥Õ¥¡¥¤¥ë¤ò³«¤¯¤ÈÈ¯Æ°¡Ë
+""" ãƒã‚¤ãƒŠãƒªç·¨é›†(xxd)ãƒ¢ãƒ¼ãƒ‰ {{{1
+"ï¼ˆvim -b ã§ã®èµ·å‹•ã€ã‚‚ã—ãã¯ *.bin ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ãã¨ç™ºå‹•ï¼‰
 "
 "augroup BinaryXXD
 "  autocmd!

@@ -122,19 +122,22 @@ cnoremap <C-b>      <Left>
 " }}}1
 "-----------------------------------------------------------------
 " qmark {{{1
-qmark d http://delicious.com/tyru/
+" もっと複雑なURLのページを登録した方がqmarkの意味があると思うんだけども
+
 qmark m http://mail.google.com/mail?hl=ja
 qmark r http://www.google.co.jp/reader/view/
 
-qmark f http://tyru.web.fc2.com/
 qmark n http://tyru.yu-nagi.com/
-qmark i http://tyru.hp.infoseek.co.jp/
 
 qmark h http://www.hatena.ne.jp/
+qmark H http://hatenadiary.g.hatena.ne.jp/keyword/%e3%81%af%e3%81%a6%e3%81%aa%e8%a8%98%e6%b3%95%e4%b8%80%e8%a6%a7
+
+qmark d http://delicious.com/tyru/
 qmark p http://www.pixiv.net/mypage.php
 qmark P http://pipes.yahoo.com/pipes/
 qmark t http://twitter.com/
 qmark T http://tyru.tumblr.com/
+
 qmark z bml-niconico-mp3
 " }}}1
 "-----------------------------------------------------------------

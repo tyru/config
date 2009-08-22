@@ -3,14 +3,14 @@
 
 (setq load-path (cons "~/.emacs.d/elisp" load-path))
 
-; ¸«±É¤¨¤È¤«¤½¤¦¤¤¤¦¤â¤Î
+; è¦‹æ „ãˆã¨ã‹ãã†ã„ã†ã‚‚ã®
 (auto-fill-mode)
 (global-font-lock-mode t)
 (set-face-background 'region "darkgreen")
 (setq visible-bell t)
 (show-paren-mode)
 (transient-mark-mode t)
-(setq indent-tabs-mode nil)    ; ¥¤¥ó¥Ç¥ó¥È¤Ë¥¹¥Ú¡¼¥¹¤ò»È¤¦
+(setq indent-tabs-mode nil)    ; ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã«ã‚¹ãƒšãƒ¼ã‚¹ã‚’ä½¿ã†
 (add-to-list 'default-frame-alist '(cursor-type . (bar . 2)))
 (tool-bar-mode 0)
 (column-number-mode t)
@@ -26,14 +26,14 @@
 (setq default-input-method "japanese-anthy")
 
 
-;;; ¥­¡¼¥Ğ¥¤¥ó¥É
+;;; ã‚­ãƒ¼ãƒã‚¤ãƒ³ãƒ‰
 (global-set-key "\C-z" 'undo)
 (global-set-key [kp-delete] 'delete-char)
 (global-set-key [delete] 'delete-char)
 
 
 
-;;; ¥×¥é¥°¥¤¥ó
+;;; ãƒ—ãƒ©ã‚°ã‚¤ãƒ³
 
 ; install-elisp.el
 (require 'install-elisp)

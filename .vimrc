@@ -753,6 +753,8 @@ augroup MyVimrc
                 \ setlocal syntax=avs
     autocmd BufNewFile,BufReadPre *.tmpl
                 \ setlocal ft=html
+    autocmd BufNewFile,BufReadPre *.mkd
+                \ setlocal ft=mkd
     " }}}3
 
     " gVim起動時に前画面にする (http://d.hatena.ne.jp/amachang/20090731/1249047638)
@@ -849,6 +851,9 @@ func! s:LoadWhenFileType()
         compiler perl
 
     elseif &filetype == 'yaml'
+        TabChange 2
+
+    elseif &filetype == 'mkd'
         TabChange 2
 
     else
