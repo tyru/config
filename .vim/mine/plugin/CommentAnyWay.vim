@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: CommentAnyWay.vim
 " Version: 1.0.0
 " Author: tyru <tyru.exe@gmail.com>
-" Last Change: 火  5月 26 10:00 午後 2009 J
+" Last Change: 2009-08-31.
 "
 " Change Log: {{{2
 "   1.0.0: Initial upload.

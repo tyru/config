@@ -28,6 +28,12 @@ shell -$SHELL
 term xterm-color
 vbell off
 
+# support 256 color (via http://vim-users.jp/2009/08/hack64/)
+attrcolor b ".I"
+termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+defbce on
+
+
 # more options:
 #   http://www.linux.or.jp/JM/html/GNU_screen/man1/screen.1.html
 #   http://www.q-eng.imat.eng.osaka-cu.ac.jp/~ippei/unix/screen.html

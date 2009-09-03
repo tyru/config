@@ -209,12 +209,12 @@ function openSBM(url, type, format, countOnly, openToBrowser){
 var SBM = { //{{{
     hatena: { //{{{
         getURL: function(url){
-            var urlPrefix = 'http://b.hatena.ne.jp/entry/json/?url=';
+            var urlPrefix = 'http://b.hatena.ne.jp/entry/jsonlite/?url=';
             return urlPrefix + encodeURIComponent(url.replace(/%23/g,'#'));
         },
         parser: function(xhr){
             //var json = window.eval(xhr.responseText);
-            var json = jsonDecode(xhr.responseText, true);
+            var json = jsonDecode(xhr.responseText, false);
             var count = json.bookmarks.length;
             var c = new SBMContainer('h', json.count, {
                 faviconURL:'http://b.hatena.ne.jp/favicon.ico',

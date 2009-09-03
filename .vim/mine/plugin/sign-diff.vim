@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: sign-diff
 " Version: 0.0.3
 " Author:  tyru <tyru.exe+vim@gmail.com>
-" Last Change: 2009-07-26.
+" Last Change: 2009-08-31.
 "
 " GetLatestVimScripts: 2712 1 :AutoInstall: sign-diff
 "
@@ -601,6 +601,7 @@ endfunc
 " s:update_diff_signs {{{
 func! s:update_diff_signs(filename)
     if !s:enabled
+        redraw    " do <C-l> default behavior
         return
     endif
     let path_tail = fnamemodify(a:filename, ':t')

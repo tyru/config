@@ -13,7 +13,7 @@ set cpo&vim
 " でもdesertも好きだったりする
 
 fun! SetColorScheme()
-    if has( 'gui' )
+    if has('gui_running')
         " GUI版の設定
         colorscheme desert
     else
@@ -30,9 +30,8 @@ call SetColorScheme()
 
 " set options {{{2
 
-" set matchpairs+=<:>       " これがあると->を入力したとき画面が点滅する
+" set matchpairs+=<:>       " これがあると->を入力したとき画面が点滅する in Perl
 " set spell      " すげーけどキモい
-" set wildignore=*.o,*.obj,*.la,*.a,*.exe,*.com,*.tds
 set autoindent
 set autoread
 set backspace=indent,eol,start
@@ -55,7 +54,6 @@ set listchars=tab:>-,extends:>,precedes:<,eol:.
 set noshowcmd
 set nosplitright
 set notimeout
-set wrap
 set nrformats-=octal
 set ruler
 set scroll=5
@@ -76,7 +74,9 @@ set viminfo='50,h,f1,n$HOME/.viminfo
 set visualbell
 set whichwrap=b,s
 set wildchar=<Tab>
+set wildignore=*.o,*.obj,*.la,*.a,*.exe,*.com,*.tds
 set wildmenu
+set wrap
 
 if has('emacs_tags') && has('path_extra')
     " ディレクトリを遡ってtagsを探す
@@ -104,7 +104,7 @@ if !isdirectory(&backupdir)
 endif
 
 " タイトル表示するかしないか
-if has('gui')
+if has('gui_running')
     set title
 else
     set notitle
@@ -163,13 +163,13 @@ if has( "win32" ) && isdirectory( $HOME .'/.vim' )
     set runtimepath+=$HOME/.vim
 endif
 let s:runtime_dirs = [
-            \ '$HOME/.vim/after',
-            \ '$HOME/.vim/mine',
-            \ '$HOME/.vim/chalice',
-            \ '$HOME/.vim/hatena',
-            \ '$HOME/.vim/xpt',
-            \ '$HOME/.vim/neocomplcache'
-            \ ]
+    \ '$HOME/.vim/after',
+    \ '$HOME/.vim/mine',
+    \ '$HOME/.vim/chalice',
+    \ '$HOME/.vim/hatena',
+    \ '$HOME/.vim/xpt',
+    \ '$HOME/.vim/neocomplcache'
+\ ]
 for dir in s:runtime_dirs
     if isdirectory(expand(dir))
         let &runtimepath .= ',' . expand(dir)
@@ -321,6 +321,24 @@ if has('mac')
 endif
 
 " }}}2
+
+" 日本語入力に関する設定 {{{
+
+if has('multi_byte_ime') || has('xim')
+  " IME ON時のカーソルの色を設定(設定例:紫)
+  highlight CursorIM guibg=Purple guifg=NONE
+  " 挿入モード・検索モードでのデフォルトのIME状態設定
+  set iminsert=0 imsearch=0
+  if has('xim') && has('GUI_GTK')
+    " XIMの入力開始キーを設定:
+    " 下記の s-space はShift+Spaceの意味でkinput2+canna用設定
+    "set imactivatekey=s-space
+  endif
+  " 挿入モードでのIME状態を記憶させない場合、次行のコメントを解除
+  "inoremap <silent> <ESC> <ESC>:set iminsert=0<CR>
+endif
+
+""" }}}
 
 " }}}1
 "-----------------------------------------------------------------
@@ -840,14 +858,22 @@ func! s:LoadWhenFileType()
 
     elseif &filetype == 'perl'
         TabChange 4
-        " add perl's path. 'gf' on module name opens its module.
+        " add perl's path.
+        " executing 'gf' command on module name opens its module.
         if exists('$PERL5LIB')
             for i in split(expand('$PERL5LIB'), ':')
                 execute 'setlocal path+=' . i
             endfor
         endif
+
         setlocal suffixesadd=.pm
         setlocal makeprg=perl\ -c\ %
+        " jumping to sub definition.
+        nnoremap <buffer> ]]    :call search('^\s*sub .* {$', 'sW')<CR>
+        nnoremap <buffer> [[    :call search('^\s*sub .* {$', 'bsW')<CR>
+        nnoremap <buffer> ][    :call search('^}$', 'sW')<CR>
+        nnoremap <buffer> []    :call search('^}$', 'bsW')<CR>
+
         compiler perl
 
     elseif &filetype == 'yaml'
@@ -965,7 +991,7 @@ noremap <silent> <LocalLeader><LocalLeader>         <LocalLeader>
 noremap <silent> <Leader><Leader>                   <Leader>
 
 " クリップボードにコピー
-noremap <LocalLeader>y     "*y
+noremap <LocalLeader>y     "+y
 
 noremap <silent> H  5h
 noremap <silent> L  5l
@@ -1054,27 +1080,31 @@ func! s:FoldAllExpand()
 endfunc
 nnoremap <silent> <LocalLeader>nn   :call <SID>FoldAllExpand()<CR>
 
-nnoremap <silent> <LocalLeader>cd   :CdCurrent<CR>
-
 nnoremap <silent> gn    :cn<CR>
 nnoremap <silent> gN    :cN<CR>
 
 " for lisp ?
+"
+" wrap () with ().
 nnoremap <silent> <LocalLeader>a        %%i(<Esc>l%a)<Esc>%a
+" change () to [].
 nnoremap <silent> <LocalLeader>A        %%mz%s]<Esc>`zs[<Esc>
+" delete ().
 nnoremap <silent> <LocalLeader>z        %%mz%x`zx
+" move current atoms in () to upper ().
 nnoremap <silent> <LocalLeader>Z        %%da(h"_da(P
 
 nnoremap <silent> Q     gQ
+
+" 直前に検索したワードで素早くvimgrep
+nnoremap g/    :<C-u>vimgrep /<C-r>// *
+" 
+nnoremap ,/    :<C-u>vimgrep // *<Left><Left><Left>
+
 " }}}2
 
 " ~~ o ~~ {{{2
-" onoremapがうざいので
-func! s:ClearOmap()
-    omapclear
-    execute 'onoremap '. g:maplocalleader .'y  "*y'
-endfunc
-call s:ClearOmap()
+omapclear
 " }}}2
 
 " -- map! -- {{{2
@@ -1108,6 +1138,7 @@ inoremap <C-r><C-r>  <C-r><C-p>+
 " <Space><BS>は現在行のインデントを保つため
 inoremap <C-l>  <Space><BS><C-o><C-l>
 
+" for lisp ?
 inoremap <C-z>                <C-o>di(
 " }}}2
 
@@ -1150,6 +1181,7 @@ let plugin_dicwin_disable = 1
 let plugin_cmdex_disable = 1
 " :CdCurrent - Change current directory to current file's one.
 command! -nargs=0 CdCurrent lcd %:p:h
+nnoremap <silent> <LocalLeader>cd   :CdCurrent<CR>
 
 " AutoDate
 let g:autodate_format = "%Y-%m-%d"
@@ -1237,9 +1269,9 @@ let MRU_Add_Menu      = 0
 let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\c\'
 
 " Align
-let Align_xstrlen    = 3       "マルチバイト
+let Align_xstrlen    = 3       " マルチバイト
 let DrChipTopLvlMenu = ""
-command! -nargs=0 AlignReset call Align#AlignCtrl( "default" )
+command! -nargs=0 AlignReset call Align#AlignCtrl("default")
 cabbrev   al    Align
 
 " Chalice {{{
@@ -1281,31 +1313,48 @@ endfunc
 let changelog_username = "tyru"
 
 " Narrow
-nnoremap <silent>   <LocalLeader>na     :Narrow<CR>
-nnoremap <silent>   <LocalLeader>nw     :Widen<CR>
+noremap <silent>   <LocalLeader>na     :Narrow<CR>
+noremap <silent>   <LocalLeader>nw     :Widen<CR>
 
-" gtags
-let s:gtags_found = 0
-func! s:JumpTags()
-    if expand('%') == '' | return | endif
+" gtags {{{
 
-    let gtags = expand('%:h') . '/GTAGS'
-    if exists(':GtagsCursor') && filereadable(gtags)
-        if ! s:gtags_found
-            echo "found GTAGS. use gtags for jumping..."
-            sleep 2
-            let s:gtags_found = 1
-        endif
-        lcd %:p:h
-        GtagsCursor
-        lcd -
-    else
-        execute "normal! \<C-]>"
-    endif
-endfunc
+" gtagsを使う理由が分からなくなった
+" 利点が分かればまたこのコメントは復活する予定
+let loaded_gtags = 1
 
-nnoremap <silent> g<C-i>    :Gtags -f %<CR>
-nnoremap <silent> <C-]>    :call <SID>JumpTags()<CR>
+" let s:gtags_found = 0
+" 
+" func! s:JumpTags()
+"     if expand('%') == '' | return | endif
+" 
+"     if exists(':GtagsCursor')
+"         " next C-]
+"         echo "gtags.vim is not installed. do default <C-]>..."
+"         sleep 2
+"         nunmap <C-]>
+"         execute "normal! \<C-]>"
+"         return
+"     endif
+" 
+"     let gtags = expand('%:h') . '/GTAGS'
+"     if filereadable(gtags)
+"         if ! s:gtags_found
+"             " if gtags found, echo this message at only first time.
+"             echo "found GTAGS. use gtags for jumping..."
+"             sleep 2
+"             let s:gtags_found = 1
+"         endif
+"         lcd %:p:h
+"         GtagsCursor
+"         lcd -
+"     else
+"         execute "normal! \<C-]>"
+"     endif
+" endfunc
+" 
+" nnoremap <silent> g<C-i>    :Gtags -f %<CR>
+" nnoremap <silent> <C-]>    :call <SID>JumpTags()<CR>
+" }}}
 
 " xptemplate
 let xptemplate_key = '<C-t>'
@@ -1320,7 +1369,7 @@ let g:qb_hotkey = '<LocalLeader>b'
 " CommentAnyWay {{{
 let g:ca_prefix  = maplocalleader . 'c'
 let g:ca_verbose = 1    " debug
-let g:ca_oneline_comment = "//"
+let g:ca_oneline_comment = "#"
 
 let g:ca_filetype_table = {
             \ 'oneline' : {
@@ -1338,9 +1387,9 @@ nmap gO      <LocalLeader>cO
 " }}}
 
 " nextfile {{{
-let nf_include_dotfiles = 1
-let nf_loop_files = 1
-let nf_ignore_ext = ['o']
+let nf_include_dotfiles = 1    " don't skip dotfiles
+let nf_loop_files = 1    " loop at the end of file
+let nf_ignore_ext = ['o']    " ignore object file
 " }}}
 
 " vimtemplate {{{
@@ -1372,6 +1421,8 @@ nnoremap <silent> <C-l>     :SDUpdate<CR><C-l>
 " }}}1
 "-----------------------------------------------------------------
 " その他 {{{1
+
+" /と"レジスタの内容をクリア
 call setreg( '/', '', '' )
 call setreg( '"', '', '' )
 " }}}1
