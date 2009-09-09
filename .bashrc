@@ -18,7 +18,7 @@ alias df='df -h'
 alias du='du -h'
 alias less='less -r'
 alias l='ls'
-alias ll='ls -lh'
+alias lh='ls -lh'
 alias la='ls -A'
 alias l.='ls -d .*'
 

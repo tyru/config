@@ -73,6 +73,7 @@ alias l='ls'
 alias ll='ls -lh'
 alias la='ls -A'
 alias l.='ls -d .*'
+alias free='free -m -l -t'
 
 OS="$(uname -o)"
 if [ "$OS" = "Cygwin" ]; then
@@ -83,32 +84,28 @@ else
 fi
 
 
+### misc ###
 
-### abbrev ###
-
-# via http://homepage1.nifty.com/blankspace/zsh/zsh.html
 typeset -A myabbrev
 myabbrev=(
-    "ll" "| less"
-    "lg" "| grep"
-    "lp" "| perl"
+    "@l" "| less"
+    "@g" "| grep"
+    "@p" "| perl"
+    "@n" ">/dev/null 2>&1"
 )
 
 my-expand-abbrev() {
     local left prefix
-    left=$(echo -nE "$LBUFFER" | sed -e "s/[_a-zA-Z0-9]*$//")
-    prefix=$(echo -nE "$LBUFFER" | sed -e "s/.*[^_a-zA-Z0-9]\([_a-zA-Z0-9]*\)$/\1/")
+    left=$(echo -nE "$LBUFFER" | sed -e "s/[@_a-zA-Z0-9]*$//")
+    prefix=$(echo -nE "$LBUFFER" | sed -e "s/.*[^@_a-zA-Z0-9]\([@_a-zA-Z0-9]*\)$/\1/")
     LBUFFER=$left${myabbrev[$prefix]:-$prefix}" "
 }
 zle -N my-expand-abbrev
 
-# スペースで展開？
 bindkey     " "         my-expand-abbrev
 
 
 
-
-### function ###
 
 # via http://blog.s21g.com/articles/602
 _git-svn () {
@@ -122,6 +119,8 @@ compdef _git-svn git-svn
 
 # カレントディレクトリが変わると実行される
 chpwd () { ls }
+
+
 
 
 ### cygwin ###

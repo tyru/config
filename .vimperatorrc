@@ -119,13 +119,18 @@ cnoremap <C-f>      <Right>
 cnoremap <C-b>      <Left>
 " }}}2
 
+" ~ i ~ {{{2
+" フォーカス中に<C-n>で新しくウィンドウを作らない
+inoremap <C-n> <Nop>
+" }}}2
+
 " }}}1
 "-----------------------------------------------------------------
 " qmark {{{1
 " もっと複雑なURLのページを登録した方がqmarkの意味があると思うんだけども
 
 qmark m http://mail.google.com/mail?hl=ja
-qmark r http://www.google.co.jp/reader/view/
+qmark r http://reader.livedoor.com/reader/
 
 qmark n http://tyru.yu-nagi.com/
 
@@ -246,10 +251,17 @@ autocmd LocationChange .* :fmapc
 
 " add ! l gl
 autocmd LocationChange 'mail\.google\.com/mail' :fmap -depth 4 c / j k n p o u e x s r a # [ ] z ! ? gi gs gt gd ga gc <C-s> l gl
+
 " add J K N P a
 autocmd LocationChange 'www\.google\.co\.jp/reader' :fmap -vkey a j k J K n p N P m s t v A r S N P X O gh ga gs gt gu u / ?
+
 " remove f <Esc> i d + - <Tab> <S-Tab>
 autocmd LocationChange 'www\.rememberthemilk\.com\/home\/tyru\/' :fmap -vkey a m c n p r g s h t u j y <Del> k z l 1 2 3 4 <C-S-Left> <C-S-Right> <C-S-0> <C-S-6> <C-S-7> <C-S-8> <C-S-9> <C-S-l> <Left> <Right> <Up> <Down> <PageUp> <PageDown> <Home> <End> <C-S-/>
+
+" LDR
+" add r
+autocmd LocationChange 'reader\.livedoor\.com\/reader\/' :fmap j k s a p o v c <Space> <S-Space> Z z ZZ b < > r
+nnoremap ZZ <Nop>
 
 
 " hatena-bookmark-search.js

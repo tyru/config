@@ -879,9 +879,6 @@ func! s:LoadWhenFileType()
     elseif &filetype == 'yaml'
         TabChange 2
 
-    elseif &filetype == 'mkd'
-        TabChange 2
-
     else
         TabChange 4
     endif
