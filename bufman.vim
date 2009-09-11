@@ -3,7 +3,7 @@ scriptencoding utf-8
 
 " Document {{{
 "==================================================
-" Name: bufman
+" Name: DumbBuf
 " Version: 0.0.0
 " Author:  tyru <tyru.exe@gmail.com>
 " Last Change: 2009-09-12.
@@ -17,35 +17,35 @@ scriptencoding utf-8
 "
 " Usage: {{{
 "   Mappings: {{{
-"       please define g:bufman_hotkey.
+"       please define g:dumbbuf_hotkey.
 "   }}}
 "   Global Variables: {{{
-"       g:bufman_hotkey (default: no default value)
-"           a mapping which calls bufman buffer.
+"       g:dumbbuf_hotkey (default: no default value)
+"           a mapping which calls dumbbuf buffer.
 "           if this variable is not defined, this plugin will be not loaded.
 "
-"       g:bufman_buffer_height (default: 10)
-"           bufman buffer's height.
-"           this is used when only g:bufman_vertical is false.
+"       g:dumbbuf_buffer_height (default: 10)
+"           dumbbuf buffer's height.
+"           this is used when only g:dumbbuf_vertical is false.
 "
-"       g:bufman_vertical (default: 0)
-"           open bufman buffer vertically.
+"       g:dumbbuf_vertical (default: 0)
+"           open dumbbuf buffer vertically.
 "
-"       g:bufman_buffer_width (default: 25)
-"           bufman buffer's width.
-"           this is used when only g:bufman_vertical is true.
+"       g:dumbbuf_buffer_width (default: 25)
+"           dumbbuf buffer's width.
+"           this is used when only g:dumbbuf_vertical is true.
 "
-"       g:bufman_listed_buffer_name (default: '__buffers__')
-"           bufman buffer's filename.
+"       g:dumbbuf_listed_buffer_name (default: '__buffers__')
+"           dumbbuf buffer's filename.
 "           set this filename when showing 'listed buffers'.
 "           'listed buffers' are opposite of 'unlisted-buffers'.
 "           see ':help unlisted-buffer'.
 "
-"       g:bufman_unlisted_buffer_name (default: '__unlisted_buffers__')
-"           bufman buffer's filename.
+"       g:dumbbuf_unlisted_buffer_name (default: '__unlisted_buffers__')
+"           dumbbuf buffer's filename.
 "           set this filename when showing 'unlisted buffers'.
 "
-"       g:bufman_disp_expr (default: see below)
+"       g:dumbbuf_disp_expr (default: see below)
 "           this variable is for the experienced users.
 "
 "           NOTE:
@@ -55,7 +55,7 @@ scriptencoding utf-8
 "           here is the default value:
 "               'printf("%s[%s] %s <%d> %s", v:val.is_current ? "*" : " ", bufname(v:val.nr), v:val.is_modified ? "[+]" : "   ", v:val.nr, fnamemodify(bufname(v:val.nr), ":p:h"))'
 "
-"       g:bufman_options (default: see below)
+"       g:dumbbuf_options (default: see below)
 "           this variable is for the experienced users.
 "
 "           NOTE:
@@ -63,7 +63,7 @@ scriptencoding utf-8
 "           see the real definition at 'Global Variables'
 "
 "           here is the default value:
-"               let g:bufman_options = [
+"               let g:dumbbuf_options = [
 "                   \'bufhidden=wipe',
 "                   \'buftype=nofile',
 "                   \'cursorline',
@@ -72,7 +72,7 @@ scriptencoding utf-8
 "                   \'noswapfile',
 "               \]
 "
-"       g:bufman_mappings (default: see below)
+"       g:dumbbuf_mappings (default: see below)
 "           this variable is for the experienced users.
 "
 "           NOTE:
@@ -80,9 +80,9 @@ scriptencoding utf-8
 "           see the real definition at 'Global Variables'
 "
 "           here is the default value:
-"               let g:bufman_mappings = {
+"               let g:dumbbuf_mappings = {
 "                   \'n': {
-"                       \g:bufman_hotkey : {
+"                       \g:dumbbuf_hotkey : {
 "                           \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
 "                       \},
 "                       \'q': {
@@ -120,18 +120,18 @@ scriptencoding utf-8
 " }}}
 
 " Load Once {{{
-if exists('g:loaded_bufman') && g:loaded_bufman != 0
+if exists('g:loaded_dumbbuf') && g:loaded_dumbbuf != 0
     finish
 endif
-let g:loaded_bufman = 1
+let g:loaded_dumbbuf = 1
 
-" do not load anymore if g:bufman_hotkey is not defined.
-if ! exists('g:bufman_hotkey')
-    " g:bufman_hotkey is not defined!
-    echoerr "g:bufman_hotkey is not defined!"
+" do not load anymore if g:dumbbuf_hotkey is not defined.
+if ! exists('g:dumbbuf_hotkey')
+    " g:dumbbuf_hotkey is not defined!
+    echoerr "g:dumbbuf_hotkey is not defined!"
     finish
-elseif exists('g:bufman_hotkey') && maparg(g:bufman_hotkey) != ''
-    echoerr printf("'%s' is already defined!", g:bufman_hotkey)
+elseif exists('g:dumbbuf_hotkey') && maparg(g:dumbbuf_hotkey) != ''
+    echoerr printf("'%s' is already defined!", g:dumbbuf_hotkey)
     finish
 endif
 " }}}
@@ -140,7 +140,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 " }}}
 " Scope Variables {{{
-let s:bufman_bufnr = -1
+let s:dumbbuf_bufnr = -1
 let s:bufs_info = []
 let s:shown_type = ''
 let s:mappings = {'default': {}, 'user': {}}
@@ -150,31 +150,31 @@ if ! exists('g:debug_errmsg')
     let g:debug_errmsg = 0
 endif
 
-"--- if g:bufman_hotkey is not defined,
+"--- if g:dumbbuf_hotkey is not defined,
 " do not load this script.
 " see 'Load Once'. ---
 
-if ! exists('g:bufman_buffer_height')
-    let g:bufman_buffer_height = 10
+if ! exists('g:dumbbuf_buffer_height')
+    let g:dumbbuf_buffer_height = 10
 endif
-if ! exists('g:bufman_vertical')
-    let g:bufman_vertical = 0
+if ! exists('g:dumbbuf_vertical')
+    let g:dumbbuf_vertical = 0
 endif
-if ! exists('g:bufman_buffer_width')
-    let g:bufman_buffer_width = 25
+if ! exists('g:dumbbuf_buffer_width')
+    let g:dumbbuf_buffer_width = 25
 endif
-if ! exists('g:bufman_listed_buffer_name')
-    let g:bufman_listed_buffer_name = '__buffers__'
+if ! exists('g:dumbbuf_listed_buffer_name')
+    let g:dumbbuf_listed_buffer_name = '__buffers__'
 endif
-if ! exists('g:bufman_unlisted_buffer_name')
-    let g:bufman_unlisted_buffer_name = '__unlisted_buffers__'
+if ! exists('g:dumbbuf_unlisted_buffer_name')
+    let g:dumbbuf_unlisted_buffer_name = '__unlisted_buffers__'
 endif
-if ! exists('g:bufman_disp_expr')
+if ! exists('g:dumbbuf_disp_expr')
     " QuickBuf.vim like UI.
-    let g:bufman_disp_expr = 'printf("%s[%s] %s <%d> %s", v:val.is_current ? "*" : " ", bufname(v:val.nr), v:val.is_modified ? "[+]" : "   ", v:val.nr, fnamemodify(bufname(v:val.nr), ":p:h"))'
+    let g:dumbbuf_disp_expr = 'printf("%s[%s] %s <%d> %s", v:val.is_current ? "*" : " ", bufname(v:val.nr), v:val.is_modified ? "[+]" : "   ", v:val.nr, fnamemodify(bufname(v:val.nr), ":p:h"))'
 endif
-if ! exists('g:bufman_options')
-    let g:bufman_options = [
+if ! exists('g:dumbbuf_options')
+    let g:dumbbuf_options = [
         \'bufhidden=wipe',
         \'buftype=nofile',
         \'cursorline',
@@ -184,13 +184,13 @@ if ! exists('g:bufman_options')
     \]
 endif
 
-if exists('g:bufman_mappings')
-    let s:mappings.user = g:bufman_mappings
-    unlet g:bufman_mappings
+if exists('g:dumbbuf_mappings')
+    let s:mappings.user = g:dumbbuf_mappings
+    unlet g:dumbbuf_mappings
 endif
 let s:mappings.default = {
     \'n': {
-        \g:bufman_hotkey : {
+        \g:dumbbuf_hotkey : {
             \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
         \},
         \'q': {
@@ -241,13 +241,13 @@ endfunc
 
 
 
-" s:open_bufman_buffer {{{
-func! s:open_bufman_buffer()
-    if g:bufman_vertical
-        execute g:bufman_buffer_width.'vnew'
+" s:open_dumbbuf_buffer {{{
+func! s:open_dumbbuf_buffer()
+    if g:dumbbuf_vertical
+        execute g:dumbbuf_buffer_width.'vnew'
         return bufnr('%')
     else
-        execute g:bufman_buffer_height.'new'
+        execute g:dumbbuf_buffer_height.'new'
         return bufnr('%')
     endif
 endfunc
@@ -268,9 +268,9 @@ endfunc
 func! s:write_buffers_list()
 
     try
-        let disp_line = map(deepcopy(s:bufs_info), g:bufman_disp_expr)
+        let disp_line = map(deepcopy(s:bufs_info), g:dumbbuf_disp_expr)
     catch
-        call s:warn("error occured while evaluating g:bufman_disp_expr.")
+        call s:warn("error occured while evaluating g:dumbbuf_disp_expr.")
         return
     endtry
 
@@ -339,8 +339,8 @@ func! s:parse_buffers_info()
         "   'x' means error occured while loading buffer.
         let [bufnr, unlisted, percent_numsign, a_h, minus_equal, plus_x; rest] = m[1:]
 
-        " skip bufman's buffer.
-        if bufnr == s:bufman_bufnr | continue | endif
+        " skip dumbbuf's buffer.
+        if bufnr == s:dumbbuf_bufnr | continue | endif
 
         " echoerr string(m)
         call add(result_list, {
@@ -361,18 +361,18 @@ func! s:parse_buffers_info()
 endfunc
 " }}}
 
-" s:close_bufman_buffer {{{
-func! s:close_bufman_buffer()
-    let winnr = bufwinnr(s:bufman_bufnr)
+" s:close_dumbbuf_buffer {{{
+func! s:close_dumbbuf_buffer()
+    let winnr = bufwinnr(s:dumbbuf_bufnr)
     if winnr !=# -1
-        " current window num is only bufman's buffer!!
-        if winnr('$') == 1 && (expand('%') ==# g:bufman_listed_buffer_name || expand('%') ==# g:bufman_unlisted_buffer_name)
+        " current window num is only dumbbuf's buffer!!
+        if winnr('$') == 1 && (expand('%') ==# g:dumbbuf_listed_buffer_name || expand('%') ==# g:dumbbuf_unlisted_buffer_name)
             " if previous opened file does exist, open that file.
             if expand('#') != ''
                 edit #
             endif
         else
-            " jump to bufman's buffer.
+            " jump to dumbbuf's buffer.
             execute winnr.'wincmd w'
             " close it.
             close
@@ -394,15 +394,15 @@ func! s:get_selected_buffer()
     if ! s:is_selected() | return {} | endif
 
     let cur = s:bufs_info[line('.') - 1]
-    call s:close_bufman_buffer()
+    call s:close_dumbbuf_buffer()
     return cur
 endfunc
 " }}}
 
 " s:run {{{
 func! s:run()
-    " if bufman's buffer is displayed, jump to that buffer.
-    let winnr = bufwinnr(s:bufman_bufnr)
+    " if dumbbuf's buffer is displayed, jump to that buffer.
+    let winnr = bufwinnr(s:dumbbuf_bufnr)
     if winnr !=# -1
         execute winnr.'wincmd w'
         return
@@ -425,9 +425,9 @@ func! s:show_buffers()
     " save current buffers info.
     let s:bufs_info = s:parse_buffers_info()
 
-    " open and switch to bufman's buffer.
-    let s:bufman_bufnr = s:open_bufman_buffer()
-    if s:bufman_bufnr ==# -1
+    " open and switch to dumbbuf's buffer.
+    let s:dumbbuf_bufnr = s:open_dumbbuf_buffer()
+    if s:dumbbuf_bufnr ==# -1
         call s:warn("internal error: can't open buffer.")
         return
     endif
@@ -445,11 +445,11 @@ func! s:show_buffers()
         let s:shown_type = current.is_unlisted ? 'unlisted' : 'listed'
     endif
 
-    " name bufman's buffer.
+    " name dumbbuf's buffer.
     if s:shown_type ==# 'unlisted'
-        silent execute 'file '.g:bufman_unlisted_buffer_name
+        silent execute 'file '.g:dumbbuf_unlisted_buffer_name
     else
-        silent execute 'file '.g:bufman_listed_buffer_name
+        silent execute 'file '.g:dumbbuf_listed_buffer_name
     endif
 
     " write buffers list.
@@ -458,7 +458,7 @@ func! s:show_buffers()
 
     "-------- buffer settings --------
     " options
-    for i in g:bufman_options
+    for i in g:dumbbuf_options
         execute printf('setlocal %s', i)
     endfor
     " mappings
@@ -480,7 +480,7 @@ endfunc
 
 
 
-" these functions are called from bufman's buffer {{{
+" these functions are called from dumbbuf's buffer {{{
 
 " s:buflocal_open {{{
 func! s:buflocal_open()
@@ -501,9 +501,9 @@ func! s:buflocal_open_onebyone()
     if ! s:is_selected() | return | endif
     let lnum = line('.')
 
-    " close bufman's buffer, and open selected item.
+    " close dumbbuf's buffer, and open selected item.
     call s:buflocal_open()
-    " open bufman's buffer again.
+    " open dumbbuf's buffer again.
     call s:show_buffers()
 
     if lnum == line('$')
@@ -555,7 +555,7 @@ endfunc
 
 " s:buflocal_toggle_listed_type {{{
 func! s:buflocal_toggle_listed_type()
-    call s:close_bufman_buffer()
+    call s:close_dumbbuf_buffer()
 
     if s:shown_type ==# 'unlisted'
         let s:shown_type = 'listed'
@@ -584,7 +584,7 @@ endfunc
 " }}}
 
 " Mappings {{{
-execute 'nnoremap <silent><unique> '.g:bufman_hotkey.' :call <SID>run()<CR>'
+execute 'nnoremap <silent><unique> '.g:dumbbuf_hotkey.' :call <SID>run()<CR>'
 " }}}
 
 " Restore 'cpoptions' {{{
