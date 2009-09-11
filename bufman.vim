@@ -9,16 +9,21 @@ scriptencoding utf-8
 " Last Change: 2009-09-12.
 "
 " Description:
-"   buffer manager like QuickBuf.vim
+"   simple buffer manager like QuickBuf.vim
 "
 " Change Log: {{{
+"   0.0.0: Initial upload
 " }}}
+"
 " Usage: {{{
-"   Commands: {{{
-"   }}}
 "   Mappings: {{{
+"       please define g:bufman_hotkey.
 "   }}}
 "   Global Variables: {{{
+"       g:bufman_hotkey (default: no default value)
+"           a mapping which calls bufman buffer.
+"           if this variable is not defined, this plugin will be not loaded.
+"
 "       g:bufman_buffer_height (default: 10)
 "           bufman buffer's height.
 "           this is used when only g:bufman_vertical is false.
