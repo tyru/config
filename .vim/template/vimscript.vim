@@ -5,8 +5,8 @@ scriptencoding utf-8
 "==================================================
 " Name: <% eval: expand('%:t:r') %>
 " Version: 0.0.0
-" Author:  tyru <tyru.exe+vim@gmail.com>
-" Last Change: 2009-07-16.
+" Author:  tyru <tyru.exe@gmail.com>
+" Last Change: 2009-09-11.
 "
 " Description:
 "   NO DESCRIPTION YET
@@ -30,25 +30,6 @@ if exists('g:loaded_<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>') &
 endif
 let g:loaded_<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%> = 1
 " }}}
-" Check Some Features {{{
-let features = [
-    \ "has('signs')",
-    \ "has('diff')",
-    \ "exists('*mkdir') || executable('mkdir')",
-    \ "executable('diff')"
-\ ]
-for feat in features
-    if !eval(feat)
-        echohl WarningMsg
-        echo printf('need %s. script is not loaded.', feat)
-        echohl None
-
-        finish
-    endif
-endfor
-
-unlet features
-" }}}
 " Saving 'cpoptions' {{{
 let s:save_cpo = &cpo
 set cpo&vim
@@ -62,14 +43,14 @@ set cpo&vim
 " Functions {{{
 
 " Debug {{{
-if g:SD_debug
+if g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug
     let s:debug_errmsg = []
 
     func! s:debug(cmd, ...)
         if a:cmd ==# 'on'
-            let g:SD_debug = 1
+            let g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug = 1
         elseif a:cmd ==# 'off'
-            let g:SD_debug = 0
+            let g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug = 0
         elseif a:cmd ==# 'msg'
             for i in s:debug_errmsg
                 echo i
@@ -86,7 +67,7 @@ endif
 
 " s:debugmsg {{{
 func! s:debugmsg(...)
-    if g:SD_debug
+    if g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug
         call s:apply('s:warn', a:000)
     endif
 endfunc
@@ -118,11 +99,12 @@ endfunc
 func! s:apply(funcname, args)
     let args_str = ''
     let i = 0
-    while i < len(a:args)
-        if args_str == ''
-            let args_str = s:uneval(a:args[0])
+    let arg_len = len(a:args)
+    while i < arg_len
+        if i ==# 0
+            let args_str = s:uneval(a:args[i])
         else
-            let args_str .= ', ' . s:uneval(a:args[i])
+            let args_str .= ', '.s:uneval(a:args[i])
         endif
         let i += 1
     endwhile

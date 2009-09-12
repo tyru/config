@@ -34,18 +34,22 @@ XPT log hint=call\ log\ on\ selection
 call Log(`_^^)
 
 
-XPT fun hint=fun!\ ..(..)\ ..\ endfunction
+XPT fun hint=func!\ ..(..)\ ..\ endfunc
 XSET arg..|post=ExpandIfNotEmpty(', ', 'arg..')
-fun! `name^(`arg..^) "{{{
+" `name^ {{{
+func! `name^(`arg..^)
   `cursor^
-endfunction "}}}
+endfunc
+ " }}}
 
 
-XPT method hint=fun!\ Dict.name\ ...\ endfunction
+XPT method hint=func!\ Dict.name\ ...\ endfunc
 XSET arg..|post=ExpandIfNotEmpty(', ', 'arg..')
-fun! `Dict^.`name^(`arg..^)
+" `Dict^.`name^ {{{
+func! `Dict^.`name^(`arg..^)
   `cursor^
-endfunction
+endfunc
+ " }}}
 
 
 XPT while hint=while\ ..\ ..\ endwhile

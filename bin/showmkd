@@ -1,0 +1,35 @@
+#!/bin/sh
+
+prereq_prog="pandoc firefox perl"
+
+
+if test $# = 0
+then
+    echo "specify markdown document." >&2
+    exit -1
+
+fi
+
+
+for i in $prereq_prog
+do
+    if test ! -x `which $i`
+    then
+        echo "prereq program '$i' was not found..." >&2
+        exit -1
+    fi
+done
+
+
+tempname=`perl -e 'print join q(), localtime, q(.html)'`
+
+if test ! -f $1
+then
+    echo "$1: No such a file" >&2
+    exit -1
+fi
+
+pandoc $1 > /tmp/$tempname
+firefox /tmp/$tempname
+# NOTE: not found if firefox reloads.
+rm /tmp/$tempname

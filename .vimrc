@@ -12,7 +12,7 @@ set cpo&vim
 " eveningはdesertに文字列ハイライト足した感じ
 " でもdesertも好きだったりする
 
-fun! SetColorScheme()
+func! s:set_color_scheme()
     if has('gui_running')
         " GUI版の設定
         colorscheme desert
@@ -20,9 +20,9 @@ fun! SetColorScheme()
         " ターミナル版の設定
         colorscheme evening
     endif
-endfun
+endfunc
 
-call SetColorScheme()
+autocmd VimEnter * call s:set_color_scheme()
 
 " }}}1
 "-----------------------------------------------------------------
@@ -1077,9 +1077,6 @@ func! s:FoldAllExpand()
 endfunc
 nnoremap <silent> <LocalLeader>nn   :call <SID>FoldAllExpand()<CR>
 
-nnoremap <silent> gn    :cn<CR>
-nnoremap <silent> gN    :cN<CR>
-
 " for lisp ?
 "
 " wrap () with ().
@@ -1167,9 +1164,9 @@ cabbrev   h@     tab help
 
 " }}}1
 "-----------------------------------------------------------------
-" For Plugins {{{1
+" For Plugins {{{
 
-" プラグイン {{{2
+" プラグイン {{{
 
 " dicwin
 let plugin_dicwin_disable = 1
@@ -1283,9 +1280,9 @@ if exists(':M')
                 \ :M/h?ttp:\/\/.+\.(jpe?g|png|gif|bmp)\c
 endif
 
-nnoremap <silent> ,cv    :call Chalice_ThreadCopy( 'v' )<CR>
-nnoremap <silent> ,cs    :call Chalice_ThreadCopy( 's' )<CR>
-nnoremap <silent> ,ct    :call Chalice_ThreadCopy( 't' )<CR>
+nnoremap <silent> <LocalLeader>cv    :call Chalice_ThreadCopy( 'v' )<CR>
+nnoremap <silent> <LocalLeader>cs    :call Chalice_ThreadCopy( 's' )<CR>
+nnoremap <silent> <LocalLeader>ct    :call Chalice_ThreadCopy( 't' )<CR>
 
 func! Chalice_ThreadCopy( open_to )
     1yank x
@@ -1357,14 +1354,14 @@ let loaded_gtags = 1
 let xptemplate_key = '<C-t>'
 
 " QuickBuf
-let g:qb_hotkey = '<LocalLeader>b'
+let qb_loaded = 1
 
-" }}}2
+" }}}
 
-" 自分の {{{2
+" 自分の {{{
 
 " CommentAnyWay {{{
-let g:ca_prefix  = maplocalleader . 'c'
+let g:ca_prefix  = mapleader . 'c'
 let g:ca_verbose = 1    " debug
 let g:ca_oneline_comment = "#"
 
@@ -1395,9 +1392,22 @@ let g:vt_command = ''
 let g:vt_author = "tyru"
 let g:vt_email = "tyru.exe@gmail.com"
 
-let s:tmp = split(glob(g:vt_template_dir_path.'/*'), "\n")
-let g:vt_filetype_files = join(s:tmp, ',')
-unlet s:tmp
+let s:files_tmp = {
+    \'cppsrc.cpp'    : "cpp",
+    \'csharp.cs'     : "cs",
+    \'csrc.c'        : "c",
+    \'header.h'      : "c",
+    \'hina.html'     : "html",
+    \'javasrc.java'  : "java",
+    \'perl.pl'       : "perl",
+    \'perlmodule.pm' : "perl",
+    \'python.py'     : "python",
+    \'scala.scala'   : "scala",
+    \'scheme.scm'    : "scheme",
+    \'vimscript.vim' : "vim"
+\}
+let g:vt_filetype_files = join(map(keys(s:files_tmp), 'v:val . "=" . s:files_tmp[v:val]'), ',')
+unlet s:files_tmp
 " }}}
 
 " winmove {{{
@@ -1413,9 +1423,13 @@ let g:SD_disable = 1
 nnoremap <silent> <C-l>     :SDUpdate<CR><C-l>
 " }}}
 
-" }}}2
+" DumbBuf {{{
+let g:dumbbuf_hotkey = '<LocalLeader>b'
+" }}}
 
-" }}}1
+" }}}
+
+" }}}
 "-----------------------------------------------------------------
 " その他 {{{1
 
