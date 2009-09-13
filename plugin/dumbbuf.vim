@@ -218,6 +218,9 @@ endif
 if ! exists('g:dumbbuf_cursor_pos')
     let g:dumbbuf_cursor_pos = 'current'
 endif
+if ! exists('g:dumbbuf_shown_type')
+    let g:dumbbuf_shown_type = ''
+endif
 
 if ! exists('g:dumbbuf_disp_expr')
     " QuickBuf.vim like UI.
@@ -461,11 +464,27 @@ endfunc
 " s:filter_bufs_info {{{
 func! s:filter_bufs_info(curbufinfo)
     if s:shown_type ==# 'unlisted'
+        " filter unlisted buffers.
         call filter(s:bufs_info, 'v:val.is_unlisted')
     elseif s:shown_type ==# 'listed'
+        " filter listed buffers.
         call filter(s:bufs_info, '! v:val.is_unlisted')
     else
-        call filter(s:bufs_info, 'a:curbufinfo.is_unlisted ? v:val.is_unlisted : ! v:val.is_unlisted')
+        if g:dumbbuf_shown_type == ''
+            " if current buffer is unlisted, filter unlisted buffers.
+            " if current buffers is listed, filter listed buffers.
+            call filter(s:bufs_info, 'a:curbufinfo.is_unlisted ? v:val.is_unlisted : ! v:val.is_unlisted')
+        elseif g:dumbbuf_shown_type =~# '^\(unlisted\|listed\)$'.'\C'    " don't ignorecase
+            let s:shown_type = g:dumbbuf_shown_type
+            call s:filter_bufs_info(a:curbufinfo)
+        else
+            call s:warn(printf("'%s' is not valid value. please choose in '', 'unlisted', 'listed'.", g:dumbbuf_shown_type))
+            call s:warn("use '' as g:dumbbuf_shown_type value...")
+
+            let g:dumbbuf_shown_type = ''
+
+            sleep 1
+        endif
     endif
 endfunc
 " }}}
@@ -537,6 +556,7 @@ func! s:show_buffers()
     else
         call s:warn(printf("'%s' is not valid value. please choose in 'current', 'top', 'bottom'.", g:dumbbuf_cursor_pos))
         call s:warn("use 'current' as g:dumbbuf_cursor_pos value...")
+
         let g:dumbbuf_cursor_pos = 'current'
 
         sleep 1
