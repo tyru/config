@@ -4,7 +4,7 @@ scriptencoding utf-8
 " Document {{{
 "==================================================
 " Name: DumbBuf
-" Version: 0.0.0
+" Version: 0.0.1
 " Author:  tyru <tyru.exe@gmail.com>
 " Last Change: 2009-09-13.
 "
@@ -12,7 +12,13 @@ scriptencoding utf-8
 "   simple buffer manager like QuickBuf.vim
 "
 " Change Log: {{{
-"   0.0.0: Initial upload
+"   0.0.0:
+"       Initial upload
+"   0.0.1:
+"       implement g:dumbbuf_cursor_pos, g:dumbbuf_shown_type, and 'tt'
+"       mapping.
+"       and fix bug of showing listed buffers even if current buffer is
+"       unlisted.
 " }}}
 "
 " Mappings: {{{
