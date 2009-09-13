@@ -531,7 +531,10 @@ func! s:show_buffers()
         normal! G
     else
         call s:warn(printf("'%s' is not valid value. please choose in 'current', 'top', 'bottom'.", g:dumbbuf_cursor_pos))
-        return
+        call s:warn("use 'current' as g:dumbbuf_cursor_pos value...")
+        let g:dumbbuf_cursor_pos = 'current'
+
+        sleep 1
     endif
 
 
