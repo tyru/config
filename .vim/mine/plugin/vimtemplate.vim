@@ -116,7 +116,7 @@ scriptencoding utf-8
 "       <%parent_dir%>
 "           will expand into current file's dir.
 "           same as <%eval:expand('%:p:h')%>.
-"           
+"
 "       <%author%>
 "           same as <% eval: g:vt_author %>.
 "
@@ -127,7 +127,6 @@ scriptencoding utf-8
 "
 " TODO: {{{2
 "   - implement auto loading file(autocmd)
-"   - have g:vt_filetype_files as hash.
 " }}}2
 "==================================================
 " }}}1
@@ -357,30 +356,21 @@ func! s:close_list_buffer()
 endfunc
 " }}}2
 
-" s:get_tempname() {{{
-func! s:get_tempname()
-    if s:tempname == ''
-        let s:tempname = tempname().localtime()
-    endif
-    return s:tempname
-endfunc
-" }}}
-
 " s:multi_setline(lines) {{{
 func! s:multi_setline(lines)
     " delete all
     %delete _
-    " write all lines to tempname() . localtime()
-    while 1
-        let tmpname = s:get_tempname()
-        if writefile(a:lines, tmpname) != -1
-            break
-        endif
-    endwhile
-    " read it
-    silent execute 'read '.tmpname
-    " delete waste top of blank line
+
+    let reg_z = getreg('z', 1)
+    let reg_z_type = getregtype('z')
+    let @z = join(a:lines, "\n")
+
+    " write all lines
+    silent put z
+    " delete the top of one waste blank line
     normal! ggdd
+
+    call setreg('z', reg_z, reg_z_type)
 endfunc
 " }}}
 

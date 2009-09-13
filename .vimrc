@@ -111,8 +111,8 @@ else
 endif
 
 " マップリーダー
-let mapleader = ','
-let maplocalleader = ';'
+let mapleader = ';'
+let maplocalleader = ','
 
 
 set statusline=%f%m%r%h%w\ [%{&fenc}][%{&ff}]\ [%p%%][%l/%L]\ [%{ShrinkPath('%:p:h',20)}]
@@ -514,7 +514,7 @@ endfunc
 
 " FastEdit {{{2
 "   遅いときは役に立つかも
-nnoremap <silent> <LocalLeader>fe        :call <SID>FastEdit()<CR>
+nnoremap <silent> <Leader>fe        :call <SID>FastEdit()<CR>
 
 let s:fast_editing = 0
 func! s:FastEdit()
@@ -949,11 +949,11 @@ func! s:LispSetup()
     setlocal lisp
     setlocal nocindent
 
-    nnoremap <buffer> <LocalLeader>e       :call <SID>EvalFileNormal('e')<CR>
-    vnoremap <buffer> <LocalLeader>e       :call <SID>EvalFileVisual('e')<CR>
-    nnoremap <buffer> <LocalLeader>E       :call <SID>EvalFileNormal('E')<CR>
-    vnoremap <buffer> <LocalLeader>E       :call <SID>EvalFileVisual('E')<CR>
-    nnoremap <buffer> <LocalLeader><C-e>   :echo <SID>System('gosh', expand('%'))<CR>
+    nnoremap <buffer> <Leader>e       :call <SID>EvalFileNormal('e')<CR>
+    vnoremap <buffer> <Leader>e       :call <SID>EvalFileVisual('e')<CR>
+    nnoremap <buffer> <Leader>E       :call <SID>EvalFileNormal('E')<CR>
+    vnoremap <buffer> <Leader>E       :call <SID>EvalFileVisual('E')<CR>
+    nnoremap <buffer> <Leader><C-e>   :echo <SID>System('gosh', expand('%'))<CR>
 
     let g:is_gauche = 1
 
@@ -988,7 +988,7 @@ noremap <silent> <LocalLeader><LocalLeader>         <LocalLeader>
 noremap <silent> <Leader><Leader>                   <Leader>
 
 " クリップボードにコピー
-noremap <LocalLeader>y     "+y
+noremap <Leader>y     "+y
 
 noremap <silent> H  5h
 noremap <silent> L  5l
@@ -1075,18 +1075,18 @@ func! s:FoldAllExpand()
     silent! %foldclose!
     normal zvzz
 endfunc
-nnoremap <silent> <LocalLeader>nn   :call <SID>FoldAllExpand()<CR>
+nnoremap <silent> <Leader>nn   :call <SID>FoldAllExpand()<CR>
 
 " for lisp ?
 "
 " wrap () with ().
-nnoremap <silent> <LocalLeader>a        %%i(<Esc>l%a)<Esc>%a
+nnoremap <silent> <Leader>a        %%i(<Esc>l%a)<Esc>%a
 " change () to [].
-nnoremap <silent> <LocalLeader>A        %%mz%s]<Esc>`zs[<Esc>
+nnoremap <silent> <Leader>A        %%mz%s]<Esc>`zs[<Esc>
 " delete ().
-nnoremap <silent> <LocalLeader>z        %%mz%x`zx
+nnoremap <silent> <Leader>z        %%mz%x`zx
 " move current atoms in () to upper ().
-nnoremap <silent> <LocalLeader>Z        %%da(h"_da(P
+nnoremap <silent> <Leader>Z        %%da(h"_da(P
 
 nnoremap <silent> Q     gQ
 
@@ -1175,7 +1175,7 @@ let plugin_dicwin_disable = 1
 let plugin_cmdex_disable = 1
 " :CdCurrent - Change current directory to current file's one.
 command! -nargs=0 CdCurrent lcd %:p:h
-nnoremap <silent> <LocalLeader>cd   :CdCurrent<CR>
+nnoremap <silent> <Leader>cd   :CdCurrent<CR>
 
 " AutoDate
 let g:autodate_format = "%Y-%m-%d"
@@ -1188,13 +1188,13 @@ let g:netrw_liststyle = 1
 let g:netrw_cygwin    = 1
 
 " FuzzyFinder {{{3
-nnoremap <silent> <LocalLeader>fb       :FuzzyFinderBuffer<CR>
-nnoremap <silent> <LocalLeader>fd       :FuzzyFinderDir<CR>
-nnoremap <silent> <LocalLeader>ff       :FuzzyFinderFile<CR>
-nnoremap <silent> <LocalLeader>fh       :FuzzyFinderMruFile<CR>
-nnoremap <silent> <LocalLeader>ft       :FuzzyFinderTag<CR>
-nnoremap <silent> <LocalLeader>fT       :FuzzyFinderTaggedFile<CR>
-nnoremap <silent> <LocalLeader>t        :FuzzyFinderTagWithCursorWord<CR>
+nnoremap <silent> <Leader>fb       :FuzzyFinderBuffer<CR>
+nnoremap <silent> <Leader>fd       :FuzzyFinderDir<CR>
+nnoremap <silent> <Leader>ff       :FuzzyFinderFile<CR>
+nnoremap <silent> <Leader>fh       :FuzzyFinderMruFile<CR>
+nnoremap <silent> <Leader>ft       :FuzzyFinderTag<CR>
+nnoremap <silent> <Leader>fT       :FuzzyFinderTaggedFile<CR>
+nnoremap <silent> <Leader>t        :FuzzyFinderTagWithCursorWord<CR>
 
 
 let g:FuzzyFinderOptions = {
@@ -1273,42 +1273,14 @@ cabbrev   al    Align
 " プレビュー機能無効
 let chalice_preview      = 0
 let chalice_startupflags = "bookmark"
-
-" 画像収集
-if exists(':M')
-    command! SrchImageUri
-                \ :M/h?ttp:\/\/.+\.(jpe?g|png|gif|bmp)\c
-endif
-
-nnoremap <silent> <LocalLeader>cv    :call Chalice_ThreadCopy( 'v' )<CR>
-nnoremap <silent> <LocalLeader>cs    :call Chalice_ThreadCopy( 's' )<CR>
-nnoremap <silent> <LocalLeader>ct    :call Chalice_ThreadCopy( 't' )<CR>
-
-func! Chalice_ThreadCopy( open_to )
-    1yank x
-    %yank y
-
-    if a:open_to == 'v'
-        let new_reg_name = "vnew " . strpart(@x, 7)
-    elseif a:open_to == 's'
-        let new_reg_name = "new " . strpart(@x, 7)
-    elseif a:open_to == 't'
-        let new_reg_name = "tabe " . strpart(@x, 7)
-    endif
-
-    exe new_reg_name
-    put y
-    1delete
-    setlocal ft=2ch_thread
-endfunc
 " }}}
 
 " changelog
 let changelog_username = "tyru"
 
 " Narrow
-noremap <silent>   <LocalLeader>na     :Narrow<CR>
-noremap <silent>   <LocalLeader>nw     :Widen<CR>
+noremap <silent>   <Leader>na     :Narrow<CR>
+noremap <silent>   <Leader>nw     :Widen<CR>
 
 " gtags {{{
 
@@ -1353,8 +1325,9 @@ let loaded_gtags = 1
 " xptemplate
 let xptemplate_key = '<C-t>'
 
-" QuickBuf
-let qb_loaded = 1
+" operator-replace
+map g;  <Plug>(operator-replace)iw
+
 
 " }}}
 
@@ -1376,8 +1349,8 @@ let g:ca_filetype_table = {
             \ }
 
 " nnoremapじゃダメ
-nmap go      <LocalLeader>co
-nmap gO      <LocalLeader>cO
+nmap go      <Leader>co
+nmap gO      <Leader>cO
 " }}}
 
 " nextfile {{{
@@ -1424,7 +1397,14 @@ nnoremap <silent> <C-l>     :SDUpdate<CR><C-l>
 " }}}
 
 " DumbBuf {{{
-let g:dumbbuf_hotkey = '<LocalLeader>b'
+let g:dumbbuf_hotkey = '<Leader>b'
+
+" たまにQuickBuf.vimの名残で<Esc>を押してしまう
+let g:dumbbuf_mappings = {
+    \'n': {
+        \'<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
+    \}
+\}
 " }}}
 
 " }}}

@@ -4,129 +4,185 @@ scriptencoding utf-8
 " Document {{{
 "==================================================
 " Name: DumbBuf
-" Version: 0.0.0
+" Version: 0.0.1
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-12.
+" Last Change: 2009-09-13.
 "
 " Description:
 "   simple buffer manager like QuickBuf.vim
 "
 " Change Log: {{{
-"   0.0.0: Initial upload
-" }}}
-"
-" Usage: {{{
-"   <CR>    :edit the buffer.
-"   q       close dumbbuf buffer.
-"   g:dumbbuf_hotkey    close dumbbuf_hotkey buffer.
-"   uu      open one by one. this is same as QuickBuf's u.
-"   ss      :split the buffer.
-"   vv      :vspilt the buffer.
-"   dd      :bdelete the buffer.
-"   ww      :bwipeout the buffer.
-"   ll      toggle listed buffers or unlisted buffers.
-"   cc      :close the buffer.
+"   0.0.0:
+"       Initial upload
+"   0.0.1:
+"       implement g:dumbbuf_cursor_pos, g:dumbbuf_shown_type, and 'tt'
+"       mapping.
+"       and fix bug of showing listed buffers even if current buffer is
+"       unlisted.
 " }}}
 "
 " Mappings: {{{
-"     please define g:dumbbuf_hotkey.
+"   please define g:dumbbuf_hotkey at first.
+"
+"   <CR>
+"       :edit the buffer.
+"   q
+"       close dumbbuf buffer.
+"   g:dumbbuf_hotkey
+"       close dumbbuf_hotkey buffer.
+"   uu
+"       open one by one. this is same as QuickBuf's u.
+"   ss
+"       :split the buffer.
+"   vv
+"       :vspilt the buffer.
+"   tt
+"       :tabedit the buffer.
+"   dd
+"       :bdelete the buffer.
+"   ww
+"       :bwipeout the buffer.
+"   ll
+"       toggle listed buffers or unlisted buffers.
+"   cc
+"       :close the buffer.
 " }}}
 "
 " Global Variables: {{{
-"     g:dumbbuf_hotkey (default: no default value)
-"         a mapping which calls dumbbuf buffer.
-"         if this variable is not defined, this plugin will be not loaded.
+"   g:dumbbuf_hotkey (default: no default value)
+"       a mapping which calls dumbbuf buffer.
+"       if this variable is not defined, this plugin will be not loaded.
 "
-"     g:dumbbuf_buffer_height (default: 10)
-"         dumbbuf buffer's height.
-"         this is used when only g:dumbbuf_vertical is false.
+"   g:dumbbuf_buffer_height (default: 10)
+"       dumbbuf buffer's height.
+"       this is used when only g:dumbbuf_vertical is false.
 "
-"     g:dumbbuf_vertical (default: 0)
-"         open dumbbuf buffer vertically.
+"   g:dumbbuf_vertical (default: 0)
+"       open dumbbuf buffer vertically.
 "
-"     g:dumbbuf_buffer_width (default: 25)
-"         dumbbuf buffer's width.
-"         this is used when only g:dumbbuf_vertical is true.
+"   g:dumbbuf_buffer_width (default: 25)
+"       dumbbuf buffer's width.
+"       this is used when only g:dumbbuf_vertical is true.
 "
-"     g:dumbbuf_listed_buffer_name (default: '__buffers__')
-"         dumbbuf buffer's filename.
-"         set this filename when showing 'listed buffers'.
-"         'listed buffers' are opposite of 'unlisted-buffers'.
-"         see ':help unlisted-buffer'.
+"   g:dumbbuf_listed_buffer_name (default: '__buffers__')
+"       dumbbuf buffer's filename.
+"       set this filename when showing 'listed buffers'.
+"       'listed buffers' are opposite of 'unlisted-buffers'.
+"       see ':help unlisted-buffer'.
 "
-"     g:dumbbuf_unlisted_buffer_name (default: '__unlisted_buffers__')
-"         dumbbuf buffer's filename.
-"         set this filename when showing 'unlisted buffers'.
+"   g:dumbbuf_unlisted_buffer_name (default: '__unlisted_buffers__')
+"       dumbbuf buffer's filename.
+"       set this filename when showing 'unlisted buffers'.
 "
-"     g:dumbbuf_disp_expr (default: see below)
-"         this variable is for the experienced users.
+"   g:dumbbuf_cursor_pos (default: 'current')
+"       jumps to this position when dumbbuf buffer opens.
 "
-"         NOTE:
-"         this document may be old!
-"         see the real definition at 'Global Variables'
+"       'current':
+"           current buffer line
+"       'top':
+"           jump to always top buffer line
+"       'bottom':
+"           jump to always bottom buffer line
 "
-"         here is the default value:
-"             'printf("%s[%s] %s <%d> %s", v:val.is_current ? "*" : " ", bufname(v:val.nr), v:val.is_modified ? "[+]" : "   ", v:val.nr, fnamemodify(bufname(v:val.nr), ":p:h"))'
+"   g:dumbbuf_shown_type (default: '')
+"       show this type of buffers list.
 "
-"     g:dumbbuf_options (default: see below)
-"         this variable is for the experienced users.
+"       '':
+"           if current buffer is unlisted, show unlisted buffers list.
+"           if current buffer is listed, show listed buffers list.
+"       'unlisted':
+"           show always unlisted buffers list.
+"       'listed':
+"           show always listed buffers list.
 "
-"         NOTE:
-"         this document may be old!
-"         see the real definition at 'Global Variables'
+"   g:dumbbuf_disp_expr (default: see below)
+"       this variable is for the experienced users.
 "
-"         here is the default value:
-"             let g:dumbbuf_options = [
-"                 \'bufhidden=wipe',
-"                 \'buftype=nofile',
-"                 \'cursorline',
-"                 \'nobuflisted',
-"                 \'nomodifiable',
-"                 \'noswapfile',
-"             \]
+"       NOTE:
+"       this document may be old!
+"       see the real definition at 'Global Variables'
 "
-"     g:dumbbuf_mappings (default: see below)
-"         this variable is for the experienced users.
+"       here is the default value:
+"           'printf("%s[%s] %s <%d> %s", v:val.is_current ? "*" : " ", bufname(v:val.nr), v:val.is_modified ? "[+]" : "   ", v:val.nr, fnamemodify(bufname(v:val.nr), ":p:h"))'
 "
-"         NOTE:
-"         this document may be old!
-"         see the real definition at 'Global Variables'
+"   g:dumbbuf_options (default: see below)
+"       this variable is for the experienced users.
 "
-"         here is the default value:
-"             let g:dumbbuf_mappings = {
-"                 \'n': {
-"                     \g:dumbbuf_hotkey : {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
-"                     \},
-"                     \'q': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
-"                     \},
-"                     \'<CR>': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_open()<CR>',
-"                     \},
-"                     \'uu': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_open_onebyone()<CR>',
-"                     \},
-"                     \'ss': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_split_open()<CR>',
-"                     \},
-"                     \'vv': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_vsplit_open()<CR>',
-"                     \},
-"                     \'dd': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_bdelete()<CR>',
-"                     \},
-"                     \'ww': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_bwipeout()<CR>',
-"                     \},
-"                     \'ll': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_toggle_listed_type()<CR>',
-"                     \},
-"                     \'cc': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_close()<CR>',
-"                     \},
-"                 \}
+"       NOTE:
+"       this document may be old!
+"       see the real definition at 'Global Variables'
+"
+"       here is the default value:
+"           let g:dumbbuf_options = [
+"               \'bufhidden=wipe',
+"               \'buftype=nofile',
+"               \'cursorline',
+"               \'nobuflisted',
+"               \'nomodifiable',
+"               \'noswapfile',
+"           \]
+"
+"   g:dumbbuf_mappings (default: see below)
+"       this variable is for the experienced users.
+"
+"       NOTE:
+"       this document may be old!
+"       see the real definition at 'Global Variables'
+"
+"       these settings will be overridden at dumbbuf.vim.
+"       for e.g., if your .vimrc setting is
+"
+"         let g:dumbbuf_mappings = {
+"             \'n': {
+"                 '<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
 "             \}
+"         \}
+"
+"       type <Esc> to close dumbbuf buffer.
+"       no influences for other default mappings.
+"
+"       here is the default value:
+"           let g:dumbbuf_mappings = {
+"               \'n': {
+"                   \g:dumbbuf_hotkey : {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
+"                   \},
+"                   \'q': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
+"                   \},
+"                   \'<CR>': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_open()<CR>',
+"                   \},
+"                   \'uu': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_open_onebyone()<CR>',
+"                   \},
+"                   \'ss': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_split_open()<CR>',
+"                   \},
+"                   \'vv': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_vsplit_open()<CR>',
+"                   \},
+"                   \'tt': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_tab_open()<CR>',
+"                   \},
+"                   \'dd': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_bdelete()<CR>',
+"                   \},
+"                   \'ww': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_bwipeout()<CR>',
+"                   \},
+"                   \'ll': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_toggle_listed_type()<CR>',
+"                   \},
+"                   \'cc': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_close()<CR>',
+"                   \},
+"               \}
+"           \}
+" }}}
+"
+" TODO: {{{
+"   - manipulate buffers each project.
 " }}}
 "==================================================
 " }}}
@@ -181,6 +237,13 @@ endif
 if ! exists('g:dumbbuf_unlisted_buffer_name')
     let g:dumbbuf_unlisted_buffer_name = '__unlisted_buffers__'
 endif
+if ! exists('g:dumbbuf_cursor_pos')
+    let g:dumbbuf_cursor_pos = 'current'
+endif
+if ! exists('g:dumbbuf_shown_type')
+    let g:dumbbuf_shown_type = ''
+endif
+
 if ! exists('g:dumbbuf_disp_expr')
     " QuickBuf.vim like UI.
     let g:dumbbuf_disp_expr = 'printf("%s[%s] %s <%d> %s", v:val.is_current ? "*" : " ", bufname(v:val.nr), v:val.is_modified ? "[+]" : "   ", v:val.nr, fnamemodify(bufname(v:val.nr), ":p:h"))'
@@ -219,6 +282,9 @@ let s:mappings.default = {
         \},
         \'vv': {
             \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_vsplit_open()<CR>',
+        \},
+        \'tt': {
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_tab_open()<CR>',
         \},
         \'dd': {
             \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_bdelete()<CR>',
@@ -266,13 +332,19 @@ endfunc
 " }}}
 
 " s:get_current_buffer_info {{{
+"   this returns [<current buffer info>, <lnum of current buffer>]
 func! s:get_current_buffer_info(caller_bufnr)
-    let current = get(filter(deepcopy(s:bufs_info), 'v:val.nr ==# a:caller_bufnr'), 0, -1)
-    if type(current) == type(-1) && current ==# -1
-        call s:warn("internal error: can't get current buffer's info")
-        return -1
-    endif
-    return current
+    let i = 0
+    let bufs_len = len(s:bufs_info)
+
+    while i < bufs_len
+        if s:bufs_info[i].nr ==# a:caller_bufnr
+            return [s:bufs_info[i], i]
+        endif
+        let i += 1
+    endwhile
+
+    return []
 endfunc
 " }}}
 
@@ -411,6 +483,34 @@ func! s:get_selected_buffer()
 endfunc
 " }}}
 
+" s:filter_bufs_info {{{
+func! s:filter_bufs_info(curbufinfo)
+    if s:shown_type ==# 'unlisted'
+        " filter unlisted buffers.
+        call filter(s:bufs_info, 'v:val.is_unlisted')
+    elseif s:shown_type ==# 'listed'
+        " filter listed buffers.
+        call filter(s:bufs_info, '! v:val.is_unlisted')
+    else
+        if g:dumbbuf_shown_type == ''
+            " if current buffer is unlisted, filter unlisted buffers.
+            " if current buffers is listed, filter listed buffers.
+            call filter(s:bufs_info, 'a:curbufinfo.is_unlisted ? v:val.is_unlisted : ! v:val.is_unlisted')
+        elseif g:dumbbuf_shown_type =~# '^\(unlisted\|listed\)$'.'\C'    " don't ignorecase
+            let s:shown_type = g:dumbbuf_shown_type
+            call s:filter_bufs_info(a:curbufinfo)
+        else
+            call s:warn(printf("'%s' is not valid value. please choose in '', 'unlisted', 'listed'.", g:dumbbuf_shown_type))
+            call s:warn("use '' as g:dumbbuf_shown_type value...")
+
+            let g:dumbbuf_shown_type = ''
+
+            sleep 1
+        endif
+    endif
+endfunc
+" }}}
+
 " s:run {{{
 func! s:run()
     " if dumbbuf's buffer is displayed, jump to that buffer.
@@ -444,18 +544,17 @@ func! s:show_buffers()
         return
     endif
 
+    " get current buffers info and lnum on dumbbuf buffer.
+    let info = s:get_current_buffer_info(caller_bufnr)
+    if empty(info)
+        call s:warn("internal error: can't get current buffer's info")
+        return
+    endif
+    let [curbufinfo, lnum] = info
+
     " if current buffer is listed, display just listed buffers.
     " if current buffers is unlisted, display just unlisted buffers.
-    if s:shown_type ==# 'unlisted'
-        call filter(s:bufs_info, 'v:val.is_unlisted')
-    elseif s:shown_type ==# 'listed'
-        call filter(s:bufs_info, '! v:val.is_unlisted')
-    else
-        let current = s:get_current_buffer_info(caller_bufnr)
-        call filter(s:bufs_info, 'current.is_unlisted ? v:val.is_unlisted : ! v:val.is_unlisted')
-        " save shown type.
-        let s:shown_type = current.is_unlisted ? 'unlisted' : 'listed'
-    endif
+    call s:filter_bufs_info(curbufinfo)
 
     " name dumbbuf's buffer.
     if s:shown_type ==# 'unlisted'
@@ -466,6 +565,24 @@ func! s:show_buffers()
 
     " write buffers list.
     call s:write_buffers_list()
+
+    " move cursor to specified position.
+    if g:dumbbuf_cursor_pos ==# 'current'
+        if lnum !=# 0
+            execute 'normal! '.lnum.'gg'
+        endif
+    elseif g:dumbbuf_cursor_pos ==# 'top'
+        normal! gg
+    elseif g:dumbbuf_cursor_pos ==# 'bottom'
+        normal! G
+    else
+        call s:warn(printf("'%s' is not valid value. please choose in 'current', 'top', 'bottom'.", g:dumbbuf_cursor_pos))
+        call s:warn("use 'current' as g:dumbbuf_cursor_pos value...")
+
+        let g:dumbbuf_cursor_pos = 'current'
+
+        sleep 1
+    endif
 
 
     "-------- buffer settings --------
@@ -544,6 +661,15 @@ func! s:buflocal_vsplit_open()
     let buf = s:get_selected_buffer()
 
     execute 'vsplit ' . bufname(buf.nr)
+endfunc
+" }}}
+
+" s:buflocal_tab_open {{{
+func! s:buflocal_tab_open()
+    if ! s:is_selected() | return | endif
+    let buf = s:get_selected_buffer()
+
+    execute 'tabedit ' . bufname(buf.nr)
 endfunc
 " }}}
 
