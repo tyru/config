@@ -458,6 +458,18 @@ func! s:get_selected_buffer()
 endfunc
 " }}}
 
+" s:filter_bufs_info {{{
+func! s:filter_bufs_info(curbufinfo)
+    if s:shown_type ==# 'unlisted'
+        call filter(s:bufs_info, 'v:val.is_unlisted')
+    elseif s:shown_type ==# 'listed'
+        call filter(s:bufs_info, '! v:val.is_unlisted')
+    else
+        call filter(s:bufs_info, 'a:curbufinfo.is_unlisted ? v:val.is_unlisted : ! v:val.is_unlisted')
+    endif
+endfunc
+" }}}
+
 " s:run {{{
 func! s:run()
     " if dumbbuf's buffer is displayed, jump to that buffer.
@@ -491,6 +503,7 @@ func! s:show_buffers()
         return
     endif
 
+    " get current buffers info and lnum on dumbbuf buffer.
     let info = s:get_current_buffer_info(caller_bufnr)
     if empty(info)
         call s:warn("internal error: can't get current buffer's info")
@@ -500,15 +513,7 @@ func! s:show_buffers()
 
     " if current buffer is listed, display just listed buffers.
     " if current buffers is unlisted, display just unlisted buffers.
-    if s:shown_type ==# 'unlisted'
-        call filter(s:bufs_info, 'v:val.is_unlisted')
-    elseif s:shown_type ==# 'listed'
-        call filter(s:bufs_info, '! v:val.is_unlisted')
-    else
-        call filter(s:bufs_info, 'curbufinfo.is_unlisted ? v:val.is_unlisted : ! v:val.is_unlisted')
-        " save shown type.
-        let s:shown_type = curbufinfo.is_unlisted ? 'unlisted' : 'listed'
-    endif
+    call s:filter_bufs_info(curbufinfo)
 
     " name dumbbuf's buffer.
     if s:shown_type ==# 'unlisted'
