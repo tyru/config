@@ -205,6 +205,10 @@ endif
 if ! exists('g:dumbbuf_unlisted_buffer_name')
     let g:dumbbuf_unlisted_buffer_name = '__unlisted_buffers__'
 endif
+if ! exists('g:dumbbuf_cursor_pos')
+    let g:dumbbuf_cursor_pos = 'current'
+endif
+
 if ! exists('g:dumbbuf_disp_expr')
     " QuickBuf.vim like UI.
     let g:dumbbuf_disp_expr = 'printf("%s[%s] %s <%d> %s", v:val.is_current ? "*" : " ", bufname(v:val.nr), v:val.is_modified ? "[+]" : "   ", v:val.nr, fnamemodify(bufname(v:val.nr), ":p:h"))'
@@ -290,13 +294,19 @@ endfunc
 " }}}
 
 " s:get_current_buffer_info {{{
+"   this returns [<current buffer info>, <lnum of current buffer>]
 func! s:get_current_buffer_info(caller_bufnr)
-    let current = get(filter(deepcopy(s:bufs_info), 'v:val.nr ==# a:caller_bufnr'), 0, -1)
-    if type(current) == type(-1) && current ==# -1
-        call s:warn("internal error: can't get current buffer's info")
-        return -1
-    endif
-    return current
+    let i = 0
+    let bufs_len = len(s:bufs_info)
+
+    while i < bufs_len
+        if s:bufs_info[i].nr ==# a:caller_bufnr
+            return [s:bufs_info[i], i]
+        endif
+        let i += 1
+    endwhile
+
+    return []
 endfunc
 " }}}
 
@@ -468,6 +478,13 @@ func! s:show_buffers()
         return
     endif
 
+    let info = s:get_current_buffer_info(caller_bufnr)
+    if empty(info)
+        call s:warn("internal error: can't get current buffer's info")
+        return
+    endif
+    let [curbufinfo, lnum] = info
+
     " if current buffer is listed, display just listed buffers.
     " if current buffers is unlisted, display just unlisted buffers.
     if s:shown_type ==# 'unlisted'
@@ -475,10 +492,9 @@ func! s:show_buffers()
     elseif s:shown_type ==# 'listed'
         call filter(s:bufs_info, '! v:val.is_unlisted')
     else
-        let current = s:get_current_buffer_info(caller_bufnr)
-        call filter(s:bufs_info, 'current.is_unlisted ? v:val.is_unlisted : ! v:val.is_unlisted')
+        call filter(s:bufs_info, 'curbufinfo.is_unlisted ? v:val.is_unlisted : ! v:val.is_unlisted')
         " save shown type.
-        let s:shown_type = current.is_unlisted ? 'unlisted' : 'listed'
+        let s:shown_type = curbufinfo.is_unlisted ? 'unlisted' : 'listed'
     endif
 
     " name dumbbuf's buffer.
@@ -490,6 +506,20 @@ func! s:show_buffers()
 
     " write buffers list.
     call s:write_buffers_list()
+
+    " move cursor to specified position.
+    if g:dumbbuf_cursor_pos ==# 'current'
+        if lnum !=# 0
+            execute 'normal! '.lnum.'gg'
+        endif
+    elseif g:dumbbuf_cursor_pos ==# 'top'
+        normal! gg
+    elseif g:dumbbuf_cursor_pos ==# 'bottom'
+        normal! G
+    else
+        call s:warn(printf("'%s' is not valid value. please choose in 'current', 'top', 'bottom'.", g:dumbbuf_cursor_pos))
+        return
+    endif
 
 
     "-------- buffer settings --------
