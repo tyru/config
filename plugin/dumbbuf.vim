@@ -69,9 +69,23 @@ scriptencoding utf-8
 "   g:dumbbuf_cursor_pos (default: 'current')
 "       jumps to this position when dumbbuf buffer opens.
 "
-"       'current': current buffer line
-"       'top': jump to always top buffer line
-"       'bottom': jump to always bottom buffer line
+"       'current':
+"           current buffer line
+"       'top':
+"           jump to always top buffer line
+"       'bottom':
+"           jump to always bottom buffer line
+"
+"   g:dumbbuf_shown_type (default: '')
+"       show this type of buffers list.
+"
+"       '':
+"           if current buffer is unlisted, show unlisted buffers list.
+"           if current buffer is listed, show listed buffers list.
+"       'unlisted':
+"           show always unlisted buffers list.
+"       'listed':
+"           show always listed buffers list.
 "
 "   g:dumbbuf_disp_expr (default: see below)
 "       this variable is for the experienced users.
