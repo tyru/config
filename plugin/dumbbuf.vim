@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.0
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-12.
+" Last Change: 2009-09-13.
 "
 " Description:
 "   simple buffer manager like QuickBuf.vim
@@ -15,118 +15,142 @@ scriptencoding utf-8
 "   0.0.0: Initial upload
 " }}}
 "
-" Usage: {{{
-"   <CR>    :edit the buffer.
-"   q       close dumbbuf buffer.
-"   g:dumbbuf_hotkey    close dumbbuf_hotkey buffer.
-"   uu      open one by one. this is same as QuickBuf's u.
-"   ss      :split the buffer.
-"   vv      :vspilt the buffer.
-"   dd      :bdelete the buffer.
-"   ww      :bwipeout the buffer.
-"   ll      toggle listed buffers or unlisted buffers.
-"   cc      :close the buffer.
-" }}}
-"
 " Mappings: {{{
-"     please define g:dumbbuf_hotkey.
+"   please define g:dumbbuf_hotkey at first.
+"
+"   <CR>
+"       :edit the buffer.
+"   q
+"       close dumbbuf buffer.
+"   g:dumbbuf_hotkey
+"       close dumbbuf_hotkey buffer.
+"   uu
+"       open one by one. this is same as QuickBuf's u.
+"   ss
+"       :split the buffer.
+"   vv
+"       :vspilt the buffer.
+"   dd
+"       :bdelete the buffer.
+"   ww
+"       :bwipeout the buffer.
+"   ll
+"       toggle listed buffers or unlisted buffers.
+"   cc
+"       :close the buffer.
 " }}}
 "
 " Global Variables: {{{
-"     g:dumbbuf_hotkey (default: no default value)
-"         a mapping which calls dumbbuf buffer.
-"         if this variable is not defined, this plugin will be not loaded.
+"   g:dumbbuf_hotkey (default: no default value)
+"       a mapping which calls dumbbuf buffer.
+"       if this variable is not defined, this plugin will be not loaded.
 "
-"     g:dumbbuf_buffer_height (default: 10)
-"         dumbbuf buffer's height.
-"         this is used when only g:dumbbuf_vertical is false.
+"   g:dumbbuf_buffer_height (default: 10)
+"       dumbbuf buffer's height.
+"       this is used when only g:dumbbuf_vertical is false.
 "
-"     g:dumbbuf_vertical (default: 0)
-"         open dumbbuf buffer vertically.
+"   g:dumbbuf_vertical (default: 0)
+"       open dumbbuf buffer vertically.
 "
-"     g:dumbbuf_buffer_width (default: 25)
-"         dumbbuf buffer's width.
-"         this is used when only g:dumbbuf_vertical is true.
+"   g:dumbbuf_buffer_width (default: 25)
+"       dumbbuf buffer's width.
+"       this is used when only g:dumbbuf_vertical is true.
 "
-"     g:dumbbuf_listed_buffer_name (default: '__buffers__')
-"         dumbbuf buffer's filename.
-"         set this filename when showing 'listed buffers'.
-"         'listed buffers' are opposite of 'unlisted-buffers'.
-"         see ':help unlisted-buffer'.
+"   g:dumbbuf_listed_buffer_name (default: '__buffers__')
+"       dumbbuf buffer's filename.
+"       set this filename when showing 'listed buffers'.
+"       'listed buffers' are opposite of 'unlisted-buffers'.
+"       see ':help unlisted-buffer'.
 "
-"     g:dumbbuf_unlisted_buffer_name (default: '__unlisted_buffers__')
-"         dumbbuf buffer's filename.
-"         set this filename when showing 'unlisted buffers'.
+"   g:dumbbuf_unlisted_buffer_name (default: '__unlisted_buffers__')
+"       dumbbuf buffer's filename.
+"       set this filename when showing 'unlisted buffers'.
 "
-"     g:dumbbuf_disp_expr (default: see below)
-"         this variable is for the experienced users.
+"   g:dumbbuf_disp_expr (default: see below)
+"       this variable is for the experienced users.
 "
-"         NOTE:
-"         this document may be old!
-"         see the real definition at 'Global Variables'
+"       NOTE:
+"       this document may be old!
+"       see the real definition at 'Global Variables'
 "
-"         here is the default value:
-"             'printf("%s[%s] %s <%d> %s", v:val.is_current ? "*" : " ", bufname(v:val.nr), v:val.is_modified ? "[+]" : "   ", v:val.nr, fnamemodify(bufname(v:val.nr), ":p:h"))'
+"       here is the default value:
+"           'printf("%s[%s] %s <%d> %s", v:val.is_current ? "*" : " ", bufname(v:val.nr), v:val.is_modified ? "[+]" : "   ", v:val.nr, fnamemodify(bufname(v:val.nr), ":p:h"))'
 "
-"     g:dumbbuf_options (default: see below)
-"         this variable is for the experienced users.
+"   g:dumbbuf_options (default: see below)
+"       this variable is for the experienced users.
 "
-"         NOTE:
-"         this document may be old!
-"         see the real definition at 'Global Variables'
+"       NOTE:
+"       this document may be old!
+"       see the real definition at 'Global Variables'
 "
-"         here is the default value:
-"             let g:dumbbuf_options = [
-"                 \'bufhidden=wipe',
-"                 \'buftype=nofile',
-"                 \'cursorline',
-"                 \'nobuflisted',
-"                 \'nomodifiable',
-"                 \'noswapfile',
-"             \]
+"       here is the default value:
+"           let g:dumbbuf_options = [
+"               \'bufhidden=wipe',
+"               \'buftype=nofile',
+"               \'cursorline',
+"               \'nobuflisted',
+"               \'nomodifiable',
+"               \'noswapfile',
+"           \]
 "
-"     g:dumbbuf_mappings (default: see below)
-"         this variable is for the experienced users.
+"   g:dumbbuf_mappings (default: see below)
+"       this variable is for the experienced users.
 "
-"         NOTE:
-"         this document may be old!
-"         see the real definition at 'Global Variables'
+"       NOTE:
+"       this document may be old!
+"       see the real definition at 'Global Variables'
 "
-"         here is the default value:
-"             let g:dumbbuf_mappings = {
-"                 \'n': {
-"                     \g:dumbbuf_hotkey : {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
-"                     \},
-"                     \'q': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
-"                     \},
-"                     \'<CR>': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_open()<CR>',
-"                     \},
-"                     \'uu': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_open_onebyone()<CR>',
-"                     \},
-"                     \'ss': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_split_open()<CR>',
-"                     \},
-"                     \'vv': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_vsplit_open()<CR>',
-"                     \},
-"                     \'dd': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_bdelete()<CR>',
-"                     \},
-"                     \'ww': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_bwipeout()<CR>',
-"                     \},
-"                     \'ll': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_toggle_listed_type()<CR>',
-"                     \},
-"                     \'cc': {
-"                         \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_close()<CR>',
-"                     \},
-"                 \}
+"       these settings will be overridden at dumbbuf.vim.
+"       for e.g., if your .vimrc setting is
+"
+"         let g:dumbbuf_mappings = {
+"             \'n': {
+"                 '<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
 "             \}
+"         \}
+"
+"       type <Esc> to close dumbbuf buffer.
+"       no influences for other default mappings.
+"
+"       here is the default value:
+"           let g:dumbbuf_mappings = {
+"               \'n': {
+"                   \g:dumbbuf_hotkey : {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
+"                   \},
+"                   \'q': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
+"                   \},
+"                   \'<CR>': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_open()<CR>',
+"                   \},
+"                   \'uu': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_open_onebyone()<CR>',
+"                   \},
+"                   \'ss': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_split_open()<CR>',
+"                   \},
+"                   \'vv': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_vsplit_open()<CR>',
+"                   \},
+"                   \'dd': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_bdelete()<CR>',
+"                   \},
+"                   \'ww': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_bwipeout()<CR>',
+"                   \},
+"                   \'ll': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_toggle_listed_type()<CR>',
+"                   \},
+"                   \'cc': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_close()<CR>',
+"                   \},
+"               \}
+"           \}
+" }}}
+"
+" TODO: {{{
+"   - manipulate buffers each project.
 " }}}
 "==================================================
 " }}}
