@@ -66,6 +66,13 @@ scriptencoding utf-8
 "       dumbbuf buffer's filename.
 "       set this filename when showing 'unlisted buffers'.
 "
+"   g:dumbbuf_cursor_pos (default: 'current')
+"       jumps to this position when dumbbuf buffer opens.
+"
+"       'current': current buffer line
+"       'top': jump to always top buffer line
+"       'bottom': jump to always bottom buffer line
+"
 "   g:dumbbuf_disp_expr (default: see below)
 "       this variable is for the experienced users.
 "
@@ -132,6 +139,9 @@ scriptencoding utf-8
 "                   \},
 "                   \'vv': {
 "                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_vsplit_open()<CR>',
+"                   \},
+"                   \'tt': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_tab_open()<CR>',
 "                   \},
 "                   \'dd': {
 "                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_bdelete()<CR>',
