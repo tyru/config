@@ -248,6 +248,9 @@ let s:mappings.default = {
         \'vv': {
             \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_vsplit_open()<CR>',
         \},
+        \'tt': {
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_tab_open()<CR>',
+        \},
         \'dd': {
             \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_bdelete()<CR>',
         \},
@@ -598,6 +601,15 @@ func! s:buflocal_vsplit_open()
     let buf = s:get_selected_buffer()
 
     execute 'vsplit ' . bufname(buf.nr)
+endfunc
+" }}}
+
+" s:buflocal_tab_open {{{
+func! s:buflocal_tab_open()
+    if ! s:is_selected() | return | endif
+    let buf = s:get_selected_buffer()
+
+    execute 'tabedit ' . bufname(buf.nr)
 endfunc
 " }}}
 
