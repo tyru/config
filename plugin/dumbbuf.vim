@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.1
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-13.
+" Last Change: 2009-09-16.
 "
 " Description:
 "   simple buffer manager like QuickBuf.vim
@@ -36,6 +36,8 @@ scriptencoding utf-8
 "       :split the buffer.
 "   vv
 "       :vspilt the buffer.
+"   tt
+"       :tabedit the buffer.
 "   dd
 "       :bdelete the buffer.
 "   ww
