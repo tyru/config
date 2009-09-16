@@ -1,44 +1,64 @@
-if exists("b:__STRUCTURES_C_LIKE_XPT_VIM__") 
-    finish 
-endif
-let b:__STRUCTURES_C_LIKE_XPT_VIM__ = 1 
+XPTemplate priority=like
+
+
+XPTvar $TRUE          1
+XPTvar $FALSE         0
+XPTvar $NULL          NULL
+
+XPTvar $VOID_LINE /* void */;
+
+XPTvar $STRUCT_BRACKET_STL \ 
 
 " containers
 let [s:f, s:v] = XPTcontainer() 
 
-" constant definition
-call extend(s:v, {'$TRUE': '1',
-                \ '$FALSE' : '0',
-                \ '$NULL' : 'NULL',
-                \ '$INDENT_HELPER' : '/* void */;'}, 'keep')
 
-" inclusion
+
+
+
+" ========================= Function and Varaibles =============================
+" fun! s:f.c_enum_next(ptn) dict
+  " let v = self.V()
+  " if v == a:ptn
+    " return ''
+  " else
+    " return ";\n  elt"
+  " endif
+" endfunction
+
+" ================================= Snippets ===================================
 XPTemplateDef
 
+
 XPT enum hint=enum\ {\ ..\ }
-enum `enumName^ {
-    `elem^ = `firstidx^`
-    `...^,
-    `subElem^`
-    `...^
-} `var^^;
+XSET postQuoter={,}
+enum `name^`$STRUCT_BRACKET_STL^{
+    `elt^;`
+    `...{^
+    `elt^;`
+    `...^`}^
+}` `var^;
 
 
 XPT struct hint=struct\ {\ ..\ }
-struct `structName^ {
+struct `structName^`$STRUCT_BRACKET_STL^{
     `type^ `field^;`
     `...^
     `type^ `field^;`
     `...^
-} `var^^;
+}` `var^^;
 
 
 XPT bitfield hint=struct\ {\ ..\ :\ n\ }
-struct `structName^ {
+struct `structName^`$STRUCT_BRACKET_STL^{
     `type^ `field^ : `bits^;`
     `...^
     `type^ `field^ : `bits^;`
     `...^
-} `var^^;
+}` `var^^;
+
+
+
+
 
 

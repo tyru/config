@@ -1,57 +1,130 @@
-if exists("b:__SH_XPT_VIM__")
-  finish
-endif
-let b:__SH_XPT_VIM__ = 1
+XPTemplate priority=lang mark=~^ keyword=$([{
+
+let [s:f, s:v] = XPTcontainer() 
+ 
+XPTvar $TRUE          1
+XPTvar $FALSE         0
+XPTvar $NULL          NULL
+XPTvar $UNDEFINED     NULL
+
+XPTvar $VOID_LINE     # void
+XPTvar $CURSOR_PH     # cursor
 
 
-" containers
-let [s:f, s:v] = XPTcontainer()
+XPTvar $IF_BRACKET_STL     \ 
+XPTvar $ELSE_BRACKET_STL   \n
+XPTvar $FOR_BRACKET_STL    \ 
+XPTvar $WHILE_BRACKET_STL  \ 
+XPTvar $STRUCT_BRACKET_STL \ 
+XPTvar $FUNC_BRACKET_STL   \ 
 
-" inclusion
-XPTinclude
+XPTinclude 
       \ _common/common
 
-" ========================= Function and Varaibles =============================
+XPTvar $CS    #
+XPTinclude 
+      \ _comment/singleSign
+
+
+" ========================= Function and Variables =============================
+
 
 " ================================= Snippets ===================================
-" in shell script '`' is used very widely 
-call XPTemplateMark('~', '^')
 
-call XPTemplate('sh', "#!/bin/sh\n")
-call XPTemplate('ba', "#!/bin/bash\n")
-call XPTemplate('echodate', 'echo `date +~fmt^`')
 
-call XPTemplate('forin', [
-      \"for ~i^ in ~list^;do", 
-      \"  ~cursor^", 
-      \"done"
-      \])
+XPTemplateDef
 
-call XPTemplate('for', [
-      \"for ((~i^ = 0; ~i^ < ~len^; ~i^++));do", 
-      \"  ~cursor^", 
-      \"done"
-      \])
 
-call XPTemplate('forr', [
-      \'for ((~i^ = ~n^; ~i^ >~=^ ~start^; ~i^~--^));do', 
-      \"  ~cursor^", 
-      \"done"
-      \])
+XPT sh hint=#!/bin/sh
+#!/bin/sh
 
-call XPTemplate('while1', [
-      \'while [ 1 ];do', 
-      \'  ~cursor^', 
-      \'done'
-      \])
+..XPT
 
-call XPTemplate('case', [
-      \'case $~i^ in', 
-      \'  ~c^)', 
-      \'  ~cursor^', 
-      \'  ;;', 
-      \'', 
-      \'  *)', 
-      \'  ;;', 
-      \'esac'
-      \])
+
+XPT bash hint=#!/bin/bash
+#!/bin/bash
+
+..XPT
+
+
+XPT echodate hint=echo\ `date\ +%...`
+echo `date +~fmt^`
+
+
+
+XPT forin
+for ~i^ in ~list^;~$FOR_BRACKET_STL^do
+    ~cursor^
+done
+
+
+XPT foreach alias=forin
+
+
+XPT for
+for ((~i^ = ~0^; ~i^ < ~len^; ~i^++));~$FOR_BRACKET_STL^do
+    ~cursor^
+done
+
+XPT forr
+for ((~i^ = ~n^; ~i^ >~=^ ~start^; ~i^--));~$FOR_BRACKET_STL^do
+    ~cursor^
+done
+
+
+XPT while
+while ~condition^;~$WHILE_BRACKET_STL^do
+    ~cursor^
+done
+
+
+XPT while1 alias=while
+XSET condition=Next( '[ 1 ]' )
+
+
+XPT case
+case $~var^ in
+    ~pattern^)
+    ~cursor^
+    ;;
+
+    *)
+    ;;
+esac
+
+
+XPT if
+if ~condition^;~$IF_BRACKET_STL^then
+    ~cursor^
+fi
+
+
+XPT ife
+if ~condition^;~$IF_BRACKET_STL^then
+    ~job^
+else
+    ~cursor^
+fi
+
+
+XPT elif
+elif ~condition^;~$IF_BRACKET_STL^then
+    ~cursor^
+
+
+XPT (
+( ~cursor^ )
+
+
+XPT {
+{ ~cursor^ }
+
+
+XPT [
+[[ ~test^ ]]
+
+
+XPT fun
+function ~name^ (~args^)~$FUNC_BRACKET_STL^{
+    ~cursor^
+}

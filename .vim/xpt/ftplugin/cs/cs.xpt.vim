@@ -1,49 +1,48 @@
-if exists('b:__CS_XPT_VIM__')
-  finish
-endif
-let b:__CS_XPT_VIM__ = 1
+XPTemplate priority=lang-
 
-" containers
-let [s:f, s:v] = XPTcontainer()
+let [s:f, s:v] = XPTcontainer() 
+ 
+XPTvar $TRUE          true
+XPTvar $FALSE         false
+XPTvar $NULL          null
 
-call extend(s:v, { '$TRUE': 'true'
-                \, '$FALSE' : 'false'
-                \, '$NULL' : 'null'
-                \, '$UNDEFINED' : ''
-                \, '$BRACKETSTYLE' : "\n"
-                \, '$INDENT_HELPER' : ';' })
-" inclusion
-XPTinclude 
+XPTvar $IF_BRACKET_STL     \n
+XPTvar $FOR_BRACKET_STL    \n
+XPTvar $WHILE_BRACKET_STL  \n
+XPTvar $STRUCT_BRACKET_STL \n
+XPTvar $FUNC_BRACKET_STL   \n
+
+XPTvar $VOID_LINE  /* void */;
+XPTvar $CURSOR_PH      /* cursor */
+
+XPTvar $CL  /*
+XPTvar $CM   *
+XPTvar $CR   */
+
+XPTinclude
       \ _common/common
-      \ _comment/c.like
+      \ _comment/doubleSign
       \ _condition/c.like
-      \ _loops/c.like
-      \ _loops/java.like
-      \ c/wrap
+      \ _loops/c.while.like
+      \ _loops/java.for.like
+      \ _structures/c.like
 
-" ========================= Function and Varaibles =============================
+
+" ========================= Function and Variables =============================
+
 
 " ================================= Snippets ===================================
 XPTemplateDef
 
+
 XPT foreach hint=foreach\ (..\ in\ ..)\ {..}
-foreach ( `var^ `e^ in `what^ )
-{
+foreach ( `var^ `e^ in `what^ )`$FOR_BRACKET_STL^{
     `cursor^
 }
 
 
-XPT enum hint=enum\ {\ ..\ }
-enum `enumName^
-{
-    `elem^`...^,
-    `subElem^`...^
-};
-`cursor^
-
-
 XPT struct hint=struct\ {\ ..\ }
-`access^public^ struct `structName^
+`public^ struct `structName^
 {
     `fieldAccess^public^ `type^ `name^;`...^
     `fieldAccess^public^ `type^ `name^;`...^
@@ -53,7 +52,7 @@ XPT struct hint=struct\ {\ ..\ }
 XPT class hint=class\ +ctor
 class `className^
 {
-    public `className^( `ctorParam^^ )
+    public `className^(` `ctorParam` ^)
     {
         `cursor^
     }
@@ -69,9 +68,11 @@ public static void Main( string[] args )
 
 XPT prop hint=..\ ..\ {get\ set}
 public `type^ `Name^
-{`get...^
-    get { return \`what\^; }^^`set...^
-    set { \`what\^ = value; }^^
+{`
+    `get...{{^
+    get { return `what^; }`}}^`
+    `set...{{^
+    set { `what^ = `value^; }`}}^
 }
 
 
@@ -83,22 +84,44 @@ namespace `name^
 
 
 XPT try hint=try\ ..\ catch\ ..\ finally
+XSET handler=$CL handler $CR
 try
 {
     `what^
-}`...^
+}`
+`...^
 catch (`except^ e)
 {
     `handler^
-}`...^`catch...^
-catch
-{
-    \`_\^
-}^^`finally...^
+}`
+`...^`
+`finally...{{^
 finally
 {
-    \`cursor\^
-}^^
+    `cursor^
+}`}}^
 
 
 
+" ================================= Wrapper ===================================
+
+
+
+
+XPT try_ hint=try\ ..\ catch\ ..\ finally
+XSET handler=$CL handler $CR
+try
+{
+    `wrapped^
+}`
+`...^
+catch (`except^ e)
+{
+    `handler^
+}`
+`...^`
+`finally...{{^
+finally
+{
+    `cursor^
+}`}}^

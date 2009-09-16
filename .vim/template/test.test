@@ -1,0 +1,9 @@
+path:<%path%>
+filename:<%filename%>
+filename_noext:<%filename_noext%>
+filename_ext:<%filename_ext%>
+filename_snake:<%filename_snake%>
+filename_camel:<%filename_camel%>
+parent_dir:<%parent_dir%>
+author:<%author%>
+email:<%email%>

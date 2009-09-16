@@ -625,4 +625,4 @@ endif
 
 let &cpo = s:cpo_save
 
-" vim:set foldmethod=marker ft=vim sw=4 sts=4 et:
+" vim:set ft=vim sw=4 sts=4 et:

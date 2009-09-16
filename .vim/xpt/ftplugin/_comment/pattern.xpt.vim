@@ -1,18 +1,14 @@
-if exists("b:___COMMENT_PATTERN_XPT_VIM__")
-  finish
-endif
-let b:___COMMENT_PATTERN_XPT_VIM__ = 1
+" priority is a bit lower than 'spec'
+XPTemplate priority=spec+
 
-" containers
+
 let [s:f, s:v] = XPTcontainer()
 
-" constant definition
 
-" inclusion
-
-call XPTemplatePriority('like')
-" ========================= Function and Varaibles =============================
-
+" XPTvar $CL  Warn_$CL_IS_NOT_SET
+" XPTvar $CM  Warn_$CM_IS_NOT_SET
+" XPTvar $CR  Warn_$CR_IS_NOT_SET
+" XPTvar $CS  Warn_$CS_IS_NOT_SET
 
 " ================================= Snippets ===================================
 
@@ -35,10 +31,12 @@ if has_key(s:v, '$CL') && has_key(s:v, '$CR')
 
 endif
 
+" line comment
 if has_key(s:v, '$CS')
-
-  " line comment
   call XPTemplate('cl', {'hint' : '$CS'}, [ '`$CS^ `cursor^' ])
+
+else
+  call XPTemplate('cl', {'hint' : '$CL .. $CR'}, [ '`$CL^ `cursor^ `$CR^' ])
 
 endif
 

@@ -1,22 +1,37 @@
-if exists('b:__CSS_CSS_XPT_VIM__') 
-    finish 
-endif
-let b:__CSS_CSS_XPT_VIM__ = 1 
+XPTemplate priority=lang
 
-" containers
 let [s:f, s:v] = XPTcontainer() 
+ 
+XPTvar $VOID_LINE  /* void */;
+XPTvar $CURSOR_PH      /* cursor */
 
-" constant definition
-call extend(s:v, {'$TRUE': '1', '$FALSE': '0', '$NULL': 'NULL', '$UNDEFINED': '', '$BRACKETSTYLE': '\n'})
+XPTvar $CL  /*
+XPTvar $CM   *
+XPTvar $CR   */
 
-" inclusion
-XPTinclude
-    \ _common/common
+XPTinclude 
+      \ _common/common
+      \ _comment/doubleSign
+
 
 " ========================= Function and Variables =============================
-" ================================= Snippets ===================================
 
-XPTemplateDef 
+fun! s:f.css_braced_post()
+  let v = self.V()
+  let v = substitute( v, '^\s*$', '', 'g' )
+
+  if v =~ '^\s*\w\+('
+    let name = matchstr( v, '^\s*\zs\w\+(' )
+    return self.Build( ' ' . name . self.ItemCreate( '', {}, {} ) . ')' )
+  else
+    return v
+  endif
+endfunction
+
+" ================================= Snippets ===================================
+XPTemplateDef
+
+
 XPT backrep hint=background-repeat
 XSET rep=Choose(['repeat', 'repeat-x','repeat-y','no-repeat'])
 background-repeat `rep^;
@@ -34,50 +49,17 @@ XSET vert=Choose(['top', 'center', 'bottom'])
 XSET vert|post=SV('^\s*$', '', 'g')
 background-position:` `vert`^` `horiz`^;
 
+
 XPT border hint=border
+XSET pos=ChooseStr( '-top', '-right', '-bottom', '-left' )
 XSET thick=Choose(['thin', 'thick', 'medium'])
 XSET thick|post=SV('^\s*$', '', 'g')
 XSET kind=Choose(['none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset'])
 XSET kind|post=SV('^\s*$', '', 'g')
-XSET color=Choose(['rgb(', '#', 'transparent'])
-XSET color|post=SV('^\s*$', '', 'g')
-border:` `thick`^`kind^` `color^; 
+XSET color=Choose(['rgb()', '#', 'transparent'])
+XSET color|post=css_braced_post()
+border`pos^:` `thick^` `kind^` `color^;
 
-XPT bordertop hint=border-top
-XSET thick=Choose(['thin', 'thick', 'medium'])
-XSET thick|post=SV('^\s*$', '', 'g')
-XSET kind=Choose(['none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset'])
-XSET kind|post=SV('^\s*$', '', 'g')
-XSET color=Choose(['rgb(', '#', 'transparent'])
-XSET color|post=SV('^\s*$', '', 'g')
-border-top:` `thick`^` `kind`^` `color`^;
-
-XPT borderbottom hint=border-bottom
-XSET thick=Choose(['thin', 'thick', 'medium'])
-XSET thick|post=SV('^\s*$', '', 'g')
-XSET kind=Choose(['none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset'])
-XSET kind|post=SV('^\s*$', '', 'g')
-XSET color=Choose(['rgb(', '#', 'transparent'])
-XSET color|post=SV('^\s*$', '', 'g')
-border-bottom:` `thick`^` `kind`^` `color`^;
-
-XPT borderleft hint=border-left
-XSET thick=Choose(['thin', 'thick', 'medium'])
-XSET thick|post=SV('^\s*$', '', 'g')
-XSET kind=Choose(['none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset'])
-XSET kind|post=SV('^\s*$', '', 'g')
-XSET color=Choose(['rgb(', '#', 'transparent'])
-XSET color|post=SV('^\s*$', '', 'g')
-border-left:` `thick`^` `kind`^` `color`^;
-
-XPT borderright hint=border-right
-XSET thick=Choose(['thin', 'thick', 'medium'])
-XSET thick|post=SV('^\s*$', '', 'g')
-XSET kind=Choose(['none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset'])
-XSET kind|post=SV('^\s*$', '', 'g')
-XSET color=Choose(['rgb(', '#', 'transparent'])
-XSET color|post=SV('^\s*$', '', 'g')
-border-right:` `thick`^` `kind`^` `color`^;
 
 XPT backgroundattachment hint=background-attachment
 XSET selec=Choose(['scroll', 'fixed'])
@@ -85,13 +67,15 @@ background-attachment: `selec^;
 
 
 XPT backgroundcolor hint=background-color
-XSET selec=Choose(['transparent', 'rgb(', '#'])
-background-color: `selec^;
+XSET selec=Choose(['transparent', 'rgb()', '#'])
+XSET selec|post=css_braced_post()
+background-color:` `selec^;
 
 
 XPT backgroundimage hint=background-image
-XSET selec=Choose(['url(', 'none'])
-background-image: `selec^;
+XSET selec=Choose(['url()', 'none'])
+XSET selec|post=css_braced_post()
+background-image:` `selec^;
 
 
 XPT backgroundrepeat hint=background-repeat
@@ -100,8 +84,9 @@ background-repeat: `selec^;
 
 
 XPT background hint=background
-XSET selec=Choose(['url(', 'scroll', 'fixed', 'transparent', 'rgb(', '#', 'none', 'top', 'center', 'bottom' , 'left', 'right', 'repeat', 'repeat-x', 'repeat-y', 'no-repeat'])
-background: `selec^;
+XSET selec=Choose(['url()', 'scroll', 'fixed', 'transparent', 'rgb()', '#', 'none', 'top', 'center', 'bottom' , 'left', 'right', 'repeat', 'repeat-x', 'repeat-y', 'no-repeat'])
+XSET selec|post=css_braced_post()
+background:` `selec^;
 
 
 XPT bordercollapse hint=border-collapse
@@ -110,13 +95,14 @@ border-collapse: `selec^;
 
 
 XPT bordercolor hint=border-color
-XSET selec=Choose(['rgb(', '#', 'transparent'])
-border-color: `selec^;
+XSET selec=Choose(['rgb()', '#', 'transparent'])
+XSET selec|post=css_braced_post()
+border-color:` `selec^;
 
 
 XPT borderspacing hint=border-spacing
-XSET selec=Choose(return [])
-border-spacing: `selec^;
+XSET select_disabled=Choose([''])
+border-spacing: `select^;
 
 
 XPT borderstyle hint=border-style
@@ -150,8 +136,9 @@ clip: `selec^;
 
 
 XPT color hint=color
-XSET selec=Choose(['rgb(', '#'])
-color: `selec^;
+XSET selec=Choose(['rgb()', '#'])
+XSET selec|post=css_braced_post()
+color:` `selec^;
 
 
 XPT content hint=content
@@ -160,8 +147,9 @@ content: `selec^;
 
 
 XPT cursor hint=cursor
-XSET selec=Choose(['url(', 'auto', 'crosshair', 'default', 'pointer', 'move', 'e-resize', 'ne-resize', 'nw-resize', 'n-resize', 'se-resize', 'sw-resize', 's-resize', 'w-resize', 'text', 'wait', 'help', 'progress'])
-cursor: `selec^;
+XSET selec=Choose(['url()', 'auto', 'crosshair', 'default', 'pointer', 'move', 'e-resize', 'ne-resize', 'nw-resize', 'n-resize', 'se-resize', 'sw-resize', 's-resize', 'w-resize', 'text', 'wait', 'help', 'progress'])
+XSET selec|post=css_braced_post()
+cursor:` `selec^;
 
 
 XPT direction hint=direction
@@ -235,8 +223,9 @@ line-height: `selec^;
 
 
 XPT liststyleimage hint=list-style-image
-XSET selec=Choose(['url(', 'none'])
-list-style-image: `selec^;
+XSET selec=Choose(['url()', 'none'])
+XSET selec|post=css_braced_post()
+list-style-image:` `selec^;
 
 
 XPT liststyleposition hint=list-style-position
@@ -274,8 +263,8 @@ XSET selec=Choose(['none'])
 min-width: `selec^;
 
 XPT outline hint=outline
-XSET color=Choose(['rgb(', '#'])
-XSET color|post=SV('^\s*$', '', 'g')
+XSET color=Choose(['rgb()', '#'])
+XSET color|post=css_braced_post()
 XSET style=Choose(['none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset'])
 XSET style|post=SV('^\s*$', '', 'g')
 XSET width=Choose(['thin', 'thick', 'medium'])
@@ -283,8 +272,9 @@ XSET width|post=SV('^\s*$', '', 'g')
 outline:` `width`^` `style`^` `color`^;
 
 XPT outlinecolor hint=outline-color
-XSET selec=Choose(['rgb(', '#'])
-outline-color: `selec^;
+XSET selec=Choose(['rgb()', '#'])
+XSET selec|post=css_braced_post()
+outline-color:` `selec^;
 
 
 XPT outlinestyle hint=outline-style
@@ -313,8 +303,9 @@ pitch: `selec^;
 
 
 XPT playduring hint=play-during
-XSET selec=Choose(['url(', 'mix', 'repeat', 'auto', 'none'])
-play-during: `selec^;
+XSET selec=Choose(['url()', 'mix', 'repeat', 'auto', 'none'])
+XSET selec|post=css_braced_post()
+play-during:` `selec^;
 
 
 XPT position hint=position
@@ -413,20 +404,24 @@ z-index: `selec^;
 
 
 XPT bordertopcolor hint=border-top-color
-XSET col=Choose(['rgb(', '#', 'transparent'])
-border-top-color: `col^;
+XSET col=Choose(['rgb()', '#', 'transparent'])
+XSET col|post=css_braced_post()
+border-top-color:` `col^;
 
 XPT borderbottomcolor hint=border-bottom-color
-XSET col=Choose(['rgb(', '#', 'transparent'])
-border-bottom-color: `col^;
+XSET col=Choose(['rgb()', '#', 'transparent'])
+XSET col|post=css_braced_post()
+border-bottom-color:` `col^;
 
 XPT borderrightcolor hint=border-right-color
-XSET col=Choose(['rgb(', '#', 'transparent'])
-border-right-color: `col^;
+XSET col=Choose(['rgb()', '#', 'transparent'])
+XSET col|post=css_braced_post()
+border-right-color:` `col^;
 
 XPT borderleftcolor hint=border-left-color
-XSET col=Choose(['rgb(', '#', 'transparent'])
-border-left-color: `col^;
+XSET col=Choose(['rgb()', '#', 'transparent'])
+XSET col|post=css_braced_post()
+border-left-color:` `col^;
 
 XPT bordertopstyle hint=border-top-style
 XSET col=Choose(['none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset'])
@@ -445,8 +440,9 @@ XSET col=Choose(['none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groov
 border-left-style: `col^;
 
 XPT bordertopwidth hint=border-top-width
-XSET col=Choose(['rgb(', '#', 'transparent'])
-border-top-width: `col^;
+XSET col=Choose(['rgb()', '#', 'transparent'])
+XSET col|post=css_braced_post()
+border-top-width:` `col^;
 
 XPT borderbottomwidth hint=border-bottom-width
 XSET col=Choose(['thin', 'thick', 'medium'])

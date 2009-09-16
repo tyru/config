@@ -773,14 +773,12 @@ augroup MyVimrc
                 \ setlocal ft=html
     autocmd BufNewFile,BufReadPre *.mkd
                 \ setlocal ft=mkd
-    " }}}3
+    autocmd BufNewFile,BufReadPre *.md
+                \ setlocal ft=mkd
+    " delete this!
+    autocmd! filetypedetect BufNewFile,BufRead *.md
 
-    " gVim起動時に前画面にする (http://d.hatena.ne.jp/amachang/20090731/1249047638)
-    if has('win32')
-        au GUIEnter * simalt ~x
-    else
-        " au GUIEnter * winpos 100 50
-    endif
+    " }}}3
 
 augroup END
 " }}}2
@@ -1188,69 +1186,45 @@ let g:netrw_liststyle = 1
 let g:netrw_cygwin    = 1
 
 " FuzzyFinder {{{3
-nnoremap <silent> <Leader>fb       :FuzzyFinderBuffer<CR>
-nnoremap <silent> <Leader>fd       :FuzzyFinderDir<CR>
-nnoremap <silent> <Leader>ff       :FuzzyFinderFile<CR>
-nnoremap <silent> <Leader>fh       :FuzzyFinderMruFile<CR>
-nnoremap <silent> <Leader>ft       :FuzzyFinderTag<CR>
-nnoremap <silent> <Leader>fT       :FuzzyFinderTaggedFile<CR>
-nnoremap <silent> <Leader>t        :FuzzyFinderTagWithCursorWord<CR>
+nnoremap <silent> <Leader>fb       :FufBuffer<CR>
+nnoremap <silent> <Leader>fd       :FufDir<CR>
+nnoremap <silent> <Leader>ff       :FufFile<CR>
+nnoremap <silent> <Leader>fh       :FufMruFile<CR>
+nnoremap <silent> <Leader>ft       :FufTag<CR>
+nnoremap <silent> <Leader>fT       :FufTaggedFile<CR>
+nnoremap <silent> <Leader>t        :FufTagWithCursorWord<CR>
 
 
-let g:FuzzyFinderOptions = {
-    \ 'Base':{},
-    \ 'Buffer':{ "mode_available" : 1 },
-    \ 'File':{ "mode_available" : 1 },
-    \ 'Dir':{ "mode_available" : 1 },
-    \ 'MruFile':{ "mode_available" : 1 },
-    \ 'MruCmd':{ "mode_available" : 0 },
-    \ 'Bookmark':{ "mode_available" : 0 },
-    \ 'Tag':{ "mode_available" : 1 },
-    \ 'TaggedFile':{ "mode_available" : 1 },
-    \ 'GivenFile':{ "mode_available" : 0 },
-    \ 'GivenDir':{ "mode_available" : 0 },
-    \ 'GivenCmd':{ "mode_available" : 0 },
-    \ 'CallbackFile':{ "mode_available" : 0 },
-    \ 'CallbackItem':{ "mode_available" : 0 },
-\ }
+let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem']
 
-" let g:FuzzyFinderOptions.Base.migemo_support   = 1    " 何故かSEGVる
-let g:FuzzyFinderOptions.Base.key_open_tab     = '<C-CR>'
-let g:FuzzyFinderOptions.Base.key_next_mode    = '<C-l>'
-let g:FuzzyFinderOptions.Base.key_prev_mode    = '<C-h>'
-let g:FuzzyFinderOptions.Base.key_open_split   = '<C-s>'
-let g:FuzzyFinderOptions.Base.key_open_vsplit  = '<C-v>'
-let g:FuzzyFinderOptions.Base.lasting_cache    = 0
 
-""" 短縮形
-let g:FuzzyFinderOptions.Base.abbrev_map  = {
-            \   '^plug' : [ '~/.vim/plugin/', '~/.vim/plugin/' ],
-            \   '^home' : [ '~/' ],
-            \   '^cyg' : [ $CYGHOME ],
-            \   '^msys' : [ $MSYSHOME ],
-            \ }
-if isdirectory( $HOME .'/.vim/mine/plugin' )
-    let g:FuzzyFinderOptions.Base.abbrev_map['^plug'] += [
-                \ '~/.vim/mine/plugin/'
-                \ ]
-endif
+let fuf_keyOpenTabpage = '<C-CR>'
+let fuf_keyNextMode    = '<C-l>'
+let fuf_keyPrevMode    = '<C-h>'
+let fuf_keyOpenSplit   = '<C-s>'
+let fuf_keyOpenVsplit  = '<C-v>'
+
+" 短縮形
+let fuf_abbrevMap = {
+    \'^plug' : ['~/.vim/plugin/', '~/.vim/plugin/', '~/.vim/mine/plugin/'],
+    \'^home' : ['~/'],
+\}
+if exists('$CYGHOME')  | let fuf_abbrevMap['^cyg']  = $CYGHOME  | endif
+if exists('$MSYSHOME') | let fuf_abbrevMap['^msys'] = $MSYSHOME | endif
 
 " デスクトップ
-if has( 'win32' )
-    let g:FuzzyFinderOptions.Base.abbrev_map['^plug'] += [
-                \   '~/vimfiles/plugin/'
-                \ ]
-    let g:FuzzyFinderOptions.Base.abbrev_map['^desk'] = [
+if has('win32')
+    let fuf_abbrevMap['^desk'] = [
                 \   'C:' . substitute( $HOMEPATH, '\', '/', 'g' ) . '/デスクトップ/'
                 \ ]
-    let g:FuzzyFinderOptions.Base.abbrev_map['^cyg'] = [
+    let fuf_abbrevMap['^cyg'] = [
                 \   'C:/cygwin/home/'. $USERNAME .'/'
                 \ ]
-    let g:FuzzyFinderOptions.Base.abbrev_map['^msys'] = [
+    let fuf_abbrevMap['^msys'] = [
                 \   'C:/msys/home/'. $USERNAME .'/'
                 \ ]
 else
-    let g:FuzzyFinderOptions.Base.abbrev_map['^desk'] = [
+    let fuf_abbrevMap['^desk'] = [
                 \     '~/Desktop/'
                 \ ]
 endif
@@ -1268,12 +1242,10 @@ let DrChipTopLvlMenu = ""
 command! -nargs=0 AlignReset call Align#AlignCtrl("default")
 cabbrev   al    Align
 
-" Chalice {{{
-"
+" Chalice
 " プレビュー機能無効
 let chalice_preview      = 0
 let chalice_startupflags = "bookmark"
-" }}}
 
 " changelog
 let changelog_username = "tyru"
@@ -1326,7 +1298,7 @@ let loaded_gtags = 1
 let xptemplate_key = '<C-t>'
 
 " operator-replace
-map g;  <Plug>(operator-replace)iw
+map g;  <Plug>(operator-replace)
 
 
 " }}}
@@ -1354,6 +1326,8 @@ nmap gO      <Leader>cO
 " }}}
 
 " nextfile {{{
+let g:nf_map_next = ',n'
+let g:nf_map_previous = ',p'
 let nf_include_dotfiles = 1    " don't skip dotfiles
 let nf_loop_files = 1    " loop at the end of file
 let nf_ignore_ext = ['o']    " ignore object file
@@ -1384,6 +1358,8 @@ unlet s:files_tmp
 " }}}
 
 " winmove {{{
+
+" デフォルトマッピングにしたいがTTBaseのアクティブウィンドウを動かすプラグインのマッピングとの共存を考えた結果がこれ
 let g:wm_move_down  = '<C-M-j>'
 let g:wm_move_up    = '<C-M-k>'
 let g:wm_move_left  = '<C-M-h>'
@@ -1391,8 +1367,13 @@ let g:wm_move_right = '<C-M-l>'
 " }}}
 
 " sign-diff {{{
-let g:SD_debug = 1
+
+" 現在未使用...
+" (作ってから自分はどっちかと言うと
+" ウィンドウにあまり情報を出したくない派なので要らないなと気付いた)
 let g:SD_disable = 1
+
+let g:SD_debug = 1
 nnoremap <silent> <C-l>     :SDUpdate<CR><C-l>
 " }}}
 

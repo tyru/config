@@ -1,13 +1,13 @@
-*pi_netrw.txt*  For Vim version 7.1.  Last change: 2008 Mar 28
+*pi_netrw.txt*  For Vim version 7.2.  Last change: 2009 Jan 14
 
 	    -----------------------------------------------------
 	    NETRW REFERENCE MANUAL    by Charles E. Campbell, Jr.
 	    -----------------------------------------------------
 
 
-*dav*           *http*          *network*       *Nwrite*   *netrw-file*
-*fetch*         *netrw*         *Nread*         *rcp*      *scp*
-*ftp*           *netrw.vim*     *Nsource*       *rsync*    *sftp*
+*dav*    *ftp*    *netrw-file*  *Nread*    *rcp*    *scp*
+*davs*   *http*   *netrw.vim*   *Nsource*  *rsync*  *sftp*
+*fetch*  *netrw*  *network*     *Nwrite*
 
 ==============================================================================
 1. Contents						*netrw-contents* {{{1
@@ -30,7 +30,7 @@
 7.  Ex Commands..........................................|netrw-ex|
 8.  Variables and Options................................|netrw-var|
 9.  Browsing.............................................|netrw-browse|
-      Introduction To Browsing...........................|netrw-browse-intro|
+      Introduction To Browsing...........................|netrw-intro-browse|
       Quick Reference: Maps..............................|netrw-browse-maps|
       Quick Reference: Commands..........................|netrw-browse-cmds|
       Bookmarking A Directory............................|netrw-mb|
@@ -43,6 +43,7 @@
       Changing To A Predecessor Directory................|netrw-u|
       Changing To A Successor Directory..................|netrw-U|
       Customizing Browsing With A User Function..........|netrw-x|
+      Deleting Bookmarks.................................|netrw-mB|
       Deleting Files Or Directories......................|netrw-D|
       Directory Exploring Commands.......................|netrw-explore|
       Exploring With Stars and Patterns..................|netrw-star|
@@ -55,12 +56,21 @@
       Listing Bookmarks And History......................|netrw-qb|
       Making A New Directory.............................|netrw-d|
       Making The Browsing Directory The Current Directory|netrw-c|
-      Marked Files: Compression And Decompression........|netrw-mz|
-      Marked Files: Printing.............................|netrw-mp|
-      Marked Files: Tagging..............................|netrw-mT|
-      Marked Files: Unmarking............................|netrw-mu|
       Marking Files......................................|netrw-mf|
       Marking Files By Regular Expression................|netrw-mr|
+      Marked Files: Arbitrary Command....................|netrw-mx|
+      Marked Files: Compression And Decompression........|netrw-mz|
+      Marked Files: Copying..............................|netrw-mc|
+      Marked Files: Diff.................................|netrw-md|
+      Marked Files: Editing..............................|netrw-me|
+      Marked Files: Grep.................................|netrw-mg|
+      Marked Files: Hiding and Unhiding by Suffix........|netrw-mh|
+      Marked Files: Moving...............................|netrw-mm|
+      Marked Files: Printing.............................|netrw-mp|
+      Marked Files: Sourcing.............................|netrw-ms|
+      Marked Files: Tagging..............................|netrw-mT|
+      Marked Files: Setting the Target Directory.........|netrw-mt|
+      Marked Files: Unmarking............................|netrw-mu|
       Netrw Browser Variables............................|netrw-browser-var|
       Netrw Browsing And Option Incompatibilities........|netrw-incompatible|
       Netrw Settings.....................................|netrw-settings|
@@ -71,6 +81,7 @@
       Renaming Files Or Directories......................|netrw-move|
       Reversing Sorting Order............................|netrw-r|
       Selecting Sorting Style............................|netrw-s|
+      Setting Editing Window.............................|netrw-C|
 10. Problems and Fixes...................................|netrw-problems|
 11. Debugging Netrw Itself...............................|netrw-debug|
 12. History..............................................|netrw-history|
@@ -150,16 +161,33 @@ EXTERNAL APPLICATIONS AND PROTOCOLS			*netrw-externapp* {{{2
 
 	Protocol  Variable	    Default Value
 	--------  ----------------  -------------
-	   dav:    *g:netrw_dav_cmd*  = "cadaver"
-	 fetch:  *g:netrw_fetch_cmd*  = "fetch -o"    if fetch is available
-	   ftp:    *g:netrw_ftp_cmd*  = "ftp"
-	  http:   *g:netrw_http_cmd*  = "curl -o"     if     curl  is available
-	  http:    g:netrw_http_cmd   = "wget -q -O"  elseif wget  is available
-          http:    g:netrw_http_cmd   = "fetch -o"    elseif fetch is available
-	   rcp:    *g:netrw_rcp_cmd*  = "rcp"
-	 rsync:  *g:netrw_rsync_cmd*  = "rsync -a"
-	   scp:    *g:netrw_scp_cmd*  = "scp -q"
-	  sftp:   *g:netrw_sftp_cmd*  = "sftp"
+	   dav:  *g:netrw_dav_cmd*   = "cadaver"     if cadaver is executable
+	   dav:   g:netrw_dav_cmd    = "curl -o"     elseif curl is available
+	 fetch:  *g:netrw_fetch_cmd* = "fetch -o"    if fetch is available
+	   ftp:  *g:netrw_ftp_cmd*   = "ftp"
+	  http:  *g:netrw_http_cmd*  = "elinks"     if   elinks  is available
+	  http:   g:netrw_http_cmd   = "links"      elseif links is available
+	  http:   g:netrw_http_cmd   = "curl"       elseif curl  is available
+	  http:   g:netrw_http_cmd   = "wget"       elseif wget  is available
+          http:   g:netrw_http_cmd   = "fetch"      elseif fetch is available
+	   rcp:  *g:netrw_rcp_cmd*   = "rcp"
+	 rsync:  *g:netrw_rsync_cmd* = "rsync -a"
+	   scp:  *g:netrw_scp_cmd*   = "scp -q"
+	  sftp:  *g:netrw_sftp_cmd*  = "sftp"
+
+	*g:netrw_http_xcmd* : the option string for http://... protocols are
+	specified via this variable and may be independently oveerridden.
+
+		    elinks : "-dump >"
+		    links  : "-dump >"
+		    curl   : "-o"
+		    wget   : "-q -O"
+		    fetch  : "-o"
+
+	For example, if your system has elinks but you want to see the html
+	source in detail rather than a text rendering thereof, you may wish
+	to have  let g:netrw_http_xcmd= "-source >" in your .vimrc.
+
 
 READING						*netrw-read* *netrw-nread* {{{2
 
@@ -269,6 +297,15 @@ settings are described below, in |netrw-browser-options|, and in
  *b:netrw_lastfile*	last file Network-read/written retained on a per-buffer
 			basis		(supports plain :Nw )
 
+ *g:netrw_chgwin*	specifies a window number where file edits will take
+			place.  (also see |netrw-C|)
+			(default) not defined
+
+ *g:Netrw_funcref*	specifies a function to be called when netrw edits
+			a file.  The file is first edited, and then the
+			function reference (|Funcref|) is called.
+			(default) not defined
+
  *g:netrw_ftp*		if it doesn't exist, use default ftp
 			=0 use default ftp		       (uid password)
 			=1 use alternate ftp method	  (user uid password)
@@ -305,15 +342,15 @@ settings are described below, in |netrw-browser-options|, and in
 			Also affects the "previous window" (see |netrw-P|) in
 			the same way.
 
- *g:netrw_shq*		= "'" for Unix/Linux systems (ie. a single quote)
-			= "'" for Windows + cygwin systems (ie. a single quote)
-			= '"' for Windows systems, not using cygwin
-			      (ie. a double quote)
-			Controls the quoting character used during scp and ftp
-			commands.
-
  *g:netrw_scpport*      = "-P" : option to use to set port for scp
  *g:netrw_sshport*      = "-p" : option to use to set port for ssh
+
+ *g:netrw_sepchr*	=\0xff
+ 			=\0x01 for enc == euc-jp (and perhaps it should be for
+			                          others, too, please let me
+						  know)
+			Separates priority codes from filenames internally.
+			See |netrw-p12|.
 
   *g:netrw_silent*	=0 : transfers done normally
 			=1 : transfers done silently
@@ -423,6 +460,10 @@ additional prompting.
   | DAV:                            |                            |            |
   |  dav://host/path                |                            | cadaver    |
   |  :Nread dav://host/path         | :Nwrite dav://host/path    | cadaver    |
+  +---------------------------------+----------------------------+------------+
+  | DAV + SSL:                      |                            |            |
+  |  davs://host/path               |                            | cadaver    |
+  |  :Nread davs://host/path        | :Nwrite davs://host/path   | cadaver    |
   +---------------------------------+----------------------------+------------+
   | FETCH:                          |                            |            |
   |  fetch://[user@]host/path       |                            |            |
@@ -672,7 +713,8 @@ variables listed below, and may be modified by the user.
                                                   read via ftp automatically
                                                   transformed however they wish
                                                   by NetReadFixup()
-    g:netrw_dav_cmd    variable   ="cadaver"
+    g:netrw_dav_cmd    variable   ="cadaver"      if cadaver  is executable
+    g:netrw_dav_cmd    variable   ="curl -o"      elseif curl is executable
     g:netrw_fetch_cmd  variable   ="fetch -o"     if fetch is available
     g:netrw_ftp_cmd    variable   ="ftp"
     g:netrw_http_cmd   variable   ="fetch -o"     if      fetch is available
@@ -778,7 +820,8 @@ itself:
 9. Browsing		*netrw-browsing* *netrw-browse* *netrw-help* {{{1
    			*netrw-browser*  *netrw-dir*    *netrw-list*
 
-INTRODUCTION TO BROWSING			*netrw-browse-intro* {{{2
+INTRODUCTION TO BROWSING			*netrw-intro-browse* {{{2
+	(Quick References: |netrw-quickmaps| |netrw-quickcoms|)
 
 Netrw supports the browsing of directories on your local system and on remote
 hosts; browsing includes listing files and directories, entering directories,
@@ -831,7 +874,43 @@ There are several things you can do to affect the browser's display of files:
 
 See |netrw-browse-cmds| for all the things you can do with netrw!
 
+			*netrw-getftype* *netrw-filigree* *netrw-ftype*
+The |getftype()| function is used to append a bit of filigree to indicate
+filetype to locally listed files:
 
+	directory  : /
+	executable : *
+	fifo       : |
+	links      : @
+	sockets    : =
+
+The filigree also affects the |g:netrw_sort_sequence|.
+
+
+QUICK HELP						*netrw-quickhelp* {{{2
+                       (Use ctrl-] to select a topic)~
+	Intro to Browsing...............................|netrw-intro-browse|
+	  Quick Reference: Maps.........................|netrw-quickmap|
+	  Quick Reference: Commands.....................|netrw-browse-cmds|
+	Hiding
+	  Edit hiding list..............................|netrw-ctrl-h|
+	  Hiding Files or Directories...................|netrw-a|
+	  Hiding/Unhiding by suffix.....................|netrw-mh|
+	  Hiding  dot-files.............................|netrw-gh|
+	Listing Style
+	  Select listing style (thin/long/wide/tree)....|netrw-i|
+	  Associated setting variable...................|g:netrw_liststyle|
+	  Shell command used to perform listing.........|g:netrw_list_cmd|
+	  Quick file info...............................|netrw-qf|
+	Sorted by
+	  Select sorting style (name/time/size).........|netrw-s|
+	  Editing the sorting sequence..................|netrw-S|
+	  Sorting options...............................|g:netrw_sort_options|
+	  Associated setting variable...................|g:netrw_sort_sequence|
+	  Reverse sorting order.........................|netrw-r|
+
+
+				*netrw-quickmap* *netrw-quickmaps*
 QUICK REFERENCE: MAPS				*netrw-browse-maps* {{{2
 >
 	  ---			-----------------			----
@@ -845,9 +924,11 @@ QUICK REFERENCE: MAPS				*netrw-browse-maps* {{{2
 		hiding (suppress display of files matching g:netrw_list_hide)
 		showing (display only files which match g:netrw_list_hide)
 	   c	Make browsing directory the current directory        |netrw-c|
+	   C	Setting the editing window                           |netrw-C|
 	   d	Make a directory                                     |netrw-d|
 	   D	Attempt to remove the file(s)/directory(ies)         |netrw-D|
 	   gb	Go to previous bookmarked directory                  |netrw-gb|
+	   gh	Quick hide/unhide of dot-files                       |netrw-gh|
 	   gi	Display information on file                          |netrw-qf|
 	 <c-h>	Edit file hiding list                             |netrw-ctrl-h|
 	   i	Cycle between thin, long, wide, and tree listings    |netrw-i|
@@ -883,6 +964,8 @@ QUICK REFERENCE: MAPS				*netrw-browse-maps* {{{2
 	   	browser window.  A vertical split is used.
 	   x	View file with an associated program                 |netrw-x|
 
+	   %	Open a new file in netrw's current directory         |netrw-%|
+
 	<leftmouse>	(gvim only) selects word under mouse as if a <cr>
 			had been pressed (ie. edit file, change directory)
 	<middlemouse>	(gvim only) same as P selecting word under mouse;
@@ -895,9 +978,10 @@ QUICK REFERENCE: MAPS				*netrw-browse-maps* {{{2
 		         * the user doesn't already have a <2-leftmouse> mapping
 			   defined before netrw is autoloaded,
 			then a double clicked leftmouse button will return
-			to the netrw browser window.
+			to the netrw browser window.  See |g:netrw_retmap|.
 	<s-leftmouse>	(gvim only) like mf, will mark files
 
+				*netrw-quickcom* *netrw-quickcoms*
 QUICK REFERENCE: COMMANDS	*netrw-explore-cmds* *netrw-browse-cmds* {{{2
      :NetrwClean[!] ...........................................|netrw-clean|
      :NetrwSettings ...........................................|netrw-settings|
@@ -911,13 +995,18 @@ QUICK REFERENCE: COMMANDS	*netrw-explore-cmds* *netrw-browse-cmds* {{{2
      :Vexplore[!] [dir] Vertical Split & Explore...............|netrw-explore|
 
 BOOKMARKING A DIRECTORY	*netrw-mb* *netrw-bookmark* *netrw-bookmarks* {{{2
+
 One may easily "bookmark" a directory by using >
 
-	{cnt}mb
+	mb
 <
-Any count may be used.  One may use viminfo's "!" option to retain bookmarks
-between vim sessions.  See |netrw-gb| for how to return to a bookmark and
-|netrw-qb| for how to list them.
+Bookmarks are retained in between sesions in a $HOME/.netrwbook file, and are
+kept in sorted order.
+
+Related Topics:
+	|netrw-gb| how to return (go) to a bookmark
+	|netrw-mB| how to delete bookmarks
+	|netrw-qb| how to list bookmarks
 
 
 BROWSING						*netrw-cr* {{{2
@@ -925,7 +1014,7 @@ BROWSING						*netrw-cr* {{{2
 Browsing is simple: move the cursor onto a file or directory of interest.
 Hitting the <cr> (the return key) will select the file or directory.
 Directories will themselves be listed, and files will be opened using the
-protocol given in the original read request.  
+protocol given in the original read request.
 
   CAVEAT: There are four forms of listing (see |netrw-i|).  Netrw assumes that
   two or more spaces delimit filenames and directory names for the long and
@@ -984,7 +1073,7 @@ new window and cursor at the bottom, have
 
 in your <.vimrc>.  (also see |netrw-t| |netrw-v|)
 
-There is only one tree listing buffer; using "o" on a displayed subdirectory 
+There is only one tree listing buffer; using "o" on a displayed subdirectory
 will split the screen, but the same buffer will be shown twice.
 
 Associated setting variables: |g:netrw_alto| |g:netrw_winsize|
@@ -1011,7 +1100,7 @@ window and cursor at the right, have
 
 in your <.vimrc>.  (also see: |netrw-o| |netrw-t|)
 
-There is only one tree listing buffer; using "v" on a displayed subdirectory 
+There is only one tree listing buffer; using "v" on a displayed subdirectory
 will split the screen, but the same buffer will be shown twice.
 
 Associated setting variable: |g:netrw_altv| |g:netrw_winsize|
@@ -1050,8 +1139,12 @@ To change directory back to a bookmarked directory, use
 
 	{cnt}gb
 
-Any count may be used to reference any of the bookmarks.  See |netrw-mb| on
-how to bookmark a directory and |netrw-qb| on how to list bookmarks.
+Any count may be used to reference any of the bookmarks.
+
+Related Topics:
+	|netrw-mB| how to delete bookmarks
+	|netrw-mb| how to return to a bookmark
+	|netrw-qb| how to list bookmarks
 
 
 CHANGING TO A PREDECESSOR DIRECTORY	*netrw-u* *netrw-updir* {{{2
@@ -1106,7 +1199,7 @@ Netrw determines which special handler by the following method:
     If g:netrw_browsex_viewer == '-', then netrwFileHandler() will be
     invoked first (see |netrw_filehandler|).
 
-  * for Windows 32 or 64, the url and FileProtocolHandler dlls are used.  
+  * for Windows 32 or 64, the url and FileProtocolHandler dlls are used.
   * for Gnome (with gnome-open): gnome-open is used.
   * for KDE (with kfmclient)   : kfmclient is used.
   * for Mac OS X               : open is used.
@@ -1140,11 +1233,11 @@ characters (except for the underscore) in them.  To support suffices that
 contain such characters, netrw will first convert the suffix using the
 following table: >
 
-    @ -> AT       ! -> EXCLAMATION    % -> PERCENT  
-    : -> COLON    = -> EQUAL          ? -> QUESTION 
+    @ -> AT       ! -> EXCLAMATION    % -> PERCENT
+    : -> COLON    = -> EQUAL          ? -> QUESTION
     , -> COMMA    - -> MINUS          ; -> SEMICOLON
-    $ -> DOLLAR   + -> PLUS           ~ -> TILDE    
-<    
+    $ -> DOLLAR   + -> PLUS           ~ -> TILDE
+<
 So, for example: >
 
 	file.rcs,v  ->  NFH_rcsCOMMAv()
@@ -1156,6 +1249,18 @@ with a request.
 Associated setting variable: |g:netrw_browsex_viewer|
 
 							*netrw-curdir*
+DELETING BOOKMARKS					*netrw-mB* {{{2
+
+To delete a bookmark, use >
+
+	{cnt}mB
+<
+Related Topics:
+	|netrw-gb| how to return (go) to a bookmark
+	|netrw-mb| how to make a bookmark
+	|netrw-qb| how to list bookmarks
+
+
 DELETING FILES OR DIRECTORIES	*netrw-delete* *netrw-D* *netrw-del* {{{2
 
 If files have not been marked with |netrw-mf|:   (local marked file list)
@@ -1197,12 +1302,12 @@ Associated setting variable: |g:netrw_local_rmdir| |g:netrw_rm_cmd|
 *netrw-rexplore* *netrw-sexplore* *netrw-texplore* *netrw-vexplore*
 DIRECTORY EXPLORATION COMMANDS  {{{2
 
-     :Explore[!]   [dir]... Explore directory of current file       *:Explore*
-     :Hexplore[!]  [dir]... Horizontal Split & Explore              *:Hexplore*
-     :Rexplore          ... Return to Explorer                      *:Rexplore*
-     :Sexplore[!]  [dir]... Split&Explore directory of current file *:Sexplore*
-     :Texplore     [dir]... Tab              & Explore              *:Texplore*
-     :Vexplore[!]  [dir]... Vertical   Split & Explore              *:Vexplore*
+     :[N]Explore[!]   [dir]... Explore directory of current file     *:Explore*
+     :[N]Hexplore[!]  [dir]... Horizontal Split & Explore            *:Hexplore*
+     :Rexplore             ... Return to Explorer                    *:Rexplore*
+     :[N]Sexplore[!]  [dir]... Split&Explore current file's directory*:Sexplore*
+     :Texplore        [dir]... Tab              & Explore            *:Texplore*
+     :[N]Vexplore[!]  [dir]... Vertical   Split & Explore            *:Vexplore*
 
      Used with :Explore **/pattern : (also see |netrw-starstar|)
      :Nexplore............. go to next matching file                *:Nexplore*
@@ -1224,11 +1329,15 @@ DIRECTORY EXPLORATION COMMANDS  {{{2
 :Vexplore! [dir] does an :Explore with |:rightbelow| vertical splitting.
 :Texplore  [dir] does a tabnew before generating the browser window
 
-By default, these commands use the current file's directory.  However, one
-may explicitly provide a directory (path) to use.
+By default, these commands use the current file's directory.  However, one may
+explicitly provide a directory (path) to use.
 
-The |g:netrw_winsize| variable also is used, if specified by the user, to
-size Hexplore and Vexplore windows.
+The [N] will override |g:netrw_winsize| to specify the quantity of rows and/or
+columns the new explorer window should have.
+
+Otherwise, the |g:netrw_winsize| variable, if it has been specified by the
+user, is used to control the quantity of rows and/or columns new explorer
+windows should have.
 
 :Rexplore  This command is a little different from the others.  When one
            edits a file, for example by pressing <cr> when atop a file in
@@ -1296,12 +1405,16 @@ for local files.
 EDIT FILE OR DIRECTORY HIDING LIST	*netrw-ctrl-h* *netrw-edithide* {{{2
 
 The "<ctrl-h>" map brings up a requestor allowing the user to change the
-file/directory hiding list.  The hiding list consists of one or more patterns
-delimited by commas.  Files and/or directories satisfying these patterns will
-either be hidden (ie. not shown) or be the only ones displayed (see
-|netrw-a|).
+file/directory hiding list contained in |g:netrw_list_hide|.  The hiding list
+consists of one or more patterns delimited by commas.  Files and/or
+directories satisfying these patterns will either be hidden (ie. not shown) or
+be the only ones displayed (see |netrw-a|).
 
-Associated setting variable: |g:netrw_hide|
+The "gh" mapping (see |netrw-gh|) quickly alternates between the usual
+hiding list and the hiding of files or directories that begin with ".".
+
+Associated setting variables: |g:netrw_hide| |g:netrw_list_hide|
+Associated topics: |netrw-a| |netrw-gh| |netrw-mh|
 
 
 EDITING THE SORTING SEQUENCE		*netrw-S* *netrw-sortsequence* {{{2
@@ -1310,7 +1423,12 @@ When "Sorted by" is name, one may specify priority via the sorting sequence
 (g:netrw_sort_sequence).  The sorting sequence typically prioritizes the
 name-listing by suffix, although any pattern will do.  Patterns are delimited
 by commas.  The default sorting sequence is (all one line):
->
+
+For Unix: >
+	'[\/]$,\<core\%(\.\d\+\)\=,\.[a-np-z]$,\.h$,\.c$,\.cpp$,*,\.o$,\.obj$,
+	\.info$,\.swp$,\.bak$,\~$'
+<
+Otherwise: >
 	'[\/]$,\.[a-np-z]$,\.h$,\.c$,\.cpp$,*,\.o$,\.obj$,\.info$,
 	\.swp$,\.bak$,\~$'
 <
@@ -1319,8 +1437,8 @@ will end up.  One may change the sorting sequence by modifying the
 g:netrw_sort_sequence variable (either manually or in your <.vimrc>) or by
 using the "S" map.
 
-Related topics:              |g:netrw-s| |g:netrw-S|
-Associated setting variable: |g:netrw_sort_sequence|
+Related topics:               |netrw-s|               |netrw-S|
+Associated setting variables: |g:netrw_sort_sequence| |g:netrw_sort_options|
 
 
 GOING UP							*netrw--* {{{2
@@ -1379,14 +1497,15 @@ If files have been marked using |netrw-mf|, then this command will:
    and showing only non-hidden files.
   endif
 
-					*netrw-gh*
+					*netrw-gh* *netrw-hide*
 As a quick shortcut, one may press >
 	gh
-to toggle between hiding files which begin with a period (dot) or not.
+to toggle between hiding files which begin with a period (dot) and not hiding
+them.
 
 Associated setting variable: |g:netrw_list_hide|
+Associated topics: |netrw-a| |netrw-ctrl-h| |netrw-mh|
 
-					*netrw-ctrl_h*
 IMPROVING BROWSING			*netrw-listhack* *netrw-ssh-hack* {{{2
 
 Especially with the remote directory browser, constantly entering the password
@@ -1397,21 +1516,56 @@ tips & tools" by Rob Flickenger (O'Reilly, ISBN 0-596-00461-3) gives a tip
 for setting up no-password ssh and scp and discusses associated security
 issues.  It used to be available at http://hacks.oreilly.com/pub/h/66 ,
 but apparently that address is now being redirected to some "hackzine".
-I'll attempt a summary:
+I'll attempt a summary based on that article and on a communication from
+Ben Schmidt:
 
-	1. Generate a public/private key pair on the ssh server:
-	   ssh-keygen -t rsa
-	   (saving the file in ~/.ssh/id_rsa is ok)
-	2. Just hit the <CR> when asked for passphrase (twice).
-	3. This creates two files:
-	     ~/.ssh/id_rsa
-	     ~/.ssh/id_rsa.pub
-	4. On the client:
-	    cd
-	    mkdir .ssh
-	    chmod 0700 .ssh
-	    scp {serverhostname}:.ssh/id_rsa.pub .
-	    cat id_rsa.pub >> .ssh/authorized_keys2
+	1. Generate a public/private key pair on the local machine
+	   (ssh client): >
+		ssh-keygen -t rsa
+		(saving the file in ~/.ssh/id_rsa as prompted)
+<
+	2. Just hit the <CR> when asked for passphrase (twice) for no
+	   passphrase.  If you do use a passphrase, you will also need to use
+	   ssh-agent so you only have to type the passphrase once per session.
+	   If you don't use a passphrase, simply logging onto your local
+	   computer or getting access to the keyfile in any way will suffice
+	   to access any ssh servers which have that key authorized for login.
+
+	3. This creates two files: >
+		~/.ssh/id_rsa
+		~/.ssh/id_rsa.pub
+<
+	4. On the target machine (ssh server): >
+		cd
+		mkdir -p .ssh
+		chmod 0700 .ssh
+<
+	5. On your local machine (ssh client): (one line) >
+		ssh {serverhostname}
+		  cat '>>' '~/.ssh/authorized_keys2' < ~/.ssh/id_rsa.pub
+<
+	   or, for OpenSSH, (one line) >
+		ssh {serverhostname}
+		  cat '>>' '~/.ssh/authorized_keys' < ~/.ssh/id_rsa.pub
+<
+You can test it out with >
+	ssh {serverhostname}
+and you should be log onto the server machine without further need to type
+anything.
+
+If you decided to use a passphrase, do: >
+	ssh-agent $SHELL
+	ssh-add
+	ssh {serverhostname}
+You will be prompted for your key passphrase when you use ssh-add, but not
+subsequently when you use ssh.  For use with vim, you can use >
+	ssh-agent vim
+and, when next within vim, use >
+	:!ssh-add
+Alternatively, you can apply ssh-agent to the terminal you're planning on
+running vim in: >
+	ssh-agent xterm &
+and do ssh-add whenever you need.
 
 For Windows, folks on the vim mailing list have mentioned that Pageant helps
 with avoiding the constant need to enter the password.
@@ -1433,11 +1587,15 @@ passwords:
 
 LISTING BOOKMARKS AND HISTORY		*netrw-qb* *netrw-listbookmark* {{{2
 
-Pressing "qb" (query bookmarks) will list the bookmarked directories and
-directory traversal history (query).
+Pressing "qb" (query bookmarks) will list both the bookmarked directories and
+directory traversal history.
 
-(see |netrw-mb|, |netrw-gb|, |netrw-u|, and |netrw-U|)
-
+Related Topics:
+	|netrw-gb| how to return (go) to a bookmark
+	|netrw-mb| how to make a bookmark
+	|netrw-mB| how to delete bookmarks
+	|netrw-u|  change to a predecessor directory via the history stack
+	|netrw-U|  change to a successor   directory via the history stack
 
 MAKING A NEW DIRECTORY					*netrw-d* {{{2
 
@@ -1447,6 +1605,8 @@ global variable g:netrw_local_mkdir).  Netrw will issue a request for the new
 directory's name.  A bare <CR> at that point will abort the making of the
 directory.  Attempts to make a local directory that already exists (as either
 a file or a directory) will be detected, reported on, and ignored.
+
+Currently, making a directory via ftp is not supported.
 
 Associated setting variable: |g:netrw_local_mkdir| |g:netrw_mkdir_cmd|
 
@@ -1467,15 +1627,60 @@ directory.
 
 Associated setting variable: |g:netrw_keepdir|
 
+MARKING FILES							*netrw-mf* {{{2
+	(also see |netrw-mr|)
+
+One may mark files with the cursor atop a filename and then pressing "mf".
+With gvim, one may also mark files with <s-leftmouse>.  The following netrw
+maps make use of marked files:
+
+    |netrw-a|	Hide marked files/directories
+    |netrw-D|	Delete marked files/directories
+    |netrw-mc|	Copy marked files to target
+    |netrw-md|	Apply vimdiff to marked files
+    |netrw-me|	Edit marked files
+    |netrw-mg|	Apply vimgrep to marked files
+    |netrw-mm|	Move marked files
+    |netrw-mp|	Print marked files
+    |netrw-mt|	Set target for |netrw-mm| and |netrw-mc|
+    |netrw-mT|	Generate tags using marked files
+    |netrw-mx|	Apply shell command to marked files
+    |netrw-mz|	Compress/Decompress marked files
+    |netrw-O|	Obtain marked files
+    |netrw-R|	Rename marked files
+
+One may unmark files one at a time the same way one marks them; ie. place
+the cursor atop a marked file and press "mf".  This process also works
+with <s-leftmouse> using gvim.  One may unmark all files by pressing
+"mu" (see |netrw-mu|).
+
+*markfilelist* *global_markfilelist* *local_markfilelist*
+All marked files are entered onto the global marked file list; there is only
+one such list.  In addition, every netrw buffer also has its own local marked
+file list; since netrw buffers are associated with specific directories, this
+means that each directory has its own local marked file list.  The various
+commands which operate on marked files use one or the other of the marked file
+lists.
+
+
+MARKING FILES BY REGULAR EXPRESSION				*netrw-mr* {{{2
+	(also see |netrw-mf|)
+
+One may also mark files by pressing "mr"; netrw will then issue a prompt,
+"Enter regexp: ".  You may then enter a regular expression such as \.c$ .
+All files in the current directory will then be marked.  Note that the
+regular expressions are vim-style |regexp| ones, not shell ones.  So
+entering *.c probably isn't what you want!
+
 
 MARKED FILES: ARBITRARY COMMAND				*netrw-mx* {{{2
 	    (See |netrw-mf| and |netrw-mr| for how to mark files)
 		      (uses the local marked-file list)
 
-Upon activation of the "mx" map, netrw will query the user for some command to
-be applied to all marked files.  All %s in the command will be substituted
-with the name of a marked file.  If no %s are in the command, then the command
-will be followed by a space and a marked filename.
+Upon activation of the "mx" map, netrw will query the user for some (external)
+command to be applied to all marked files.  All "%"s in the command will be
+substituted with the name of each marked file in turn.  If no "%"s are in the
+command, then the command will be followed by a space and a marked filename.
 
 
 MARKED FILES: COMPRESSION AND DECOMPRESSION		*netrw-mz* {{{2
@@ -1515,6 +1720,16 @@ MARKED FILES: EDITING						*netrw-me* {{{2
 This command will place the marked files on the |arglist| and commence
 editing them.  One may return the to explorer window with |:Rexplore|.
 
+MARKED FILES: GREP						*netrw-mg* {{{2
+	    (See |netrw-mf| and |netrw-mr| for how to mark files)
+		      (uses the global marked file list)
+
+This command will apply |:vimgrep| to the marked files.  The command will ask
+for the requested pattern; one may enter: >
+	/pattern/[g][j]
+	! /pattern/[g][j]
+	pattern
+<
 MARKED FILES: HIDING AND UNHIDING BY SUFFIX			*netrw-mh* {{{2
 	    (See |netrw-mf| and |netrw-mr| for how to mark files)
 		      (uses the local marked file list)
@@ -1530,6 +1745,13 @@ Related topics: |netrw-a| |g:netrw_list_hide|
 MARKED FILES: MOVING						*netrw-mm* {{{2
 	    (See |netrw-mf| and |netrw-mr| for how to mark files)
 		      (uses the global marked file list)
+
+	WARNING: moving files is more dangerous than copying them.
+	A file being moved is first copied and then deleted; if the
+	copy operation fails and the delete succeeds, you will lose
+	the file.  Either try things out with unimportant files
+	first or do the copy and then delete yourself using mc and D.
+	Use at your own risk!
 
 Select a target directory with mT (|netrw-mt|).  Then change directory,
 select file(s) (see |netrw-mf|), and press "mm".
@@ -1602,51 +1824,6 @@ MARKED FILES: UNMARKING						*netrw-mu* {{{2
 The "mu" mapping will unmark all currently marked files.
 
 
-MARKING FILES							*netrw-mf* {{{2
-	(also see |netrw-mr|)
-
-One may mark files with the cursor atop a filename and then pressing "mf".
-With gvim, one may also mark files with <s-leftmouse>.  The following netrw
-maps make use of marked files:
-
-    |netrw-a|	Hide marked files/directories
-    |netrw-D|	Delete marked files/directories
-    |netrw-mc|	Copy marked files to target
-    |netrw-md|	Apply vimdiff to marked files
-    |netrw-me|	Edit marked files
-    |netrw-mm|	Move marked files
-    |netrw-mp|	Print marked files
-    |netrw-mt|	Set target for |netrw-mm| and |netrw-mc|
-    |netrw-mT|	Generate tags using marked files
-    |netrw-mx|	Apply shell command to marked files
-    |netrw-mz|	Compress/Decompress marked files
-    |netrw-O|	Obtain marked files
-    |netrw-R|	Rename marked files
-
-One may unmark files one at a time the same way one marks them; ie. place
-the cursor atop a marked file and press "mf".  This process also works
-with <s-leftmouse> using gvim.  One may unmark all files by pressing
-"mu" (see |netrw-mu|).
-
-*markfilelist* *global_markfilelist* *local_markfilelist*
-All marked files are entered onto the global marked file list; there is only
-one such list.  In addition, every netrw buffer also has its own local marked
-file list; since netrw buffers are associated with specific directories, this
-means that each directory has its own local marked file list.  The various
-commands which operate on marked files use one or the other of the marked file
-lists.
-
-
-MARKING FILES BY REGULAR EXPRESSION				*netrw-mr* {{{2
-	(also see |netrw-mf|)
-
-One may also mark files by pressing "mr"; netrw will then issue a prompt,
-"Enter regexp: ".  You may then enter a regular expression such as \.c$ .
-All files in the current directory will then be marked.  Note that the
-regular expressions are vim-style |regexp| ones, not shell ones.  So
-entering *.c probably isn't what you want!
-
-
 NETRW BROWSER VARIABLES		*netrw-browser-options* *netrw-browser-var* {{{2
 
 (if you're interestd in the netrw file transfer settings, see |netrw-options|)
@@ -1668,8 +1845,8 @@ your browsing preferences.  (see also: |netrw-settings|)
 
   *g:netrw_browse_split*	when browsing, <cr> will open the file by:
 				=0: re-using the same window
-				=1: horizontally splitting the window first  
-				=2: vertically   splitting the window first  
+				=1: horizontally splitting the window first
+				=2: vertically   splitting the window first
 				=3: open file in new tab
 				=4: act like "P" (ie. open previous window)
 
@@ -1682,13 +1859,22 @@ your browsing preferences.  (see also: |netrw-settings|)
 				a script/function to handle the given
 				extension.  (see |netrw_filehandler|).
 
-  *g:netrw_cd_escape*		="[]#*$%'\" ?`!&();<>\\"
-  				This option is used to escape directory names
-				before changing directory to them.
-
   *g:netrw_compress*		="gzip"
 				    Will compress marked files with this
 				    command
+
+  *g:netrw_ctags*		="ctags"
+				The default external program used to create tags
+
+  *g:netrw_cursorline*		= 1 (default)
+				will use the |'cursorline'| local setting when
+				|g:netrw_liststyle| ==0 (thin listing) or
+				|g:netrw_liststyle| ==1 (long listing) or
+				|g:netrw_liststyle| ==3 (tree listing)
+				=0: off
+				=2: like ==1, but the wide listing gets both
+				cursorline and |'cursorcolumn'|locally set
+				(ie. doesn't affect the wide listing)
 
   *g:netrw_decompress*		= { ".gz" : "gunzip" ,
 				    ".bz2" : "bunzip2" ,
@@ -1697,15 +1883,18 @@ your browsing preferences.  (see also: |netrw-settings|)
 				  A dictionary mapping suffices to
 				  decompression programs.
 
-  *g:netrw_fastbrowse*		=0: slow speed browsing, never re-use
-				    directory listings; always obtain
-				    directory listings.
-				=1: medium speed browsing, re-use directory
-				    listings only when remote browsing.
+  *g:netrw_fastbrowse*		=0: slow speed directory browsing;
+				    never re-uses directory listings,
+				    always obtains directory listings.
+				=1: medium speed directory browsing;
+				    re-use directory listings only
+				    when remote directory browsing.
 				    (default value)
-				=2: fast browsing, only obtains directory
-				    listings when the directory hasn't been
-				    seen before (or |netrw-ctrl-l| is used).
+				=2: fast directory browsing;
+				    only obtains directory listings when the
+				    directory hasn't been seen before
+				    (or |netrw-ctrl-l| is used).
+
 				Fast browsing retains old directory listing
 				buffers so that they don't need to be
 				re-acquired.  This feature is especially
@@ -1714,8 +1903,9 @@ your browsing preferences.  (see also: |netrw-settings|)
 				such directories, the old directory buffer
 				becomes out-of-date.  One may always refresh
 				such a directory listing with |netrw-ctrl-l|.
-				This option gives the choice of the trade-off
-				between accuracy and speed to the user.
+				This option gives the user the choice of
+				trading off accuracy (ie. up-to-date listing)
+				versus speed.
 
   *g:netrw_fname_escape*	=' ?&;%'
   				Used on filenames before remote reading/writing
@@ -1757,6 +1947,12 @@ your browsing preferences.  (see also: |netrw-settings|)
 
   *g:netrw_hide*		if true, the hiding list is used
 				 default: =0
+
+  *g:netrw_home*		The home directory for where bookmarks and
+				history are saved (as .netrwbook and
+				.netrwhist).
+				 default: the first directory on the
+				         |'runtimepath'|
 
   *g:netrw_keepdir*		=1 (default) keep current directory immune from
 				   the browsing directory.
@@ -1806,11 +2002,23 @@ your browsing preferences.  (see also: |netrw-settings|)
   *g:netrw_mkdir_cmd*		command for making a remote directory
 				 default: "ssh USEPORT HOSTNAME mkdir"
 
-  *g:netrw_retmap*		if it exists and is set to one, then
-				<2-leftmouse> will be mapped for easy
+  *g:netrw_retmap*		if it exists and is set to one, then:
+				 * if in a netrw-selected file, AND
+				 * no normal-mode <2-leftmouse> mapping exists,
+				then the <2-leftmouse> will be mapped for easy
 				return to the netrw browser window.
-				(example: click once to select and open
-				a file, double-click to return)
+				 example: click once to select and open a file,
+				          double-click to return.
+
+				Note that one may instead choose to:
+				 * let g:netrw_retmap= 1, AND
+				 * nmap <silent> YourChoice <Plug>NetrwReturn
+				and have another mapping instead of
+				<2-leftmouse> to invoke the return.
+
+				You may also use the |:Rexplore| command to do
+				the same thing.
+
 				  default: =0
 
   *g:netrw_rm_cmd*		command for removing files
@@ -1828,8 +2036,18 @@ your browsing preferences.  (see also: |netrw-settings|)
   *g:netrw_sort_direction*	sorting direction: "normal" or "reverse"
 				 default: "normal"
 
+  *g:netrw_sort_options*	sorting is done using |:sort|; this
+				variable's value is appended to the
+				sort command.  Thus one may ignore case,
+				for example, with the following in your
+				.vimrc: >
+					let g:netrw_sort_options="i"
+<				 default: ""
+
   *g:netrw_sort_sequence*	when sorting by name, first sort by the
-				comma-separated pattern sequence
+				comma-separated pattern sequence.  Note that
+				the filigree added to indicate filetypes
+				should be accounted for in your pattern.
 				 default: '[\/]$,*,\.bak$,\.o$,\.h$,
 				           \.info$,\.swp$,\.obj$'
 
@@ -1895,6 +2113,22 @@ your browsing preferences.  (see also: |netrw-settings|)
 				|:Hexplore| or |:Vexplore|.
 				 default: ""
 
+  *g:netrw_xstrlen*		Controls how netrw computes string lengths,
+  				including multi-byte characters' string
+				length. (thanks to N Weibull, T Mechelynck)
+				=0: uses Vim's built-in strlen()
+				=1: number of codepoints (Latin + a combining
+				    circumflex is two codepoints)  (DEFAULT)
+				=2: number of spacing codepoints (Latin a +
+				    combining circumflex is one spacing
+				    codepoint; a hard tab is one; wide and
+				    narrow CJK are one each; etc.)
+				=3: virtual length (counting tabs as anything
+				    between 1 and |'tabstop'|, wide CJJK as 2
+				    rather than 1, Arabic alif as zero when
+				    immediately preceded by lam, one
+				    otherwise, etc)
+
   *g:NetrwTopLvlMenu*		This variable specifies the top level
 				menu name; by default, it's "Netrw.".  If
 				you wish to change this, do so in your
@@ -1955,6 +2189,13 @@ Related topics:
    directory, see |g:netrw_keepdir|.
 
 
+OPEN A NEW FILE IN NETRW'S CURRENT DIRECTORY		*netrw-%*
+
+To open a file in netrw's current directory, press "%".  This map will
+query the user for a new filename; an empty file by that name will be
+placed in the netrw's current directory (ie. b:netrw_curdir).
+
+
 PREVIEW WINDOW				*netrw-p* *netrw-preview* {{{2
 
 One may use a preview window by using the "p" key when the cursor is atop the
@@ -1966,10 +2207,10 @@ splitting if one has set |g:netrw_preview| first.
 
 PREVIOUS WINDOW				*netrw-P* *netrw-prvwin* {{{2
 
-To edit a file or directory in the previously used window (see :he |CTRL-W_P|),
-press a "P".  If there's only one window, then the one window will be
-horizontally split (above/below splitting is controlled by |g:netrw_alto|,
-and its initial size is controlled by |g:netrw_winsize|).
+To edit a file or directory in the previously used (last accessed) window (see
+:he |CTRL-W_p|), press a "P".  If there's only one window, then the one window
+will be horizontally split (above/below splitting is controlled by
+|g:netrw_alto|, and its initial size is controlled by |g:netrw_winsize|).
 
 If there's more than one window, the previous window will be re-used on
 the selected file/directory.  If the previous window's associated buffer
@@ -2000,6 +2241,12 @@ If there are marked files:  (see |netrw-mf|)
     Marked files will be renamed (moved).  You will be queried as above in
     order to specify where you want the file/directory to be moved.
 
+    WARNING:~
+
+    Note that moving files is a dangerous operation; copies are safer.  That's
+    because a "move" for remote files is actually a copy + delete -- and if
+    the copy fails and the delete does not, you may lose the file.
+
 The g:netrw_rename_cmd variable is used to implement renaming.  By default its
 value is:
 
@@ -2014,7 +2261,7 @@ REVERSING SORTING ORDER		*netrw-r* *netrw-reverse* {{{2
 One may toggle between normal and reverse sorting order by pressing the
 "r" key.
 
-Related topics:              |g:netrw-s|
+Related topics:              |netrw-s|
 Associated setting variable: |g:netrw_sort_direction|
 
 
@@ -2024,8 +2271,18 @@ One may select the sorting style by name, time, or (file) size.  The "s" map
 allows one to circulate amongst the three choices; the directory listing will
 automatically be refreshed to reflect the selected style.
 
-Related topics:               |g:netrw-r| |g:netrw-S|
+Related topics:               |netrw-r| |netrw-S|
 Associated setting variables: |g:netrw_sort_by| |g:netrw_sort_sequence|
+
+
+SETTING EDITING WINDOW					*netrw-C* {{{2
+
+One may select a netrw window for editing with the "C" mapping, or by setting
+g:netrw_chgwin to the selected window number.  Subsequent selection of a file
+to edit (|netrw-cr|) will use that window.
+
+Related topics:			|netrw-cr|
+Associated setting variables:	|g:netrw_chgwin|
 
 
 10. Problems and Fixes					*netrw-problems* {{{1
@@ -2104,7 +2361,7 @@ Associated setting variables: |g:netrw_sort_by| |g:netrw_sort_sequence|
 	    Put the following line in your |.vimrc|:
 >
 		let g:netrw_keepdir= 0
-<	
+<
 								*netrw-p7*
 	P7. I use Chinese (or other non-ascii) characters in my filenames, and
 	    netrw (Explore, Sexplore, Hexplore, etc) doesn't display them!
@@ -2132,7 +2389,7 @@ Associated setting variables: |g:netrw_sort_by| |g:netrw_sort_sequence|
 
 		(Marlin Unruh) This program also works for me. It's a single
 		executable, so he/she can copy it into the Windows\System32
-		folder and create a shortcut to it. 
+		folder and create a shortcut to it.
 
 		(Dudley Fox) You might also wish to consider plink, as it
 		sounds most similar to what you are looking for. plink is an
@@ -2145,7 +2402,7 @@ Associated setting variables: |g:netrw_sort_by| |g:netrw_sort_sequence|
 
 		http://sshwindows.sourceforge.net/
 
-		It doesn't need the full Cygwin package. 
+		It doesn't need the full Cygwin package.
 
 		(Antoine Mechelynck) For individual Unix-like programs needed
 		for work in a native-Windows environment, I recommend getting
@@ -2156,7 +2413,7 @@ Associated setting variables: |g:netrw_sort_by| |g:netrw_sort_sequence|
 		Unlike Cygwin, which sets up a Unix-like virtual machine on
 		top of Windows, GnuWin32 is a rewrite of Unix utilities with
 		Windows system calls, and its programs works quite well in the
-		cmd.exe "Dos box". 
+		cmd.exe "Dos box".
 
 		(dave) Download WinSCP and use that to connect to the server.
 		In Preferences > Editors, set gvim as your editor:
@@ -2183,7 +2440,7 @@ Associated setting variables: |g:netrw_sort_by| |g:netrw_sort_sequence|
 		How to use a private key with 'pscp': >
 
 			http://www.tartarus.org/~simon/puttydoc/Chapter5.html
-			5.2.4 Using public key authentication with PSCP 
+			5.2.4 Using public key authentication with PSCP
 <
 		(Ben Schmidt) I find the ssh included with cwRsync is
 		brilliant, and install cwRsync or cwRsyncServer on most
@@ -2232,14 +2489,24 @@ Associated setting variables: |g:netrw_sort_by| |g:netrw_sort_sequence|
 			let g:netrw_altv = 1
 		* Edit the current directory:  :e .
 		* Select some file, press v
-		* Resize the windows as you wish (see |ctrl-w_<| and
-		  |ctrl-w_>|).  If you're using gvim, you can drag
+		* Resize the windows as you wish (see |CTRL-W_<| and
+		  |CTRL-W_>|).  If you're using gvim, you can drag
 		  the separating bar with your mouse.
 		* When you want a new file, use  ctrl-w h  to go back to the
-		  netrw browser, select a file, then press P  (see |ctrl-w_h|
+		  netrw browser, select a file, then press P  (see |CTRL-W_h|
 		  and |netrw-P|).  If you're using gvim, you can press
 		  <leftmouse> in the browser window and then press the
 		  <middlemouse> to select the file.
+	
+								*netrw-p12*
+	P12. My directory isn't sorting correctly, or unwanted letters are
+	     appearing in the listed filenames, or things aren't lining
+	     up properly in the wide listing, ...
+
+	     This may be due to an encoding problem.  I myself usually use
+	     utf-8, but really only use ascii (ie. bytes from 32-126).
+	     Multibyte encodings use two (or more) bytes per character.
+	     You may need to change |g:netrw_sepchr| and/or |g:netrw_xstrlen|.
 
 ==============================================================================
 11. Debugging Netrw Itself				*netrw-debug* {{{1
@@ -2295,6 +2562,140 @@ which is loaded automatically at startup (assuming :set nocp).
 ==============================================================================
 12. History						*netrw-history* {{{1
 
+	v135: Oct 29, 2008 * using |simplify()| on directory names
+			     (supporting handling ".."s in directory names)
+	      Oct 31, 2008 * added special file highlighting for core dumps
+			     under Unix/Linux.  The default sorting sequence
+			     now also gives core dumps priority.
+	      Nov 10, 2008 * uses a call to netrw#Nread() instead of Nread
+			     to avoid having to use fnameescape()
+			   * fixed a tree redrawing problem (open directory,
+			     open subdir, close subdir, close dir)
+	      Nov 19, 2008 * sprinked some histdel("/",-1)s through the code
+			     in an attempt to prevent netrw from changing
+			     the search history.
+	      Jan 02, 2009 * |g:netrw_funcref| included
+	      Jan 05, 2009 * Explore */ **/ *// **// all clear explorer
+			     variables
+	      Jan 05, 2009 * (Panagiotis Louridas) extended s:WinPath()
+			     to remove cygdrive from non-cygwin Windows
+			     paths.  Improved the determination as to
+			     whether or not to do so.
+	      Jan 13, 2009 * included contains=@NoSpell in every syntax
+			     group for syntax/netrw.vim .
+	v134: Sep 30, 2008 * (Sander Marechal) provided a bugfix involving
+			     the use of the |netrw-t| command with a remote
+			     directory.
+	      Sep 30, 2008 * using "x" on a remote jpg was failing; fixed.
+	      Oct 03, 2008 * bookmarks now go on a list and are stored to
+			     the first directory on the |'runtimepath'| in
+			     the hopes of making their retention reliable.
+			     History now also goes to that directory.
+	      Oct 07, 2008 * Included check that vim 7.0 or later is in use.
+	      Oct 07, 2008 * Improved |g:netrw_retmap| handling.
+	      Oct 12, 2008 * Based upon Sébastien Migniot's suggestion, if
+			     cadaver isn't available then netrw will try to
+			     use curl for the dav://... protocol.
+	      Oct 13, 2008 * added @*/ to netrw buffers' |'iskeyword'|setting
+			     This lets mf (|netrw-mf|) mark directories, links
+			     and executables.
+	      Oct 13, 2008 * avoids a second NetrwBrowse() refresh when
+			     g:netrw_fastbrowse is <= 1 (slow, medium speed)
+	      Oct 22, 2008 * |g:netrw_http_xcmd| may now be overridden
+			     independently of |g:netrw_http_cmd|.
+	      Oct 23, 2008 * [N] added to the various Explore commands to
+			     let users specify the width/height of new
+			     explorer windows, overriding |g:netrw_winsize|.
+	v133: Aug 10, 2008 * NetReadFixup() for win95 was missing some "a:"s
+	      Aug 12, 2008 * (Jan Minář) an error condition in NetrwMethod()
+			     wasn't being used, resulting in "b:netrw_fname
+			     undefined" errors
+	      Aug 12, 2008 * (François Ingeirest) asked that "hi link" be
+			     changed to hi default link in the netrw syntax
+			     files.
+	      Aug 12, 2008 * using s:NetrwUnmarkList() more often.  Filenames
+			     were being left on the global list when removed
+			     from the buffer-local lists.
+	      Aug 14, 2008 * (Joshua Clayton) an errant extra ")" was left in
+			     the rcp-handling portion of NetRead().
+	      Sep 03, 2008 * added |'cursorline'| highlighting to thin, long,
+			     and tree displays.
+	v132: Aug 06, 2008 * Fixed marked file-based obtain
+	      Aug 08, 2008 * sourcing a file via ftp from a netrw-generated
+	                     buffer (or any buffer with |'nobl'|) left an
+			     empty no-name buffer in its wake.  Fixed.
+	v130: Jul 31, 2008 * trying out elinks/links for http://host/
+			     requests.  One problem: in-page links
+			     (such as with ...#LABEL) are not supported
+			   * verified that Bram's modified netrwPlugin works
+	      Aug 01, 2008 * fixed a bug: when sourcing a file via ftp, the
+			     "filter window" was left behind.
+	v129: Jul 31, 2008 * bug found in non-mouse enabled vim and some
+			     local maps
+	v128: Jul 30, 2008 * much work done in using shellescape() and
+			     fnameescape()
+	v126: Jun 30, 2008 * after having gone to a remote directory,
+	                     <f1> was no longer taking one to the correct
+			     entry in the help (|netrw-quickhelp|).  Fixed.
+	      Jul 01, 2008 * extracting the last filename from a wide listing
+			     missed the last letter when |'virtualedit'| not
+			     enabled.
+	      Jul 01, 2008 * vim foo/bar  was creating [Scratch] buffers,
+			     where bar was also a directory
+	      Jul 01, 2008 * numerous additional changes were made to netrw
+			     to use fnameescape() and shellescape() instead
+			     of escape().  Not all changes have been tested
+			     as yet...
+	      Jul 01, 2008 * (James Vega reported) some problems with
+			     :NetrwSettings (due to no longer used setting
+			     variables).
+	      Jul 07, 2008 * Additional numerous changes to support security;
+	                     shellescape(arg,1), etc.
+	v125: Apr 07, 2008 * (Cristian Rigamonti) CR provides a patch; he
+			     noted that gx was failing since its call to
+			     netrw#NetBrowseX() wasn't updated to
+			     netrw#NetrwBrowseX().
+			   * (Stanis Trendelenburg) ST provides a patch to
+			     supports davs: (dav + ssl)
+			   * (Rick Choi) noted that directory names comprised
+			     of three digits were not being displayed by
+			     the internal browser.  Fixed.
+			   * (Erik Falor) provided a patch to handle problems
+			     with changing directory and |'acd'| option.
+			   * (James Vega, Teemu Likonen) noted that netrw
+			     wasn't handling multi-byte filenames/directories
+			     correctly.  Fixed.
+			   * (Rick) found problem with g:netrw_maxfilenamelen
+			     being overridden.
+			   * (James Vega) pointed out that netrw was
+			     misidentifying all files in a symbolically linked
+			     directory as being symbolically linked
+			     themselves.  This particular problem was fixed;
+			     however, there are now situations where
+			     symbolically linked files will not be detected.
+			     Really need an internal vim function to do this
+			     identification.
+	      Apr 17, 2008 * When g:netrw_keepdir==0, current directory
+	                     doesn't necessarily equal b:netrw_curdir
+			     initially.  Problem is due to the patch directly
+			     above.
+			   * Fixed qf to handle case where b:netrw_curdir
+			     isn't the same as the current directory under
+			     linux/macosx.
+			   * New: |netrw-mg| (apply vimgrep to marked files)
+	      May 05, 2008 * (Rick) pointed out that a "setlocal ts=32" was
+			     interfering with g:netrw_maxfilenamelen
+	      May 05, 2008 * (James Vega) a file inside a linked directory
+			     was showing up as a symbolic link itself.
+	      May 22, 2008 * symbolic links, fifos, and sockets are now
+	                     indicated by a trailing @, |, or =, respectively.
+	      Jun 06, 2008 * Removed numerous bugs from the marked file
+			     move and copy.  Tested these changes under
+			     Unix only thus far.
+			   * :Rexplore returns to the screen position in the
+			     netrw listing from whence the file was edited
+	v124: Apr 02, 2008 * (Adrian Rollett) change the line supporting the
+			    "x" action for mac to use g:netrw_shq
 	v123: Feb 27, 2008 * Marked files now keeps a "global" marked file
 			     list.  The global marked file list is used to
 			     support tag processing and vimdiff'ing
@@ -2415,7 +2816,7 @@ which is loaded automatically at startup (assuming :set nocp).
 	      Sep 20, 2007 * (Nico Weber) the "x" command has been extended
 			     to Mac's OS/X (macunix); it now uses open to
 			     handle |netrw-x| browsing with special files.
-	      Sep 22, 2007 * Added |g:netrw_noretmap| to netrw at Tony M's
+	      Sep 22, 2007 * Added g:netrw_noretmap to netrw at Tony M's
 			     request.
 			   * Included path to NetrwRemoteRmFile()
 	v112: Aug 18, 2007 * added mx (|netrw-mx|) for executing arbitrary
@@ -2443,7 +2844,7 @@ which is loaded automatically at startup (assuming :set nocp).
 	v110: May 10, 2007 * added [ and ] maps to NetrwTreeListing
 	      May 25, 2007 * |g:netrw_preview| included
 	      May 29, 2007 * modifed netrw#NetBrowseX to consistently use
-			    |g:netrw_shq| instead of hardcoded quotes,
+			     g:netrw_shq instead of hardcoded quotes,
 			     and modified the snippet that sets up redir
 			     so Windows machines use "nul" instead of
 			     "/dev/null".
@@ -2458,7 +2859,7 @@ which is loaded automatically at startup (assuming :set nocp).
 			     decipher the name.
 	      May 07, 2007 * g:netrw_use_errorwindow now allows one to
 			     have error messages go to a reliable window
-			     or to use a less reliable but recallable 
+			     or to use a less reliable but recallable
 			     echoerr method
 	      May 07, 2007 * g:netrw_scpport and g:netrw_sshport support
 			     use of -P and -p, respectively, to set port
@@ -2917,7 +3318,7 @@ which is loaded automatically at startup (assuming :set nocp).
 
 	inputsecret(), BufReadCmd, BufWriteCmd contributed by C Campbell
 
-	Jerome Auge		-- also using new buffer method with ftp+.netrc
+	Jérôme Augé		-- also using new buffer method with ftp+.netrc
 	Bram Moolenaar		-- obviously vim itself, :e and v:cmdarg use,
 	                           fetch,...
 	Yasuhiro Matsumoto	-- pointing out undo+0r problem and a solution

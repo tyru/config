@@ -1,9 +1,0 @@
-2280a2281,2288
->         " XXX: delete blank line in batch file
->         for line in readfile(s:taglist_tempfile)
->           " Not blank line
->           if match(line, '^\s*$') == -1
->             call writefile([line], s:taglist_tempfile)
->             break
->           endif
->         endfor

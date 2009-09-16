@@ -727,6 +727,9 @@ g:XPTfuncs()   g:XPTvars()
 
 							     *xpt-changes-log*
 : > <
+==== 0.3.7.21 ====
+Added:2009 Jun 01       XPTreload command to reload all snippets to current buffer.
+Added:2009 May 29	standalone popup plugin.
 ==== 0.3.7.20 ====
 Fixed:2009 May 23	avoiding popup fall back into line complete mode
 ==== 0.3.7.19 ====

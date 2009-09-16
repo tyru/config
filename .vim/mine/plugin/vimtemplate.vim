@@ -4,9 +4,9 @@ scriptencoding utf-8
 " DOCUMENT {{{1
 "==================================================
 " Name: vimtemplate
-" Version: 0.0.5
+" Version: 0.0.6
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-12.
+" Last Change: 2009-09-13.
 "
 " Description:
 "   MRU-like simple template management plugin
@@ -22,6 +22,15 @@ scriptencoding utf-8
 "   0.0.4: delete g:vt_files_using_template. and support modeline in
 "   template file.
 "   0.0.5: speed optimization and fix bugs.
+"   0.0.6:
+"       - fix bugs:
+"           - did not ignore whitespaces in <% ... %>
+"           - if filename is 'FooBar.baz',
+"             <%filename_snake%> was expanded to '_foo_bar'.
+"             now is expanded to 'foo_bar'.
+"       - more speed optimization
+"       - <%filename_camel%> now supports '-' and '_' in filename
+"       - implement <%filename_ext%> as template syntax
 " }}}2
 "
 " My .vimrc setting: {{{2
@@ -112,6 +121,24 @@ scriptencoding utf-8
 "       <%filename_noext%>
 "           will expand into current file name without extension.
 "           same as <%eval:expand('%:t:r')%>.
+"
+"       <%filename_ext%>
+"           will expand into current filename's extension.
+"           same as <%eval:expand('%:e')%>.
+"
+"       <%filename_camel%>
+"         will expand into camel case of expand('%:t:r').
+"         so extension is not added to result.
+"
+"         e.g.:
+"             foo-bar.baz => FooBar
+"             foo_bar.baz => FooBar
+"
+"       <%filename_snake%>
+"         will expand into snake case of expand('%:t:r').
+"         so extension is not added to result.
+"
+"         e.g.: FooBar.baz => foo_bar
 "
 "       <%parent_dir%>
 "           will expand into current file's dir.
@@ -242,7 +269,7 @@ endfunc
 " s:expand_template_syntax(line, path) {{{2
 func! s:expand_template_syntax(line, path)
     let line = a:line
-    let regex = '\m<%\(.\{-}\)%>'
+    let regex = '\m<%\s*\(.\{-}\)\s*%>'
     let path = expand('%') == '' ? a:path : expand('%')
     let replaced = ''
 
@@ -256,27 +283,39 @@ func! s:expand_template_syntax(line, path)
         else
             if lis[1] ==# 'path'
                 let replaced = path
+
             elseif lis[1] ==# 'filename'
                 let replaced = fnamemodify(path, ':t')
+
             elseif lis[1] ==# 'filename_noext'
                 let replaced = fnamemodify(path, ':t:r')
+
+            elseif lis[1] ==# 'filename_ext'
+                let replaced = fnamemodify(path, ':e')
+
             elseif lis[1] ==# 'filename_camel'
                 let replaced = fnamemodify(path, ':t:r')
-                let m = get(matchlist(replaced, '_.'), 0, '')
+                let m = get(matchlist(replaced, '[-_].'), 0, '')
                 while m != ''
                     let replaced = substitute(replaced, m, toupper(m[1]), '')
-                    let m = get(matchlist(replaced, '_.'), 0, '')
+                    let m = get(matchlist(replaced, '[-_].'), 0, '')
                 endwhile
                 let replaced = toupper(replaced[0]) . replaced[1:]
+
             elseif lis[1] ==# 'filename_snake'
                 let replaced = fnamemodify(path, ':t:r')
-                let l = split(replaced, '\zs')
-                let mapped = map(l, 'v:val =~# "[A-Z]" ? "_".tolower(v:val) : v:val')
-                let replaced = join(mapped, '')
+                let camels = split(replaced, '\%([A-Z]\)\@=')
+                let camels =
+                            \[tolower(strpart(camels[0], 0, 1)).strpart(camels[0], 1)] +
+                            \map(camels[1:], '"_".tolower(strpart(v:val, 0, 1)).strpart(v:val, 1)')
+                let replaced = join(camels, '')
+
             elseif lis[1] ==# 'parent_dir'
                 let replaced = fnamemodify(path, ':p:h')
+
             elseif lis[1] ==# 'author'
                 let replaced = g:vt_author
+
             elseif lis[1] ==# 'email'
                 let replaced = g:vt_email
             endif

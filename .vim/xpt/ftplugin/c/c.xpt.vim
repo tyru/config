@@ -1,94 +1,136 @@
-XPTemplate priority=lang 
+XPTemplate priority=lang indent=auto
 
 
-XPTvar $TRUE          1
-XPTvar $FALSE         0
-XPTvar $NULL          NULL
-XPTvar $INDENT_HELPER /* void */;
+XPTvar $TRUE           1
+XPTvar $FALSE          0
+XPTvar $NULL           NULL
+
+XPTvar $IF_BRACKET_STL     \ 
+XPTvar $FOR_BRACKET_STL    \ 
+XPTvar $WHILE_BRACKET_STL  \ 
+XPTvar $STRUCT_BRACKET_STL \ 
+XPTvar $FUNC_BRACKET_STL   \n
+
+XPTvar $VOID_LINE      /* void */;
+XPTvar $CURSOR_PH      /* cursor */
+
+XPTvar $CL  /*
+XPTvar $CM   *
+XPTvar $CR   */
 
 
 XPTinclude
-      \ _common/common 
-      \ _comment/c.like 
+      \ _common/common
+      \ _comment/doubleSign
       \ _condition/c.like
-      \ _loops/c.like
-      \ _structures/c.like
+      \ _func/c.like
+      \ _loops/c.while.like
       \ _preprocessor/c.like
+      \ _structures/c.like
+
+XPTinclude
+      \ _loops/for
 
 
 " ========================= Function and Varaibles =============================
 
-let s:f = XPTcontainer()[ 0 ]
+let s:f = XPTcontainer()[0]
 
-function! s:f.showLst()
-   return [ "xx-small", "x-small", "small", "medium", "large", "x-large", "xx-large", "larger", "smaller" ]
+let s:printfElts = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+"  %[flags][width][.precision][length]specifier  
+let s:printfItemPattern = '\V\C' . '%' . '\[+\- 0#]\*' . '\%(*\|\d\+\)\?' . '\(.*\|.\d\+\)\?' . '\[hlL]\?' . '\(\[cdieEfgGosuxXpn]\)'
+
+let s:printfSpecifierMap = {
+      \'c' : 'char',
+      \'d' : 'int',
+      \'i' : 'int',
+      \'e' : 'scientific',
+      \'E' : 'scientific',
+      \'f' : 'float',
+      \'g' : 'float',
+      \'G' : 'float',
+      \'o' : 'octal',
+      \'s' : 'str',
+      \'u' : 'unsigned',
+      \'x' : 'decimal',
+      \'X' : 'Decimal',
+      \'p' : 'pointer',
+      \'n' : 'numWritten',
+      \}
+
+fun! s:f.c_printfElts( v )
+  " remove '%%' representing a single '%'
+  let v = substitute( a:v, '\V%%', '', 'g' )
+
+  if v =~ '\V%'
+
+    let start = 0
+    let post = ''
+    let i = -1
+    while 1
+      let i += 1
+
+      let start = match( v, s:printfItemPattern, start )
+      if start < 0
+        break
+      endif
+
+      let eltList = matchlist( v, s:printfItemPattern, start )
+
+      if eltList[1] == '.*'
+        " need to specifying string length before string pointer
+        let post .= ', `' . s:printfElts[ i ] . '_len^'
+      endif
+
+      let post .= ', `' . s:printfElts[ i ] . '_' . s:printfSpecifierMap[ eltList[2] ] . '^'
+
+      let start += len( eltList[0] )
+
+    endwhile
+    return post
+
+  else 
+    return self.Next( '' )
+
+  endif
 endfunction
+
+
 
 " ================================= Snippets ===================================
 XPTemplateDef
 
 
-" XPT fs
-" font-size: `--`size`==^showLst()^
-" `size^
-" ..XPT
-" 
-" XPT tt
-" XSET to=Trigger("fs")
-" "`~~~`to`***^"
-" ..XPT
-" 
-" XPT yy
-" `-`w`=^~NN()~^
-" ..XPT
+" XPT tt hint=tips
+" XSET a2|post=fff()
+" `aa^`aa^fff()^
+
+XPT printf	hint=printf\(...)
+XSET elts=c_printfElts( R( 'pattern' ) )
+printf( "`pattern^"`elts^ )
 
 
-" " sample:
-" XPT for indent=/2*8 hint=this\ is\ for
-" for (`i^ = 0; `i^ < `len^; ++`i^) {
-"   `cursor^
-" }
+XPT sprintf	hint=sprintf\(...)
+XSET elts=c_printfElts( R( 'pattern' ) )
+sprintf( `str^, "`pattern^"`elts^ )
 
 
-" " JUST A TEST
-" "
-" " Super Repetition. saves 1 key pressing. without needing expanding repetition
-" " For small repetition usage. Such as parameter list
-" " 
-" "   type first, then <tab>
-" " NOT <tab> then type
-" "
-" " NOTE that "exp" followed by only 2 dot. distinction from normal
-" " expandable. For normal expandable does not evaluate expression.
-" "
-" XPT superrepetition
-" XSET exp..|post=ExpandIfNotEmpty(', ', 'exp..')
-" `exp..^
+XPT snprintf	hint=snprintf\(...)
+XSET elts=c_printfElts( R( 'pattern' ) )
+snprintf( `str^, `size^, "`pattern^"`elts^ )
 
 
+XPT fprintf	hint=fprintf\(...)
+XSET elts=c_printfElts( R( 'pattern' ) )
+fprintf( `stream^, "`pattern^"`elts^ )
 
 
 XPT assert	hint=assert\ (..,\ msg)
-assert(`isTrue^, "`text^");
+assert(`isTrue^, "`text^")
 
-XPT main hint=main\ (argc,\ argv)
-  int
-main(int argc, char **argv)
-{
-  `cursor^
-  return 0;
-}
 
-" Quick-Repetition parameters list
-XPT fun		hint=func..\ (\ ..\ )\ {...
-XSET p..|post=ExpandIfNotEmpty(', ', 'p..')
-  `int^
-`name^(`p..^)
-{
-  `cursor^
-}
-
-XPT cmt
+XPT fcomment
 /**
  * @author : `$author^ | `$email^
  * @description
@@ -102,6 +144,7 @@ XPT para syn=comment	hint=comment\ parameter
 
 
 XPT filehead
+XSET cursor|pre=CURSOR
 /**-------------------------/// `sum^ \\\---------------------------
  *
  * <b>`function^</b>
@@ -109,7 +152,7 @@ XPT filehead
  * @since : `strftime("%Y %b %d")^
  * 
  * @description :
- *   `cursor^
+ *     `cursor^
  * @usage : 
  * 
  * @author : `$author^ | `$email^
@@ -117,4 +160,16 @@ XPT filehead
  * @TODO : 
  * 
  *--------------------------\\\ `sum^ ///---------------------------*/
+
+..XPT
+
+
+
+" ================================= Wrapper ===================================
+
+
+XPT call_ hint=..(\ SEL\ )
+XSET p*|post=ExpandIfNotEmpty(', ', 'p*')
+`name^(`wrapped^`, `p*^)`cursor^
+
 
