@@ -8,6 +8,8 @@ scriptencoding utf-8
 " Author:  tyru <tyru.exe@gmail.com>
 " Last Change: 2009-09-16.
 "
+" GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
+"
 " Description:
 "   simple buffer manager like QuickBuf.vim
 "
