@@ -750,6 +750,7 @@ operator-replace	operator-replace.txt	/*operator-replace*
 operator-replace-bugs	operator-replace.txt	/*operator-replace-bugs*
 operator-replace-changelog	operator-replace.txt	/*operator-replace-changelog*
 operator-replace-changelog-0.0.0	operator-replace.txt	/*operator-replace-changelog-0.0.0*
+operator-replace-changelog-0.0.1	operator-replace.txt	/*operator-replace-changelog-0.0.1*
 operator-replace-contents	operator-replace.txt	/*operator-replace-contents*
 operator-replace-examples	operator-replace.txt	/*operator-replace-examples*
 operator-replace-interface	operator-replace.txt	/*operator-replace-interface*

@@ -6,7 +6,9 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.1
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-13.
+" Last Change: 2009-09-17.
+"
+" GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
 " Description:
 "   simple buffer manager like QuickBuf.vim
@@ -719,10 +721,32 @@ endfunc
 
 " }}}
 
+
+
+" s:bufenter_handler {{{
+func! s:bufenter_handler()
+    echoerr "fooo!"
+    let cmd = input('')
+    if cmd =~# '^\s*$' | return | endif
+
+    call feedkeys(cmd, 'm')
+endfunc
+" }}}
+
 " }}}
 
 " Mappings {{{
 execute 'nnoremap <silent><unique> '.g:dumbbuf_hotkey.' :call <SID>run()<CR>'
+" }}}
+
+" Autocmd {{{
+augroup DumbBuf
+    autocmd!
+
+    for i in [g:dumbbuf_listed_buffer_name, g:dumbbuf_unlisted_buffer_name]
+        execute 'autocmd BufEnter '.i.' call s:bufenter_handler()'
+    endfor
+augroup END
 " }}}
 
 " Restore 'cpoptions' {{{

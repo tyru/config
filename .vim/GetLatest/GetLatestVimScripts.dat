@@ -8,3 +8,5 @@ ScriptID SourceID Filename
 1075 9816 :AutoInstall: netrw.vim
 1697 8283 :AutoInstall: surround.vim
 1502 8743 :AutoInstall: vimball.vim
+# my plugins
+0 0 dumbbuf.vim

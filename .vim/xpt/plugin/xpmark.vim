@@ -49,6 +49,7 @@ fun! XPMflush()
     let d.marks = {}
     let d.orderedMarks = []
     let d.markHistory[ changenr() ] = { 'dict' : d.marks, 'list': d.orderedMarks }
+    let d.changeLikelyBetween  = { 'start' : '', 'end' : '' }
 endfunction 
 fun! XPMgoto( name ) 
     let d = s:bufData()
@@ -185,7 +186,7 @@ fun! s:snapshot() dict
         if has_key( self.markHistory, n-2 )
             let self.markHistory[ n-1 ] = self.markHistory[ n-2 ]
         else
-            throw 'no history nr:' . ( n-1 ) . ' lastNr:' . self.lastChangenr . ' history:' . string( self.markHistory )
+            self.markHistory[ n-1 ] = {'list':[], 'dict' :{}}
         endif
     endif
     Assert has_key( self.markHistory, n-1 )

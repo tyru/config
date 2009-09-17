@@ -1,4 +1,4 @@
-XPTemplate priority=lang
+XPTemplate priority=lang indent=auto
 
 let [s:f, s:v] = XPTcontainer() 
  
@@ -34,11 +34,14 @@ if !exists("`access^g^:`varname^")
 endif
 
 
-XPT fun hint=fun!\ ..(..)\ ..\ endfunction
+XPT fun hint=func!\ ..(..)\ ..\ endfunc
 XSET arg*|post=ExpandIfNotEmpty(', ', 'arg*')
-fun! `name^(`arg*^) "{{{
-  `cursor^
-endfunction "}}}
+" `name^ {{{
+func! `name^(`arg*^)
+    `cursor^
+endfunc
+" }}}
+..XPT
 
 
 XPT while hint=while\ ..\ ..\ endwhile

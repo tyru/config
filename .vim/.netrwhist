@@ -1,11 +1,5 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =9
-let g:netrw_dirhist_1='/home/tyru'
-let g:netrw_dirhist_2='/home/tyru/.vim-sign-diff'
-let g:netrw_dirhist_3='/home/tyru'
-let g:netrw_dirhist_4='/home/tyru/.vim'
-let g:netrw_dirhist_5='/home/tyru/.vim/GetLatest'
-let g:netrw_dirhist_6='/home/tyru/.vim'
-let g:netrw_dirhist_7='/home/tyru/.vim/GetLatest'
-let g:netrw_dirhist_8='/home/tyru'
-let g:netrw_dirhist_9='/home/tyru/.vim'
+let g:netrw_dirhist_cnt =3
+let g:netrw_dirhist_1='/home/tyru/.vim/xpt'
+let g:netrw_dirhist_2='/home/tyru/.vim/xpt/ftplugin'
+let g:netrw_dirhist_3='/home/tyru/.vim/xpt/ftplugin/vim'

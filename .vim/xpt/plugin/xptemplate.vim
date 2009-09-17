@@ -269,14 +269,13 @@ endfunction
 fun! XPTemplatePreWrap(wrap) 
     let x = g:XPTobject()
     let x.wrap = a:wrap
-    if x.wrap[-1:-1] == "\n"
-        let x.wrap = x.wrap[0:-2]
-        let @" = "\n"
-        normal! ""P
-    endif
+    let x.wrap = substitute( x.wrap, '\n$', '', '' )
     let x.wrapStartPos = col(".")
-    if g:xptemplate_strip_left
-        let x.wrap = substitute(x.wrap, '^\s*', '', '')
+    if g:xptemplate_strip_left || x.wrap =~ '\n'
+        let indent = matchstr( x.wrap, '^\s*' )
+        let x.wrap = x.wrap[ len( indent ) : ]
+        let x.wrap = s:BuildFilterIndent( x.wrap, len( indent ) )
+        let x.wrap = 'Echo(' . string( x.wrap ) . ')'
     endif
     let ppr = s:Popup("", x.wrapStartPos)
     return ppr
@@ -565,11 +564,9 @@ fun! s:RenderTemplate(nameStartPosition, nameEndPosition)
         let tmpl = s:ApplyTmplIndent(ctx, tmpl)
     endif
     let tmpl = s:ParseRepetition(tmpl, x)
-    let wrapPos = match( tmpl, xp.lft . s:wrappedName . xp.rt )
-    if wrapPos != -1
-        let indent = matchstr( tmpl[ : wrapPos - 1 ], '\V\.\*\%(\^\|\n\)\zs\s\*' )
-        let wrapped = substitute( x.wrap, '\n', "\n" . indent, 'g' )
-        let tmpl = substitute(tmpl, '\V' . xp.lft . s:wrappedName . xp.rt, wrapped, 'g')
+    if ctx.tmpl.wrapped
+        let ctx.tmpl.setting.preValues.wrapped = x.wrap
+        let ctx.tmpl.setting.defaultValues.wrapped = "Next()"
     endif
     call XPMupdate()
     call XPMadd( ctx.marks.tmpl.start, a:nameStartPosition, g:XPMpreferLeft )
@@ -641,14 +638,19 @@ fun! s:GetValueInfo(end)
     return [r0, r1, r2]
 endfunction 
 fun! s:BuildFilterIndent( str, firstLineIndent ) 
-    let min = a:firstLineIndent
+    let [ nIndent, str ] = s:RemoveCommonIndent( a:str, a:firstLineIndent )
+    return repeat( ' ', a:firstLineIndent - nIndent ) . "\n" . str
+endfunction 
+fun! s:RemoveCommonIndent( str, largerThan ) 
+    let min = a:largerThan
     let list = split( a:str, "\n", 1 )
+    call filter( list, 'v:val !~ ''^\s*$''' )
     for line in list[ 1 : ]
         let indentWidth = len( matchstr( line, '^\s*' ) )
         let min = min( [ min, indentWidth ] )
     endfor
     let pattern = '\n\s\{' . min . '}'
-    return repeat( ' ', a:firstLineIndent - min ) . "\n" . substitute( a:str, pattern, "\n", 'g' )
+    return [min, substitute( a:str, pattern, "\n", 'g' )]
 endfunction 
 fun! s:CreatePlaceHolder( ctx, nameInfo, valueInfo ) 
     let xp = a:ctx.tmpl.ptn
@@ -846,6 +848,7 @@ fun! s:ApplyPreValues( placeHolder )
     let preValue = a:placeHolder.name == '' ? '' : 
                 \ (has_key( setting.preValues, a:placeHolder.name ) ? setting.preValues[ a:placeHolder.name ] : '')
     if !s:IsFilterEmpty( preValue ) 
+        let preValue = s:Eval( preValue )
         let [ filterIndent, filterText ] = s:GetFilterIndentAndText( preValue )
         call s:SetPreValue( a:placeHolder, filterIndent, filterText )
     else
@@ -853,17 +856,17 @@ fun! s:ApplyPreValues( placeHolder )
                     \setting.defaultValues[ a:placeHolder.name ] 
                     \: a:placeHolder.ontimeFilter
         if !s:IsFilterEmpty( preValue ) 
-            let [ filterIndent, filterText ] = s:GetFilterIndentAndText( preValue )
-            if filterText !~ '\V' . xp.item_func . '\|' . xp.item_qfunc 
+            if preValue !~ '\V' . xp.item_func . '\|' . xp.item_qfunc 
+                let text = s:Eval( preValue )
+                let [ filterIndent, filterText ] = s:GetFilterIndentAndText( text )
                 call s:SetPreValue( a:placeHolder, filterIndent, filterText )
             endif
         endif
     endif
 endfunction
 fun! s:SetPreValue( placeHolder, indent, text )
-    let text = s:Eval( a:text )
     let marks = a:placeHolder.isKey ? a:placeHolder.editMark : a:placeHolder.mark
-    let text = s:AdjustIndentAccordingToLine( text, a:indent, XPMpos( marks.start )[0], a:placeHolder )
+    let text = s:AdjustIndentAccordingToLine( a:text, a:indent, XPMpos( marks.start )[0], a:placeHolder )
     call XPRstartSession()
     call XPreplaceByMarkInternal( marks.start, marks.end, text )
     call XPRendSession()
@@ -1098,8 +1101,7 @@ fun! s:GotoNextItem()
     endif
     let phPos = XPMpos( placeHolder.mark.start )
     if phPos == [0, 0]
-        call s:log.Error( 'failed to find position of mark:' . placeHolder.mark.start )
-        return s:Crash()
+        return s:Crash('failed to find position of mark:' . placeHolder.mark.start)
     endif
     let leader =  renderContext.leadingPlaceHolder
     let leaderMark = leader.isKey ? leader.editMark : leader.mark
@@ -1176,6 +1178,12 @@ fun! s:HandleDefaultValueAction( ctx, act )
         elseif a:act.action ==# 'next'
             if has_key( a:act, 'text' )
                 let text = has_key( a:act, 'text' ) ? a:act.text : ''
+                if text != ''
+                    let [ filterIndent, filterText ] = s:GetFilterIndentAndText( text )
+                    let leader = ctx.leadingPlaceHolder
+                    let marks = leader.isKey ? leader.editMark : leader.mark
+                    let text = s:AdjustIndentAccordingToLine( filterText, filterIndent, XPMpos( marks.start )[0], leader )
+                endif
                 call s:FillinLeadingPlaceHolderAndSelect( ctx, text )
             endif
             return s:FinishCurrentAndGotoNextItem( '' )
@@ -1631,15 +1639,19 @@ fun! s:PopBackPos()
     return p
 endfunction 
 fun! s:SynNameStack(l, c) 
-    let ids = synstack(a:l, a:c)
-    if empty(ids)
-        return []
+    if exists( '*synstack' )
+        let ids = synstack(a:l, a:c)
+        if empty(ids)
+            return []
+        endif
+        let names = []
+        for id in ids
+            let names = names + [synIDattr(id, "name")]
+        endfor
+        return names
+    else
+        return [synIDattr( synID( a:l, a:c, 0 ), "name" )]
     endif
-    let names = []
-    for id in ids
-        let names = names + [synIDattr(id, "name")]
-    endfor
-    return names
 endfunction 
 fun! s:CurSynNameStack() 
     return SynNameStack(line("."), col("."))
