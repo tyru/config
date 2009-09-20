@@ -175,8 +175,9 @@ unless ($extract) {
 if ($auto_commit) {
     my $output = qx(git diff -- .vimrc);
     if (length $output) {
-        # ¤â¤·.vimrc¤¬ÊÑ¹¹¤µ¤ì¤Æ¤¤¤¿¤é
+        # ã‚‚ã—.vimrcãŒå¤‰æ›´ã•ã‚Œã¦ã„ãŸã‚‰
         system(qw(vim -c RcbVimrc -c quit));
+        sleep 1;
     }
 
     system(qw(git rm -fr --cached .));
