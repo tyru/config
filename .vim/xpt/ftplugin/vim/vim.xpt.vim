@@ -1,4 +1,4 @@
-XPTemplate priority=lang indent=auto
+XPTemplate priority=lang
 
 let [s:f, s:v] = XPTcontainer() 
  
@@ -8,7 +8,7 @@ XPTvar $FALSE         0
 XPTinclude 
       \ _common/common
 
-XPTvar $CS    #
+XPTvar $CS    "
 XPTinclude 
       \ _comment/singleSign
 
@@ -34,14 +34,11 @@ if !exists("`access^g^:`varname^")
 endif
 
 
-XPT fun hint=func!\ ..(..)\ ..\ endfunc
+XPT fun hint=fun!\ ..(..)\ ..\ endfunction
 XSET arg*|post=ExpandIfNotEmpty(', ', 'arg*')
-" `name^ {{{
-func! `name^(`arg*^)
-    `cursor^
-endfunc
-" }}}
-..XPT
+fun! `name^(`arg*^) "{{{
+  `cursor^
+endfunction "}}}
 
 
 XPT while hint=while\ ..\ ..\ endwhile

@@ -159,7 +159,7 @@ filetype plugin indent on
 
 
 " ランタイムパスの設定
-if has( "win32" ) && isdirectory( $HOME .'/.vim' )
+if has("win32")
     set runtimepath+=$HOME/.vim
 endif
 let s:runtime_dirs = [
@@ -1078,13 +1078,13 @@ nnoremap <silent> <Leader>nn   :call <SID>FoldAllExpand()<CR>
 " for lisp ?
 "
 " wrap () with ().
-nnoremap <silent> <Leader>a        %%i(<Esc>l%a)<Esc>%a
+nnoremap <Leader>a        %%i(<Esc>l%a)<Esc>%a
 " change () to [].
-nnoremap <silent> <Leader>A        %%mz%s]<Esc>`zs[<Esc>
+nnoremap <Leader>A        %%mz%s]<Esc>`zs[<Esc>
 " delete ().
-nnoremap <silent> <Leader>z        %%mz%x`zx
+nnoremap <Leader>z        %%mz%x`zx
 " move current atoms in () to upper ().
-nnoremap <silent> <Leader>Z        %%da(h"_da(P
+nnoremap <Leader>Z        %%da(h"_da(P
 
 nnoremap <silent> Q     gQ
 
