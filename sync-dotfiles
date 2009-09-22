@@ -173,10 +173,14 @@ unless ($extract) {
 
 # update trees and commit all.
 if ($auto_commit) {
-    my $output = qx(git diff -- .vimrc);
-    if (length $output) {
-        # もし.vimrcが変更されていたら
+    if (length qx(git diff -- .vimrc)) {
+        # if .vimrc has changed
         system(qw(vim -c RcbVimrc -c quit));
+        sleep 1;
+    }
+    if (length qx(git diff -- .gvimrc)) {
+        # if .gvimrc has changed
+        system(qw(vim -c RcbGVimrc -c quit));
         sleep 1;
     }
 

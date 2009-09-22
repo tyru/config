@@ -26,12 +26,10 @@ autocmd VimEnter * call s:set_color_scheme()
 
 " }}}1
 "-----------------------------------------------------------------
-" 基本設定＆KaoriYa版についてきたもの＆その他色々コピペ {{{1
+" 基本設定＆KaoriYa版についてきたもの＆その他色々コピペ {{{
 
-" set options {{{2
+" set options {{{
 
-" set matchpairs+=<:>       " これがあると->を入力したとき画面が点滅する in Perl
-" set spell      " すげーけどキモい
 set autoindent
 set autoread
 set backspace=indent,eol,start
@@ -176,9 +174,9 @@ for dir in s:runtime_dirs
     endif
 endfor
 unlet s:runtime_dirs
-" }}}2
+" }}}
 
-" vimbackupの中の古いやつを削除する {{{2
+" vimbackupの中の古いやつを削除する {{{
 func! s:DeleteBackUp()
     if has('win32')
         if exists('$TMP')
@@ -206,7 +204,7 @@ func! s:DeleteBackUp()
         call filter(backup_files, 'localtime() - getftime(v:val) > thirty_days_sec')
         for i in backup_files
             if delete(i) != 0
-                call s:Warn("can't delete " . i)
+                call s:warn("can't delete " . i)
             endif
         endfor
         call writefile([localtime()], stamp_file)
@@ -215,10 +213,9 @@ endfunc
 
 call s:DeleteBackUp()
 delfunc s:DeleteBackUp
-" }}}2
+" }}}
 
-" 文字コードの設定 {{{2
-
+" 文字コードの設定 {{{
 if &encoding !=# 'utf-8'
     set encoding=japan
     set fileencoding=japan
@@ -272,19 +269,9 @@ set fileformats=unix,dos,mac
 if exists('&ambiwidth')
     set ambiwidth=double
 endif
+" }}}
 
-" }}}2
-
-" メニューファイルが存在しない場合は予め'guioptions'を調整しておく {{{2
-if !filereadable($VIMRUNTIME . '/menu.vim') && has('gui_running')
-    set guioptions+=M
-endif
-
-" }}}2
-
-" }}}2
-
-" コンソールでのカラー表示のための設定(暫定的にUNIX専用) {{{2
+" コンソールでのカラー表示のための設定(暫定的にUNIX専用) {{{
 if has('unix') && !has('gui_running')
     let uname = system('uname')
     if uname =~? "linux"
@@ -298,32 +285,26 @@ if has('unix') && !has('gui_running')
     endif
     unlet uname
 endif
+" }}}
 
-" }}}2
-
-" コンソール版で環境変数$DISPLAYが設定されていると起動が遅くなる件へ対応 {{{2
+" コンソール版で環境変数$DISPLAYが設定されていると起動が遅くなる件へ対応 {{{
 if !has('gui_running') && has('xterm_clipboard')
     set clipboard=exclude:cons\\\|linux\\\|cygwin\\\|rxvt\\\|screen
 endif
+" }}}
 
-" }}}2
-
-" プラットホーム依存の特別な設定 {{{2
-
+" プラットホーム依存の特別な設定 {{{
 " WinではPATHに$VIMが含まれていないときにexeを見つけ出せないので修正
 if has('win32') && $PATH !~? '\(^\|;\)' . escape($VIM, '\\') . '\(;\|$\)'
     let $PATH = $VIM . ';' . $PATH
 endif
-
 if has('mac')
     " Macではデフォルトの'iskeyword'がcp932に対応しきれていないので修正
     set iskeyword=@,48-57,_,128-167,224-235
 endif
-
-" }}}2
+" }}}
 
 " 日本語入力に関する設定 {{{
-
 if has('multi_byte_ime') || has('xim')
   " IME ON時のカーソルの色を設定(設定例:紫)
   highlight CursorIM guibg=Purple guifg=NONE
@@ -337,40 +318,72 @@ if has('multi_byte_ime') || has('xim')
   " 挿入モードでのIME状態を記憶させない場合、次行のコメントを解除
   "inoremap <silent> <ESC> <ESC>:set iminsert=0<CR>
 endif
+" }}}
 
-""" }}}
-
-" }}}1
+" }}}
 "-----------------------------------------------------------------
-" Commands {{{1
-
-" Util Commands {{{
-" s:Warn {{{
-func! s:Warn(msg)
+" Functions {{{
+" s:warn {{{
+func! s:warn(msg)
     echohl WarningMsg
     echo a:msg
     echohl None
 endfunc
 " }}}
 
-" s:System {{{
-func! s:System(command, ...)
+" s:system {{{
+func! s:system(command, ...)
     let args = [a:command] + map(copy(a:000), 'shellescape(v:val)')
     return system(join(args, ' '))
 endfunc
 " }}}
+
+" s:EvalFileNormal(eval_main) {{{
+func! s:EvalFileNormal(eval_main)
+    normal! %v%
+    call s:EvalFileVisual(a:eval_main)
+endfunc
 " }}}
 
+" s:EvalFileVisual(eval_main) {{{
+func! s:EvalFileVisual(eval_main) range
+    let z_val = getreg('z', 1)
+    let z_type = getregtype('z')
+    normal! "zy
 
-command! -range BSlashToSlash
-            \ s/\\/\//g
-command! -range SlashToBSlash
-            \ s/\//\\/g
+    try
+        let curfile = expand('%')
+        if !filereadable(curfile)
+            call s:warn("can't load " . curfile . "...")
+            return
+        endif
 
-" セッション保存 GUI 版
-if has( 'gui_running' )
-    command! Session       browse mksession
-endif
+        let lines = readfile(curfile) + ['(print'] + split(@z, "\n") + [')']
+
+        let tmpfile = tempname() . localtime()
+        call writefile(lines, tmpfile)
+
+        if filereadable(tmpfile)
+            if a:eval_main ==# 'e'
+                " ファイル全体を評価し、mainを実行する
+                echo s:system('gosh', tmpfile)
+            elseif a:eval_main ==# 'E'
+                " ファイル全体を評価する
+                echo system(printf('cat %s | gosh', shellescape(tmpfile)))
+            else
+                call s:warn("this block never reached")
+            endif
+        else
+            call s:warn("cannot write to " . tmpfile . "...")
+        endif
+    finally
+        call setreg('z', z_val, z_type)
+    endtry
+endfunc
+" }}}
+" }}}
+"-----------------------------------------------------------------
+" Commands {{{1
 
 " HelpTagAll {{{2
 "     runtimepathの全てのdocディレクトリに
@@ -387,19 +400,6 @@ func! s:HelpTagAll()
         endif
     endfor
 endfunc
-" }}}2
-
-" ShowEol {{{2
-" 末尾の$を表示したりしなかったり
-" command! ShowEol
-"             \ call s:ShowEol()
-" 
-" func! s:ShowEol()
-"     setlocal listchars+=eol:$
-"     redraw
-"     sleep 2
-"     setlocal listchars-=eol:$
-" endfunc
 " }}}2
 
 " MTest {{{2
@@ -425,15 +425,15 @@ func! s:MTest( ... )
 endfunc
 " }}}2
 
-" Dir {{{2
-command! -nargs=? -complete=dir Dir
-            \ call s:Dir( <f-args> )
+" Open {{{2
+command! -nargs=? -complete=dir Open
+            \ call s:Open( <f-args> )
 
-func! s:Dir( ... )
+func! s:Open( ... )
     let dir =   a:0 == 1 ? a:1 : '.'
 
     if !isdirectory( dir )
-        call s:Warn(dir .': No such a directory')
+        call s:warn(dir .': No such a directory')
         return
     endif
 
@@ -442,10 +442,10 @@ func! s:Dir( ... )
             let dir = '"'. dir .'"'
         endif
         let dir = substitute( dir, '/', '\', 'g' )
-        call s:System('explorer', dir)
+        call s:system('explorer', dir)
     else
         let dir = shellescape( dir )
-        call s:System('gnome-open', dir)
+        call s:system('gnome-open', dir)
     endif
 endfunc
 " }}}2
@@ -482,12 +482,12 @@ func! s:ListAndExecute( lis, template )
         if string( num ) =~ '^\d\+$'
             if num < 1 || len( a:lis ) < num
                 " 範囲外
-                call s:Warn( 'out of num number. Try again.' )
+                call s:warn( 'out of num number. Try again.' )
             else
                 break
             endif
         else
-            call s:Warn( 'non-digit characters found. Try again.' )
+            call s:warn( 'non-digit characters found. Try again.' )
         endif
     endwhile
 
@@ -558,11 +558,11 @@ func! s:DelFile(...)
             if filereadable(j)
                 call delete(j)
             else
-                call s:Warn(j . ": No such a file")
+                call s:warn(j . ": No such a file")
             endif
 
             if filereadable(j)
-                call s:Warn(printf("Can't delete '%s'", j))
+                call s:warn(printf("Can't delete '%s'", j))
             elseif j ==# expand('%')
                 " 現在開いているファイルを削除する場合現在のバッファを削除する
                 bwipeout
@@ -627,19 +627,7 @@ command! -nargs=* GccSyntaxCheck
             \ call s:GccSyntaxCheck(<f-args>)
 " }}}2
 
-" ToggleOption {{{
-command! -nargs=1 ToggleOption
-            \ call s:ToggleOption(<f-args>)
-
-func! s:ToggleOption(opt)
-    let val = getbufvar('%', '&'.a:opt)
-    if val ==# '' | return | endif
-    if type(val) ==# type(0)
-        call setbufvar('%', '&'.a:opt, !val)
-    endif
-endfunc
-" }}}
-
+" XXX
 " BDelUnlisted {{{
 command! BDelUnlisted
             \ call s:BDelUnlisted()
@@ -791,8 +779,7 @@ endfunc
 
 " s:LoadWhenFileType() {{{2
 func! s:LoadWhenFileType()
-
-    call s:SetDict(&filetype)    " dict
+    call s:SetDict(&filetype)
 
     " デフォルト(ftplugin/*.vimで用意されていない場合)のomnifunc
     if exists("+omnifunc") && &omnifunc == ""
@@ -804,9 +791,7 @@ func! s:LoadWhenFileType()
 
     elseif &filetype == 'c' || &filetype == 'cpp'
         TabChange 4
-        if &filetype == 'c'
-            call s:SetDict('c')
-        elseif &filetype == 'cpp'
+        if &filetype == 'cpp'
             call s:SetDict('c', 'cpp')
         endif
 
@@ -826,8 +811,8 @@ func! s:LoadWhenFileType()
 
     elseif &filetype == 'html' || &filetype == 'javascript' || &filetype == 'css'
         TabChange 2
-        call s:SetDict('html', 'javascript', 'css')
         if &filetype == 'html'
+            call s:SetDict('html', 'javascript', 'css')
             inoremap <buffer>   </    </<C-x><C-o>
         endif
 
@@ -852,16 +837,41 @@ func! s:LoadWhenFileType()
 
     elseif &filetype == 'lisp' || &filetype == 'scheme'
         TabChange 2
-        call s:LispSetup()
+
+        setlocal lisp
+        setlocal nocindent
+
+        nnoremap <buffer> <Leader>e       :call <SID>EvalFileNormal('e')<CR>
+        vnoremap <buffer> <Leader>e       :call <SID>EvalFileVisual('e')<CR>
+        nnoremap <buffer> <Leader>E       :call <SID>EvalFileNormal('E')<CR>
+        vnoremap <buffer> <Leader>E       :call <SID>EvalFileVisual('E')<CR>
+        nnoremap <buffer> <Leader><C-e>   :echo <SID>system('gosh', expand('%'))<CR>
+
+        let g:is_gauche = 1
+
+        setlocal lispwords+=and-let*,begin0,call-with-client-socket,call-with-input-conversion,call-with-input-file
+        setlocal lispwords+=call-with-input-process,call-with-input-string,call-with-iterator,call-with-output-conversion,call-with-output-file
+        setlocal lispwords+=call-with-output-string,call-with-temporary-file,call-with-values,dolist,dotimes
+        setlocal lispwords+=if-match,let*-values,let-args,let-keywords*,let-match
+        setlocal lispwords+=let-optionals*,let-syntax,let-values,let/cc,let1
+        setlocal lispwords+=letrec-syntax,make,match,match-lambda,match-let
+        setlocal lispwords+=match-let*,match-letrec,match-let1,match-define,multiple-value-bind
+        setlocal lispwords+=parameterize,parse-options,receive,rxmatch-case,rxmatch-cond
+        setlocal lispwords+=rxmatch-if,rxmatch-let,syntax-rules,unless,until
+        setlocal lispwords+=when,while,with-builder,with-error-handler,with-error-to-port
+        setlocal lispwords+=with-input-conversion,with-input-from-port,with-input-from-process,with-input-from-string,with-iterator
+        setlocal lispwords+=with-module,with-output-conversion,with-output-to-port,with-output-to-process,with-output-to-string
+        setlocal lispwords+=with-port-locking,with-string-io,with-time-counter,with-signal-handlers 
 
     elseif &filetype == 'perl'
         TabChange 4
         " add perl's path.
         " executing 'gf' command on module name opens its module.
-        if exists('$PERL5LIB')
+        if exists('$PERL5LIB') && !exists('b:perl_already_added_path')
             for i in split(expand('$PERL5LIB'), ':')
                 execute 'setlocal path+=' . i
             endfor
+            let b:perl_already_added_path = 1
         endif
 
         setlocal suffixesadd=.pm
@@ -880,99 +890,9 @@ func! s:LoadWhenFileType()
     else
         TabChange 4
     endif
-
 endfunc
 " }}}2
 
-" }}}1
-"-----------------------------------------------------------------
-" For Lisp(Scheme,Gauche) {{{1
-
-
-" 端末の時だと見づらくなる
-if has('gui_running')
-    let g:lisp_rainbow = 1
-endif
-
-command! LispSetup            call s:LispSetup()
-
-" s:EvalFileNormal(eval_main) {{{2
-func! s:EvalFileNormal(eval_main)
-    normal! %v%
-    call s:EvalFileVisual(a:eval_main)
-endfunc
-" }}}2
-
-" s:EvalFileVisual(eval_main) {{{2
-func! s:EvalFileVisual(eval_main) range
-    let z_val = getreg('z', 1)
-    let z_type = getregtype('z')
-    normal! "zy
-
-    try
-        let curfile = expand('%')
-        if !filereadable(curfile)
-            call s:Warn("can't load " . curfile . "...")
-            return
-        endif
-
-        let lines = readfile(curfile) + ['(print'] + split(@z, "\n") + [')']
-
-        let tmpfile = tempname() . localtime()
-        call writefile(lines, tmpfile)
-
-        if filereadable(tmpfile)
-            if a:eval_main ==# 'e'
-                " ファイル全体を評価し、mainを実行する
-                echo s:System('gosh', tmpfile)
-            elseif a:eval_main ==# 'E'
-                " ファイル全体を評価する
-                echo system(printf('cat %s | gosh', shellescape(tmpfile)))
-            else
-                call s:Warn("this block never reached")
-            endif
-        else
-            call s:Warn("cannot write to " . tmpfile . "...")
-        endif
-    finally
-        call setreg('z', z_val, z_type)
-    endtry
-endfunc
-" }}}2
-
-" s:LispSetup() {{{2
-func! s:LispSetup()
-    if exists('b:LispSetup') && b:LispSetup != 0 | return | endif
-
-    setlocal lisp
-    setlocal nocindent
-
-    nnoremap <buffer> <Leader>e       :call <SID>EvalFileNormal('e')<CR>
-    vnoremap <buffer> <Leader>e       :call <SID>EvalFileVisual('e')<CR>
-    nnoremap <buffer> <Leader>E       :call <SID>EvalFileNormal('E')<CR>
-    vnoremap <buffer> <Leader>E       :call <SID>EvalFileVisual('E')<CR>
-    nnoremap <buffer> <Leader><C-e>   :echo <SID>System('gosh', expand('%'))<CR>
-
-    let g:is_gauche = 1
-
-    setlocal lispwords+=and-let*,begin0,call-with-client-socket,call-with-input-conversion,call-with-input-file
-    setlocal lispwords+=call-with-input-process,call-with-input-string,call-with-iterator,call-with-output-conversion,call-with-output-file
-    setlocal lispwords+=call-with-output-string,call-with-temporary-file,call-with-values,dolist,dotimes
-    setlocal lispwords+=if-match,let*-values,let-args,let-keywords*,let-match
-    setlocal lispwords+=let-optionals*,let-syntax,let-values,let/cc,let1
-    setlocal lispwords+=letrec-syntax,make,match,match-lambda,match-let
-    setlocal lispwords+=match-let*,match-letrec,match-let1,match-define,multiple-value-bind
-    setlocal lispwords+=parameterize,parse-options,receive,rxmatch-case,rxmatch-cond
-    setlocal lispwords+=rxmatch-if,rxmatch-let,syntax-rules,unless,until
-    setlocal lispwords+=when,while,with-builder,with-error-handler,with-error-to-port
-    setlocal lispwords+=with-input-conversion,with-input-from-port,with-input-from-process,with-input-from-string,with-iterator
-    setlocal lispwords+=with-module,with-output-conversion,with-output-to-port,with-output-to-process,with-output-to-string
-    setlocal lispwords+=with-port-locking,with-string-io,with-time-counter,with-signal-handlers 
-
-
-    let b:LispSetup = 1
-endfunc
-" }}}2
 " }}}1
 "-----------------------------------------------------------------
 " Mappings or Abbreviation {{{1
