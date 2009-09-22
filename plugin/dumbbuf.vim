@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.1
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-16.
+" Last Change: 2009-09-23.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -371,7 +371,7 @@ func! s:write_buffers_list()
     call setreg('z', reg_z, reg_z_type)
 
     " delete the top of one waste blank line!
-    normal! ggdd
+    normal! gg"_dd
 endfunc
 " }}}
 
