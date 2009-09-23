@@ -336,7 +336,7 @@ endif
 " s:debug {{{
 fun! s:debug(msg)
     if g:dumbbuf_verbose
-        call add(s:debug_msg, a:msg)
+        call insert(s:debug_msg, a:msg)
         call s:warn(a:msg)
     endif
 endfunc
@@ -677,11 +677,7 @@ func! s:run_from_local_map(code, type, is_custom_args, ...)
     let lnum = line('.')
 
     let winnr = bufwinnr(s:caller_bufnr)
-    if winnr == -1    " if caller buffer is missing
-        " create it.
-        new
-        let s:caller_bufnr = bufnr('%')
-    else
+    if winnr != -1    " if caller buffer is missing
         " or jump to winnr buffer.
         execute winnr.'wincmd w'
     endif
@@ -693,20 +689,25 @@ func! s:run_from_local_map(code, type, is_custom_args, ...)
         " note that current buffer is caller buffer.
         if a:type ==# 'cmd'
             if a:is_custom_args
+                call s:debug("custom args is:".selected_buf.nr)
                 execute printf(a:code, selected_buf.nr)
             else
+                call s:debug("no custom args")
                 execute a:code
             endif
         elseif a:type ==# 'func'
             if a:is_custom_args
+                call s:debug("custom args is:".string(a:1))
                 call s:apply(a:code, a:1)
             else
+                call s:debug("no custom args")
                 call s:apply(a:code, [selected_buf, lnum])
             endif
         else
             call s:warn("internal error: unknown type: ".a:type)
         endif
     catch /^skip_closing_dumbbuf_buffer$/
+        " skip closing or update dumbbuf buffer.
         return
     catch
         call s:warn(printf("internal error: something wrong... code:%s, type:%s, is_custom_args:%d", a:code, a:type, a:is_custom_args))
