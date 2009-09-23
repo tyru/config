@@ -843,6 +843,7 @@ func! s:buflocal_open_onebyone(curbuf, db_lnum)
         if lnum == line('$')
             let lnum = 1
         else
+            " TODO go to upper line (global var)
             let lnum += 1
         endif
         call s:debug("go to:".lnum)
@@ -852,6 +853,8 @@ func! s:buflocal_open_onebyone(curbuf, db_lnum)
     finally
         let g:dumbbuf_close_when_exec = save_close_when_exec
     endtry
+
+    throw 'skip_closing_dumbbuf_buffer'
 endfunc
 " }}}
 
