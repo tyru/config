@@ -149,6 +149,12 @@ scriptencoding utf-8
 "       here is the default value:
 "           let g:dumbbuf_mappings = {
 "               \'n': {
+"                   \'j': {
+"                       \'opt': '<silent>', 'mapto': 'j',
+"                   \},
+"                   \'k': {
+"                       \'opt': '<silent>', 'mapto': 'k',
+"                   \},
 "                   \g:dumbbuf_hotkey : {
 "                       \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
 "                   \},
@@ -186,15 +192,9 @@ scriptencoding utf-8
 "           \}
 " }}}
 "
-" FIXME: {{{
-"   - closing last buffer.
-"     because dumbbuf buffer exists when mapping executes.
-"   - strange behavior when :bwipeout and :bdelete
-" }}}
 " TODO: {{{
 "   - manipulate buffers each project.
 "   - local mappings of single key sequence.
-"   - in dumbbuf buffer, use j not gj.
 "   - reuse dumbbuf buffer.
 " }}}
 "==================================================
