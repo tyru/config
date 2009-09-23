@@ -322,7 +322,7 @@ let s:mappings.default = {
             \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("vsplit #%d", "cmd", 1)<CR>',
         \},
         \'tt': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("tabedit #%d", "cmd", 1)<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map(["tabedit #%d", "throw \"skip_closing_dumbbuf_buffer\""], "cmd", [1, 0])<CR>',
         \},
         \'dd': {
             \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bdelete %d", "cmd", 1)<CR>',
@@ -775,7 +775,7 @@ func! s:run_from_local_map(code, type, is_custom_args, ...)
     call s:debug(printf('caller exists:%d, window:%d, bufname:%s, current window:%d', bufexists(s:caller_bufnr), bufwinnr(s:caller_bufnr), bufname(s:caller_bufnr), winnr()))
 
 
-    call s:debug(printf("exec %s from local map: %s", a:type, a:code))
+    call s:debug(printf("exec %s from local map: %s", string(a:type), string(a:code)))
     try
         " dispatch a:code.
         " note that current buffer is caller buffer.
