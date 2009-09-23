@@ -576,6 +576,11 @@ func! s:open_dumbbuf_buffer()
         call s:warn("internal error: can't get current bufnr.")
         return
     endif
+    if bufwinnr(s:caller_bufnr) == -1
+        call s:warn("internal error: caller buffer does not appear.")
+        call s:warn('caller buffer is '.bufname(s:caller_bufnr))
+        return
+    endif
 
     " save current buffers info.
     let s:bufs_info = s:parse_buffers_info()
