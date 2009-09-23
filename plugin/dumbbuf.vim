@@ -22,8 +22,9 @@ scriptencoding utf-8
 "       and fix bug of showing listed buffers even if current buffer is
 "       unlisted.
 "   0.0.2:
-"       - fix bug of destroying " register...sorry
-"       - add g:dumbbuf_close_when_exec.
+"       - fix bug of destroying " register...
+"       - implement g:dumbbuf_close_when_exec, g:dumbbuf_downward.
+"       - use plain j and k even if user mapped j to gj and/or k to gk.
 "       - change default behavior.
 "         if you want to close dumbbuf buffer on each mapping
 "         as previous version, let g:dumbbuf_close_when_exec = 1.
@@ -113,6 +114,10 @@ scriptencoding utf-8
 "   g:dumbbuf_close_when_exec (default: 0)
 "       if true, close when execute local mapping from dumbbuf buffer.
 "
+"   g:dumbbuf_downward (default: 1)
+"       if true, go downwardly when 'uu' mapping.
+"       if false, go upwardly.
+"
 "   g:dumbbuf_disp_expr (default: see below)
 "       this variable is for the experienced users.
 "
@@ -187,7 +192,7 @@ scriptencoding utf-8
 "                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("vsplit #%d", "cmd", 1)<CR>',
 "                   \},
 "                   \'tt': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("tabedit #%d", "cmd", 1)<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map(["tabedit #%d", "throw \"skip_closing_dumbbuf_buffer\""], "cmd", [1, 0])<CR>',
 "                   \},
 "                   \'dd': {
 "                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bdelete %d", "cmd", 1)<CR>',
