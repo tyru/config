@@ -60,7 +60,7 @@ scriptencoding utf-8
 "       this is used when only g:dumbbuf_vertical is false.
 "
 "   g:dumbbuf_vertical (default: 0)
-"       open dumbbuf buffer vertically.
+"       if true, open dumbbuf buffer vertically.
 "
 "   g:dumbbuf_buffer_width (default: 25)
 "       dumbbuf buffer's width.
@@ -96,6 +96,9 @@ scriptencoding utf-8
 "           show always unlisted buffers list.
 "       'listed':
 "           show always listed buffers list.
+"
+"   g:dumbbuf_close_when_exec (default: 0)
+"       if true, close when execute local mapping from dumbbuf buffer.
 "
 "   g:dumbbuf_disp_expr (default: see below)
 "       this variable is for the experienced users.
@@ -147,44 +150,50 @@ scriptencoding utf-8
 "           let g:dumbbuf_mappings = {
 "               \'n': {
 "                   \g:dumbbuf_hotkey : {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>close_dumbbuf_buffer", "func", 1, [])<CR>',
 "                   \},
 "                   \'q': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>close_dumbbuf_buffer", "func", 1, [])<CR>',
 "                   \},
 "                   \'<CR>': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_open()<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_closing_dumbbuf", "func", 0)<CR>',
 "                   \},
 "                   \'uu': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_open_onebyone()<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_onebyone", "func", 0)<CR>',
 "                   \},
 "                   \'ss': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_split_open()<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("split", "cmd", 1)<CR>',
 "                   \},
 "                   \'vv': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_vsplit_open()<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("vspilt", "cmd", 1)<CR>',
 "                   \},
 "                   \'tt': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_tab_open()<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("tabedit", "cmd", 1)<CR>',
 "                   \},
 "                   \'dd': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_bdelete()<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bdelete", "cmd", 1)<CR>',
 "                   \},
 "                   \'ww': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_bwipeout()<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bwipeout", "cmd", 1)<CR>',
 "                   \},
 "                   \'ll': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_toggle_listed_type()<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_toggle_listed_type", "func", 0)<CR>',
 "                   \},
 "                   \'cc': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_close()<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_close", "func", 0)<CR>',
 "                   \},
 "               \}
 "           \}
 " }}}
 "
+" FIXME: {{{
+"   - closing last buffer.
+"     because dumbbuf buffer exists when mapping executes.
+"   - strange behavior when :bwipeout and :bdelete
+" }}}
 " TODO: {{{
 "   - manipulate buffers each project.
+"   - local mappings of single key sequence.
 " }}}
 "==================================================
 " }}}
@@ -210,14 +219,17 @@ let s:save_cpo = &cpo
 set cpo&vim
 " }}}
 " Scope Variables {{{
-let s:dumbbuf_bufnr = -1
-let s:bufs_info = []
-let s:shown_type = ''
-let s:mappings = {'default': {}, 'user': {}}
+let s:debug_msg = []
+
+let s:caller_bufnr = -1    " caller buffer's bufnr which calls dumbbuf buffer.
+let s:dumbbuf_bufnr = -1    " dumbbuf buffer's bufnr.
+let s:bufs_info = []    " buffers list.
+let s:shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
+let s:mappings = {'default': {}, 'user': {}}    " buffer local mappings.
 " }}}
 " Global Variables {{{
-if ! exists('g:debug_errmsg')
-    let g:debug_errmsg = 0
+if ! exists('g:dumbbuf_verbose')
+    let g:dumbbuf_verbose = 0
 endif
 
 "--- if g:dumbbuf_hotkey is not defined,
@@ -244,6 +256,9 @@ if ! exists('g:dumbbuf_cursor_pos')
 endif
 if ! exists('g:dumbbuf_shown_type')
     let g:dumbbuf_shown_type = ''
+endif
+if ! exists('g:dumbbuf_close_when_exec')
+    let g:dumbbuf_close_when_exec = 0
 endif
 
 if ! exists('g:dumbbuf_disp_expr')
@@ -274,31 +289,31 @@ let s:mappings.default = {
             \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
         \},
         \'<CR>': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_open()<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_closing_dumbbuf", "func", 0)<CR>',
         \},
         \'uu': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_open_onebyone()<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_onebyone", "func", 0)<CR>',
         \},
         \'ss': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_split_open()<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("split #%d", "cmd", 1)<CR>',
         \},
         \'vv': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_vsplit_open()<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("vsplit #%d", "cmd", 1)<CR>',
         \},
         \'tt': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_tab_open()<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("tabedit #%d", "cmd", 1)<CR>',
         \},
         \'dd': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_bdelete()<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bdelete %d", "cmd", 1)<CR>',
         \},
         \'ww': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_bwipeout()<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bwipeout %d", "cmd", 1)<CR>',
         \},
         \'ll': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_toggle_listed_type()<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_toggle_listed_type", "func", 0)<CR>',
         \},
         \'cc': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_close()<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_close", "func", 0)<CR>',
         \},
     \}
 \}
@@ -309,6 +324,26 @@ let s:mappings.default = {
 
 " Utility Functions {{{
 
+" Debug {{{
+if g:dumbbuf_verbose
+    command DumbBufDebug call s:list_debug()
+
+    func! s:list_debug()
+        for i in s:debug_msg | call s:warn(i) | endfor
+    endfunc
+endif
+
+" s:debug {{{
+fun! s:debug(msg)
+    if g:dumbbuf_verbose
+        call add(s:debug_msg, a:msg)
+        call s:warn(a:msg)
+    endif
+endfunc
+" }}}
+
+" }}}
+
 " s:warn {{{
 func! s:warn(msg)
     echohl WarningMsg
@@ -317,12 +352,31 @@ func! s:warn(msg)
 endfunc
 " }}}
 
+" s:apply {{{
+func! s:apply(funcname, args)
+    let args_str = ''
+    let i = 0
+    let arg_len = len(a:args)
+    while i < arg_len
+        if i ==# 0
+            let args_str = printf('a:args[%d]', i)
+        else
+            let args_str .= ', '.printf('a:args[%d]', i)
+        endif
+        let i += 1
+    endwhile
+
+    call s:debug(printf("funcname:%s, args_str:%s, args:%s", string(a:funcname), args_str, string(a:args)))
+    return eval(printf('%s(%s)', a:funcname, args_str))
+endfunc
+" }}}
+
 " }}}
 
 
 
-" s:open_dumbbuf_buffer {{{
-func! s:open_dumbbuf_buffer()
+" s:create_dumbbuf_buffer {{{
+func! s:create_dumbbuf_buffer()
     if g:dumbbuf_vertical
         execute g:dumbbuf_buffer_width.'vnew'
         return bufnr('%')
@@ -335,12 +389,12 @@ endfunc
 
 " s:get_current_buffer_info {{{
 "   this returns [<current buffer info>, <lnum of current buffer>]
-func! s:get_current_buffer_info(caller_bufnr)
+func! s:get_current_buffer_info()
     let i = 0
     let bufs_len = len(s:bufs_info)
 
     while i < bufs_len
-        if s:bufs_info[i].nr ==# a:caller_bufnr
+        if s:bufs_info[i].nr ==# s:caller_bufnr
             return [s:bufs_info[i], i]
         endif
         let i += 1
@@ -428,7 +482,7 @@ func! s:parse_buffers_info()
         " skip dumbbuf's buffer.
         if bufnr == s:dumbbuf_bufnr | continue | endif
 
-        " echoerr string(m)
+        call s:debug(string(m))
         call add(result_list, {
             \'nr': bufnr + 0,
             \'is_unlisted': unlisted ==# 'u',
@@ -478,9 +532,7 @@ endfunc
 " s:get_selected_buffer {{{
 func! s:get_selected_buffer()
     if ! s:is_selected() | return {} | endif
-
     let cur = s:bufs_info[line('.') - 1]
-    call s:close_dumbbuf_buffer()
     return cur
 endfunc
 " }}}
@@ -508,30 +560,19 @@ func! s:filter_bufs_info(curbufinfo)
             let g:dumbbuf_shown_type = ''
 
             sleep 1
+
+            call s:filter_bufs_info(a:curbufinfo)
         endif
     endif
 endfunc
 " }}}
 
-" s:run {{{
-func! s:run()
-    " if dumbbuf's buffer is displayed, jump to that buffer.
-    let winnr = bufwinnr(s:dumbbuf_bufnr)
-    if winnr !=# -1
-        execute winnr.'wincmd w'
-        return
-    else
-        call s:show_buffers()
-    endif
-endfunc
-" }}}
-
-" s:show_buffers {{{
-func! s:show_buffers()
+" s:open_dumbbuf_buffer {{{
+func! s:open_dumbbuf_buffer()
 
     " remember current bufnr.
-    let caller_bufnr = bufnr('%')
-    if caller_bufnr ==# -1
+    let s:caller_bufnr = bufnr('%')
+    if s:caller_bufnr ==# -1
         call s:warn("internal error: can't get current bufnr.")
         return
     endif
@@ -540,14 +581,14 @@ func! s:show_buffers()
     let s:bufs_info = s:parse_buffers_info()
 
     " open and switch to dumbbuf's buffer.
-    let s:dumbbuf_bufnr = s:open_dumbbuf_buffer()
+    let s:dumbbuf_bufnr = s:create_dumbbuf_buffer()
     if s:dumbbuf_bufnr ==# -1
         call s:warn("internal error: can't open buffer.")
         return
     endif
 
     " get current buffers info and lnum on dumbbuf buffer.
-    let info = s:get_current_buffer_info(caller_bufnr)
+    let info = s:get_current_buffer_info()
     if empty(info)
         call s:warn("internal error: can't get current buffer's info")
         return
@@ -557,6 +598,7 @@ func! s:show_buffers()
     " if current buffer is listed, display just listed buffers.
     " if current buffers is unlisted, display just unlisted buffers.
     call s:filter_bufs_info(curbufinfo)
+    call s:debug(printf("filtered only '%s' buffers.", s:shown_type))
 
     " name dumbbuf's buffer.
     if s:shown_type ==# 'unlisted'
@@ -609,111 +651,159 @@ func! s:show_buffers()
 endfunc
 " }}}
 
+" s:update_buffers_list {{{
+func! s:update_buffers_list()
+    call s:close_dumbbuf_buffer()
+    call s:open_dumbbuf_buffer()
+endfunc
+" }}}
+
+
+" s:run_from_map {{{
+func! s:run_from_map()
+    let winnr = bufwinnr(s:dumbbuf_bufnr)
+    if winnr !=# -1
+        call s:update_buffers_list()
+    else
+        call s:open_dumbbuf_buffer()
+    endif
+endfunc
+" }}}
+
+" s:run_from_local_map {{{
+func! s:run_from_local_map(code, type, is_custom_args, ...)
+    if ! s:is_selected() | return | endif
+    let selected_buf = s:get_selected_buffer()
+    let lnum = line('.')
+
+    let winnr = bufwinnr(s:caller_bufnr)
+    if winnr == -1    " if caller buffer is missing
+        " create it.
+        new
+        let s:caller_bufnr = bufnr('%')
+    else
+        " or jump to winnr buffer.
+        execute winnr.'wincmd w'
+    endif
+
+    call s:debug(printf("exec %s from local map: %s", a:type, a:code))
+
+    try
+        " dispatch a:code.
+        " note that current buffer is caller buffer.
+        if a:type ==# 'cmd'
+            if a:is_custom_args
+                execute printf(a:code, selected_buf.nr)
+            else
+                execute a:code
+            endif
+        elseif a:type ==# 'func'
+            if a:is_custom_args
+                call s:apply(a:code, a:1)
+            else
+                call s:apply(a:code, [selected_buf, lnum])
+            endif
+        else
+            call s:warn("internal error: unknown type: ".a:type)
+        endif
+    catch /^skip_closing_dumbbuf_buffer$/
+        return
+    catch
+        call s:warn(printf("internal error: something wrong... code:%s, type:%s, is_custom_args:%d", a:code, a:type, a:is_custom_args))
+    endtry
+
+    if g:dumbbuf_close_when_exec
+        call s:close_dumbbuf_buffer()
+    else
+        call s:update_buffers_list()
+    endif
+endfunc
+" }}}
+
 
 
 " these functions are called from dumbbuf's buffer {{{
 
-" s:buflocal_open {{{
-func! s:buflocal_open()
-    if ! s:is_selected() | return | endif
-    let buf = s:get_selected_buffer()
-
-    let winnr = bufwinnr(buf.nr)
+" s:buflocal_open_closing_dumbbuf {{{
+"   this must be going to close dumbbuf buffer.
+func! s:buflocal_open_closing_dumbbuf(curbuf, db_lnum)
+    let winnr = bufwinnr(a:curbuf.nr)
     if winnr == -1
-        execute buf.nr . 'buffer'
+        execute a:curbuf.nr . 'buffer'
     else
-        execute winnr . 'wincmd w'
+        execute winnr.'wincmd w'
     endif
+
+    " I don't care g:dumbbuf_close_when_exec,
+    " close dumbbuf buffer anyway.
+    call s:close_dumbbuf_buffer()
+    throw 'skip_closing_dumbbuf_buffer'
 endfunc
 " }}}
 
 " s:buflocal_open_onebyone {{{
-func! s:buflocal_open_onebyone()
-    if ! s:is_selected() | return | endif
-    let lnum = line('.')
+"   this does NOT do update or close buffers list.
+func! s:buflocal_open_onebyone(curbuf, db_lnum)
+    let lnum = a:db_lnum
+    call s:debug("current lnum:".lnum)
 
-    " close dumbbuf's buffer, and open selected item.
-    call s:buflocal_open()
+    " open selected buffer and close dumbbuf buffer.
+    try
+        call s:buflocal_open_closing_dumbbuf(a:curbuf, a:db_lnum)
+    catch /^skip_closing_dumbbuf_buffer/
+        " do not rewind stack and go to s:run_from_local_map().
+    endtry
     " open dumbbuf's buffer again.
-    call s:show_buffers()
+    call s:open_dumbbuf_buffer()
 
     if lnum == line('$')
-        let lnum = 0
+        let lnum = 1
     else
         let lnum += 1
     endif
+    call s:debug("go to:".lnum)
 
     " goto lnum.
     execute 'normal! '.lnum.'gg'
-endfunc
-" }}}
 
-" s:buflocal_split_open {{{
-func! s:buflocal_split_open()
-    if ! s:is_selected() | return | endif
-    let buf = s:get_selected_buffer()
-
-    execute 'split ' . bufname(buf.nr)
-endfunc
-" }}}
-
-" s:buflocal_vsplit_open {{{
-func! s:buflocal_vsplit_open()
-    if ! s:is_selected() | return | endif
-    let buf = s:get_selected_buffer()
-
-    execute 'vsplit ' . bufname(buf.nr)
-endfunc
-" }}}
-
-" s:buflocal_tab_open {{{
-func! s:buflocal_tab_open()
-    if ! s:is_selected() | return | endif
-    let buf = s:get_selected_buffer()
-
-    execute 'tabedit ' . bufname(buf.nr)
-endfunc
-" }}}
-
-" s:buflocal_bdelete {{{
-func! s:buflocal_bdelete()
-    if ! s:is_selected() | return | endif
-    let buf = s:get_selected_buffer()
-
-    execute 'bdelete ' . buf.nr
-endfunc
-" }}}
-
-" s:buflocal_bwipeout {{{
-func! s:buflocal_bwipeout()
-    if ! s:is_selected() | return | endif
-    let buf = s:get_selected_buffer()
-
-    execute 'bwipeout ' . buf.nr
+    throw 'skip_closing_dumbbuf_buffer'
 endfunc
 " }}}
 
 " s:buflocal_toggle_listed_type {{{
-func! s:buflocal_toggle_listed_type()
-    call s:close_dumbbuf_buffer()
-
+"   this does NOT do update or close buffers list.
+func! s:buflocal_toggle_listed_type(curbuf, db_lnum)
     if s:shown_type ==# 'unlisted'
         let s:shown_type = 'listed'
+        call s:update_buffers_list()
+
     elseif s:shown_type ==# 'listed'
         let s:shown_type = 'unlisted'
+        call s:update_buffers_list()
+
+    elseif s:shown_type == ''
+        if a:curbuf.is_unlisted
+            let s:shown_type = 'listed'
+        else
+            let s:shown_type = 'unlisted'
+        endif
+        call s:update_buffers_list()
+        " restore.
+        let s:shown_type = ''
+
+    else
+        call s:warn("internal error: strange s:shown_type value...: ".s:shown_type)
     endif
-    call s:show_buffers()
+
+    throw 'skip_closing_dumbbuf_buffer'
 endfunc
  " }}}
 
 " s:buflocal_close {{{
-func! s:buflocal_close()
-    if ! s:is_selected() | return | endif
-    let buf = s:get_selected_buffer()
-
-    let winnr = bufwinnr(buf.nr)
+func! s:buflocal_close(curbuf, db_lnum)
+    let winnr = bufwinnr(a:curbuf.nr)
     if winnr !=# -1
-        execute winnr . 'wincmd w'
+        execute winnr.'wincmd w'
         close
     endif
 endfunc
@@ -724,7 +814,7 @@ endfunc
 " }}}
 
 " Mappings {{{
-execute 'nnoremap <silent><unique> '.g:dumbbuf_hotkey.' :call <SID>run()<CR>'
+execute 'nnoremap <silent><unique> '.g:dumbbuf_hotkey.' :call <SID>run_from_map()<CR>'
 " }}}
 
 " Restore 'cpoptions' {{{
