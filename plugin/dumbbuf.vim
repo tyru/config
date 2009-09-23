@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.1
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-23.
+" Last Change: 2009-09-24.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -377,7 +377,7 @@ func! s:apply(funcname, args)
         let i += 1
     endwhile
 
-    call s:debug(printf("funcname:%s, args_str:%s, args:%s", string(a:funcname), args_str, string(a:args)))
+    call s:debug(printf("funcname:%s, args:%s", string(a:funcname), string(a:args)))
     return eval(printf('%s(%s)', a:funcname, args_str))
 endfunc
 " }}}
@@ -677,6 +677,36 @@ func! s:update_buffers_list()
 endfunc
 " }}}
 
+" s:dispatch_code {{{
+func! s:dispatch_code(code, type, is_custom_args, args, opt)
+    call s:debug(
+        \s:apply('printf',
+            \map(["code:%s, type:%s, is_custom_args:%s, func args:%s", a:code, a:type, a:is_custom_args]
+                    \+ [a:0 == 0 ? "no func args" : string(a:1)],
+                \'string(v:val)')))
+
+    let selected_buf = a:opt.selected_buf
+    let lnum         = a:opt.lnum
+
+    if a:type ==# 'cmd'
+        if a:is_custom_args
+            execute printf(a:code, selected_buf.nr)
+        else
+            execute a:code
+        endif
+    elseif a:type ==# 'func'
+        if a:is_custom_args
+            " NOTE: not used.
+            call s:apply(a:code, a:args)
+        else
+            call s:apply(a:code, [selected_buf, lnum])
+        endif
+    else
+        throw "internal error: unknown type: ".a:type
+    endif
+endfunc
+"}}}
+
 
 " s:run_from_map {{{
 func! s:run_from_map()
@@ -715,6 +745,10 @@ func! s:run_from_local_map(code, type, is_custom_args, ...)
         call s:warn("selected buffer does not exist!")
         return
     endif
+    " this must be done in dumbbuf buffer.
+    let lnum = line('.')
+    " save current value.
+    let save_close_when_exec = g:dumbbuf_close_when_exec
 
     " jump to caller buffer from dumbbuf buffer.
     let caller_winnr = bufwinnr(s:caller_bufnr)
@@ -727,33 +761,25 @@ func! s:run_from_local_map(code, type, is_custom_args, ...)
     execute caller_winnr.'wincmd w'
     call s:debug(printf('caller exists:%d, window:%d, bufname:%s, current window:%d', bufexists(s:caller_bufnr), bufwinnr(s:caller_bufnr), bufname(s:caller_bufnr), winnr()))
 
-    " save current value.
-    let lnum = line('.')
-    let save_close_when_exec = g:dumbbuf_close_when_exec
-
 
     call s:debug(printf("exec %s from local map: %s", a:type, a:code))
     try
         " dispatch a:code.
         " note that current buffer is caller buffer.
-        if a:type ==# 'cmd'
-            if a:is_custom_args
-                call s:debug("custom args is:".selected_buf.nr)
-                execute printf(a:code, selected_buf.nr)
-            else
-                call s:debug("no custom args")
-                execute a:code
-            endif
-        elseif a:type ==# 'func'
-            if a:is_custom_args
-                call s:debug("custom args is:".string(a:1))
-                call s:apply(a:code, a:1)
-            else
-                call s:debug("no custom args")
-                call s:apply(a:code, [selected_buf, lnum])
-            endif
+        if type(a:code) == type([])
+            let i = 0
+            let len = len(a:code)
+            while i < len
+                call s:apply('s:dispatch_code',
+                            \[a:code[i], a:type, a:is_custom_args[i], (a:0 == 0 ? [] : [a:1]),
+                                \{'lnum': lnum, 'selected_buf': selected_buf}])
+                let i += 1
+            endwhile
         else
-            call s:warn("internal error: unknown type: ".a:type)
+            call s:apply('s:dispatch_code',
+                        \[a:code, a:type, a:is_custom_args, (a:0 == 0 ? [] : [a:1]),
+                            \{'lnum': lnum, 'selected_buf': selected_buf}])
+            " call s:apply('s:dispatch_code', [a:code, a:type, a:is_custom_args] + a:000)
         endif
 
         " close or update dumbbuf buffer.
@@ -769,8 +795,11 @@ func! s:run_from_local_map(code, type, is_custom_args, ...)
             call s:update_buffers_list()
         endif
 
+    catch /^skip_closing_dumbbuf_buffer$/
+        " skip.
+
     catch
-        call s:warn(printf("internal error: something wrong... code:%s, type:%s, is_custom_args:%d", a:code, a:type, a:is_custom_args))
+        echoerr printf("internal error: '%s' in '%s'", v:exception, v:throwpoint)
 
     finally
         " restore previous value.
