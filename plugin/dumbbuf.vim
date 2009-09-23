@@ -275,6 +275,9 @@ endif
 if ! exists('g:dumbbuf_close_when_exec')
     let g:dumbbuf_close_when_exec = 0
 endif
+if ! exists('g:dumbbuf_downward')
+    let g:dumbbuf_downward = 1
+endif
 
 if ! exists('g:dumbbuf_disp_expr')
     " QuickBuf.vim like UI.
@@ -853,11 +856,18 @@ func! s:buflocal_open_onebyone(curbuf, db_lnum)
         " open dumbbuf's buffer again.
         call s:open_dumbbuf_buffer()
 
-        if lnum == line('$')
-            let lnum = 1
+        if g:dumbbuf_downward
+            if lnum >= line('$')
+                let lnum = 1
+            else
+                let lnum += 1
+            endif
         else
-            " TODO go to upper line (global var)
-            let lnum += 1
+            if lnum <= 1
+                let lnum = line('$')
+            else
+                let lnum -= 1
+            endif
         endif
         call s:debug("go to:".lnum)
 
