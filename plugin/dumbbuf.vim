@@ -284,6 +284,12 @@ if exists('g:dumbbuf_mappings')
 endif
 let s:mappings.default = {
     \'n': {
+        \'j': {
+            \'opt': '<silent>', 'mapto': 'j',
+        \},
+        \'k': {
+            \'opt': '<silent>', 'mapto': 'k',
+        \},
         \g:dumbbuf_hotkey : {
             \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
         \},
