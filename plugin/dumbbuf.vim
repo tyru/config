@@ -150,10 +150,10 @@ scriptencoding utf-8
 "           let g:dumbbuf_mappings = {
 "               \'n': {
 "                   \g:dumbbuf_hotkey : {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>close_dumbbuf_buffer", "func", 1, [])<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
 "                   \},
 "                   \'q': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>close_dumbbuf_buffer", "func", 1, [])<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
 "                   \},
 "                   \'<CR>': {
 "                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_closing_dumbbuf", "func", 0)<CR>',
@@ -162,19 +162,19 @@ scriptencoding utf-8
 "                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_onebyone", "func", 0)<CR>',
 "                   \},
 "                   \'ss': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("split", "cmd", 1)<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("split #%d", "cmd", 1)<CR>',
 "                   \},
 "                   \'vv': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("vspilt", "cmd", 1)<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("vsplit #%d", "cmd", 1)<CR>',
 "                   \},
 "                   \'tt': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("tabedit", "cmd", 1)<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("tabedit #%d", "cmd", 1)<CR>',
 "                   \},
 "                   \'dd': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bdelete", "cmd", 1)<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bdelete %d", "cmd", 1)<CR>',
 "                   \},
 "                   \'ww': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bwipeout", "cmd", 1)<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bwipeout %d", "cmd", 1)<CR>',
 "                   \},
 "                   \'ll': {
 "                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_toggle_listed_type", "func", 0)<CR>',
