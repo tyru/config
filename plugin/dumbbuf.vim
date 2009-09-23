@@ -21,11 +21,24 @@ scriptencoding utf-8
 "       mapping.
 "       and fix bug of showing listed buffers even if current buffer is
 "       unlisted.
+"   0.0.2:
+"       - fix bug of destroying " register...sorry
+"       - add g:dumbbuf_close_when_exec.
+"       - change default behavior.
+"         if you want to close dumbbuf buffer on each mapping
+"         as previous version, let g:dumbbuf_close_when_exec = 1.
+"         (but '<CR>' mapping is exceptional case.
+"         close dumbbuf buffer even if g:dumbbuf_close_when_exec is false)
+"       - support of glvs.
 " }}}
 "
 " Mappings: {{{
 "   please define g:dumbbuf_hotkey at first.
 "
+"   j
+"       move cursor to lower line.
+"   k
+"       move cursor to upper line.
 "   <CR>
 "       :edit the buffer.
 "   q
