@@ -194,6 +194,8 @@ scriptencoding utf-8
 " TODO: {{{
 "   - manipulate buffers each project.
 "   - local mappings of single key sequence.
+"   - in dumbbuf buffer, use j not gj.
+"   - reuse dumbbuf buffer.
 " }}}
 "==================================================
 " }}}
@@ -336,8 +338,11 @@ endif
 " s:debug {{{
 fun! s:debug(msg)
     if g:dumbbuf_verbose
-        call insert(s:debug_msg, a:msg)
         call s:warn(a:msg)
+        call add(s:debug_msg, a:msg)
+        if len(s:debug_msg) > 30
+            let s:debug_msg = s:debug_msg[-30:-1]
+        endif
     endif
 endfunc
 " }}}
@@ -379,11 +384,10 @@ endfunc
 func! s:create_dumbbuf_buffer()
     if g:dumbbuf_vertical
         execute g:dumbbuf_buffer_width.'vnew'
-        return bufnr('%')
     else
         execute g:dumbbuf_buffer_height.'new'
-        return bufnr('%')
     endif
+    return bufnr('%')
 endfunc
 " }}}
 
@@ -503,26 +507,25 @@ endfunc
 
 " s:close_dumbbuf_buffer {{{
 func! s:close_dumbbuf_buffer()
+    let prevwinnr = winnr()
+
     let winnr = bufwinnr(s:dumbbuf_bufnr)
-    if winnr !=# -1
-        " current window num is only dumbbuf's buffer!!
-        if winnr('$') == 1 && (expand('%') ==# g:dumbbuf_listed_buffer_name || expand('%') ==# g:dumbbuf_unlisted_buffer_name)
-            " if previous opened file does exist, open that file.
-            if expand('#') != ''
-                edit #
-            endif
-        else
-            " jump to dumbbuf's buffer.
-            execute winnr.'wincmd w'
-            " close it.
-            close
-        endif
+    if winnr != -1
+        " jump to dumbbuf's window.
+        execute winnr.'wincmd w'
+        " close it.
+        close
+    endif
+
+    " jump to previous window.
+    if winnr() != prevwinnr
+        execute prevwinnr.'wincmd w'
     endif
 endfunc
 " }}}
 
-" s:is_selected {{{
-func! s:is_selected()
+" s:has_selected_buffer_info {{{
+func! s:has_selected_buffer_info()
     " selected buffer is available.
     " (not out-of-range)
     return line('.') <= len(s:bufs_info)
@@ -531,7 +534,7 @@ endfunc
 
 " s:get_selected_buffer {{{
 func! s:get_selected_buffer()
-    if ! s:is_selected() | return {} | endif
+    if ! s:has_selected_buffer_info() | return {} | endif
     let cur = s:bufs_info[line('.') - 1]
     return cur
 endfunc
@@ -581,6 +584,11 @@ func! s:open_dumbbuf_buffer()
         call s:warn('caller buffer is '.bufname(s:caller_bufnr))
         return
     endif
+    if bufwinnr(s:dumbbuf_bufnr) != -1
+        call s:debug("I'm now going to open dumbbuf buffer but dumbbuf exists! close it.")
+        call s:close_dumbbuf_buffer()
+    endif
+    call s:debug('caller buffer name is '.bufname(s:caller_bufnr))
 
     " save current buffers info.
     let s:bufs_info = s:parse_buffers_info()
@@ -592,7 +600,7 @@ func! s:open_dumbbuf_buffer()
         return
     endif
 
-    " get current buffers info and lnum on dumbbuf buffer.
+    " get current buffer's info and lnum on dumbbuf buffer.
     let info = s:get_current_buffer_info()
     if empty(info)
         call s:warn("internal error: can't get current buffer's info")
@@ -666,29 +674,59 @@ endfunc
 
 " s:run_from_map {{{
 func! s:run_from_map()
-    let winnr = bufwinnr(s:dumbbuf_bufnr)
-    if winnr !=# -1
-        call s:update_buffers_list()
-    else
-        call s:open_dumbbuf_buffer()
+    call s:debug(printf('map: winnr:%d, bufnr:%d, s:dumbbuf_bufnr:%d', winnr('$'), bufnr('%'), s:dumbbuf_bufnr))
+    " current window is unlisted window.
+    if ! getbufvar(expand('%'), '&buflisted')
+        new
     endif
+
+    " if dumbbuf buffer exists, close it.
+    " (because old dumbbuf buffers list may be wrong)
+    let winnr = bufwinnr(s:dumbbuf_bufnr)
+    if winnr != -1
+        call s:close_dumbbuf_buffer()
+    endif
+
+    " open dumbbuf buffer from listed buffer.
+    call s:open_dumbbuf_buffer()
 endfunc
 " }}}
 
 " s:run_from_local_map {{{
 func! s:run_from_local_map(code, type, is_custom_args, ...)
-    if ! s:is_selected() | return | endif
-    let selected_buf = s:get_selected_buffer()
-    let lnum = line('.')
+    call s:debug(printf('local map: winnr:%d, bufnr:%d, s:dumbbuf_bufnr:%d', winnr('$'), bufnr('%'), s:dumbbuf_bufnr))
 
-    let winnr = bufwinnr(s:caller_bufnr)
-    if winnr != -1    " if caller buffer is missing
-        " or jump to winnr buffer.
-        execute winnr.'wincmd w'
+    " at now, current window must be dumbbuf buffer
+    " because this func is called only from dumbbuf buffer local mappings.
+
+    " get selected buffer info.
+    if ! s:has_selected_buffer_info()
+        call s:warn("can't get selected buffer info...")
+        return
+    endif
+    let selected_buf = s:get_selected_buffer()
+    if ! bufexists(selected_buf.nr)
+        call s:warn("selected buffer does not exist!")
+        return
     endif
 
-    call s:debug(printf("exec %s from local map: %s", a:type, a:code))
+    " jump to caller buffer from dumbbuf buffer.
+    let caller_winnr = bufwinnr(s:caller_bufnr)
+    if caller_winnr == -1
+        call s:debug('caller buffer does NOT exist. create new buffer...')
+        new
+        let s:caller_bufnr = bufnr('%')
+        let caller_winnr = winnr()
+    endif
+    execute caller_winnr.'wincmd w'
+    call s:debug(printf('caller exists:%d, window:%d, bufname:%s, current window:%d', bufexists(s:caller_bufnr), bufwinnr(s:caller_bufnr), bufname(s:caller_bufnr), winnr()))
 
+    " save current value.
+    let lnum = line('.')
+    let save_close_when_exec = g:dumbbuf_close_when_exec
+
+
+    call s:debug(printf("exec %s from local map: %s", a:type, a:code))
     try
         " dispatch a:code.
         " note that current buffer is caller buffer.
@@ -711,18 +749,27 @@ func! s:run_from_local_map(code, type, is_custom_args, ...)
         else
             call s:warn("internal error: unknown type: ".a:type)
         endif
-    catch /^skip_closing_dumbbuf_buffer$/
-        " skip closing or update dumbbuf buffer.
-        return
+
+        " close or update dumbbuf buffer.
+        if winnr('$') == 1    " current window(dumbbuf buffer) is last window.
+            call s:debug("dumbbuf buffer is last window.")
+            new
+            call s:update_buffers_list()
+        elseif g:dumbbuf_close_when_exec
+            call s:debug("just close")
+            call s:close_dumbbuf_buffer()
+        else
+            call s:debug("close and re-open")
+            call s:update_buffers_list()
+        endif
+
     catch
         call s:warn(printf("internal error: something wrong... code:%s, type:%s, is_custom_args:%d", a:code, a:type, a:is_custom_args))
-    endtry
 
-    if g:dumbbuf_close_when_exec
-        call s:close_dumbbuf_buffer()
-    else
-        call s:update_buffers_list()
-    endif
+    finally
+        " restore previous value.
+        let g:dumbbuf_close_when_exec = save_close_when_exec
+    endtry
 endfunc
 " }}}
 
@@ -735,15 +782,13 @@ endfunc
 func! s:buflocal_open_closing_dumbbuf(curbuf, db_lnum)
     let winnr = bufwinnr(a:curbuf.nr)
     if winnr == -1
-        execute a:curbuf.nr . 'buffer'
+        execute a:curbuf.nr.'buffer'
     else
         execute winnr.'wincmd w'
     endif
 
-    " I don't care g:dumbbuf_close_when_exec,
     " close dumbbuf buffer anyway.
-    call s:close_dumbbuf_buffer()
-    throw 'skip_closing_dumbbuf_buffer'
+    let g:dumbbuf_close_when_exec = 1
 endfunc
 " }}}
 
@@ -752,27 +797,26 @@ endfunc
 func! s:buflocal_open_onebyone(curbuf, db_lnum)
     let lnum = a:db_lnum
     call s:debug("current lnum:".lnum)
+    let save_close_when_exec = g:dumbbuf_close_when_exec
 
-    " open selected buffer and close dumbbuf buffer.
     try
+        " open selected buffer and close dumbbuf buffer.
         call s:buflocal_open_closing_dumbbuf(a:curbuf, a:db_lnum)
-    catch /^skip_closing_dumbbuf_buffer/
-        " do not rewind stack and go to s:run_from_local_map().
+        " open dumbbuf's buffer again.
+        call s:open_dumbbuf_buffer()
+
+        if lnum == line('$')
+            let lnum = 1
+        else
+            let lnum += 1
+        endif
+        call s:debug("go to:".lnum)
+
+        " goto lnum.
+        execute 'normal! '.lnum.'gg'
+    finally
+        let g:dumbbuf_close_when_exec = save_close_when_exec
     endtry
-    " open dumbbuf's buffer again.
-    call s:open_dumbbuf_buffer()
-
-    if lnum == line('$')
-        let lnum = 1
-    else
-        let lnum += 1
-    endif
-    call s:debug("go to:".lnum)
-
-    " goto lnum.
-    execute 'normal! '.lnum.'gg'
-
-    throw 'skip_closing_dumbbuf_buffer'
 endfunc
 " }}}
 
