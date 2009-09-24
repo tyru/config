@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.3
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-24.
+" Last Change: 2009-09-25.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -248,6 +248,8 @@ let s:dumbbuf_bufnr = -1    " dumbbuf buffer's bufnr.
 let s:bufs_info = []    " buffers list.
 let s:shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
 let s:mappings = {'default': {}, 'user': {}}    " buffer local mappings.
+let s:mapstack = ''
+let s:orig_updatetime = &updatetime
 " }}}
 " Global Variables {{{
 if ! exists('g:dumbbuf_verbose')
@@ -285,6 +287,13 @@ endif
 if ! exists('g:dumbbuf_downward')
     let g:dumbbuf_downward = 1
 endif
+if ! exists('g:dumbbuf_single_key')
+    let g:dumbbuf_single_key = 0
+endif
+if ! exists('g:dumbbuf_updatetime')
+    let g:dumbbuf_updatetime = 100
+endif
+
 
 if ! exists('g:dumbbuf_disp_expr')
     " QuickBuf.vim like UI.
@@ -312,6 +321,12 @@ let s:mappings.default = {
         \},
         \'k': {
             \'opt': '<silent>', 'mapto': 'k',
+        \},
+        \'gg': {
+            \'opt': '<silent>', 'mapto': 'gg',
+        \},
+        \'G': {
+            \'opt': '<silent>', 'mapto': 'G',
         \},
         \g:dumbbuf_hotkey : {
             \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
@@ -347,6 +362,16 @@ let s:mappings.default = {
             \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_close", "func", 0)<CR>',
         \},
     \}
+\}
+let s:mappings.single_key = {
+    \'u': 'uu',
+    \'s': 'ss',
+    \'v': 'vv',
+    \'t': 'tt',
+    \'d': 'dd',
+    \'w': 'ww',
+    \'l': 'll',
+    \'c': 'cc',
 \}
 
 " }}}
@@ -689,7 +714,10 @@ func! s:open_dumbbuf_buffer()
             endif
         endfor
     endfor
-
+    " updatetime
+    " NOTE: updatetime is global. so I must restore it later.
+    let s:orig_updatetime = &updatetime
+    let &l:updatetime = g:dumbbuf_updatetime
 endfunc
 " }}}
 
@@ -729,6 +757,7 @@ func! s:dispatch_code(code, type, is_custom_args, args, opt)
     endif
 endfunc
 "}}}
+
 
 
 " s:run_from_map {{{
@@ -931,10 +960,77 @@ endfunc
 
 " }}}
 
+
+
+" s:emulate_single_key {{{
+"   emulate QuickBuf.vim's single key mappings.
+func! s:emulate_single_key()
+    if s:dumbbuf_bufnr != bufnr('%') | return | endif
+    if mode() !=# 'n'                | return | endif
+
+    let c = nr2char(getchar())
+    call s:debug(printf('getchar:[%s]', c))
+    let key = s:mapstack . c
+
+    if has_key(s:mappings.single_key, key) || mapcheck(key, 'n') != ''
+        " (candidate) mappings exist.
+        if has_key(s:mappings.single_key, key)    " single key mapping.
+            call feedkeys(s:mappings.single_key[key], 'm')
+            let s:mapstack = ''
+        elseif maparg(key, 'n') != ''    " user mapping or local buffer mapping.
+            call feedkeys(key, 'm')
+            let s:mapstack = ''
+        else
+            " push char key.
+            let s:mapstack = s:mapstack . c
+        endif
+    else
+        " no mappings. just do it.
+        call feedkeys(key, "m")
+        let s:mapstack = ''
+    endif
+endfunc
+" }}}
+
+" s:try_to_emulate_single_key {{{
+func! s:try_to_emulate_single_key()
+    try
+        call s:emulate_single_key()
+    catch
+        " ignore all!
+        if v:exception != ''
+            call s:debug(printf("ignore following error: '%s' in '%s'", v:exception, v:throwpoint))
+        endif
+    endtry
+endfunc
+" }}}
+
 " }}}
 
 " Mappings {{{
 execute 'nnoremap <silent><unique> '.g:dumbbuf_hotkey.' :call <SID>run_from_map()<CR>'
+
+" nop.
+noremap <silent> <Plug>try_to_emulate_single_key <Nop>
+noremap! <silent> <Plug>try_to_emulate_single_key <Nop>
+" redefine only mapmode-n.
+nnoremap <silent> <Plug>try_to_emulate_single_key :<C-u>call <SID>try_to_emulate_single_key()<CR>
+
+" }}}
+
+" Autocmd {{{
+if g:dumbbuf_single_key
+    augroup DumbBuf
+        autocmd!
+
+        for i in [g:dumbbuf_listed_buffer_name, g:dumbbuf_unlisted_buffer_name]
+            " get each key and execute it.
+            execute 'autocmd CursorHold '.i.' call feedkeys("\<Plug>try_to_emulate_single_key", "m")'
+            " restore &updatetime because &updatetime is global setting.
+            execute 'autocmd BufLeave   '.i.' let &updatetime = s:orig_updatetime'
+        endfor
+    augroup END
+endif
 " }}}
 
 " Restore 'cpoptions' {{{
