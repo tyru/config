@@ -735,9 +735,9 @@ endfunc
 func! s:run_from_map()
     call s:debug(printf('map: winnr:%d, bufnr:%d, s:dumbbuf_bufnr:%d', winnr('$'), bufnr('%'), s:dumbbuf_bufnr))
     " current window is unlisted window.
-    if ! getbufvar(expand('%'), '&buflisted')
-        new
-    endif
+    " if ! getbufvar('%', '&buflisted')
+    "     new
+    " endif
 
     " if dumbbuf buffer exists, close it.
     " (because old dumbbuf buffers list may be wrong)
@@ -777,12 +777,14 @@ func! s:run_from_local_map(code, type, is_custom_args, ...)
     let caller_winnr = bufwinnr(s:caller_bufnr)
     if caller_winnr == -1
         call s:debug('caller buffer does NOT exist. create new buffer...')
-        new
-        let s:caller_bufnr = bufnr('%')
-        let caller_winnr = winnr()
+        " new
+        " let s:caller_bufnr = bufnr('%')
+        " let caller_winnr = winnr()
+    else
+        execute caller_winnr.'wincmd w'
     endif
-    execute caller_winnr.'wincmd w'
     call s:debug(printf('caller exists:%d, window:%d, bufname:%s, current window:%d', bufexists(s:caller_bufnr), bufwinnr(s:caller_bufnr), bufname(s:caller_bufnr), winnr()))
+    call s:debug('current buffer is '.bufname('%'))
 
 
     call s:debug(printf("exec %s from local map: %s", string(a:type), string(a:code)))
