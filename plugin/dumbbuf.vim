@@ -32,7 +32,7 @@ scriptencoding utf-8
 "         close dumbbuf buffer even if g:dumbbuf_close_when_exec is false)
 "       - support of glvs.
 "   0.0.3:
-"       - fix bug of trappin all errors(including other plugin error).
+"       - fix bug of trapping all errors(including other plugin error).
 " }}}
 "
 " Mappings: {{{
