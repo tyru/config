@@ -819,8 +819,8 @@ func! s:run_from_local_map(code, type, is_custom_args, ...)
     catch /^skip_closing_dumbbuf_buffer$/
         " skip.
 
-    catch
-        echoerr printf("internal error: '%s' in '%s'", v:exception, v:throwpoint)
+    " catch
+    "     echoerr printf("internal error: '%s' in '%s'", v:exception, v:throwpoint)
 
     finally
         " restore previous value.
