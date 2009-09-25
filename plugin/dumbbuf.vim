@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.4
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-25.
+" Last Change: 2009-09-26.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -260,6 +260,10 @@ scriptencoding utf-8
 "           \}
 " }}}
 "
+" FIXME: {{{
+"   - can't get selected buffer when there is no buffers in list.
+"     I met this when I pressed 'tt'.
+" }}}
 " TODO: {{{
 "   - manipulate buffers each project.
 "   - reuse dumbbuf buffer.
@@ -715,6 +719,7 @@ func! s:open_dumbbuf_buffer()
     call s:debug(printf("filtered only '%s' buffers.", s:shown_type))
 
     " name dumbbuf's buffer.
+    " FIXME: pass safe string to :file command.
     if s:shown_type ==# 'unlisted'
         silent execute 'file '.g:dumbbuf_unlisted_buffer_name
     else
