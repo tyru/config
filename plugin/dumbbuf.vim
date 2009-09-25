@@ -33,21 +33,34 @@ scriptencoding utf-8
 "       - support of glvs.
 "   0.0.3:
 "       - fix bug of trapping all errors(including other plugin error).
+"   0.0.4:
+"       - implement single key mappings like QuickBuf.vim.
+"         'let g:dumbbuf_single_key = 1' to use it.
+"       - add g:dumbbuf_single_key, g:dumbbuf_updatetime.
+"       - map plain gg and G mappings in local buffer.
+"       - fix bug of making a waste buffer when called from
+"         unlisted buffer.
 " }}}
 "
 " Mappings: {{{
 "   please define g:dumbbuf_hotkey at first.
+"   if that is not defined, this script is not loaded.
 "
+"   gg
+"       move the cursor to the top of line.
+"   G
+"       move the cursor to the bottom of line.
 "   j
-"       move cursor to lower line.
+"       move the cursor to lower line.
 "   k
-"       move cursor to upper line.
+"       move the cursor to upper line.
 "   <CR>
 "       :edit the buffer.
 "   q
-"       close dumbbuf buffer.
+"       :close dumbbuf buffer.
 "   g:dumbbuf_hotkey
-"       close dumbbuf_hotkey buffer.
+"       :close dumbbuf_hotkey buffer.
+"       this is useful for toggling dumbbuf buffer.
 "   uu
 "       open one by one. this is same as QuickBuf's u.
 "   ss
@@ -64,6 +77,10 @@ scriptencoding utf-8
 "       toggle listed buffers or unlisted buffers.
 "   cc
 "       :close the buffer.
+"
+"   and, if you turn on 'g:dumbbuf_single_key',
+"   you can use single key mappings like QuickBuf.vim.
+"   see 'g:dumbbuf_single_key' at 'Global Variables' for the details.
 " }}}
 "
 " Global Variables: {{{
@@ -120,6 +137,31 @@ scriptencoding utf-8
 "       if true, go downwardly when 'uu' mapping.
 "       if false, go upwardly.
 "
+"   g:dumbbuf_single_key (default: 0)
+"       if true, use single key mappings like QuickBuf.vim.
+"       here is the single key mappings that are defined:
+"           "u" as "uu".
+"           "s" as "ss".
+"           "v" as "vv".
+"           "t" as "tt".
+"           "d" as "dd".
+"           "w" as "ww".
+"           "l" as "ll".
+"           "c" as "cc".
+"       the reason why these mappings are defined as 'plain' mappings
+"       in dumbbuf buffer is due to avoiding conflicts of Vim's default mappings.
+"       however, making this global variable true, that mappings are
+"       safely used without any conflicts.
+"
+"       this is implemented by doing getchar() and executing it on normal
+"       mode. but you can enter to other modes while waiting a key.
+"       so, like MRU, you can search string in dumbbuf buffer.
+"
+"   g:dumbbuf_updatetime (default: 100)
+"       local value of &updatetime in dumbbuf buffer.
+"       making this 0 speeds up key input
+"       but that may be 'heavy' for Vim.
+"
 "   g:dumbbuf_disp_expr (default: see below)
 "       this variable is for the experienced users.
 "
@@ -175,6 +217,12 @@ scriptencoding utf-8
 "                   \'k': {
 "                       \'opt': '<silent>', 'mapto': 'k',
 "                   \},
+"                   \'gg': {
+"                       \'opt': '<silent>', 'mapto': 'gg',
+"                   \},
+"                   \'G': {
+"                       \'opt': '<silent>', 'mapto': 'G',
+"                   \},
 "                   \g:dumbbuf_hotkey : {
 "                       \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
 "                   \},
@@ -214,7 +262,6 @@ scriptencoding utf-8
 "
 " TODO: {{{
 "   - manipulate buffers each project.
-"   - local mappings of single key sequence.
 "   - reuse dumbbuf buffer.
 " }}}
 "==================================================
