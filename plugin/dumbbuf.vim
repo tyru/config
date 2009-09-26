@@ -263,6 +263,8 @@ scriptencoding utf-8
 " FIXME: {{{
 "   - can't get selected buffer when there is no buffers in list.
 "     I met this when I pressed 'tt'.
+"   - use :botright when :new.
+"   - fix bug which is reported by Bernhard.
 " }}}
 " TODO: {{{
 "   - manipulate buffers each project.
