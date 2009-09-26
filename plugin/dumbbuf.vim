@@ -92,15 +92,15 @@ scriptencoding utf-8
 "       a mapping which calls dumbbuf buffer.
 "       if this variable is not defined, this plugin will be not loaded.
 "
-"   g:dumbbuf_buffer_height (default: 10)
-"       dumbbuf buffer's height.
-"       this is used when only g:dumbbuf_vertical is false.
+"   g:dumbbuf_open_with (default: 'botright')
+"       open dumbbuf buffer with this command.
 "
 "   g:dumbbuf_vertical (default: 0)
 "       if true, open dumbbuf buffer vertically.
 "
-"   g:dumbbuf_open_with (default: 'botright')
-"       open dumbbuf buffer with this command.
+"   g:dumbbuf_buffer_height (default: 10)
+"       dumbbuf buffer's height.
+"       this is used when only g:dumbbuf_vertical is false.
 "
 "   g:dumbbuf_buffer_width (default: 25)
 "       dumbbuf buffer's width.
