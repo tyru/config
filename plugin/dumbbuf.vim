@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.5
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-26.
+" Last Change: 2009-09-27.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -42,7 +42,8 @@ scriptencoding utf-8
 "         unlisted buffer.
 "   0.0.5:
 "       - fix bug: when using with another plugin that uses unlisted buffer,
-"       pressing <CR> in dumbbuf buffer jumps into that unlisted buffer.
+"         pressing <CR> in dumbbuf buffer jumps into that unlisted buffer.
+"         Thanks to Bernhard Walle for reporting the bug.
 "       - add g:dumbbuf_open_with.
 " }}}
 "
