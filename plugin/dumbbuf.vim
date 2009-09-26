@@ -263,8 +263,6 @@ scriptencoding utf-8
 " FIXME: {{{
 "   - can't get selected buffer when there is no buffers in list.
 "     I met this when I pressed 'tt'.
-"   - use :botright when :new.
-"   - fix bug which is reported by Bernhard.
 " }}}
 " TODO: {{{
 "   - manipulate buffers each project.
@@ -318,6 +316,9 @@ if ! exists('g:dumbbuf_buffer_height')
 endif
 if ! exists('g:dumbbuf_vertical')
     let g:dumbbuf_vertical = 0
+endif
+if ! exists('g:dumbbuf_open_with')
+    let g:dumbbuf_open_with = 'botright'
 endif
 if ! exists('g:dumbbuf_buffer_width')
     let g:dumbbuf_buffer_width = 25
@@ -489,11 +490,10 @@ endfunc
 
 " s:create_dumbbuf_buffer {{{
 func! s:create_dumbbuf_buffer()
-    if g:dumbbuf_vertical
-        execute g:dumbbuf_buffer_width.'vnew'
-    else
-        execute g:dumbbuf_buffer_height.'new'
-    endif
+    execute printf("%s %s %dnew",
+                \g:dumbbuf_vertical ? 'vertical' : '',
+                \g:dumbbuf_open_with,
+                \g:dumbbuf_vertical ? g:dumbbuf_buffer_width : g:dumbbuf_buffer_height)
     return bufnr('%')
 endfunc
 " }}}
@@ -817,11 +817,6 @@ endfunc
 " s:run_from_map {{{
 func! s:run_from_map()
     call s:debug(printf('map: winnr:%d, bufnr:%d, s:dumbbuf_bufnr:%d', winnr('$'), bufnr('%'), s:dumbbuf_bufnr))
-    " current window is unlisted window.
-    " if ! getbufvar('%', '&buflisted')
-    "     new
-    " endif
-
     " if dumbbuf buffer exists, close it.
     " (because old dumbbuf buffers list may be wrong)
     let winnr = bufwinnr(s:dumbbuf_bufnr)
@@ -858,12 +853,8 @@ func! s:run_from_local_map(code, type, is_custom_args, ...)
 
     " jump to caller buffer from dumbbuf buffer.
     let caller_winnr = bufwinnr(s:caller_bufnr)
-    if caller_winnr == -1
-        call s:debug('caller buffer does NOT exist. create new buffer...')
-        " new
-        " let s:caller_bufnr = bufnr('%')
-        " let caller_winnr = winnr()
-    else
+    " only if caller buffer is displayed, jump to that buffer.
+    if caller_winnr != -1
         execute caller_winnr.'wincmd w'
     endif
     call s:debug(printf('caller exists:%d, window:%d, bufname:%s, current window:%d', bufexists(s:caller_bufnr), bufwinnr(s:caller_bufnr), bufname(s:caller_bufnr), winnr()))
@@ -873,7 +864,7 @@ func! s:run_from_local_map(code, type, is_custom_args, ...)
     call s:debug(printf("exec %s from local map: %s", string(a:type), string(a:code)))
     try
         " dispatch a:code.
-        " note that current buffer is caller buffer.
+        " NOTE: current buffer may not be caller buffer.
         if type(a:code) == type([])
             let i = 0
             let len = len(a:code)
@@ -891,11 +882,7 @@ func! s:run_from_local_map(code, type, is_custom_args, ...)
         endif
 
         " close or update dumbbuf buffer.
-        if winnr('$') == 1    " current window(dumbbuf buffer) is last window.
-            call s:debug("dumbbuf buffer is last window.")
-            new
-            call s:update_buffers_list()
-        elseif g:dumbbuf_close_when_exec
+        if g:dumbbuf_close_when_exec
             call s:debug("just close")
             call s:close_dumbbuf_buffer()
         else
@@ -904,7 +891,7 @@ func! s:run_from_local_map(code, type, is_custom_args, ...)
         endif
 
     catch /^skip_closing_dumbbuf_buffer$/
-        " skip.
+        " do not close or update any buffer, just return.
 
     " catch
     "     echoerr printf("internal error: '%s' in '%s'", v:exception, v:throwpoint)
