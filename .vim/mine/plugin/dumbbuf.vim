@@ -4,7 +4,7 @@ scriptencoding utf-8
 " Document {{{
 "==================================================
 " Name: DumbBuf
-" Version: 0.0.3
+" Version: 0.0.5
 " Author:  tyru <tyru.exe@gmail.com>
 " Last Change: 2009-09-26.
 "
@@ -32,22 +32,39 @@ scriptencoding utf-8
 "         close dumbbuf buffer even if g:dumbbuf_close_when_exec is false)
 "       - support of glvs.
 "   0.0.3:
-"       - fix bug of trappin all errors(including other plugin error).
+"       - fix bug of trapping all errors(including other plugin error).
+"   0.0.4:
+"       - implement single key mappings like QuickBuf.vim.
+"         'let g:dumbbuf_single_key = 1' to use it.
+"       - add g:dumbbuf_single_key, g:dumbbuf_updatetime.
+"       - map plain gg and G mappings in local buffer.
+"       - fix bug of making a waste buffer when called from
+"         unlisted buffer.
+"   0.0.5:
+"       - fix bug: when using with another plugin that uses unlisted buffer,
+"       pressing <CR> in dumbbuf buffer jumps into that unlisted buffer.
+"       - add g:dumbbuf_open_with.
 " }}}
 "
 " Mappings: {{{
 "   please define g:dumbbuf_hotkey at first.
+"   if that is not defined, this script is not loaded.
 "
+"   gg
+"       move the cursor to the top of line.
+"   G
+"       move the cursor to the bottom of line.
 "   j
-"       move cursor to lower line.
+"       move the cursor to lower line.
 "   k
-"       move cursor to upper line.
+"       move the cursor to upper line.
 "   <CR>
 "       :edit the buffer.
 "   q
-"       close dumbbuf buffer.
+"       :close dumbbuf buffer.
 "   g:dumbbuf_hotkey
-"       close dumbbuf_hotkey buffer.
+"       :close dumbbuf_hotkey buffer.
+"       this is useful for toggling dumbbuf buffer.
 "   uu
 "       open one by one. this is same as QuickBuf's u.
 "   ss
@@ -64,6 +81,10 @@ scriptencoding utf-8
 "       toggle listed buffers or unlisted buffers.
 "   cc
 "       :close the buffer.
+"
+"   and, if you turn on 'g:dumbbuf_single_key',
+"   you can use single key mappings like QuickBuf.vim.
+"   see 'g:dumbbuf_single_key' at 'Global Variables' for the details.
 " }}}
 "
 " Global Variables: {{{
@@ -71,12 +92,15 @@ scriptencoding utf-8
 "       a mapping which calls dumbbuf buffer.
 "       if this variable is not defined, this plugin will be not loaded.
 "
-"   g:dumbbuf_buffer_height (default: 10)
-"       dumbbuf buffer's height.
-"       this is used when only g:dumbbuf_vertical is false.
+"   g:dumbbuf_open_with (default: 'botright')
+"       open dumbbuf buffer with this command.
 "
 "   g:dumbbuf_vertical (default: 0)
 "       if true, open dumbbuf buffer vertically.
+"
+"   g:dumbbuf_buffer_height (default: 10)
+"       dumbbuf buffer's height.
+"       this is used when only g:dumbbuf_vertical is false.
 "
 "   g:dumbbuf_buffer_width (default: 25)
 "       dumbbuf buffer's width.
@@ -119,6 +143,31 @@ scriptencoding utf-8
 "   g:dumbbuf_downward (default: 1)
 "       if true, go downwardly when 'uu' mapping.
 "       if false, go upwardly.
+"
+"   g:dumbbuf_single_key (default: 0)
+"       if true, use single key mappings like QuickBuf.vim.
+"       here is the single key mappings that are defined:
+"           "u" as "uu".
+"           "s" as "ss".
+"           "v" as "vv".
+"           "t" as "tt".
+"           "d" as "dd".
+"           "w" as "ww".
+"           "l" as "ll".
+"           "c" as "cc".
+"       the reason why these mappings are defined as 'plain' mappings
+"       in dumbbuf buffer is due to avoiding conflicts of Vim's default mappings.
+"       however, making this global variable true, that mappings are
+"       safely used without any conflicts.
+"
+"       this is implemented by doing getchar() and executing it on normal
+"       mode. but you can enter to other modes while waiting a key.
+"       so, like MRU, you can search string in dumbbuf buffer.
+"
+"   g:dumbbuf_updatetime (default: 100)
+"       local value of &updatetime in dumbbuf buffer.
+"       making this 0 speeds up key input
+"       but that may be 'heavy' for Vim.
 "
 "   g:dumbbuf_disp_expr (default: see below)
 "       this variable is for the experienced users.
@@ -175,6 +224,12 @@ scriptencoding utf-8
 "                   \'k': {
 "                       \'opt': '<silent>', 'mapto': 'k',
 "                   \},
+"                   \'gg': {
+"                       \'opt': '<silent>', 'mapto': 'gg',
+"                   \},
+"                   \'G': {
+"                       \'opt': '<silent>', 'mapto': 'G',
+"                   \},
 "                   \g:dumbbuf_hotkey : {
 "                       \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
 "                   \},
@@ -212,18 +267,17 @@ scriptencoding utf-8
 "           \}
 " }}}
 "
+" FIXME: {{{
+"   - can't get selected buffer when there is no buffers in list.
+"     I met this when I pressed 'tt'.
+" }}}
 " TODO: {{{
 "   - manipulate buffers each project.
-"   - local mappings of single key sequence.
 "   - reuse dumbbuf buffer.
 " }}}
 "==================================================
 " }}}
 
-" Saving 'cpoptions' {{{
-let s:save_cpo = &cpo
-set cpo&vim
-" }}}
 " Load Once {{{
 if exists('g:loaded_dumbbuf') && g:loaded_dumbbuf != 0
     finish
@@ -240,6 +294,10 @@ elseif exists('g:dumbbuf_hotkey') && maparg(g:dumbbuf_hotkey) != ''
     finish
 endif
 " }}}
+" Saving 'cpoptions' {{{
+let s:save_cpo = &cpo
+set cpo&vim
+" }}}
 " Scope Variables {{{
 let s:debug_msg = []
 
@@ -248,6 +306,8 @@ let s:dumbbuf_bufnr = -1    " dumbbuf buffer's bufnr.
 let s:bufs_info = []    " buffers list.
 let s:shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
 let s:mappings = {'default': {}, 'user': {}}    " buffer local mappings.
+let s:mapstack = ''
+let s:orig_updatetime = &updatetime
 " }}}
 " Global Variables {{{
 if ! exists('g:dumbbuf_verbose')
@@ -263,6 +323,9 @@ if ! exists('g:dumbbuf_buffer_height')
 endif
 if ! exists('g:dumbbuf_vertical')
     let g:dumbbuf_vertical = 0
+endif
+if ! exists('g:dumbbuf_open_with')
+    let g:dumbbuf_open_with = 'botright'
 endif
 if ! exists('g:dumbbuf_buffer_width')
     let g:dumbbuf_buffer_width = 25
@@ -285,6 +348,13 @@ endif
 if ! exists('g:dumbbuf_downward')
     let g:dumbbuf_downward = 1
 endif
+if ! exists('g:dumbbuf_single_key')
+    let g:dumbbuf_single_key = 0
+endif
+if ! exists('g:dumbbuf_updatetime')
+    let g:dumbbuf_updatetime = 100
+endif
+
 
 if ! exists('g:dumbbuf_disp_expr')
     " QuickBuf.vim like UI.
@@ -312,6 +382,12 @@ let s:mappings.default = {
         \},
         \'k': {
             \'opt': '<silent>', 'mapto': 'k',
+        \},
+        \'gg': {
+            \'opt': '<silent>', 'mapto': 'gg',
+        \},
+        \'G': {
+            \'opt': '<silent>', 'mapto': 'G',
         \},
         \g:dumbbuf_hotkey : {
             \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
@@ -347,6 +423,16 @@ let s:mappings.default = {
             \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_close", "func", 0)<CR>',
         \},
     \}
+\}
+let s:mappings.single_key = {
+    \'u': 'uu',
+    \'s': 'ss',
+    \'v': 'vv',
+    \'t': 'tt',
+    \'d': 'dd',
+    \'w': 'ww',
+    \'l': 'll',
+    \'c': 'cc',
 \}
 
 " }}}
@@ -405,17 +491,48 @@ func! s:apply(funcname, args)
 endfunc
 " }}}
 
+" s:pat_escape {{{
+"   path to pattern.
+func! s:pat_escape(pat_str)
+    " see :help file-pattern
+    " XXX: maybe not complete...
+    let patterns = {
+        \"*": "\\*",
+        \"?": "\\?",
+        \"\\?": "?",
+        \",": "/,",
+        \"\\": "\\\\",
+        \"[": "\\[",
+        \"]": "\\]",
+    \}
+    let pat_str = a:pat_str
+    let escaped = ''
+
+    while pat_str != ''
+        let matched =
+            \filter(copy(patterns),
+                   \'strpart(pat_str, 0, strlen(v:key)) ==# v:key')
+
+        if len(matched) == 0
+        elseif len(matched) == 1
+        else
+        endif
+    endwhile
+
+    return escaped
+endfunc
+" }}}
+
 " }}}
 
 
 
 " s:create_dumbbuf_buffer {{{
 func! s:create_dumbbuf_buffer()
-    if g:dumbbuf_vertical
-        execute g:dumbbuf_buffer_width.'vnew'
-    else
-        execute g:dumbbuf_buffer_height.'new'
-    endif
+    execute printf("%s %s %dnew",
+                \g:dumbbuf_vertical ? 'vertical' : '',
+                \g:dumbbuf_open_with,
+                \g:dumbbuf_vertical ? g:dumbbuf_buffer_width : g:dumbbuf_buffer_height)
     return bufnr('%')
 endfunc
 " }}}
@@ -643,10 +760,11 @@ func! s:open_dumbbuf_buffer()
     call s:debug(printf("filtered only '%s' buffers.", s:shown_type))
 
     " name dumbbuf's buffer.
+    " FIXME: pass safe string to :file command.
     if s:shown_type ==# 'unlisted'
-        silent execute 'file '.g:dumbbuf_unlisted_buffer_name
+        silent execute 'file `=g:dumbbuf_unlisted_buffer_name`'
     else
-        silent execute 'file '.g:dumbbuf_listed_buffer_name
+        silent execute 'file `=g:dumbbuf_listed_buffer_name`'
     endif
 
     " write buffers list.
@@ -689,7 +807,10 @@ func! s:open_dumbbuf_buffer()
             endif
         endfor
     endfor
-
+    " updatetime
+    " NOTE: updatetime is global. so I must restore it later.
+    let s:orig_updatetime = &updatetime
+    let &l:updatetime = g:dumbbuf_updatetime
 endfunc
 " }}}
 
@@ -731,14 +852,10 @@ endfunc
 "}}}
 
 
+
 " s:run_from_map {{{
 func! s:run_from_map()
     call s:debug(printf('map: winnr:%d, bufnr:%d, s:dumbbuf_bufnr:%d', winnr('$'), bufnr('%'), s:dumbbuf_bufnr))
-    " current window is unlisted window.
-    if ! getbufvar(expand('%'), '&buflisted')
-        new
-    endif
-
     " if dumbbuf buffer exists, close it.
     " (because old dumbbuf buffers list may be wrong)
     let winnr = bufwinnr(s:dumbbuf_bufnr)
@@ -775,20 +892,18 @@ func! s:run_from_local_map(code, type, is_custom_args, ...)
 
     " jump to caller buffer from dumbbuf buffer.
     let caller_winnr = bufwinnr(s:caller_bufnr)
-    if caller_winnr == -1
-        call s:debug('caller buffer does NOT exist. create new buffer...')
-        new
-        let s:caller_bufnr = bufnr('%')
-        let caller_winnr = winnr()
+    " only if caller buffer is displayed, jump to that buffer.
+    if caller_winnr != -1
+        execute caller_winnr.'wincmd w'
     endif
-    execute caller_winnr.'wincmd w'
     call s:debug(printf('caller exists:%d, window:%d, bufname:%s, current window:%d', bufexists(s:caller_bufnr), bufwinnr(s:caller_bufnr), bufname(s:caller_bufnr), winnr()))
+    call s:debug('current buffer is '.bufname('%'))
 
 
     call s:debug(printf("exec %s from local map: %s", string(a:type), string(a:code)))
     try
         " dispatch a:code.
-        " note that current buffer is caller buffer.
+        " NOTE: current buffer may not be caller buffer.
         if type(a:code) == type([])
             let i = 0
             let len = len(a:code)
@@ -806,11 +921,7 @@ func! s:run_from_local_map(code, type, is_custom_args, ...)
         endif
 
         " close or update dumbbuf buffer.
-        if winnr('$') == 1    " current window(dumbbuf buffer) is last window.
-            call s:debug("dumbbuf buffer is last window.")
-            new
-            call s:update_buffers_list()
-        elseif g:dumbbuf_close_when_exec
+        if g:dumbbuf_close_when_exec
             call s:debug("just close")
             call s:close_dumbbuf_buffer()
         else
@@ -819,7 +930,7 @@ func! s:run_from_local_map(code, type, is_custom_args, ...)
         endif
 
     catch /^skip_closing_dumbbuf_buffer$/
-        " skip.
+        " do not close or update any buffer, just return.
 
     " catch
     "     echoerr printf("internal error: '%s' in '%s'", v:exception, v:throwpoint)
@@ -929,10 +1040,77 @@ endfunc
 
 " }}}
 
+
+
+" s:emulate_single_key {{{
+"   emulate QuickBuf.vim's single key mappings.
+func! s:emulate_single_key()
+    if s:dumbbuf_bufnr != bufnr('%') | return | endif
+    if mode() !=# 'n'                | return | endif
+
+    let c = nr2char(getchar())
+    call s:debug(printf('getchar:[%s]', c))
+    let key = s:mapstack . c
+
+    if has_key(s:mappings.single_key, key) || mapcheck(key, 'n') != ''
+        " (candidate) mappings exist.
+        if has_key(s:mappings.single_key, key)    " single key mapping.
+            call feedkeys(s:mappings.single_key[key], 'm')
+            let s:mapstack = ''
+        elseif maparg(key, 'n') != ''    " user mapping or local buffer mapping.
+            call feedkeys(key, 'm')
+            let s:mapstack = ''
+        else
+            " push char key.
+            let s:mapstack = s:mapstack . c
+        endif
+    else
+        " no mappings. just do it.
+        call feedkeys(key, "m")
+        let s:mapstack = ''
+    endif
+endfunc
+" }}}
+
+" s:try_to_emulate_single_key {{{
+func! s:try_to_emulate_single_key()
+    try
+        call s:emulate_single_key()
+    catch
+        " ignore all!
+        if v:exception != ''
+            call s:debug(printf("ignore following error: '%s' in '%s'", v:exception, v:throwpoint))
+        endif
+    endtry
+endfunc
+" }}}
+
 " }}}
 
 " Mappings {{{
 execute 'nnoremap <silent><unique> '.g:dumbbuf_hotkey.' :call <SID>run_from_map()<CR>'
+
+" nop.
+noremap <silent> <Plug>try_to_emulate_single_key <Nop>
+noremap! <silent> <Plug>try_to_emulate_single_key <Nop>
+" redefine only mapmode-n.
+nnoremap <silent> <Plug>try_to_emulate_single_key :<C-u>call <SID>try_to_emulate_single_key()<CR>
+
+" }}}
+
+" Autocmd {{{
+if g:dumbbuf_single_key
+    augroup DumbBuf
+        autocmd!
+
+        for i in [g:dumbbuf_listed_buffer_name, g:dumbbuf_unlisted_buffer_name]
+            " get each key and execute it.
+            execute 'autocmd CursorHold '.s:pat_escape(i).' call feedkeys("\<Plug>try_to_emulate_single_key", "m")'
+            " restore &updatetime because &updatetime is global setting.
+            execute 'autocmd BufLeave   '.s:pat_escape(i).' let &updatetime = s:orig_updatetime'
+        endfor
+    augroup END
+endif
 " }}}
 
 " Restore 'cpoptions' {{{

@@ -289,6 +289,7 @@ endif
 if !has('gui_running') && has('xterm_clipboard')
     set clipboard=exclude:cons\\\|linux\\\|cygwin\\\|rxvt\\\|screen
 endif
+let did_install_default_menus = 1
 " }}}
 
 " プラットホーム依存の特別な設定 {{{
@@ -1220,6 +1221,8 @@ let xptemplate_key = '<C-t>'
 map g;  <Plug>(operator-replace)
 
 " taglist {{{
+let loaded_taglist = 1
+
 let Tlist_Ctags_Cmd = '/usr/bin/ctags'
 nnoremap <silent> \t :TlistToggle<CR>
 
@@ -1320,6 +1323,7 @@ let g:dumbbuf_mappings = {
 \}
 " let g:dumbbuf_shown_type = 'listed'
 let g:dumbbuf_single_key = 1
+let g:dumbbuf_listed_buffer_name = '*foo bar*'
 
 " let g:dumbbuf_verbose = 1
 " }}}
