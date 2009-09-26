@@ -113,9 +113,17 @@ scriptencoding utf-8
 "       'listed buffers' are opposite of 'unlisted-buffers'.
 "       see ':help unlisted-buffer'.
 "
+"       NOTE: DON'T assign string which includes whitespace, or any special
+"       characters like "*", "?", ",".
+"       see :help file-pattern
+"
 "   g:dumbbuf_unlisted_buffer_name (default: '__unlisted_buffers__')
 "       dumbbuf buffer's filename.
 "       set this filename when showing 'unlisted buffers'.
+"
+"       NOTE: DON'T assign string which includes whitespace, or any special
+"       characters like "*", "?", ",".
+"       see :help file-pattern
 "
 "   g:dumbbuf_cursor_pos (default: 'current')
 "       jumps to this position when dumbbuf buffer opens.
