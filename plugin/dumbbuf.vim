@@ -279,6 +279,7 @@ scriptencoding utf-8
 " TODO: {{{
 "   - manipulate buffers each project.
 "   - reuse dumbbuf buffer.
+"   - select some buffers and execute mapping each buffers.
 " }}}
 "==================================================
 " }}}
@@ -359,6 +360,9 @@ endif
 if ! exists('g:dumbbuf_updatetime')
     let g:dumbbuf_updatetime = 100
 endif
+if ! exists('g:dumbbuf_wrap_cursor')
+    let g:dumbbuf_wrap_cursor = 1
+endif
 
 
 if ! exists('g:dumbbuf_disp_expr')
@@ -383,10 +387,10 @@ endif
 let s:mappings.default = {
     \'n': {
         \'j': {
-            \'opt': '<silent>', 'mapto': 'j',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_move_lower()<CR>',
         \},
         \'k': {
-            \'opt': '<silent>', 'mapto': 'k',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_move_upper()<CR>',
         \},
         \'gg': {
             \'opt': '<silent>', 'mapto': 'gg',
@@ -624,15 +628,22 @@ func! s:parse_buffers_info()
 endfunc
 " }}}
 
+" s:jump_to_buffer {{{
+func! s:jump_to_buffer(bufnr)
+    let winnr = bufwinnr(a:bufnr)
+    if winnr != -1
+        call s:debug(printf("jump to ... [%s]", bufname(a:bufnr)))
+        execute winnr.'wincmd w'
+    endif
+    return winnr
+endfunc
+" }}}
+
 " s:close_dumbbuf_buffer {{{
 func! s:close_dumbbuf_buffer()
     let prevwinnr = winnr()
 
-    let winnr = bufwinnr(s:dumbbuf_bufnr)
-    if winnr != -1
-        " jump to dumbbuf's window.
-        execute winnr.'wincmd w'
-        " close it.
+    if s:jump_to_buffer(s:dumbbuf_bufnr) != -1
         close
     endif
 
@@ -881,12 +892,7 @@ func! s:run_from_local_map(code, opt)
     " save current value.
     let save_close_when_exec = g:dumbbuf_close_when_exec
 
-    " jump to caller buffer from dumbbuf buffer.
-    let caller_winnr = bufwinnr(s:caller_bufnr)
-    " only if caller buffer is displayed, jump to that buffer.
-    if caller_winnr != -1
-        execute caller_winnr.'wincmd w'
-    endif
+    call s:jump_to_buffer(s:caller_bufnr)
     call s:debug(printf('caller exists:%d, window:%d, bufname:%s, current window:%d', bufexists(s:caller_bufnr), bufwinnr(s:caller_bufnr), bufname(s:caller_bufnr), winnr()))
     call s:debug('current buffer is '.bufname('%'))
 
@@ -937,6 +943,32 @@ endfunc
 
 
 " these functions are called from dumbbuf's buffer {{{
+
+" s:buflocal_move_lower {{{
+func! s:buflocal_move_lower()
+    if line('.') == line('$')
+        if g:dumbbuf_wrap_cursor
+            " go to the top of buffer.
+            execute '1'
+        endif
+    else
+        normal! j
+    endif
+endfunc
+" }}}
+
+" s:buflocal_move_upper {{{
+func! s:buflocal_move_upper()
+    if line('.') == 1
+        if g:dumbbuf_wrap_cursor
+            " go to the bottom of buffer.
+            execute line('$')
+        endif
+    else
+        normal! k
+    endif
+endfunc
+" }}}
 
 " s:buflocal_open_closing_dumbbuf {{{
 "   this must be going to close dumbbuf buffer.
@@ -1025,10 +1057,7 @@ endfunc
 " s:buflocal_close {{{
 func! s:buflocal_close(curbuf, db_lnum)
     if empty(a:curbuf) | return | endif
-
-    let winnr = bufwinnr(a:curbuf.nr)
-    if winnr !=# -1
-        execute winnr.'wincmd w'
+    if s:jump_to_buffer(a:curbuf.nr) != -1
         close
     endif
 endfunc
