@@ -40,6 +40,10 @@ scriptencoding utf-8
 "       - map plain gg and G mappings in local buffer.
 "       - fix bug of making a waste buffer when called from
 "         unlisted buffer.
+"   0.0.5:
+"       - fix bug: when using with another plugin that uses unlisted buffer,
+"       pressing <CR> in dumbbuf buffer jumps into that unlisted buffer.
+"       - add g:dumbbuf_open_with.
 " }}}
 "
 " Mappings: {{{
@@ -94,6 +98,9 @@ scriptencoding utf-8
 "
 "   g:dumbbuf_vertical (default: 0)
 "       if true, open dumbbuf buffer vertically.
+"
+"   g:dumbbuf_open_with (default: 'botright')
+"       open dumbbuf buffer with this command.
 "
 "   g:dumbbuf_buffer_width (default: 25)
 "       dumbbuf buffer's width.
