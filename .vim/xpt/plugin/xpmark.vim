@@ -45,7 +45,40 @@ let g:XPMpreferRight = 'r'
 
 
 
+augroup XPM
+    au!
+    au BufEnter * call XPMcheckStatusline()
+augroup END
+
+fun! XPMcheckStatusline() "{{{
+    if &statusline == ""
+        if &l:statusline == ''
+            " all empty 
+            setlocal statusline=%<%f\ %h%m%r%=\ %P
+        else
+            " locally set
+            " nothing to do
+
+        endif 
+    else
+        if &l:statusline == ''
+            " set only globally
+            " copy it
+            setlocal statusline<
+        else
+            " locally set
+
+        endif 
+    endif
+    if &l:statusline !~ 'XPMautoUpdate' 
+        let &l:statusline  .= '%{XPMautoUpdate("statusline")}' 
+    endif 
+ 
+endfunction "}}} 
+
+
 fun! XPMadd( name, pos, prefer ) "{{{
+
     " @param name       mark name
     "
     " @param pos        list of [ line, column ]
@@ -54,6 +87,8 @@ fun! XPMadd( name, pos, prefer ) "{{{
     "                   right-prefered. Typing on a left-prefered mark add text
     "                   after mark, before mark for right-prefered.
     "                   Default : 'l' left-prefered
+
+    call XPMcheckStatusline()
 
     call s:log.Log( "add mark of name " . string( a:name ) . ' at ' . string( a:pos ) )
     let d = s:bufData()
@@ -79,6 +114,7 @@ fun! XPMremove( name ) "{{{
 endfunction "}}}
 
 fun! XPMremoveMarkStartWith(prefix) "{{{
+    call s:log.Log( "XPMremoveMarkStartWith prefix=" . a:prefix )
     let d = s:bufData()
     for key in keys( d.marks )
         if key =~# '^\V' . a:prefix
@@ -88,6 +124,7 @@ fun! XPMremoveMarkStartWith(prefix) "{{{
 endfunction "}}}
 
 fun! XPMflush() "{{{
+    call s:log.Debug( "XPMflush" )
     let d = s:bufData()
     let d.marks = {}
     let d.orderedMarks = []
@@ -319,7 +356,7 @@ fun! s:snapshot() dict "{{{
             let self.markHistory[ n-1 ] = self.markHistory[ n-2 ]
         else
             let self.markHistory[ n-1 ] = {'list':[], 'dict' :{}}
-            " throw 'no history nr:' . ( n-1 ) . ' lastNr:' . self.lastChangenr . ' history:' . string( self.markHistory )
+            " throw ( 'no history nr:' . ( n-1 ) . ' lastNr:' . self.lastChangenr . ' history:' . string( self.markHistory ) )
         endif
     endif
 
@@ -1161,13 +1198,17 @@ elseif !&ruler
 
 endif
 
+" if &statusline == ""
+    " set statusline=%17(%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P%)
+" endif
+
 " Always enable ruler so that if statusline disabled, update can be done
 " through rulerformat
 set ruler
 
 " let &statusline   = '%{PrintDebug()}' . &statusline
 let &rulerformat .= '%{XPMautoUpdate("ruler")}'
-let &statusline  .= '%{XPMautoUpdate("statusline")}'
+" let &statusline  .= '%{XPMautoUpdate("statusline")}'
 
 
 

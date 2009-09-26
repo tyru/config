@@ -164,9 +164,7 @@ let s:runtime_dirs = [
     \ '$HOME/.vim/after',
     \ '$HOME/.vim/mine',
     \ '$HOME/.vim/chalice',
-    \ '$HOME/.vim/hatena',
     \ '$HOME/.vim/xpt',
-    \ '$HOME/.vim/neocomplcache'
 \ ]
 for dir in s:runtime_dirs
     if isdirectory(expand(dir))
@@ -912,7 +910,7 @@ noremap <silent> H  5h
 noremap <silent> L  5l
 " }}}2
 
-" ~~ n ~~ {{{2
+" ~~ n ~~ {{{
 
 nnoremap <silent> n     nzz
 nnoremap <silent> N     Nzz
@@ -1008,12 +1006,13 @@ nnoremap <Leader>Z        %%da(h"_da(P
 
 nnoremap <silent> Q     gQ
 
-" 直前に検索したワードで素早くvimgrep
 nnoremap g/    :<C-u>vimgrep /<C-r>// *
-" 
 nnoremap ,/    :<C-u>vimgrep // *<Left><Left><Left>
 
-" }}}2
+" Vimのコマンドラインが隠れるバグをリセットするために必要
+nnoremap ,r    :<C-u>echoerr ''<CR>
+
+" }}}
 
 " ~~ o ~~ {{{2
 omapclear
@@ -1106,13 +1105,13 @@ let g:netrw_liststyle = 1
 let g:netrw_cygwin    = 1
 
 " FuzzyFinder {{{3
-nnoremap <silent> <Leader>fb       :FufBuffer<CR>
-nnoremap <silent> <Leader>fd       :FufDir<CR>
-nnoremap <silent> <Leader>ff       :FufFile<CR>
-nnoremap <silent> <Leader>fh       :FufMruFile<CR>
-nnoremap <silent> <Leader>ft       :FufTag<CR>
-nnoremap <silent> <Leader>fT       :FufTaggedFile<CR>
-nnoremap <silent> <Leader>t        :FufTagWithCursorWord<CR>
+nnoremap <silent> <Leader>fb       :FufRenewCache<CR>:FufBuffer<CR>
+nnoremap <silent> <Leader>fd       :FufRenewCache<CR>:FufDir<CR>
+nnoremap <silent> <Leader>ff       :FufRenewCache<CR>:FufFile<CR>
+nnoremap <silent> <Leader>fh       :FufRenewCache<CR>:FufMruFile<CR>
+nnoremap <silent> <Leader>ft       :FufRenewCache<CR>:FufTag<CR>
+nnoremap <silent> <Leader>fT       :FufRenewCache<CR>:FufTaggedFile<CR>
+nnoremap <silent> <Leader>t        :FufRenewCache<CR>:FufTagWithCursorWord<CR>
 
 
 let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem']
@@ -1220,6 +1219,20 @@ let xptemplate_key = '<C-t>'
 " operator-replace
 map g;  <Plug>(operator-replace)
 
+" taglist {{{
+let Tlist_Ctags_Cmd = '/usr/bin/ctags'
+nnoremap <silent> \t :TlistToggle<CR>
+
+" nnoremap <silent> <F8> :TlistToggle<CR>
+let Tlist_Process_File_Always = 1
+let Tlist_Use_Right_Window = 1
+let Tlist_Enable_Fold_Column = 0
+let Tlist_Compact_Format = 1
+let Tlist_Display_Prototype = 0
+let Tlist_Exit_OnlyWindow = 1
+let Tlist_File_Fold_Auto_Close = 1
+let Tlist_Show_Menu = 1
+" }}}
 
 " }}}
 
@@ -1299,13 +1312,16 @@ nnoremap <silent> <C-l>     :SDUpdate<CR><C-l>
 
 " DumbBuf {{{
 let g:dumbbuf_hotkey = '<Leader>b'
-
 " たまにQuickBuf.vimの名残で<Esc>を押してしまう
 let g:dumbbuf_mappings = {
     \'n': {
         \'<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
     \}
 \}
+" let g:dumbbuf_shown_type = 'listed'
+let g:dumbbuf_single_key = 1
+
+" let g:dumbbuf_verbose = 1
 " }}}
 
 " }}}

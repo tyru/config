@@ -129,21 +129,19 @@ inoremap <C-n> <Nop>
 " qmark {{{1
 " もっと複雑なURLのページを登録した方がqmarkの意味があると思うんだけども
 
-qmark m http://mail.google.com/mail?hl=ja
-qmark r http://reader.livedoor.com/reader/
-
-qmark n http://tyru.yu-nagi.com/
-
-qmark h http://www.hatena.ne.jp/
 qmark H http://hatenadiary.g.hatena.ne.jp/keyword/%e3%81%af%e3%81%a6%e3%81%aa%e8%a8%98%e6%b3%95%e4%b8%80%e8%a6%a7
-
-qmark d http://delicious.com/tyru/
-qmark p http://www.pixiv.net/mypage.php
 qmark P http://pipes.yahoo.com/pipes/
-qmark t http://twitter.com/
+qmark R http://www.rememberthemilk.com/
 qmark T http://tyru.tumblr.com/
-
+qmark d http://delicious.com/tyru/
+qmark h http://www.hatena.ne.jp/
+qmark m http://mail.google.com/mail?hl=ja
+qmark n http://tyru.yu-nagi.com/
+qmark p http://www.pixiv.net/mypage.php
+qmark r http://reader.livedoor.com/reader/
+qmark t http://twitter.com/
 qmark z bml-niconico-mp3
+
 " }}}1
 "-----------------------------------------------------------------
 " abbr {{{1
@@ -159,7 +157,7 @@ command! Dir    !explorer %HOME%
 autocmd VimperatorEnter .* pluginmanager update
 " }}}1
 "-----------------------------------------------------------------
-" プラグイン {{{1
+" プラグイン {{{
 
 " direct_bookmark.js
 let direct_sbm_use_services_by_tag  = "d"
@@ -168,39 +166,28 @@ let direct_sbm_is_use_migemo = 1
 noremap a   :sbm<Space>
 noremap B   :tab bentry<CR>
 
-
 " sbmcommentsviewer.js
 let def_sbm_format = "id,timestamp,tags,comment"
 let def_sbms       = "h"
 noremap b   :viewSBMComments<CR>
 
-
 " migemo_hint.js
 set hintmatching=custom
-
 
 " multi_requester.js
 noremap <C-k>   :mr<Space>
 noremap <Leader>tw     :mr twitter-timeline<CR>
 
-
 " ime_controller.js
 let ex_ime_mode = "inactive"  
 let textarea_ime_mode = "inactive"
 
-
 " copy.js
-noremap <Leader>cy      :copy titleAndURL<CR>
-noremap <Leader>ct      :copy title<CR>
-noremap <Leader>co      :copy<Space>
+" noremap <Leader>cy      :copy titleAndURL<CR>
+" noremap <Leader>ct      :copy title<CR>
+" noremap <Leader>co      :copy<Space>
 
-
-" command_menu.js
-" noremap g,t      :toolbar<Space>
-" noremap g,m      :menu<Space>
-
-
-" stella.js & nicontroller.js
+" stella.js & nicontroller.js {{{
 noremap <Leader>nc      :nicomment<Space>
 noremap <Leader>ni      :nicoinfo<CR>
 noremap <Leader>np      :stplay<CR>
@@ -211,25 +198,15 @@ noremap <Leader>nz      :stfullscreen<CR>
 noremap <Leader>ns      :stseek!<Space>
 noremap <Leader>n+      :stvolume! +10<CR>
 noremap <Leader>n-      :stvolume! -10<CR>
-
+" }}}
 
 " appendAnchor.js
 let auto_append_anchor_once = "true"
 
-
 " nextlink.js
 let nextlink_nositeinfo_act = "f"
 
-
-" foxytunes.js
-noremap <Leader>fp  :ftplay<CR>
-noremap <Leader>fs  :ftpause<CR>
-noremap <Leader>ff  :ftnext<CR>
-noremap <Leader>fb  :ftprevious<CR>
-noremap <Leader>fv  :ftvolume<Space>
-
-
-" toggler.js
+" toggler.js {{{
 js <<EOM
 liberator.globalVariables.toggler = {
   go: ["set go=nbr","set go=nbrmBT"],
@@ -243,20 +220,25 @@ EOM
 
 noremap <Leader>tg      :toggle go<CR>
 noremap <Leader>ts      :toggle sb<CR>
+" }}}
 
-
-" feedSomeKeys_2.js
+" feedSomeKeys_2.js {{{
 
 autocmd LocationChange .* :fmapc
 
-" add ! l gl
+" GMail
+"   add ! l gl.
 autocmd LocationChange 'mail\.google\.com/mail' :fmap -depth 4 c / j k n p o u e x s r a # [ ] z ! ? gi gs gt gd ga gc <C-s> l gl
 
-" add J K N P a
+" Google Reader
+"   add J K N P a.
 autocmd LocationChange 'www\.google\.co\.jp/reader' :fmap -vkey a j k J K n p N P m s t v A r S N P X O gh ga gs gt gu u / ?
 
-" remove f <Esc> i d + - <Tab> <S-Tab>
+" RememberTheMilk
+"   remove f <Esc> i d + - <Tab> <S-Tab>.
 autocmd LocationChange 'www\.rememberthemilk\.com\/home\/tyru\/' :fmap -vkey a m c n p r g s h t u j y <Del> k z l 1 2 3 4 <C-S-Left> <C-S-Right> <C-S-0> <C-S-6> <C-S-7> <C-S-8> <C-S-9> <C-S-l> <Left> <Right> <Up> <Down> <PageUp> <PageDown> <Home> <End> <C-S-/>
+
+" }}}
 
 " LDR
 " add r
@@ -268,7 +250,7 @@ nnoremap ZZ <Nop>
 let g:hatena_bookmark_no_migemo = 'true';
 " let g:hatena_bookmark_suffix_array = 'true';
 
-" }}}1
+" }}}
 "-----------------------------------------------------------------
 
 " vim:fdm=marker:fen:ft=vimperator:

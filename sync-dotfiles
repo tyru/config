@@ -178,11 +178,6 @@ if ($auto_commit) {
         system(qw(vim -c RcbVimrc -c quit));
         sleep 1;
     }
-    if (length qx(git diff -- .gvimrc)) {
-        # if .gvimrc has changed
-        system(qw(vim -c RcbGVimrc -c quit));
-        sleep 1;
-    }
 
     system(qw(git rm -fr --cached .));
     system(qw(git add .));

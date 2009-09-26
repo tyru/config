@@ -1,10 +1,6 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =8
-let g:netrw_dirhist_1='/home/tyru/work/vcs'
-let g:netrw_dirhist_2='/home/tyru/work'
-let g:netrw_dirhist_3='/data/git'
-let g:netrw_dirhist_4='/home/tyru/work/git'
-let g:netrw_dirhist_5='/home/tyru/work/git/dotfiles'
-let g:netrw_dirhist_6='/data/vcs/git/hatenadiary-tyru/text/vim'
-let g:netrw_dirhist_7='/data/scratch/haskell'
-let g:netrw_dirhist_8='/data/vcs/git/hatenadiary-tyru/text/tyru-entry'
+let g:netrw_dirhist_cnt =4
+let g:netrw_dirhist_1='/home/tyru/.vim/xpt/ftplugin/vim'
+let g:netrw_dirhist_2='/data/vcs/git/hatenadiary-tyru/text/vim'
+let g:netrw_dirhist_3='/data/vcs/git/dumbbuf.vim'
+let g:netrw_dirhist_4='/data/vcs/git'

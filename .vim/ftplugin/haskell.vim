@@ -11,7 +11,7 @@ setlocal cpoptions+=M
 
 compiler ghc
 
-inoremap <C-T> _<BS><ESC>:call <SID>Indent()<CR>i
+" inoremap <C-T> _<BS><ESC>:call <SID>Indent()<CR>i
 
 function! s:Indent()
     let pos = getpos('.')
