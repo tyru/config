@@ -737,11 +737,10 @@ func! s:open_dumbbuf_buffer()
     call s:debug(printf("filtered only '%s' buffers.", s:shown_type))
 
     " name dumbbuf's buffer.
-    " FIXME: pass safe string to :file command.
     if s:shown_type ==# 'unlisted'
-        silent execute 'file '.g:dumbbuf_unlisted_buffer_name
+        silent execute 'file `=g:dumbbuf_unlisted_buffer_name`'
     else
-        silent execute 'file '.g:dumbbuf_listed_buffer_name
+        silent execute 'file `=g:dumbbuf_listed_buffer_name`'
     endif
 
     " write buffers list.
