@@ -45,27 +45,22 @@ scriptencoding utf-8
 "         pressing <CR> in dumbbuf buffer jumps into that unlisted buffer.
 "         Thanks to Bernhard Walle for reporting the bug.
 "       - add g:dumbbuf_open_with.
+"   0.0.6:
+"       - fix bug: when there is no buffers in list,
+"         dumbbuf can't get selected buffer info.
+"       - add option g:dumbbuf_wrap_cursor.
 " }}}
 "
 " Mappings: {{{
 "   please define g:dumbbuf_hotkey at first.
 "   if that is not defined, this script is not loaded.
 "
-"   gg
-"       move the cursor to the top of line.
-"   G
-"       move the cursor to the bottom of line.
-"   j
-"       move the cursor to lower line.
-"   k
-"       move the cursor to upper line.
-"   <CR>
-"       :edit the buffer.
 "   q
 "       :close dumbbuf buffer.
 "   g:dumbbuf_hotkey
-"       :close dumbbuf_hotkey buffer.
-"       this is useful for toggling dumbbuf buffer.
+"       toggle dumbbuf buffer.
+"   <CR>
+"       :edit the buffer.
 "   uu
 "       open one by one. this is same as QuickBuf's u.
 "   ss
@@ -178,22 +173,20 @@ scriptencoding utf-8
 "       making this 0 speeds up key input
 "       but that may be 'heavy' for Vim.
 "
+"   g:dumbbuf_wrap_cursor (default: 1)
+"       wrap the cursor at the top or bottom of dumbbuf buffer.
+"
 "   g:dumbbuf_disp_expr (default: see below)
 "       this variable is for the experienced users.
 "
-"       NOTE:
-"       this document may be old!
-"       see the real definition at 'Global Variables'
-"
 "       here is the default value:
-"           'printf("%s[%s] %s <%d> %s", v:val.is_current ? "*" : " ", bufname(v:val.nr), v:val.is_modified ? "[+]" : "   ", v:val.nr, fnamemodify(bufname(v:val.nr), ":p:h"))'
+"           'printf("%s[%s] %s <%d> %s", val.is_current ? "*" : " ", bufname(val.nr), val.is_modified ? "[+]" : "   ", val.nr, fnamemodify(bufname(val.nr), ":p:h"))'
+"
+"       'val' has buffer's info.
+"       'v:val' also works for backward compatibility.
 "
 "   g:dumbbuf_options (default: see below)
 "       this variable is for the experienced users.
-"
-"       NOTE:
-"       this document may be old!
-"       see the real definition at 'Global Variables'
 "
 "       here is the default value:
 "           let g:dumbbuf_options = [
@@ -207,10 +200,6 @@ scriptencoding utf-8
 "
 "   g:dumbbuf_mappings (default: see below)
 "       this variable is for the experienced users.
-"
-"       NOTE:
-"       this document may be old!
-"       see the real definition at 'Global Variables'
 "
 "       these settings will be overridden at dumbbuf.vim.
 "       for e.g., if your .vimrc setting is
@@ -228,10 +217,10 @@ scriptencoding utf-8
 "           let g:dumbbuf_mappings = {
 "               \'n': {
 "                   \'j': {
-"                       \'opt': '<silent>', 'mapto': 'j',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_move_lower()<CR>',
 "                   \},
 "                   \'k': {
-"                       \'opt': '<silent>', 'mapto': 'k',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_move_upper()<CR>',
 "                   \},
 "                   \'gg': {
 "                       \'opt': '<silent>', 'mapto': 'gg',
@@ -246,31 +235,34 @@ scriptencoding utf-8
 "                       \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
 "                   \},
 "                   \'<CR>': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open", "func", 0)<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open", {"type":"func", "requires_args":0, "pre":["close_dumbbuf", "jump_to_caller", "return_if_empty", "return_if_not_exist"], "post":["clear_selected"]})<CR>',
 "                   \},
 "                   \'uu': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_onebyone", "func", 0)<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_onebyone", {"type":"func", "requires_args":0, "pre":["close_dumbbuf", "jump_to_caller", "return_if_empty", "return_if_not_exist"], "post":["clear_selected"]})<CR>',
 "                   \},
 "                   \'ss': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("split #%d", "cmd", 1)<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("split #%d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "update"]})<CR>',
 "                   \},
 "                   \'vv': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("vsplit #%d", "cmd", 1)<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("vsplit #%d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "update"]})<CR>',
 "                   \},
 "                   \'tt': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map(["tabedit #%d", "throw \"skip_post_process\""], "cmd", [1, 0])<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("tabedit #%d", {"type":"cmd", "requires_args":[1, 0], "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected"]})<CR>',
 "                   \},
 "                   \'dd': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bdelete %d", "cmd", 1)<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bdelete %d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "update"]})<CR>',
 "                   \},
 "                   \'ww': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bwipeout %d", "cmd", 1)<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bwipeout %d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "update"]})<CR>',
 "                   \},
 "                   \'ll': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_toggle_listed_type", "func", 0)<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_toggle_listed_type", {"type":"func", "requires_args":0})<CR>',
 "                   \},
 "                   \'cc': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_close", "func", 0)<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_close", {"type":"func", "requires_args":0, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "update"]})<CR>',
+"                   \},
+"                   \'xx': {
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_select", {"type":"func", "requires_args":0, "pre":["return_if_empty", "return_if_not_exist"], "post":["update"]})<CR>'
 "                   \},
 "               \}
 "           \}
@@ -888,7 +880,7 @@ func! s:run_from_local_map(code, opt)
 
     catch /^return_from_pre_process$/
 
-    " catch    " NOTE: this traps also unknown other plugin's error. wtf?
+    " catch    " NOTE: this traps also unknown other plugin's error...
     "     echoerr printf("internal error: '%s' in '%s'", v:exception, v:throwpoint)
 
     finally
