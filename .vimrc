@@ -3,7 +3,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 "-----------------------------------------------------------------
-" Colorscheme {{{1
+" Colorscheme {{{
 "
 " peachpuff
 " evening, desert, slate, candycode, lettuce, rdark, wombat
@@ -24,7 +24,7 @@ endfunc
 
 autocmd VimEnter * call s:set_color_scheme()
 
-" }}}1
+" }}}
 "-----------------------------------------------------------------
 " 基本設定＆KaoriYa版についてきたもの＆その他色々コピペ {{{
 
@@ -382,9 +382,9 @@ endfunc
 " }}}
 " }}}
 "-----------------------------------------------------------------
-" Commands {{{1
+" Commands {{{
 
-" HelpTagAll {{{2
+" HelpTagAll {{{
 "     runtimepathの全てのdocディレクトリに
 "     helptagsする
 command! HelpTagAll
@@ -399,9 +399,9 @@ func! s:HelpTagAll()
         endif
     endfor
 endfunc
-" }}}2
+" }}}
 
-" MTest {{{2
+" MTest {{{
 "     Perlの正規表現をVimの正規表現に
 command! -nargs=? MTest
             \ call s:MTest( <q-args> )
@@ -422,9 +422,9 @@ func! s:MTest( ... )
 
     echo @"
 endfunc
-" }}}2
+" }}}
 
-" Open {{{2
+" Open {{{
 command! -nargs=? -complete=dir Open
             \ call s:Open( <f-args> )
 
@@ -447,9 +447,9 @@ func! s:Open( ... )
         call s:system('gnome-open', dir)
     endif
 endfunc
-" }}}2
+" }}}
 
-" 環境によって動作が異なるコマンド {{{2
+" 環境によって動作が異なるコマンド {{{
 if has('gui_running')
     if has( 'win32' )
         command! GoDesktop   execute 'lcd C:' . $HOMEPATH . '\デスクトップ'
@@ -458,9 +458,9 @@ if has('gui_running')
         command! GoDesktop   lcd '~/Desktop'
     endif
 endif
-" }}}2
+" }}}
 
-" s:ListAndExecute() {{{2
+" s:ListAndExecute() {{{
 func! s:ListAndExecute( lis, template )
     " リスト表示
     let i = 0
@@ -495,9 +495,9 @@ func! s:ListAndExecute( lis, template )
 
     return a:lis[num - 1]
 endfunc
-" }}}2
+" }}}
 
-" s:ListChars() {{{2
+" s:ListChars() {{{
 command! ListChars
             \ call s:ListChars()
 
@@ -509,9 +509,9 @@ func! s:ListChars()
                 \                 'tab:>\\ ,extends:<' ],
                 \              'set listchars=%embed%' )
 endfunc
-" }}}2
+" }}}
 
-" FastEdit {{{2
+" FastEdit {{{
 "   遅いときは役に立つかも
 nnoremap <silent> <Leader>fe        :call <SID>FastEdit()<CR>
 
@@ -543,9 +543,9 @@ func! s:FastEdit()
         echo 'fast browsing.'
     endif
 endfunc
-" }}}2
+" }}}
 
-" DelFile {{{2
+" DelFile {{{
 command! -complete=file -nargs=+ DelFile
             \ call s:DelFile(<f-args>)
 
@@ -569,9 +569,9 @@ func! s:DelFile(...)
         endfor
     endfor
 endfunc
-" }}}2
+" }}}
 
-" TabChange {{{2
+" TabChange {{{
 command! -nargs=1 TabChange
             \ call s:TabChange( <f-args> )
 
@@ -581,17 +581,17 @@ func! s:TabChange( width )
         exe "setlocal sw=" . a:width
     endif
 endfunc
-" }}}2
+" }}}
 
-" Mkdir {{{2
+" Mkdir {{{
 func! s:Mkdir(...)
     for i in a:000 | call mkdir(i, 'p') | endfor
 endfunc
 command! -nargs=+ -complete=dir Mkdir
             \ call s:Mkdir(<f-args>)
-" }}}2
+" }}}
 
-" s:GccSyntaxCheck(...) {{{2
+" s:GccSyntaxCheck(...) {{{
 func! s:GccSyntaxCheck(...)
     if expand('%') ==# '' | return | endif
 
@@ -624,7 +624,7 @@ endfunc
 
 command! -nargs=* GccSyntaxCheck
             \ call s:GccSyntaxCheck(<f-args>)
-" }}}2
+" }}}
 
 " XXX
 " BDelUnlisted {{{
@@ -651,14 +651,14 @@ func! s:BDelUnlisted()
 endfunc
 " }}}
 
-" }}}1
+" }}}
 "-----------------------------------------------------------------
-" Encoding {{{1
+" Encoding {{{
 
 set fencs-=iso-2022-jp-3
 set fencs+=iso-2022-jp,iso-2022-jp-3
 
-" set enc=... {{{2
+" set enc=... {{{
 func! <SID>ChangeEncoding()
     if expand( '%' ) == ''
         echo "current file is empty."
@@ -677,9 +677,9 @@ func! <SID>ChangeEncoding()
     endif
 endfunc
 nnoremap <silent> <F2>    :call <SID>ChangeEncoding()<CR>
-" }}}2
+" }}}
 
-" set fenc=... {{{2
+" set fenc=... {{{
 func! <SID>ChangeFileEncoding()
     let lis = [ 'cp932',
                 \ 'shift-jis',
@@ -699,9 +699,9 @@ func! <SID>ChangeFileEncoding()
     endif
 endfunc
 nnoremap <silent> <F3>    :call <SID>ChangeFileEncoding()<CR>
-" }}}2
+" }}}
 
-" set ff=... {{{2
+" set ff=... {{{
 func! <SID>ChangeNL()
     let result = s:ListAndExecute( [ 'dos', 'unix', 'mac' ], 'set ff=%embed%' )
     if result != ''
@@ -709,13 +709,13 @@ func! <SID>ChangeNL()
     endif
 endfunc
 nnoremap <silent> <F4>    :call <SID>ChangeNL()<CR>
-" }}}2
+" }}}
 
-" }}}1
+" }}}
 "-----------------------------------------------------------------
-" FileType and AutoCommand {{{1
+" FileType and AutoCommand {{{
 
-" augroup MyVimrc {{{2
+" augroup MyVimrc {{{
 augroup MyVimrc
     autocmd!
 
@@ -725,7 +725,7 @@ augroup MyVimrc
     " ftpluginディレクトリ作るのめんどい
     autocmd FileType *   call s:LoadWhenFileType()
 
-    " filetype {{{3
+    " filetype {{{
     autocmd BufNewFile,BufReadPre *.as
                 \ setlocal ft=actionscript syntax=actionscript
     autocmd BufNewFile,BufReadPre *.c
@@ -765,10 +765,10 @@ augroup MyVimrc
     " delete this!
     autocmd! filetypedetect BufNewFile,BufRead *.md
 
-    " }}}3
+    " }}}
 
 augroup END
-" }}}2
+" }}}
 
 func! s:SetDict(...)
     execute "setlocal dict="
@@ -776,7 +776,7 @@ func! s:SetDict(...)
 endfunc
 
 
-" s:LoadWhenFileType() {{{2
+" s:LoadWhenFileType() {{{
 func! s:LoadWhenFileType()
     call s:SetDict(&filetype)
 
@@ -890,13 +890,13 @@ func! s:LoadWhenFileType()
         TabChange 4
     endif
 endfunc
-" }}}2
+" }}}
 
-" }}}1
+" }}}
 "-----------------------------------------------------------------
-" Mappings or Abbreviation {{{1
+" Mappings or Abbreviation {{{
 
-" ~~ map ~~ {{{2
+" ~~ map ~~ {{{
 "
 noremap <silent> j          gj
 noremap <silent> k          gk
@@ -909,7 +909,7 @@ noremap <Leader>y     "+y
 
 noremap <silent> H  5h
 noremap <silent> L  5l
-" }}}2
+" }}}
 
 " ~~ n ~~ {{{
 
@@ -1015,11 +1015,11 @@ nnoremap ,r    :<C-u>echoerr ''<CR>
 
 " }}}
 
-" ~~ o ~~ {{{2
+" ~~ o ~~ {{{
 omapclear
-" }}}2
+" }}}
 
-" -- map! -- {{{2
+" -- map! -- {{{
 noremap! <C-f>   <Right>
 noremap! <C-b>   <Left>
 noremap! <M-f>   <C-Right>
@@ -1038,9 +1038,9 @@ noremap! <M-)>         \(\)<Left><Left>
 noremap! <M-]>         \[\]<Left><Left>
 noremap! <M->>         \<\><Left><Left>
 noremap! <M-}>         \{\}<Left><Left>
-" }}}2
+" }}}
 
-" ~~ i ~~ {{{2
+" ~~ i ~~ {{{
 inoremap <S-CR>  <C-o>O
 inoremap <C-CR>  <C-o>o
 
@@ -1052,9 +1052,9 @@ inoremap <C-l>  <Space><BS><C-o><C-l>
 
 " for lisp ?
 inoremap <C-z>                <C-o>di(
-" }}}2
+" }}}
 
-" ~~ c ~~ {{{2
+" ~~ c ~~ {{{
 
 " 親フォルダ補完
 cnoremap <C-x>    <C-r>=expand('%:p:h')<CR>/
@@ -1068,9 +1068,9 @@ if &wildmenu
     cnoremap <C-f> <Space><BS><Right>
     cnoremap <C-b> <Space><BS><Left>
 endif
-" }}}2
+" }}}
 
-" abbr {{{2
+" abbr {{{
 
 iabbrev <expr> date@      strftime("%Y-%m-%d")
 iabbrev <expr> time@      strftime("%H:%M")
@@ -1078,9 +1078,9 @@ iabbrev <expr> datetime@  strftime("%Y-%m-%d %H:%M")
 
 cabbrev   h@     tab help
 
-" }}}2
+" }}}
 
-" }}}1
+" }}}
 "-----------------------------------------------------------------
 " For Plugins {{{
 
@@ -1105,7 +1105,7 @@ let g:fencview_autodetect = 0
 let g:netrw_liststyle = 1
 let g:netrw_cygwin    = 1
 
-" FuzzyFinder {{{3
+" FuzzyFinder {{{
 nnoremap <silent> <Leader>fb       :FufRenewCache<CR>:FufBuffer<CR>
 nnoremap <silent> <Leader>fd       :FufRenewCache<CR>:FufDir<CR>
 nnoremap <silent> <Leader>ff       :FufRenewCache<CR>:FufFile<CR>
@@ -1148,7 +1148,7 @@ else
                 \     '~/Desktop/'
                 \ ]
 endif
-" }}}3
+" }}}
 
 " MRU
 nnoremap <silent> <C-h>     :MRU<CR>
@@ -1314,30 +1314,32 @@ nnoremap <silent> <C-l>     :SDUpdate<CR><C-l>
 " }}}
 
 " DumbBuf {{{
-let g:dumbbuf_hotkey = '<Leader>b'
+let dumbbuf_hotkey = '<Leader>b'
 " たまにQuickBuf.vimの名残で<Esc>を押してしまう
-let g:dumbbuf_mappings = {
+let dumbbuf_mappings = {
     \'n': {
         \'<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
     \}
 \}
-" let g:dumbbuf_shown_type = 'listed'
-let g:dumbbuf_single_key = 1
-let g:dumbbuf_listed_buffer_name = '*foo bar*'
+let dumbbuf_single_key = 1
 
-" let g:dumbbuf_verbose = 1
+" for test
+"
+" let dumbbuf_shown_type = 'foobar'
+" let dumbbuf_listed_buffer_name = "*foo bar*"
+" let dumbbuf_verbose = 1
 " }}}
 
 " }}}
 
 " }}}
 "-----------------------------------------------------------------
-" その他 {{{1
+" その他 {{{
 
 " /と"レジスタの内容をクリア
 call setreg( '/', '', '' )
 call setreg( '"', '', '' )
-" }}}1
+" }}}
 "-----------------------------------------------------------------
 
 let &cpo = s:save_cpo

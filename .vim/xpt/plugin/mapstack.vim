@@ -160,9 +160,9 @@ fun! g:MapPop(expected) "{{{
 
 
   if info.cont == ''
-    let cmd = "silent ".info.mode.'unmap '. info.isbuf . info.key
+    let cmd = "silent! ".info.mode.'unmap '. info.isbuf . info.key 
   else
-    let cmd = "silent " . info.mode . info.nore .'map '. info.isbuf . info.key . ' ' . info.cont
+    let cmd = "silent! " . info.mode . info.nore .'map '. info.isbuf . info.key . ' ' . info.cont
   endif
 
 
@@ -172,6 +172,7 @@ fun! g:MapPop(expected) "{{{
   catch /.*/
   endtry
 
+  
 
 endfunction "}}}
 
@@ -195,12 +196,15 @@ fun! SettingPush(key, value) "{{{
     
 endfunction "}}}
 
-fun! SettingPop() "{{{
+fun! SettingPop( ... ) "{{{
   if !exists( 'b:__setting_stack__' )
     call s:InitStacks()
   endif
 
     let d = b:__setting_stack__[-1]
+    if a:0 != 0 && d.key != a:1
+        throw "unexpected setting popped up, expected:" . a:1 . ' but popped up is ' . d.key
+    endif
     exe 'let '.d.key.'='.string(d.val)
 
     call remove(b:__setting_stack__, -1)

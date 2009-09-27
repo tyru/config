@@ -1,6 +1,6 @@
 " XPTEMPLATE ENGIE:
 "   snippet template engine
-" VERSION: 0.3.9.4
+" VERSION: 0.3.9.5
 " BY: drdr.xp | drdr.xp@gmail.com
 "
 " MARK USED:
@@ -25,20 +25,19 @@
 " "}}}
 "
 " TODOLIST: "{{{
+" TODO in insert mode <HOME> <END>,  xpt complains error.
+" TODO option to set double <tab> to jump to next or single if pum is visible
+" and nothing typed.
 " TODO standardize html/xml snippets.
 " TODO how to load different language snippets like html in php in single buffer
-" TODO escaped mark in snippet '`' and '^' and in nested.
 " TODO snippets bundle and bundle selection
 " TODO snippet-file scope XSET
 " TODO block context check
-" TODO eval default value in-time
-" TODO without template rendering, xpmark update complains error.
 " TODO ontime repetition
 " TODO in windows & in select mode to trigger wrapped or normal?
 " TODO change on previous item
-" TODO implement wrapping in more natural way. nested maybe.
 " TODO as function call template
-" TODO highlight all pending item instead of using mark
+" TODO highlight all pending items
 " TODO item popup: repopup
 " TODO install guide
 " TODO do not let xpt throw error if calling undefined s:f.function..
@@ -54,13 +53,15 @@
 " TODO separately store wrapped templates and normal ones
 " TODO match snippet names from middle
 " TODO snippets bundle and bundle selection
+" TODO without template rendering, xpmark update complains error.
 " TODO 'completefunc' to re-popup item menu. Or using <tab> to force popup showing
 "
 " "}}}
 " 
 " Log of This version:
-"   fix cursor indent bug in some version of vim.
-"   fix statusline overriding problem if statusline set to be ''
+"       option : g:xptemplate_ph_pum_accept_empty    
+"       fix : hidden command line bug
+"       fix : textwidth caused xpt crashed.
 "
 " 
 
@@ -769,13 +770,14 @@ endfunction " }}}
 
 " TODO deal with it in any condition
 fun! s:FinishRendering(...) "{{{
+
     let x = g:XPTobject()
     let renderContext = s:getRenderContext()
     let xp = renderContext.tmpl.ptn
     
-    match none
+    " match none 
 
-    call s:removeMarksInRenderContext(renderContext)
+    call s:removeMarksInRenderContext(renderContext) 
 
     if empty(x.stack)
         let renderContext.processing = 0
@@ -783,9 +785,10 @@ fun! s:FinishRendering(...) "{{{
         call s:ClearMap()
 
 
-        " call feedkeys( "\<C-o>:echoe ''\<cr>", 'nt' )
+        " call feedkeys( "\<C-o>:echoe ''\<cr>\<c-c>", 'nt' )  
 
-        return ''
+        " call feedkeys( '' )
+        return '' 
         " return '' . g:xpt_post_action
     else
         call s:PopCtx()
@@ -864,7 +867,7 @@ fun! s:Popup(pref, coln) "{{{
     let cmpl = cmpl + cmpl2
 
 
-    return XPPopupNew(s:pumCB, {}, cmpl).popup(a:coln)
+    return XPPopupNew(s:pumCB, {}, cmpl).popup(a:coln, {})
 
 endfunction "}}}
 
@@ -2429,7 +2432,10 @@ fun! s:ApplyDefaultValueToPH( renderContext, filter ) "{{{
         " let renderContext.phase = 'fillin'
 
         " to pop up, but do not enlarge matching, thus empty string is selected at first
-        return XPPopupNew(s:ItemPumCB, {}, obj).popup(col("."), 1, 0)
+        " if only word listed,  do callback at once. 
+        let pumSess = XPPopupNew(s:ItemPumCB, {}, obj)
+        call pumSess.SetAcceptEmpty(g:xptemplate_ph_pum_accept_empty)
+        return pumSess.popup(col("."), { 'doCallback' : 1, 'enlarge' : 0 } )
 
     else 
         " string
@@ -2820,6 +2826,9 @@ fun! s:ApplyMap() " {{{
     let x = g:XPTobject()
     let savedMap = x.savedMap
 
+
+    call SettingPush( '&l:textwidth', '0' )
+
     " let savedMap.i_bs       = g:MapPush("<bs>", "i", 1)
     " let savedMap.i_c_w      = g:MapPush("<C-w>", "i", 1)
     " let savedMap.i_del      = g:MapPush("<Del>", "i", 1)
@@ -2849,13 +2858,20 @@ fun! s:ApplyMap() " {{{
 
     snoremap <silent> <buffer> <Del> <Del>i
     snoremap <silent> <buffer> <bs> <esc>`>a<bs>
-    exe "snoremap <silent> <buffer> ".g:xptemplate_to_right." <esc>`>a"
+
+    if &selection == 'inclusive'
+        exe "snoremap <silent> <buffer> ".g:xptemplate_to_right." <esc>`>a"
+    else
+        exe "snoremap <silent> <buffer> ".g:xptemplate_to_right." <esc>`>i"
+    endif
 
 endfunction " }}}
 
 fun! s:ClearMap() " {{{
     let x = g:XPTobject()
     let savedMap = x.savedMap
+
+    call SettingPop( '&l:textwidth' )
 
     " clear all
     " iunmap <buffer> <bs>
@@ -2870,6 +2886,7 @@ fun! s:ClearMap() " {{{
     sunmap <buffer> <Del>
     sunmap <buffer> <bs>
     exe "sunmap <buffer> ".g:xptemplate_to_right
+
 
 
     " restore map, reversed order
