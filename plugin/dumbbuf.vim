@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.5
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-27.
+" Last Change: 2009-09-28.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -573,8 +573,6 @@ endfunc
 
 " s:parse_buffers_info {{{
 func! s:parse_buffers_info()
-    call s:jump_to_buffer(s:caller_bufnr)
-
     " redirect output of :ls! to ls_out.
     redir => ls_out
     silent ls!
@@ -667,36 +665,33 @@ endfunc
 "   this returns 'listed' or 'unlisted'.
 "   if s:shown_type or g:dumbbuf_shown_type value is invalid,
 "   this may throw exception.
-func! s:get_shown_type()
-    if s:shown_type =~# '^\(unlisted\|listed\)$'.'\C'    " don't ignorecase
-        return s:shown_type
-    elseif s:shown_type == ''
-        if g:dumbbuf_shown_type =~# '^\(unlisted\|listed\)$'.'\C'
-            return g:dumbbuf_shown_type
-        elseif g:dumbbuf_shown_type == ''
-            let info = s:get_buffer_info(s:caller_bufnr)
-            if empty(info)
-                throw "internal error: can't get caller buffer's info..."
-            endif
-            return info.is_unlisted ? 'unlisted' : 'listed'
-        else
-            throw printf("internal error: strange g:dumbbuf_shown_type value...[%s]",
-                        \g:dumbbuf_shown_type)
+func! s:get_shown_type(caller_bufnr)
+    if g:dumbbuf_shown_type =~# '^\(unlisted\|listed\)$'.'\C'
+        return g:dumbbuf_shown_type
+    elseif g:dumbbuf_shown_type == ''
+        let info = s:get_buffer_info(a:caller_bufnr)
+        if empty(info)
+            throw "internal error: can't get caller buffer's info..."
         endif
+        return info.is_unlisted ? 'unlisted' : 'listed'
     else
-        " error
-        throw printf("internal error: strange s:shown_type value...[%s]", s:shown_type)
+        call s:warn(printf("'%s' is not valid value. please choose in '', 'unlisted', 'listed'.", g:dumbbuf_shown_type))
+        call s:warn("use '' as g:dumbbuf_shown_type value...")
+
+        let g:dumbbuf_shown_type = ''
+        sleep 1
+
+        return s:get_shown_type(a:caller_bufnr)
     endif
 endfunc
 " }}}
 
 " s:filter_bufs_info {{{
-func! s:filter_bufs_info(curbufinfo)
+func! s:filter_bufs_info(curbufinfo, shown_type)
     " if current buffer is unlisted, filter unlisted buffers.
     " if current buffers is listed, filter listed buffers.
-    let s:shown_type = s:get_shown_type()
     call filter(s:bufs_info,
-                \'s:shown_type ==# "unlisted" ?' .
+                \'a:shown_type ==# "unlisted" ?' .
                     \'v:val.is_unlisted : ! v:val.is_unlisted')
 endfunc
 " }}}
@@ -704,23 +699,7 @@ endfunc
 
 " s:open_dumbbuf_buffer {{{
 "   open and set up dumbbuf buffer.
-func! s:open_dumbbuf_buffer()
-
-    " remember current bufnr.
-    let s:caller_bufnr = bufnr('%')
-    if s:caller_bufnr ==# -1
-        call s:warn("internal error: can't get current bufnr.")
-        return
-    endif
-    if bufwinnr(s:dumbbuf_bufnr) != -1
-        call s:debug("I'm now going to open dumbbuf buffer but dumbbuf exists! close it.")
-        call s:close_dumbbuf_buffer()
-    endif
-    call s:debug('caller buffer name is '.bufname(s:caller_bufnr))
-
-    " save current buffers info.
-    let s:bufs_info = s:parse_buffers_info()
-
+func! s:open_dumbbuf_buffer(shown_type)
     " open and switch to dumbbuf's buffer.
     let s:dumbbuf_bufnr = s:create_dumbbuf_buffer()
     if s:dumbbuf_bufnr ==# -1
@@ -728,7 +707,6 @@ func! s:open_dumbbuf_buffer()
         return
     endif
 
-    " get current buffer's info and lnum on dumbbuf buffer.
     let curbufinfo = s:get_buffer_info(s:caller_bufnr)
     if empty(curbufinfo)
         call s:warn("internal error: can't get current buffer's info")
@@ -737,26 +715,11 @@ func! s:open_dumbbuf_buffer()
 
     " if current buffer is listed, display just listed buffers.
     " if current buffers is unlisted, display just unlisted buffers.
-    try
-        call s:filter_bufs_info(curbufinfo)
-    catch /internal error:/
-        call s:warn(printf("'%s' is not valid value. please choose in '', 'unlisted', 'listed'.", g:dumbbuf_shown_type))
-        call s:warn("use '' as g:dumbbuf_shown_type value...")
-
-        let g:dumbbuf_shown_type = ''
-        sleep 1
-
-        try
-            call s:filter_bufs_info(curbufinfo)
-        catch /internal error:/
-            call s:warn(v:exception)
-            return
-        endtry
-    endtry
-    call s:debug(printf("filtered only '%s' buffers.", s:shown_type))
+    call s:filter_bufs_info(curbufinfo, a:shown_type)
+    call s:debug(printf("filtered only '%s' buffers.", a:shown_type))
 
     " name dumbbuf's buffer.
-    if s:shown_type ==# 'unlisted'
+    if a:shown_type ==# 'unlisted'
         silent execute 'file `=g:dumbbuf_unlisted_buffer_name`'
     else
         silent execute 'file `=g:dumbbuf_listed_buffer_name`'
@@ -828,9 +791,24 @@ endfunc
 " }}}
 
 " s:update_buffers_list {{{
-func! s:update_buffers_list()
+func! s:update_buffers_list(...)
+    " close if exists.
     call s:close_dumbbuf_buffer()
-    call s:open_dumbbuf_buffer()
+
+    " remember current bufnr.
+    let s:caller_bufnr = bufnr('%')
+    call s:debug('caller buffer name is '.bufname(s:caller_bufnr))
+    " save current buffers to s:bufs_info.
+    let s:bufs_info = s:parse_buffers_info()
+    " decide which type dumbbuf shows.
+    if a:0 > 0
+        let s:shown_type = a:1
+    else
+        let s:shown_type = s:get_shown_type(s:caller_bufnr)
+    endif
+
+    " open.
+    call s:open_dumbbuf_buffer(s:shown_type)
 endfunc
 " }}}
 
@@ -1050,7 +1028,7 @@ func! s:buflocal_open_onebyone(curbuf, db_lnum)
     " open buffer on the cursor and close dumbbuf buffer.
     call s:buflocal_open(a:curbuf, a:db_lnum)
     " open dumbbuf's buffer again.
-    call s:open_dumbbuf_buffer()
+    call s:update_buffers_list()
     " go to previous lnum.
     execute a:db_lnum
 
@@ -1063,26 +1041,14 @@ endfunc
 " }}}
 
 " s:buflocal_toggle_listed_type {{{
-"   this does NOT do update or close buffers list.
 func! s:buflocal_toggle_listed_type(curbuf, db_lnum)
+    " NOTE: s:shown_type SHOULD NOT be '', and MUST NOT be.
+
     if s:shown_type ==# 'unlisted'
-        let s:shown_type = 'listed'
-        call s:update_buffers_list()
+        call s:update_buffers_list('listed')
 
     elseif s:shown_type ==# 'listed'
-        let s:shown_type = 'unlisted'
-        call s:update_buffers_list()
-
-    elseif s:shown_type == ''
-        if a:curbuf.is_unlisted
-            let s:shown_type = 'listed'
-        else
-            let s:shown_type = 'unlisted'
-        endif
-        call s:update_buffers_list()
-        " restore.
-        " this is why tt's pre process has 'update'.
-        let s:shown_type = ''
+        call s:update_buffers_list('unlisted')
 
     else
         call s:warn("internal warning: strange s:shown_type value...: ".s:shown_type)
