@@ -246,7 +246,7 @@ scriptencoding utf-8
 "                       \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
 "                   \},
 "                   \'<CR>': {
-"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_closing_dumbbuf", "func", 0)<CR>',
+"                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open", "func", 0)<CR>',
 "                   \},
 "                   \'uu': {
 "                       \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_onebyone", "func", 0)<CR>',
@@ -280,6 +280,7 @@ scriptencoding utf-8
 "   - manipulate buffers each project.
 "   - reuse dumbbuf buffer.
 "   - select some buffers and execute mapping each buffers.
+"   - user-defined mapping
 " }}}
 "==================================================
 " }}}
@@ -409,31 +410,31 @@ let s:mappings.default = {
             \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
         \},
         \'<CR>': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_closing_dumbbuf", {"type":"func", "requires_args":0, "pre":["jump_to_caller"], "post":["clear_selected", "close"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open", {"type":"func", "requires_args":0, "pre":["close_dumbbuf", "jump_to_caller"], "post":["clear_selected"]})<CR>',
         \},
         \'uu': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_onebyone", {"type":"func", "requires_args":0, "pre":["jump_to_caller"], "post":["clear_selected"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_onebyone", {"type":"func", "requires_args":0, "pre":["close_dumbbuf", "jump_to_caller"], "post":["clear_selected"]})<CR>',
         \},
         \'ss': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("split #%d", {"type":"cmd", "requires_args":1, "pre":["jump_to_caller"], "post":["clear_selected", "update"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("split #%d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "jump_to_caller", "return_on_noname"], "post":["clear_selected", "update"]})<CR>',
         \},
         \'vv': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("vsplit #%d", {"type":"cmd", "requires_args":1, "pre":["jump_to_caller"], "post":["clear_selected", "update"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("vsplit #%d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "jump_to_caller", "return_on_noname"], "post":["clear_selected", "update"]})<CR>',
         \},
         \'tt': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("tabedit #%d", {"type":"cmd", "requires_args":[1, 0], "pre":["close", "jump_to_caller"], "post":["clear_selected"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("tabedit #%d", {"type":"cmd", "requires_args":[1, 0], "pre":["close_dumbbuf", "jump_to_caller", "return_on_noname"], "post":["clear_selected"]})<CR>',
         \},
         \'dd': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bdelete %d", {"type":"cmd", "requires_args":1, "post":["clear_selected", "update"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bdelete %d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf"], "post":["clear_selected", "update"]})<CR>',
         \},
         \'ww': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bwipeout %d", {"type":"cmd", "requires_args":1, "post":["clear_selected", "update"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bwipeout %d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf"], "post":["clear_selected", "update"]})<CR>',
         \},
         \'ll': {
             \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_toggle_listed_type", {"type":"func", "requires_args":0})<CR>',
         \},
         \'cc': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_close", {"type":"func", "requires_args":0, "post":["clear_selected", "update"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_close", {"type":"func", "requires_args":0, "pre":["close_dumbbuf"], "post":["clear_selected", "update"]})<CR>',
         \},
     \}
 \}
@@ -894,16 +895,24 @@ func! s:run_from_local_map(code, opt)
     let save_close_when_exec = g:dumbbuf_close_when_exec
 
     " --- pre process ---
-
     for p in opt.pre
-        if p ==# 'close'
+        if p ==# 'close_dumbbuf'
             call s:close_dumbbuf_buffer()
         elseif p ==# 'jump_to_caller'    " jump to caller buffer.
             call s:jump_to_buffer(s:caller_bufnr)
+        elseif p ==# 'return_on_noname'
+            if bufname('%') == ''
+                return
+            endif
+        elseif p ==# 'return_if_only_window'
+            if winnr('$') == 1
+                return
+            endif
         else
             call s:warn("internal warning: unknown pre process name: ".p)
         endif
     endfor
+    " --- pre process ---
 
     call s:debug(printf("exec %s from local map: %s", string(opt.type), string(a:code)))
     call s:debug("selected buffers len:".len(s:selected_bufs))
@@ -927,12 +936,11 @@ func! s:run_from_local_map(code, opt)
         endif
 
         " --- post process ---
-
         for p in opt.post
             if p ==# 'clear_selected'
                 " clear selected buffers.
                 let s:selected_bufs = []
-            elseif p ==# 'close'
+            elseif p ==# 'close_dumbbuf'
                 call s:debug("just close")
                 call s:close_dumbbuf_buffer()
             elseif p ==# 'update'
@@ -948,6 +956,7 @@ func! s:run_from_local_map(code, opt)
                 call s:warn("internal warning: unknown post process name: ".p)
             endif
         endfor
+        " --- post process ---
 
     catch /internal error:/
         call s:warn(v:exception)
@@ -992,9 +1001,9 @@ func! s:buflocal_move_upper()
 endfunc
 " }}}
 
-" s:buflocal_open_closing_dumbbuf {{{
+" s:buflocal_open {{{
 "   this must be going to close dumbbuf buffer.
-func! s:buflocal_open_closing_dumbbuf(curbuf, db_lnum)
+func! s:buflocal_open(curbuf, db_lnum)
     if ! empty(a:curbuf)
         let winnr = bufwinnr(a:curbuf.nr)
         if winnr == -1
@@ -1012,20 +1021,18 @@ func! s:buflocal_open_onebyone(curbuf, db_lnum)
     call s:debug("current lnum:".a:db_lnum)
     let save_close_when_exec = g:dumbbuf_close_when_exec
 
-    try
-        " open buffer on the cursor and close dumbbuf buffer.
-        call s:buflocal_open_closing_dumbbuf(a:curbuf, a:db_lnum)
-        " open dumbbuf's buffer again.
-        call s:open_dumbbuf_buffer()
+    " open buffer on the cursor and close dumbbuf buffer.
+    call s:buflocal_open(a:curbuf, a:db_lnum)
+    " open dumbbuf's buffer again.
+    call s:open_dumbbuf_buffer()
+    " go to previous lnum.
+    execute a:db_lnum
 
-        if g:dumbbuf_downward
-            call s:buflocal_move_lower()
-        else
-            call s:buflocal_move_upper()
-        endif
-    finally
-        let g:dumbbuf_close_when_exec = save_close_when_exec
-    endtry
+    if g:dumbbuf_downward
+        call s:buflocal_move_lower()
+    else
+        call s:buflocal_move_upper()
+    endif
 endfunc
 " }}}
 
@@ -1048,6 +1055,7 @@ func! s:buflocal_toggle_listed_type(curbuf, db_lnum)
         endif
         call s:update_buffers_list()
         " restore.
+        " this is why tt's pre process has 'update'.
         let s:shown_type = ''
 
     else
