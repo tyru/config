@@ -288,7 +288,7 @@ if ! exists('g:dumbbuf_hotkey')
     " g:dumbbuf_hotkey is not defined!
     echomsg "g:dumbbuf_hotkey is not defined!"
     finish
-elseif exists('g:dumbbuf_hotkey') && maparg(g:dumbbuf_hotkey) != ''
+elseif maparg(g:dumbbuf_hotkey, 'n') != ''
     echomsg printf("'%s' is already defined!", g:dumbbuf_hotkey)
     finish
 endif
