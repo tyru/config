@@ -273,7 +273,6 @@ scriptencoding utf-8
 " TODO: {{{
 "   - manipulate buffers each project.
 "   - reuse dumbbuf buffer.
-"   - select some buffers and execute mapping each buffers.
 "   - user-defined mapping
 " }}}
 "==================================================
@@ -387,56 +386,126 @@ if exists('g:dumbbuf_mappings')
     let s:mappings.user = g:dumbbuf_mappings
     unlet g:dumbbuf_mappings
 endif
-" TODO code clean up
 let s:mappings.default = {
     \'n': {
         \'j': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_move_lower()<CR>',
+            \'opt': '<silent>',
+            \'mapto': ':<C-u>call <SID>buflocal_move_lower()<CR>',
         \},
         \'k': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>buflocal_move_upper()<CR>',
+            \'opt': '<silent>',
+            \'mapto': ':<C-u>call <SID>buflocal_move_upper()<CR>',
         \},
         \'gg': {
-            \'opt': '<silent>', 'mapto': 'gg',
+            \'opt': '<silent>',
+            \'mapto': 'gg',
         \},
         \'G': {
-            \'opt': '<silent>', 'mapto': 'G',
+            \'opt': '<silent>',
+            \'mapto': 'G',
         \},
         \g:dumbbuf_hotkey : {
-            \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
+            \'opt': '<silent>',
+            \'mapto': ':<C-u>close<CR>',
         \},
         \'q': {
-            \'opt': '<silent>', 'mapto': ':<C-u>close<CR>',
+            \'opt': '<silent>',
+            \'mapto': ':<C-u>close<CR>',
         \},
         \'<CR>': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open", {"type":"func", "requires_args":0, "pre":["close_dumbbuf", "jump_to_caller", "return_if_empty", "return_if_not_exist"], "post":["clear_selected"]})<CR>',
+            \'opt': '<silent>',
+            \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open", ' .
+                \'{"type":"func", ' .
+                \'"requires_args":0, ' .
+                \'"pre":["close_dumbbuf", "jump_to_caller", ' .
+                        \'"return_if_empty", "return_if_not_exist"], ' .
+                \'"post":["clear_selected"]})<CR>',
         \},
         \'uu': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_onebyone", {"type":"func", "requires_args":0, "pre":["close_dumbbuf", "jump_to_caller", "return_if_empty", "return_if_not_exist"], "post":["save_lnum", "clear_selected"]})<CR>',
+            \'opt': '<silent>',
+            \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_onebyone", ' .
+                \'{"type":"func", ' .
+                \'"requires_args":0, ' .
+                \'"pre":["close_dumbbuf", "jump_to_caller", ' .
+                        \'"return_if_empty", "return_if_not_exist"], ' .
+                \'"post":["save_lnum", "clear_selected"]})<CR>',
         \},
         \'ss': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("split #%d", {"type":"cmd", "requires_args":1, "process_selected":1, "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
+            \'opt': '<silent>',
+            \'mapto': ':<C-u>call <SID>run_from_local_map("split #%d", ' .
+                \'{"type":"cmd", ' .
+                \'"requires_args":1, ' .
+                \'"process_selected":1, ' .
+                \'"pre":["close_dumbbuf", "jump_to_caller", ' .
+                        \'"return_if_noname", "return_if_empty", ' .
+                        \'"return_if_not_exist"], ' .
+                \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
         \},
         \'vv': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("vsplit #%d", {"type":"cmd", "requires_args":1, "process_selected":1, "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
+            \'opt': '<silent>',
+            \'mapto': ':<C-u>call <SID>run_from_local_map("vsplit #%d", ' .
+                \'{"type":"cmd", ' .
+                \'"requires_args":1, ' .
+                \'"process_selected":1, ' .
+                \'"pre":["close_dumbbuf", "jump_to_caller", ' .
+                        \'"return_if_noname", "return_if_empty", ' .
+                        \'"return_if_not_exist"], ' .
+                \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
         \},
         \'tt': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("tabedit #%d", {"type":"cmd", "requires_args":[1, 0], "process_selected":1, "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum"]})<CR>',
+            \'opt': '<silent>',
+            \'mapto': ':<C-u>call <SID>run_from_local_map("tabedit #%d", ' .
+                \'{"type":"cmd", ' .
+                \'"requires_args":[1, 0], ' .
+                \'"process_selected":1, ' .
+                \'"pre":["close_dumbbuf", "jump_to_caller", ' .
+                        \'"return_if_noname", "return_if_empty", ' .
+                        \'"return_if_not_exist"], ' .
+                \'"post":["clear_selected", "save_lnum"]})<CR>',
         \},
         \'dd': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bdelete %d", {"type":"cmd", "requires_args":1, "process_selected":1, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
+            \'opt': '<silent>',
+            \'mapto': ':<C-u>call <SID>run_from_local_map("bdelete %d", ' .
+                \'{"type":"cmd", ' .
+                    \'"requires_args":1, ' .
+                    \'"process_selected":1, ' .
+                    \'"pre":["close_dumbbuf", "return_if_empty", ' .
+                            \'"return_if_not_exist"], ' .
+                    \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
         \},
         \'ww': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bwipeout %d", {"type":"cmd", "requires_args":1, "process_selected":1, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
+            \'opt': '<silent>',
+            \'mapto': ':<C-u>call <SID>run_from_local_map("bwipeout %d", ' .
+                \'{"type":"cmd", ' .
+                \'"requires_args":1, ' .
+                \'"process_selected":1, ' .
+                \'"pre":["close_dumbbuf", "return_if_empty", ' .
+                        \'"return_if_not_exist"], ' .
+                \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
         \},
         \'ll': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_toggle_listed_type", {"type":"func", "requires_args":0})<CR>',
+            \'opt': '<silent>',
+            \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_toggle_listed_type", ' .
+                \'{"type":"func", ' .
+                \'"requires_args":0})<CR>',
         \},
         \'cc': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_close", {"type":"func", "requires_args":0, "process_selected":1, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
+            \'opt': '<silent>',
+            \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_close", ' .
+                \'{"type":"func", ' .
+                \'"requires_args":0, ' .
+                \'"process_selected":1, ' .
+                \'"pre":["close_dumbbuf", "return_if_empty", ' .
+                        \'"return_if_not_exist"], ' .
+                \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
         \},
         \'xx': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_select", {"type":"func", "requires_args":0, "pre":["return_if_empty", "return_if_not_exist"], "post":["save_lnum", "update"]})<CR>'
+            \'opt': '<silent>',
+            \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_select", ' .
+                \'{"type":"func", ' .
+                \'"requires_args":0, ' .
+                \'"pre":["return_if_empty", "return_if_not_exist"], ' .
+                \'"post":["save_lnum", "update"]})<CR>'
         \},
     \}
 \}
