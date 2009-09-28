@@ -48,7 +48,9 @@ scriptencoding utf-8
 "   0.0.6:
 "       - fix bug: when there is no buffers in list,
 "         dumbbuf can't get selected buffer info.
-"       - add option g:dumbbuf_wrap_cursor.
+"       - add option g:dumbbuf_wrap_cursor, and allow 'keep' in
+"         g:dumbbuf_cursor_pos.
+"       - implement 'select' of buffers. mapping is 'xx'.
 " }}}
 "
 " Mappings: {{{
@@ -77,6 +79,11 @@ scriptencoding utf-8
 "       toggle listed buffers or unlisted buffers.
 "   cc
 "       :close the buffer.
+"   xx
+"       select the buffer.
+"       if one or more selected buffers exist,
+"       'ss', 'vv', 'tt', 'dd', 'ww', 'cc'
+"       get to be able to execute for that buffers at a time.
 "
 "   and, if you turn on 'g:dumbbuf_single_key',
 "   you can use single key mappings like QuickBuf.vim.
