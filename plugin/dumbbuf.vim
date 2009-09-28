@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.5
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-28.
+" Last Change: 2009-09-29.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -306,7 +306,6 @@ let s:caller_bufnr = -1    " caller buffer's bufnr which calls dumbbuf buffer.
 let s:dumbbuf_bufnr = -1    " dumbbuf buffer's bufnr.
 let s:bufs_info = []    " buffers info.
 let s:selected_bufs = []    " selected buffers info.
-let s:placed_signs = []
 let s:previous_lnum = -1    " lnum on which a mapping executed.
 
 let s:shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
@@ -368,7 +367,7 @@ endif
 
 if ! exists('g:dumbbuf_disp_expr')
     " QuickBuf.vim like UI.
-    let g:dumbbuf_disp_expr = 'printf("%s[%s] %s <%d> %s", val.is_current ? "*" : " ", bufname(val.nr), val.is_modified ? "[+]" : "   ", val.nr, fnamemodify(bufname(val.nr), ":p:h"))'
+    let g:dumbbuf_disp_expr = 'printf("%s %s[%s] %s <%d> %s", (val.is_selected ? "x" : " "), (val.is_current ? "*" : " "), bufname(val.nr), (val.is_modified ? "[+]" : "   "), val.nr, fnamemodify(bufname(val.nr), ":p:h"))'
 else
     " backward compatibility.
     let g:dumbbuf_disp_expr = substitute(g:dumbbuf_disp_expr, '\<v:val\>'.'\C', 'val', 'g')
@@ -388,6 +387,7 @@ if exists('g:dumbbuf_mappings')
     let s:mappings.user = g:dumbbuf_mappings
     unlet g:dumbbuf_mappings
 endif
+" TODO code clean up
 let s:mappings.default = {
     \'n': {
         \'j': {
@@ -415,25 +415,25 @@ let s:mappings.default = {
             \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_onebyone", {"type":"func", "requires_args":0, "pre":["close_dumbbuf", "jump_to_caller", "return_if_empty", "return_if_not_exist"], "post":["save_lnum", "clear_selected"]})<CR>',
         \},
         \'ss': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("split #%d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("split #%d", {"type":"cmd", "requires_args":1, "process_selected":1, "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
         \},
         \'vv': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("vsplit #%d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("vsplit #%d", {"type":"cmd", "requires_args":1, "process_selected":1, "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
         \},
         \'tt': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("tabedit #%d", {"type":"cmd", "requires_args":[1, 0], "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("tabedit #%d", {"type":"cmd", "requires_args":[1, 0], "process_selected":1, "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum"]})<CR>',
         \},
         \'dd': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bdelete %d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bdelete %d", {"type":"cmd", "requires_args":1, "process_selected":1, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
         \},
         \'ww': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bwipeout %d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bwipeout %d", {"type":"cmd", "requires_args":1, "process_selected":1, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
         \},
         \'ll': {
             \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_toggle_listed_type", {"type":"func", "requires_args":0})<CR>',
         \},
         \'cc': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_close", {"type":"func", "requires_args":0, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_close", {"type":"func", "requires_args":0, "process_selected":1, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
         \},
         \'xx': {
             \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_select", {"type":"func", "requires_args":0, "pre":["return_if_empty", "return_if_not_exist"], "post":["save_lnum", "update"]})<CR>'
@@ -490,24 +490,6 @@ func! s:warn(msg)
     echohl WarningMsg
     echo a:msg
     echohl None
-endfunc
-" }}}
-
-" s:apply {{{
-func! s:apply(funcname, args)
-    let args_str = ''
-    let i = 0
-    let arg_len = len(a:args)
-    while i < arg_len
-        if i ==# 0
-            let args_str = printf('a:args[%d]', i)
-        else
-            let args_str .= ', '.printf('a:args[%d]', i)
-        endif
-        let i += 1
-    endwhile
-
-    return eval(printf('%s(%s)', a:funcname, args_str))
 endfunc
 " }}}
 
@@ -630,7 +612,8 @@ func! s:parse_buffers_info()
             \'is_readonly': minus_equal ==# '=',
             \'is_modified': plus_x ==# '+',
             \'is_err': plus_x ==# 'x',
-            \'lnum': -1
+            \'lnum': -1,
+            \'is_selected': 0,
         \})
     endfor
 
@@ -713,6 +696,15 @@ func! s:open_dumbbuf_buffer(shown_type)
     call s:filter_bufs_info(curbufinfo, a:shown_type)
     call s:debug(printf("filtered only '%s' buffers.", a:shown_type))
 
+    " check flag if selected.
+    for buf in s:bufs_info
+        " TODO store s:bufs_info and s:selected_bufs as dict.
+        if !empty(filter(deepcopy(s:selected_bufs), 'v:val.nr == buf.nr'))
+            " if current buffer is selected
+            let buf.is_selected = 1
+        endif
+    endfor
+
     " name dumbbuf's buffer.
     if a:shown_type ==# 'unlisted'
         silent execute 'file `=g:dumbbuf_unlisted_buffer_name`'
@@ -723,7 +715,6 @@ func! s:open_dumbbuf_buffer(shown_type)
     " write buffers list.
     call s:write_buffers_list()
 
-    call s:debug(printf("g:dumbbuf_cursor_pos [%s]", g:dumbbuf_cursor_pos))
     " move cursor to specified position.
     if g:dumbbuf_cursor_pos ==# 'current'
         if curbufinfo.lnum !=# -1
@@ -845,7 +836,7 @@ endfunc
 
 " s:run_from_local_map {{{
 func! s:run_from_local_map(code, opt)
-    let opt = extend(copy(a:opt), {"pre":[], "post":[]}, "keep")
+    let opt = extend(copy(a:opt), {"process_selected":0, "pre":[], "post":[]}, "keep")
 
     " at now, current window should be dumbbuf buffer
     " because this func is called only from dumbbuf buffer local mappings.
@@ -869,10 +860,14 @@ func! s:run_from_local_map(code, opt)
         " pre process.
         call s:map_process_pre(opt.pre, cursor_buf)
 
+        let bufs = opt.process_selected && !empty(s:selected_bufs) ?
+                    \ s:selected_bufs
+                    \ : [cursor_buf]
+
         " dispatch a:code.
         " NOTE: current buffer may not be caller buffer.
         if type(a:code) == type([])
-            for buf in empty(s:selected_bufs) ? [cursor_buf] : s:selected_bufs
+            for buf in bufs
                 let i = 0
                 let len = len(a:code)
                 while i < len
@@ -881,7 +876,7 @@ func! s:run_from_local_map(code, opt)
                 endwhile
             endfor
         else
-            for buf in empty(s:selected_bufs) ? [cursor_buf] : s:selected_bufs
+            for buf in bufs
                 let i = 0
                 call s:dispatch_code(a:code, i, extend(copy(opt), {'lnum': lnum, 'cursor_buf': buf}))
             endfor
@@ -963,23 +958,24 @@ endfunc
 
 " s:dispatch_code {{{
 func! s:dispatch_code(code, no, opt)
-    let cursor_buf = a:opt.cursor_buf
-    let lnum       = a:opt.lnum
+    call s:debug(printf("a:code [%s], buffer [%s]",
+                        \a:code, bufname(a:opt.cursor_buf.nr)))
+
     let requires_args = type(a:opt.requires_args) == type([]) ?
                 \a:opt.requires_args[a:no] : a:opt.requires_args
 
     if a:opt.type ==# 'cmd'
         if requires_args
-            execute printf(a:code, cursor_buf.nr)
+            execute printf(a:code, a:opt.cursor_buf.nr)
         else
             execute a:code
         endif
     elseif a:opt.type ==# 'func'
         if requires_args
             " NOTE: not used.
-            call s:apply(a:code, a:opt.args)
+            return function(a:code)(a:opt.args)
         else
-            call s:apply(a:code, [cursor_buf, lnum])
+            return function(a:code)(a:opt.cursor_buf, a:opt.lnum)
         endif
     else
         throw "internal error: unknown type: ".a:opt.type
@@ -1077,7 +1073,13 @@ endfunc
 
 " s:buflocal_select {{{
 func! s:buflocal_select(curbuf, db_lnum)
-    call add(s:selected_bufs, a:curbuf)
+    if !empty(filter(deepcopy(s:selected_bufs), 'v:val.nr == a:curbuf.nr'))
+        " remove from selected.
+        call filter(s:selected_bufs, 'v:val.nr != a:curbuf.nr')
+    else
+        " add to selected.
+        call add(s:selected_bufs, a:curbuf)
+    endif
 endfunc
 " }}}
 
