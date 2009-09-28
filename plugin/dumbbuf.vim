@@ -4,7 +4,7 @@ scriptencoding utf-8
 " Document {{{
 "==================================================
 " Name: DumbBuf
-" Version: 0.0.5
+" Version: 0.0.6
 " Author:  tyru <tyru.exe@gmail.com>
 " Last Change: 2009-09-29.
 "
