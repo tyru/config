@@ -124,11 +124,13 @@ scriptencoding utf-8
 "       jumps to this position when dumbbuf buffer opens.
 "
 "       'current':
-"           current buffer line
+"           jump to the current buffer's line.
+"       'keep':
+"           keep the cursor pos.
 "       'top':
-"           jump to always top buffer line
+"           always jump to the top line.
 "       'bottom':
-"           jump to always bottom buffer line
+"           always jump to the bottom line
 "
 "   g:dumbbuf_shown_type (default: '')
 "       show this type of buffers list.
@@ -305,6 +307,7 @@ let s:dumbbuf_bufnr = -1    " dumbbuf buffer's bufnr.
 let s:bufs_info = []    " buffers info.
 let s:selected_bufs = []    " selected buffers info.
 let s:placed_signs = []
+let s:previous_lnum = -1    " lnum on which a mapping executed.
 
 let s:shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
 let s:mappings = {'default': {}, 'user': {}}    " buffer local mappings.
@@ -409,31 +412,31 @@ let s:mappings.default = {
             \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open", {"type":"func", "requires_args":0, "pre":["close_dumbbuf", "jump_to_caller", "return_if_empty", "return_if_not_exist"], "post":["clear_selected"]})<CR>',
         \},
         \'uu': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_onebyone", {"type":"func", "requires_args":0, "pre":["close_dumbbuf", "jump_to_caller", "return_if_empty", "return_if_not_exist"], "post":["clear_selected"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_onebyone", {"type":"func", "requires_args":0, "pre":["close_dumbbuf", "jump_to_caller", "return_if_empty", "return_if_not_exist"], "post":["save_lnum", "clear_selected"]})<CR>',
         \},
         \'ss': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("split #%d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "update"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("split #%d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
         \},
         \'vv': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("vsplit #%d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "update"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("vsplit #%d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
         \},
         \'tt': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("tabedit #%d", {"type":"cmd", "requires_args":[1, 0], "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("tabedit #%d", {"type":"cmd", "requires_args":[1, 0], "pre":["close_dumbbuf", "jump_to_caller", "return_if_noname", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum"]})<CR>',
         \},
         \'dd': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bdelete %d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "update"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bdelete %d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
         \},
         \'ww': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bwipeout %d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "update"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("bwipeout %d", {"type":"cmd", "requires_args":1, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
         \},
         \'ll': {
             \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_toggle_listed_type", {"type":"func", "requires_args":0})<CR>',
         \},
         \'cc': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_close", {"type":"func", "requires_args":0, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "update"]})<CR>',
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_close", {"type":"func", "requires_args":0, "pre":["close_dumbbuf", "return_if_empty", "return_if_not_exist"], "post":["clear_selected", "save_lnum", "update"]})<CR>',
         \},
         \'xx': {
-            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_select", {"type":"func", "requires_args":0, "pre":["return_if_empty", "return_if_not_exist"], "post":["update"]})<CR>'
+            \'opt': '<silent>', 'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_select", {"type":"func", "requires_args":0, "pre":["return_if_empty", "return_if_not_exist"], "post":["save_lnum", "update"]})<CR>'
         \},
     \}
 \}
@@ -720,10 +723,22 @@ func! s:open_dumbbuf_buffer(shown_type)
     " write buffers list.
     call s:write_buffers_list()
 
+    call s:debug(printf("g:dumbbuf_cursor_pos [%s]", g:dumbbuf_cursor_pos))
     " move cursor to specified position.
     if g:dumbbuf_cursor_pos ==# 'current'
-        if curbufinfo.lnum !=# 0
+        if curbufinfo.lnum !=# -1
             execute 'normal! '.curbufinfo.lnum.'gg'
+        endif
+    elseif g:dumbbuf_cursor_pos ==# 'keep'
+        call s:debug(printf("s:previous_lnum [%d]", s:previous_lnum))
+        if s:previous_lnum == -1
+            " same as above.
+            if curbufinfo.lnum !=# -1
+                execute 'normal! '.curbufinfo.lnum.'gg'
+            endif
+        else
+            " keep.
+            execute s:previous_lnum
         endif
     elseif g:dumbbuf_cursor_pos ==# 'top'
         normal! gg
@@ -873,7 +888,7 @@ func! s:run_from_local_map(code, opt)
         endif
 
         " post process.
-        call s:map_process_post(opt.post)
+        call s:map_process_post(opt.post, lnum)
 
     catch /internal error:/
         call s:warn(v:exception)
@@ -919,7 +934,7 @@ endfunc
 " }}}
 
 " s:map_process_post {{{
-func! s:map_process_post(tasks)
+func! s:map_process_post(tasks, lnum)
     for p in a:tasks
         if p ==# 'clear_selected'
             " clear selected buffers.
@@ -936,6 +951,9 @@ func! s:map_process_post(tasks)
                 call s:debug("close and re-open")
                 call s:update_buffers_list()
             endif
+        elseif p ==# 'save_lnum'    " NOTE: do this before 'update'.
+            call s:debug("save_lnum:".a:lnum)
+            let s:previous_lnum = a:lnum
         else
             call s:warn("internal warning: unknown post process name: ".p)
         endif
