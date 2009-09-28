@@ -53,6 +53,24 @@ scriptencoding utf-8
 "       - implement 'select' of buffers. mapping is 'xx'.
 " }}}
 "
+"
+" My .vimrc: {{{
+" let dumbbuf_hotkey = '<Leader>b'
+"
+" " sometimes I put <Esc> to close dumbbuf buffer.
+" " that mapping is QuickBuf's one :)
+" let dumbbuf_mappings = {
+"     'n': {
+"         '<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
+"     \}
+" \}
+"
+" let dumbbuf_single_key = 1
+" let g:dumbbuf_updatetime = 1    " mininum value of updatetime.
+"
+" let g:dumbbuf_cursor_pos = 'keep'
+" }}}
+"
 " Mappings: {{{
 "   please define g:dumbbuf_hotkey at first.
 "   if that is not defined, this script is not loaded.
@@ -348,10 +366,14 @@ scriptencoding utf-8
 "           \}
 " }}}
 "
+"
 " TODO: {{{
 "   - manipulate buffers each project.
 "   - reuse dumbbuf buffer.
 "   - user-defined mapping
+"   - use :silent
+"   - highlight current line.
+"   (it's hard to make out in terminal, if only :setlocal cursorline)
 " }}}
 "==================================================
 " }}}
