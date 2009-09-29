@@ -1282,6 +1282,8 @@ func! s:emulate_single_key()
             " push char key.
             let s:mapstack = s:mapstack . c
         endif
+    elseif s:mapstack =~ '[0-9]*' && c =~ '[0-9]'    " range
+        let s:mapstack = s:mapstack . c
     else
         " no mappings. just do it.
         call feedkeys(key, "m")
