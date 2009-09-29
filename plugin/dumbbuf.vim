@@ -367,10 +367,6 @@ scriptencoding utf-8
 " }}}
 "
 "
-" FIXME: {{{
-"   - when range is specified, 'j' and 'k' mappings can't jump if invalid
-"   range(:help E16).
-" }}}
 " TODO: {{{
 "   - manipulate buffers each project.
 "   - reuse dumbbuf buffer.
@@ -493,11 +489,11 @@ let s:mappings.default = {
     \'n': {
         \'j': {
             \'opt': '<silent>',
-            \'mapto': ':call <SID>buflocal_move_lower()<CR>',
+            \'mapto': ':<C-u>call <SID>buflocal_move_lower()<CR>',
         \},
         \'k': {
             \'opt': '<silent>',
-            \'mapto': ':call <SID>buflocal_move_upper()<CR>',
+            \'mapto': ':<C-u>call <SID>buflocal_move_upper()<CR>',
         \},
         \'gg': {
             \'opt': '<silent>',
@@ -1161,8 +1157,8 @@ endfunc
 " these functions are called from dumbbuf's buffer {{{
 
 " s:buflocal_move_lower {{{
-func! s:buflocal_move_lower() range
-    for i in range(a:firstline, a:lastline)
+func! s:buflocal_move_lower()
+    for i in range(0, v:count)
         if line('.') == line('$')
             if g:dumbbuf_wrap_cursor
                 " go to the top of buffer.
@@ -1176,8 +1172,8 @@ endfunc
 " }}}
 
 " s:buflocal_move_upper {{{
-func! s:buflocal_move_upper() range
-    for i in range(a:firstline, a:lastline)
+func! s:buflocal_move_upper()
+    for i in range(0, v:count)
         if line('.') == 1
             if g:dumbbuf_wrap_cursor
                 " go to the bottom of buffer.
