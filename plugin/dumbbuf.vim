@@ -1135,19 +1135,19 @@ func! s:dispatch_code(code, no, opt)
     if a:opt.type ==# 'cmd'
         if requires_args
             if ! empty(a:opt.cursor_buf)
-                execute printf(a:code, a:opt.cursor_buf.nr)
+                silent execute printf(a:code, a:opt.cursor_buf.nr)
             else
                 call s:warn("internal error: a:opt.cursor_buf is empty...")
             endif
         else
-            execute a:code
+            silent execute a:code
         endif
     elseif a:opt.type ==# 'func'
         if requires_args
             " NOTE: not used.
-            return function(a:code)(a:opt.args)
+            silent call call(a:code, [a:opt.args])
         else
-            return function(a:code)(a:opt.cursor_buf, a:opt.lnum)
+            silent call call(a:code, [a:opt.cursor_buf, a:opt.lnum])
         endif
     else
         throw "internal error: unknown type: ".a:opt.type
