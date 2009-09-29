@@ -367,11 +367,14 @@ scriptencoding utf-8
 " }}}
 "
 "
+" FIXME: {{{
+"   - when range is specified, 'j' and 'k' mappings can't jump if invalid
+"   range(:help E16).
+" }}}
 " TODO: {{{
 "   - manipulate buffers each project.
 "   - reuse dumbbuf buffer.
 "   - user-defined mapping
-"   - use :silent
 "   - highlight current line.
 "   (it's hard to make out in terminal, if only :setlocal cursorline)
 " }}}
@@ -490,11 +493,11 @@ let s:mappings.default = {
     \'n': {
         \'j': {
             \'opt': '<silent>',
-            \'mapto': ':<C-u>call <SID>buflocal_move_lower()<CR>',
+            \'mapto': ':call <SID>buflocal_move_lower()<CR>',
         \},
         \'k': {
             \'opt': '<silent>',
-            \'mapto': ':<C-u>call <SID>buflocal_move_upper()<CR>',
+            \'mapto': ':call <SID>buflocal_move_upper()<CR>',
         \},
         \'gg': {
             \'opt': '<silent>',
@@ -1158,28 +1161,32 @@ endfunc
 " these functions are called from dumbbuf's buffer {{{
 
 " s:buflocal_move_lower {{{
-func! s:buflocal_move_lower()
-    if line('.') == line('$')
-        if g:dumbbuf_wrap_cursor
-            " go to the top of buffer.
-            execute '1'
+func! s:buflocal_move_lower() range
+    for i in range(a:firstline, a:lastline)
+        if line('.') == line('$')
+            if g:dumbbuf_wrap_cursor
+                " go to the top of buffer.
+                execute '1'
+            endif
+        else
+            normal! j
         endif
-    else
-        normal! j
-    endif
+    endfor
 endfunc
 " }}}
 
 " s:buflocal_move_upper {{{
-func! s:buflocal_move_upper()
-    if line('.') == 1
-        if g:dumbbuf_wrap_cursor
-            " go to the bottom of buffer.
-            execute line('$')
+func! s:buflocal_move_upper() range
+    for i in range(a:firstline, a:lastline)
+        if line('.') == 1
+            if g:dumbbuf_wrap_cursor
+                " go to the bottom of buffer.
+                execute line('$')
+            endif
+        else
+            normal! k
         endif
-    else
-        normal! k
-    endif
+    endfor
 endfunc
 " }}}
 
