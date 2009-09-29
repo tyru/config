@@ -1127,15 +1127,18 @@ endfunc
 
 " s:dispatch_code {{{
 func! s:dispatch_code(code, no, opt)
-    call s:debug(printf("a:code [%s], buffer [%s]",
-                        \a:code, bufname(a:opt.cursor_buf.nr)))
-
+    " NOTE: a:opt.cursor_buf may be empty.
+    call s:debug(string(a:opt))
     let requires_args = type(a:opt.requires_args) == type([]) ?
                 \a:opt.requires_args[a:no] : a:opt.requires_args
 
     if a:opt.type ==# 'cmd'
         if requires_args
-            execute printf(a:code, a:opt.cursor_buf.nr)
+            if ! empty(a:opt.cursor_buf)
+                execute printf(a:code, a:opt.cursor_buf.nr)
+            else
+                call s:warn("internal error: a:opt.cursor_buf is empty...")
+            endif
         else
             execute a:code
         endif
