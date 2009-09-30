@@ -36,12 +36,9 @@ endif
 
 XPT fun hint=fun!\ ..(..)\ ..\ endfunction
 XSET arg*|post=ExpandIfNotEmpty(', ', 'arg*')
-" `name^ {{{
-func! `name^(`arg*^)
+fun! `name^(`arg*^) "{{{
     `cursor^
-endfunc
-" }}}
-..XPT
+endfunction "}}}
 
 
 XPT while hint=while\ ..\ ..\ endwhile

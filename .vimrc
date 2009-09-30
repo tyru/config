@@ -26,13 +26,13 @@ autocmd VimEnter * call s:set_color_scheme()
 
 " }}}
 "-----------------------------------------------------------------
-" 基本設定＆KaoriYa版についてきたもの＆その他色々コピペ {{{
+" basic settings (bundled with kaoriya vim's .vimrc & etc.) {{{
 
 " set options {{{
-
 set autoindent
 set autoread
 set backspace=indent,eol,start
+set helplang=ja,en
 set browsedir=buffer
 set clipboard=
 set complete=.,w,b,k,t
@@ -77,7 +77,7 @@ set wildmenu
 set wrap
 
 if has('emacs_tags') && has('path_extra')
-    " ディレクトリを遡ってtagsを探す
+    " find 'tags' rewinding current directory
     set tags+=.;
 endif
 
@@ -88,12 +88,14 @@ if has('virtualedit')
     " set virtualedit=all
 endif
 
+" speed optimization related to fsync...
 if has('unix')
     set nofsync
     set swapsync=
 endif
 
 
+" backupdir
 set backup
 set backupdir=$HOME/.vim/backup
 set directory=$HOME/.vim/backup
@@ -101,7 +103,6 @@ if !isdirectory(&backupdir)
     call mkdir(&backupdir)
 endif
 
-" タイトル表示するかしないか
 if has('gui_running')
     set title
 else
@@ -145,9 +146,12 @@ func! ShrinkPath( path, maxwidth )
 endfunc
 
 
+" migemo
 if has("migemo")
     set migemo
 endif
+
+" convert "\\" to "/" on win32 like environment
 if exists('+shellslash')
     set shellslash
 endif
@@ -156,15 +160,16 @@ syntax on
 filetype plugin indent on
 
 
-" ランタイムパスの設定
+" runtimepath
 if has("win32")
     set runtimepath+=$HOME/.vim
 endif
 let s:runtime_dirs = [
-    \ '$HOME/.vim/after',
-    \ '$HOME/.vim/mine',
-    \ '$HOME/.vim/chalice',
-    \ '$HOME/.vim/xpt',
+    \'$HOME/.vim/after',
+    \'$HOME/.vim/mine',
+    \'$HOME/.vim/chalice',
+    \'$HOME/.vim/xpt',
+    \'$HOME/.vim/vimdoc_ja',
 \ ]
 for dir in s:runtime_dirs
     if isdirectory(expand(dir))
@@ -174,7 +179,7 @@ endfor
 unlet s:runtime_dirs
 " }}}
 
-" vimbackupの中の古いやつを削除する {{{
+" delete old files in ~/.vim/backup {{{
 func! s:DeleteBackUp()
     if has('win32')
         if exists('$TMP')
@@ -213,7 +218,7 @@ call s:DeleteBackUp()
 delfunc s:DeleteBackUp
 " }}}
 
-" 文字コードの設定 {{{
+" japanese encodings {{{
 if &encoding !=# 'utf-8'
     set encoding=japan
     set fileencoding=japan
@@ -251,7 +256,6 @@ if has('iconv')
         endif
     endif
 endif
-" 日本語を含まない場合は fileencoding に encoding を使うようにする
 if has('autocmd')
     function! AU_ReCheck_FENC()
         if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
@@ -261,15 +265,16 @@ if has('autocmd')
     autocmd BufReadPost * call AU_ReCheck_FENC()
 endif
 
-" 改行コードの自動認識
+" supports fileformats in this order
 set fileformats=unix,dos,mac
-" □とか○の文字があってもカーソル位置がずれないようにする
+" assume the specific charactes like "□" or "○" as 2 bytes characters
+" (for vim in terminal)
 if exists('&ambiwidth')
     set ambiwidth=double
 endif
 " }}}
 
-" コンソールでのカラー表示のための設定(暫定的にUNIX専用) {{{
+" support of colors in terminal (unix only) {{{
 if has('unix') && !has('gui_running')
     let uname = system('uname')
     if uname =~? "linux"
@@ -281,29 +286,27 @@ if has('unix') && !has('gui_running')
     else
         set term=builtin_xterm
     endif
-    unlet uname
 endif
 " }}}
 
-" コンソール版で環境変数$DISPLAYが設定されていると起動が遅くなる件へ対応 {{{
+" when $DISPLAY is set and vim runs under terminal, vim's start-up will be very slow {{{
 if !has('gui_running') && has('xterm_clipboard')
     set clipboard=exclude:cons\\\|linux\\\|cygwin\\\|rxvt\\\|screen
 endif
 let did_install_default_menus = 1
 " }}}
 
-" プラットホーム依存の特別な設定 {{{
-" WinではPATHに$VIMが含まれていないときにexeを見つけ出せないので修正
-if has('win32') && $PATH !~? '\(^\|;\)' . escape($VIM, '\\') . '\(;\|$\)'
-    let $PATH = $VIM . ';' . $PATH
-endif
-if has('mac')
-    " Macではデフォルトの'iskeyword'がcp932に対応しきれていないので修正
-    set iskeyword=@,48-57,_,128-167,224-235
-endif
+" " WinではPATHに$VIMが含まれていないときにexeを見つけ出せないので修正 {{{
+" if has('win32') && $PATH !~? '\(^\|;\)' . escape($VIM, '\\') . '\(;\|$\)'
+"     let $PATH = $VIM . ';' . $PATH
+" endif
+" if has('mac')
+"     " Macではデフォルトの'iskeyword'がcp932に対応しきれていないので修正
+"     set iskeyword=@,48-57,_,128-167,224-235
+" endif
 " }}}
 
-" 日本語入力に関する設定 {{{
+" about japanese input method {{{
 if has('multi_byte_ime') || has('xim')
   " IME ON時のカーソルの色を設定(設定例:紫)
   highlight CursorIM guibg=Purple guifg=NONE
@@ -321,7 +324,7 @@ endif
 
 " }}}
 "-----------------------------------------------------------------
-" Functions {{{
+" Util Functions {{{
 " s:warn {{{
 func! s:warn(msg)
     echohl WarningMsg
@@ -364,10 +367,10 @@ func! s:EvalFileVisual(eval_main) range
 
         if filereadable(tmpfile)
             if a:eval_main ==# 'e'
-                " ファイル全体を評価し、mainを実行する
+                " load tmpfile, execute the function 'main'
                 echo s:system('gosh', tmpfile)
             elseif a:eval_main ==# 'E'
-                " ファイル全体を評価する
+                " load tmpfile
                 echo system(printf('cat %s | gosh', shellescape(tmpfile)))
             else
                 call s:warn("this block never reached")
@@ -385,16 +388,15 @@ endfunc
 " Commands {{{
 
 " HelpTagAll {{{
-"     runtimepathの全てのdocディレクトリに
-"     helptagsする
+"   do :helptags to all doc/ in &runtimepath
 command! HelpTagAll
             \ call s:HelpTagAll()
 
 func! s:HelpTagAll()
     for path in split( &runtimepath, ',' )
         if isdirectory( path . '/doc' )
-            "" path . '/doc/*' に何もないと
-            "" No match ... ってエラーが出るので :silent!
+            " add :silent! because Vim warns "No match ..."
+            " if there are no files in path . '/doc/*',
             silent! exe 'helptags ' . path . '/doc'
         endif
     endfor
@@ -402,7 +404,7 @@ endfunc
 " }}}
 
 " MTest {{{
-"     Perlの正規表現をVimの正規表現に
+"   convert Perl's regex to Vim's regex
 command! -nargs=? MTest
             \ call s:MTest( <q-args> )
 
@@ -413,7 +415,7 @@ func! s:MTest( ... )
     let searched = @/
     let hilight = &hlsearch
 
-    " 変換
+    " convert
     silent exe "M" . regex
     let @" = @/
 
@@ -440,16 +442,14 @@ func! s:Open( ... )
         if dir =~ '[&()\[\]{}\^=;!+,`~ '. "']" && dir !~ '^".*"$'
             let dir = '"'. dir .'"'
         endif
-        let dir = substitute( dir, '/', '\', 'g' )
         call s:system('explorer', dir)
     else
-        let dir = shellescape( dir )
         call s:system('gnome-open', dir)
     endif
 endfunc
 " }}}
 
-" 環境によって動作が異なるコマンド {{{
+" commands related to specific environments {{{
 if has('gui_running')
     if has( 'win32' )
         command! GoDesktop   execute 'lcd C:' . $HOMEPATH . '\デスクトップ'
@@ -462,7 +462,7 @@ endif
 
 " s:ListAndExecute() {{{
 func! s:ListAndExecute( lis, template )
-    " リスト表示
+    " display the list
     let i = 0
     while i < len( a:lis )
         echo printf('%d: %s', i + 1, a:lis[i])
@@ -477,10 +477,10 @@ func! s:ListAndExecute( lis, template )
         endif
         let num = ch - 48
 
-        " 数字の場合
+        " is digit?
         if string( num ) =~ '^\d\+$'
             if num < 1 || len( a:lis ) < num
-                " 範囲外
+                " out of range
                 call s:warn( 'out of num number. Try again.' )
             else
                 break
@@ -512,7 +512,8 @@ endfunc
 " }}}
 
 " FastEdit {{{
-"   遅いときは役に立つかも
+"   this is useful when Vim is very slow?
+"   currently just toggling syntax highlight.
 nnoremap <silent> <Leader>fe        :call <SID>FastEdit()<CR>
 
 let s:fast_editing = 0
@@ -521,7 +522,7 @@ func! s:FastEdit()
 
     if s:fast_editing
 
-        " ファイルタイプ(カラーとかインデントとか)
+        " filetype (color, indent, etc.)
         syntax on
         filetype plugin indent on
 
@@ -530,13 +531,9 @@ func! s:FastEdit()
         echo 'slow but high ability.'
     else
 
-        " ファイルタイプ
+        " filetype (color, indent, etc.)
         syntax off
         filetype plugin indent off
-
-        " 不可逆
-        " autocmd! CursorMoved
-        " autocmd! CursorMovedI
 
         redraw
         let s:fast_editing = 1
@@ -554,16 +551,16 @@ func! s:DelFile(...)
 
     for i in map(copy(a:000), 'expand(v:val)')
         for j in split(i, "\n")
+            " delete the file
             if filereadable(j)
                 call delete(j)
             else
                 call s:warn(j . ": No such a file")
             endif
-
+            " delete also that buffer
             if filereadable(j)
                 call s:warn(printf("Can't delete '%s'", j))
             elseif j ==# expand('%')
-                " 現在開いているファイルを削除する場合現在のバッファを削除する
                 bwipeout
             endif
         endfor
@@ -624,31 +621,6 @@ endfunc
 
 command! -nargs=* GccSyntaxCheck
             \ call s:GccSyntaxCheck(<f-args>)
-" }}}
-
-" XXX
-" BDelUnlisted {{{
-command! BDelUnlisted
-            \ call s:BDelUnlisted()
-
-func! s:BDelUnlisted()
-    " ls!の出力をoutputに保存
-    redir => output
-    ls!
-    redir END
-
-    for b in split(output, "\n")
-        if b =~# '^\s*$' | continue | endif
-
-        let splitted = split(b, '\s\+')
-        let m = matchlist(splitted[0], '^\(\d\+\)u')
-
-        if ! empty(m)
-            " バッファ削除
-            execute 'bwipeout '.m[1]
-        endif
-    endfor
-endfunc
 " }}}
 
 " }}}
@@ -722,7 +694,8 @@ augroup MyVimrc
     " autocmd CursorHold,CursorHoldI *   silent! update
     autocmd QuickfixCmdPost make,grep,grepadd,vimgrep,helpgrep   copen
 
-    " ftpluginディレクトリ作るのめんどい
+    " do what ~/.vim/ftplugin/* does in .vimrc
+    " because of my laziness :p
     autocmd FileType *   call s:LoadWhenFileType()
 
     " filetype {{{
@@ -762,7 +735,8 @@ augroup MyVimrc
                 \ setlocal ft=mkd
     autocmd BufNewFile,BufReadPre *.md
                 \ setlocal ft=mkd
-    " delete this!
+
+    " delete for ft=mkd
     autocmd! filetypedetect BufNewFile,BufRead *.md
 
     " }}}
@@ -916,70 +890,50 @@ noremap <silent> L  5l
 nnoremap <silent> n     nzz
 nnoremap <silent> N     Nzz
 
-nnoremap <silent> *     :call <SID>Srch( 0, '*' )<CR>
-nnoremap <silent> #     :call <SID>Srch( 0, '#' )<CR>
-nnoremap <silent> g*    :call <SID>Srch( 1, '*' )<CR>
-nnoremap <silent> g#    :call <SID>Srch( 1, '#' )<CR>
-func! s:EscapeRegexp( regexp )
-    let regexp = a:regexp
-    " escape '-' between '[' and ']'.
-    let regexp = substitute( regexp, '\[[^\]]*\(-\)[^\]]*\]', '', 'g' )
+" add '\C' to the pattern
+nnoremap <silent> *     :call <SID>dont_ignore_case('*')<CR>
+nnoremap <silent> #     :call <SID>dont_ignore_case('#')<CR>
+nnoremap <silent> g*    :call <SID>dont_ignore_case('*')<CR>
+nnoremap <silent> g#    :call <SID>dont_ignore_case('#')<CR>
+func! s:dont_ignore_case(cmd)
+    let pos = getpos(".")
 
-    " In Perl: escape( a:regexp, '\*+.?{}()[]^$|/' )
-    if &magic
-        return escape( a:regexp, '\*.{[]^$|/' )
-    else
-        return escape( a:regexp, '\*[]^$/' )
-    endif
+    execute 'normal! ' . a:cmd
+    let @/ .= '\C'
+
+    call setpos(".", pos)
+
+    execute 'normal! ' . a:cmd
 endfunc
 
-" ただ'\C'をつけるだけなのに・・・
-func! s:Srch( g, vect )
-    if a:g
-        let word = s:EscapeRegexp( expand( '<cword>' ) ) .'\C'
-    else
-        let word = '\<'. s:EscapeRegexp( expand( '<cword>' ) ) .'\>\C'
-    endif
-    if a:vect == '*'
-        call feedkeys( "/". word ."\<CR>", 'n' )
-    else
-        call feedkeys( "gew?". word ."\<CR>", 'n' )
-    endif
-endfunc
-
-" 全部インデント
+" fix up all indents
 nnoremap <silent> =<Space>    mqgg=G`qzz<CR>
 
-" ハイライトを消す(silentはつけない)
+" disappear highlight
 nnoremap /       :nohls<CR>/
 
-" レジスタに記憶しない
+" do not destroy noname register when pressed 'x'
 nnoremap <silent> x       "_x
 
-" ウインドウサイズ変更
+" window size of gVim itself
 nnoremap <C-Right>    :set columns+=5<CR>
 nnoremap <C-Left>     :set columns-=5<CR>
 nnoremap <C-Up>       :set lines+=1<CR>
 nnoremap <C-Down>     :set lines-=1<CR>
 
-" 小窓サイズ変更
+" window size in gVim
 nnoremap <S-Right>  <C-w>>
 nnoremap <S-Left>   <C-w><
 nnoremap <S-Up>     <C-w>+
 nnoremap <S-Down>   <C-w>-
 
-" タブ移動
+" tab
 nnoremap <silent> <C-n>         gt
 nnoremap <silent> <C-p>         gT
 nnoremap <silent> <C-Tab>       gt
 nnoremap <silent> <C-S-Tab>     gT
 
-" 保存ダイアログ
-if has( 'gui_running' )
-    nnoremap <C-s>      :browse confirm saveas<CR>
-endif
-
-" 先頭が \S の行に飛ぶ
+" jump to the line matched '^\S'
 noremap <silent> ]k        m`:call search( '^\S', 'W' )<CR>
 noremap <silent> [k        m`:call search( '^\S', 'Wb' )<CR>
 
@@ -987,15 +941,14 @@ noremap <silent> [k        m`:call search( '^\S', 'Wb' )<CR>
 nnoremap <silent>   gm      :make<CR>
 nnoremap <silent>   gc      :cclose<CR>
 
+" open only current line's fold.
 func! s:FoldAllExpand()
     %foldclose
     silent! %foldclose!
-    normal zvzz
+    normal! zvzz
 endfunc
 nnoremap <silent> <Leader>nn   :call <SID>FoldAllExpand()<CR>
 
-" for lisp ?
-"
 " wrap () with ().
 nnoremap <Leader>a        %%i(<Esc>l%a)<Esc>%a
 " change () to [].
@@ -1007,16 +960,14 @@ nnoremap <Leader>Z        %%da(h"_da(P
 
 nnoremap <silent> Q     gQ
 
+" :vimgrep
 nnoremap g/    :<C-u>vimgrep /<C-r>// *
 nnoremap ,/    :<C-u>vimgrep // *<Left><Left><Left>
-
-" Vimのコマンドラインが隠れるバグをリセットするために必要
-nnoremap ,r    :<C-u>echoerr ''<CR>
 
 " }}}
 
 " ~~ o ~~ {{{
-omapclear
+" omapclear
 " }}}
 
 " -- map! -- {{{
@@ -1029,7 +980,6 @@ noremap! <C-e>   <End>
 noremap! <C-d>   <Del>
 noremap! <C-k>   <C-o>D
 
-" 括弧
 noremap! <M-(>         ()<Left>
 noremap! <M-[>         []<Left>
 noremap! <M-<>         <><Left>
@@ -1038,32 +988,23 @@ noremap! <M-)>         \(\)<Left><Left>
 noremap! <M-]>         \[\]<Left><Left>
 noremap! <M->>         \<\><Left><Left>
 noremap! <M-}>         \{\}<Left><Left>
+
+noremap! <C-r><C-o>  <C-r><C-p>"
+noremap! <C-r><C-r>  <C-r><C-p>+
 " }}}
 
 " ~~ i ~~ {{{
 inoremap <S-CR>  <C-o>O
 inoremap <C-CR>  <C-o>o
 
-inoremap <C-r><C-o>  <C-r><C-p>"
-inoremap <C-r><C-r>  <C-r><C-p>+
-
-" <Space><BS>は現在行のインデントを保つため
+" <Space><BS> for saving current pos
 inoremap <C-l>  <Space><BS><C-o><C-l>
 
-" for lisp ?
+" delete in parenthesis
 inoremap <C-z>                <C-o>di(
 " }}}
 
 " ~~ c ~~ {{{
-
-" 親フォルダ補完
-cnoremap <C-x>    <C-r>=expand('%:p:h')<CR>/
-" ファイル補完
-cnoremap <C-z>   <C-r>%
-
-cnoremap <C-r><C-o>  <C-r>"
-cnoremap <C-r><C-r>  <C-r>+
-
 if &wildmenu
     cnoremap <C-f> <Space><BS><Right>
     cnoremap <C-b> <Space><BS><Left>
@@ -1084,7 +1025,7 @@ cabbrev   h@     tab help
 "-----------------------------------------------------------------
 " For Plugins {{{
 
-" プラグイン {{{
+" いろいろ {{{
 
 " dicwin
 let plugin_dicwin_disable = 1
@@ -1106,16 +1047,12 @@ let g:netrw_liststyle = 1
 let g:netrw_cygwin    = 1
 
 " FuzzyFinder {{{
-nnoremap <silent> <Leader>fb       :FufRenewCache<CR>:FufBuffer<CR>
 nnoremap <silent> <Leader>fd       :FufRenewCache<CR>:FufDir<CR>
 nnoremap <silent> <Leader>ff       :FufRenewCache<CR>:FufFile<CR>
 nnoremap <silent> <Leader>fh       :FufRenewCache<CR>:FufMruFile<CR>
-nnoremap <silent> <Leader>ft       :FufRenewCache<CR>:FufTag<CR>
-nnoremap <silent> <Leader>fT       :FufRenewCache<CR>:FufTaggedFile<CR>
-nnoremap <silent> <Leader>t        :FufRenewCache<CR>:FufTagWithCursorWord<CR>
 
 
-let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem']
+let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem', 'buffer', 'tag', 'taggedfile']
 
 
 let fuf_keyOpenTabpage = '<C-CR>'
@@ -1170,14 +1107,8 @@ let chalice_startupflags = "bookmark"
 " changelog
 let changelog_username = "tyru"
 
-" Narrow
-noremap <silent>   <Leader>na     :Narrow<CR>
-noremap <silent>   <Leader>nw     :Widen<CR>
-
 " gtags {{{
 
-" gtagsを使う理由が分からなくなった
-" 利点が分かればまたこのコメントは復活する予定
 let loaded_gtags = 1
 
 " let s:gtags_found = 0
@@ -1218,7 +1149,7 @@ let loaded_gtags = 1
 let xptemplate_key = '<C-t>'
 
 " operator-replace
-map g;  <Plug>(operator-replace)
+map ,r  <Plug>(operator-replace)
 
 " taglist {{{
 let loaded_taglist = 1
@@ -1322,6 +1253,8 @@ let dumbbuf_mappings = {
     \}
 \}
 let dumbbuf_single_key = 1
+let dumbbuf_updatetime = 1    " mininum value of updatetime.
+let dumbbuf_cursor_pos = 'keep'
 
 " for test
 "
@@ -1332,13 +1265,6 @@ let dumbbuf_single_key = 1
 
 " }}}
 
-" }}}
-"-----------------------------------------------------------------
-" その他 {{{
-
-" /と"レジスタの内容をクリア
-call setreg( '/', '', '' )
-call setreg( '"', '', '' )
 " }}}
 "-----------------------------------------------------------------
 

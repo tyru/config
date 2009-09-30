@@ -4,9 +4,9 @@ scriptencoding utf-8
 " DOCUMENT {{{1
 "==================================================
 " Name: nextfile
-" Version: 0.0.2
+" Version: 0.0.3
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-07-29.
+" Last Change: 2009-09-30.
 "
 " Description:
 "   open the next or previous file
@@ -135,13 +135,15 @@ func! s:OpenNextFile(advance)
         " get current file idx
         let tailed = map(copy(files), 'fnamemodify(v:val, ":t")')
         let idx = s:GetListIdx(tailed, expand('%:t'))
+        " move next or previous
+        let idx = a:advance ? idx + 1 : idx - 1
 
     catch /^not found$/
-        return s:Warn('not found current file')
+        " open the first file.
+        let idx = 0
     endtry
 
 
-    let idx = a:advance ? idx + 1 : idx - 1
     " can access files[idx]
     if idx >= 0 && get(files, idx, -1) !=# -1
         execute g:nf_open_command . ' ' . fnameescape(files[idx])

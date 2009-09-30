@@ -127,13 +127,13 @@ inoremap <C-n> <Nop>
 " }}}1
 "-----------------------------------------------------------------
 " qmark {{{1
-" もっと複雑なURLのページを登録した方がqmarkの意味があると思うんだけども
 
 qmark H http://hatenadiary.g.hatena.ne.jp/keyword/%e3%81%af%e3%81%a6%e3%81%aa%e8%a8%98%e6%b3%95%e4%b8%80%e8%a6%a7
 qmark P http://pipes.yahoo.com/pipes/
 qmark R http://www.rememberthemilk.com/
 qmark T http://tyru.tumblr.com/
 qmark d http://delicious.com/tyru/
+qmark g http://github.com/tyru
 qmark h http://www.hatena.ne.jp/
 qmark m http://mail.google.com/mail?hl=ja
 qmark n http://tyru.yu-nagi.com/

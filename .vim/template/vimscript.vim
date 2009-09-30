@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: <% eval: expand('%:t:r') %>
 " Version: 0.0.0
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-11.
+" Last Change: 2009-09-29.
 "
 " Description:
 "   NO DESCRIPTION YET
@@ -102,12 +102,13 @@ func! s:apply(funcname, args)
     let arg_len = len(a:args)
     while i < arg_len
         if i ==# 0
-            let args_str = s:uneval(a:args[i])
+            let args_str = printf('a:args[%d]', i)
         else
-            let args_str .= ', '.s:uneval(a:args[i])
+            let args_str .= ', '.printf('a:args[%d]', i)
         endif
         let i += 1
     endwhile
+
     return eval(printf('%s(%s)', a:funcname, args_str))
 endfunc
 " }}}
