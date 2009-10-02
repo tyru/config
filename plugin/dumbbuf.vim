@@ -455,6 +455,9 @@ endif
 if ! exists('g:dumbbuf_single_key')
     let g:dumbbuf_single_key = 0
 endif
+if ! exists('g:dumbbuf_single_key_echo_stack')
+    let g:dumbbuf_single_key_echo_stack = 1
+endif
 if ! exists('g:dumbbuf_updatetime')
     let g:dumbbuf_updatetime = 100
 endif
@@ -1271,10 +1274,13 @@ func! s:emulate_single_key()
 
     call s:debug(printf('s:mapstack [%s], s:mapstack_count [%d]', s:mapstack, s:mapstack_count))
 
+    let count1 = (s:mapstack_count == -1 ? '' : s:mapstack_count)
+    if g:dumbbuf_single_key_echo_stack
+        echon count1 . s:mapstack
+    endif
+
     let c = nr2char(getchar())
     call s:debug(printf('getchar:[%s]', c))
-
-    let count1 = (s:mapstack_count == -1 ? '' : s:mapstack_count)
     let key = s:mapstack . c
 
     let reset = 'let s:mapstack = "" | let s:mapstack_count = -1'
