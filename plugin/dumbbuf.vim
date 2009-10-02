@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.6
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-29.
+" Last Change: 2009-10-02.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -369,7 +369,6 @@ scriptencoding utf-8
 "
 " TODO: {{{
 "   - manipulate buffers each project.
-"   - reuse dumbbuf buffer.
 "   - user-defined mapping
 "   - highlight current line.
 "   (it's hard to make out in terminal, if only :setlocal cursorline)
@@ -1332,10 +1331,10 @@ execute 'nnoremap <silent><unique> '.g:dumbbuf_hotkey.' :call <SID>update_buffer
 " single key emulation
 "
 " nop.
-noremap <silent> <Plug>try_to_emulate_single_key <Nop>
-noremap! <silent> <Plug>try_to_emulate_single_key <Nop>
+noremap <silent><unique> <Plug>dumbbuf_try_to_emulate_single_key <Nop>
+noremap! <silent><unique> <Plug>dumbbuf_try_to_emulate_single_key <Nop>
 " redefine only mapmode-n.
-nnoremap <silent> <Plug>try_to_emulate_single_key :<C-u>call <SID>try_to_emulate_single_key()<CR>
+nnoremap <silent> <Plug>dumbbuf_try_to_emulate_single_key :<C-u>call <SID>try_to_emulate_single_key()<CR>
 
 " }}}
 
@@ -1346,7 +1345,7 @@ if g:dumbbuf_single_key
 
         for i in [g:dumbbuf_listed_buffer_name, g:dumbbuf_unlisted_buffer_name]
             " single key emulation.
-            execute 'autocmd CursorHold '.i.' call feedkeys("\<Plug>try_to_emulate_single_key", "m")'
+            execute 'autocmd CursorHold '.i.' call feedkeys("\<Plug>dumbbuf_try_to_emulate_single_key", "m")'
             " restore &updatetime.
             execute 'autocmd BufLeave    '.i.' call s:bufleave_handler()'
         endfor
