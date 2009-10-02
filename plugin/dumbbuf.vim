@@ -51,6 +51,8 @@ scriptencoding utf-8
 "       - add option g:dumbbuf_wrap_cursor, and allow 'keep' in
 "         g:dumbbuf_cursor_pos.
 "       - implement 'select' of buffers. mapping is 'xx'.
+"   0.0.7:
+"       - add option g:dumbbuf_single_key_echo_stack
 " }}}
 "
 "
@@ -147,6 +149,7 @@ scriptencoding utf-8
 "
 "   g:dumbbuf_cursor_pos (default: 'current')
 "       jumps to this position when dumbbuf buffer opens.
+"       this is useful for deleting some buffers continuaslly.
 "
 "       'current':
 "           jump to the current buffer's line.
