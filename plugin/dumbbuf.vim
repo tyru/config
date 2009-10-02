@@ -195,6 +195,10 @@ scriptencoding utf-8
 "       mode. but you can enter to other modes while waiting a key.
 "       so, like MRU, you can search string in dumbbuf buffer.
 "
+"   g:dumbbuf_single_key_echo_stack (default: 1)
+"       if true, show the keys which was input.
+"       this option is meaningless if g:dumbbuf_single_key is not true.
+"
 "   g:dumbbuf_updatetime (default: 100)
 "       local value of &updatetime in dumbbuf buffer.
 "       making this 0 speeds up key input
