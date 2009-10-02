@@ -1277,6 +1277,7 @@ func! s:emulate_single_key()
     let count1 = (s:mapstack_count == -1 ? '' : s:mapstack_count)
     if g:dumbbuf_single_key_echo_stack
         echon count1 . s:mapstack
+        redraw
     endif
 
     let c = nr2char(getchar())
