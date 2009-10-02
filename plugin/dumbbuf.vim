@@ -204,8 +204,8 @@ scriptencoding utf-8
 "
 "   g:dumbbuf_updatetime (default: 100)
 "       local value of &updatetime in dumbbuf buffer.
-"       making this 0 speeds up key input
-"       but that may be 'heavy' for Vim.
+"       recommended value is 1(minimum value of &updatetime).
+"       this default value is for only backward compatibility.
 "
 "   g:dumbbuf_wrap_cursor (default: 1)
 "       wrap the cursor at the top or bottom of dumbbuf buffer.
@@ -214,7 +214,7 @@ scriptencoding utf-8
 "       this variable is for the experienced users.
 "
 "       here is the default value:
-"           'printf("%s[%s] %s <%d> %s", val.is_current ? "*" : " ", bufname(val.nr), val.is_modified ? "[+]" : "   ", val.nr, fnamemodify(bufname(val.nr), ":p:h"))'
+"           'printf("%s %s[%s] %s <%d> %s", (val.is_selected ? "x" : " "), (val.is_current ? "*" : " "), bufname(val.nr), (val.is_modified ? "[+]" : "   "), val.nr, fnamemodify(bufname(val.nr), ":p:h"))'
 "
 "       'val' has buffer's info.
 "       'v:val' also works for backward compatibility.
@@ -410,7 +410,7 @@ let s:caller_bufnr = -1    " caller buffer's bufnr which calls dumbbuf buffer.
 let s:dumbbuf_bufnr = -1    " dumbbuf buffer's bufnr.
 let s:bufs_info = []    " buffers info.
 let s:selected_bufs = []    " selected buffers info.
-let s:previous_lnum = -1    " lnum on which a mapping executed.
+let s:previous_lnum = -1    " lnum where a previous mapping executed.
 
 let s:shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
 let s:mappings = {'default': {}, 'user': {}}    " buffer local mappings.
