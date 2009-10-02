@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: CommentAnyWay.vim
 " Version: 1.0.0
 " Author: tyru <tyru.exe@gmail.com>
-" Last Change: 2009-08-31.
+" Last Change: 2009-10-01.
 "
 " Change Log: {{{2
 "   1.0.0: Initial upload.
@@ -358,7 +358,7 @@ scriptencoding utf-8
 "             let g:ca_prefix = ',c'
 "         so you can add comment at the beginning of line
 "         by typing ',cI' or ',ci'
-"         
+"
 "         my favorite mapping is '<LocalLeader>c'.
 "         my g:maplocalleader is ';'. so this is the same as ';c'.
 "

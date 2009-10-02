@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.6
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-29.
+" Last Change: 2009-10-02.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -51,6 +51,8 @@ scriptencoding utf-8
 "       - add option g:dumbbuf_wrap_cursor, and allow 'keep' in
 "         g:dumbbuf_cursor_pos.
 "       - implement 'select' of buffers. mapping is 'xx'.
+"   0.0.7:
+"       - add option g:dumbbuf_single_key_echo_stack
 " }}}
 "
 "
@@ -147,6 +149,7 @@ scriptencoding utf-8
 "
 "   g:dumbbuf_cursor_pos (default: 'current')
 "       jumps to this position when dumbbuf buffer opens.
+"       this is useful for deleting some buffers continuaslly.
 "
 "       'current':
 "           jump to the current buffer's line.
@@ -195,10 +198,14 @@ scriptencoding utf-8
 "       mode. but you can enter to other modes while waiting a key.
 "       so, like MRU, you can search string in dumbbuf buffer.
 "
+"   g:dumbbuf_single_key_echo_stack (default: 1)
+"       if true, show the keys which was input.
+"       this option is meaningless if g:dumbbuf_single_key is not true.
+"
 "   g:dumbbuf_updatetime (default: 100)
 "       local value of &updatetime in dumbbuf buffer.
-"       making this 0 speeds up key input
-"       but that may be 'heavy' for Vim.
+"       recommended value is 1(minimum value of &updatetime).
+"       this default value is for only backward compatibility.
 "
 "   g:dumbbuf_wrap_cursor (default: 1)
 "       wrap the cursor at the top or bottom of dumbbuf buffer.
@@ -207,7 +214,7 @@ scriptencoding utf-8
 "       this variable is for the experienced users.
 "
 "       here is the default value:
-"           'printf("%s[%s] %s <%d> %s", val.is_current ? "*" : " ", bufname(val.nr), val.is_modified ? "[+]" : "   ", val.nr, fnamemodify(bufname(val.nr), ":p:h"))'
+"           'printf("%s %s[%s] %s <%d> %s", (val.is_selected ? "x" : " "), (val.is_current ? "*" : " "), bufname(val.nr), (val.is_modified ? "[+]" : "   "), val.nr, fnamemodify(bufname(val.nr), ":p:h"))'
 "
 "       'val' has buffer's info.
 "       'v:val' also works for backward compatibility.
@@ -403,12 +410,13 @@ let s:caller_bufnr = -1    " caller buffer's bufnr which calls dumbbuf buffer.
 let s:dumbbuf_bufnr = -1    " dumbbuf buffer's bufnr.
 let s:bufs_info = []    " buffers info.
 let s:selected_bufs = []    " selected buffers info.
-let s:previous_lnum = -1    " lnum on which a mapping executed.
+let s:previous_lnum = -1    " lnum where a previous mapping executed.
 
 let s:shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
 let s:mappings = {'default': {}, 'user': {}}    " buffer local mappings.
 
 " used for single key emulation.
+let s:mapstack_count = -1
 let s:mapstack = ''
 let s:orig_updatetime = &updatetime
 " }}}
@@ -453,6 +461,9 @@ if ! exists('g:dumbbuf_downward')
 endif
 if ! exists('g:dumbbuf_single_key')
     let g:dumbbuf_single_key = 0
+endif
+if ! exists('g:dumbbuf_single_key_echo_stack')
+    let g:dumbbuf_single_key_echo_stack = 1
 endif
 if ! exists('g:dumbbuf_updatetime')
     let g:dumbbuf_updatetime = 100
@@ -537,7 +548,7 @@ let s:mappings.default = {
                 \'"pre":["close_dumbbuf", "jump_to_caller", ' .
                         \'"return_if_noname", "return_if_empty", ' .
                         \'"return_if_not_exist"], ' .
-                \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
+                \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'vv': {
             \'opt': '<silent>',
@@ -548,7 +559,7 @@ let s:mappings.default = {
                 \'"pre":["close_dumbbuf", "jump_to_caller", ' .
                         \'"return_if_noname", "return_if_empty", ' .
                         \'"return_if_not_exist"], ' .
-                \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
+                \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'tt': {
             \'opt': '<silent>',
@@ -569,7 +580,7 @@ let s:mappings.default = {
                     \'"process_selected":1, ' .
                     \'"pre":["close_dumbbuf", "return_if_empty", ' .
                             \'"return_if_not_exist"], ' .
-                    \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
+                    \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'ww': {
             \'opt': '<silent>',
@@ -579,7 +590,7 @@ let s:mappings.default = {
                 \'"process_selected":1, ' .
                 \'"pre":["close_dumbbuf", "return_if_empty", ' .
                         \'"return_if_not_exist"], ' .
-                \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
+                \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'ll': {
             \'opt': '<silent>',
@@ -595,7 +606,7 @@ let s:mappings.default = {
                 \'"process_selected":1, ' .
                 \'"pre":["close_dumbbuf", "return_if_empty", ' .
                         \'"return_if_not_exist"], ' .
-                \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
+                \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'xx': {
             \'opt': '<silent>',
@@ -603,7 +614,7 @@ let s:mappings.default = {
                 \'{"type":"func", ' .
                 \'"requires_args":0, ' .
                 \'"pre":["return_if_empty", "return_if_not_exist"], ' .
-                \'"post":["save_lnum", "update"]})<CR>'
+                \'"post":["save_lnum", "update_dumbbuf"]})<CR>'
         \},
     \}
 \}
@@ -1003,7 +1014,7 @@ endfunc
 
 " s:run_from_local_map {{{
 func! s:run_from_local_map(code, opt)
-    let opt = extend(copy(a:opt), {"process_selected":0, "pre":[], "post":[]}, "keep")
+    let opt = extend(deepcopy(a:opt), {"process_selected":0, "pre":[], "post":[]}, "keep")
 
     " at now, current window should be dumbbuf buffer
     " because this func is called only from dumbbuf buffer local mappings.
@@ -1012,8 +1023,6 @@ func! s:run_from_local_map(code, opt)
     let cursor_buf = s:get_cursor_buffer()
     " this must be done in dumbbuf buffer.
     let lnum = line('.')
-    " save current value.
-    let save_close_when_exec = g:dumbbuf_close_when_exec
 
     " current window should be dumbbuf buffer, though.
     " if winnr('$') == 1 && bufnr('%') == s:dumbbuf_bufnr
@@ -1024,8 +1033,8 @@ func! s:run_from_local_map(code, opt)
 
 
     try
-        " pre process.
-        call s:map_process_pre(opt.pre, cursor_buf)
+        " pre
+        call s:do_tasks(opt.pre, cursor_buf, lnum)
 
         let bufs = opt.process_selected && !empty(s:selected_bufs) ?
                     \ s:selected_bufs
@@ -1049,62 +1058,64 @@ func! s:run_from_local_map(code, opt)
             endfor
         endif
 
-        " post process.
-        call s:map_process_post(opt.post, lnum)
+        " post
+        call s:do_tasks(opt.post, cursor_buf, lnum)
 
     catch /internal error:/
         call s:warn(v:exception)
 
-    catch /^return_from_pre_process$/
+    catch /^nop$/
+        " nop.
 
     " catch    " NOTE: this traps also unknown other plugin's error...
     "     echoerr printf("internal error: '%s' in '%s'", v:exception, v:throwpoint)
 
-    finally
-        " restore previous value.
-        let g:dumbbuf_close_when_exec = save_close_when_exec
     endtry
 endfunc
 " }}}
 
-" s:map_process_pre {{{
-func! s:map_process_pre(tasks, cursor_buf)
+" s:do_tasks {{{
+func! s:do_tasks(tasks, cursor_buf, lnum)
     for p in a:tasks
         if p ==# 'close_dumbbuf'
             call s:close_dumbbuf_buffer()
-        elseif p ==# 'jump_to_caller'    " jump to caller buffer.
-            call s:jump_to_buffer(s:caller_bufnr)
-        elseif p ==# 'return_if_noname'
-            if bufname('%') == ''
-                throw 'return_from_pre_process'
-            endif
-        elseif p ==# 'return_if_empty'
-            if empty(a:cursor_buf)
-                call s:warn("empty list!")
-                throw 'return_from_pre_process'
-            endif
-        elseif p ==# 'return_if_not_exist'
-            if has_key(a:cursor_buf, 'nr') && ! bufexists(a:cursor_buf.nr)
-                call s:warn("selected buffer does not exist!")
-                throw 'return_from_pre_process'
-            endif
-        else
-            call s:warn("internal warning: unknown pre process name: ".p)
-        endif
-    endfor
-endfunc
-" }}}
 
-" s:map_process_post {{{
-func! s:map_process_post(tasks, lnum)
-    for p in a:tasks
-        if p ==# 'clear_selected'
+        elseif p ==# 'clear_previous_lnum'
+            let s:previous_lnum = -1
+
+        elseif p ==# 'clear_selected'
             " clear selected buffers.
             let s:selected_bufs = []
+
         elseif p ==# 'close_dumbbuf'
             call s:debug("just close")
             call s:close_dumbbuf_buffer()
-        elseif p ==# 'update'
+
+        elseif p ==# 'jump_to_caller'    " jump to caller buffer.
+            call s:jump_to_buffer(s:caller_bufnr)
+
+        elseif p ==# 'return_if_noname'
+            if bufname('%') == ''
+                throw 'nop'
+            endif
+
+        elseif p ==# 'return_if_empty'
+            if empty(a:cursor_buf)
+                call s:warn("empty list!")
+                throw 'nop'
+            endif
+
+        elseif p ==# 'return_if_not_exist'
+            if has_key(a:cursor_buf, 'nr') && ! bufexists(a:cursor_buf.nr)
+                call s:warn("selected buffer does not exist!")
+                throw 'nop'
+            endif
+
+        elseif p ==# 'save_lnum'    " NOTE: do this before 'update'.
+            call s:debug("save_lnum:".a:lnum)
+            let s:previous_lnum = a:lnum
+
+        elseif p ==# 'update_dumbbuf'
             " close or update dumbbuf buffer.
             if g:dumbbuf_close_when_exec
                 call s:debug("just close")
@@ -1113,11 +1124,9 @@ func! s:map_process_post(tasks, lnum)
                 call s:debug("close and re-open")
                 call s:update_buffers_list()
             endif
-        elseif p ==# 'save_lnum'    " NOTE: do this before 'update'.
-            call s:debug("save_lnum:".a:lnum)
-            let s:previous_lnum = a:lnum
+
         else
-            call s:warn("internal warning: unknown post process name: ".p)
+            call s:warn("internal warning: unknown task name: ".p)
         endif
     endfor
 endfunc
@@ -1157,7 +1166,7 @@ endfunc
 
 " s:buflocal_move_lower {{{
 func! s:buflocal_move_lower()
-    for i in range(0, v:count)
+    for i in range(1, v:count1)
         if line('.') == line('$')
             if g:dumbbuf_wrap_cursor
                 " go to the top of buffer.
@@ -1172,7 +1181,7 @@ endfunc
 
 " s:buflocal_move_upper {{{
 func! s:buflocal_move_upper()
-    for i in range(0, v:count)
+    for i in range(1, v:count1)
         if line('.') == 1
             if g:dumbbuf_wrap_cursor
                 " go to the bottom of buffer.
@@ -1203,7 +1212,6 @@ endfunc
 "   this does NOT do update or close buffers list.
 func! s:buflocal_open_onebyone(curbuf, db_lnum)
     call s:debug("current lnum:".a:db_lnum)
-    let save_close_when_exec = g:dumbbuf_close_when_exec
 
     " open buffer on the cursor and close dumbbuf buffer.
     call s:buflocal_open(a:curbuf, a:db_lnum)
@@ -1260,7 +1268,7 @@ endfunc
 " }}}
 
 
-" singkey key emulation {{{
+" single key emulation {{{
 
 " s:emulate_single_key {{{
 "   emulate QuickBuf.vim's single key mappings.
@@ -1268,29 +1276,51 @@ func! s:emulate_single_key()
     if s:dumbbuf_bufnr != bufnr('%') | return | endif
     if mode() !=# 'n'                | return | endif
 
+    call s:debug(printf('s:mapstack [%s], s:mapstack_count [%d]', s:mapstack, s:mapstack_count))
+
+    let count1 = (s:mapstack_count == -1 ? '' : s:mapstack_count)
+    if g:dumbbuf_single_key_echo_stack
+        echon count1 . s:mapstack
+        redraw
+    endif
+
     let c = nr2char(getchar())
     call s:debug(printf('getchar:[%s]', c))
     let key = s:mapstack . c
 
-    if has_key(s:mappings.single_key, key) || mapcheck(key, 'n') != ''
-        " (candidate) mappings exist.
-        if has_key(s:mappings.single_key, key)    " single key mapping.
-            call feedkeys(s:mappings.single_key[key], 'm')
-            let s:mapstack = ''
-        elseif maparg(key, 'n') != ''    " user mapping or local buffer mapping.
-            call feedkeys(key, 'm')
-            let s:mapstack = ''
+    let reset = 'let s:mapstack = "" | let s:mapstack_count = -1'
+
+    if s:mapstack == '' && c =~ '[1-9]'    " range
+        if s:mapstack_count == -1
+            let s:mapstack_count = str2nr(c)
         else
-            " push char key.
+            let s:mapstack_count = str2nr(s:mapstack_count . c)
+        endif
+    elseif has_key(s:mappings.single_key, key)    " single key mappings
+        " NOTE: don't have to check if candidate mappings exist,
+        " because s:mappings.single_key has only keys of one character.
+        "
+        " do it.
+        call s:debug("run single key")
+        call feedkeys(count1 . s:mappings.single_key[key], 'm')
+        execute reset
+    elseif mapcheck(key, 'n') != ''    " (candidate) mappings
+        if maparg(key, 'n') != ''    " exact mapping exists
+            " do it.
+            call s:debug("run real mapping")
+            call feedkeys(count1 . key, 'm')
+            execute reset
+        else
             let s:mapstack = s:mapstack . c
         endif
-    elseif s:mapstack =~ '[0-9]*' && c =~ '[0-9]'    " range
-        let s:mapstack = s:mapstack . c
-    else
-        " no mappings. just do it.
-        call feedkeys(key, "m")
-        let s:mapstack = ''
+    else    " no mappings
+        " do it.
+        call s:debug("run no mappings")
+        call feedkeys(count1 . key, "m")
+        execute reset
     endif
+
+    redraw
 endfunc
 " }}}
 
@@ -1303,6 +1333,9 @@ func! s:try_to_emulate_single_key()
         if v:exception != ''
             call s:debug(printf("ignore following error: '%s' in '%s'", v:exception, v:throwpoint))
         endif
+        " clear
+        let s:mapstack = ''
+        let s:mapstack_count = -1
     endtry
 endfunc
 " }}}
@@ -1331,10 +1364,10 @@ execute 'nnoremap <silent><unique> '.g:dumbbuf_hotkey.' :call <SID>update_buffer
 " single key emulation
 "
 " nop.
-noremap <silent> <Plug>try_to_emulate_single_key <Nop>
-noremap! <silent> <Plug>try_to_emulate_single_key <Nop>
+noremap <silent><unique> <Plug>dumbbuf_try_to_emulate_single_key <Nop>
+noremap! <silent><unique> <Plug>dumbbuf_try_to_emulate_single_key <Nop>
 " redefine only mapmode-n.
-nnoremap <silent> <Plug>try_to_emulate_single_key :<C-u>call <SID>try_to_emulate_single_key()<CR>
+nnoremap <silent> <Plug>dumbbuf_try_to_emulate_single_key :<C-u>call <SID>try_to_emulate_single_key()<CR>
 
 " }}}
 
@@ -1345,7 +1378,7 @@ if g:dumbbuf_single_key
 
         for i in [g:dumbbuf_listed_buffer_name, g:dumbbuf_unlisted_buffer_name]
             " single key emulation.
-            execute 'autocmd CursorHold '.i.' call feedkeys("\<Plug>try_to_emulate_single_key", "m")'
+            execute 'autocmd CursorHold '.i.' call feedkeys("\<Plug>dumbbuf_try_to_emulate_single_key", "m")'
             " restore &updatetime.
             execute 'autocmd BufLeave    '.i.' call s:bufleave_handler()'
         endfor

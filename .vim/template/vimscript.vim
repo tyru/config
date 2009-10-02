@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: <% eval: expand('%:t:r') %>
 " Version: 0.0.0
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-29.
+" Last Change: 2009-10-03.
 "
 " Description:
 "   NO DESCRIPTION YET
@@ -36,6 +36,7 @@ set cpo&vim
 " }}}
 
 " Scope Variables {{{
+let s:debug_errmsg = []
 " }}}
 " Global Variables {{{
 " }}}
@@ -44,14 +45,12 @@ set cpo&vim
 
 " Debug {{{
 if g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug
-    let s:debug_errmsg = []
-
     func! s:debug(cmd, ...)
         if a:cmd ==# 'on'
             let g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug = 1
         elseif a:cmd ==# 'off'
             let g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug = 0
-        elseif a:cmd ==# 'msg'
+        elseif a:cmd ==# 'list'
             for i in s:debug_errmsg
                 echo i
             endfor
@@ -66,9 +65,9 @@ if g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug
 endif
 
 " s:debugmsg {{{
-func! s:debugmsg(...)
+func! s:debugmsg(msg)
     if g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug
-        call s:apply('s:warn', a:000)
+        call s:warn(a:msg)
     endif
 endfunc
 " }}}
@@ -76,83 +75,12 @@ endfunc
 " }}}
 
 " s:warn {{{
-func! s:warn(...)
-    if a:0 == 0
-        return
-    elseif a:0 == 1
-        let msg = a:1
-    else
-        let msg = s:apply('printf', a:000)
-    endif
-
+func! s:warn(msg)
     echohl WarningMsg
     echo msg
-    sleep 1
-    redraw
     echohl None
 
     call add(s:debug_errmsg, msg)
-endfunc
-" }}}
-
-" s:apply {{{
-func! s:apply(funcname, args)
-    let args_str = ''
-    let i = 0
-    let arg_len = len(a:args)
-    while i < arg_len
-        if i ==# 0
-            let args_str = printf('a:args[%d]', i)
-        else
-            let args_str .= ', '.printf('a:args[%d]', i)
-        endif
-        let i += 1
-    endwhile
-
-    return eval(printf('%s(%s)', a:funcname, args_str))
-endfunc
-" }}}
-
-" s:uneval {{{
-func! s:uneval(expr)
-    let expr = a:expr
-
-    if type(expr) == type(0)
-        return expr + 0
-
-    elseif type(expr) == type("")
-        " how ugly
-        let table = [
-            \ 'n',
-            \ 't'
-        \ ]
-        let expr = substitute(expr, '\', escape('\\', '\'), 'g')
-        let expr = substitute(expr, '"', escape('\"', '\'), 'g')
-        for i in table
-            let pat = eval(printf('"\%s"', i))
-            let sub = eval(printf('"\\%s"', i))
-            " "\n" -> '\n'
-            let expr = substitute(expr, pat, escape(sub, '\'), 'g')
-        endfor
-        let expr = '"'.expr.'"'
-        return expr
-        " return printf('"%s"', escape(expr, "\n\t\"\\"))
-
-    elseif type(expr) == type(function('tr'))
-        return printf("function('%s')", string(expr))
-
-    elseif type(expr) == type([])
-        let lis = map(copy(expr), 's:uneval(v:val)')
-        return '['.join(lis, ',').']'
-
-    elseif type(expr) == type({})
-        let keys = keys(expr)
-        let pairs = map(keys, 's:uneval(copy(v:val)).":".s:uneval(copy(expr[v:val]))')
-        return '{'.join(pairs, ',').'}'
-
-    else
-        let v:errmsg = printf('undefined type number '.type(expr))
-    endif
 endfunc
 " }}}
 

@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: shell-mode
 " Version: 0.0.0
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-06-01.
+" Last Change: 2009-10-02.
 "
 " Change Log: {{{2
 "   0.0.0: Initial upload.
@@ -139,6 +139,7 @@ func! s:write_result(args, stdout, stderr)
 endfunc
 " }}}2
 
+" s:put_reg_to_buffer {{{
 func! s:put_reg_to_buffer(reg, str)
     let val = getreg('z', 1)
     let mode = getregtype('z')
@@ -150,6 +151,7 @@ func! s:put_reg_to_buffer(reg, str)
 
     call setreg('z', val, mode)
 endfunc
+" }}}
 
 " s:goto_cmdline() {{{2
 func! s:goto_cmdline()

@@ -22,8 +22,6 @@ func! s:set_color_scheme()
     endif
 endfunc
 
-autocmd VimEnter * call s:set_color_scheme()
-
 " }}}
 "-----------------------------------------------------------------
 " basic settings (bundled with kaoriya vim's .vimrc & etc.) {{{
@@ -256,19 +254,16 @@ if has('iconv')
         endif
     endif
 endif
-if has('autocmd')
-    function! AU_ReCheck_FENC()
-        if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
-            let &fileencoding=&encoding
-        endif
-    endfunction
-    autocmd BufReadPost * call AU_ReCheck_FENC()
-endif
+function! s:AU_ReCheck_FENC()
+    if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
+        let &fileencoding=&encoding
+    endif
+endfunction
 
 " supports fileformats in this order
 set fileformats=unix,dos,mac
-" assume the specific charactes like "□" or "○" as 2 bytes characters
-" (for vim in terminal)
+" assume the specific characters like "□" or "○" as 2 bytes to
+" display (for vim in terminal)
 if exists('&ambiwidth')
     set ambiwidth=double
 endif
@@ -691,6 +686,12 @@ nnoremap <silent> <F4>    :call <SID>ChangeNL()<CR>
 augroup MyVimrc
     autocmd!
 
+    " check encoding
+    autocmd BufReadPost * call s:AU_ReCheck_FENC()
+
+    " colorscheme
+    autocmd VimEnter * call s:set_color_scheme()
+
     " autocmd CursorHold,CursorHoldI *   silent! update
     autocmd QuickfixCmdPost make,grep,grepadd,vimgrep,helpgrep   copen
 
@@ -893,8 +894,8 @@ nnoremap <silent> N     Nzz
 " add '\C' to the pattern
 nnoremap <silent> *     :call <SID>dont_ignore_case('*')<CR>
 nnoremap <silent> #     :call <SID>dont_ignore_case('#')<CR>
-nnoremap <silent> g*    :call <SID>dont_ignore_case('*')<CR>
-nnoremap <silent> g#    :call <SID>dont_ignore_case('#')<CR>
+nnoremap <silent> g*    :call <SID>dont_ignore_case('g*')<CR>
+nnoremap <silent> g#    :call <SID>dont_ignore_case('g#')<CR>
 func! s:dont_ignore_case(cmd)
     let pos = getpos(".")
 
@@ -904,13 +905,11 @@ func! s:dont_ignore_case(cmd)
     call setpos(".", pos)
 
     execute 'normal! ' . a:cmd
+    set hlsearch
 endfunc
 
 " fix up all indents
 nnoremap <silent> =<Space>    mqgg=G`qzz<CR>
-
-" disappear highlight
-nnoremap /       :nohls<CR>/
 
 " do not destroy noname register when pressed 'x'
 nnoremap <silent> x       "_x
@@ -963,6 +962,15 @@ nnoremap <silent> Q     gQ
 " :vimgrep
 nnoremap g/    :<C-u>vimgrep /<C-r>// *
 nnoremap ,/    :<C-u>vimgrep // *<Left><Left><Left>
+
+" hlsearch
+nnoremap gh    :set hlsearch!<CR>
+
+" sync @* and @+
+" @* -> @+
+nnoremap ,*+    :let @+ = @*<CR>:echo printf('[%s]', @+)<CR>
+" @+ -> @*
+nnoremap ,+*    :let @* = @+<CR>:echo printf('[%s]', @*)<CR>
 
 " }}}
 
@@ -1025,167 +1033,21 @@ cabbrev   h@     tab help
 "-----------------------------------------------------------------
 " For Plugins {{{
 
-" いろいろ {{{
-
-" dicwin
-let plugin_dicwin_disable = 1
-
-" cmdex
-let plugin_cmdex_disable = 1
-" :CdCurrent - Change current directory to current file's one.
-command! -nargs=0 CdCurrent lcd %:p:h
-nnoremap <silent> <Leader>cd   :CdCurrent<CR>
-
-" AutoDate
-let g:autodate_format = "%Y-%m-%d"
-
-" FencView
-let g:fencview_autodetect = 0
-
-" Netrw
-let g:netrw_liststyle = 1
-let g:netrw_cygwin    = 1
-
-" FuzzyFinder {{{
-nnoremap <silent> <Leader>fd       :FufRenewCache<CR>:FufDir<CR>
-nnoremap <silent> <Leader>ff       :FufRenewCache<CR>:FufFile<CR>
-nnoremap <silent> <Leader>fh       :FufRenewCache<CR>:FufMruFile<CR>
-
-
-let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem', 'buffer', 'tag', 'taggedfile']
-
-
-let fuf_keyOpenTabpage = '<C-CR>'
-let fuf_keyNextMode    = '<C-l>'
-let fuf_keyPrevMode    = '<C-h>'
-let fuf_keyOpenSplit   = '<C-s>'
-let fuf_keyOpenVsplit  = '<C-v>'
-
-" 短縮形
-let fuf_abbrevMap = {
-    \'^plug' : ['~/.vim/plugin/', '~/.vim/plugin/', '~/.vim/mine/plugin/'],
-    \'^home' : ['~/'],
-\}
-if exists('$CYGHOME')  | let fuf_abbrevMap['^cyg']  = $CYGHOME  | endif
-if exists('$MSYSHOME') | let fuf_abbrevMap['^msys'] = $MSYSHOME | endif
-
-" デスクトップ
-if has('win32')
-    let fuf_abbrevMap['^desk'] = [
-                \   'C:' . substitute( $HOMEPATH, '\', '/', 'g' ) . '/デスクトップ/'
-                \ ]
-    let fuf_abbrevMap['^cyg'] = [
-                \   'C:/cygwin/home/'. $USERNAME .'/'
-                \ ]
-    let fuf_abbrevMap['^msys'] = [
-                \   'C:/msys/home/'. $USERNAME .'/'
-                \ ]
-else
-    let fuf_abbrevMap['^desk'] = [
-                \     '~/Desktop/'
-                \ ]
-endif
-" }}}
-
-" MRU
-nnoremap <silent> <C-h>     :MRU<CR>
-let MRU_Max_Entries   = 500
-let MRU_Add_Menu      = 0
-let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\c\'
-
-" Align
-let Align_xstrlen    = 3       " マルチバイト
-let DrChipTopLvlMenu = ""
-command! -nargs=0 AlignReset call Align#AlignCtrl("default")
-cabbrev   al    Align
-
-" Chalice
-" プレビュー機能無効
-let chalice_preview      = 0
-let chalice_startupflags = "bookmark"
-
-" changelog
-let changelog_username = "tyru"
-
-" gtags {{{
-
-let loaded_gtags = 1
-
-" let s:gtags_found = 0
-" 
-" func! s:JumpTags()
-"     if expand('%') == '' | return | endif
-" 
-"     if exists(':GtagsCursor')
-"         " next C-]
-"         echo "gtags.vim is not installed. do default <C-]>..."
-"         sleep 2
-"         nunmap <C-]>
-"         execute "normal! \<C-]>"
-"         return
-"     endif
-" 
-"     let gtags = expand('%:h') . '/GTAGS'
-"     if filereadable(gtags)
-"         if ! s:gtags_found
-"             " if gtags found, echo this message at only first time.
-"             echo "found GTAGS. use gtags for jumping..."
-"             sleep 2
-"             let s:gtags_found = 1
-"         endif
-"         lcd %:p:h
-"         GtagsCursor
-"         lcd -
-"     else
-"         execute "normal! \<C-]>"
-"     endif
-" endfunc
-" 
-" nnoremap <silent> g<C-i>    :Gtags -f %<CR>
-" nnoremap <silent> <C-]>    :call <SID>JumpTags()<CR>
-" }}}
-
-" xptemplate
-let xptemplate_key = '<C-t>'
-
-" operator-replace
-map ,r  <Plug>(operator-replace)
-
-" taglist {{{
-let loaded_taglist = 1
-
-let Tlist_Ctags_Cmd = '/usr/bin/ctags'
-nnoremap <silent> \t :TlistToggle<CR>
-
-" nnoremap <silent> <F8> :TlistToggle<CR>
-let Tlist_Process_File_Always = 1
-let Tlist_Use_Right_Window = 1
-let Tlist_Enable_Fold_Column = 0
-let Tlist_Compact_Format = 1
-let Tlist_Display_Prototype = 0
-let Tlist_Exit_OnlyWindow = 1
-let Tlist_File_Fold_Auto_Close = 1
-let Tlist_Show_Menu = 1
-" }}}
-
-" }}}
-
-" 自分の {{{
+" my plugins {{{
 
 " CommentAnyWay {{{
-let g:ca_prefix  = mapleader . 'c'
-let g:ca_verbose = 1    " debug
-let g:ca_oneline_comment = "#"
+let ca_prefix  = '<Leader>c'
+let ca_verbose = 1    " debug
 
-let g:ca_filetype_table = {
-            \ 'oneline' : {
-            \ 'dosbatch' : 'rem ###'
-            \ },
-            \ 'wrapline' : {
-            \ 'html' : [ "<!-- ", " -->" ],
-            \ 'css' : [ "/* ", " */" ]
-            \ }
-            \ }
+let ca_filetype_table = {
+    \ 'oneline' : {
+        \ 'dosbatch' : 'rem ###',
+    \ },
+    \ 'wrapline' : {
+        \ 'html' : [ "<!-- ", " -->" ],
+        \ 'css' : [ "/* ", " */" ],
+    \ },
+\ }
 
 " nnoremapじゃダメ
 nmap go      <Leader>co
@@ -1254,13 +1116,157 @@ let dumbbuf_mappings = {
 \}
 let dumbbuf_single_key = 1
 let dumbbuf_updatetime = 1    " mininum value of updatetime.
-let dumbbuf_cursor_pos = 'keep'
+" let dumbbuf_cursor_pos = 'keep'
 
 " for test
 "
 " let dumbbuf_shown_type = 'foobar'
 " let dumbbuf_listed_buffer_name = "*foo bar*"
 " let dumbbuf_verbose = 1
+" }}}
+
+" workaround-for-vim-bug-cant-restore-col-over-blank-line {{{
+let loaded_workaround_for_vim_bug_cant_restore_col_over_blank_line = 1
+" }}}
+
+" }}}
+
+" others {{{
+
+" dicwin
+let plugin_dicwin_disable = 1
+
+" cmdex
+let plugin_cmdex_disable = 1
+" :CdCurrent - Change current directory to current file's one.
+command! -nargs=0 CdCurrent lcd %:p:h
+nnoremap <silent> <Leader>cd   :CdCurrent<CR>
+
+" AutoDate
+let g:autodate_format = "%Y-%m-%d"
+
+" FencView
+let g:fencview_autodetect = 0
+
+" Netrw
+let g:netrw_liststyle = 1
+let g:netrw_cygwin    = 1
+
+" FuzzyFinder {{{
+nnoremap <silent> <Leader>fd       :FufRenewCache<CR>:FufDir<CR>
+nnoremap <silent> <Leader>ff       :FufRenewCache<CR>:FufFile<CR>
+nnoremap <silent> <Leader>fh       :FufRenewCache<CR>:FufMruFile<CR>
+
+let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem', 'buffer', 'tag', 'taggedfile']
+
+let fuf_keyOpenTabpage = '<C-CR>'
+let fuf_keyNextMode    = '<C-l>'
+let fuf_keyPrevMode    = '<C-h>'
+let fuf_keyOpenSplit   = '<C-s>'
+let fuf_keyOpenVsplit  = '<C-v>'
+
+" abbrev {{{
+let fuf_abbrevMap = {
+    \'^plug' : ['~/.vim/plugin/', '~/.vim/plugin/', '~/.vim/mine/plugin/'],
+    \'^home' : ['~/'],
+\}
+if exists('$CYGHOME')  | let fuf_abbrevMap['^cyg']  = $CYGHOME  | endif
+if exists('$MSYSHOME') | let fuf_abbrevMap['^msys'] = $MSYSHOME | endif
+
+if has('win32')
+    let fuf_abbrevMap['^desk'] = [
+                \   'C:' . substitute( $HOMEPATH, '\', '/', 'g' ) . '/デスクトップ/'
+                \ ]
+    let fuf_abbrevMap['^cyg'] = [
+                \   'C:/cygwin/home/'. $USERNAME .'/'
+                \ ]
+    let fuf_abbrevMap['^msys'] = [
+                \   'C:/msys/home/'. $USERNAME .'/'
+                \ ]
+else
+    let fuf_abbrevMap['^desk'] = [
+                \     '~/Desktop/'
+                \ ]
+endif
+" }}}
+" }}}
+
+" MRU
+nnoremap <silent> <C-h>     :MRU<CR>
+let MRU_Max_Entries   = 500
+let MRU_Add_Menu      = 0
+let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\c\'
+
+" Align
+let Align_xstrlen    = 3       " multibyte
+let DrChipTopLvlMenu = ""
+command! -nargs=0 AlignReset call Align#AlignCtrl("default")
+cabbrev   al    Align
+
+" Chalice
+let chalice_preview      = 0
+let chalice_startupflags = "bookmark"
+
+" changelog
+let changelog_username = "tyru"
+
+" gtags {{{
+
+let loaded_gtags = 1
+
+" let s:gtags_found = 0
+" 
+" func! s:JumpTags()
+"     if expand('%') == '' | return | endif
+" 
+"     if exists(':GtagsCursor')
+"         " next C-]
+"         echo "gtags.vim is not installed. do default <C-]>..."
+"         sleep 2
+"         nunmap <C-]>
+"         execute "normal! \<C-]>"
+"         return
+"     endif
+" 
+"     let gtags = expand('%:h') . '/GTAGS'
+"     if filereadable(gtags)
+"         if ! s:gtags_found
+"             " if gtags found, echo this message at only first time.
+"             echo "found GTAGS. use gtags for jumping..."
+"             sleep 2
+"             let s:gtags_found = 1
+"         endif
+"         lcd %:p:h
+"         GtagsCursor
+"         lcd -
+"     else
+"         execute "normal! \<C-]>"
+"     endif
+" endfunc
+" 
+" nnoremap <silent> g<C-i>    :Gtags -f %<CR>
+" nnoremap <silent> <C-]>    :call <SID>JumpTags()<CR>
+" }}}
+
+" xptemplate
+let xptemplate_key = '<C-t>'
+
+" operator-replace
+map ,r  <Plug>(operator-replace)
+
+" taglist {{{
+let Tlist_Ctags_Cmd = '/usr/bin/ctags'
+nnoremap <silent> \t :TlistToggle<CR>
+
+" nnoremap <silent> <F8> :TlistToggle<CR>
+let Tlist_Process_File_Always = 1
+let Tlist_Use_Right_Window = 1
+let Tlist_Enable_Fold_Column = 0
+let Tlist_Compact_Format = 1
+let Tlist_Display_Prototype = 0
+let Tlist_Exit_OnlyWindow = 1
+let Tlist_File_Fold_Auto_Close = 1
+let Tlist_Show_Menu = 1
 " }}}
 
 " }}}

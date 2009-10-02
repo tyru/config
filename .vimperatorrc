@@ -19,6 +19,7 @@ set! ui.caretBlinkTime=1000
 
 set! browser.tabs.closeWindowWithLastTab=false
 
+set! dom.popup_maximum=65536
 
 " ScrapBook
 " (:menuで選択したものが次回起動時に消える)
@@ -30,10 +31,9 @@ set! browser.tabs.closeWindowWithLastTab=false
 "-----------------------------------------------------------------
 " set {{{1
 
-set activate=homepage
+set activate=homepage,quickmark,tabopen
 set complete=sfl
-" set complete=sflH
-" set focuscontent
+set focuscontent
 set guioptions=nbr
 set hlsearch
 set ignorecase
@@ -98,13 +98,12 @@ noremap <Leader>gf     :tab normal gf<CR>
 
 noremap !       :set invum<CR>
 
-noremap <C-i>   <C-o>
-noremap <C-o>   <C-i>
+noremap ZZ <Nop>
 
 " }}}2
 
 " ~ c ~ {{{2
-cnoremap <C-c>          <C-v><C-c><Home><S-End><Del>echo "yank!"<CR>
+cnoremap <C-c>          <C-v><C-c>
 cnoremap <C-x>          <C-v><C-x>
 cnoremap <C-v>          <S-Insert>
 cnoremap <C-r><C-r>     <S-Insert>
@@ -175,17 +174,12 @@ noremap b   :viewSBMComments<CR>
 set hintmatching=custom
 
 " multi_requester.js
-noremap <C-k>   :mr<Space>
-noremap <Leader>tw     :mr twitter-timeline<CR>
+noremap <C-k>       :mr<Space>
+noremap <Leader>a   :mr alc<Space>
 
 " ime_controller.js
 let ex_ime_mode = "inactive"  
 let textarea_ime_mode = "inactive"
-
-" copy.js
-" noremap <Leader>cy      :copy titleAndURL<CR>
-" noremap <Leader>ct      :copy title<CR>
-" noremap <Leader>co      :copy<Space>
 
 " stella.js & nicontroller.js {{{
 noremap <Leader>nc      :nicomment<Space>
@@ -228,7 +222,10 @@ autocmd LocationChange .* :fmapc
 
 " GMail
 "   add ! l gl.
-autocmd LocationChange 'mail\.google\.com/mail' :fmap -depth 4 c / j k n p o u e x s r a # [ ] z ! ? gi gs gt gd ga gc <C-s> l gl
+autocmd LocationChange 'mail\.google\.com/mail' :fmap -depth 4 c / j k n p o u e x s r z # [ ] ! ? . gi gs gt gd ga gc gk gl <C-s> l *a *n *r *u *s *t T
+
+" Google Groups
+autocmd LocationChange 'groups\.google\.\w+\/group' :fmap -event keydown -vkey n p o
 
 " Google Reader
 "   add J K N P a.
@@ -238,17 +235,29 @@ autocmd LocationChange 'www\.google\.co\.jp/reader' :fmap -vkey a j k J K n p N 
 "   remove f <Esc> i d + - <Tab> <S-Tab>.
 autocmd LocationChange 'www\.rememberthemilk\.com\/home\/tyru\/' :fmap -vkey a m c n p r g s h t u j y <Del> k z l 1 2 3 4 <C-S-Left> <C-S-Right> <C-S-0> <C-S-6> <C-S-7> <C-S-8> <C-S-9> <C-S-l> <Left> <Right> <Up> <Down> <PageUp> <PageDown> <Home> <End> <C-S-/>
 
-" }}}
-
 " LDR
 " add r
 autocmd LocationChange 'reader\.livedoor\.com\/reader\/' :fmap j k s a p o v c <Space> <S-Space> Z z ZZ b < > r
-nnoremap ZZ <Nop>
 
+" }}}
 
-" hatena-bookmark-search.js
-let g:hatena_bookmark_no_migemo = 'true';
-" let g:hatena_bookmark_suffix_array = 'true';
+" copy.js {{{
+js<<EOM
+liberator.globalVariables.copy_templates = [{
+  label: 'Tabslist',
+  value: 'Current tabs copy to <UL> list',
+  custom: function() {
+            let result = <ul/>;
+            for each ([,tab] in tabs.browsers)
+                result.li += <li>
+  <a href={tab.currentURI.spec}>
+  {tab.contentTitle}</a>
+</li>;
+            return result;
+          }
+}];
+EOM
+" }}}
 
 " }}}
 "-----------------------------------------------------------------

@@ -21,7 +21,12 @@ do
 done
 
 
-tempname=`perl -e 'print join q(), localtime, q(.html)'`
+if test $# = 0
+then
+    fname=`perl -e 'print join q(), time, q(.html)'`
+else
+    fname=$1
+fi
 
 if test ! -f $1
 then
@@ -29,7 +34,7 @@ then
     exit -1
 fi
 
-pandoc $1 > /tmp/$tempname
-firefox /tmp/$tempname
+pandoc $1 > /tmp/$fname
+firefox /tmp/$fname
 # NOTE: not found if firefox reloads.
-rm /tmp/$tempname
+# rm /tmp/$fname
