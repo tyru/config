@@ -409,6 +409,7 @@ let s:shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
 let s:mappings = {'default': {}, 'user': {}}    " buffer local mappings.
 
 " used for single key emulation.
+let s:mapstack_count = -1
 let s:mapstack = ''
 let s:orig_updatetime = &updatetime
 " }}}
@@ -1157,7 +1158,7 @@ endfunc
 
 " s:buflocal_move_lower {{{
 func! s:buflocal_move_lower()
-    for i in range(0, v:count)
+    for i in range(1, v:count1)
         if line('.') == line('$')
             if g:dumbbuf_wrap_cursor
                 " go to the top of buffer.
@@ -1172,7 +1173,7 @@ endfunc
 
 " s:buflocal_move_upper {{{
 func! s:buflocal_move_upper()
-    for i in range(0, v:count)
+    for i in range(1, v:count1)
         if line('.') == 1
             if g:dumbbuf_wrap_cursor
                 " go to the bottom of buffer.
@@ -1268,29 +1269,47 @@ func! s:emulate_single_key()
     if s:dumbbuf_bufnr != bufnr('%') | return | endif
     if mode() !=# 'n'                | return | endif
 
+    call s:debug(printf('s:mapstack [%s], s:mapstack_count [%d]', s:mapstack, s:mapstack_count))
+
     let c = nr2char(getchar())
     call s:debug(printf('getchar:[%s]', c))
+
+    let count1 = (s:mapstack_count == -1 ? '' : s:mapstack_count)
     let key = s:mapstack . c
 
-    if has_key(s:mappings.single_key, key) || mapcheck(key, 'n') != ''
-        " (candidate) mappings exist.
-        if has_key(s:mappings.single_key, key)    " single key mapping.
-            call feedkeys(s:mappings.single_key[key], 'm')
-            let s:mapstack = ''
-        elseif maparg(key, 'n') != ''    " user mapping or local buffer mapping.
-            call feedkeys(key, 'm')
-            let s:mapstack = ''
+    let reset = 'let s:mapstack = "" | let s:mapstack_count = -1'
+
+    if s:mapstack == '' && c =~ '[1-9]'    " range
+        if s:mapstack_count == -1
+            let s:mapstack_count = str2nr(c)
         else
-            " push char key.
+            let s:mapstack_count = str2nr(s:mapstack_count . c)
+        endif
+    elseif has_key(s:mappings.single_key, key)    " single key mappings
+        " NOTE: don't have to check if candidate mappings exist,
+        " because s:mappings.single_key has only keys of one character.
+        "
+        " do it.
+        call s:debug("run single key")
+        call feedkeys(count1 . s:mappings.single_key[key], 'm')
+        execute reset
+    elseif mapcheck(key, 'n') != ''    " (candidate) mappings
+        if maparg(key, 'n') != ''    " exact mapping exists
+            " do it.
+            call s:debug("run real mapping")
+            call feedkeys(count1 . key, 'm')
+            execute reset
+        else
             let s:mapstack = s:mapstack . c
         endif
-    elseif s:mapstack =~ '[0-9]*' && c =~ '[0-9]'    " range
-        let s:mapstack = s:mapstack . c
-    else
-        " no mappings. just do it.
-        call feedkeys(key, "m")
-        let s:mapstack = ''
+    else    " no mappings
+        " do it.
+        call s:debug("run no mappings")
+        call feedkeys(count1 . key, "m")
+        execute reset
     endif
+
+    redraw
 endfunc
 " }}}
 
@@ -1303,6 +1322,9 @@ func! s:try_to_emulate_single_key()
         if v:exception != ''
             call s:debug(printf("ignore following error: '%s' in '%s'", v:exception, v:throwpoint))
         endif
+        " clear
+        let s:mapstack = ''
+        let s:mapstack_count = -1
     endtry
 endfunc
 " }}}
