@@ -1014,7 +1014,7 @@ endfunc
 
 " s:run_from_local_map {{{
 func! s:run_from_local_map(code, opt)
-    let opt = extend(copy(a:opt), {"process_selected":0, "pre":[], "post":[]}, "keep")
+    let opt = extend(deepcopy(a:opt), {"process_selected":0, "pre":[], "post":[]}, "keep")
 
     " at now, current window should be dumbbuf buffer
     " because this func is called only from dumbbuf buffer local mappings.
@@ -1023,8 +1023,6 @@ func! s:run_from_local_map(code, opt)
     let cursor_buf = s:get_cursor_buffer()
     " this must be done in dumbbuf buffer.
     let lnum = line('.')
-    " save current value.
-    let save_close_when_exec = g:dumbbuf_close_when_exec
 
     " current window should be dumbbuf buffer, though.
     " if winnr('$') == 1 && bufnr('%') == s:dumbbuf_bufnr
@@ -1035,8 +1033,8 @@ func! s:run_from_local_map(code, opt)
 
 
     try
-        " pre process.
-        call s:map_process_pre(opt.pre, cursor_buf)
+        " pre
+        call s:do_tasks(opt.pre, cursor_buf, lnum)
 
         let bufs = opt.process_selected && !empty(s:selected_bufs) ?
                     \ s:selected_bufs
@@ -1060,61 +1058,58 @@ func! s:run_from_local_map(code, opt)
             endfor
         endif
 
-        " post process.
-        call s:map_process_post(opt.post, lnum)
+        " post
+        call s:do_tasks(opt.post, cursor_buf, lnum)
 
     catch /internal error:/
         call s:warn(v:exception)
 
-    catch /^return_from_pre_process$/
+    catch /^nop$/
 
     " catch    " NOTE: this traps also unknown other plugin's error...
     "     echoerr printf("internal error: '%s' in '%s'", v:exception, v:throwpoint)
 
-    finally
-        " restore previous value.
-        let g:dumbbuf_close_when_exec = save_close_when_exec
     endtry
 endfunc
 " }}}
 
-" s:map_process_pre {{{
-func! s:map_process_pre(tasks, cursor_buf)
+" s:do_tasks {{{
+func! s:do_tasks(tasks, cursor_buf, lnum)
     for p in a:tasks
         if p ==# 'close_dumbbuf'
             call s:close_dumbbuf_buffer()
+
         elseif p ==# 'jump_to_caller'    " jump to caller buffer.
             call s:jump_to_buffer(s:caller_bufnr)
+
         elseif p ==# 'return_if_noname'
             if bufname('%') == ''
-                throw 'return_from_pre_process'
+                throw 'nop'
             endif
+
         elseif p ==# 'return_if_empty'
             if empty(a:cursor_buf)
                 call s:warn("empty list!")
-                throw 'return_from_pre_process'
+                throw 'nop'
             endif
+
         elseif p ==# 'return_if_not_exist'
             if has_key(a:cursor_buf, 'nr') && ! bufexists(a:cursor_buf.nr)
                 call s:warn("selected buffer does not exist!")
-                throw 'return_from_pre_process'
+                throw 'nop'
             endif
-        else
-            call s:warn("internal warning: unknown pre process name: ".p)
-        endif
-    endfor
-endfunc
-" }}}
 
-" s:map_process_post {{{
-func! s:map_process_post(tasks, lnum)
-    for p in a:tasks
-        if p ==# 'clear_selected'
+        elseif p ==# 'clear_previous_lnum'
+            let s:previous_lnum = -1
+
+        elseif p ==# 'clear_selected'
             " clear selected buffers.
             let s:selected_bufs = []
+
         elseif p ==# 'close_dumbbuf'
             call s:debug("just close")
             call s:close_dumbbuf_buffer()
+
         elseif p ==# 'update'
             " close or update dumbbuf buffer.
             if g:dumbbuf_close_when_exec
@@ -1124,11 +1119,13 @@ func! s:map_process_post(tasks, lnum)
                 call s:debug("close and re-open")
                 call s:update_buffers_list()
             endif
+
         elseif p ==# 'save_lnum'    " NOTE: do this before 'update'.
             call s:debug("save_lnum:".a:lnum)
             let s:previous_lnum = a:lnum
+
         else
-            call s:warn("internal warning: unknown post process name: ".p)
+            call s:warn("internal warning: unknown task name: ".p)
         endif
     endfor
 endfunc
@@ -1214,7 +1211,6 @@ endfunc
 "   this does NOT do update or close buffers list.
 func! s:buflocal_open_onebyone(curbuf, db_lnum)
     call s:debug("current lnum:".a:db_lnum)
-    let save_close_when_exec = g:dumbbuf_close_when_exec
 
     " open buffer on the cursor and close dumbbuf buffer.
     call s:buflocal_open(a:curbuf, a:db_lnum)
