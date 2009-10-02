@@ -548,7 +548,7 @@ let s:mappings.default = {
                 \'"pre":["close_dumbbuf", "jump_to_caller", ' .
                         \'"return_if_noname", "return_if_empty", ' .
                         \'"return_if_not_exist"], ' .
-                \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
+                \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'vv': {
             \'opt': '<silent>',
@@ -559,7 +559,7 @@ let s:mappings.default = {
                 \'"pre":["close_dumbbuf", "jump_to_caller", ' .
                         \'"return_if_noname", "return_if_empty", ' .
                         \'"return_if_not_exist"], ' .
-                \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
+                \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'tt': {
             \'opt': '<silent>',
@@ -580,7 +580,7 @@ let s:mappings.default = {
                     \'"process_selected":1, ' .
                     \'"pre":["close_dumbbuf", "return_if_empty", ' .
                             \'"return_if_not_exist"], ' .
-                    \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
+                    \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'ww': {
             \'opt': '<silent>',
@@ -590,7 +590,7 @@ let s:mappings.default = {
                 \'"process_selected":1, ' .
                 \'"pre":["close_dumbbuf", "return_if_empty", ' .
                         \'"return_if_not_exist"], ' .
-                \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
+                \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'ll': {
             \'opt': '<silent>',
@@ -606,7 +606,7 @@ let s:mappings.default = {
                 \'"process_selected":1, ' .
                 \'"pre":["close_dumbbuf", "return_if_empty", ' .
                         \'"return_if_not_exist"], ' .
-                \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
+                \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'xx': {
             \'opt': '<silent>',
@@ -614,7 +614,7 @@ let s:mappings.default = {
                 \'{"type":"func", ' .
                 \'"requires_args":0, ' .
                 \'"pre":["return_if_empty", "return_if_not_exist"], ' .
-                \'"post":["save_lnum", "update"]})<CR>'
+                \'"post":["save_lnum", "update_dumbbuf"]})<CR>'
         \},
     \}
 \}
@@ -1065,6 +1065,7 @@ func! s:run_from_local_map(code, opt)
         call s:warn(v:exception)
 
     catch /^nop$/
+        " nop.
 
     " catch    " NOTE: this traps also unknown other plugin's error...
     "     echoerr printf("internal error: '%s' in '%s'", v:exception, v:throwpoint)
@@ -1077,6 +1078,17 @@ endfunc
 func! s:do_tasks(tasks, cursor_buf, lnum)
     for p in a:tasks
         if p ==# 'close_dumbbuf'
+            call s:close_dumbbuf_buffer()
+
+        elseif p ==# 'clear_previous_lnum'
+            let s:previous_lnum = -1
+
+        elseif p ==# 'clear_selected'
+            " clear selected buffers.
+            let s:selected_bufs = []
+
+        elseif p ==# 'close_dumbbuf'
+            call s:debug("just close")
             call s:close_dumbbuf_buffer()
 
         elseif p ==# 'jump_to_caller'    " jump to caller buffer.
@@ -1099,18 +1111,11 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
                 throw 'nop'
             endif
 
-        elseif p ==# 'clear_previous_lnum'
-            let s:previous_lnum = -1
+        elseif p ==# 'save_lnum'    " NOTE: do this before 'update'.
+            call s:debug("save_lnum:".a:lnum)
+            let s:previous_lnum = a:lnum
 
-        elseif p ==# 'clear_selected'
-            " clear selected buffers.
-            let s:selected_bufs = []
-
-        elseif p ==# 'close_dumbbuf'
-            call s:debug("just close")
-            call s:close_dumbbuf_buffer()
-
-        elseif p ==# 'update'
+        elseif p ==# 'update_dumbbuf'
             " close or update dumbbuf buffer.
             if g:dumbbuf_close_when_exec
                 call s:debug("just close")
@@ -1119,10 +1124,6 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
                 call s:debug("close and re-open")
                 call s:update_buffers_list()
             endif
-
-        elseif p ==# 'save_lnum'    " NOTE: do this before 'update'.
-            call s:debug("save_lnum:".a:lnum)
-            let s:previous_lnum = a:lnum
 
         else
             call s:warn("internal warning: unknown task name: ".p)
@@ -1267,7 +1268,7 @@ endfunc
 " }}}
 
 
-" singkey key emulation {{{
+" single key emulation {{{
 
 " s:emulate_single_key {{{
 "   emulate QuickBuf.vim's single key mappings.
