@@ -18,9 +18,28 @@ XPTinclude
 
 " ========================= Function and Variables =============================
 
+fun! s:f.python_wrap_args_if_func(func, args)
+    if a:func != ''
+        return a:func.'('.a:args.')'
+    else
+        return a:args
+    endif
+endfunction
 
 " ================================= Snippets ===================================
 XPTemplateDef
+
+
+XPT python hint=#!/usr/bin/env\ python\ #\ coding:\ ..
+XSET encoding|pre=Echo(&fenc ? &fenc : &enc)
+#!/usr/bin/env python
+# coding: `encoding^
+
+..XPT
+
+XPT shebang alias=python
+
+XPT sb alias=python
 
 
 XPT if hint=if\ ..:\ ..\ else...
@@ -33,6 +52,7 @@ if `cond^:
 ^`}}^`else...{{^else:
     `cursor^`}}^
 
+
 XPT elif hint=else:
 elif `condition^:
     `cursor^
@@ -44,22 +64,24 @@ else:
 
 
 XPT for hint=for\ ..\ in\ range\(\ ..\ )
-for `var^ in range(`0^):
+XSET 0|post=EchoIfNoChange( '' )
+for `var^ in range(``0`, ^`end^):
     `cursor^
 
 XPT forin hint=for\ ..\ in\ ..:\ ...
-for `vars^ in `array^:
+for `vars^ in `seq^:
     `cursor^
 
 
 XPT def hint=def\ ..(\ ..\ ):\ ...
-XSET para*|post=ExpandIfNotEmpty( ', ', 'para*' )
-def `fun_name^( `para*^ ):
+XSET args*|post=ExpandIfNotEmpty( ', ', 'args*' )
+def `func_name^(`args*^):
     `cursor^
 
 
-XPT lambda hint=(labmda\ ..\ :\ ..)
-(lambda `args^ : `expr^)
+XPT lambda hint=(lambda\ ..\ :\ ..)
+XSET args*|post=ExpandIfNotEmpty( ', ', 'args*' )
+lambda `args*^: `expr^
 
 
 XPT try hint=try:\ ..\ except:\ ...
@@ -89,14 +111,43 @@ XSETm END
 
 
 XPT class hint=class\ ..\ :\ def\ __init__\ ...
-class `className^ `inherit^^:
-    def __init__( self `args^^):
+XSET args*|post=ExpandIfNotEmpty( ', ', 'args*' )
+class `ClassName^(`inherit^):
+    def __init__(self, `args*^):
         `cursor^
 
 
 XPT ifmain hint=if\ __name__\ ==\ __main__
 if __name__ == "__main__" :
     `cursor^
+
+XPT with hint=with\ ..\ as\ ..\ :
+with `opener^ as `name^:
+    `cursor^
+
+XPT importas hint=import\ ..\ as
+import `module^ as `name^
+
+XPT fromas hint=from\ ..\ import\ ..\ as
+from `module^ import `item^ as `name^
+
+XPT from hint=from\ ..\ import\ ..
+from `module^ import `item^
+
+
+XPT fromfuture hint=from\ __future__\ import\ ..
+from __future__ import `name^
+
+XPT genExp hint=\(func\(x)\ for\ x\ in\ seq)
+XSET ComeFirst=elem seq func
+XSET func|post=python_wrap_args_if_func(V(), Reference('elem'))
+(`func^ for `elem^ in `seq^)
+
+XPT listComp hint=\[func\(x)\ for\ x\ in\ seq]
+XSET ComeFirst=elem seq func
+XSET func|post=python_wrap_args_if_func(V(), Reference('elem'))
+[`func^ for `elem^ in `seq^]
+..XPT
 
 
 " ================================= Wrapper ===================================

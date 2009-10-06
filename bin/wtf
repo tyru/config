@@ -1,0 +1,170 @@
+#!/bin/bash
+
+test_font() {
+    # test the terminal font
+    output="This should produce a uniform gradient, if not try a different font.\n\n"
+    for prefix in '' ${h_frac[8]}; do
+        for ((n = 1; n <= 8; n++)); do
+            output+=$prefix${h_frac[n]}\\n
+        done
+    done
+    printf -- "$output"
+    exit 0
+}
+
+main() {
+    # define input range
+    max_input=${1:?'main() missing range'}
+
+    # save number of fractions
+    num_fractions=$((${#frac_set[@]} - 1))
+
+    # set cursor invisible and restore on exit
+    trap 'tput cnorm' 0; tput civis
+    # keep track of terminal length and check for minimum length
+    trap 'COLUMNS=$(tput cols); check_cols' WINCH; kill -WINCH $$
+
+    # begin read loop
+    while read input; do
+        # ignore blank lines
+        if [[ $input ]]; then
+            # check input is a number
+            if [[ $input != *[^0-9]* ]]; then
+                # remove leading zeros and check if input is within allowed range
+                input=$((10#$input)); ((0 <= input && input <= max_input)) || exit_error "input out of range (0 <= input <= $max_input)"
+            else
+                exit_error "input is NaN"
+            fi
+
+            # initialize output
+            line=$l_delim
+            # iterate available spaces for printing ($cols delared global on check_cols)
+            for ((pos = 0; pos < cols; pos++)); do
+                # determine which character will be added based on current position
+                if ((input * cols >= (pos + 1) * max_input)); then
+                    # if "input / max_input >= (pos + 1) / cols" print a full square
+                    line+=${frac_set[$num_fractions]}
+                elif ((input * cols <= pos * max_input)); then
+                    # if "input / max_input <= pos / cols" print an empty square
+                    line+=$frac_set
+                else
+                    # else calculate fraction
+                    for ((frac = num_fractions - 1; frac >= 0; frac--)); do
+                        # look for the largest fraction such as: input / max_input >= (pos + frac / num_fractions) / cols
+                        if ((input * cols * num_fractions >= (num_fractions * pos + frac) * max_input)); then
+                            line+=${frac_set[frac]}
+                            break
+                        fi
+                    done
+                fi
+            done
+            # finish output
+            line+=$r_delim
+
+            # overwrite previous line
+            printf -- $'\r'"$line"
+        fi
+    done
+}
+
+exit_error() {
+    # helper function to output error msg to stdout and exit with error
+    (($#)) && printf -- "$*" >&2
+    exit 1
+}
+
+check_cols() {
+    # check if terminal is wide enough for display
+    cols=$((COLUMNS - ${#l_delim} - ${#r_delim})); ((cols > 0)) || exit_error "terminal too narrow, aborting"
+}
+
+parse_arg() {
+    # shared code among options
+    local argname=$1; shift
+    if [[ $1 = $argname=* ]]; then
+        printf -- "${1:${#argname}+1}"
+        return 0
+    elif [[ $1 = $argname ]]; then
+        printf -- "${2:?"missing value of argument '$argname'"}"
+        # fake status to signal the need of an additional shift from the caller
+        return 128
+    else
+        exit_error "unknown argument $1"
+    fi
+}
+
+## initialization ##
+
+# Unicode fraction characters
+h_frac=(' ' \\u258F \\u258E \\u258D \\u258C \\u258B \\u258A \\u2589 \\u2588)
+v_frac=(' ' \\u2581 \\u2582 \\u2583 \\u2584 \\u2585 \\u2586 \\u2587 \\u2588)
+
+# default border decorations
+l_delim=[ r_delim=]
+
+# default operation mode (default range such as $RANDOM doesn't overflow)
+mode=run orientation=horizontal range=32767
+
+## parse commandline ##
+
+while (($#)); do
+    case "$1" in
+        -h|--help|--usage)
+            mode=help
+        ;;
+        --test-font)
+            mode=test
+        ;;
+        --vertical)
+            orientation=vertical
+        ;;
+        --range*|--l-delim*|--r-delim*)
+            # validate input and match argname
+            [[ $1 =~ ^(--(range|[lr]-delim))(=|$) ]] || exit_error "unknown argument $1"
+            argname=${BASH_REMATCH[1]}
+            # process via generic function
+            result=$(parse_arg "$argname" "$@")
+            # use fake returncode to shift in case $result was a separate commandline arg
+            [[ $? -eq 128 ]] && shift
+            # assign result
+            case "$argname" in
+                --range)
+                    range=$result
+                ;;
+                --l-delim)
+                    l_delim=$result
+                ;;
+                --r-delim)
+                    r_delim=$result
+                ;;
+            esac
+        ;;
+        *)
+            exit_error "unknown argument $1"
+        ;;
+    esac
+    shift
+done
+
+## configure environment ##
+
+# disable builtin printf (do not supports full Unicode)
+enable -n printf
+
+## start ##
+
+case "$mode" in
+    test)
+        # show sample to test the font
+        test_font
+    ;;
+    run)
+        # select set of characters for display
+        [[ $orientation = horizontal ]] && frac_set=("${h_frac[@]}")
+        [[ $orientation = vertical ]] && frac_set=("${v_frac[@]}")
+
+        # run from stdin
+        main "$range"
+    ;;
+esac
+

@@ -1,27 +1,68 @@
 scriptencoding utf-8
+
 let s:save_cpo = &cpo
 set cpo&vim
 
 "-----------------------------------------------------------------
-" Colorscheme {{{
-"
-" peachpuff
-" evening, desert, slate, candycode, lettuce, rdark, wombat
-" advantage, reloaded, hh***, hhd***, maroloccio
-"
-" eveningはdesertに文字列ハイライト足した感じ
-" でもdesertも好きだったりする
-
-func! s:set_color_scheme()
-    if has('gui_running')
-        " GUI版の設定
-        colorscheme desert
-    else
-        " ターミナル版の設定
-        colorscheme evening
-    endif
+" Util Functions {{{
+" s:warn {{{
+func! s:warn(msg)
+    echohl WarningMsg
+    echomsg a:msg
+    echohl None
 endfunc
+" }}}
 
+" s:system {{{
+func! s:system(command, ...)
+    let args = [a:command] + map(copy(a:000), 'shellescape(v:val)')
+    return system(join(args, ' '))
+endfunc
+" }}}
+
+" s:EvalFileNormal(eval_main) {{{
+func! s:EvalFileNormal(eval_main)
+    normal! %v%
+    call s:EvalFileVisual(a:eval_main)
+endfunc
+" }}}
+
+" s:EvalFileVisual(eval_main) {{{
+func! s:EvalFileVisual(eval_main) range
+    let z_val = getreg('z', 1)
+    let z_type = getregtype('z')
+    normal! "zy
+
+    try
+        let curfile = expand('%')
+        if !filereadable(curfile)
+            call s:warn("can't load " . curfile . "...")
+            return
+        endif
+
+        let lines = readfile(curfile) + ['(print'] + split(@z, "\n") + [')']
+
+        let tmpfile = tempname() . localtime()
+        call writefile(lines, tmpfile)
+
+        if filereadable(tmpfile)
+            if a:eval_main ==# 'e'
+                " load tmpfile, execute the function 'main'
+                echo s:system('gosh', tmpfile)
+            elseif a:eval_main ==# 'E'
+                " load tmpfile
+                echo system(printf('cat %s | gosh', shellescape(tmpfile)))
+            else
+                call s:warn("this block never reached")
+            endif
+        else
+            call s:warn("cannot write to " . tmpfile . "...")
+        endif
+    finally
+        call setreg('z', z_val, z_type)
+    endtry
+endfunc
+" }}}
 " }}}
 "-----------------------------------------------------------------
 " basic settings (bundled with kaoriya vim's .vimrc & etc.) {{{
@@ -319,67 +360,6 @@ endif
 
 " }}}
 "-----------------------------------------------------------------
-" Util Functions {{{
-" s:warn {{{
-func! s:warn(msg)
-    echohl WarningMsg
-    echo a:msg
-    echohl None
-endfunc
-" }}}
-
-" s:system {{{
-func! s:system(command, ...)
-    let args = [a:command] + map(copy(a:000), 'shellescape(v:val)')
-    return system(join(args, ' '))
-endfunc
-" }}}
-
-" s:EvalFileNormal(eval_main) {{{
-func! s:EvalFileNormal(eval_main)
-    normal! %v%
-    call s:EvalFileVisual(a:eval_main)
-endfunc
-" }}}
-
-" s:EvalFileVisual(eval_main) {{{
-func! s:EvalFileVisual(eval_main) range
-    let z_val = getreg('z', 1)
-    let z_type = getregtype('z')
-    normal! "zy
-
-    try
-        let curfile = expand('%')
-        if !filereadable(curfile)
-            call s:warn("can't load " . curfile . "...")
-            return
-        endif
-
-        let lines = readfile(curfile) + ['(print'] + split(@z, "\n") + [')']
-
-        let tmpfile = tempname() . localtime()
-        call writefile(lines, tmpfile)
-
-        if filereadable(tmpfile)
-            if a:eval_main ==# 'e'
-                " load tmpfile, execute the function 'main'
-                echo s:system('gosh', tmpfile)
-            elseif a:eval_main ==# 'E'
-                " load tmpfile
-                echo system(printf('cat %s | gosh', shellescape(tmpfile)))
-            else
-                call s:warn("this block never reached")
-            endif
-        else
-            call s:warn("cannot write to " . tmpfile . "...")
-        endif
-    finally
-        call setreg('z', z_val, z_type)
-    endtry
-endfunc
-" }}}
-" }}}
-"-----------------------------------------------------------------
 " Commands {{{
 
 " HelpTagAll {{{
@@ -494,16 +474,12 @@ endfunc
 
 " s:ListChars() {{{
 command! ListChars
-            \ call s:ListChars()
-
-func! s:ListChars()
-    call s:ListAndExecute( [  '',
-                \                 'tab:>-,extends:<',
-                \                 'tab:>-,eol:$,extends:<',
-                \                 'tab:>\\ ',
-                \                 'tab:>\\ ,extends:<' ],
-                \              'set listchars=%embed%' )
-endfunc
+            \ call s:ListAndExecute([
+                    \'tab:>-,extends:>,precedes:<,eol:.',
+                    \'tab:>-',
+                    \'tab:\\ \\ ',
+                \],
+                \'set listchars=%embed%')
 " }}}
 
 " FastEdit {{{
@@ -680,9 +656,7 @@ nnoremap <silent> <F4>    :call <SID>ChangeNL()<CR>
 
 " }}}
 "-----------------------------------------------------------------
-" FileType and AutoCommand {{{
-
-" augroup MyVimrc {{{
+" AutoCommand {{{
 augroup MyVimrc
     autocmd!
 
@@ -690,7 +664,10 @@ augroup MyVimrc
     autocmd BufReadPost * call s:AU_ReCheck_FENC()
 
     " colorscheme
-    autocmd VimEnter * call s:set_color_scheme()
+    autocmd VimEnter * colorscheme desert
+
+    " open on read-only if swap exists
+    autocmd SwapExists * let v:swapchoice = 'o'
 
     " autocmd CursorHold,CursorHoldI *   silent! update
     autocmd QuickfixCmdPost make,grep,grepadd,vimgrep,helpgrep   copen
@@ -739,20 +716,43 @@ augroup MyVimrc
 
     " delete for ft=mkd
     autocmd! filetypedetect BufNewFile,BufRead *.md
-
     " }}}
 
 augroup END
 " }}}
+"-----------------------------------------------------------------
+" FileType {{{
 
-func! s:SetDict(...)
-    execute "setlocal dict="
-                \ . join(map(copy(a:000), '"$HOME/.vim/dict/" . v:val . ".dict"'), ',')
+" ToggleFileType {{{
+command! ToggleFileType call s:ToggleFileType()
+
+let s:load_filetype = 1
+func! s:ToggleFileType()
+    if s:load_filetype
+        let s:load_filetype = 0
+        echomsg "will NOT load filetype"
+    else
+        let s:load_filetype = 1
+        echomsg "load filetype"
+    endif
 endfunc
+" }}}
 
+" s:SetDict {{{
+func! s:SetDict(...)
+    execute "setlocal dict=" .
+                \join(map(copy(a:000), '"$HOME/.vim/dict/" . v:val . ".dict"'), ',')
+endfunc
+" }}}
 
 " s:LoadWhenFileType() {{{
 func! s:LoadWhenFileType()
+    if ! s:load_filetype
+        call s:warn("skip loading filetype config...")
+        return
+    endif
+
+
     call s:SetDict(&filetype)
 
     " デフォルト(ftplugin/*.vimで用意されていない場合)のomnifunc
@@ -1255,18 +1255,15 @@ let xptemplate_key = '<C-t>'
 map ,r  <Plug>(operator-replace)
 
 " taglist {{{
-let Tlist_Ctags_Cmd = '/usr/bin/ctags'
+let Tlist_Ctags_Cmd = 'ctags'
 nnoremap <silent> \t :TlistToggle<CR>
 
-" nnoremap <silent> <F8> :TlistToggle<CR>
-let Tlist_Process_File_Always = 1
 let Tlist_Use_Right_Window = 1
-let Tlist_Enable_Fold_Column = 0
+let Tlist_Enable_Fold_Column = 1
 let Tlist_Compact_Format = 1
-let Tlist_Display_Prototype = 0
+let Tlist_Display_Prototype = 1
 let Tlist_Exit_OnlyWindow = 1
 let Tlist_File_Fold_Auto_Close = 1
-let Tlist_Show_Menu = 1
 " }}}
 
 " }}}
@@ -1275,4 +1272,4 @@ let Tlist_Show_Menu = 1
 "-----------------------------------------------------------------
 
 let &cpo = s:save_cpo
-" vim:fdm=marker:fen:
+" vim:set fen fdm=marker:

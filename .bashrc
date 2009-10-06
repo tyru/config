@@ -35,6 +35,13 @@ if [ -x "$(which vim)" ]; then
 fi
 
 
+### function ###
+cd () {
+    command cd $1
+    ls -l
+}
+
+
 ### cygwin ###
 if [ "$OS" = 'Cygwin' ]; then
     function wwhich() {

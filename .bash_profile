@@ -26,7 +26,7 @@ if [ -x "$(which vim)" ]; then
 elif [ -x "$(which vi)" ]; then
     export EDITOR="$(which vi)"
 fi
-export PS1="{\@} \u@\H being in [\W]\n \\$ "
+export PS1="{\@} \u@\H in [\W]\n \\$ "
 
 # delete duplicated paths
 export PATH="$HOME/bin:$HOME/local/bin:/usr/local/bin:$PATH"

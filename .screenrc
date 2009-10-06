@@ -8,8 +8,8 @@ encoding utf-8
 defencoding utf-8
 defkanji utf-8
 
-bind ^E encoding euc
-bind ^U encoding utf-8
+# bind ^E encoding euc
+# bind ^U encoding utf-8
 
 bind ^L windowlist
 
@@ -17,7 +17,7 @@ bind ^L windowlist
 # blanker
 # blankerprg /usr/bin/fortune -s
 
-caption always "%{= wb} %-w%{=bu dr}%n %t%{-}%+w %= %{=b wk} [%l] %{=b wb}%y/%m/%d(%D) %{=b wm}%c"
+# caption always "%{= wb} %-w%{=bu dr}%n %t%{-}%+w %= %{=b wk} [%l] %{=b wb}%y/%m/%d(%D) %{=b wm}%c"
 bind a  caption splitonly
 bind ^A caption always
 
