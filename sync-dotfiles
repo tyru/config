@@ -14,6 +14,42 @@ use File::Spec::Functions qw(catfile);
 
 
 
+
+my @files = qw(
+    bin
+    .vim
+    .vimrc
+    .gvimrc
+    .vimperator
+    .vimperatorrc
+    .bash_profile
+    .bashrc
+    .screenrc
+    .inputrc
+    .zshrc
+    .zshenv
+    .zsh
+    .skel
+    .module-starter
+    .emacs
+    .emacs.d
+);
+# exclude these files
+my @info_files = qw(
+    .vim/backup
+    .vim/.vimbackup_deleted
+    .vim/chalice/cache
+    .vim/chalice/*.bmk
+    .vimperator/info
+);
+# do not delete these files if --extract was given
+# (if file exists, skip it)
+my %dont_overwrite = map { $_ => 1 } qw(
+    bin
+);
+
+
+
 ### sub ###
 
 sub usage () {
@@ -22,9 +58,10 @@ sub usage () {
 EOF
 }
 
-sub puts {
-    print @_, "\n";
-}
+use subs qw(say warn);
+
+*say = sub { print @_, "\n" };
+*warn = sub { CORE::warn @_, "\n" };
 
 sub install {
     # install $src to $dest as $user.
@@ -36,7 +73,7 @@ sub install {
     }
     rmtree($dest);
 
-    puts("$src -> $dest");
+    say("$src -> $dest");
     system('cp', '-RL', $src, $dest);
 
     if ($^O eq 'cygwin') {
@@ -59,34 +96,6 @@ sub ask {
 
 # chdir parent directory of this script
 chdir $Bin or die "$Bin:$!";
-
-
-my @files = qw(
-    bin
-    .vim
-    .vimrc
-    .gvimrc
-    .vimperator
-    .vimperatorrc
-    .bash_profile
-    .bashrc
-    .screenrc
-    .inputrc
-    .zshrc
-    .zshenv
-    .zsh
-    .skel
-    .module-starter
-    .emacs
-    .emacs.d
-);
-my @info_files = qw(
-    .vim/backup
-    .vim/.vimbackup_deleted
-    .vim/chalice/cache
-    .vim/chalice/*.bmk
-    .vimperator/info
-);
 
 my $username;
 my $auto_commit;
@@ -146,6 +155,10 @@ for my $file (@files) {
         } else {
             $src  = $file;
             $dest = catfile($home, $file);
+        }
+        if (exists $dont_overwrite{$file}) {
+            warn "skip $file...";
+            next;
         }
 
         install($src, $dest, $username);
