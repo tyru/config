@@ -9,8 +9,10 @@ colorscheme vimplight
 " via http://retlet.net/log/2008/06/awesomebar-bookmarklet.html
 set! browser.urlbar.filter.javascript=false
 set! browser.urlbar.maxRichResults=50
+
 " disable accesskey
 " set! ui.key.generalAccessKey=0
+
 " open bookmarks in background
 set! browser.tabs.loadBookmarksInBackground=true
 
@@ -26,6 +28,19 @@ set! dom.popup_maximum=65536
 "
 " command! AutoScrap         :autocmd  PageLoad .* menu ScrapBook-ページの取り込み
 " command! DisableAutoScrap  :autocmd! PageLoad .*
+
+" フィードアイコンをステータスバーに表示
+" http://memo.officebrook.net/20090906.html
+javascript <<EOF
+(function(){
+    var feedPanel = document.createElement("statusbarpanel");
+    feedPanel.setAttribute("id", "feed-panel-clone");
+    feedPanel.appendChild(document.getElementById("feed-button"));
+    feedPanel.firstChild.setAttribute("style", "padding: 0; max-height: 16px;");
+    document.getElementById("status-bar")
+        .insertBefore(feedPanel, document.getElementById("security-button"));
+})();
+EOF
 
 " }}}1
 "-----------------------------------------------------------------
@@ -158,28 +173,33 @@ autocmd VimperatorEnter .* pluginmanager update
 "-----------------------------------------------------------------
 " プラグイン {{{
 
-" direct_bookmark.js
+" direct_bookmark.js {{{
 let direct_sbm_use_services_by_tag  = "d"
 let direct_sbm_use_services_by_post = "hd"
 let direct_sbm_is_use_migemo = 1
 noremap a   :sbm<Space>
 noremap B   :tab bentry<CR>
+" }}}
 
-" sbmcommentsviewer.js
+" sbmcommentsviewer.js {{{
 let def_sbm_format = "id,timestamp,tags,comment"
 let def_sbms       = "h"
 noremap b   :viewSBMComments<CR>
+" }}}
 
-" migemo_hint.js
+" migemo_hint.js {{{
 set hintmatching=custom
+" }}}
 
-" multi_requester.js
+" multi_requester.js {{{
 noremap <C-k>       :mr<Space>
 noremap <Leader>a   :mr alc<Space>
+" }}}
 
-" ime_controller.js
+" ime_controller.js {{{
 let ex_ime_mode = "inactive"  
 let textarea_ime_mode = "inactive"
+" }}}
 
 " stella.js & nicontroller.js {{{
 noremap <Leader>nc      :nicomment<Space>
@@ -194,11 +214,14 @@ noremap <Leader>n+      :stvolume! +10<CR>
 noremap <Leader>n-      :stvolume! -10<CR>
 " }}}
 
-" appendAnchor.js
+" appendAnchor.js {{{
 let auto_append_anchor_once = "true"
+" }}}
 
-" nextlink.js
+" nextlink.js {{{
 let nextlink_nositeinfo_act = "f"
+let nextlink_followlink = "true"
+" }}}
 
 " toggler.js {{{
 js <<EOM

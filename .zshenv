@@ -8,7 +8,7 @@ if [ -x "$(which vim)" ]; then
 elif [ -x "$(which vi)" ]; then
     export EDITOR="$(which vi)"
 fi
-export LESS="--LONG-PROMPT --RAW-CONTROL-CHARS --quit-if-one-screen"
+export LESS="--LONG-PROMPT --RAW-CONTROL-CHARS"
 export PAGER=less
 
 # for cygwin

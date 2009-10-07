@@ -19,7 +19,7 @@ if [ "$OS" = "Cygwin" ]; then
     export LANG=ja_JP.SJIS
 fi
 
-export LESS="--LONG-PROMPT --RAW-CONTROL-CHARS --quit-if-one-screen"
+export LESS="--LONG-PROMPT --RAW-CONTROL-CHARS"
 export PAGER=less
 if [ -x "$(which vim)" ]; then
     export EDITOR="$(which vim)"

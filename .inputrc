@@ -31,15 +31,14 @@ set editing-mode emacs
 # "\eOH": beginning-of-line
 # "\eOF": end-of-line
 
+
 # Allow 8-bit input/output
 #set meta-flag on
 set convert-meta off
 set input-meta on
 set output-meta on
-#$if Bash
-  # Don't ring bell on completion
-  #set bell-style none
 
+#$if Bash
   # or, don't beep at me - show me
   set bell-style visible
 
@@ -69,4 +68,3 @@ set output-meta on
   #Space: magic-space
 #$endif
 
-set prefer-visible-bell

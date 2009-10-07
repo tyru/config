@@ -120,11 +120,9 @@ if has('emacs_tags') && has('path_extra')
     set tags+=.;
 endif
 
-" Life Changing
+" Life Changing (unstable?)
 if has('virtualedit')
-    " unstable yet...
-    " set selection=exclusive
-    " set virtualedit=all
+    set virtualedit=all
 endif
 
 " speed optimization related to fsync...
@@ -676,6 +674,9 @@ augroup MyVimrc
     " because of my laziness :p
     autocmd FileType *   call s:LoadWhenFileType()
 
+    " sometimes &modeline becomes false
+    autocmd BufReadPre *    setlocal modeline
+
     " filetype {{{
     autocmd BufNewFile,BufReadPre *.as
                 \ setlocal ft=actionscript syntax=actionscript
@@ -748,7 +749,7 @@ endfunc
 " s:LoadWhenFileType() {{{
 func! s:LoadWhenFileType()
     if ! s:load_filetype
-        call s:warn("skip loading filetype config...")
+        " call s:warn("skip loading filetype config...")
         return
     endif
 
@@ -1117,6 +1118,7 @@ let dumbbuf_mappings = {
 let dumbbuf_single_key = 1
 let dumbbuf_updatetime = 1    " mininum value of updatetime.
 " let dumbbuf_cursor_pos = 'keep'
+" let dumbbuf_shown_type = 'listed'
 
 " for test
 "
