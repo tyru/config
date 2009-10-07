@@ -34,15 +34,7 @@ my @files = qw(
     .emacs
     .emacs.d
 );
-# exclude these files
-my @info_files = qw(
-    .vim/backup
-    .vim/.vimbackup_deleted
-    .vim/chalice/cache
-    .vim/chalice/*.bmk
-    .vimperator/info
-);
-# do not delete these files if --extract was given
+# do not delete these files in home directory if --extract was given
 # (if file exists, skip it)
 my %dont_overwrite = map { $_ => 1 } qw(
     bin
@@ -173,14 +165,6 @@ for my $file (@files) {
         }
 
         install($src, $dest, $username);
-    }
-}
-
-# delete info files.
-unless ($extract) {
-    # paths are expanded by 'glob'.
-    for (map { glob } @info_files) {
-        rmtree($_);
     }
 }
 
