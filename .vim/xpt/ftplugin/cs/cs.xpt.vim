@@ -1,6 +1,6 @@
 XPTemplate priority=lang-
 
-let [s:f, s:v] = XPTcontainer() 
+let s:f = g:XPTfuncs() 
  
 XPTvar $TRUE          true
 XPTvar $FALSE         false
@@ -27,6 +27,8 @@ XPTinclude
       \ _loops/java.for.like
       \ _structures/c.like
 
+XPTinclude
+            \ c/c
 
 " ========================= Function and Variables =============================
 

@@ -61,9 +61,10 @@ syntax keyword  XPTSnippetVar XPTvar nextgroup=XptVarBody skipwhite
 " ==================
 syntax match    XptSnippetIncludeItemDir /\%(\w\+\/\)\+/ containedin=XptSnippetIncludeItem
 syntax match    XptSnippetIncludeItemFile /[a-zA-Z0-9_.]\+\s*$/ containedin=XptSnippetIncludeItem
-syntax match    XptSnippetIncludeItem /\w\+\/.*/ containedin=XptSnippetIncludeBody
-syntax region   XptSnippetIncludeBody start=/^\s*\\/ end=/^\ze\s*[^\\	]/ keepend skipwhite
+syntax match    XptSnippetIncludeItem /[a-zA-Z0-9_.]\+\/.*/ containedin=XptSnippetIncludeBody
+syntax region   XptSnippetIncludeBody start=/^\s*\\/ end=/^\ze\s*[^\\	 ]/ keepend skipwhite
 syntax keyword  XptSnippetInclude     XPTinclude nextgroup=XptSnippetIncludeBody skipnl skipwhite
+syntax keyword  XptSnippetInclude     XPTembed   nextgroup=XptSnippetIncludeBody skipnl skipwhite
 
 
 
@@ -111,12 +112,13 @@ syntax match    XPTsnippetName /\S\+/ containedin=XPTsnippetTitle nextgroup=XPTm
 " escaped white space or non-space
 syntax match XPTmeta /\(\\\s\|\S\)\+/ containedin=XPTsnippetTitle nextgroup=XPTmeta skipwhite
 syntax match XPTmeta_name /\w\+\ze=/ containedin=XPTmeta nextgroup=XPTmeta_value
+syntax keyword XPTmeta_name_key hint alias synonym hidden contained containedin=XPTmeta_name
 syntax match XPTmeta_value /=\zs\(\\\s\|\S\)*/ containedin=XPTmeta
 " syntax match XPTcomment /^"\%(\s\|"\)*[^"]*$/ containedin=XPTregion
 syntax match XPTcomment /^".*$/ containedin=XPTregion
 
-syntax match XPTbadIndent /^\(    \)* \{1,3}\ze\%(\S\|$\)/ contained containedin=XPTsnippetBody
-syntax match XPTbadIndent /^\s*\t/ contained containedin=XPTsnippetBody
+syntax match XPTbadIndent /^\(    \)*\zs \{1,3}\ze\%(\S\|$\)/ contained containedin=XPTsnippetBody
+syntax match XPTbadIndent /^\s*\zs\t/ contained containedin=XPTsnippetBody
 
 
 " TODO mark may be need escaping in regexp
@@ -124,6 +126,9 @@ let s:m = s:GetMark()
 
 exe 'syntax match XPTitemPost /\V\%(\[^' . s:m[2] . ']\|\(\\\*\)\1\\\[' . s:m[2] . ']\)\*\[^\\' . s:m[2] . ']' . s:m[1] . '\{1,2}/ contains=XPTmark containedin=XPTsnippetBody'
 exe 'syntax match XPTitem /\V' . s:m[0] . '\%(\_[^' . s:m[1] . ']\)\{-}' . s:m[1] . '/ contains=XPTmark containedin=XPTsnippetBody nextgroup=XPTitemPost'
+exe 'syntax match XPTinclusion /\VInclude:\zs\.\{-}\ze' . s:m[1] . '/ contained containedin=XPTitem'
+exe 'syntax match XPTinclusion /\V:\zs\.\{-}\ze:' . s:m[1] . '/ contained containedin=XPTitem'
+exe 'syntax match XPTmark /\V' . s:m[0] . '\|' . s:m[1] . '/ contains=XPTmark containedin=XPTitem'
 
       " \%(\%([^`^]\|\(\\*\)\1\\\^\)*\^\)\?
 " syntax match XPTmark /`\|\^/ contained
@@ -157,7 +162,8 @@ hi link XPTemplateDefStartKey Special
 hi link XPTsnippetTitle       Statement
 hi link XPTsnippetName        Label
 hi link XPTmeta               Normal
-hi link XPTmeta_name          Identifier
+hi link XPTmeta_name          Error
+hi link XPTmeta_name_key      Identifier
 hi link XPTmeta_value         String
 hi link XPTsnippetBody        Normal
 hi link XPTcomment            Comment
@@ -172,6 +178,7 @@ hi link XPTxset_eq            Operator
 hi link XPTxset_value         Normal
 hi link XPTregion             SpecialKey
 hi link XPTitem               CursorLine
+hi link XPTinclusion          XPTsnippetName
 hi link XPTitemPost           WildMenu
 hi link XPTvariable           Constant
 hi link XPTvariable_quote     Constant
@@ -180,7 +187,7 @@ hi link XPTfunction           Function
 hi link XPTbadIndent          Error
 
 " not implemented
-hi link XPTmark               Title
+hi link XPTmark               NonText
 hi link TemplateKey           Title
 
 

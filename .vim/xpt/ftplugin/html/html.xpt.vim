@@ -1,6 +1,6 @@
 XPTemplate priority=lang keyword=<
 
-let [s:f, s:v] = XPTcontainer() 
+let s:f = g:XPTfuncs() 
  
 XPTvar $TRUE          1
 XPTvar $FALSE         0
@@ -11,13 +11,19 @@ XPTvar $IF_BRACKET_STL \n
 
 XPTinclude 
       \ _common/common
-      \ xml/xml
 
 XPTvar $CL    <!--
 XPTvar $CM    
 XPTvar $CR    -->
 XPTinclude 
       \ _comment/doubleSign
+
+XPTinclude 
+      \ xml/xml
+
+XPTembed
+      \ javascript/javascript
+      \ css/css
 
 " ========================= Function and Variables =============================
 
@@ -100,27 +106,27 @@ XPTemplateDef
 
 XPT table
 <table>
-  <tr>
-    <td>`text^^</td>`...2^
-    <td>`text^^</td>`...2^
-  </tr>`...0^
-  <tr>
-    <td>`text^^</td>`...1^
-    <td>`text^^</td>`...1^
-  </tr>`...0^
+    <tr>
+        <td>`text^^</td>`...2^
+        <td>`text^^</td>`...2^
+    </tr>`...0^
+    <tr>
+        <td>`text^^</td>`...1^
+        <td>`text^^</td>`...1^
+    </tr>`...0^
 </table>
 ..XPT
 
 XPT tablecounter hidden=1
 <table id="`id^">`CntStart("i", "0")^
-  <tr>`CntStart("j", "0")^
-    <td id="`^R("id")_{Cnt("i")}_{CntIncr("j")}^">`text^^</td>`...2^
-    <td id="`^R("id")_{Cnt("i")}_{CntIncr("j")}^">`text^^</td>`...2^
-  </tr>`tr...^
-  <tr>
-    <td id="\`\^CntStart("j","0")R("id")_{CntIncr("i")}_{CntIncr("j")}\^">\`text\^\^</td>\`td...\^
-    <td id="\\\`\\\^R("id")_{Cnt("i")}_{CntIncr("j")}\\\^">\\\`text\\\^\\\^</td>\\\`td...\\\^\^\^
-  </tr>\`tr...\^^^
+    <tr>`CntStart("j", "0")^
+        <td id="`^R("id")_{Cnt("i")}_{CntIncr("j")}^">`text^^</td>`...2^
+        <td id="`^R("id")_{Cnt("i")}_{CntIncr("j")}^">`text^^</td>`...2^
+    </tr>`tr...^
+    <tr>
+        <td id="\`\^CntStart("j","0")R("id")_{CntIncr("i")}_{CntIncr("j")}\^">\`text\^\^</td>\`td...\^
+        <td id="\\\`\\\^R("id")_{Cnt("i")}_{CntIncr("j")}\\\^">\\\`text\\\^\\\^</td>\\\`td...\\\^\^\^
+    </tr>\`tr...\^^^
 </table>
 ..XPT
 
@@ -131,18 +137,18 @@ XPT table0 hidden=1
 XPT html hint=<html><head>..<head><body>...
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=`encoding^utf-8^"/>
-    <link rel="stylesheet" type="text/css" href="" />
-    <style></style>
-    <title>`title^E('%:r')^</title>
-    <script language="javascript" type="text/javascript">
-      <!-- -->
-    </script>
-  </head>
-  <body>
-    `cursor^
-  </body>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=`encoding^utf-8^"/>
+        <link rel="stylesheet" type="text/css" href="" />
+        <style></style>
+        <title>`title^E('%:r')^</title>
+        <script language="javascript" type="text/javascript">
+            <!-- -->
+        </script>
+    </head>
+    <body>
+        `cursor^
+    </body>
 </html>
 
 XPT doctype hint=<!DOCTYPE\ ***

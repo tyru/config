@@ -1,6 +1,6 @@
 XPTemplate priority=lang-
 
-let s:f = XPTcontainer()[0]
+let s:f = g:XPTfuncs() 
  
 XPTvar $TRUE          true
 XPTvar $FALSE         false
@@ -37,12 +37,16 @@ XPTinclude
 XPTinclude 
       \ _loops/c.while.like
 
+XPTembed 
+            \ html/html
 
 " ========================= Function and Variables =============================
 
 " ================================= Snippets ===================================
 XPTemplateDef
 
+XPT php hint=<?php\ ...\ ?>
+<?php `cursor^?>
 
 XPT foreach hint=foreach\ (..\ as\ ..)\ {..}
 foreach ($`var^ as `container^)`$FOR_BRACKET_STL^{

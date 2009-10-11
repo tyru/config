@@ -1,6 +1,6 @@
 XPTemplate priority=lang mark=`~
 
-let [s:f, s:v] = XPTcontainer() 
+let s:f = g:XPTfuncs() 
  
 XPTvar $TRUE          1
 XPTvar $FALSE         0
@@ -68,6 +68,16 @@ XPT section hint=section{..}
 \section{`sectionTitle~}
 ..XPT
 
+XPT frame hint=\begin{frame}{..}\ ..\ \end{frame}
+\begin{frame}{`title~}
+    `cursor~
+\end{frame}
+
+XPT block hint=\begin{block}{..}\ ..\ \end{block}
+\begin{block}{`title~}
+    `cursor~
+\end{block}
+
 XPT frac hint=frac{..}{..}
 \frac{`a~}{`b~}
 ..XPT
@@ -130,6 +140,11 @@ XPT beg hint=begin{..}\ ..\ end{..}
 `cursor~
 \end{`something~}
 ..XPT
+
+XPT enclose_ hint=\begin{..}\ SEL\ \end{..}
+\begin{`something~}
+    `wrapped~
+\end{`something~}
 
 XPT as_ hint=SEL{..}
 \\`wrapped~{`cursor~}

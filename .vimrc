@@ -661,8 +661,8 @@ augroup MyVimrc
     " check encoding
     autocmd BufReadPost * call s:AU_ReCheck_FENC()
 
-    " colorscheme
-    autocmd VimEnter * colorscheme desert
+    " colorscheme (on windows, setting colorscheme in .vimrc does not work)
+    autocmd VimEnter * colorscheme chocolate
 
     " open on read-only if swap exists
     autocmd SwapExists * let v:swapchoice = 'o'
@@ -1117,18 +1117,14 @@ let dumbbuf_mappings = {
 \}
 let dumbbuf_single_key = 1
 let dumbbuf_updatetime = 1    " mininum value of updatetime.
-" let dumbbuf_cursor_pos = 'keep'
-" let dumbbuf_shown_type = 'listed'
+let dumbbuf_cursor_pos = 'keep'
+let dumbbuf_shown_type = 'listed'
 
 " for test
 "
 " let dumbbuf_shown_type = 'foobar'
 " let dumbbuf_listed_buffer_name = "*foo bar*"
 " let dumbbuf_verbose = 1
-" }}}
-
-" workaround-for-vim-bug-cant-restore-col-over-blank-line {{{
-let loaded_workaround_for_vim_bug_cant_restore_col_over_blank_line = 1
 " }}}
 
 " }}}

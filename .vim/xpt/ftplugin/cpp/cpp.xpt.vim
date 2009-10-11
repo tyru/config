@@ -35,9 +35,11 @@ XPTinclude
       \ _loops/java.for.like
       \ _preprocessor/c.like
       \ _structures/c.like
+XPTinclude
+            \ c/c
 
 " ========================= Function and Varaibles =============================
-let [s:f, s:v] = XPTcontainer()
+let s:f = g:XPTfuncs() 
 
 function! s:f.cleanTempl( ctx, ... )
   let notypename = substitute( a:ctx,"\\s*typename\\s*","","g" )
@@ -147,6 +149,7 @@ try
 `...^catch ( `except^ )
 {
     `handler^
-}`...^
+}
+`...^
 
 ..XPT

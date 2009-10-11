@@ -19,11 +19,17 @@ let g:__XPTEMPLATE_PARSER_VIM__ = 1
 "
 
 runtime plugin/debug.vim
+
+runtime plugin/xpclass.vim
+runtime plugin/FiletypeScope.class.vim
+
 runtime plugin/xptemplate.util.vim
 runtime plugin/xptemplate.vim
 
+
+
 let s:log = CreateLogger( 'warn' )
-" let s:log = CreateLogger( 'debug' )
+let s:log = CreateLogger( 'debug' )
 
 
 com! -nargs=* XPTemplate
@@ -35,24 +41,77 @@ com!          XPTemplateDef call s:XPTstartSnippetPart(expand("<sfile>")) | fini
 com! -nargs=* XPTvar        call XPTsetVar( <q-args> )
 com! -nargs=* XPTsnipSet    call XPTsnipSet( <q-args> )
 com! -nargs=+ XPTinclude    call XPTinclude(<f-args>)
+com! -nargs=+ XPTembed      call XPTembed(<f-args>)
 " com! -nargs=* XSET          call XPTbufferScopeSet( <q-args> )
 
 
 let s:nonEscaped = '\%(' . '\%(\[^\\]\|\^\)' . '\%(\\\\\)\*' . '\)' . '\@<='
 
-fun! XPTsnippetFileInit( filename, ... ) "{{{
-    if !exists( 'b:__xpt_loaded' )
-        let b:__xpt_loaded = {}
+fun! s:AssignSnipFT( filename ) "{{{
+    let x = g:XPTobject()
+
+    let filename = substitute( a:filename, '\\', '/', 'g' )
+
+
+    let ftFolder = matchstr( filename, '\V/ftplugin/\zs\[^\\]\+\ze/' )
+    if empty( x.snipFileScopeStack ) 
+        " Snippet file is loaded at top level
+        "
+        " All cross filetype inclusion must be done through XPTinclude or
+        " XPTembed, runtime command is disabled for inclusion or embed
+
+        if &filetype !~ '\<' . ftFolder . '\>' " sub type like 'xpt.vim' 
+            return 'not allowed'
+        else
+            let ft =  &filetype
+        endif
+
+    else
+        " XPTinclude or XPTembed
+        if x.snipFileScopeStack[ -1 ].inheritFT
+                \ || ftFolder =~ '^_'
+
+            if !has_key( x.snipFileScopeStack[ -1 ], 'filetype' )
+                " no parent snippet file 
+                " maybe parent snippet file has no XPTemplate command called
+                throw 'parent may has no XPTemplate command called :' . a:filename
+            endif
+
+            let ft = x.snipFileScopeStack[ -1 ].filetype
+        else
+            let ft = ftFolder
+        endif
     endif
 
-    if has_key( b:__xpt_loaded, a:filename )
+    call s:log.Log( "filename=" . filename . 'filetype=' . &filetype . " ft=" . ft )
+
+    return ft
+endfunction "}}}
+
+
+
+
+fun! XPTsnippetFileInit( filename, ... ) "{{{
+    let x = XPTbufData()
+    let filetypes = x.filetypes
+
+    let snipScope = XPTnewSnipScope(a:filename)
+    let snipScope.filetype = s:AssignSnipFT( a:filename )
+
+    if snipScope.filetype == 'not allowed'
+        " TODO 
+        echom "not allowed:" 
+        return 'finish'
+    endif 
+
+    let filetypes[ snipScope.filetype ] = get( filetypes, snipScope.filetype, g:FiletypeScope.New() )
+    let ftScope = filetypes[ snipScope.filetype ]
+
+
+    if ftScope.CheckAndSetSnippetLoaded( a:filename )
         return 'finish'
     endif
 
-    let b:__xpt_loaded[a:filename] = 1
-
-    let x = XPTbufData()
-    let x.snipFileScope = XPTnewSnipScope()
 
 
     for pair in a:000
@@ -103,6 +162,7 @@ endfunction "}}}
 
 fun! XPTsetVar( nameSpaceValue ) "{{{
     let x = XPTbufData()
+    let ftScope = g:GetSnipFileFtScope()
 
     call s:log.Debug( 'xpt var raw data=' . string( a:nameSpaceValue ) )
     let name = matchstr(a:nameSpaceValue, '^\S\+\ze\s')
@@ -110,23 +170,58 @@ fun! XPTsetVar( nameSpaceValue ) "{{{
         return
     endif
 
-    " TODO use s:nonEscaped to detect escape
     let val  = matchstr(a:nameSpaceValue, '\s\+\zs.*')
-    let val = substitute( val, '\\n', "\n", 'g' )
-    let val = substitute( val, '\\ ', " ", 'g' )
+    if val =~ '^''.*''$'
+        let val = val[1:-2]
+    else
+        " TODO use s:nonEscaped to detect escape
+        let val = substitute( val, '\\n', "\n", 'g' )
+        let val = substitute( val, '\\ ', " ", 'g' )
+    endif
 
 
     let priority = x.snipFileScope.priority
     call s:log.Log("name=".name.' value='.val.' priority='.priority)
 
 
-    if !has_key( x.varPriority, name ) || priority < x.varPriority[ name ]
-        let [ x.vars[ name ], x.varPriority[ name ] ] = [ val, priority ]
+    if !has_key( ftScope.varPriority, name ) || priority < ftScope.varPriority[ name ]
+        let [ ftScope.funcs[ name ], ftScope.varPriority[ name ] ] = [ val, priority ]
     endif
 
 endfunction "}}}
 
 fun! XPTinclude(...) "{{{
+    let scope = XPTsnipScope()
+    let scope.inheritFT = 1
+    for v in a:000
+        if type(v) == type([])
+            for s in v
+                call XPTinclude(s)
+            endfor
+        elseif type(v) == type('') 
+            " let fullname = globpath( &rtp, 'ftplugin/' . v . '.xpt.vim' )
+            " if fullname == ''
+                " call s:log.Info( 'no such file in runtime path:' . v . ', included from:' . scope.filename )
+                " continue
+            " endif
+" 
+            " let fullname = split( fullname, "\n" )[0]
+" 
+            " if XPTbufData().filetypes[ scope.filetype ].IsSnippetLoaded( fullname )
+                " continue
+            " endif
+
+            call XPTsnipScopePush()
+            exe 'runtime ftplugin/' . v . '.xpt.vim'
+            call XPTsnipScopePop()
+
+        endif
+    endfor
+endfunction "}}}
+
+fun! XPTembed(...) "{{{
+    let scope = XPTsnipScope()
+    let scope.inheritFT = 0
     for v in a:000
         if type(v) == type([])
             for s in v
@@ -138,8 +233,6 @@ fun! XPTinclude(...) "{{{
             call XPTsnipScopePop()
         endif
     endfor
-
-
 endfunction "}}}
 
 " TODO refine me
@@ -149,15 +242,12 @@ fun! s:XPTstartSnippetPart(fn) "{{{
 
 
     " find the line where XPTemplateDef called
+    let i = match( lines, '^XPTemplateDef' )
+
+    let lines = lines[ i : ]
     let [i, len] = [0, len(lines)]
-    while i < len
-        if lines[i] =~# '^XPTemplateDef'
-            break
-        endif
 
-        let i += 1
-    endwhile
-
+    call s:ConvertIndent( lines )
 
     " parse lines
     " start end and blank start
@@ -213,10 +303,10 @@ fun! s:XPTemplateParseSnippet(lines) "{{{
     let snippetParameters = split(lines[0], '\V'.s:nonEscaped.'\s\+')
     let snippetName = snippetParameters[1]
 
-    call s:log.Log("parse lines:".string(lines))
-    call s:log.Log("snippetParameters=".string(snippetParameters))
-    call s:log.Log("line0=".lines[0])
-    call s:log.Log('snippetName='.snippetName)
+    " call s:log.Log("parse lines:".string(lines))
+    " call s:log.Log("snippetParameters=".string(snippetParameters))
+    " call s:log.Log("line0=".lines[0])
+    " call s:log.Log('snippetName='.snippetName)
 
     let setting = deepcopy( g:XPTemplateSettingPrototype )
 
@@ -241,7 +331,6 @@ fun! s:XPTemplateParseSnippet(lines) "{{{
     endfor
 
 
-    call s:ConvertIndent( lines )
 
     let start = 1
     let len = len( lines )
@@ -272,6 +361,7 @@ fun! s:XPTemplateParseSnippet(lines) "{{{
         elseif lines[start] =~# '^\\XSET\%[m]' " escaped XSET or XSETm
             let snippetLines += [ lines[ start ][1:] ]
             " break
+
         else
             let snippetLines += [ lines[ start ] ]
             " break
@@ -289,10 +379,16 @@ fun! s:XPTemplateParseSnippet(lines) "{{{
     call s:log.Log("tmpl setting:".string(setting))
     if has_key( setting, 'alias' )
         call XPTemplateAlias( snippetName, setting.alias, setting )
-
     else
         call XPTemplate(snippetName, setting, snippetLines)
+    endif
 
+
+    if has_key( setting, 'synonym' )
+        let synonyms = split( setting.synonym, '|' )
+        for synonym in synonyms
+            call XPTemplateAlias( synonym, snippetName, {} )
+        endfor
     endif
 
 
@@ -308,22 +404,16 @@ fun! s:ConvertIndent( snipLines ) "{{{
         let sts = ts
     endif
 
-    let bufIndent = repeat( ' ', sts )
     let tabspaces = repeat( ' ', ts )
+    let indentRep = repeat( '\1', sts )
 
-    let i = 0
-    for line in a:snipLines
-        let spaces = matchstr( line, '^\(    \)*' )
-        let left = line[ len( spaces ) : ]
-        let space = repeat( bufIndent, len(spaces) / 4 )
-        if usingTab 
-            let space = substitute( space, tabspaces, '	', 'g' )
-        endif
+    let cmdExpand = 'substitute(v:val, ''^\( *\)\1\1\1'', ''' . indentRep . ''', "g" )'
 
-        let a:snipLines[ i ] = space . left
-
-        let i += 1
-    endfor
+    call map( a:snipLines, cmdExpand )
+    if usingTab 
+        let cmdReplaceTab = 'v:val !~ ''^ '' ? v:val : join(split( v:val, ' . string( '^\%(' . tabspaces . '\)' ) . ', 1), ''	'')' 
+        call map( a:snipLines, cmdReplaceTab )
+    endif
 
 endfunction "}}}
 

@@ -5,32 +5,31 @@ let g:__XPTEMPLATE_UTIL_VIM__ = 1
 
 
 runtime plugin/debug.vim
+runtime plugin/xpclass.vim
 
 
 let s:log = CreateLogger( 'warn' )
 " let s:log = CreateLogger( 'debug' )
 
+let g:XPTsid = 'map <Plug>xsid <SID>|let s:sid=matchstr(maparg("<Plug>xsid"), "\\d\\+_")|unmap <Plug>xsid'
 
 
-com! XPTutilGetSID let s:sid =  matchstr("<SID>", '\zs\d\+_\ze')
-XPTutilGetSID
-delc XPTutilGetSID
+
+exe g:XPTsid
 
 
 
 let s:unescapeHead          = '\v(\\*)\1\\?\V'
 
 
-
-fun! g:ClassPrototype(...) "{{{
+fun! g:XPclassPrototype( sid, ...) "{{{
     let p = {}
     for name in a:000
-        let p[ name ] = function( '<SNR>' . s:sid . name )
+        let p[ name ] = function( '<SNR>' . a:sid . name )
     endfor
 
     return p
 endfunction "}}}
-
 
 fun! s:UnescapeChar( str, chars ) "{{{
     " unescape only chars started with several '\' 
@@ -72,10 +71,29 @@ fun! s:DeepExtend( to, from ) "{{{
     endfor
 endfunction "}}}
 
-let g:xptutil =  g:ClassPrototype(
-            \    'UnescapeChar', 
-            \    'DeepExtend', 
-            \ )
+fun! s:XPTgetCurrentOrPreviousSynName() "{{{
+    let pos = [ line( "." ), col( "." ) ]
+    let synName = synIDattr(synID(pos[0], pos[1], 1), "name")
+
+    if synName == ''
+        let prevPos = searchpos( '\S', 'bWn' )
+        if prevPos == [0, 0]
+            return synName
+        endif
+
+        let synName = synIDattr(synID(prevPos[0], prevPos[1], 1), "name")
+        if synName == ''
+            " an empty syntax char
+            return &filetype
+        endif
+    endif
+
+    return synName
+
+endfunction "}}}
+
+let g:xptutil = g:XPclass( s:sid, {} )
+
 
 
 " vim:tw=78:ts=8:sw=4:sts=4:et:norl:fdm=marker:fmr={{{,}}}

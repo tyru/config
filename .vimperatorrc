@@ -115,6 +115,8 @@ noremap !       :set invum<CR>
 
 noremap ZZ <Nop>
 
+noremap gt :tab<Space>
+
 " }}}2
 
 " ~ c ~ {{{2

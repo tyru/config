@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: vimtemplate
 " Version: 0.0.6
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-13.
+" Last Change: 2009-10-08.
 "
 " Description:
 "   MRU-like simple template management plugin
@@ -343,11 +343,11 @@ func! s:eval_modeline(line, path)
         " NOTE set opt=: is NG but not needed to support it maybe
         for opt in split(match, ':')
             if opt =~# '\mset\='
-                " XXX modeline is setlocal?
+                " TODO option to choose ':setlocal' or ':setglobal'.
                 let opt = substitute(opt, '\mset\=', 'setlocal', '')
                 execute opt
             else
-                " XXX modeline is setlocal?
+                " TODO
                 let opt = 'setlocal ' . opt
                 execute opt
             endif

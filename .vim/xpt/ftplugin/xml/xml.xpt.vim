@@ -1,6 +1,6 @@
 XPTemplate priority=spec keyword=<
 
-let [s:f, s:v] = XPTcontainer() 
+let s:f = g:XPTfuncs() 
  
 XPTvar $TRUE          1
 XPTvar $FALSE         0
@@ -37,7 +37,7 @@ XPT style hint=<?xml-stylesheet...
 <?xml-stylesheet type="`style^text/css^" href="`from^">
 
 
-XPT CDATA_ hint=<![CDATA[...
+XPT CDATA hint=<![CDATA[...
 <![CDATA[
 `cursor^
 ]]>

@@ -12,8 +12,8 @@ elseif has('mac')    " Mac
     set guifont=Osaka－等幅:h14
     set printfont=Osaka－等幅:h14
 else    " *nix系OS
-    set guifont=Monospace\ 10
-    set printfont=Monospace\ 10
+    set guifont=Monospace\ 12
+    set printfont=Monospace\ 12
 endif
 
 " }}}

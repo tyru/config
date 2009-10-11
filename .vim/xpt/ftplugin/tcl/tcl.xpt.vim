@@ -1,6 +1,6 @@
 XPTemplate priority=lang mark=~^
 
-let [s:f, s:v] = XPTcontainer() 
+let s:f = g:XPTfuncs() 
  
 XPTvar $TRUE          1
 XPTvar $FALSE         0
@@ -23,13 +23,15 @@ XPTinclude
 XPTemplateDef
 
 
-XPT tcl hint=#!/bin/sh\ ..\ exec\ tclsh..
+XPT shebang hint=#!/bin/sh\ ..\ exec\ tclsh..
 #!/bin/sh
 #\
 exec tclsh "$0" "$@""
 
 ..XPT
-                        
+
+XPT sb alias=shebang
+
 
 XPT for hint=for\ {...}
 for {set ~i^ ~x^} {$~i^ <= ~len^} {incr ~i^} {
