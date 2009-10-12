@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.6
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-10-02.
+" Last Change: 2009-10-12.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -1014,7 +1014,10 @@ endfunc
 
 " s:run_from_local_map {{{
 func! s:run_from_local_map(code, opt)
-    let opt = extend(deepcopy(a:opt), {"process_selected":0, "pre":[], "post":[]}, "keep")
+    let opt = extend(
+                \deepcopy(a:opt),
+                \{"process_selected":0, "prev_mode":"n", "pre":[], "post":[]},
+                \"keep")
 
     " at now, current window should be dumbbuf buffer
     " because this func is called only from dumbbuf buffer local mappings.
@@ -1154,7 +1157,7 @@ func! s:dispatch_code(code, no, opt)
             " NOTE: not used.
             silent call call(a:code, [a:opt.args])
         else
-            silent call call(a:code, [a:opt.cursor_buf, a:opt.lnum])
+            silent call call(a:code, [a:opt])
         endif
     else
         throw "internal error: unknown type: ".a:opt.type
@@ -1196,11 +1199,11 @@ endfunc
 
 " s:buflocal_open {{{
 "   this must be going to close dumbbuf buffer.
-func! s:buflocal_open(curbuf, db_lnum)
-    if ! empty(a:curbuf)
-        let winnr = bufwinnr(a:curbuf.nr)
+func! s:buflocal_open(opt)
+    if ! empty(a:opt.cursor_buf)
+        let winnr = bufwinnr(a:opt.cursor_buf.nr)
         if winnr == -1
-            execute a:curbuf.nr.'buffer'
+            execute a:opt.cursor_buf.nr.'buffer'
         else
             execute winnr.'wincmd w'
         endif
@@ -1210,15 +1213,15 @@ endfunc
 
 " s:buflocal_open_onebyone {{{
 "   this does NOT do update or close buffers list.
-func! s:buflocal_open_onebyone(curbuf, db_lnum)
-    call s:debug("current lnum:".a:db_lnum)
+func! s:buflocal_open_onebyone(opt)
+    call s:debug("current lnum:" . a:opt.db_lnum)
 
     " open buffer on the cursor and close dumbbuf buffer.
-    call s:buflocal_open(a:curbuf, a:db_lnum)
+    call s:buflocal_open(a:opt.cursor_buf, a:opt.db_lnum)
     " open dumbbuf's buffer again.
     call s:update_buffers_list()
     " go to previous lnum.
-    execute a:db_lnum
+    execute a:opt.db_lnum
 
     if g:dumbbuf_downward
         call s:buflocal_move_lower()
@@ -1229,7 +1232,7 @@ endfunc
 " }}}
 
 " s:buflocal_toggle_listed_type {{{
-func! s:buflocal_toggle_listed_type(curbuf, db_lnum)
+func! s:buflocal_toggle_listed_type(opt)
     " NOTE: s:shown_type SHOULD NOT be '', and MUST NOT be.
 
     if s:shown_type ==# 'unlisted'
@@ -1245,22 +1248,22 @@ endfunc
  " }}}
 
 " s:buflocal_close {{{
-func! s:buflocal_close(curbuf, db_lnum)
-    if empty(a:curbuf) | return | endif
-    if s:jump_to_buffer(a:curbuf.nr) != -1
+func! s:buflocal_close(opt)
+    if empty(a:opt.cursor_buf) | return | endif
+    if s:jump_to_buffer(a:opt.cursor_buf.nr) != -1
         close
     endif
 endfunc
 " }}}
 
 " s:buflocal_select {{{
-func! s:buflocal_select(curbuf, db_lnum)
-    if !empty(filter(deepcopy(s:selected_bufs), 'v:val.nr == a:curbuf.nr'))
+func! s:buflocal_select(opt)
+    if !empty(filter(deepcopy(s:selected_bufs), 'v:val.nr == a:opt.cursor_buf.nr'))
         " remove from selected.
-        call filter(s:selected_bufs, 'v:val.nr != a:curbuf.nr')
+        call filter(s:selected_bufs, 'v:val.nr != a:opt.cursor_buf.nr')
     else
         " add to selected.
-        call add(s:selected_bufs, a:curbuf)
+        call add(s:selected_bufs, a:opt.cursor_buf)
     endif
 endfunc
 " }}}
