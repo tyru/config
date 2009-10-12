@@ -496,6 +496,17 @@ if exists('g:dumbbuf_mappings')
     unlet g:dumbbuf_mappings
 endif
 let s:mappings.default = {
+    \'v': {
+        \'x': {
+            \'opt': '<silent>',
+            \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_select", ' .
+                \'{"type":"func", ' .
+                \'"requires_args":0, ' .
+                \'"prev_mode":"v", ' .
+                \'"pre":["return_if_empty", "return_if_not_exist"], ' .
+                \'"post":["save_lnum", "update_dumbbuf"]})<CR>'
+        \},
+    \},
     \'n': {
         \'j': {
             \'opt': '<silent>',
@@ -698,13 +709,13 @@ func! s:write_buffers_list()
         let i = 0
         let len = len(s:bufs_info)
         while i < len
+            " use 'val' as a replacement of 'v:val'.
             let val = s:bufs_info[i]
             let val.lnum = i + 1
             call add(disp_line, eval(g:dumbbuf_disp_expr))
 
             let i += 1
         endwhile
-        " let disp_line = map(deepcopy(s:bufs_info), g:dumbbuf_disp_expr)
     catch
         call s:warn("error occured while evaluating g:dumbbuf_disp_expr.")
         return
@@ -1009,6 +1020,12 @@ func! s:create_dumbbuf_buffer()
 endfunc
 " }}}
 
+" s:get_prev_count {{{
+func! s:get_prev_count()
+    return [line("'<"), line("'>")]
+endfunc
+" }}}
+
 " }}}
 
 
@@ -1033,6 +1050,16 @@ func! s:run_from_local_map(code, opt)
     "                 \g:dumbbuf_vertical ? 'vertical' : '',
     "                 \g:dumbbuf_open_with)
     " endif
+
+    let opt.v_selected_bufs = []
+    if opt.prev_mode ==# 'v'
+        let save_pos = getpos('.')
+        for lnum in call('range', s:get_prev_count())
+            call cursor(lnum, 0)
+            call add(opt.v_selected_bufs, s:get_cursor_buffer())
+        endfor
+        call setpos('.', save_pos)
+    endif
 
 
     try
@@ -1258,12 +1285,21 @@ endfunc
 
 " s:buflocal_select {{{
 func! s:buflocal_select(opt)
-    if !empty(filter(deepcopy(s:selected_bufs), 'v:val.nr == a:opt.cursor_buf.nr'))
-        " remove from selected.
-        call filter(s:selected_bufs, 'v:val.nr != a:opt.cursor_buf.nr')
+    if a:opt.prev_mode ==# 'v'
+        let tmp = deepcopy(a:opt)
+        let tmp.prev_mode = 'n'
+        for i in a:opt.v_selected_bufs
+            let tmp.cursor_buf = i
+            call s:buflocal_select(tmp)
+        endfor
     else
-        " add to selected.
-        call add(s:selected_bufs, a:opt.cursor_buf)
+        if !empty(filter(deepcopy(s:selected_bufs), 'v:val.nr == a:opt.cursor_buf.nr'))
+            " remove from selected.
+            call filter(s:selected_bufs, 'v:val.nr != a:opt.cursor_buf.nr')
+        else
+            " add to selected.
+            call add(s:selected_bufs, a:opt.cursor_buf)
+        endif
     endif
 endfunc
 " }}}
