@@ -1117,6 +1117,7 @@ let dumbbuf_mappings = {
 \}
 let dumbbuf_single_key = 1
 let dumbbuf_updatetime = 1    " mininum value of updatetime.
+
 let dumbbuf_cursor_pos = 'keep'
 let dumbbuf_shown_type = 'listed'
 

@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.6
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-10-02.
+" Last Change: 2009-10-13.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -408,8 +408,8 @@ let s:debug_msg = []
 
 let s:caller_bufnr = -1    " caller buffer's bufnr which calls dumbbuf buffer.
 let s:dumbbuf_bufnr = -1    " dumbbuf buffer's bufnr.
-let s:bufs_info = []    " buffers info.
-let s:selected_bufs = []    " selected buffers info.
+let s:bufs_info = {}    " buffers info. (key: bufnr)
+let s:selected_bufs = {}    " selected buffers info.
 let s:previous_lnum = -1    " lnum where a previous mapping executed.
 
 let s:shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
@@ -496,6 +496,17 @@ if exists('g:dumbbuf_mappings')
     unlet g:dumbbuf_mappings
 endif
 let s:mappings.default = {
+    \'v': {
+        \'x': {
+            \'opt': '<silent>',
+            \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_select", ' .
+                \'{"type":"func", ' .
+                \'"requires_args":0, ' .
+                \'"prev_mode":"v", ' .
+                \'"pre":["return_if_empty", "return_if_not_exist"], ' .
+                \'"post":["save_lnum", "update_dumbbuf"]})<CR>'
+        \},
+    \},
     \'n': {
         \'j': {
             \'opt': '<silent>',
@@ -678,50 +689,31 @@ endfunc
 " s:get_buffer_info {{{
 "   this returns the caller buffer's info
 func! s:get_buffer_info(bufnr)
-    for buf in s:bufs_info
-        if buf.nr ==# a:bufnr
-            return buf
-        endif
-    endfor
-
-    return []
+    return has_key(s:bufs_info, a:bufnr) ? s:bufs_info[a:bufnr] : []
 endfunc
 " }}}
 
 " s:write_buffers_list {{{
-"   this defines s:bufs_info[i].lnum
-func! s:write_buffers_list()
+"   this determines s:bufs_info[i].lnum
+func! s:write_buffers_list(bufs)
     call s:jump_to_buffer(s:dumbbuf_bufnr)
 
     let disp_line = []
     try
-        let i = 0
-        let len = len(s:bufs_info)
-        while i < len
-            let val = s:bufs_info[i]
-            let val.lnum = i + 1
+        let lnum = 1
+        for nr in sort(keys(a:bufs))
+            let val = a:bufs[nr]
+            let val.lnum = lnum
             call add(disp_line, eval(g:dumbbuf_disp_expr))
-
-            let i += 1
-        endwhile
-        " let disp_line = map(deepcopy(s:bufs_info), g:dumbbuf_disp_expr)
+            let lnum += 1
+        endfor
     catch
         call s:warn("error occured while evaluating g:dumbbuf_disp_expr.")
+        call s:debug(v:exception)
         return
     endtry
 
-    " TODO use 'put ="..."'
-
-    " write buffers list.
-    let reg_z = getreg('z', 1)
-    let reg_z_type = getregtype('z')
-
-    let @z = join(disp_line, "\n")
-    silent! put z
-
-    call setreg('z', reg_z, reg_z_type)
-
-    " delete the top of one waste blank line!
+    silent put =disp_line
     normal! gg"_dd
 endfunc
 " }}}
@@ -744,7 +736,7 @@ func! s:parse_buffers_info()
         \'\([-= ]\)'.
         \'\([\+x ]\)'
 
-    let result_list = []
+    let result = {}
 
     for line in buf_list
         let m = matchlist(line, regex)
@@ -779,7 +771,7 @@ func! s:parse_buffers_info()
         if bufnr == s:dumbbuf_bufnr | continue | endif
 
         call s:debug(string(m))
-        call add(result_list, {
+        let result[bufnr] = {
             \'nr': bufnr + 0,
             \'is_unlisted': unlisted ==# 'u',
             \'is_current': percent_numsign ==# '%',
@@ -792,27 +784,21 @@ func! s:parse_buffers_info()
             \'is_err': plus_x ==# 'x',
             \'lnum': -1,
             \'is_selected': 0,
-        \})
+        \}
     endfor
 
-    return result_list
-endfunc
-" }}}
-
-
-" s:has_cursor_buffer {{{
-"   this returns if the buffer on the cursor is available.
-"   (not out-of-range)
-func! s:has_cursor_buffer()
-    return line('.') <= len(s:bufs_info)
+    return result
 endfunc
 " }}}
 
 " s:get_cursor_buffer {{{
 func! s:get_cursor_buffer()
-    if ! s:has_cursor_buffer() | return {} | endif
-    let cur = s:bufs_info[line('.') - 1]
-    return cur
+    for buf in values(s:bufs_info)
+        if buf.lnum ==# line('.')
+            return buf
+        endif
+    endfor
+    return {}
 endfunc
 " }}}
 
@@ -843,6 +829,8 @@ endfunc
 " }}}
 
 " s:filter_bufs_info {{{
+"   filter s:bufs_info.
+"   NOTE: that this modifies s:bufs_info.
 func! s:filter_bufs_info(curbufinfo, shown_type)
     " if current buffer is unlisted, filter unlisted buffers.
     " if current buffers is listed, filter listed buffers.
@@ -874,11 +862,12 @@ func! s:open_dumbbuf_buffer(shown_type)
     call s:filter_bufs_info(curbufinfo, a:shown_type)
     call s:debug(printf("filtered only '%s' buffers.", a:shown_type))
 
-    " check flag if selected.
-    for buf in s:bufs_info
-        " TODO store s:bufs_info and s:selected_bufs as dict.
-        if !empty(filter(deepcopy(s:selected_bufs), 'v:val.nr == buf.nr'))
-            " if current buffer is selected
+    " set flag of buffer which is selected.
+    "
+    " this is necessary because s:bufs_info is generated each time
+    " when s:filter_bufs_info() is called.
+    for buf in values(s:bufs_info)
+        if has_key(s:selected_bufs, buf.nr)
             let buf.is_selected = 1
         endif
     endfor
@@ -891,7 +880,7 @@ func! s:open_dumbbuf_buffer(shown_type)
     endif
 
     " write buffers list.
-    call s:write_buffers_list()
+    call s:write_buffers_list(s:bufs_info)
 
     " move cursor to specified position.
     if g:dumbbuf_cursor_pos ==# 'current'
@@ -990,6 +979,7 @@ endfunc
 
 " s:jump_to_buffer {{{
 func! s:jump_to_buffer(bufnr)
+    if a:bufnr ==# bufnr('%') | return a:bufnr | endif
     let winnr = bufwinnr(a:bufnr)
     if winnr != -1 && winnr != winnr()
         call s:debug(printf("jump to ... [%s]", bufname(a:bufnr)))
@@ -1009,12 +999,22 @@ func! s:create_dumbbuf_buffer()
 endfunc
 " }}}
 
+
+" s:get_prev_count {{{
+func! s:get_prev_count()
+    return [line("'<"), line("'>")]
+endfunc
+" }}}
+
 " }}}
 
 
 " s:run_from_local_map {{{
 func! s:run_from_local_map(code, opt)
-    let opt = extend(deepcopy(a:opt), {"process_selected":0, "pre":[], "post":[]}, "keep")
+    let opt = extend(
+                \deepcopy(a:opt),
+                \{"process_selected":0, "prev_mode":"n", "pre":[], "post":[]},
+                \"keep")
 
     " at now, current window should be dumbbuf buffer
     " because this func is called only from dumbbuf buffer local mappings.
@@ -1025,19 +1025,31 @@ func! s:run_from_local_map(code, opt)
     let lnum = line('.')
 
     " current window should be dumbbuf buffer, though.
-    " if winnr('$') == 1 && bufnr('%') == s:dumbbuf_bufnr
+    " if winnr('$') == 1
     "     execute printf("%s %s new",
     "                 \g:dumbbuf_vertical ? 'vertical' : '',
     "                 \g:dumbbuf_open_with)
     " endif
+
+    let opt.v_selected_bufs = []
+    if opt.prev_mode ==# 'v'
+        let save_pos = getpos('.')
+        for lnum in call('range', s:get_prev_count())
+            call cursor(lnum, 0)
+            call add(opt.v_selected_bufs, s:get_cursor_buffer())
+        endfor
+        call setpos('.', save_pos)
+    endif
 
 
     try
         " pre
         call s:do_tasks(opt.pre, cursor_buf, lnum)
 
+        " if a:code supports 'process_selected' and selected buffers exist,
+        " process selected buffers instead of current cursor buffer.
         let bufs = opt.process_selected && !empty(s:selected_bufs) ?
-                    \ s:selected_bufs
+                    \ map(keys(s:selected_bufs), 's:bufs_info[v:val]')
                     \ : [cursor_buf]
 
         " dispatch a:code.
@@ -1085,7 +1097,7 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
 
         elseif p ==# 'clear_selected'
             " clear selected buffers.
-            let s:selected_bufs = []
+            let s:selected_bufs = {}
 
         elseif p ==# 'close_dumbbuf'
             call s:debug("just close")
@@ -1154,7 +1166,7 @@ func! s:dispatch_code(code, no, opt)
             " NOTE: not used.
             silent call call(a:code, [a:opt.args])
         else
-            silent call call(a:code, [a:opt.cursor_buf, a:opt.lnum])
+            silent call call(a:code, [a:opt])
         endif
     else
         throw "internal error: unknown type: ".a:opt.type
@@ -1196,11 +1208,11 @@ endfunc
 
 " s:buflocal_open {{{
 "   this must be going to close dumbbuf buffer.
-func! s:buflocal_open(curbuf, db_lnum)
-    if ! empty(a:curbuf)
-        let winnr = bufwinnr(a:curbuf.nr)
+func! s:buflocal_open(opt)
+    if ! empty(a:opt.cursor_buf)
+        let winnr = bufwinnr(a:opt.cursor_buf.nr)
         if winnr == -1
-            execute a:curbuf.nr.'buffer'
+            execute a:opt.cursor_buf.nr.'buffer'
         else
             execute winnr.'wincmd w'
         endif
@@ -1210,15 +1222,15 @@ endfunc
 
 " s:buflocal_open_onebyone {{{
 "   this does NOT do update or close buffers list.
-func! s:buflocal_open_onebyone(curbuf, db_lnum)
-    call s:debug("current lnum:".a:db_lnum)
+func! s:buflocal_open_onebyone(opt)
+    call s:debug("current lnum:" . a:opt.db_lnum)
 
     " open buffer on the cursor and close dumbbuf buffer.
-    call s:buflocal_open(a:curbuf, a:db_lnum)
+    call s:buflocal_open(a:opt.cursor_buf, a:opt.db_lnum)
     " open dumbbuf's buffer again.
     call s:update_buffers_list()
     " go to previous lnum.
-    execute a:db_lnum
+    execute a:opt.db_lnum
 
     if g:dumbbuf_downward
         call s:buflocal_move_lower()
@@ -1229,7 +1241,7 @@ endfunc
 " }}}
 
 " s:buflocal_toggle_listed_type {{{
-func! s:buflocal_toggle_listed_type(curbuf, db_lnum)
+func! s:buflocal_toggle_listed_type(opt)
     " NOTE: s:shown_type SHOULD NOT be '', and MUST NOT be.
 
     if s:shown_type ==# 'unlisted'
@@ -1245,22 +1257,31 @@ endfunc
  " }}}
 
 " s:buflocal_close {{{
-func! s:buflocal_close(curbuf, db_lnum)
-    if empty(a:curbuf) | return | endif
-    if s:jump_to_buffer(a:curbuf.nr) != -1
+func! s:buflocal_close(opt)
+    if empty(a:opt.cursor_buf) | return | endif
+    if s:jump_to_buffer(a:opt.cursor_buf.nr) != -1
         close
     endif
 endfunc
 " }}}
 
 " s:buflocal_select {{{
-func! s:buflocal_select(curbuf, db_lnum)
-    if !empty(filter(deepcopy(s:selected_bufs), 'v:val.nr == a:curbuf.nr'))
-        " remove from selected.
-        call filter(s:selected_bufs, 'v:val.nr != a:curbuf.nr')
+func! s:buflocal_select(opt)
+    if a:opt.prev_mode ==# 'v'
+        let tmp = deepcopy(a:opt)
+        let tmp.prev_mode = 'n'
+        for i in a:opt.v_selected_bufs
+            let tmp.cursor_buf = i
+            call s:buflocal_select(tmp)
+        endfor
     else
-        " add to selected.
-        call add(s:selected_bufs, a:curbuf)
+        if has_key(s:selected_bufs, a:opt.cursor_buf.nr)
+            " remove from selected.
+            unlet s:selected_bufs[a:opt.cursor_buf.nr]
+        else
+            " add to selected.
+            let s:selected_bufs[a:opt.cursor_buf.nr] = 1
+        endif
     endif
 endfunc
 " }}}

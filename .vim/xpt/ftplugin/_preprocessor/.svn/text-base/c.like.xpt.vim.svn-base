@@ -61,7 +61,7 @@ XSET symbol|post=UpperCase(V())
 XPT once	hint=#ifndef\ ..\ #define\ ..
 XSET symbol=headerSymbol()
 #ifndef `symbol^
-#define `symbol^
+#     define `symbol^
 
 `cursor^
 #endif `$CL^ `symbol^ `$CR^

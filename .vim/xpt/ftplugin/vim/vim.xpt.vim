@@ -36,15 +36,21 @@ endif
 
 XPT fun hint=fun!\ ..(..)\ ..\ endfunction
 XSET arg*|post=ExpandIfNotEmpty(', ', 'arg*')
-fun! `name^(`arg*^) "{{{
+" `name^ {{{
+func! `name^(`arg*^)
     `cursor^
-endfunction "}}}
+endfunc
+" }}}
+..XPT
 
 XPT member hint=tips
 XSET arg*|post=ExpandIfNotEmpty(', ', 'arg*')
-fun! `name^(`arg*^) dict "{{{
+" ~name^ {{{
+func! `name^(`arg*^) dict
     `cursor^
-endfunction "}}}
+endfunc
+" }}}
+..XPT
 
 
 
