@@ -409,9 +409,7 @@ let s:debug_msg = []
 let s:caller_bufnr = -1    " caller buffer's bufnr which calls dumbbuf buffer.
 let s:dumbbuf_bufnr = -1    " dumbbuf buffer's bufnr.
 let s:bufs_info = []    " buffers info.
-" TODO s:selected_bufs should save only ids of each item of s:bufs_info for
-" Vim's memory.
-let s:selected_bufs = []    " selected buffers info.
+let s:selected_bufs = {}    " selected buffers info.
 let s:previous_lnum = -1    " lnum where a previous mapping executed.
 
 let s:shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
@@ -882,7 +880,7 @@ func! s:open_dumbbuf_buffer(shown_type)
     " this is necessary because s:bufs_info is generated each time
     " when s:filter_bufs_info() is called.
     for buf in s:bufs_info
-        if !empty(filter(deepcopy(s:selected_bufs), 'v:val.nr == buf.nr'))
+        if has_key(s:selected_bufs, buf.nr)
             let buf.is_selected = 1
         endif
     endfor
@@ -1063,9 +1061,20 @@ func! s:run_from_local_map(code, opt)
 
         " if a:code supports 'process_selected' and selected buffers exist,
         " process selected buffers instead of current cursor buffer.
-        let bufs = opt.process_selected && !empty(s:selected_bufs) ?
-                    \ s:selected_bufs
-                    \ : [cursor_buf]
+        if opt.process_selected && !empty(s:selected_bufs)
+            let bufs = []
+            for selected_nr in keys(s:selected_bufs)
+                " TODO make s:bufs_info Dictionary
+                for buf in s:bufs_info
+                    if buf.nr ==# selected_nr
+                        call add(bufs, buf)
+                        break
+                    endif
+                endfor
+            endfor
+        else
+            let bufs = [cursor_buf]
+        endif
 
         " dispatch a:code.
         " NOTE: current buffer may not be caller buffer.
@@ -1112,7 +1121,7 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
 
         elseif p ==# 'clear_selected'
             " clear selected buffers.
-            let s:selected_bufs = []
+            let s:selected_bufs = {}
 
         elseif p ==# 'close_dumbbuf'
             call s:debug("just close")
@@ -1290,12 +1299,12 @@ func! s:buflocal_select(opt)
             call s:buflocal_select(tmp)
         endfor
     else
-        if !empty(filter(deepcopy(s:selected_bufs), 'v:val.nr == a:opt.cursor_buf.nr'))
+        if has_key(s:selected_bufs, a:opt.cursor_buf.nr)
             " remove from selected.
-            call filter(s:selected_bufs, 'v:val.nr != a:opt.cursor_buf.nr')
+            unlet s:selected_bufs[a:opt.cursor_buf.nr]
         else
             " add to selected.
-            call add(s:selected_bufs, a:opt.cursor_buf)
+            let s:selected_bufs[a:opt.cursor_buf.nr] = 1
         endif
     endif
 endfunc
