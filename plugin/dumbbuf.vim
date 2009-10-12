@@ -1049,7 +1049,7 @@ func! s:run_from_local_map(code, opt)
         " if a:code supports 'process_selected' and selected buffers exist,
         " process selected buffers instead of current cursor buffer.
         let bufs = opt.process_selected && !empty(s:selected_bufs) ?
-                    \ map(copy(s:selected_bufs), 's:bufs_info[v:key]')
+                    \ map(keys(s:selected_bufs), 's:bufs_info[v:val]')
                     \ : [cursor_buf]
 
         " dispatch a:code.
