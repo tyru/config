@@ -690,13 +690,6 @@ endfunc
 "   this returns the caller buffer's info
 func! s:get_buffer_info(bufnr)
     return has_key(s:bufs_info, a:bufnr) ? s:bufs_info[a:bufnr] : []
-    " for buf in values(s:bufs_info)
-    "     if buf.nr ==# a:bufnr
-    "         return buf
-    "     endif
-    " endfor
-    " 
-    " return []
 endfunc
 " }}}
 
@@ -707,23 +700,13 @@ func! s:write_buffers_list(bufs)
 
     let disp_line = []
     try
-        let i = 1
+        let lnum = 1
         for nr in sort(keys(a:bufs))
             let val = a:bufs[nr]
-            let val.lnum = i
+            let val.lnum = lnum
             call add(disp_line, eval(g:dumbbuf_disp_expr))
-            let i += 1
+            let lnum += 1
         endfor
-        " let i = 0
-        " let len = len(a:bufs)
-        " while i < len
-        "     " use 'val' as a replacement of 'v:val'.
-        "     let val = a:bufs[i]
-        "     let val.lnum = i + 1
-        "     call add(disp_line, eval(g:dumbbuf_disp_expr))
-        " 
-        "     let i += 1
-        " endwhile
     catch
         call s:warn("error occured while evaluating g:dumbbuf_disp_expr.")
         call s:debug(v:exception)
@@ -808,18 +791,8 @@ func! s:parse_buffers_info()
 endfunc
 " }}}
 
-
-" s:has_cursor_buffer {{{
-"   this returns if the buffer on the cursor is available.
-"   (not out-of-range)
-" func! s:has_cursor_buffer()
-"     return line('.') <= len(s:bufs_info)
-" endfunc
-" }}}
-
 " s:get_cursor_buffer {{{
 func! s:get_cursor_buffer()
-    " if ! s:has_cursor_buffer() | return {} | endif
     for buf in values(s:bufs_info)
         if buf.lnum ==# line('.')
             return buf
@@ -1052,7 +1025,7 @@ func! s:run_from_local_map(code, opt)
     let lnum = line('.')
 
     " current window should be dumbbuf buffer, though.
-    " if winnr('$') == 1 && bufnr('%') == s:dumbbuf_bufnr
+    " if winnr('$') == 1
     "     execute printf("%s %s new",
     "                 \g:dumbbuf_vertical ? 'vertical' : '',
     "                 \g:dumbbuf_open_with)
@@ -1078,21 +1051,6 @@ func! s:run_from_local_map(code, opt)
         let bufs = opt.process_selected && !empty(s:selected_bufs) ?
                     \ map(copy(s:selected_bufs), 's:bufs_info[v:key]')
                     \ : [cursor_buf]
-        " if 
-        "     let bufs = []
-        "     for selected_nr in keys(s:selected_bufs)
-        "         " TODO make s:bufs_info Dictionary
-        "         if has_key()
-        "         for buf in s:bufs_info
-        "             if buf.nr ==# selected_nr
-        "                 call add(bufs, buf)
-        "                 break
-        "             endif
-        "         endfor
-        "     endfor
-        " else
-        "     let bufs = [cursor_buf]
-        " endif
 
         " dispatch a:code.
         " NOTE: current buffer may not be caller buffer.
