@@ -408,7 +408,7 @@ let s:debug_msg = []
 
 let s:caller_bufnr = -1    " caller buffer's bufnr which calls dumbbuf buffer.
 let s:dumbbuf_bufnr = -1    " dumbbuf buffer's bufnr.
-let s:bufs_info = []    " buffers info.
+let s:bufs_info = {}    " buffers info. (key: bufnr)
 let s:selected_bufs = {}    " selected buffers info.
 let s:previous_lnum = -1    " lnum where a previous mapping executed.
 
@@ -689,13 +689,14 @@ endfunc
 " s:get_buffer_info {{{
 "   this returns the caller buffer's info
 func! s:get_buffer_info(bufnr)
-    for buf in s:bufs_info
-        if buf.nr ==# a:bufnr
-            return buf
-        endif
-    endfor
-
-    return []
+    return has_key(s:bufs_info, a:bufnr) ? s:bufs_info[a:bufnr] : []
+    " for buf in values(s:bufs_info)
+    "     if buf.nr ==# a:bufnr
+    "         return buf
+    "     endif
+    " endfor
+    " 
+    " return []
 endfunc
 " }}}
 
@@ -706,16 +707,23 @@ func! s:write_buffers_list(bufs)
 
     let disp_line = []
     try
-        let i = 0
-        let len = len(a:bufs)
-        while i < len
-            " use 'val' as a replacement of 'v:val'.
-            let val = a:bufs[i]
-            let val.lnum = i + 1
+        let i = 1
+        for nr in sort(keys(a:bufs))
+            let val = a:bufs[nr]
+            let val.lnum = i
             call add(disp_line, eval(g:dumbbuf_disp_expr))
-
             let i += 1
-        endwhile
+        endfor
+        " let i = 0
+        " let len = len(a:bufs)
+        " while i < len
+        "     " use 'val' as a replacement of 'v:val'.
+        "     let val = a:bufs[i]
+        "     let val.lnum = i + 1
+        "     call add(disp_line, eval(g:dumbbuf_disp_expr))
+        " 
+        "     let i += 1
+        " endwhile
     catch
         call s:warn("error occured while evaluating g:dumbbuf_disp_expr.")
         call s:debug(v:exception)
@@ -745,7 +753,7 @@ func! s:parse_buffers_info()
         \'\([-= ]\)'.
         \'\([\+x ]\)'
 
-    let result_list = []
+    let result = {}
 
     for line in buf_list
         let m = matchlist(line, regex)
@@ -780,7 +788,7 @@ func! s:parse_buffers_info()
         if bufnr == s:dumbbuf_bufnr | continue | endif
 
         call s:debug(string(m))
-        call add(result_list, {
+        let result[bufnr] = {
             \'nr': bufnr + 0,
             \'is_unlisted': unlisted ==# 'u',
             \'is_current': percent_numsign ==# '%',
@@ -793,10 +801,10 @@ func! s:parse_buffers_info()
             \'is_err': plus_x ==# 'x',
             \'lnum': -1,
             \'is_selected': 0,
-        \})
+        \}
     endfor
 
-    return result_list
+    return result
 endfunc
 " }}}
 
@@ -804,16 +812,20 @@ endfunc
 " s:has_cursor_buffer {{{
 "   this returns if the buffer on the cursor is available.
 "   (not out-of-range)
-func! s:has_cursor_buffer()
-    return line('.') <= len(s:bufs_info)
-endfunc
+" func! s:has_cursor_buffer()
+"     return line('.') <= len(s:bufs_info)
+" endfunc
 " }}}
 
 " s:get_cursor_buffer {{{
 func! s:get_cursor_buffer()
-    if ! s:has_cursor_buffer() | return {} | endif
-    let cur = s:bufs_info[line('.') - 1]
-    return cur
+    " if ! s:has_cursor_buffer() | return {} | endif
+    for buf in values(s:bufs_info)
+        if buf.lnum ==# line('.')
+            return buf
+        endif
+    endfor
+    return {}
 endfunc
 " }}}
 
@@ -844,6 +856,8 @@ endfunc
 " }}}
 
 " s:filter_bufs_info {{{
+"   filter s:bufs_info.
+"   NOTE: that this modifies s:bufs_info.
 func! s:filter_bufs_info(curbufinfo, shown_type)
     " if current buffer is unlisted, filter unlisted buffers.
     " if current buffers is listed, filter listed buffers.
@@ -879,7 +893,7 @@ func! s:open_dumbbuf_buffer(shown_type)
     "
     " this is necessary because s:bufs_info is generated each time
     " when s:filter_bufs_info() is called.
-    for buf in s:bufs_info
+    for buf in values(s:bufs_info)
         if has_key(s:selected_bufs, buf.nr)
             let buf.is_selected = 1
         endif
@@ -1061,20 +1075,24 @@ func! s:run_from_local_map(code, opt)
 
         " if a:code supports 'process_selected' and selected buffers exist,
         " process selected buffers instead of current cursor buffer.
-        if opt.process_selected && !empty(s:selected_bufs)
-            let bufs = []
-            for selected_nr in keys(s:selected_bufs)
-                " TODO make s:bufs_info Dictionary
-                for buf in s:bufs_info
-                    if buf.nr ==# selected_nr
-                        call add(bufs, buf)
-                        break
-                    endif
-                endfor
-            endfor
-        else
-            let bufs = [cursor_buf]
-        endif
+        let bufs = opt.process_selected && !empty(s:selected_bufs) ?
+                    \ map(copy(s:selected_bufs), 's:bufs_info[v:key]')
+                    \ : [cursor_buf]
+        " if 
+        "     let bufs = []
+        "     for selected_nr in keys(s:selected_bufs)
+        "         " TODO make s:bufs_info Dictionary
+        "         if has_key()
+        "         for buf in s:bufs_info
+        "             if buf.nr ==# selected_nr
+        "                 call add(bufs, buf)
+        "                 break
+        "             endif
+        "         endfor
+        "     endfor
+        " else
+        "     let bufs = [cursor_buf]
+        " endif
 
         " dispatch a:code.
         " NOTE: current buffer may not be caller buffer.
