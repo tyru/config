@@ -700,17 +700,17 @@ endfunc
 " }}}
 
 " s:write_buffers_list {{{
-"   this defines s:bufs_info[i].lnum
-func! s:write_buffers_list()
+"   this determines s:bufs_info[i].lnum
+func! s:write_buffers_list(bufs)
     call s:jump_to_buffer(s:dumbbuf_bufnr)
 
     let disp_line = []
     try
         let i = 0
-        let len = len(s:bufs_info)
+        let len = len(a:bufs)
         while i < len
             " use 'val' as a replacement of 'v:val'.
-            let val = s:bufs_info[i]
+            let val = a:bufs[i]
             let val.lnum = i + 1
             call add(disp_line, eval(g:dumbbuf_disp_expr))
 
@@ -718,6 +718,7 @@ func! s:write_buffers_list()
         endwhile
     catch
         call s:warn("error occured while evaluating g:dumbbuf_disp_expr.")
+        call s:debug(v:exception)
         return
     endtry
 
@@ -890,6 +891,9 @@ func! s:open_dumbbuf_buffer(shown_type)
         " TODO store s:bufs_info and s:selected_bufs as dict.
         if !empty(filter(deepcopy(s:selected_bufs), 'v:val.nr == buf.nr'))
             " if current buffer is selected
+            "
+            " XXX is this necessary?
+            " s:selected_bufs and s:bufs_info store same object, aren't they?
             let buf.is_selected = 1
         endif
     endfor
@@ -902,7 +906,7 @@ func! s:open_dumbbuf_buffer(shown_type)
     endif
 
     " write buffers list.
-    call s:write_buffers_list()
+    call s:write_buffers_list(s:bufs_info)
 
     " move cursor to specified position.
     if g:dumbbuf_cursor_pos ==# 'current'
@@ -1019,6 +1023,7 @@ func! s:create_dumbbuf_buffer()
     return bufnr('%')
 endfunc
 " }}}
+
 
 " s:get_prev_count {{{
 func! s:get_prev_count()
