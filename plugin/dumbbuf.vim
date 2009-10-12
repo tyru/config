@@ -409,6 +409,8 @@ let s:debug_msg = []
 let s:caller_bufnr = -1    " caller buffer's bufnr which calls dumbbuf buffer.
 let s:dumbbuf_bufnr = -1    " dumbbuf buffer's bufnr.
 let s:bufs_info = []    " buffers info.
+" TODO s:selected_bufs should save only ids of each item of s:bufs_info for
+" Vim's memory.
 let s:selected_bufs = []    " selected buffers info.
 let s:previous_lnum = -1    " lnum where a previous mapping executed.
 
@@ -886,14 +888,12 @@ func! s:open_dumbbuf_buffer(shown_type)
     call s:filter_bufs_info(curbufinfo, a:shown_type)
     call s:debug(printf("filtered only '%s' buffers.", a:shown_type))
 
-    " check flag if selected.
+    " set flag of buffer which is selected.
+    "
+    " this is necessary because s:bufs_info is generated each time
+    " when s:filter_bufs_info() is called.
     for buf in s:bufs_info
-        " TODO store s:bufs_info and s:selected_bufs as dict.
         if !empty(filter(deepcopy(s:selected_bufs), 'v:val.nr == buf.nr'))
-            " if current buffer is selected
-            "
-            " XXX is this necessary?
-            " s:selected_bufs and s:bufs_info store same object, aren't they?
             let buf.is_selected = 1
         endif
     endfor
@@ -1071,6 +1071,8 @@ func! s:run_from_local_map(code, opt)
         " pre
         call s:do_tasks(opt.pre, cursor_buf, lnum)
 
+        " if a:code supports 'process_selected' and selected buffers exist,
+        " process selected buffers instead of current cursor buffer.
         let bufs = opt.process_selected && !empty(s:selected_bufs) ?
                     \ s:selected_bufs
                     \ : [cursor_buf]
