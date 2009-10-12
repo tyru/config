@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.6
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-10-12.
+" Last Change: 2009-10-13.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -724,18 +724,7 @@ func! s:write_buffers_list(bufs)
         return
     endtry
 
-    " TODO use 'put ="..."'
-
-    " write buffers list.
-    let reg_z = getreg('z', 1)
-    let reg_z_type = getregtype('z')
-
-    let @z = join(disp_line, "\n")
-    silent! put z
-
-    call setreg('z', reg_z, reg_z_type)
-
-    " delete the top of one waste blank line!
+    silent put =disp_line
     normal! gg"_dd
 endfunc
 " }}}
@@ -1005,6 +994,7 @@ endfunc
 
 " s:jump_to_buffer {{{
 func! s:jump_to_buffer(bufnr)
+    if a:bufnr ==# bufnr('%') | return a:bufnr | endif
     let winnr = bufwinnr(a:bufnr)
     if winnr != -1 && winnr != winnr()
         call s:debug(printf("jump to ... [%s]", bufname(a:bufnr)))
