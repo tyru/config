@@ -504,7 +504,7 @@ let s:mappings.default = {
                 \'"requires_args":0, ' .
                 \'"prev_mode":"v", ' .
                 \'"pre":["return_if_empty", "return_if_not_exist"], ' .
-                \'"post":["save_lnum", "update_dumbbuf"]})<CR>'
+                \'"post":["save_lnum", "update_marks"]})<CR>'
         \},
     \},
     \'n': {
@@ -559,7 +559,7 @@ let s:mappings.default = {
                 \'"pre":["close_dumbbuf", "jump_to_caller", ' .
                         \'"return_if_noname", "return_if_empty", ' .
                         \'"return_if_not_exist"], ' .
-                \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
+                \'"post":["clear_selected", "save_lnum", "update_marks"]})<CR>',
         \},
         \'vv': {
             \'opt': '<silent>',
@@ -570,7 +570,7 @@ let s:mappings.default = {
                 \'"pre":["close_dumbbuf", "jump_to_caller", ' .
                         \'"return_if_noname", "return_if_empty", ' .
                         \'"return_if_not_exist"], ' .
-                \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
+                \'"post":["clear_selected", "save_lnum", "update_marks"]})<CR>',
         \},
         \'tt': {
             \'opt': '<silent>',
@@ -625,7 +625,7 @@ let s:mappings.default = {
                 \'{"type":"func", ' .
                 \'"requires_args":0, ' .
                 \'"pre":["return_if_empty", "return_if_not_exist"], ' .
-                \'"post":["save_lnum", "update_dumbbuf"]})<CR>'
+                \'"post":["save_lnum", "update_marks"]})<CR>'
         \},
     \}
 \}
@@ -960,6 +960,27 @@ func! s:close_dumbbuf_buffer()
 endfunc
 " }}}
 
+" s:update_only_marks {{{
+func! s:update_only_marks()
+    let save_modifiable = &l:modifiable
+
+    setlocal modifiable
+
+    try
+        for buf in values(s:bufs_info)
+            " update 'is_selected'.
+            let buf.is_selected = has_key(s:selected_bufs, buf.nr)
+            " rewrite buffers list.
+            let r = s:eval_disp_expr(buf)
+            call s:debug(printf("replace line %d with '%s'", buf.lnum, string(r)))
+            call setline(buf.lnum, r)
+        endfor
+    finally
+        let &l:modifiable = save_modifiable
+    endtry
+endfunc
+" }}}
+
 " s:update_buffers_list {{{
 func! s:update_buffers_list(...)
     " close if exists.
@@ -1134,6 +1155,9 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
                 call s:debug("close and re-open")
                 call s:update_buffers_list()
             endif
+
+        elseif p ==# 'update_marks'
+            call s:update_only_marks()
 
         else
             call s:warn("internal warning: unknown task name: ".p)
