@@ -834,8 +834,9 @@ func! s:filter_bufs_info(curbufinfo, shown_type)
 endfunc
 " }}}
 
-" s:move_cursor {{{
-func! s:move_cursor(curbufinfo)
+" s:set_cursor_pos {{{
+"   move cursor to the pos which is specified by g:dumbbuf_cursor_pos.
+func! s:set_cursor_pos(curbufinfo)
     if g:dumbbuf_cursor_pos ==# 'current'
         if a:curbufinfo.lnum !=# -1
             execute 'normal! ' . a:curbufinfo.lnum . 'gg'
@@ -909,7 +910,7 @@ func! s:open_dumbbuf_buffer(shown_type)
     call s:write_buffers_list(s:bufs_info)
 
     " move cursor to specified position.
-    call s:move_cursor(curbufinfo)
+    call s:set_cursor_pos(curbufinfo)
 
 
     "-------- buffer settings --------
