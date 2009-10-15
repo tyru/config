@@ -968,6 +968,11 @@ endfunc
 
 " s:update_only_marks {{{
 func! s:update_only_marks()
+    if s:jump_to_buffer(s:dumbbuf_bufnr) == -1
+        return
+    endif
+
+
     let save_modifiable = &l:modifiable
 
     setlocal modifiable
