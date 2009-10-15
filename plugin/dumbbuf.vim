@@ -808,7 +808,6 @@ func! s:get_cursor_buffer()
 endfunc
 " }}}
 
-
 " s:get_shown_type {{{
 "   this returns 'listed' or 'unlisted'.
 "   if s:current_shown_type or g:dumbbuf_shown_type value is invalid,
@@ -845,6 +844,39 @@ func! s:filter_bufs_info(curbufinfo, shown_type)
                     \'v:val.is_unlisted : ! v:val.is_unlisted')
 endfunc
 " }}}
+
+" s:move_cursor {{{
+func! s:move_cursor(curbufinfo)
+    if g:dumbbuf_cursor_pos ==# 'current'
+        if a:curbufinfo.lnum !=# -1
+            execute 'normal! ' . a:curbufinfo.lnum . 'gg'
+        endif
+    elseif g:dumbbuf_cursor_pos ==# 'keep'
+        call s:debug(printf("s:previous_lnum [%d]", s:previous_lnum))
+        if s:previous_lnum == -1
+            " same as above.
+            if a:curbufinfo.lnum !=# -1
+                execute 'normal! ' . a:curbufinfo.lnum . 'gg'
+            endif
+        else
+            " keep.
+            execute s:previous_lnum
+        endif
+    elseif g:dumbbuf_cursor_pos ==# 'top'
+        normal! gg
+    elseif g:dumbbuf_cursor_pos ==# 'bottom'
+        normal! G
+    else
+        call s:warn(printf("'%s' is not valid value. please choose in 'current', 'top', 'bottom'.", g:dumbbuf_cursor_pos))
+        call s:warn("use 'current' as g:dumbbuf_cursor_pos value...")
+
+        let g:dumbbuf_cursor_pos = 'current'
+
+        sleep 1
+    endif
+endfunc
+" }}}
+
 
 
 " s:open_dumbbuf_buffer {{{
@@ -888,33 +920,7 @@ func! s:open_dumbbuf_buffer(shown_type)
     call s:write_buffers_list(s:bufs_info)
 
     " move cursor to specified position.
-    if g:dumbbuf_cursor_pos ==# 'current'
-        if curbufinfo.lnum !=# -1
-            execute 'normal! '.curbufinfo.lnum.'gg'
-        endif
-    elseif g:dumbbuf_cursor_pos ==# 'keep'
-        call s:debug(printf("s:previous_lnum [%d]", s:previous_lnum))
-        if s:previous_lnum == -1
-            " same as above.
-            if curbufinfo.lnum !=# -1
-                execute 'normal! '.curbufinfo.lnum.'gg'
-            endif
-        else
-            " keep.
-            execute s:previous_lnum
-        endif
-    elseif g:dumbbuf_cursor_pos ==# 'top'
-        normal! gg
-    elseif g:dumbbuf_cursor_pos ==# 'bottom'
-        normal! G
-    else
-        call s:warn(printf("'%s' is not valid value. please choose in 'current', 'top', 'bottom'.", g:dumbbuf_cursor_pos))
-        call s:warn("use 'current' as g:dumbbuf_cursor_pos value...")
-
-        let g:dumbbuf_cursor_pos = 'current'
-
-        sleep 1
-    endif
+    call s:move_cursor(curbufinfo)
 
 
     "-------- buffer settings --------
