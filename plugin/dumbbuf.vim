@@ -537,8 +537,8 @@ let s:mappings.default = {
             \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open", ' .
                 \'{"type":"func", ' .
                 \'"requires_args":0, ' .
-                \'"pre":["close_return_if_empty", "close_dumbbuf", "jump_to_caller"], ' .
-                \'"post":["clear_selected"]})<CR>',
+                \'"pre":["close_return_if_empty", "close_dumbbuf", "jump_to_caller"]' .
+                \'})<CR>',
         \},
         \'uu': {
             \'opt': '<silent>',
@@ -546,7 +546,7 @@ let s:mappings.default = {
                 \'{"type":"func", ' .
                 \'"requires_args":0, ' .
                 \'"pre":["close_return_if_empty", "close_dumbbuf", "jump_to_caller"], ' .
-                \'"post":["save_lnum", "clear_selected"]})<CR>',
+                \'"post":["save_lnum"]})<CR>',
         \},
         \'ss': {
             \'opt': '<silent>',
@@ -555,7 +555,7 @@ let s:mappings.default = {
                 \'"requires_args":1, ' .
                 \'"process_selected":1, ' .
                 \'"pre":["close_return_if_empty", "close_dumbbuf", "jump_to_caller"], ' .
-                \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
+                \'"post":["save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'vv': {
             \'opt': '<silent>',
@@ -564,7 +564,7 @@ let s:mappings.default = {
                 \'"requires_args":1, ' .
                 \'"process_selected":1, ' .
                 \'"pre":["close_return_if_empty", "close_dumbbuf", "jump_to_caller"], ' .
-                \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
+                \'"post":["save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'tt': {
             \'opt': '<silent>',
@@ -573,7 +573,7 @@ let s:mappings.default = {
                 \'"requires_args":[1, 0], ' .
                 \'"process_selected":1, ' .
                 \'"pre":["close_return_if_empty", "close_dumbbuf", "jump_to_caller"], ' .
-                \'"post":["clear_selected", "save_lnum"]})<CR>',
+                \'"post":["save_lnum"]})<CR>',
         \},
         \'dd': {
             \'opt': '<silent>',
@@ -582,7 +582,7 @@ let s:mappings.default = {
                     \'"requires_args":1, ' .
                     \'"process_selected":1, ' .
                     \'"pre":["close_return_if_empty", "close_dumbbuf"], ' .
-                    \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
+                    \'"post":["save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'ww': {
             \'opt': '<silent>',
@@ -591,7 +591,7 @@ let s:mappings.default = {
                 \'"requires_args":1, ' .
                 \'"process_selected":1, ' .
                 \'"pre":["close_return_if_empty", "close_dumbbuf"], ' .
-                \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
+                \'"post":["save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'ll': {
             \'opt': '<silent>',
@@ -606,7 +606,7 @@ let s:mappings.default = {
                 \'"requires_args":0, ' .
                 \'"process_selected":1, ' .
                 \'"pre":["close_return_if_empty", "close_dumbbuf"], ' .
-                \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
+                \'"post":["save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'xx': {
             \'opt': '<silent>',
@@ -1078,9 +1078,7 @@ func! s:run_from_local_map(code, opt)
 
         " if a:code supports 'process_selected' and selected buffers exist,
         " process selected buffers instead of current cursor buffer.
-        let bufs = opt.process_selected && !empty(s:selected_bufs) ?
-                    \ map(keys(s:selected_bufs), 's:bufs_info[v:val]')
-                    \ : [cursor_buf]
+        let bufs = s:get_buffers_being_processed(opt, cursor_buf)
 
         " dispatch a:code.
         " NOTE: current buffer may not be caller buffer.
@@ -1121,10 +1119,6 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
     for p in a:tasks
         if p ==# 'close_dumbbuf'
             call s:close_dumbbuf_buffer()
-
-        elseif p ==# 'clear_selected'
-            " clear selected buffers.
-            let s:selected_bufs = {}
 
         elseif p ==# 'jump_to_caller'    " jump to caller buffer.
             call s:jump_to_buffer(s:caller_bufnr)
@@ -1202,6 +1196,19 @@ func! s:dispatch_code(code, no, opt)
     endif
 endfunc
 "}}}
+
+" s:get_buffers_being_processed {{{
+func! s:get_buffers_being_processed(opt, cursor_buf)
+    if a:opt.process_selected && !empty(s:selected_bufs)
+        let tmp = s:selected_bufs
+        let s:selected_bufs = {}    " clear
+        return map(keys(tmp), 's:bufs_info[v:val]')
+    else
+        return [a:cursor_buf]
+    endif
+endfunc
+" }}}
+
 
 " these functions are called from dumbbuf's buffer {{{
 
