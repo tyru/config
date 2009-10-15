@@ -555,7 +555,7 @@ let s:mappings.default = {
                 \'"requires_args":1, ' .
                 \'"process_selected":1, ' .
                 \'"pre":["close_return_if_empty", "close_dumbbuf", "jump_to_caller"], ' .
-                \'"post":["clear_selected", "save_lnum", "update_marks"]})<CR>',
+                \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'vv': {
             \'opt': '<silent>',
@@ -564,7 +564,7 @@ let s:mappings.default = {
                 \'"requires_args":1, ' .
                 \'"process_selected":1, ' .
                 \'"pre":["close_return_if_empty", "close_dumbbuf", "jump_to_caller"], ' .
-                \'"post":["clear_selected", "save_lnum", "update_marks"]})<CR>',
+                \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'tt': {
             \'opt': '<silent>',
