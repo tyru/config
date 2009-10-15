@@ -1092,16 +1092,9 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
         if p ==# 'close_dumbbuf'
             call s:close_dumbbuf_buffer()
 
-        elseif p ==# 'clear_previous_lnum'
-            let s:previous_lnum = -1
-
         elseif p ==# 'clear_selected'
             " clear selected buffers.
             let s:selected_bufs = {}
-
-        elseif p ==# 'close_dumbbuf'
-            call s:debug("just close")
-            call s:close_dumbbuf_buffer()
 
         elseif p ==# 'jump_to_caller'    " jump to caller buffer.
             call s:jump_to_buffer(s:caller_bufnr)
