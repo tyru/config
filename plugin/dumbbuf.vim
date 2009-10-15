@@ -693,6 +693,13 @@ func! s:get_buffer_info(bufnr)
 endfunc
 " }}}
 
+" s:eval_disp_expr {{{
+func! s:eval_disp_expr(buf)
+    let val = a:buf
+    return eval(g:dumbbuf_disp_expr)
+endfunc
+" }}}
+
 " s:write_buffers_list {{{
 "   this determines s:bufs_info[i].lnum
 func! s:write_buffers_list(bufs)
@@ -702,10 +709,9 @@ func! s:write_buffers_list(bufs)
     try
         let lnum = 1
         for nr in sort(keys(a:bufs))
-            let val = a:bufs[nr]
-            let val.lnum = lnum
-            call add(disp_line, eval(g:dumbbuf_disp_expr))
+            let a:bufs[nr].lnum = lnum
             let lnum += 1
+            call add(disp_line, s:eval_disp_expr(a:bufs[nr]))
         endfor
     catch
         call s:warn("error occured while evaluating g:dumbbuf_disp_expr.")
@@ -851,26 +857,25 @@ func! s:open_dumbbuf_buffer(shown_type)
         return
     endif
 
+
+    " ======== begin - get buffers list and set up ========
+
     let curbufinfo = s:get_buffer_info(s:caller_bufnr)
     if empty(curbufinfo)
         call s:warn("internal error: can't get current buffer's info")
         return
     endif
 
-    " if current buffer is listed, display just listed buffers.
-    " if current buffers is unlisted, display just unlisted buffers.
     call s:filter_bufs_info(curbufinfo, a:shown_type)
     call s:debug(printf("filtered only '%s' buffers.", a:shown_type))
 
-    " set flag of buffer which is selected.
-    "
-    " this is necessary because s:bufs_info is generated each time
-    " when s:filter_bufs_info() is called.
     for buf in values(s:bufs_info)
-        if has_key(s:selected_bufs, buf.nr)
-            let buf.is_selected = 1
-        endif
+        let buf.is_selected = has_key(s:selected_bufs, buf.nr)
     endfor
+
+    " ======== begin - get buffers list and set up ========
+
+
 
     " name dumbbuf's buffer.
     if a:shown_type ==# 'unlisted'
