@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.6
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-10-15.
+" Last Change: 2009-10-16.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -503,7 +503,7 @@ let s:mappings.default = {
                 \'{"type":"func", ' .
                 \'"requires_args":0, ' .
                 \'"prev_mode":"v", ' .
-                \'"pre":["return_if_empty", "return_if_not_exist"], ' .
+                \'"pre":["return_if_empty"], ' .
                 \'"post":["save_lnum", "update_marks"]})<CR>'
         \},
     \},
@@ -537,8 +537,7 @@ let s:mappings.default = {
             \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open", ' .
                 \'{"type":"func", ' .
                 \'"requires_args":0, ' .
-                \'"pre":["close_dumbbuf", "jump_to_caller", ' .
-                        \'"return_if_empty", "return_if_not_exist"], ' .
+                \'"pre":["close_return_if_empty", "close_dumbbuf", "jump_to_caller"], ' .
                 \'"post":["clear_selected"]})<CR>',
         \},
         \'uu': {
@@ -546,8 +545,7 @@ let s:mappings.default = {
             \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_onebyone", ' .
                 \'{"type":"func", ' .
                 \'"requires_args":0, ' .
-                \'"pre":["close_dumbbuf", "jump_to_caller", ' .
-                        \'"return_if_empty", "return_if_not_exist"], ' .
+                \'"pre":["close_return_if_empty", "close_dumbbuf", "jump_to_caller"], ' .
                 \'"post":["save_lnum", "clear_selected"]})<CR>',
         \},
         \'ss': {
@@ -556,9 +554,7 @@ let s:mappings.default = {
                 \'{"type":"cmd", ' .
                 \'"requires_args":1, ' .
                 \'"process_selected":1, ' .
-                \'"pre":["close_dumbbuf", "jump_to_caller", ' .
-                        \'"return_if_noname", "return_if_empty", ' .
-                        \'"return_if_not_exist"], ' .
+                \'"pre":["close_return_if_empty", "close_dumbbuf", "jump_to_caller"], ' .
                 \'"post":["clear_selected", "save_lnum", "update_marks"]})<CR>',
         \},
         \'vv': {
@@ -567,9 +563,7 @@ let s:mappings.default = {
                 \'{"type":"cmd", ' .
                 \'"requires_args":1, ' .
                 \'"process_selected":1, ' .
-                \'"pre":["close_dumbbuf", "jump_to_caller", ' .
-                        \'"return_if_noname", "return_if_empty", ' .
-                        \'"return_if_not_exist"], ' .
+                \'"pre":["close_return_if_empty", "close_dumbbuf", "jump_to_caller"], ' .
                 \'"post":["clear_selected", "save_lnum", "update_marks"]})<CR>',
         \},
         \'tt': {
@@ -578,9 +572,7 @@ let s:mappings.default = {
                 \'{"type":"cmd", ' .
                 \'"requires_args":[1, 0], ' .
                 \'"process_selected":1, ' .
-                \'"pre":["close_dumbbuf", "jump_to_caller", ' .
-                        \'"return_if_noname", "return_if_empty", ' .
-                        \'"return_if_not_exist"], ' .
+                \'"pre":["close_return_if_empty", "close_dumbbuf", "jump_to_caller"], ' .
                 \'"post":["clear_selected", "save_lnum"]})<CR>',
         \},
         \'dd': {
@@ -589,8 +581,7 @@ let s:mappings.default = {
                 \'{"type":"cmd", ' .
                     \'"requires_args":1, ' .
                     \'"process_selected":1, ' .
-                    \'"pre":["close_dumbbuf", "return_if_empty", ' .
-                            \'"return_if_not_exist"], ' .
+                    \'"pre":["close_return_if_empty", "close_dumbbuf"], ' .
                     \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'ww': {
@@ -599,8 +590,7 @@ let s:mappings.default = {
                 \'{"type":"cmd", ' .
                 \'"requires_args":1, ' .
                 \'"process_selected":1, ' .
-                \'"pre":["close_dumbbuf", "return_if_empty", ' .
-                        \'"return_if_not_exist"], ' .
+                \'"pre":["close_return_if_empty", "close_dumbbuf"], ' .
                 \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'ll': {
@@ -615,8 +605,7 @@ let s:mappings.default = {
                 \'{"type":"func", ' .
                 \'"requires_args":0, ' .
                 \'"process_selected":1, ' .
-                \'"pre":["close_dumbbuf", "return_if_empty", ' .
-                        \'"return_if_not_exist"], ' .
+                \'"pre":["close_return_if_empty", "close_dumbbuf"], ' .
                 \'"post":["clear_selected", "save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'xx': {
@@ -624,7 +613,7 @@ let s:mappings.default = {
             \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_select", ' .
                 \'{"type":"func", ' .
                 \'"requires_args":0, ' .
-                \'"pre":["return_if_empty", "return_if_not_exist"], ' .
+                \'"pre":["return_if_empty"], ' .
                 \'"post":["save_lnum", "update_marks"]})<CR>'
         \},
     \}
@@ -1058,6 +1047,9 @@ func! s:run_from_local_map(code, opt)
 
     " get selected buffer info.
     let cursor_buf = s:get_cursor_buffer()
+    if empty(cursor_buf)
+        call s:warn("can't get buffer on cursor...")
+    endif
     " this must be done in dumbbuf buffer.
     let lnum = line('.')
 
@@ -1136,20 +1128,23 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
         elseif p ==# 'jump_to_caller'    " jump to caller buffer.
             call s:jump_to_buffer(s:caller_bufnr)
 
-        elseif p ==# 'return_if_noname'
-            if bufname('%') == ''
+        elseif p ==# 'close_return_if_empty'
+            " if buffer is not available, close dumbbuf and do nothing.
+            try
+                call s:do_tasks(['return_if_empty'], a:cursor_buf, a:lnum)
+            catch /^nop$/
+                call s:close_dumbbuf_buffer()
                 throw 'nop'
-            endif
+            endtry
 
         elseif p ==# 'return_if_empty'
-            if empty(a:cursor_buf)
-                call s:warn("empty list!")
+            " check buffer's availability.
+            if bufname(a:cursor_buf.nr + 0) == ''
+                call s:warn("buffer name is empty.")
                 throw 'nop'
             endif
-
-        elseif p ==# 'return_if_not_exist'
-            if has_key(a:cursor_buf, 'nr') && ! bufexists(a:cursor_buf.nr)
-                call s:warn("selected buffer does not exist!")
+            if ! bufexists(a:cursor_buf.nr + 0)
+                call s:warn("buffer doesn't exist.")
                 throw 'nop'
             endif
 
@@ -1358,13 +1353,13 @@ func! s:emulate_single_key()
         call s:debug("run single key")
         call feedkeys(count1 . s:mappings.single_key[key], 'm')
         execute reset
-    elseif mapcheck(key, 'n') != ''    " (candidate) mappings
+    elseif mapcheck(key, 'n') != ''
         if maparg(key, 'n') != ''    " exact mapping exists
             " do it.
             call s:debug("run real mapping")
             call feedkeys(count1 . key, 'm')
             execute reset
-        else
+        else    " candidate mapping exists
             let s:mapstack = s:mapstack . c
         endif
     else    " no mappings
