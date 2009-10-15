@@ -1251,14 +1251,14 @@ endfunc
 " s:buflocal_open_onebyone {{{
 "   this does NOT do update or close buffers list.
 func! s:buflocal_open_onebyone(opt)
-    call s:debug("current lnum:" . a:opt.db_lnum)
+    call s:debug("current lnum:" . a:opt.lnum)
 
     " open buffer on the cursor and close dumbbuf buffer.
-    call s:buflocal_open(a:opt.cursor_buf, a:opt.db_lnum)
+    call s:buflocal_open(a:opt)
     " open dumbbuf's buffer again.
     call s:update_buffers_list()
     " go to previous lnum.
-    execute a:opt.db_lnum
+    execute a:opt.lnum
 
     if g:dumbbuf_downward
         call s:buflocal_move_lower()
