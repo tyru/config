@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.6
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-10-13.
+" Last Change: 2009-10-15.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -412,7 +412,7 @@ let s:bufs_info = {}    " buffers info. (key: bufnr)
 let s:selected_bufs = {}    " selected buffers info.
 let s:previous_lnum = -1    " lnum where a previous mapping executed.
 
-let s:shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
+let s:current_shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
 let s:mappings = {'default': {}, 'user': {}}    " buffer local mappings.
 
 " used for single key emulation.
@@ -805,7 +805,7 @@ endfunc
 
 " s:get_shown_type {{{
 "   this returns 'listed' or 'unlisted'.
-"   if s:shown_type or g:dumbbuf_shown_type value is invalid,
+"   if s:current_shown_type or g:dumbbuf_shown_type value is invalid,
 "   this may throw exception.
 func! s:get_shown_type(caller_bufnr)
     if g:dumbbuf_shown_type =~# '^\(unlisted\|listed\)$'.'\C'
@@ -967,13 +967,13 @@ func! s:update_buffers_list(...)
     let s:bufs_info = s:parse_buffers_info()
     " decide which type dumbbuf shows.
     if a:0 > 0
-        let s:shown_type = a:1
+        let s:current_shown_type = a:1
     else
-        let s:shown_type = s:get_shown_type(s:caller_bufnr)
+        let s:current_shown_type = s:get_shown_type(s:caller_bufnr)
     endif
 
     " open.
-    call s:open_dumbbuf_buffer(s:shown_type)
+    call s:open_dumbbuf_buffer(s:current_shown_type)
 endfunc
 " }}}
 
@@ -1242,16 +1242,16 @@ endfunc
 
 " s:buflocal_toggle_listed_type {{{
 func! s:buflocal_toggle_listed_type(opt)
-    " NOTE: s:shown_type SHOULD NOT be '', and MUST NOT be.
+    " NOTE: s:current_shown_type SHOULD NOT be '', and MUST NOT be.
 
-    if s:shown_type ==# 'unlisted'
+    if s:current_shown_type ==# 'unlisted'
         call s:update_buffers_list('listed')
 
-    elseif s:shown_type ==# 'listed'
+    elseif s:current_shown_type ==# 'listed'
         call s:update_buffers_list('unlisted')
 
     else
-        call s:warn("internal warning: strange s:shown_type value...: ".s:shown_type)
+        call s:warn("internal warning: strange s:current_shown_type value...: ".s:current_shown_type)
     endif
 endfunc
  " }}}
