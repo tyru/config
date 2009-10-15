@@ -57,20 +57,20 @@ scriptencoding utf-8
 "
 "
 " My .vimrc: {{{
-" let dumbbuf_hotkey = '<Leader>b'
+"   let dumbbuf_hotkey = '<Leader>b'
 "
-" " sometimes I put <Esc> to close dumbbuf buffer.
-" " that mapping is QuickBuf's one :)
-" let dumbbuf_mappings = {
-"     'n': {
-"         '<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
-"     \}
-" \}
+"   " sometimes I put <Esc> to close dumbbuf buffer,
+"   " which was mapped to close QuickBuf's list :)
+"   let dumbbuf_mappings = {
+"       'n': {
+"           '<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
+"       \}
+"   \}
 "
-" let dumbbuf_single_key = 1
-" let g:dumbbuf_updatetime = 1    " mininum value of updatetime.
+"   let dumbbuf_single_key = 1
+"   let g:dumbbuf_updatetime = 1    " mininum value of updatetime.
 "
-" let g:dumbbuf_cursor_pos = 'keep'
+"   let g:dumbbuf_cursor_pos = 'keep'
 " }}}
 "
 " Mappings: {{{
@@ -181,14 +181,15 @@ scriptencoding utf-8
 "   g:dumbbuf_single_key (default: 0)
 "       if true, use single key mappings like QuickBuf.vim.
 "       here is the single key mappings that are defined:
-"           "u" as "uu".
-"           "s" as "ss".
-"           "v" as "vv".
-"           "t" as "tt".
-"           "d" as "dd".
-"           "w" as "ww".
-"           "l" as "ll".
-"           "c" as "cc".
+"           "u" as "uu"
+"           "s" as "ss"
+"           "v" as "vv"
+"           "t" as "tt"
+"           "d" as "dd"
+"           "w" as "ww"
+"           "l" as "ll"
+"           "c" as "cc"
+"           "x" as "xx"
 "       the reason why these mappings are defined as 'plain' mappings
 "       in dumbbuf buffer is due to avoiding conflicts of Vim's default mappings.
 "       however, making this global variable true, that mappings are
@@ -210,33 +211,22 @@ scriptencoding utf-8
 "   g:dumbbuf_wrap_cursor (default: 1)
 "       wrap the cursor at the top or bottom of dumbbuf buffer.
 "
-"   g:dumbbuf_disp_expr (default: see below)
+"   g:dumbbuf_disp_expr (default: see the definition)
 "       this variable is for the experienced users.
-"
-"       here is the default value:
-"           'printf("%s %s[%s] %s <%d> %s", (val.is_selected ? "x" : " "), (val.is_current ? "*" : " "), bufname(val.nr), (val.is_modified ? "[+]" : "   "), val.nr, fnamemodify(bufname(val.nr), ":p:h"))'
 "
 "       'val' has buffer's info.
 "       'v:val' also works for backward compatibility.
 "
-"   g:dumbbuf_options (default: see below)
+"   g:dumbbuf_options (default: see the definition)
 "       this variable is for the experienced users.
+"       dumbbuf buffer will be set up with these options.
 "
-"       here is the default value:
-"           let g:dumbbuf_options = [
-"               \'bufhidden=wipe',
-"               \'buftype=nofile',
-"               \'cursorline',
-"               \'nobuflisted',
-"               \'nomodifiable',
-"               \'noswapfile',
-"           \]
-"
-"   g:dumbbuf_mappings (default: see below)
+"   g:dumbbuf_mappings (default: see the definition)
 "       this variable is for the experienced users.
+"       these settings will override default value.
 "
-"       these settings will be overridden at dumbbuf.vim.
-"       for e.g., if your .vimrc setting is
+"       e.g.:
+"       if your .vimrc setting is
 "
 "         let g:dumbbuf_mappings = {
 "             \'n': {
@@ -244,133 +234,8 @@ scriptencoding utf-8
 "             \}
 "         \}
 "
-"       type <Esc> to close dumbbuf buffer.
+"       you can type <Esc> to close dumbbuf buffer.
 "       no influences for other default mappings.
-"
-"       here is the default value:
-"           let g:dumbbuf_mappings = {
-"               \'n': {
-"                   \'j': {
-"                       \'opt': '<silent>',
-"                       \'mapto': ':<C-u>call <SID>buflocal_move_lower()<CR>',
-"                   \},
-"                   \'k': {
-"                       \'opt': '<silent>',
-"                       \'mapto': ':<C-u>call <SID>buflocal_move_upper()<CR>',
-"                   \},
-"                   \'gg': {
-"                       \'opt': '<silent>',
-"                       \'mapto': 'gg',
-"                   \},
-"                   \'G': {
-"                       \'opt': '<silent>',
-"                       \'mapto': 'G',
-"                   \},
-"                   \g:dumbbuf_hotkey : {
-"                       \'opt': '<silent>',
-"                       \'mapto': ':<C-u>close<CR>',
-"                   \},
-"                   \'q': {
-"                       \'opt': '<silent>',
-"                       \'mapto': ':<C-u>close<CR>',
-"                   \},
-"                   \'<CR>': {
-"                       \'opt': '<silent>',
-"                       \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open", ' .
-"                           \'{"type":"func", ' .
-"                           \'"requires_args":0, ' .
-"                           \'"pre":["close_dumbbuf", "jump_to_caller", ' .
-"                                   \'"return_if_empty", "return_if_not_exist"], ' .
-"                           \'"post":["clear_selected"]})<CR>',
-"                   \},
-"                   \'uu': {
-"                       \'opt': '<silent>',
-"                       \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_open_onebyone", ' .
-"                           \'{"type":"func", ' .
-"                           \'"requires_args":0, ' .
-"                           \'"pre":["close_dumbbuf", "jump_to_caller", ' .
-"                                   \'"return_if_empty", "return_if_not_exist"], ' .
-"                           \'"post":["save_lnum", "clear_selected"]})<CR>',
-"                   \},
-"                   \'ss': {
-"                       \'opt': '<silent>',
-"                       \'mapto': ':<C-u>call <SID>run_from_local_map("split #%d", ' .
-"                           \'{"type":"cmd", ' .
-"                           \'"requires_args":1, ' .
-"                           \'"process_selected":1, ' .
-"                           \'"pre":["close_dumbbuf", "jump_to_caller", ' .
-"                                   \'"return_if_noname", "return_if_empty", ' .
-"                                   \'"return_if_not_exist"], ' .
-"                           \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
-"                   \},
-"                   \'vv': {
-"                       \'opt': '<silent>',
-"                       \'mapto': ':<C-u>call <SID>run_from_local_map("vsplit #%d", ' .
-"                           \'{"type":"cmd", ' .
-"                           \'"requires_args":1, ' .
-"                           \'"process_selected":1, ' .
-"                           \'"pre":["close_dumbbuf", "jump_to_caller", ' .
-"                                   \'"return_if_noname", "return_if_empty", ' .
-"                                   \'"return_if_not_exist"], ' .
-"                           \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
-"                   \},
-"                   \'tt': {
-"                       \'opt': '<silent>',
-"                       \'mapto': ':<C-u>call <SID>run_from_local_map("tabedit #%d", ' .
-"                           \'{"type":"cmd", ' .
-"                           \'"requires_args":[1, 0], ' .
-"                           \'"process_selected":1, ' .
-"                           \'"pre":["close_dumbbuf", "jump_to_caller", ' .
-"                                   \'"return_if_noname", "return_if_empty", ' .
-"                                   \'"return_if_not_exist"], ' .
-"                           \'"post":["clear_selected", "save_lnum"]})<CR>',
-"                   \},
-"                   \'dd': {
-"                       \'opt': '<silent>',
-"                       \'mapto': ':<C-u>call <SID>run_from_local_map("bdelete %d", ' .
-"                           \'{"type":"cmd", ' .
-"                               \'"requires_args":1, ' .
-"                               \'"process_selected":1, ' .
-"                               \'"pre":["close_dumbbuf", "return_if_empty", ' .
-"                                       \'"return_if_not_exist"], ' .
-"                               \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
-"                   \},
-"                   \'ww': {
-"                       \'opt': '<silent>',
-"                       \'mapto': ':<C-u>call <SID>run_from_local_map("bwipeout %d", ' .
-"                           \'{"type":"cmd", ' .
-"                           \'"requires_args":1, ' .
-"                           \'"process_selected":1, ' .
-"                           \'"pre":["close_dumbbuf", "return_if_empty", ' .
-"                                   \'"return_if_not_exist"], ' .
-"                           \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
-"                   \},
-"                   \'ll': {
-"                       \'opt': '<silent>',
-"                       \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_toggle_listed_type", ' .
-"                           \'{"type":"func", ' .
-"                           \'"requires_args":0})<CR>',
-"                   \},
-"                   \'cc': {
-"                       \'opt': '<silent>',
-"                       \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_close", ' .
-"                           \'{"type":"func", ' .
-"                           \'"requires_args":0, ' .
-"                           \'"process_selected":1, ' .
-"                           \'"pre":["close_dumbbuf", "return_if_empty", ' .
-"                                   \'"return_if_not_exist"], ' .
-"                           \'"post":["clear_selected", "save_lnum", "update"]})<CR>',
-"                   \},
-"                   \'xx': {
-"                       \'opt': '<silent>',
-"                       \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_select", ' .
-"                           \'{"type":"func", ' .
-"                           \'"requires_args":0, ' .
-"                           \'"pre":["return_if_empty", "return_if_not_exist"], ' .
-"                           \'"post":["save_lnum", "update"]})<CR>'
-"                   \},
-"               \}
-"           \}
 " }}}
 "
 "
