@@ -666,7 +666,7 @@ endfunc
 " s:warn {{{
 func! s:warn(msg)
     echohl WarningMsg
-    echo a:msg
+    echomsg a:msg
     echohl None
 endfunc
 " }}}
