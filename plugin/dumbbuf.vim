@@ -214,8 +214,8 @@ scriptencoding utf-8
 "   g:dumbbuf_disp_expr (default: see the definition)
 "       this variable is for the experienced users.
 "
-"       'val' has buffer's info.
-"       'v:val' also works for backward compatibility.
+"       'v:val' has buffer's info.
+"       NOTE: 'val' does NOT work now.
 "
 "   g:dumbbuf_options (default: see the definition)
 "       this variable is for the experienced users.
