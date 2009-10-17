@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.6
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-10-16.
+" Last Change: 2009-10-17.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -50,7 +50,7 @@ scriptencoding utf-8
 "         dumbbuf can't get selected buffer info.
 "       - add option g:dumbbuf_wrap_cursor, and allow 'keep' in
 "         g:dumbbuf_cursor_pos.
-"       - implement 'select' of buffers. mapping is 'xx'.
+"       - implement 'mark' of buffers. mapping is 'xx'.
 "   0.0.7:
 "       - add option g:dumbbuf_single_key_echo_stack
 " }}}
@@ -100,8 +100,8 @@ scriptencoding utf-8
 "   cc
 "       :close the buffer.
 "   xx
-"       select the buffer.
-"       if one or more selected buffers exist,
+"       mark the buffer.
+"       if one or more marked buffers exist,
 "       'ss', 'vv', 'tt', 'dd', 'ww', 'cc'
 "       get to be able to execute for that buffers at a time.
 "
@@ -274,7 +274,7 @@ let s:debug_msg = []
 let s:caller_bufnr = -1    " caller buffer's bufnr which calls dumbbuf buffer.
 let s:dumbbuf_bufnr = -1    " dumbbuf buffer's bufnr.
 let s:bufs_info = {}    " buffers info. (key: bufnr)
-let s:selected_bufs = {}    " selected buffers info.
+let s:marked_bufs = {}    " marked buffers info.
 let s:previous_lnum = -1    " lnum where a previous mapping executed.
 
 let s:current_shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
@@ -340,7 +340,7 @@ endif
 
 if ! exists('g:dumbbuf_disp_expr')
     " QuickBuf.vim like UI.
-    let g:dumbbuf_disp_expr = 'printf("%s %s[%s] %s <%d> %s", (val.is_selected ? "x" : " "), (val.is_current ? "*" : " "), bufname(val.nr), (val.is_modified ? "[+]" : "   "), val.nr, fnamemodify(bufname(val.nr), ":p:h"))'
+    let g:dumbbuf_disp_expr = 'printf("%s %s[%s] %s <%d> %s", (val.is_marked ? "x" : " "), (val.is_current ? "*" : " "), bufname(val.nr), (val.is_modified ? "[+]" : "   "), val.nr, fnamemodify(bufname(val.nr), ":p:h"))'
 else
     " backward compatibility.
     let g:dumbbuf_disp_expr = substitute(g:dumbbuf_disp_expr, '\<v:val\>'.'\C', 'val', 'g')
@@ -364,7 +364,7 @@ let s:mappings.default = {
     \'v': {
         \'x': {
             \'opt': '<silent>',
-            \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_select", ' .
+            \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_mark", ' .
                 \'{"type":"func", ' .
                 \'"requires_args":0, ' .
                 \'"prev_mode":"v", ' .
@@ -418,7 +418,7 @@ let s:mappings.default = {
             \'mapto': ':<C-u>call <SID>run_from_local_map("split #%d", ' .
                 \'{"type":"cmd", ' .
                 \'"requires_args":1, ' .
-                \'"process_selected":1, ' .
+                \'"process_marked":1, ' .
                 \'"pre":["close_return_if_empty", "close_dumbbuf", "jump_to_caller"], ' .
                 \'"post":["save_lnum", "update_dumbbuf"]})<CR>',
         \},
@@ -427,7 +427,7 @@ let s:mappings.default = {
             \'mapto': ':<C-u>call <SID>run_from_local_map("vsplit #%d", ' .
                 \'{"type":"cmd", ' .
                 \'"requires_args":1, ' .
-                \'"process_selected":1, ' .
+                \'"process_marked":1, ' .
                 \'"pre":["close_return_if_empty", "close_dumbbuf", "jump_to_caller"], ' .
                 \'"post":["save_lnum", "update_dumbbuf"]})<CR>',
         \},
@@ -436,7 +436,7 @@ let s:mappings.default = {
             \'mapto': ':<C-u>call <SID>run_from_local_map("tabedit #%d", ' .
                 \'{"type":"cmd", ' .
                 \'"requires_args":[1, 0], ' .
-                \'"process_selected":1, ' .
+                \'"process_marked":1, ' .
                 \'"pre":["close_return_if_empty", "close_dumbbuf", "jump_to_caller"], ' .
                 \'"post":["save_lnum"]})<CR>',
         \},
@@ -445,7 +445,7 @@ let s:mappings.default = {
             \'mapto': ':<C-u>call <SID>run_from_local_map("bdelete %d", ' .
                 \'{"type":"cmd", ' .
                     \'"requires_args":1, ' .
-                    \'"process_selected":1, ' .
+                    \'"process_marked":1, ' .
                     \'"pre":["close_return_if_empty", "close_dumbbuf"], ' .
                     \'"post":["save_lnum", "update_dumbbuf"]})<CR>',
         \},
@@ -454,7 +454,7 @@ let s:mappings.default = {
             \'mapto': ':<C-u>call <SID>run_from_local_map("bwipeout %d", ' .
                 \'{"type":"cmd", ' .
                 \'"requires_args":1, ' .
-                \'"process_selected":1, ' .
+                \'"process_marked":1, ' .
                 \'"pre":["close_return_if_empty", "close_dumbbuf"], ' .
                 \'"post":["save_lnum", "update_dumbbuf"]})<CR>',
         \},
@@ -469,13 +469,13 @@ let s:mappings.default = {
             \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_close", ' .
                 \'{"type":"func", ' .
                 \'"requires_args":0, ' .
-                \'"process_selected":1, ' .
+                \'"process_marked":1, ' .
                 \'"pre":["close_return_if_empty", "close_dumbbuf"], ' .
                 \'"post":["save_lnum", "update_dumbbuf"]})<CR>',
         \},
         \'xx': {
             \'opt': '<silent>',
-            \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_select", ' .
+            \'mapto': ':<C-u>call <SID>run_from_local_map("<SID>buflocal_mark", ' .
                 \'{"type":"func", ' .
                 \'"requires_args":0, ' .
                 \'"pre":["return_if_empty"], ' .
@@ -643,7 +643,7 @@ func! s:parse_buffers_info()
             \'is_modified': plus_x ==# '+',
             \'is_err': plus_x ==# 'x',
             \'lnum': -1,
-            \'is_selected': 0,
+            \'is_marked': 0,
         \}
     endfor
 
@@ -757,7 +757,7 @@ func! s:open_dumbbuf_buffer(shown_type)
     call s:debug(printf("filtered only '%s' buffers.", a:shown_type))
 
     for buf in values(s:bufs_info)
-        let buf.is_selected = has_key(s:selected_bufs, buf.nr)
+        let buf.is_marked = has_key(s:marked_bufs, buf.nr)
     endfor
 
     " ======== begin - get buffers list and set up ========
@@ -834,8 +834,8 @@ func! s:update_only_marks()
 
     try
         for buf in values(s:bufs_info)
-            " update 'is_selected'.
-            let buf.is_selected = has_key(s:selected_bufs, buf.nr)
+            " update 'is_marked'.
+            let buf.is_marked = has_key(s:marked_bufs, buf.nr)
             " rewrite buffers list.
             let r = s:eval_disp_expr(buf)
             call s:debug(printf("replace line %d with '%s'", buf.lnum, string(r)))
@@ -905,7 +905,7 @@ endfunc
 func! s:run_from_local_map(code, opt)
     let opt = extend(
                 \deepcopy(a:opt),
-                \{"process_selected":0, "prev_mode":"n", "pre":[], "post":[]},
+                \{"process_marked":0, "prev_mode":"n", "pre":[], "post":[]},
                 \"keep")
 
     " at now, current window should be dumbbuf buffer
@@ -941,8 +941,6 @@ func! s:run_from_local_map(code, opt)
         " pre
         call s:do_tasks(opt.pre, cursor_buf, lnum)
 
-        " if a:code supports 'process_selected' and selected buffers exist,
-        " process selected buffers instead of current cursor buffer.
         let bufs = s:get_buffers_being_processed(opt, cursor_buf)
 
         " dispatch a:code.
@@ -1063,10 +1061,12 @@ endfunc
 "}}}
 
 " s:get_buffers_being_processed {{{
+"   if a:code supports 'process_marked' and marked buffers exist,
+"   process marked buffers instead of current cursor buffer.
 func! s:get_buffers_being_processed(opt, cursor_buf)
-    if a:opt.process_selected && !empty(s:selected_bufs)
-        let tmp = s:selected_bufs
-        let s:selected_bufs = {}    " clear
+    if a:opt.process_marked && !empty(s:marked_bufs)
+        let tmp = s:marked_bufs
+        let s:marked_bufs = {}    " clear
         return map(keys(tmp), 's:bufs_info[v:val]')
     else
         return [a:cursor_buf]
@@ -1166,22 +1166,22 @@ func! s:buflocal_close(opt)
 endfunc
 " }}}
 
-" s:buflocal_select {{{
-func! s:buflocal_select(opt)
+" s:buflocal_mark {{{
+func! s:buflocal_mark(opt)
     if a:opt.prev_mode ==# 'v'
         let tmp = deepcopy(a:opt)
         let tmp.prev_mode = 'n'
         for i in a:opt.v_selected_bufs
             let tmp.cursor_buf = i
-            call s:buflocal_select(tmp)
+            call s:buflocal_mark(tmp)
         endfor
     else
-        if has_key(s:selected_bufs, a:opt.cursor_buf.nr)
-            " remove from selected.
-            unlet s:selected_bufs[a:opt.cursor_buf.nr]
+        if has_key(s:marked_bufs, a:opt.cursor_buf.nr)
+            " remove from marked.
+            unlet s:marked_bufs[a:opt.cursor_buf.nr]
         else
-            " add to selected.
-            let s:selected_bufs[a:opt.cursor_buf.nr] = 1
+            " add to marked.
+            let s:marked_bufs[a:opt.cursor_buf.nr] = 1
         endif
     endif
 endfunc
