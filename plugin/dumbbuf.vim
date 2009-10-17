@@ -913,9 +913,6 @@ func! s:run_from_local_map(code, opt)
 
     " get selected buffer info.
     let cursor_buf = s:get_cursor_buffer()
-    if empty(cursor_buf)
-        call s:warn("can't get buffer on cursor...")
-    endif
     " this must be done in dumbbuf buffer.
     let lnum = line('.')
 
@@ -997,6 +994,10 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
 
         elseif p ==# 'return_if_empty'
             " check buffer's availability.
+            if empty(a:cursor_buf)
+                call s:warn("can't get buffer on cursor...")
+                throw 'nop'
+            endif
             if bufname(a:cursor_buf.nr + 0) == ''
                 call s:warn("buffer name is empty.")
                 throw 'nop'
