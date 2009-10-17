@@ -340,10 +340,7 @@ endif
 
 if ! exists('g:dumbbuf_disp_expr')
     " QuickBuf.vim like UI.
-    let g:dumbbuf_disp_expr = 'printf("%s %s[%s] %s <%d> %s", (val.is_marked ? "x" : " "), (val.is_current ? "*" : " "), bufname(val.nr), (val.is_modified ? "[+]" : "   "), val.nr, fnamemodify(bufname(val.nr), ":p:h"))'
-else
-    " backward compatibility.
-    let g:dumbbuf_disp_expr = substitute(g:dumbbuf_disp_expr, '\<v:val\>'.'\C', 'val', 'g')
+    let g:dumbbuf_disp_expr = 'printf("%s %s[%s] %s <%d> %s", (v:val.is_marked ? "x" : " "), (v:val.is_current ? "*" : " "), bufname(v:val.nr), (v:val.is_modified ? "[+]" : "   "), v:val.nr, fnamemodify(bufname(v:val.nr), ":p:h"))'
 endif
 if ! exists('g:dumbbuf_options')
     let g:dumbbuf_options = [
@@ -548,9 +545,12 @@ endfunc
 " }}}
 
 " s:eval_disp_expr {{{
-func! s:eval_disp_expr(buf)
-    let val = a:buf
-    return eval(g:dumbbuf_disp_expr)
+func! s:eval_disp_expr(bufs)
+    if type(a:bufs) == type([])
+        return map(a:bufs, g:dumbbuf_disp_expr)
+    else
+        return get(map([a:bufs], g:dumbbuf_disp_expr), 0)
+    endif
 endfunc
 " }}}
 
@@ -562,10 +562,10 @@ func! s:write_buffers_list(bufs)
     let disp_line = []
     try
         let lnum = 1
-        for nr in sort(keys(a:bufs))
-            let a:bufs[nr].lnum = lnum
+        for buf in map(sort(keys(a:bufs)), 'a:bufs[v:val]')
+            let buf.lnum = lnum
             let lnum += 1
-            call add(disp_line, s:eval_disp_expr(a:bufs[nr]))
+            call add(disp_line, s:eval_disp_expr(buf))
         endfor
     catch
         call s:warn("error occured while evaluating g:dumbbuf_disp_expr.")
