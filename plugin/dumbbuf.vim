@@ -52,7 +52,11 @@ scriptencoding utf-8
 "         g:dumbbuf_cursor_pos.
 "       - implement 'mark' of buffers. mapping is 'xx'.
 "   0.0.7:
-"       - add option g:dumbbuf_single_key_echo_stack
+"       - add option g:dumbbuf_single_key_echo_stack.
+"       - fix some bugs and do some optimizations.
+"       - change g:dumbbuf_disp_expr's description.
+"       - replace the words 'select' to 'mark' in document and source code.
+"         I would use 'select' for only visual mode's region.
 " }}}
 "
 "
@@ -69,45 +73,49 @@ scriptencoding utf-8
 "
 "   let dumbbuf_single_key = 1
 "   let g:dumbbuf_updatetime = 1    " mininum value of updatetime.
-"
-"   let g:dumbbuf_cursor_pos = 'keep'
 " }}}
 "
 " Mappings: {{{
 "   please define g:dumbbuf_hotkey at first.
 "   if that is not defined, this script is not loaded.
 "
-"   q
-"       :close dumbbuf buffer.
-"   g:dumbbuf_hotkey
-"       toggle dumbbuf buffer.
-"   <CR>
-"       :edit the buffer.
-"   uu
-"       open one by one. this is same as QuickBuf's u.
-"   ss
-"       :split the buffer.
-"   vv
-"       :vspilt the buffer.
-"   tt
-"       :tabedit the buffer.
-"   dd
-"       :bdelete the buffer.
-"   ww
-"       :bwipeout the buffer.
-"   ll
-"       toggle listed buffers or unlisted buffers.
-"   cc
-"       :close the buffer.
-"   xx
-"       mark the buffer.
-"       if one or more marked buffers exist,
-"       'ss', 'vv', 'tt', 'dd', 'ww', 'cc'
-"       get to be able to execute for that buffers at a time.
+"   Visual Mode:
+"       x
+"           mark buffers on selected region.
+"           see Normal Mode's xx for details.
+"
+"   Normal Mode:
+"       q
+"           :close dumbbuf buffer.
+"       g:dumbbuf_hotkey
+"           toggle dumbbuf buffer.
+"       <CR>
+"           :edit buffer.
+"       uu
+"           open one by one. this is same as QuickBuf's u.
+"       ss
+"           :split buffer.
+"       vv
+"           :vspilt buffer.
+"       tt
+"           :tabedit buffer.
+"       dd
+"           :bdelete buffer.
+"       ww
+"           :bwipeout buffer.
+"       ll
+"           toggle listed buffers or unlisted buffers.
+"       cc
+"           :close buffer.
+"       xx
+"           mark buffer.
+"           if one or more marked buffers exist,
+"           'ss', 'vv', 'tt', 'dd', 'ww', 'cc'
+"           get to be able to execute for that buffers at a time.
 "
 "   and, if you turn on 'g:dumbbuf_single_key',
 "   you can use single key mappings like QuickBuf.vim.
-"   see 'g:dumbbuf_single_key' at 'Global Variables' for the details.
+"   see 'g:dumbbuf_single_key' at 'Global Variables' for details.
 " }}}
 "
 " Global Variables: {{{
