@@ -480,17 +480,20 @@ let s:mappings.default = {
         \},
     \}
 \}
-let s:mappings.single_key = {
-    \'u': 'uu',
-    \'s': 'ss',
-    \'v': 'vv',
-    \'t': 'tt',
-    \'d': 'dd',
-    \'w': 'ww',
-    \'l': 'll',
-    \'c': 'cc',
-    \'x': 'xx',
-\}
+
+if g:dumbbuf_single_key
+    let s:mappings.single_key = {
+        \'u': 'uu',
+        \'s': 'ss',
+        \'v': 'vv',
+        \'t': 'tt',
+        \'d': 'dd',
+        \'w': 'ww',
+        \'l': 'll',
+        \'c': 'cc',
+        \'x': 'xx',
+    \}
+endif
 
 " }}}
 
