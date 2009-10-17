@@ -1316,7 +1316,7 @@ if g:dumbbuf_single_key
             " single key emulation.
             execute 'autocmd CursorHold '.i.' call feedkeys("\<Plug>dumbbuf_try_to_emulate_single_key", "m")'
             " restore &updatetime.
-            execute 'autocmd BufLeave    '.i.' call s:bufleave_handler()'
+            execute 'autocmd BufWipeout '.i.' call s:bufleave_handler()'
         endfor
     augroup END
 endif
