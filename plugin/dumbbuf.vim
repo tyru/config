@@ -1196,14 +1196,16 @@ endfunc
 "   emulate QuickBuf.vim's single key mappings.
 func! s:emulate_single_key()
     if s:dumbbuf_bufnr != bufnr('%') | return | endif
-    if mode() !=# 'n'                | return | endif
+    " if mode() !=# 'n'                | return | endif
 
     call s:debug(printf('s:mapstack [%s], s:mapstack_count [%d]', s:mapstack, s:mapstack_count))
+
+    " NOTE: 'count' is same as 'v:count'. for Vi's compatibility.
 
     let count1 = (s:mapstack_count == -1 ? '' : s:mapstack_count)
     if g:dumbbuf_single_key_echo_stack
         echon count1 . s:mapstack
-        redraw
+        redraw    " in order that getchar() does not skip getting character.
     endif
 
     let c = nr2char(getchar())
