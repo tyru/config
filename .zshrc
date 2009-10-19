@@ -88,10 +88,12 @@ fi
 
 typeset -A myabbrev
 myabbrev=(
-    "@l" "| less"
-    "@g" "| grep"
-    "@p" "| perl"
-    "@n" ">/dev/null 2>&1"
+    "l@" "| less"
+    "g@" "| grep"
+    "p@" "| perl"
+    "n@" ">/dev/null 2>&1"
+    "e@" "2>&1"
+    "h@" "--help 2>&1"
 )
 
 my-expand-abbrev() {

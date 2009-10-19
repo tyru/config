@@ -1,0 +1,1 @@
+minicpan -r ftp://ftp.kddilabs.jp/CPAN/ -l $HOME/work/minicpan

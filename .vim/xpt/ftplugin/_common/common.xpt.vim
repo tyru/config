@@ -8,11 +8,18 @@ XPTvar $email         $email is not set, you need to set g:xptemplate_vars="$aut
 
 XPTvar $VOID
 
-XPTvar $IF_BRACKET_STL     \ 
-XPTvar $FOR_BRACKET_STL    \ 
-XPTvar $WHILE_BRACKET_STL  \ 
-XPTvar $STRUCT_BRACKET_STL \ 
-XPTvar $FUNC_BRACKET_STL   \ 
+XPTvar $IF_BRACKET_STL     ' '
+XPTvar $ELSE_BRACKET_STL   \n
+XPTvar $FOR_BRACKET_STL    ' '
+XPTvar $WHILE_BRACKET_STL  ' '
+XPTvar $STRUCT_BRACKET_STL ' '
+XPTvar $FUNC_BRACKET_STL   ' '
+
+XPTvar $SP_ARG      ' '
+XPTvar $SP_IF       ' '
+XPTvar $SP_EQ       ' '
+XPTvar $SP_OP       ' '
+XPTvar $SP_COMMA    ' '
 
 XPTvar $TRUE          1
 XPTvar $FALSE         0
@@ -167,14 +174,26 @@ fun! s:f.Build( ... )
   return { 'action' : 'build', 'text' : join( a:000, '' ) }
 endfunction
 
+fun! s:f.BuildIfChanged( ... )
+  let v = substitute( self.V(), "\\V\n\\|\\s", '', 'g')
+  let fn = substitute( self.ItemFullname(), "\\V\n\\|\\s", '', 'g')
+
+  if v ==# fn
+      " return { 'action' : 'keepIndent', 'text' : self.V() }
+      return ''
+  else
+      return { 'action' : 'build', 'text' : join( a:000, '' ) }
+  endif
+endfunction
+
 fun! s:f.BuildIfNoChange( ... )
   let v = substitute( self.V(), "\\V\n\\|\\s", '', 'g')
   let fn = substitute( self.ItemFullname(), "\\V\n\\|\\s", '', 'g')
 
   if v ==# fn
-    return { 'action' : 'build', 'text' : join( a:000, '' ) }
+      return { 'action' : 'build', 'text' : join( a:000, '' ) }
   else
-    return { 'action' : 'keepIndent', 'text' : self.V() }
+      return { 'action' : 'keepIndent', 'text' : self.V() }
   endif
 endfunction
 
@@ -339,7 +358,50 @@ fun! s:f.ExpandIfNotEmpty( sep, item, ... ) "{{{
   return t
 endfunction "}}}
 
+let s:xptCompleteMap = [ 
+            \"''",
+            \'""',
+            \'()',
+            \'[]',
+            \'{}',
+            \'<>',
+            \'||',
+            \'**',
+            \'``', 
+            \]
+let s:xptCompleteLeft = join( map( deepcopy( s:xptCompleteMap ), 'v:val[0:0]' ), '' )
+let s:xptCompleteRight = join( map( deepcopy( s:xptCompleteMap ), 'v:val[1:1]' ), '' )
 
+fun! s:f.CompleteRightPart( left ) dict
+    let v = self.V()
+    " let left = substitute( a:left, '[', '[[]', 'g' )
+    let left = escape( a:left, '[\' )
+    let v = matchstr( v, '^\V\[' . left . ']\+' )
+    if v == '' 
+        return ''
+    endif
+
+    let v = join( reverse( split( v, '\s*' ) ), '')
+    let v = tr( v, s:xptCompleteLeft, s:xptCompleteRight )
+    return v
+
+endfunction
+
+fun! s:f.CmplQuoter() dict
+    let v = self.V()
+    let first = matchstr( v, '\V\^\[''"]' )
+    if first == ''
+        return ''
+    endif
+
+    let v = substitute( v, '\V\[^' . first . ']', '', 'g' )
+    if v == first
+        " only 1 quoter
+        return first
+    else
+        return ''
+    endif
+endfunction
 
 
 

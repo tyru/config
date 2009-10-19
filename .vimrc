@@ -202,7 +202,6 @@ if has("win32")
     set runtimepath+=$HOME/.vim
 endif
 let s:runtime_dirs = [
-    \'$HOME/.vim/after',
     \'$HOME/.vim/mine',
     \'$HOME/.vim/chalice',
     \'$HOME/.vim/xpt',
@@ -973,6 +972,8 @@ nnoremap ,*+    :let @+ = @*<CR>:echo printf('[%s]', @+)<CR>
 " @+ -> @*
 nnoremap ,+*    :let @* = @+<CR>:echo printf('[%s]', @*)<CR>
 
+nnoremap ZZ <Nop>
+
 " }}}
 
 " ~~ o ~~ {{{
@@ -1118,13 +1119,16 @@ let dumbbuf_mappings = {
 let dumbbuf_single_key = 1
 let dumbbuf_updatetime = 1    " mininum value of updatetime.
 
-let dumbbuf_cursor_pos = 'keep'
-let dumbbuf_shown_type = 'listed'
 
-" for test
+" let dumbbuf_cursor_pos = 'keep'
+" let dumbbuf_shown_type = 'listed'
+
+" for test.
 "
 " let dumbbuf_shown_type = 'foobar'
 " let dumbbuf_listed_buffer_name = "*foo bar*"
+" let g:dumbbuf_close_when_exec = 1
+"
 " let dumbbuf_verbose = 1
 " }}}
 
@@ -1252,18 +1256,6 @@ let xptemplate_key = '<C-t>'
 
 " operator-replace
 map ,r  <Plug>(operator-replace)
-
-" taglist {{{
-let Tlist_Ctags_Cmd = 'ctags'
-nnoremap <silent> \t :TlistToggle<CR>
-
-let Tlist_Use_Right_Window = 1
-let Tlist_Enable_Fold_Column = 1
-let Tlist_Compact_Format = 1
-let Tlist_Display_Prototype = 1
-let Tlist_Exit_OnlyWindow = 1
-let Tlist_File_Fold_Auto_Close = 1
-" }}}
 
 " }}}
 

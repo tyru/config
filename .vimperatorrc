@@ -11,19 +11,40 @@ set! browser.urlbar.filter.javascript=false
 set! browser.urlbar.maxRichResults=50
 
 " disable accesskey
-" set! ui.key.generalAccessKey=0
+set! ui.key.generalAccessKey=0
 
-" open bookmarks in background
+" open in background
+set! browser.tabs.loadDivertedInBackground=true
+
+" open also bookmarks in background
 set! browser.tabs.loadBookmarksInBackground=true
 
 set! ui.caretWidth=1
 set! ui.caretBlinkTime=1000
 
+" don't close window when closed last tab
 set! browser.tabs.closeWindowWithLastTab=false
 
+" for LDR.
+" (firefox prevents popups even if popups are allowed in particular site)
 set! dom.popup_maximum=65536
 
+" some optimizations
 set! config.trim_on_minimize=true
+set! browser.history_expire_days=30
+set! browser.history_expire_days_min=7
+set! browser.history_expire_sites=1000
+set! browser.cache.memory.capacity=32768
+set! browser.sessionstore.max_tabs_undo=5
+set! browser.sessionhistory.max_total_viewers=5
+
+" Fx 3.5 only?
+set! javascript.options.jit.content=true
+set! javascript.options.jit.chrome=true
+
+" disable IPv6
+set! network.dns.disableIPv6=true
+
 
 " }}}
 "-----------------------------------------------------------------
@@ -45,7 +66,7 @@ EOF
 "-----------------------------------------------------------------
 " set {{{
 
-set activate=homepage,quickmark,tabopen
+set activate=
 set complete=sfl
 " set focuscontent
 set guioptions=nbr
@@ -68,47 +89,47 @@ set wildoptions=auto
 " NOTE: <silent>つけるとむしろ遅いorz
 
 " ~ noremap ~ {{{
-noremap <F5>    <Nop>
-noremap <BS>    <Nop>
+nnoremap <F5>    <Nop>
+nnoremap <BS>    <Nop>
 
 " 上下移動
-noremap j   4<C-e>
-noremap k   4<C-y>
-noremap J   <C-d>
-noremap K   <C-u>
+nnoremap j   4<C-e>
+nnoremap k   4<C-y>
+nnoremap J   <C-d>
+nnoremap K   <C-u>
 
 " タブ移動
-noremap <Right> :tabmove! +1<CR>
-noremap <Left>  :tabmove! -1<CR>
+nnoremap <Right> :tabmove! +1<CR>
+nnoremap <Left>  :tabmove! -1<CR>
 
 " Escで中止
-noremap <Esc>   <C-c>
+nnoremap <Esc>   <C-c>
 
 " 戻れるように
-noremap gg      mzgg
-noremap G       mzG
+nnoremap gg      mzgg
+nnoremap G       mzG
 
 " フレーム内移動
-noremap <C-,>   [f
-noremap <C-.>   ]f
+nnoremap <C-,>   [f
+nnoremap <C-.>   ]f
 
 " 選択文字列のコピー
-noremap <C-c>   Y
+nnoremap <C-c>   Y
 " 選択文字列のgoogle検索
-noremap <C-g>   YP
+nnoremap <C-g>   YP
 
 
 " vimperatorだとincsearchのとき
 " マッチしなかった場合元の位置に戻らない
-noremap /   mz/
+nnoremap /   mz/
 
-noremap <Leader>gf     :tab normal gf<CR>
+nnoremap <Leader>gf     :tab normal gf<CR>
 
-noremap !       :set invum<CR>
+nnoremap !       :set invum<CR>
 
-noremap ZZ <Nop>
+nnoremap ZZ <Nop>
 
-noremap gt :tab<Space>
+nnoremap <Leader>t :tab<Space>
 
 " }}}
 
@@ -191,26 +212,12 @@ let ex_ime_mode = "inactive"
 let textarea_ime_mode = "inactive"
 " }}}
 
-" stella.js & nicontroller.js {{{
-noremap <Leader>nc      :nicomment<Space>
-noremap <Leader>ni      :nicoinfo<CR>
-noremap <Leader>np      :stplay<CR>
-noremap <Leader>nr      :strepeat<CR>
-noremap <Leader>nm      :stmute<CR>
-noremap <Leader>nv      :nicommentvisible<CR>
-noremap <Leader>nz      :stfullscreen<CR>
-noremap <Leader>ns      :stseek!<Space>
-noremap <Leader>n+      :stvolume! +10<CR>
-noremap <Leader>n-      :stvolume! -10<CR>
-" }}}
-
 " appendAnchor.js {{{
 let auto_append_anchor_once = "true"
 " }}}
 
 " nextlink.js {{{
 let nextlink_nositeinfo_act = "f"
-let nextlink_followlink = "true"
 " }}}
 
 " toggler.js {{{
@@ -256,20 +263,37 @@ autocmd LocationChange 'reader\.livedoor\.com\/reader\/' :fmap j k s a p o v c <
 
 " copy.js {{{
 js<<EOM
-liberator.globalVariables.copy_templates = [{
-  label: 'Tabslist',
-  value: 'Current tabs copy to <UL> list',
-  custom: function() {
-            let result = <ul/>;
-            for each ([,tab] in tabs.browsers)
-                result.li += <li>
-  <a href={tab.currentURI.spec}>
-  {tab.contentTitle}</a>
+liberator.globalVariables.copy_templates = [
+  { label: 'titleAndURL',    value: '%TITLE%\n%URL%' },
+  { label: 'title',          value: '%TITLE%', map: ',y' },
+  { label: 'anchor',         value: '<a href="%URL%">%TITLE%</a>' },
+  { label: 'selanchor',      value: '<a href="%URL%" title="%TITLE%">%SEL%</a>' },
+  { label: 'htmlblockquote', value: '<blockquote cite="%URL%" title="%TITLE%">%HTMLSEL%</blockquote>' },
+  { label: 'ASIN', value: 'copy ASIN code from Amazon', custom: function() { return content.document.getElementById('ASIN').value; } },
+
+  { label: 'Tabslist',
+    value: 'Current tabs copy to <UL> list',
+    custom: function() {
+      let result = <ul/>;
+      for each ([,tab] in tabs.browsers)
+          result.li += <li>
+<a href={tab.currentURI.spec}>
+{tab.contentTitle}</a>
 </li>;
-            return result;
-          }
-}];
+      return result;
+    }
+  },
+];
 EOM
+" }}}
+
+" sbmincsearch {{{
+let sbmincsearch_service_name = "delicious"
+let sbmincsearch_max = 50
+" }}}
+
+" pino.js {{{
+nnoremap ,p     :pino<Space>
 " }}}
 
 " }}}

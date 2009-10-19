@@ -1,6 +1,6 @@
-XPTemplate priority=like keyword=#
+XPTemplate priority=like
 
-let [s:f, s:v] = XPTcontainer() 
+let s:f = g:XPTfuncs() 
  
 XPTvar $TRUE          1
 XPTvar $FALSE         0
@@ -51,7 +51,7 @@ XPT #ifndef	hint=#ifndef\ ..
 XSET symbol=S(fileRoot(),'\.','_','g')
 XSET symbol|post=UpperCase(V())
 #ifndef `symbol^
-#     define `symbol^
+#define `symbol^
 
 `cursor^ 
 #endif `$CL^ `symbol^ `$CR^

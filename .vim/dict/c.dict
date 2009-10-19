@@ -10,6 +10,9 @@ __FILE__
 __LINE__
 __TIME__
 
+NOTREACHED
+FALLTHROUGH
+
 ifdef
 ifndef
 define
