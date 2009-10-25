@@ -17,6 +17,8 @@ endif
 let g:__XPOPUP_VIM__ = 1
 
 
+let s:oldcpo = &cpo
+set cpo-=< cpo+=B
 " TODO popup fix:select it if strictly matched
 runtime plugin/debug.vim
 runtime plugin/xpreplace.vim
@@ -580,6 +582,7 @@ fun! s:ApplyMapAndSetting() "{{{
     " snippet start with '#' causes a choas.
     call SettingPush( '&l:cinkeys', '' )
     call SettingPush( '&l:indentkeys', '' )
+    " call SettingPush( '&l:ignorecase', '1' )
 
 endfunction "}}}
 
@@ -594,8 +597,9 @@ fun! s:ClearMapAndSetting() "{{{
     call g:MapPop(b:__xpp_mapped.i_bs)
 
 
-    call SettingPop() " cinkeys 
+    " call SettingPop() " ignorecase 
     call SettingPop() " indentkeys 
+    call SettingPop() " cinkeys 
 
     unlet b:__xpp_mapped
 endfunction "}}}
@@ -746,5 +750,7 @@ let s:sessionPrototype2 =  s:ClassPrototype(
             \)
 
 call extend( s:sessionPrototype, s:sessionPrototype2, 'force' )
+
+let &cpo = s:oldcpo
 
 " vim: set sw=4 sts=4 :

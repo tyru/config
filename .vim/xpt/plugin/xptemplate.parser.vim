@@ -18,9 +18,11 @@ let g:__XPTEMPLATE_PARSER_VIM__ = 1
 "
 "
 
+let s:oldcpo = &cpo
+set cpo-=< cpo+=B
+
 runtime plugin/debug.vim
 
-runtime plugin/xpclass.vim
 runtime plugin/FiletypeScope.class.vim
 
 runtime plugin/xptemplate.util.vim
@@ -298,17 +300,22 @@ endfunction "}}}
 fun! s:XPTemplateParseSnippet(lines) "{{{
     let lines = a:lines
 
+    let snipScope = XPTsnipScope()
+    let snipScope.loadedSnip = get( snipScope, 'loadedSnip', {} )
+
     let snippetLines = []
+
+    " TODO simple hint support
+    
+    let setting = deepcopy( g:XPTemplateSettingPrototype )
+
+    let [hint, lines[0]] = s:GetSnipCommentHint( lines[0] )
+    if hint != ''
+        let setting.hint = hint
+    endif
 
     let snippetParameters = split(lines[0], '\V'.s:nonEscaped.'\s\+')
     let snippetName = snippetParameters[1]
-
-    " call s:log.Log("parse lines:".string(lines))
-    " call s:log.Log("snippetParameters=".string(snippetParameters))
-    " call s:log.Log("line0=".lines[0])
-    " call s:log.Log('snippetName='.snippetName)
-
-    let setting = deepcopy( g:XPTemplateSettingPrototype )
 
     let snippetParameters = snippetParameters[2:]
 
@@ -384,15 +391,40 @@ fun! s:XPTemplateParseSnippet(lines) "{{{
     endif
 
 
+    if has_key( snipScope.loadedSnip, snippetName )
+        echom "XPT: warn : duplicate snippet:" . snippetName . ' in file:' . snipScope.filename
+    endif
+
+    let snipScope.loadedSnip[ snippetName ] = 1
+
+
     if has_key( setting, 'synonym' )
         let synonyms = split( setting.synonym, '|' )
         for synonym in synonyms
             call XPTemplateAlias( synonym, snippetName, {} )
+
+            if has_key( snipScope.loadedSnip, synonym )
+                echom "XPT: warn : duplicate snippet:" . synonym . ' in file:' . snipScope.filename
+            endif
+
+            let snipScope.loadedSnip[ synonym ] = 1
+
         endfor
     endif
 
 
 endfunction "}}}
+
+fun! s:GetSnipCommentHint(str) "{{{
+    let pos = match( a:str, '\V\s' . s:nonEscaped . '"' )
+    if pos == -1
+        return [ '', a:str ]
+    else
+        " skip space, '"'
+        return [ matchstr( a:str[ pos + 1 + 1 : ], '\S.*' ), a:str[ : pos ] ]
+    endif
+endfunction "}}}
+
 
 
 fun! s:ConvertIndent( snipLines ) "{{{
@@ -572,6 +604,7 @@ fun! s:splitWith( str, char ) "{{{
 endfunction "}}}
 
 
+let &cpo = s:oldcpo
 
 
 

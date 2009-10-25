@@ -25,6 +25,7 @@ my @files = qw(
     .bash_profile
     .bashrc
     .screenrc
+    .tscreenrc
     .inputrc
     .zshrc
     .zshenv

@@ -1,0 +1,119 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'gisty'
+
+@cmds = {}
+
+def cmd name
+  @cmds[name.to_s] = Proc.new { |i| yield i }
+end
+
+cmd :about do
+  puts Gisty::AA
+  puts
+  puts 'version: ' + Gisty::VERSION
+  puts 'url: ' + Gisty::GISTY_URL
+end
+
+cmd :help do
+  puts <<-EOS
+usage:
+  gisty commands
+commands:
+  gisty list                          show local list.
+  gisty post file1 file2 ...          post new gist.
+  gisty private_post file1 file2 ...  post new private gist.
+  gisty sync                          sync remote gist. (clone all remote gist)
+  gisty sync_delete                   sync remote gist. delete local gist if remote gist was deleted.
+  gisty pull_all                      pull all gist.
+  gisty about                         show about gisty
+  gisty help                          show help
+  EOS
+end
+
+cmd :list do
+  list = @g.list
+  puts '- public gist -'
+  list[:public].each do |i|
+    puts "#{i[0]}: #{i[1].join(' ')}"
+  end
+  puts '- private gist -'
+  list[:private].each do |i|
+    puts "#{i[0]}: #{i[1].join(' ')}"
+  end
+end
+
+cmd :sync do
+  @g.sync
+  puts '---'
+  puts 'sync finished.'
+end
+
+cmd :sync_delete do
+  @g.sync true
+  puts '---'
+  puts 'sync finished.'
+end
+
+cmd :pull_all do
+  @g.pull_all
+  puts '---'
+  puts 'pull_all finished.'
+end
+
+cmd :post do |fs|
+  if fs.size > 0
+    begin
+      url = @g.create fs
+    rescue Gisty::InvalidFileException => e
+      puts "Error: invalid file"
+    rescue Exception => e
+      puts "Error: #{e}"
+    else
+      id = url.split('/').last
+      @g.clone id
+      system "open #{url}" if /darwin/ === RUBY_PLATFORM
+    end
+  end
+end
+
+cmd :private_post do |fs|
+  if fs.size > 0
+    begin
+      url = @g.create fs, :private => true
+    rescue Exception => e
+      puts "Error: #{e}"
+    else
+      system "open #{url}" if /darwin/ === RUBY_PLATFORM
+      id = url.split('/').last
+      @g.clone id
+    end
+  end
+end
+
+
+if ENV['GISTY_DIR']
+  begin
+    @g = Gisty.new ENV['GISTY_DIR']
+  rescue Gisty::UnsetAuthInfoException => e
+    puts 'Error: set your api token.'
+    puts 'see Global Git Config at https://github.com/account'
+    exit
+  end
+else
+  puts "Error: please set ENV['GISTY_DIR']"
+  exit
+end
+
+if ARGV.size == 0
+  @cmds['help'].call []
+else
+  c = @cmds[ARGV.first]
+  if c
+    c.call ARGV.last(ARGV.size - 1)
+  else
+    puts 'unknown commands.'
+  end
+end
+

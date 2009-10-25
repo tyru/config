@@ -74,7 +74,7 @@ set hlsearch
 set ignorecase
 set incsearch
 set nextpattern+=\b次
-set noinsertmode
+" set noinsertmode
 set previouspattern+=\b前
 set scroll=8
 set smartcase
@@ -169,7 +169,7 @@ qmark m http://mail.google.com/mail?hl=ja
 qmark n http://tyru.yu-nagi.com/
 qmark p http://www.pixiv.net/mypage.php
 qmark r http://reader.livedoor.com/reader/
-qmark t http://twitter.com/
+qmark t bml-share-tumblr
 qmark z bml-niconico-mp3
 
 " }}}

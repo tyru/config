@@ -124,6 +124,45 @@ chpwd () { ls }
 
 
 
+### gitのブランチ名を右プロンプトに表示
+# via http://d.hatena.ne.jp/uasi/20091017/1255712789
+
+# ${fg[...]} や $reset_color をロード
+autoload -U colors; colors
+
+function rprompt-git-current-branch {
+    local name st color
+    if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
+        return
+    fi
+    name=`git branch 2> /dev/null | grep '^\*' | cut -b 3-`
+    if [[ -z $name ]]; then
+        return
+    fi
+    st=`git status`
+    if [[ -n `echo "$st" | grep "^nothing to"` ]]; then
+        color=${fg[green]}
+    elif [[ -n `echo "$st" | grep "^nothing added"` ]]; then
+        color=${fg[yellow]}
+    elif [[ -n `echo "$st" | grep "^# Untracked"` ]]; then
+        color=${fg_bold[red]}
+    else
+        color=${fg[red]}
+    fi
+
+    # %{...%} は囲まれた文字列がエスケープシーケンスであることを明示する
+    # これをしないと右プロンプトの位置がずれる
+    echo "[%{$color%}$name%{$reset_color%}]"
+}
+
+# プロンプトが表示されるたびにプロンプト文字列を評価、置換する
+setopt prompt_subst
+
+RPROMPT='`rprompt-git-current-branch`'
+
+
+
+
 
 ### cygwin ###
 

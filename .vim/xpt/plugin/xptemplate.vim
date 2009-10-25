@@ -1,6 +1,6 @@
 " XPTEMPLATE ENGIE:
 "   snippet template engine
-" VERSION: 0.3.9.8
+" VERSION: 0.3.9.9
 " BY: drdr.xp | drdr.xp@gmail.com
 "
 " MARK USED:
@@ -19,11 +19,13 @@
 " "}}}
 "
 " KNOWING BUG: "{{{
-"   indent bug of html::table with inclusion
 "
 " "}}}
 "
 " TODOLIST: "{{{
+" TODO hint of whether xpt is running. sign, statusline, highlight
+" TODO check duplication in single snippet file
+" TODO 2 <tab> to accept empty
 " TODO /../../ ontime filter shortcut
 " TODO ( ) shortcut of Echo
 " TODO import utils
@@ -34,29 +36,26 @@
 " TODO snippet only inside others
 " TODO need more format variables
 " TODO standardize html/xml snippets.
-" TODO snippets bundle and bundle selection
 " TODO snippet-file scope XSET
 " TODO block context check
 " TODO ontime repetition
 " TODO in windows & in select mode to trigger wrapped or normal?
 " TODO change on previous item
-" TODO as function call template
 " TODO highlight all pending items
 " TODO <Plug>mapping
 " TODO item popup: repopup
 " TODO install guide
 " TODO do not let xpt throw error if calling undefined s:f.function..
-" TODO buffer/snippet scope template setting.
 " TODO simple place holder : just a postion waiting for user input
 " TODO wrapping on different visual mode
 " TODO prefixed template trigger
 " TODO class-style
 " TODO simplify if no need to popup, popup session
 " TODO on the first time template rendering, replace all vars with its value.
-" TODO pre-build expression to evaluate
+" TODO pre-build expression to evaluate. compile expression to vim expression
+" TODO simplify wrapper snippets
 " TODO separately store wrapped templates and normal ones
 " TODO match snippet names from middle
-" TODO snippets bundle and bundle selection
 " TODO without template rendering, xpmark update complains error.
 " TODO 'completefunc' to re-popup item menu. Or using <tab> to force popup showing
 "
@@ -64,8 +63,6 @@
 "
 " 
 " Log of This version:
-"   fix : set typed value as named step element before post filter evaluated
-"
 "
 "
 "
@@ -85,6 +82,8 @@ if exists("g:__XPTEMPLATE_VIM__")
 endif
 let g:__XPTEMPLATE_VIM__ = 1
 
+let s:oldcpo = &cpo
+set cpo-=< cpo+=B
 
 com! XPTgetSID let s:sid =  matchstr("<SID>", '\zs\d\+_\ze')
 XPTgetSID
@@ -93,7 +92,7 @@ delc XPTgetSID
 
 
 
-" runtime plugin/position.vim
+runtime plugin/xptemplate.conf.vim
 runtime plugin/debug.vim
 runtime plugin/xptemplate.util.vim
 runtime plugin/mapstack.vim
@@ -968,6 +967,10 @@ fun! s:Popup(pref, coln) "{{{
     let cmpl=[]
     let cmpl2 = []
     let ftScope = s:GetContextFTObj()
+    if ftScope == {}
+        " unsupported ft
+        return ''
+    endif
     let dic = ftScope.normalTemplates
 
     let ctxs = s:SynNameStack(line("."), a:coln)
@@ -1213,7 +1216,6 @@ fun! s:parseQuotedPostFilter( tmplObj ) "{{{
         let plainPostFilter = s:BuildFilterIndent( plainPostFilter, firstLineIndent )
 
         let postFilters[ name ] = plainPostFilter
-        echom 'name=' . string( name )
 
         call s:log.Debug( 'name=' . name )
         call s:log.Debug( 'quoted post filter=' . string( postFilters[ name ] ) )
@@ -1902,6 +1904,7 @@ fun! s:ApplyPreValues( placeHolder ) "{{{
     let preValue = a:placeHolder.name == '' ? '' : 
                 \ (has_key( setting.preValues, a:placeHolder.name ) ? setting.preValues[ a:placeHolder.name ] : '')
 
+
     if !s:IsFilterEmpty( preValue ) 
         let preValue = s:Eval( preValue )
         let [ filterIndent, filterText ] = s:GetFilterIndentAndText( preValue )
@@ -1912,8 +1915,12 @@ fun! s:ApplyPreValues( placeHolder ) "{{{
                     \setting.defaultValues[ a:placeHolder.name ] 
                     \: a:placeHolder.ontimeFilter
 
+
         if !s:IsFilterEmpty( preValue ) 
+
+            "Note: does not include function or function is preValue safe(with '_pre' suffix)
             if preValue !~ '\V' . xp.item_func . '\|' . xp.item_qfunc 
+                        \|| preValue =~ '\V_pre()'
                 let text = s:Eval( preValue )
 
                 let [ filterIndent, filterText ] = s:GetFilterIndentAndText( text )
@@ -3129,8 +3136,8 @@ fun! s:XPTinit() "{{{
                 \ 'i_<DEL>', 
                 \]
 
-    let s:mapSaver = g:MapSaver.New(1)
-    call s:mapSaver.AddList(
+    let b:mapSaver = g:MapSaver.New(1)
+    call b:mapSaver.AddList(
                 \ 'i_' . g:xptemplate_nav_next, 
                 \ 's_' . g:xptemplate_nav_next, 
                 \
@@ -3145,12 +3152,12 @@ fun! s:XPTinit() "{{{
                 \ 's_<BS>', 
                 \)
 
-    let s:mapLiteral = g:MapSaver.New( 1 )
-    call s:mapLiteral.AddList( literalKeys )
+    let b:mapLiteral = g:MapSaver.New( 1 )
+    call b:mapLiteral.AddList( literalKeys )
 
 
-    let s:mapMask = g:MapSaver.New( 0 )
-    call s:mapMask.AddList( disabledKeys )
+    let b:mapMask = g:MapSaver.New( 0 )
+    call b:mapMask.AddList( disabledKeys )
 
 
 endfunction "}}}
@@ -3164,13 +3171,13 @@ fun! s:ApplyMap() " {{{
     call SettingPush( '&l:textwidth', '0' )
 
 
-    call s:mapSaver.Save()
-    call s:mapLiteral.Save()
-    call s:mapMask.Save()
+    call b:mapSaver.Save()
+    call b:mapLiteral.Save()
+    call b:mapMask.Save()
 
-    call s:mapSaver.UnmapAll()
-    call s:mapLiteral.Literalize()
-    call s:mapMask.UnmapAll()
+    call b:mapSaver.UnmapAll()
+    call b:mapLiteral.Literalize()
+    call b:mapMask.UnmapAll()
 
 
 
@@ -3197,13 +3204,12 @@ fun! s:ApplyMap() " {{{
 endfunction " }}}
 
 fun! s:ClearMap() " {{{
-    let x = g:XPTobject()
 
     call SettingPop( '&l:textwidth' )
 
-    call s:mapMask.Restore()
-    call s:mapLiteral.Restore()
-    call s:mapSaver.Restore()
+    call b:mapMask.Restore()
+    call b:mapLiteral.Restore()
+    call b:mapSaver.Restore()
 
 endfunction " }}}
 
@@ -3312,6 +3318,8 @@ fun! g:XPTobject() "{{{
 
         " TODO is this the right place to do that?
         call XPMsetBufSortFunction( function( 'XPTmarkCompare' ) )
+
+        call s:XPTinit()
     endif
     return b:xptemplateData
 endfunction "}}}
@@ -3700,7 +3708,7 @@ fun! s:XPTtrackFollowingSpace() "{{{
 endfunction "}}}
 
 fun! s:GetContextFT() "{{{
-    if exists( '*b:XPTfiletypeDetect' )
+    if exists( 'b:XPTfiletypeDetect' )
         return b:XPTfiletypeDetect()
     elseif &filetype == ''
         return '**'
@@ -3711,7 +3719,7 @@ endfunction "}}}
 
 fun! s:GetContextFTObj() "{{{
     let x = XPTbufData()
-    return x.filetypes[ s:GetContextFT() ]
+    return get( x.filetypes, s:GetContextFT(), {} )
 endfunction "}}}
 
 augroup XPT "{{{
@@ -3771,7 +3779,6 @@ call <SID>Link('TmplRange GetRangeBetween TextBetween GetStaticRange LeftPos')
 com! XPTreload call XPTreload()
 com! XPTcrash call <SID>Crash()
 
-call s:XPTinit()
 
 
 fun! String( d, ... )
@@ -3784,5 +3791,6 @@ fun! String( d, ... )
 
 endfunction
 
+let &cpo = s:oldcpo
 
 " vim: set sw=4 sts=4 :

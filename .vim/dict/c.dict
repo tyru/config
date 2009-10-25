@@ -27,8 +27,7 @@ break
 case
 char
 const
-continue
-default
+continue default
 do
 double
 else
@@ -250,7 +249,9 @@ setbuf
 setjmp
 setlocale
 setvbuf
+siglongjmp
 signal
+sigsetjmp
 sin
 sinh
 sprintf

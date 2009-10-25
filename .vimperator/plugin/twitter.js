@@ -22,7 +22,7 @@ let PLUGIN_INFO =
 <VimperatorPlugin>
 <name>{NAME}</name>
 <description>The script allows you to update Twitter status from Vimperator</description>
-<version>1.0.1</version>
+<version>1.2.0</version>
 <updateURL>http://svn.coderepos.org/share/lang/javascript/vimperator-plugins/trunk/twitter.js</updateURL>
 <author>Trapezoid</author>
 <license>Creative Commons</license>
@@ -46,7 +46,12 @@ let PLUGIN_INFO =
 ]]></detail>
 </VimperatorPlugin>;
 
-(function(){
+liberator.modules.twitter = (function(){
+    var statuses = null;
+    var expiredStatus = false;
+    var autoStatusUpdate = !!parseInt(liberator.globalVariables.twitter_auto_status_update || 0);
+    var statusValidDuration = parseInt(liberator.globalVariables.twitter_status_valid_duration || 90);
+    var statusRefreshTimer;
     var passwordManager = Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
     var evalFunc = window.eval;
     try {
@@ -80,10 +85,19 @@ let PLUGIN_INFO =
         return result.singleNodeValue ? result.singleNodeValue : null;
     }
     function sayTwitter(username, password, stat){
+        var sendData = '';
+        if (stat.match(/^(.*)@([^\s#]+)(?:#(\d+))(.*)$/)){
+            var [replyUser, replyID] = [RegExp.$2, RegExp.$3];
+            stat = RegExp.$1 + "@" + replyUser + RegExp.$4;
+            sendData = "status=" + encodeURIComponent(stat) + "&in_reply_to_status_id=" + replyID;
+        } else {
+            sendData = "status=" + encodeURIComponent(stat);
+        }
+        sendData += "&source=Vimperator";
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "https://twitter.com/statuses/update.json", false, username, password);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.send("status=" + encodeURIComponent(stat) + "&source=Vimperator");
+        xhr.send(sendData);
         liberator.echo("[Twitter] Your post " + '"' + stat + '" (' + stat.length + " characters) was sent. " );
     }
     function favTwitter(username, password, user){
@@ -104,7 +118,7 @@ let PLUGIN_INFO =
         var xhr = new XMLHttpRequest();
         xhr.open("GET", "https://twitter.com/statuses/mentions.json", false, username, password);
         xhr.send(null);
-        var statuses = evalFunc(xhr.responseText);
+        statuses = evalFunc(xhr.responseText);
 
         var html = <style type="text/css"><![CDATA[
             span.twitter.entry-content a { text-decoration: none; }
@@ -126,15 +140,40 @@ let PLUGIN_INFO =
         //liberator.log(html);
         liberator.echo(html, true);
     }
-    function showFollowersStatus(username, password, target){
+    function getFollowersStatus(username, password, target, onComplete){
         // for debug
         //target = "otsune"
+        function setRefresher(){
+            expiredStatus = false;
+            if (statusRefreshTimer)
+                clearTimeout(statusRefreshTimer);
+            statusRefreshTimer = setTimeout(function () expiredStatus = true, statusValidDuration * 1000);
+        }
+
         var xhr = new XMLHttpRequest();
         var endPoint = target ? "https://twitter.com/statuses/user_timeline/" + target + ".json"
             : "https://twitter.com/statuses/friends_timeline.json";
-        xhr.open("GET", endPoint, false, username, password);
+        xhr.open("GET", endPoint, onComplete, username, password);
+        liberator.log('get!');
+        if (onComplete) {
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    liberator.log('got!');
+                    setRefresher();
+                    onComplete(statuses = evalFunc(xhr.responseText) || []);
+                }
+            }
+        }
         xhr.send(null);
-        var statuses = evalFunc(xhr.responseText) || [];
+        if (onComplete)
+            return;
+        setRefresher();
+        statuses = evalFunc(xhr.responseText) || [];
+    }
+    function showFollowersStatus(username, password, target){
+        // for debug
+        //target = "otsune"
+        getFollowersStatus.apply(null, arguments);
 
         var html = <style type="text/css"><![CDATA[
             span.twitter.entry-content a { text-decoration: none; }
@@ -156,7 +195,7 @@ let PLUGIN_INFO =
         //liberator.log(html);
         liberator.echo(html, true);
     }
-    function detectLink(str) {
+    function detectLink(str){
         let m = str.match(/https?:\/\/\S+/);
         if (m) {
             let left = str.substr(0, m.index);
@@ -165,6 +204,19 @@ let PLUGIN_INFO =
             return <>{detectLink(left)}<a highlight="URL" href={url}> {url} </a>{detectLink(right)}</>;
         }
         return str;
+    }
+    function getAccount(){
+        try {
+            var logins = passwordManager.findLogins({}, "http://twitter.com", "https://twitter.com", null);
+            if (logins.length)
+                return [logins[0].username, logins[0].password];
+            else
+                throw "Twitter: account not found";
+        }
+        catch (ex){
+            liberator.echoerr(ex);
+        }
+
     }
     function showTwitterSearchResult(word){
         var xhr = new XMLHttpRequest();
@@ -195,19 +247,7 @@ let PLUGIN_INFO =
     liberator.modules.commands.addUserCommand(["twitter"], "Change Twitter status",
         function(arg){
             var special = arg.bang;
-            var password;
-            var username;
-            try {
-                var logins = passwordManager.findLogins({}, "http://twitter.com", "https://twitter.com", null);
-                if (logins.length)
-                    [username, password] = [logins[0].username, logins[0].password];
-                else
-                    throw "Twitter: account not found";
-            }
-            catch (ex){
-                liberator.echoerr(ex);
-            }
-
+            var [username, password] = getAccount();
             arg = arg.string.replace(/%URL%/g, liberator.modules.buffer.URL)
                 .replace(/%TITLE%/g, liberator.modules.buffer.title);
 
@@ -229,8 +269,55 @@ let PLUGIN_INFO =
                 sayTwitter(username, password, arg);
         },{
             bang: true,
-            literal: 0
-        }
+            literal: 0,
+            completer: let (getting, targetContext) function(context, args){
+                function compl(){
+                    if (args.bang){
+                        targetContext.title = ["Name","Entry"];
+                        list = statuses.map(function(s) ["@" + s.user.screen_name, s.text]);
+                    } else if (/RT\s+@\w*$/.test(args[0])){
+                        targetContext.title = ["Name + Text"];
+                        list = statuses.map(function(s) ["@" + s.user.screen_name + ": " + s.text, "-"]);
+                    } else {
+                        targetContext.title = ["Name#ID","Entry"];
+                        list = statuses.map(function(s) ["@" + s.user.screen_name+ "#" + s.id + " ", s.text]);
+                    }
+
+                    if (target){
+                        list = list.filter(function($_) $_[0].indexOf(target) >= 0);
+                    }
+                    targetContext.completions = list;
+                    targetContext.incomplete = false;
+                    targetContext = getting = null;
+                }
+
+                var matches= context.filter.match(/@(\w*)$/);
+                if (!matches) return;
+                var list = [];
+                var target = matches[1];
+                var doGet = (expiredStatus || !(statuses && statuses.length)) && autoStatusUpdate;
+                context.offset += matches.index;
+                context.incomplete = doGet;
+                context.hasitems = !doGet;
+                targetContext = context;
+                if (doGet) {
+                    if (!getting) {
+                        getting = true;
+                        var [username, password] = getAccount();
+                        getFollowersStatus(username, password, null, compl);
+                    }
+                } else {
+                    compl();
+                }
+            }
+        },
+        true
     );
+    let self = {
+        get statuses(){
+            return statuses;
+        },
+    };
+    return self;
 })();
 // vim:sw=4 ts=4 et:
