@@ -1012,6 +1012,10 @@ inoremap <C-l>  <Space><BS><C-o><C-l>
 
 " delete in parenthesis
 inoremap <C-z>                <C-o>di(
+
+" omni
+inoremap <C-w><C-n>     <C-x><C-n>
+inoremap <C-w><C-p>     <C-x><C-p>
 " }}}
 
 " ~~ c ~~ {{{

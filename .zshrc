@@ -6,6 +6,8 @@ bindkey -e
 autoload -U compinit
 compinit -u
 
+
+
 ### promptinit ###
 if [ $UID != 0 ]; then
     autoload promptinit
@@ -14,11 +16,21 @@ if [ $UID != 0 ]; then
     # prompt elite2
 fi
 
-### colorize ###
-export LS_COLORS='di=36:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
+
+
+### color ###
+# ${fg[...]} や $reset_color をロード
+autoload -U colors; colors
+
+
+
+### completion ###
+
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # ignore alphabet case when completion,
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+
 
 ### search history ###
 autoload history-search-end
@@ -26,17 +38,24 @@ zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
-bindkey "^R" history-incremental-search-backward
-# no response when pressed in command line and vim
-# bindkey "^S" history-incremental-search-forward
+
+bindkey "^I" menu-complete
+
+
 
 ### setopt ###
+
+# http://journal.mycom.co.jp/column/zsh/index.html
+# http://www.crimson-snow.net/tips/unix/zsh.html
+
 setopt always_last_prompt
 setopt auto_menu
 setopt auto_name_dirs
 setopt auto_param_keys
+setopt auto_param_slash
 setopt auto_pushd
 setopt auto_remove_slash
+setopt mark_dirs
 setopt cdable_vars
 setopt correct
 setopt extended_glob
@@ -47,17 +66,27 @@ setopt interactive_comments
 setopt list_packed
 setopt list_types
 setopt magic_equal_subst
+setopt complete_in_word
 setopt print_eight_bit
 setopt prompt_subst
 setopt pushd_ignore_dups
 setopt rm_star_silent
 setopt sh_word_split
 setopt share_history
-unsetopt auto_cd
+
 unsetopt beep
 unsetopt listbeep
-unsetopt print_exit_value
-unsetopt promptcr
+
+setopt notify
+
+setopt rm_star_wait
+#setopt rm_star_silent
+setopt no_clobber
+#setopt no_clobber
+
+# setopt auto_cd
+# setopt print_exit_value
+# setopt promptcr
 
 
 
@@ -84,8 +113,18 @@ else
 fi
 
 
+
+
 ### misc ###
 
+# via http://d.hatena.ne.jp/hiboma/20061005/1160026514
+# カレントディレクトリが変わると実行される
+chpwd () { ls }
+
+
+
+
+# via http://homepage1.nifty.com/blankspace/zsh/zsh.html
 typeset -A myabbrev
 myabbrev=(
     "l@" "| less"
@@ -95,7 +134,6 @@ myabbrev=(
     "e@" "2>&1"
     "h@" "--help 2>&1"
 )
-
 my-expand-abbrev() {
     local left prefix
     left=$(echo -nE "$LBUFFER" | sed -e "s/[@_a-zA-Z0-9]*$//")
@@ -103,34 +141,15 @@ my-expand-abbrev() {
     LBUFFER=$left${myabbrev[$prefix]:-$prefix}" "
 }
 zle -N my-expand-abbrev
-
 bindkey     " "         my-expand-abbrev
 
-
-
-
-# via http://blog.s21g.com/articles/602
-_git-svn () {
-    `git-svn --help \
-    | grep "^ \w" \
-    | sed "s/^ //" \
-    | sed "s/ .*//" \
-    | sed 's/^/ compadd /'`
-}
-compdef _git-svn git-svn 
-
-# カレントディレクトリが変わると実行される
-chpwd () { ls }
 
 
 
 ### gitのブランチ名を右プロンプトに表示
 # via http://d.hatena.ne.jp/uasi/20091017/1255712789
 
-# ${fg[...]} や $reset_color をロード
-autoload -U colors; colors
-
-function rprompt-git-current-branch {
+rprompt-git-current-branch () {
     local name st color
     if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
         return
@@ -159,6 +178,27 @@ function rprompt-git-current-branch {
 setopt prompt_subst
 
 RPROMPT='`rprompt-git-current-branch`'
+
+
+
+
+
+# via http://d.hatena.ne.jp/voidy21/20090902/1251918174
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
+zstyle ':completion:*:messages' format $fg[yellow]'%d'$reset_color
+zstyle ':completion:*:warnings' format $fg[red]'No matches for:'$fg[yellow]' %d'$reset_color
+zstyle ':completion:*:descriptions' format $fg[yellow]'completing %B%d%b'$reset_color
+zstyle ':completion:*:corrections' format $fg[yellow]'%B%d '$fg[red]'(errors: %e)%b'$reset_color
+zstyle ':completion:*:options' description 'yes'
+# グループ名に空文字列を指定すると，マッチ対象のタグ名がグループ名に使われる。
+# したがって，すべての マッチ種別を別々に表示させたいなら以下のようにする
+zstyle ':completion:*' group-name ''
+
+# manの補完をセクション番号別に表示させる
+zstyle ':completion:*:manuals' separate-sections true
+
+
 
 
 

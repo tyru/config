@@ -13,10 +13,12 @@ __TIME__
 NOTREACHED
 FALLTHROUGH
 
+define
+defined
+endif
 ifdef
 ifndef
-define
-endif
+include
 
 _Bool
 _Complex
@@ -27,7 +29,8 @@ break
 case
 char
 const
-continue default
+continue
+default
 do
 double
 else
