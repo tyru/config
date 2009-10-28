@@ -1207,9 +1207,6 @@ endfunc
 " s:emulate_single_key {{{
 "   emulate QuickBuf.vim's single key mappings.
 func! s:emulate_single_key()
-    if s:dumbbuf_bufnr != bufnr('%') | return | endif
-    " if mode() !=# 'n'                | return | endif
-
     call s:debug(printf('s:mapstack [%s], s:mapstack_count [%d]', s:mapstack, s:mapstack_count))
 
     " NOTE: 'count' is same as 'v:count'. for Vi's compatibility.
@@ -1262,6 +1259,15 @@ endfunc
 
 " s:try_to_emulate_single_key {{{
 func! s:try_to_emulate_single_key()
+    if bufnr('%') != s:dumbbuf_bufnr
+        call s:restore_updatetime()
+        return
+    endif
+    " if mode() !=# 'n'
+    "     call s:restore_updatetime()
+    "     return
+    " endif
+
     try
         call s:emulate_single_key()
     catch
@@ -1281,9 +1287,9 @@ endfunc
 
 " autocmd's handlers {{{
 
-" s:bufleave_handler {{{
-func! s:bufleave_handler()
-    call s:debug("s:bufleave_handler()...")
+" s:restore_updatetime {{{
+func! s:restore_updatetime()
+    call s:debug("s:restore_updatetime()...")
 
     let &updatetime = s:orig_updatetime
     let s:mapstack  = ''
@@ -1316,7 +1322,7 @@ if g:dumbbuf_single_key
             " single key emulation.
             execute 'autocmd CursorHold '.i.' call feedkeys("\<Plug>dumbbuf_try_to_emulate_single_key", "m")'
             " restore &updatetime.
-            execute 'autocmd BufWipeout '.i.' call s:bufleave_handler()'
+            execute 'autocmd BufWipeout '.i.' call s:restore_updatetime()'
         endfor
     augroup END
 endif
