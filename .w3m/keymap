@@ -1,0 +1,9 @@
+keymap H BACK
+keymap L NEXT
+keymap r RELOAD
+keymap d CLOSE_TAB
+keymap o GOTO
+keymap t TAB_GOTO
+keymap C-n PREV_TAB
+keymap C-p NEXT_TAB
+keymap M-h HELP

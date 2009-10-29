@@ -892,20 +892,19 @@ nnoremap <silent> n     nzz
 nnoremap <silent> N     Nzz
 
 " add '\C' to the pattern
-nnoremap <silent> *     :call <SID>dont_ignore_case('*')<CR>
-nnoremap <silent> #     :call <SID>dont_ignore_case('#')<CR>
-nnoremap <silent> g*    :call <SID>dont_ignore_case('g*')<CR>
-nnoremap <silent> g#    :call <SID>dont_ignore_case('g#')<CR>
-func! s:dont_ignore_case(cmd)
-    let pos = getpos(".")
+for [s:pat, s:flags] in [['*', 's'], ['#', 'bs'], ['g*', 's'], ['g#', 'bs']]
+    execute printf("nnoremap <silent> %s :call <SID>dont_ignore_case(%s, %s)<CR>", s:pat, string(s:pat), string(s:flags))
+endfor
+nnoremap <silent> ;*    :call <SID>dont_ignore_case('*', 's')<CR>:vimgrep /<C-r>// %<CR>
 
+func! s:dont_ignore_case(cmd, flags)
+    let pos = getpos('.')
     execute 'normal! ' . a:cmd
     let @/ .= '\C'
+    call setpos('.', pos)
 
-    call setpos(".", pos)
-
-    execute 'normal! ' . a:cmd
-    set hlsearch
+    call search(@/, a:flags)
+    call feedkeys(":set hls\<CR>", 'n')
 endfunc
 
 " fix up all indents
@@ -968,12 +967,11 @@ nnoremap gh    :set hlsearch!<CR>
 
 " sync @* and @+
 " @* -> @+
-nnoremap ,*+    :let @+ = @*<CR>:echo printf('[%s]', @+)<CR>
+" nnoremap ,*+    :let @+ = @*<CR>:echo printf('[%s]', @+)<CR>
 " @+ -> @*
-nnoremap ,+*    :let @* = @+<CR>:echo printf('[%s]', @*)<CR>
+" nnoremap ,+*    :let @* = @+<CR>:echo printf('[%s]', @*)<CR>
 
 nnoremap ZZ <Nop>
-
 " }}}
 
 " ~~ o ~~ {{{

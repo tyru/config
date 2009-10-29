@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.6
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-10-17.
+" Last Change: 2009-10-28.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -375,6 +375,14 @@ let s:mappings.default = {
                 \'"prev_mode":"v", ' .
                 \'"pre":["return_if_empty"], ' .
                 \'"post":["save_lnum", "update_marks"]})<CR>'
+        \},
+        \'j': {
+            \'opt': '<silent>',
+            \'mapto': 'j',
+        \},
+        \'k': {
+            \'opt': '<silent>',
+            \'mapto': 'k',
         \},
     \},
     \'n': {

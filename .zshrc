@@ -39,7 +39,7 @@ zle -N history-beginning-search-forward-end history-search-end
 bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
 
-bindkey "^I" menu-complete
+# bindkey "^I" menu-complete
 
 
 
@@ -85,8 +85,8 @@ setopt no_clobber
 #setopt no_clobber
 
 # setopt auto_cd
-# setopt print_exit_value
 # setopt promptcr
+# setopt print_exit_value
 
 
 
