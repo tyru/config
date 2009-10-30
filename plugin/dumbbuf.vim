@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.6
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-10-28.
+" Last Change: 2009-10-30.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -292,6 +292,7 @@ let s:mappings = {'default': {}, 'user': {}}    " buffer local mappings.
 let s:mapstack_count = -1
 let s:mapstack = ''
 let s:orig_updatetime = &updatetime
+let s:orig_hl_cursorline = 0
 " }}}
 " Global Variables {{{
 if ! exists('g:dumbbuf_verbose')
@@ -343,6 +344,9 @@ if ! exists('g:dumbbuf_updatetime')
 endif
 if ! exists('g:dumbbuf_wrap_cursor')
     let g:dumbbuf_wrap_cursor = 1
+endif
+if ! exists('g:dumbbuf_hl_cursorline')
+    let g:dumbbuf_hl_cursorline = 'guibg=Red  guifg=White'
 endif
 
 
@@ -818,6 +822,16 @@ func! s:open_dumbbuf_buffer(shown_type)
         endfor
     endfor
 
+    " highlight
+    let hl_cursorline = s:get_highlight('CursorLine')
+    if type(s:orig_hl_cursorline) == type(0)
+        call s:debug(printf("save original CursorLine [%s]", hl_cursorline))
+        let s:orig_hl_cursorline = hl_cursorline
+    endif
+    if hl_cursorline !=# g:dumbbuf_hl_cursorline
+        call s:set_highlight('CursorLine', g:dumbbuf_hl_cursorline)
+    endif
+
     " updatetime
     " NOTE: updatetime is global option. so I must restore it later.
     let s:orig_updatetime = &updatetime
@@ -914,6 +928,23 @@ endfunc
 " s:get_prev_count {{{
 func! s:get_prev_count()
     return [line("'<"), line("'>")]
+endfunc
+" }}}
+
+
+" s:get_highlight {{{
+func! s:get_highlight(hl_name)
+    redir => output
+    silent execute 'hi ' . a:hl_name
+    redir END
+    return substitute(output, '.*\<XXX\>\s\+\(.*\)$', '\1', 'g')
+endfunc
+" }}}
+
+" s:set_highlight {{{
+func! s:set_highlight(hl_name, value)
+    call s:debug(printf("set highlight '%s' to '%s'.", a:hl_name, a:value))
+    execute printf('hi %s %s', a:hl_name, a:value)
 endfunc
 " }}}
 
@@ -1266,6 +1297,7 @@ endfunc
 " }}}
 
 " s:try_to_emulate_single_key {{{
+" XXX can't handle meta key sequence?
 func! s:try_to_emulate_single_key()
     if bufnr('%') != s:dumbbuf_bufnr
         call s:restore_updatetime()
@@ -1301,6 +1333,10 @@ func! s:restore_updatetime()
 
     let &updatetime = s:orig_updatetime
     let s:mapstack  = ''
+
+    if type(s:orig_hl_cursorline) != type(0)
+        call s:set_highlight('CursorLine', s:orig_hl_cursorline)
+    endif
 endfunc
 " }}}
 
