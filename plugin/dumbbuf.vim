@@ -941,7 +941,7 @@ func! s:get_highlight(hl_name)
     redir => output
     silent execute 'hi ' . a:hl_name
     redir END
-    return substitute(output, '.*\<XXX\>\s\+\(.*\)$', '\1', 'g')
+    return substitute(output, '\C' . '.*\<xxx\>\s\+\(.*\)$', '\1', 'g')
 endfunc
 " }}}
 
