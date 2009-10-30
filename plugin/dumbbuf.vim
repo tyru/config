@@ -826,6 +826,10 @@ func! s:open_dumbbuf_buffer(shown_type)
         endfor
     endfor
 
+    " NOTE:
+    " highlight group and updatetime are global settings.
+    " so I must restore it later (s:restore_options()).
+
     " highlight
     let hl_cursorline = s:get_highlight('CursorLine')
     if type(s:orig_hl_cursorline) == type(0)
@@ -837,7 +841,6 @@ func! s:open_dumbbuf_buffer(shown_type)
     endif
 
     " updatetime
-    " NOTE: updatetime is global option. so I must restore it later.
     let s:orig_updatetime = &updatetime
     let &updatetime = g:dumbbuf_updatetime
 endfunc
