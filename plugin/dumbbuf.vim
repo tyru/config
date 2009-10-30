@@ -216,34 +216,41 @@ scriptencoding utf-8
 "       recommended value is 1(minimum value of &updatetime).
 "       this default value is for only backward compatibility.
 "
+"   g:dumbbuf_hl_cursorline (default: "guibg=Red  guifg=White")
+"       local value of highlight 'CursorLine'.
+"
 "   g:dumbbuf_wrap_cursor (default: 1)
 "       wrap the cursor at the top or bottom of dumbbuf buffer.
 "
-"   g:dumbbuf_disp_expr (default: see the definition)
-"       this variable is for the experienced users.
 "
-"       'v:val' has buffer's info.
-"       NOTE: 'val' does NOT work now.
 "
-"   g:dumbbuf_options (default: see the definition)
-"       this variable is for the experienced users.
-"       dumbbuf buffer will be set up with these options.
+"   For The Experienced User: {{{
+"       g:dumbbuf_disp_expr (default: see the definition)
+"           this variable is for the experienced users.
 "
-"   g:dumbbuf_mappings (default: see the definition)
-"       this variable is for the experienced users.
-"       these settings will override default value.
+"           'v:val' has buffer's info.
+"           NOTE: 'val' does NOT work now.
 "
-"       e.g.:
-"       if your .vimrc setting is
+"       g:dumbbuf_options (default: see the definition)
+"           this variable is for the experienced users.
+"           dumbbuf buffer will be set up with these options.
 "
-"         let g:dumbbuf_mappings = {
-"             \'n': {
-"                 '<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
+"       g:dumbbuf_mappings (default: see the definition)
+"           this variable is for the experienced users.
+"           these settings will override default value.
+"
+"           e.g.:
+"           if your .vimrc setting is
+"
+"             let g:dumbbuf_mappings = {
+"                 \'n': {
+"                     '<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
+"                 \}
 "             \}
-"         \}
 "
-"       you can type <Esc> to close dumbbuf buffer.
-"       no influences for other default mappings.
+"           you can type <Esc> to close dumbbuf buffer.
+"           no influences for other default mappings.
+"   }}}
 " }}}
 "
 "
