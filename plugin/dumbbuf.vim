@@ -256,9 +256,6 @@ scriptencoding utf-8
 "
 " TODO: {{{
 "   - manipulate buffers each project.
-"   - user-defined mapping
-"   - highlight current line.
-"   (it's hard to make out in terminal, if only :setlocal cursorline)
 " }}}
 "==================================================
 " }}}
