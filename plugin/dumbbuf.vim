@@ -296,7 +296,9 @@ let s:mappings = {'default': {}, 'user': {}}    " buffer local mappings.
 let s:mapstack_count = -1
 let s:mapstack = ''
 let s:orig_updatetime = &updatetime
+
 let s:orig_hl_cursorline = 0
+let s:now_processing = 0
 " }}}
 " Global Variables {{{
 if ! exists('g:dumbbuf_verbose')
@@ -352,6 +354,9 @@ endif
 if ! exists('g:dumbbuf_hl_cursorline')
     let g:dumbbuf_hl_cursorline = 'guibg=Red  guifg=White'
 endif
+if ! exists('g:dumbbuf_remove_marked_when_close')
+    let g:dumbbuf_remove_marked_when_close = 0
+endif
 
 
 if ! exists('g:dumbbuf_disp_expr')
@@ -373,6 +378,7 @@ if exists('g:dumbbuf_mappings')
     let s:mappings.user = g:dumbbuf_mappings
     unlet g:dumbbuf_mappings
 endif
+" TODO clean up
 let s:mappings.default = {
     \'v': {
         \'x': {
@@ -960,6 +966,7 @@ endfunc
 
 " s:run_from_local_map {{{
 func! s:run_from_local_map(code, opt)
+    let s:now_processing = 1
     let opt = extend(
                 \deepcopy(a:opt),
                 \{"process_marked":0, "prev_mode":"n", "pre":[], "post":[]},
@@ -1026,6 +1033,9 @@ func! s:run_from_local_map(code, opt)
 
     " catch    " NOTE: this traps also unknown other plugin's error...
     "     echoerr printf("internal error: '%s' in '%s'", v:exception, v:throwpoint)
+
+    finally
+        let s:now_processing = 0
 
     endtry
 endfunc
@@ -1338,11 +1348,19 @@ endfunc
 func! s:restore_options()
     call s:debug("s:restore_options()...")
 
-    let &updatetime = s:orig_updatetime
-    let s:mapstack  = ''
+    " restore ...
 
+    " s:mapstack
+    let s:mapstack  = ''
+    " &updatetime
+    let &updatetime = s:orig_updatetime
+    " highlight 'CursorLine'
     if type(s:orig_hl_cursorline) != type(0)
         call s:set_highlight('CursorLine', s:orig_hl_cursorline)
+    endif
+    " remove all marked buffers if g:dumbbuf_remove_marked_when_close
+    if g:dumbbuf_remove_marked_when_close && ! s:now_processing
+        let s:marked_bufs = {}
     endif
 endfunc
 " }}}
