@@ -182,6 +182,12 @@ scriptencoding utf-8
 "   g:dumbbuf_close_when_exec (default: 0)
 "       if true, close when execute local mapping from dumbbuf buffer.
 "
+"   g:dumbbuf_remove_marked_when_close (default: 0)
+"       remove all marked buffers on closing dumbbuf buffer.
+"       this default value is for only backward compatibility.
+"       (if I could fix this variable name...
+"        'dumbbuf_close_when_exec' => 'dumbbuf_close_on_exec')
+"
 "   g:dumbbuf_downward (default: 1)
 "       if true, go downwardly when 'uu' mapping.
 "       if false, go upwardly.
