@@ -1245,11 +1245,17 @@ func! s:buflocal_open_onebyone(opt)
     " go to previous lnum.
     execute a:opt.lnum
 
-    if g:dumbbuf_downward
-        call s:buflocal_move_lower()
-    else
-        call s:buflocal_move_upper()
-    endif
+    let save_wrap_cursor = g:dumbbuf_wrap_cursor
+    let g:dumbbuf_wrap_cursor = 1
+    try
+        if g:dumbbuf_downward
+            call s:buflocal_move_lower()
+        else
+            call s:buflocal_move_upper()
+        endif
+    finally
+        let g:dumbbuf_wrap_cursor = save_wrap_cursor
+    endtry
 endfunc
 " }}}
 
