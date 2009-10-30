@@ -1300,11 +1300,11 @@ endfunc
 " XXX can't handle meta key sequence?
 func! s:try_to_emulate_single_key()
     if bufnr('%') != s:dumbbuf_bufnr
-        call s:restore_updatetime()
+        call s:restore_options()
         return
     endif
     " if mode() !=# 'n'
-    "     call s:restore_updatetime()
+    "     call s:restore_options()
     "     return
     " endif
 
@@ -1327,9 +1327,9 @@ endfunc
 
 " autocmd's handlers {{{
 
-" s:restore_updatetime {{{
-func! s:restore_updatetime()
-    call s:debug("s:restore_updatetime()...")
+" s:restore_options {{{
+func! s:restore_options()
+    call s:debug("s:restore_options()...")
 
     let &updatetime = s:orig_updatetime
     let s:mapstack  = ''
@@ -1366,7 +1366,7 @@ if g:dumbbuf_single_key
             " single key emulation.
             execute 'autocmd CursorHold '.i.' call feedkeys("\<Plug>dumbbuf_try_to_emulate_single_key", "m")'
             " restore &updatetime.
-            execute 'autocmd BufWipeout '.i.' call s:restore_updatetime()'
+            execute 'autocmd BufWipeout '.i.' call s:restore_options()'
         endfor
     augroup END
 endif
