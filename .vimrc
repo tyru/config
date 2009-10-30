@@ -661,7 +661,7 @@ augroup MyVimrc
     autocmd BufReadPost * call s:AU_ReCheck_FENC()
 
     " colorscheme (on windows, setting colorscheme in .vimrc does not work)
-    autocmd VimEnter * colorscheme chocolate
+    autocmd VimEnter * set bg=dark | colorscheme desert
 
     " open on read-only if swap exists
     autocmd SwapExists * let v:swapchoice = 'o'
@@ -1118,8 +1118,10 @@ let dumbbuf_mappings = {
         \'<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
     \}
 \}
-let dumbbuf_single_key = 1
-let dumbbuf_updatetime = 1    " mininum value of updatetime.
+let dumbbuf_single_key  = 1
+let dumbbuf_updatetime  = 1    " mininum value of updatetime.
+let dumbbuf_wrap_cursor = 0
+let dumbbuf_remove_marked_when_close = 1
 
 
 " let dumbbuf_cursor_pos = 'keep'
@@ -1217,40 +1219,35 @@ let changelog_username = "tyru"
 
 " gtags {{{
 
-let loaded_gtags = 1
+" let loaded_gtags = 1
 
-" let s:gtags_found = 0
-" 
-" func! s:JumpTags()
-"     if expand('%') == '' | return | endif
-" 
-"     if exists(':GtagsCursor')
-"         " next C-]
-"         echo "gtags.vim is not installed. do default <C-]>..."
-"         sleep 2
-"         nunmap <C-]>
-"         execute "normal! \<C-]>"
-"         return
-"     endif
-" 
-"     let gtags = expand('%:h') . '/GTAGS'
-"     if filereadable(gtags)
-"         if ! s:gtags_found
-"             " if gtags found, echo this message at only first time.
-"             echo "found GTAGS. use gtags for jumping..."
-"             sleep 2
-"             let s:gtags_found = 1
-"         endif
-"         lcd %:p:h
-"         GtagsCursor
-"         lcd -
-"     else
-"         execute "normal! \<C-]>"
-"     endif
-" endfunc
-" 
-" nnoremap <silent> g<C-i>    :Gtags -f %<CR>
-" nnoremap <silent> <C-]>    :call <SID>JumpTags()<CR>
+func! s:JumpTags()
+    if expand('%') == '' | return | endif
+
+    if exists(':GtagsCursor')
+        echo "gtags.vim is not installed. do default <C-]>..."
+        sleep 2
+        " unmap this function.
+        " use plain <C-]> next time.
+        nunmap <C-]>
+        execute "normal! \<C-]>"
+        return
+    endif
+
+    let gtags = expand('%:h') . '/GTAGS'
+    if filereadable(gtags)
+        " use gtags if found GTAGS.
+        lcd %:p:h
+        GtagsCursor
+        lcd -
+    else
+        " or use ctags.
+        execute "normal! \<C-]>"
+    endif
+endfunc
+
+nnoremap <silent> g<C-i>    :Gtags -f %<CR>
+nnoremap <silent> <C-]>    :call <SID>JumpTags()<CR>
 " }}}
 
 " xptemplate
@@ -1258,6 +1255,22 @@ let xptemplate_key = '<C-t>'
 
 " operator-replace
 map ,r  <Plug>(operator-replace)
+
+" git.vim
+let g:git_no_map_default = 1
+let g:git_command_edit = 'rightbelow vnew'
+" let g:git_bufhidden = 'wipe'
+nnoremap <Leader>gd :<C-u>GitDiff<Enter>
+nnoremap <Leader>gD :<C-u>GitDiff --cached<Enter>
+nnoremap <Leader>gs :<C-u>GitStatus<Enter>
+nnoremap <Leader>gl :<C-u>GitLog<Enter>
+nnoremap <Leader>gL :<C-u>GitLog -p<Enter>
+" nnoremap <Leader>ga :<C-u>GitAdd<Enter>
+" nnoremap <Leader>gA :<C-u>GitAdd <cfile><Enter>
+" nnoremap <Leader>gc :<C-u>GitCommit<Enter>
+" nnoremap <Leader>gC :<C-u>GitCommit --amend<Enter>
+" nnoremap <Leader>gp :<C-u>Git push
+
 
 " }}}
 

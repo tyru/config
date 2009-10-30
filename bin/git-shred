@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+# Delete specified file from all commit log.
+
+progname=`basename $0`
+usage () {
+    cat <<EOM
+Usage: $progname <file>
+EOM
+    exit 1
+}
+
+
+if [ $# != 1 ]; then usage; fi
+command git filter-branch \
+    -f --index-filter \
+    "git update-index --remove '$1'" HEAD
