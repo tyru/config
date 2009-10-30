@@ -65,17 +65,17 @@ scriptencoding utf-8
 "
 " My .vimrc: {{{
 "   let dumbbuf_hotkey = '<Leader>b'
-"
 "   " sometimes I put <Esc> to close dumbbuf buffer,
 "   " which was mapped to close QuickBuf's list :)
 "   let dumbbuf_mappings = {
-"       'n': {
-"           '<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
+"       \'n': {
+"           \'<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
 "       \}
 "   \}
-"
-"   let dumbbuf_single_key = 1
-"   let g:dumbbuf_updatetime = 1    " mininum value of updatetime.
+"   let dumbbuf_single_key  = 1
+"   let dumbbuf_updatetime  = 1    " mininum value of updatetime.
+"   let dumbbuf_wrap_cursor = 0
+"   let dumbbuf_remove_marked_when_close = 1
 " }}}
 "
 " Mappings: {{{
@@ -253,7 +253,7 @@ scriptencoding utf-8
 "
 "             let g:dumbbuf_mappings = {
 "                 \'n': {
-"                     '<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
+"                     \'<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
 "                 \}
 "             \}
 "
