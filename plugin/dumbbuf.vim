@@ -52,9 +52,12 @@ scriptencoding utf-8
 "         g:dumbbuf_cursor_pos.
 "       - implement 'mark' of buffers. mapping is 'xx'.
 "   0.0.7:
-"       - add option g:dumbbuf_single_key_echo_stack.
-"       - fix some bugs and do some optimizations.
-"       - change g:dumbbuf_disp_expr's description.
+"       - highlight support
+"       - add option g:dumbbuf_single_key_echo_stack,
+"         g:dumbbuf_hl_cursorline,
+"         g:dumbbuf_remove_marked_when_close.
+"       - change g:dumbbuf_disp_expr's spec.
+"       - fix minor bugs and do some optimizations.
 "       - replace the words 'select' to 'mark' in document and source code.
 "         I would use 'select' for only visual mode's region.
 " }}}
