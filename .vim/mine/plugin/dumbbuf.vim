@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.7
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-10-30.
+" Last Change: 2009-11-01.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -269,6 +269,7 @@ scriptencoding utf-8
 "     if operator-user.vim was installed.
 "   - :hide
 "   - option which decides the order of buffer's list.
+"   - support <Plug>... mapping as hotkey.
 " }}}
 "==================================================
 " }}}

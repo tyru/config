@@ -1,7 +1,5 @@
 let mapleader = ','
-so $HOME/.vimperatorrc.local
-
-colorscheme vimplight
+source $HOME/.vimperatorrc.local
 
 "-----------------------------------------------------------------
 " set! {{{
@@ -69,7 +67,7 @@ EOF
 set activate=
 set complete=sfl
 " set focuscontent
-set guioptions=nbr
+" set guioptions=nbr
 set hlsearch
 set ignorecase
 set incsearch

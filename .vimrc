@@ -1,8 +1,7 @@
+" vim:set fen fdm=marker:
 scriptencoding utf-8
-
 let s:save_cpo = &cpo
 set cpo&vim
-
 "-----------------------------------------------------------------
 " Util Functions {{{
 " s:warn {{{
@@ -12,21 +11,18 @@ func! s:warn(msg)
     echohl None
 endfunc
 " }}}
-
 " s:system {{{
 func! s:system(command, ...)
     let args = [a:command] + map(copy(a:000), 'shellescape(v:val)')
     return system(join(args, ' '))
 endfunc
 " }}}
-
 " s:EvalFileNormal(eval_main) {{{
 func! s:EvalFileNormal(eval_main)
     normal! %v%
     call s:EvalFileVisual(a:eval_main)
 endfunc
 " }}}
-
 " s:EvalFileVisual(eval_main) {{{
 func! s:EvalFileVisual(eval_main) range
     let z_val = getreg('z', 1)
@@ -66,7 +62,6 @@ endfunc
 " }}}
 "-----------------------------------------------------------------
 " basic settings (bundled with kaoriya vim's .vimrc & etc.) {{{
-
 " set options {{{
 set autoindent
 set autoread
@@ -214,7 +209,6 @@ for dir in s:runtime_dirs
 endfor
 unlet s:runtime_dirs
 " }}}
-
 " delete old files in ~/.vim/backup {{{
 func! s:DeleteBackUp()
     if has('win32')
@@ -253,7 +247,6 @@ endfunc
 call s:DeleteBackUp()
 delfunc s:DeleteBackUp
 " }}}
-
 " japanese encodings {{{
 if &encoding !=# 'utf-8'
     set encoding=japan
@@ -306,7 +299,6 @@ if exists('&ambiwidth')
     set ambiwidth=double
 endif
 " }}}
-
 " support of colors in terminal (unix only) {{{
 if has('unix') && !has('gui_running')
     let uname = system('uname')
@@ -321,14 +313,12 @@ if has('unix') && !has('gui_running')
     endif
 endif
 " }}}
-
 " when $DISPLAY is set and vim runs under terminal, vim's start-up will be very slow {{{
 if !has('gui_running') && has('xterm_clipboard')
     set clipboard=exclude:cons\\\|linux\\\|cygwin\\\|rxvt\\\|screen
 endif
 let did_install_default_menus = 1
 " }}}
-
 " " WinではPATHに$VIMが含まれていないときにexeを見つけ出せないので修正 {{{
 " if has('win32') && $PATH !~? '\(^\|;\)' . escape($VIM, '\\') . '\(;\|$\)'
 "     let $PATH = $VIM . ';' . $PATH
@@ -338,7 +328,6 @@ let did_install_default_menus = 1
 "     set iskeyword=@,48-57,_,128-167,224-235
 " endif
 " }}}
-
 " about japanese input method {{{
 if has('multi_byte_ime') || has('xim')
   " IME ON時のカーソルの色を設定(設定例:紫)
@@ -354,11 +343,9 @@ if has('multi_byte_ime') || has('xim')
   "inoremap <silent> <ESC> <ESC>:set iminsert=0<CR>
 endif
 " }}}
-
 " }}}
 "-----------------------------------------------------------------
 " Commands {{{
-
 " HelpTagAll {{{
 "   do :helptags to all doc/ in &runtimepath
 command! HelpTagAll
@@ -374,7 +361,6 @@ func! s:HelpTagAll()
     endfor
 endfunc
 " }}}
-
 " MTest {{{
 "   convert Perl's regex to Vim's regex
 command! -nargs=? MTest
@@ -397,7 +383,6 @@ func! s:MTest( ... )
     echo @"
 endfunc
 " }}}
-
 " Open {{{
 command! -nargs=? -complete=dir Open
             \ call s:Open( <f-args> )
@@ -420,7 +405,6 @@ func! s:Open( ... )
     endif
 endfunc
 " }}}
-
 " commands related to specific environments {{{
 if has('gui_running')
     if has( 'win32' )
@@ -431,7 +415,6 @@ if has('gui_running')
     endif
 endif
 " }}}
-
 " s:ListAndExecute() {{{
 func! s:ListAndExecute( lis, template )
     " display the list
@@ -468,7 +451,6 @@ func! s:ListAndExecute( lis, template )
     return a:lis[num - 1]
 endfunc
 " }}}
-
 " s:ListChars() {{{
 command! ListChars
             \ call s:ListAndExecute([
@@ -478,7 +460,6 @@ command! ListChars
                 \],
                 \'set listchars=%embed%')
 " }}}
-
 " FastEdit {{{
 "   this is useful when Vim is very slow?
 "   currently just toggling syntax highlight.
@@ -509,7 +490,6 @@ func! s:FastEdit()
     endif
 endfunc
 " }}}
-
 " DelFile {{{
 command! -complete=file -nargs=+ DelFile
             \ call s:DelFile(<f-args>)
@@ -535,7 +515,6 @@ func! s:DelFile(...)
     endfor
 endfunc
 " }}}
-
 " TabChange {{{
 command! -nargs=1 TabChange
             \ call s:TabChange( <f-args> )
@@ -547,7 +526,6 @@ func! s:TabChange( width )
     endif
 endfunc
 " }}}
-
 " Mkdir {{{
 func! s:Mkdir(...)
     for i in a:000 | call mkdir(i, 'p') | endfor
@@ -555,7 +533,6 @@ endfunc
 command! -nargs=+ -complete=dir Mkdir
             \ call s:Mkdir(<f-args>)
 " }}}
-
 " s:GccSyntaxCheck(...) {{{
 func! s:GccSyntaxCheck(...)
     if expand('%') ==# '' | return | endif
@@ -590,11 +567,9 @@ endfunc
 command! -nargs=* GccSyntaxCheck
             \ call s:GccSyntaxCheck(<f-args>)
 " }}}
-
 " }}}
 "-----------------------------------------------------------------
 " Encoding {{{
-
 set fencs-=iso-2022-jp-3
 set fencs+=iso-2022-jp,iso-2022-jp-3
 
@@ -650,7 +625,6 @@ func! <SID>ChangeNL()
 endfunc
 nnoremap <silent> <F4>    :call <SID>ChangeNL()<CR>
 " }}}
-
 " }}}
 "-----------------------------------------------------------------
 " AutoCommand {{{
@@ -722,7 +696,6 @@ augroup END
 " }}}
 "-----------------------------------------------------------------
 " FileType {{{
-
 " ToggleFileType {{{
 command! ToggleFileType call s:ToggleFileType()
 
@@ -737,14 +710,12 @@ func! s:ToggleFileType()
     endif
 endfunc
 " }}}
-
 " s:SetDict {{{
 func! s:SetDict(...)
     execute "setlocal dict=" .
                 \join(map(copy(a:000), '"$HOME/.vim/dict/" . v:val . ".dict"'), ',')
 endfunc
 " }}}
-
 " s:LoadWhenFileType() {{{
 func! s:LoadWhenFileType()
     if ! s:load_filetype
@@ -752,17 +723,14 @@ func! s:LoadWhenFileType()
         return
     endif
 
-
-    call s:SetDict(&filetype)
-
-    " デフォルト(ftplugin/*.vimで用意されていない場合)のomnifunc
+    " default omnifunc value
     if exists("+omnifunc") && &omnifunc == ""
         setlocal omnifunc=syntaxcomplete#Complete
     endif
+    call s:SetDict(&filetype)
 
     if &filetype == 'actionscript'
         TabChange 4
-
     elseif &filetype == 'c' || &filetype == 'cpp'
         TabChange 4
         if &filetype == 'cpp'
@@ -771,32 +739,26 @@ func! s:LoadWhenFileType()
 
         setlocal makeprg&
         compiler gcc
-
     elseif &filetype == 'cs'
         TabChange 4
         compiler cs
-
     elseif &filetype == 'css'
         TabChange 2
-
     elseif &filetype == 'xml'
         TabChange 2
         inoremap <buffer>   </    </<C-x><C-o>
-
     elseif &filetype == 'html' || &filetype == 'javascript' || &filetype == 'css'
         TabChange 2
         if &filetype == 'html'
             call s:SetDict('html', 'javascript', 'css')
             inoremap <buffer>   </    </<C-x><C-o>
         endif
-
     elseif &filetype == 'java'
         TabChange 2
         " for javadoc
         setlocal iskeyword+=@-@
         setlocal makeprg=javac\ %
         compiler javac
-
     elseif &filetype == 'scala'
         TabChange 2
         " for javadoc
@@ -808,7 +770,6 @@ func! s:LoadWhenFileType()
         setlocal commentstring=//%s
         setlocal formatoptions-=t formatoptions+=croql
         call s:SetDict('java', 'scala')
-
     elseif &filetype == 'lisp' || &filetype == 'scheme'
         TabChange 2
 
@@ -836,7 +797,6 @@ func! s:LoadWhenFileType()
         setlocal lispwords+=with-input-conversion,with-input-from-port,with-input-from-process,with-input-from-string,with-iterator
         setlocal lispwords+=with-module,with-output-conversion,with-output-to-port,with-output-to-process,with-output-to-string
         setlocal lispwords+=with-port-locking,with-string-io,with-time-counter,with-signal-handlers 
-
     elseif &filetype == 'perl'
         TabChange 4
         " add perl's path.
@@ -857,22 +817,17 @@ func! s:LoadWhenFileType()
         nnoremap <buffer> []    :call search('^}$', 'bsW')<CR>
 
         compiler perl
-
     elseif &filetype == 'yaml'
         TabChange 2
-
     else
         TabChange 4
     endif
 endfunc
 " }}}
-
 " }}}
 "-----------------------------------------------------------------
 " Mappings or Abbreviation {{{
-
 " ~~ map ~~ {{{
-"
 noremap <silent> j          gj
 noremap <silent> k          gk
 
@@ -885,9 +840,7 @@ noremap <Leader>y     "+y
 noremap <silent> H  5h
 noremap <silent> L  5l
 " }}}
-
 " ~~ n ~~ {{{
-
 nnoremap <silent> n     nzz
 nnoremap <silent> N     Nzz
 
@@ -973,11 +926,9 @@ nnoremap gh    :set hlsearch!<CR>
 
 nnoremap ZZ <Nop>
 " }}}
-
 " ~~ o ~~ {{{
 " omapclear
 " }}}
-
 " -- map! -- {{{
 noremap! <C-f>   <Right>
 noremap! <C-b>   <Left>
@@ -1000,7 +951,6 @@ noremap! <M-}>         \{\}<Left><Left>
 noremap! <C-r><C-o>  <C-r><C-p>"
 noremap! <C-r><C-r>  <C-r><C-p>+
 " }}}
-
 " ~~ i ~~ {{{
 inoremap <S-CR>  <C-o>O
 inoremap <C-CR>  <C-o>o
@@ -1015,30 +965,23 @@ inoremap <C-z>                <C-o>di(
 inoremap <C-w><C-n>     <C-x><C-n>
 inoremap <C-w><C-p>     <C-x><C-p>
 " }}}
-
 " ~~ c ~~ {{{
 if &wildmenu
     cnoremap <C-f> <Space><BS><Right>
     cnoremap <C-b> <Space><BS><Left>
 endif
 " }}}
-
 " abbr {{{
-
 iabbrev <expr> date@      strftime("%Y-%m-%d")
 iabbrev <expr> time@      strftime("%H:%M")
 iabbrev <expr> datetime@  strftime("%Y-%m-%d %H:%M")
 
 cabbrev   h@     tab help
-
 " }}}
-
 " }}}
 "-----------------------------------------------------------------
 " For Plugins {{{
-
 " my plugins {{{
-
 " CommentAnyWay {{{
 let ca_prefix  = '<Leader>c'
 let ca_verbose = 1    " debug
@@ -1053,11 +996,9 @@ let ca_filetype_table = {
     \ },
 \ }
 
-" nnoremapじゃダメ
 nmap go      <Leader>co
 nmap gO      <Leader>cO
 " }}}
-
 " nextfile {{{
 let g:nf_map_next = ',n'
 let g:nf_map_previous = ',p'
@@ -1065,7 +1006,6 @@ let nf_include_dotfiles = 1    " don't skip dotfiles
 let nf_loop_files = 1    " loop at the end of file
 let nf_ignore_ext = ['o']    " ignore object file
 " }}}
-
 " vimtemplate {{{
 let g:vt_template_dir_path = expand("$HOME/.vim/template")
 let g:vt_command = ''
@@ -1089,27 +1029,22 @@ let s:files_tmp = {
 let g:vt_filetype_files = join(map(keys(s:files_tmp), 'v:val . "=" . s:files_tmp[v:val]'), ',')
 unlet s:files_tmp
 " }}}
-
 " winmove {{{
-
-" デフォルトマッピングにしたいがTTBaseのアクティブウィンドウを動かすプラグインのマッピングとの共存を考えた結果がこれ
 let g:wm_move_down  = '<C-M-j>'
 let g:wm_move_up    = '<C-M-k>'
 let g:wm_move_left  = '<C-M-h>'
 let g:wm_move_right = '<C-M-l>'
 " }}}
-
 " sign-diff {{{
-
+"
 " 現在未使用...
 " (作ってから自分はどっちかと言うと
 " ウィンドウにあまり情報を出したくない派なので要らないなと気付いた)
 let g:SD_disable = 1
 
-let g:SD_debug = 1
-nnoremap <silent> <C-l>     :SDUpdate<CR><C-l>
+" let g:SD_debug = 1
+" nnoremap <silent> <C-l>     :SDUpdate<CR><C-l>
 " }}}
-
 " DumbBuf {{{
 let dumbbuf_hotkey = '<Leader>b'
 " たまにQuickBuf.vimの名残で<Esc>を押してしまう
@@ -1135,30 +1070,27 @@ let dumbbuf_remove_marked_when_close = 1
 "
 " let dumbbuf_verbose = 1
 " }}}
-
 " }}}
-
 " others {{{
-
-" dicwin
+" dicwin {{{
 let plugin_dicwin_disable = 1
-
-" cmdex
+" }}}
+" cmdex {{{
 let plugin_cmdex_disable = 1
 " :CdCurrent - Change current directory to current file's one.
 command! -nargs=0 CdCurrent lcd %:p:h
 nnoremap <silent> <Leader>cd   :CdCurrent<CR>
-
-" AutoDate
+" }}}
+" AutoDate {{{
 let g:autodate_format = "%Y-%m-%d"
-
-" FencView
+" }}}
+" FencView {{{
 let g:fencview_autodetect = 0
-
-" Netrw
+" }}}
+" Netrw {{{
 let g:netrw_liststyle = 1
 let g:netrw_cygwin    = 1
-
+" }}}
 " FuzzyFinder {{{
 nnoremap <silent> <Leader>fd       :FufRenewCache<CR>:FufDir<CR>
 nnoremap <silent> <Leader>ff       :FufRenewCache<CR>:FufFile<CR>
@@ -1197,30 +1129,26 @@ else
 endif
 " }}}
 " }}}
-
-" MRU
+" MRU {{{
 nnoremap <silent> <C-h>     :MRU<CR>
 let MRU_Max_Entries   = 500
 let MRU_Add_Menu      = 0
 let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\c\'
-
-" Align
+" }}}
+" Align {{{
 let Align_xstrlen    = 3       " multibyte
 let DrChipTopLvlMenu = ""
 command! -nargs=0 AlignReset call Align#AlignCtrl("default")
 cabbrev   al    Align
-
-" Chalice
+" }}}
+" Chalice {{{
 let chalice_preview      = 0
 let chalice_startupflags = "bookmark"
-
-" changelog
+" }}}
+" changelog {{{
 let changelog_username = "tyru"
-
-" gtags {{{
-
-" let loaded_gtags = 1
-
+" }}}
+" Gtags {{{
 func! s:JumpTags()
     if expand('%') == '' | return | endif
 
@@ -1249,14 +1177,13 @@ endfunc
 nnoremap <silent> g<C-i>    :Gtags -f %<CR>
 nnoremap <silent> <C-]>    :call <SID>JumpTags()<CR>
 " }}}
-
-" xptemplate
+" xptemplate {{{
 let xptemplate_key = '<C-t>'
-
-" operator-replace
+" }}}
+" operator-replace {{{
 map ,r  <Plug>(operator-replace)
-
-" git.vim
+" }}}
+" git {{{
 let g:git_no_map_default = 1
 let g:git_command_edit = 'rightbelow vnew'
 " let g:git_bufhidden = 'wipe'
@@ -1270,12 +1197,8 @@ nnoremap <Leader>gL :<C-u>GitLog -p<Enter>
 " nnoremap <Leader>gc :<C-u>GitCommit<Enter>
 " nnoremap <Leader>gC :<C-u>GitCommit --amend<Enter>
 " nnoremap <Leader>gp :<C-u>Git push
-
-
 " }}}
-
+" }}}
 " }}}
 "-----------------------------------------------------------------
-
 let &cpo = s:save_cpo
-" vim:set fen fdm=marker:
