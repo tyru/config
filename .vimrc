@@ -17,6 +17,16 @@ func! s:system(command, ...)
     return system(join(args, ' '))
 endfunc
 " }}}
+" s:has_errored {{{
+func! s:has_errored(exe)
+    try
+        execute a:exe
+        return 0
+    catch
+        return 1
+    endtry
+endfunc
+" }}}
 " s:EvalFileNormal(eval_main) {{{
 func! s:EvalFileNormal(eval_main)
     normal! %v%
@@ -57,6 +67,42 @@ func! s:EvalFileVisual(eval_main) range
     finally
         call setreg('z', z_val, z_type)
     endtry
+endfunc
+" }}}
+" s:ListAndExecute() {{{
+func! s:ListAndExecute( lis, template )
+    " display the list
+    let i = 0
+    while i < len( a:lis )
+        echo printf('%d: %s', i + 1, a:lis[i])
+        let i = i + 1
+    endwhile
+
+    while 1
+        echon "\n:"
+        let ch = getchar()
+        if ch == char2nr( "\<ESC>" )
+            return ""
+        endif
+        let num = ch - 48
+
+        " is digit?
+        if string( num ) =~ '^\d\+$'
+            if num < 1 || len( a:lis ) < num
+                " out of range
+                call s:warn( 'out of num number. Try again.' )
+            else
+                break
+            endif
+        else
+            call s:warn( 'non-digit characters found. Try again.' )
+        endif
+    endwhile
+
+    execute substitute( a:template, '%embed%', a:lis[num - 1], 'g' )
+    redraw
+
+    return a:lis[num - 1]
 endfunc
 " }}}
 " }}}
@@ -143,7 +189,7 @@ endif
 
 " マップリーダー
 let mapleader = ';'
-let maplocalleader = ','
+let maplocalleader = '\'
 
 
 set statusline=%f%m%r%h%w\ [%{&fenc}][%{&ff}]\ [%p%%][%l/%L]\ [%{ShrinkPath('%:p:h',20)}]
@@ -415,50 +461,14 @@ if has('gui_running')
     endif
 endif
 " }}}
-" s:ListAndExecute() {{{
-func! s:ListAndExecute( lis, template )
-    " display the list
-    let i = 0
-    while i < len( a:lis )
-        echo printf('%d: %s', i + 1, a:lis[i])
-        let i = i + 1
-    endwhile
-
-    while 1
-        echon "\n:"
-        let ch = getchar()
-        if ch == char2nr( "\<ESC>" )
-            return ""
-        endif
-        let num = ch - 48
-
-        " is digit?
-        if string( num ) =~ '^\d\+$'
-            if num < 1 || len( a:lis ) < num
-                " out of range
-                call s:warn( 'out of num number. Try again.' )
-            else
-                break
-            endif
-        else
-            call s:warn( 'non-digit characters found. Try again.' )
-        endif
-    endwhile
-
-    execute substitute( a:template, '%embed%', a:lis[num - 1], 'g' )
-    redraw
-
-    return a:lis[num - 1]
-endfunc
-" }}}
-" s:ListChars() {{{
+" ListChars {{{
 command! ListChars
             \ call s:ListAndExecute([
-                    \'tab:>-,extends:>,precedes:<,eol:.',
-                    \'tab:>-',
-                    \'tab:\\ \\ ',
-                \],
-                \'set listchars=%embed%')
+            \       'tab:>-,extends:>,precedes:<,eol:.',
+            \       'tab:>-',
+            \       'tab:\\ \\ ',
+            \   ],
+            \   'set listchars=%embed%')
 " }}}
 " FastEdit {{{
 "   this is useful when Vim is very slow?
@@ -533,7 +543,7 @@ endfunc
 command! -nargs=+ -complete=dir Mkdir
             \ call s:Mkdir(<f-args>)
 " }}}
-" s:GccSyntaxCheck(...) {{{
+" GccSyntaxCheck {{{
 func! s:GccSyntaxCheck(...)
     if expand('%') ==# '' | return | endif
 
@@ -567,55 +577,73 @@ endfunc
 command! -nargs=* GccSyntaxCheck
             \ call s:GccSyntaxCheck(<f-args>)
 " }}}
+" Restart {{{
+command! Restart    call s:restart()
+func! s:restart()
+    if !has('gui_running')
+        call s:warn("can't restart 'vim'.")
+        return;
+    endif
+    if !s:has_errored('bmodified')
+        call s:warn("modified buffer exists!")
+        return
+    endif
+
+    call s:system('gvim')
+    qall
+endfunc
+" }}}
+" CdCurrent {{{
+"   Change current directory to current file's one.
+command! -nargs=0 CdCurrent lcd %:p:h
+nnoremap <silent> <Leader>cd   :CdCurrent<CR>
+" }}}
 " }}}
 "-----------------------------------------------------------------
 " Encoding {{{
 set fencs-=iso-2022-jp-3
 set fencs+=iso-2022-jp,iso-2022-jp-3
-
 " set enc=... {{{
 func! <SID>ChangeEncoding()
     if expand( '%' ) == ''
         echo "current file is empty."
         return
     endif
-    let lis = [ 'cp932',
+    let enc = s:ListAndExecute([
+                \ 'cp932',
                 \ 'shift-jis',
                 \ 'iso-2022-jp',
                 \ 'euc-jp',
                 \ 'utf-8',
-                \ 'ucs-bom' ]
-    let enc = s:ListAndExecute( lis, 'edit ++enc=%embed%' )
-
+                \ 'ucs-bom'
+                \ ], 'edit ++enc=%embed%')
     if enc != ''
         echo "Change the encoding to " . enc
     endif
 endfunc
 nnoremap <silent> <F2>    :call <SID>ChangeEncoding()<CR>
 " }}}
-
 " set fenc=... {{{
 func! <SID>ChangeFileEncoding()
-    let lis = [ 'cp932',
+    let enc = s:ListAndExecute([
+                \ 'cp932',
                 \ 'shift-jis',
                 \ 'iso-2022-jp',
                 \ 'euc-jp',
                 \ 'utf-8',
-                \ 'ucs-bom' ]
-    let enc = s:ListAndExecute( lis, 'set fenc=%embed%' )
+                \ 'ucs-bom'
+                \ ], 'set fenc=%embed%')
     if enc == 'ucs-bom'
         set bomb
     else
         set nobomb
     endif
-
     if enc != ''
         echo "Change the file encoding to " . enc
     endif
 endfunc
 nnoremap <silent> <F3>    :call <SID>ChangeFileEncoding()<CR>
 " }}}
-
 " set ff=... {{{
 func! <SID>ChangeNL()
     let result = s:ListAndExecute( [ 'dos', 'unix', 'mac' ], 'set ff=%embed%' )
@@ -703,10 +731,10 @@ let s:load_filetype = 1
 func! s:ToggleFileType()
     if s:load_filetype
         let s:load_filetype = 0
-        echomsg "will NOT load filetype"
+        echomsg "DON'T load my filetype config"
     else
         let s:load_filetype = 1
-        echomsg "load filetype"
+        echomsg "load my filetype config"
     endif
 endfunc
 " }}}
@@ -827,20 +855,26 @@ endfunc
 " }}}
 "-----------------------------------------------------------------
 " Mappings or Abbreviation {{{
-" ~~ map ~~ {{{
+" map {{{
+" operator {{{
+" paste to clipboard
+noremap <Leader>y     "+y
+" }}}
+" motion/textobj {{{
 noremap <silent> j          gj
 noremap <silent> k          gk
 
-noremap <silent> <LocalLeader><LocalLeader>         <LocalLeader>
-noremap <silent> <Leader><Leader>                   <Leader>
-
-" クリップボードにコピー
-noremap <Leader>y     "+y
-
 noremap <silent> H  5h
 noremap <silent> L  5l
+
+noremap <silent> ]k        :call search('^\S', 'Ws')<CR>
+noremap <silent> [k        :call search('^\S', 'Wsb')<CR>
 " }}}
-" ~~ n ~~ {{{
+" }}}
+" n {{{
+nnoremap <silent> <LocalLeader><LocalLeader>         <LocalLeader>
+nnoremap <silent> <Leader><Leader>                   <Leader>
+
 nnoremap <silent> n     nzz
 nnoremap <silent> N     Nzz
 
@@ -884,10 +918,6 @@ nnoremap <silent> <C-p>         gT
 nnoremap <silent> <C-Tab>       gt
 nnoremap <silent> <C-S-Tab>     gT
 
-" jump to the line matched '^\S'
-noremap <silent> ]k        m`:call search( '^\S', 'W' )<CR>
-noremap <silent> [k        m`:call search( '^\S', 'Wb' )<CR>
-
 " make
 nnoremap <silent>   gm      :make<CR>
 nnoremap <silent>   gc      :cclose<CR>
@@ -926,10 +956,7 @@ nnoremap gh    :set hlsearch!<CR>
 
 nnoremap ZZ <Nop>
 " }}}
-" ~~ o ~~ {{{
-" omapclear
-" }}}
-" -- map! -- {{{
+" map! {{{
 noremap! <C-f>   <Right>
 noremap! <C-b>   <Left>
 noremap! <M-f>   <C-Right>
@@ -951,7 +978,7 @@ noremap! <M-}>         \{\}<Left><Left>
 noremap! <C-r><C-o>  <C-r><C-p>"
 noremap! <C-r><C-r>  <C-r><C-p>+
 " }}}
-" ~~ i ~~ {{{
+" i {{{
 inoremap <S-CR>  <C-o>O
 inoremap <C-CR>  <C-o>o
 
@@ -965,7 +992,7 @@ inoremap <C-z>                <C-o>di(
 inoremap <C-w><C-n>     <C-x><C-n>
 inoremap <C-w><C-p>     <C-x><C-p>
 " }}}
-" ~~ c ~~ {{{
+" c {{{
 if &wildmenu
     cnoremap <C-f> <Space><BS><Right>
     cnoremap <C-b> <Space><BS><Left>
@@ -1072,24 +1099,8 @@ let dumbbuf_remove_marked_when_close = 1
 " }}}
 " }}}
 " others {{{
-" dicwin {{{
-let plugin_dicwin_disable = 1
-" }}}
-" cmdex {{{
-let plugin_cmdex_disable = 1
-" :CdCurrent - Change current directory to current file's one.
-command! -nargs=0 CdCurrent lcd %:p:h
-nnoremap <silent> <Leader>cd   :CdCurrent<CR>
-" }}}
 " AutoDate {{{
 let g:autodate_format = "%Y-%m-%d"
-" }}}
-" FencView {{{
-let g:fencview_autodetect = 0
-" }}}
-" Netrw {{{
-let g:netrw_liststyle = 1
-let g:netrw_cygwin    = 1
 " }}}
 " FuzzyFinder {{{
 nnoremap <silent> <Leader>fd       :FufRenewCache<CR>:FufDir<CR>
@@ -1140,10 +1151,6 @@ let Align_xstrlen    = 3       " multibyte
 let DrChipTopLvlMenu = ""
 command! -nargs=0 AlignReset call Align#AlignCtrl("default")
 cabbrev   al    Align
-" }}}
-" Chalice {{{
-let chalice_preview      = 0
-let chalice_startupflags = "bookmark"
 " }}}
 " changelog {{{
 let changelog_username = "tyru"
@@ -1201,4 +1208,3 @@ nnoremap <Leader>gL :<C-u>GitLog -p<Enter>
 " }}}
 " }}}
 "-----------------------------------------------------------------
-let &cpo = s:save_cpo

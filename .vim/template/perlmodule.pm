@@ -1,19 +1,10 @@
 package <%filename_noext%>;
-
 use strict;
 use warnings;
-
-use base qw(Exporter);
-
-our @EXPORT      = qw();
-our @EXPORT_OK   = qw();
-our %EXPORT_TAGS = qw();
-
-
+use utf8;
 use Carp;
 
-use version;
-our $VERSION = qv('0.0.0');
+our $VERSION = eval('0.001');
 
 # use base 'Class::Accessor::Fast';
 # __PACKAGE__->mk_accessors(qw());
@@ -22,8 +13,8 @@ our $VERSION = qv('0.0.0');
 
 
 sub new {
-    my $self = shift;
-    bless {}, $self;
+    my ($pkg) = @_;
+    bless {}, $pkg;
 }
 
 

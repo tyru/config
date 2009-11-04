@@ -3,7 +3,6 @@ source $HOME/.vimperatorrc.local
 
 "-----------------------------------------------------------------
 " set! {{{
-
 " via http://retlet.net/log/2008/06/awesomebar-bookmarklet.html
 set! browser.urlbar.filter.javascript=false
 set! browser.urlbar.maxRichResults=50
@@ -42,12 +41,9 @@ set! javascript.options.jit.chrome=true
 
 " disable IPv6
 set! network.dns.disableIPv6=true
-
-
 " }}}
 "-----------------------------------------------------------------
 " misc. {{{
-
 " フィードアイコンをステータスバーに表示
 " (via http://memo.officebrook.net/20090906.html)
 javascript <<EOF
@@ -63,7 +59,6 @@ EOF
 " }}}
 "-----------------------------------------------------------------
 " set {{{
-
 set activate=
 set complete=sfl
 " set focuscontent
@@ -79,13 +74,11 @@ set smartcase
 set titlestring=Firefox
 set visualbell
 set wildoptions=auto
-
 " }}}
 "-----------------------------------------------------------------
 " map {{{
 "
 " NOTE: <silent>つけるとむしろ遅いorz
-
 " ~ noremap ~ {{{
 nnoremap <F5>    <Nop>
 nnoremap <BS>    <Nop>
@@ -116,7 +109,6 @@ nnoremap <C-c>   Y
 " 選択文字列のgoogle検索
 nnoremap <C-g>   YP
 
-
 " vimperatorだとincsearchのとき
 " マッチしなかった場合元の位置に戻らない
 nnoremap /   mz/
@@ -128,9 +120,7 @@ nnoremap !       :set invum<CR>
 nnoremap ZZ <Nop>
 
 nnoremap <Leader>t :tab<Space>
-
 " }}}
-
 " ~ c ~ {{{
 cnoremap <C-c>          <C-v><C-c>
 cnoremap <C-x>          <C-v><C-x>
@@ -151,11 +141,9 @@ cnoremap <C-b>      <Left>
 " フォーカス中に<C-n>で新しくウィンドウを作らない
 inoremap <C-n> <Nop>
 " }}}
-
 " }}}
 "-----------------------------------------------------------------
 " qmark {{{
-
 qmark H http://hatenadiary.g.hatena.ne.jp/keyword/%e3%81%af%e3%81%a6%e3%81%aa%e8%a8%98%e6%b3%95%e4%b8%80%e8%a6%a7
 qmark P http://pipes.yahoo.com/pipes/
 qmark R http://www.rememberthemilk.com/
@@ -169,7 +157,6 @@ qmark p http://www.pixiv.net/mypage.php
 qmark r http://reader.livedoor.com/reader/
 qmark t bml-share-tumblr
 qmark z bml-niconico-mp3
-
 " }}}
 "-----------------------------------------------------------------
 " abbr {{{
@@ -181,7 +168,6 @@ autocmd VimperatorEnter .* pluginmanager update
 " }}}
 "-----------------------------------------------------------------
 " プラグイン {{{
-
 " direct_bookmark.js {{{
 let direct_sbm_use_services_by_tag  = "d"
 let direct_sbm_use_services_by_post = "hd"
@@ -189,35 +175,28 @@ let direct_sbm_is_use_migemo = 1
 noremap a   :sbm<Space>
 noremap B   :tab bentry<CR>
 " }}}
-
 " sbmcommentsviewer.js {{{
 let def_sbm_format = "id,timestamp,tags,comment"
 let def_sbms       = "h"
 noremap b   :viewSBMComments<CR>
 " }}}
-
 " migemo_hint.js {{{
 set hintmatching=custom
 " }}}
-
 " multi_requester.js {{{
 noremap <C-k>       :mr<Space>
 noremap <Leader>a   :mr alc<Space>
 " }}}
-
 " ime_controller.js {{{
 let ex_ime_mode = "inactive"  
 let textarea_ime_mode = "inactive"
 " }}}
-
 " appendAnchor.js {{{
 let auto_append_anchor_once = "true"
 " }}}
-
 " nextlink.js {{{
 let nextlink_nositeinfo_act = "f"
 " }}}
-
 " toggler.js {{{
 js <<EOM
 liberator.globalVariables.toggler = {
@@ -233,33 +212,29 @@ EOM
 noremap <Leader>tg      :toggle go<CR>
 noremap <Leader>ts      :toggle sb<CR>
 " }}}
-
 " feedSomeKeys_2.js {{{
-
 autocmd LocationChange .* :fmapc
-
-" GMail
-"   add ! l gl
+" GMail {{{
+"   add ! l gl g/
 "   delete /
-autocmd LocationChange 'mail\.google\.com/mail' :fmap -depth 4 c j k n p o u e x s r z # [ ] ! ? . gi gs gt gd ga gc gk gl <C-s> l *a *n *r *u *s *t T
-
-" Google Groups
+autocmd LocationChange 'mail\.google\.com/mail' :fmap -depth 4 c j k n p o u e x s r z # [ ] ! ? . gi gs gt gd ga gc gk gl <C-s> l *a *n *r *u *s *t T g/
+" }}}
+" Google Groups {{{
 autocmd LocationChange 'groups\.google\.\w+\/group' :fmap -event keydown -vkey n p o
-
-" Google Reader
+" }}}
+" Google Reader {{{
 "   add J K N P a
 autocmd LocationChange 'www\.google\.co\.jp/reader' :fmap -vkey a j k J K n p N P m s t v A r S N P X O gh ga gs gt gu u / ?
-
-" RememberTheMilk
+" }}}
+" RememberTheMilk {{{
 "   remove f <Esc> i d + - <Tab> <S-Tab>
 autocmd LocationChange 'www\.rememberthemilk\.com\/home\/tyru\/' :fmap -vkey a m c n p r g s h t u j y <Del> k z l 1 2 3 4 <C-S-Left> <C-S-Right> <C-S-0> <C-S-6> <C-S-7> <C-S-8> <C-S-9> <C-S-l> <Left> <Right> <Up> <Down> <PageUp> <PageDown> <Home> <End> <C-S-/>
-
-" LDR
+" }}}
+" LDR {{{
 " add r
 autocmd LocationChange 'reader\.livedoor\.com\/reader\/' :fmap j k s a p o v c <Space> <S-Space> Z z ZZ b < > r
-
 " }}}
-
+" }}}
 " copy.js {{{
 js<<EOM
 liberator.globalVariables.copy_templates = [
@@ -285,16 +260,13 @@ liberator.globalVariables.copy_templates = [
 ];
 EOM
 " }}}
-
 " sbmincsearch {{{
 let sbmincsearch_service_name = "delicious"
 let sbmincsearch_max = 50
 " }}}
-
 " pino.js {{{
 nnoremap ,p     :pino<Space>
 " }}}
-
 " }}}
 "-----------------------------------------------------------------
 
