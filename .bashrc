@@ -1,19 +1,19 @@
+# vim:set fdm=marker:
 
-# root should use /bin/bash
+# root should use /bin/bash {{{
 if [ $UID != 0 -a -x "$(which zsh)" ]; then
     exec zsh
 fi
+# }}}
 
-
-
-### shopt ###
+### shopt/set ### {{{
 shopt -s nocaseglob
 shopt -s cdspell
 
 set bell-style visible
+# }}}
 
-
-### alias ###
+### alias ### {{{
 alias df='df -h'
 alias du='du -h'
 alias less='less -r'
@@ -33,16 +33,16 @@ fi
 if [ -x "$(which vim)" ]; then
     alias vi=vim
 fi
+# }}}
 
-
-### function ###
+### function ### {{{
 cd () {
     command cd $1
     ls -l
 }
+# }}}
 
-
-### cygwin ###
+### cygwin ### {{{
 if [ "$OS" = 'Cygwin' ]; then
     function wwhich() {
         if [ $# != 0 ]; then
@@ -61,11 +61,10 @@ if [ "$OS" = 'Cygwin' ]; then
         fi
     }
 fi
+# }}}
 
-
-
-### local ###
-
+### local ### {{{
 if [ -e "$HOME/.alias.local" ]; then
     source "$HOME/.alias.local"
 fi
+# }}}

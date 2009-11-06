@@ -2,6 +2,12 @@
 scriptencoding utf-8
 let s:save_cpo = &cpo
 set cpo&vim
+
+syntax on
+filetype plugin indent on
+
+let mapleader = ';'
+let maplocalleader = '\'
 "-----------------------------------------------------------------
 " Util Functions {{{
 " s:warn {{{
@@ -24,48 +30,6 @@ func! s:has_errored(exe)
         return 0
     catch
         return 1
-    endtry
-endfunc
-" }}}
-" s:EvalFileNormal(eval_main) {{{
-func! s:EvalFileNormal(eval_main)
-    normal! %v%
-    call s:EvalFileVisual(a:eval_main)
-endfunc
-" }}}
-" s:EvalFileVisual(eval_main) {{{
-func! s:EvalFileVisual(eval_main) range
-    let z_val = getreg('z', 1)
-    let z_type = getregtype('z')
-    normal! "zy
-
-    try
-        let curfile = expand('%')
-        if !filereadable(curfile)
-            call s:warn("can't load " . curfile . "...")
-            return
-        endif
-
-        let lines = readfile(curfile) + ['(print'] + split(@z, "\n") + [')']
-
-        let tmpfile = tempname() . localtime()
-        call writefile(lines, tmpfile)
-
-        if filereadable(tmpfile)
-            if a:eval_main ==# 'e'
-                " load tmpfile, execute the function 'main'
-                echo s:system('gosh', tmpfile)
-            elseif a:eval_main ==# 'E'
-                " load tmpfile
-                echo system(printf('cat %s | gosh', shellescape(tmpfile)))
-            else
-                call s:warn("this block never reached")
-            endif
-        else
-            call s:warn("cannot write to " . tmpfile . "...")
-        endif
-    finally
-        call setreg('z', z_val, z_type)
     endtry
 endfunc
 " }}}
@@ -161,7 +125,6 @@ if has('emacs_tags') && has('path_extra')
     set tags+=.;
 endif
 
-" Life Changing (unstable?)
 if has('virtualedit')
     set virtualedit=all
 endif
@@ -172,8 +135,6 @@ if has('unix')
     set swapsync=
 endif
 
-
-" backupdir
 set backup
 set backupdir=$HOME/.vim/backup
 set directory=$HOME/.vim/backup
@@ -187,13 +148,7 @@ else
     set notitle
 endif
 
-" マップリーダー
-let mapleader = ';'
-let maplocalleader = '\'
-
-
 set statusline=%f%m%r%h%w\ [%{&fenc}][%{&ff}]\ [%p%%][%l/%L]\ [%{ShrinkPath('%:p:h',20)}]
-
 func! ShrinkPath( path, maxwidth )
     let path = expand( a:path )
 
@@ -223,8 +178,7 @@ func! ShrinkPath( path, maxwidth )
     return path_str
 endfunc
 
-
-" migemo
+" &migemo
 if has("migemo")
     set migemo
 endif
@@ -234,26 +188,17 @@ if exists('+shellslash')
     set shellslash
 endif
 
-syntax on
-filetype plugin indent on
-
-
-" runtimepath
+" &runtimepath
 if has("win32")
     set runtimepath+=$HOME/.vim
 endif
-let s:runtime_dirs = [
-    \'$HOME/.vim/mine',
-    \'$HOME/.vim/chalice',
-    \'$HOME/.vim/xpt',
-    \'$HOME/.vim/vimdoc_ja',
-\ ]
-for dir in s:runtime_dirs
-    if isdirectory(expand(dir))
-        let &runtimepath .= ',' . expand(dir)
-    endif
-endfor
-unlet s:runtime_dirs
+set runtimepath+=$HOME/.vim/mine
+
+" visual bell
+set t_vb=
+
+set t_ti= t_te=
+
 " }}}
 " delete old files in ~/.vim/backup {{{
 func! s:DeleteBackUp()
@@ -719,7 +664,6 @@ augroup MyVimrc
     " delete for ft=mkd
     autocmd! filetypedetect BufNewFile,BufRead *.md
     " }}}
-
 augroup END
 " }}}
 "-----------------------------------------------------------------
@@ -739,11 +683,69 @@ func! s:ToggleFileType()
 endfunc
 " }}}
 " s:SetDict {{{
-func! s:SetDict(...)
-    execute "setlocal dict=" .
-                \join(map(copy(a:000), '"$HOME/.vim/dict/" . v:val . ".dict"'), ',')
+func! s:SetDict(ft)
+    if !exists('s:filetype_vs_dictionary')
+        let s:filetype_vs_dictionary = {
+        \   'cpp': ['c', 'cpp'],
+        \   'html': ['html', 'css', 'javascript'],
+        \   'scala': ['scala', 'java'],
+        \ }
+    endif
+    let ftypes = has_key(s:filetype_vs_dictionary, a:ft) ?
+                \   s:filetype_vs_dictionary[a:ft]
+                \   : [a:ft]
+    for ft in ftypes
+        let dict_path = expand(printf('$HOME/.vim/dict/%s.dict', ft))
+        if filereadable(dict_path)
+            execute 'setlocal dictionary+=' . dict_path
+        endif
+    endfor
 endfunc
 " }}}
+" s:SetTabWidth {{{
+func! s:SetTabWidth(ft)
+    if !exists('s:filetype_vs_tabwidth')
+        let s:filetype_vs_tabwidth = {
+        \   'css': 2,
+        \   'xml': 2,
+        \   'lisp': 2,
+        \   'scheme': 2,
+        \   'yaml': 2,
+        \ }
+    endif
+    execute 'TabChange'
+            \ has_key(s:filetype_vs_tabwidth, a:ft) ?
+            \   s:filetype_vs_tabwidth[a:ft]
+            \   : 4
+endfunc
+" }}}
+" s:SetCompiler {{{
+func! s:SetCompiler(ft)
+    if !exists('s:filetype_vs_compiler')
+        let s:filetype_vs_compiler = {
+        \   'c': 'gcc',
+        \   'cpp': 'gcc',
+        \   'html': 'tidy',
+        \   'java': 'javac',
+        \}
+    endif
+    try
+        execute 'compiler'
+                \ has_key(s:filetype_vs_compiler, a:ft) ?
+                \   s:filetype_vs_compiler[a:ft]
+                \   : a:ft
+    catch
+        " to supress warnings
+    endtry
+endfunc
+" }}}
+" s:SetMisc {{{
+func! s:SetMisc(ft)
+    if !exists('s:filetype_vs_misc')
+    endif
+endfunc
+" }}}
+" TODO Move these settings to ~/.vim/ftplugin/*
 " s:LoadWhenFileType() {{{
 func! s:LoadWhenFileType()
     if ! s:load_filetype
@@ -751,104 +753,22 @@ func! s:LoadWhenFileType()
         return
     endif
 
-    " default omnifunc value
+    " Set default &omnifunc
     if exists("+omnifunc") && &omnifunc == ""
         setlocal omnifunc=syntaxcomplete#Complete
     endif
+    " Set dictionary for reserved keywords, etc.
     call s:SetDict(&filetype)
+    " Set tab width
+    call s:SetTabWidth(&filetype)
+    " Set compiler
+    call s:SetCompiler(&filetype)
 
-    if &filetype == 'actionscript'
-        TabChange 4
-    elseif &filetype == 'c' || &filetype == 'cpp'
-        TabChange 4
-        if &filetype == 'cpp'
-            call s:SetDict('c', 'cpp')
-        endif
-
-        setlocal makeprg&
-        compiler gcc
-    elseif &filetype == 'cs'
-        TabChange 4
-        compiler cs
-    elseif &filetype == 'css'
-        TabChange 2
-    elseif &filetype == 'xml'
-        TabChange 2
+    " Misc.
+    if &filetype == 'xml' || &filetype == 'html'
         inoremap <buffer>   </    </<C-x><C-o>
-    elseif &filetype == 'html' || &filetype == 'javascript' || &filetype == 'css'
-        TabChange 2
-        if &filetype == 'html'
-            call s:SetDict('html', 'javascript', 'css')
-            inoremap <buffer>   </    </<C-x><C-o>
-        endif
-    elseif &filetype == 'java'
-        TabChange 2
-        " for javadoc
-        setlocal iskeyword+=@-@
-        setlocal makeprg=javac\ %
-        compiler javac
-    elseif &filetype == 'scala'
-        TabChange 2
-        " for javadoc
-        setlocal iskeyword+=@-@
-        setlocal includeexpr=substitute(v:fname,'\\.','/','g')
-        setlocal suffixesadd=.scala
-        setlocal suffixes+=.class
-        setlocal comments& comments^=sO:*\ -,mO:*\ \ ,exO:*/
-        setlocal commentstring=//%s
-        setlocal formatoptions-=t formatoptions+=croql
-        call s:SetDict('java', 'scala')
-    elseif &filetype == 'lisp' || &filetype == 'scheme'
-        TabChange 2
-
-        setlocal lisp
-        setlocal nocindent
-
-        nnoremap <buffer> <Leader>e       :call <SID>EvalFileNormal('e')<CR>
-        vnoremap <buffer> <Leader>e       :call <SID>EvalFileVisual('e')<CR>
-        nnoremap <buffer> <Leader>E       :call <SID>EvalFileNormal('E')<CR>
-        vnoremap <buffer> <Leader>E       :call <SID>EvalFileVisual('E')<CR>
-        nnoremap <buffer> <Leader><C-e>   :echo <SID>system('gosh', expand('%'))<CR>
-
-        let g:is_gauche = 1
-
-        setlocal lispwords+=and-let*,begin0,call-with-client-socket,call-with-input-conversion,call-with-input-file
-        setlocal lispwords+=call-with-input-process,call-with-input-string,call-with-iterator,call-with-output-conversion,call-with-output-file
-        setlocal lispwords+=call-with-output-string,call-with-temporary-file,call-with-values,dolist,dotimes
-        setlocal lispwords+=if-match,let*-values,let-args,let-keywords*,let-match
-        setlocal lispwords+=let-optionals*,let-syntax,let-values,let/cc,let1
-        setlocal lispwords+=letrec-syntax,make,match,match-lambda,match-let
-        setlocal lispwords+=match-let*,match-letrec,match-let1,match-define,multiple-value-bind
-        setlocal lispwords+=parameterize,parse-options,receive,rxmatch-case,rxmatch-cond
-        setlocal lispwords+=rxmatch-if,rxmatch-let,syntax-rules,unless,until
-        setlocal lispwords+=when,while,with-builder,with-error-handler,with-error-to-port
-        setlocal lispwords+=with-input-conversion,with-input-from-port,with-input-from-process,with-input-from-string,with-iterator
-        setlocal lispwords+=with-module,with-output-conversion,with-output-to-port,with-output-to-process,with-output-to-string
-        setlocal lispwords+=with-port-locking,with-string-io,with-time-counter,with-signal-handlers 
-    elseif &filetype == 'perl'
-        TabChange 4
-        " add perl's path.
-        " executing 'gf' command on module name opens its module.
-        if exists('$PERL5LIB') && !exists('b:perl_already_added_path')
-            for i in split(expand('$PERL5LIB'), ':')
-                execute 'setlocal path+=' . i
-            endfor
-            let b:perl_already_added_path = 1
-        endif
-
-        setlocal suffixesadd=.pm
-        setlocal makeprg=perl\ -c\ %
-        " jumping to sub definition.
-        nnoremap <buffer> ]]    :call search('^\s*sub .* {$', 'sW')<CR>
-        nnoremap <buffer> [[    :call search('^\s*sub .* {$', 'bsW')<CR>
-        nnoremap <buffer> ][    :call search('^}$', 'sW')<CR>
-        nnoremap <buffer> []    :call search('^}$', 'bsW')<CR>
-
-        compiler perl
-    elseif &filetype == 'yaml'
-        TabChange 2
-    else
-        TabChange 4
+    elseif &filetype == 'vimperator'
+        setl comments=f:\"
     endif
 endfunc
 " }}}
@@ -1002,6 +922,8 @@ endif
 iabbrev <expr> date@      strftime("%Y-%m-%d")
 iabbrev <expr> time@      strftime("%H:%M")
 iabbrev <expr> datetime@  strftime("%Y-%m-%d %H:%M")
+iabbrev <expr> w3cdtf@    strftime("%Y-%m-%dT%H:%M:%S+09:00")
+
 
 cabbrev   h@     tab help
 " }}}
@@ -1103,9 +1025,9 @@ let dumbbuf_remove_marked_when_close = 1
 let g:autodate_format = "%Y-%m-%d"
 " }}}
 " FuzzyFinder {{{
-nnoremap <silent> <Leader>fd       :FufRenewCache<CR>:FufDir<CR>
-nnoremap <silent> <Leader>ff       :FufRenewCache<CR>:FufFile<CR>
-nnoremap <silent> <Leader>fh       :FufRenewCache<CR>:FufMruFile<CR>
+nnoremap <silent> <Leader>fd        :FufRenewCache<CR>:FufDir<CR>
+nnoremap <silent> <Leader>ff        :FufRenewCache<CR>:FufFile<CR>
+nnoremap <silent> <Leader>fh        :FufRenewCache<CR>:FufMruFile<CR>
 
 let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem', 'buffer', 'tag', 'taggedfile']
 
@@ -1117,8 +1039,8 @@ let fuf_keyOpenVsplit  = '<C-v>'
 
 " abbrev {{{
 let fuf_abbrevMap = {
-    \'^plug' : ['~/.vim/plugin/', '~/.vim/plugin/', '~/.vim/mine/plugin/'],
-    \'^home' : ['~/'],
+    \ '^plug' : ['~/.vim/plugin/', '~/.vim/plugin/', '~/.vim/mine/plugin/'],
+    \ '^home' : ['~/'],
 \}
 if exists('$CYGHOME')  | let fuf_abbrevMap['^cyg']  = $CYGHOME  | endif
 if exists('$MSYSHOME') | let fuf_abbrevMap['^msys'] = $MSYSHOME | endif
@@ -1182,7 +1104,7 @@ func! s:JumpTags()
 endfunc
 
 nnoremap <silent> g<C-i>    :Gtags -f %<CR>
-nnoremap <silent> <C-]>    :call <SID>JumpTags()<CR>
+nnoremap <silent> <C-]>     :call <SID>JumpTags()<CR>
 " }}}
 " xptemplate {{{
 let xptemplate_key = '<C-t>'

@@ -1,31 +1,25 @@
+" vim:set ft=vimperator fdm=marker:
 let mapleader = ','
 source $HOME/.vimperatorrc.local
-
 "-----------------------------------------------------------------
 " set! {{{
 " via http://retlet.net/log/2008/06/awesomebar-bookmarklet.html
 set! browser.urlbar.filter.javascript=false
 set! browser.urlbar.maxRichResults=50
-
 " disable accesskey
 set! ui.key.generalAccessKey=0
-
 " open in background
 set! browser.tabs.loadDivertedInBackground=true
-
 " open also bookmarks in background
 set! browser.tabs.loadBookmarksInBackground=true
-
+" make caret mode's bar more visible
 set! ui.caretWidth=1
 set! ui.caretBlinkTime=1000
-
 " don't close window when closed last tab
 set! browser.tabs.closeWindowWithLastTab=false
-
 " for LDR.
 " (firefox prevents popups even if popups are allowed in particular site)
 set! dom.popup_maximum=65536
-
 " some optimizations
 set! config.trim_on_minimize=true
 set! browser.history_expire_days=30
@@ -34,11 +28,9 @@ set! browser.history_expire_sites=1000
 set! browser.cache.memory.capacity=32768
 set! browser.sessionstore.max_tabs_undo=5
 set! browser.sessionhistory.max_total_viewers=5
-
 " Fx 3.5 only?
 set! javascript.options.jit.content=true
 set! javascript.options.jit.chrome=true
-
 " disable IPv6
 set! network.dns.disableIPv6=true
 " }}}
@@ -155,8 +147,8 @@ qmark m http://mail.google.com/mail?hl=ja
 qmark n http://tyru.yu-nagi.com/
 qmark p http://www.pixiv.net/mypage.php
 qmark r http://reader.livedoor.com/reader/
-qmark t bml-share-tumblr
-qmark z bml-niconico-mp3
+qmark t b@tumblr
+qmark z b@nico-mp3
 " }}}
 "-----------------------------------------------------------------
 " abbr {{{
@@ -269,5 +261,3 @@ nnoremap ,p     :pino<Space>
 " }}}
 " }}}
 "-----------------------------------------------------------------
-
-" vim:set ft=vimperator fdm=marker:

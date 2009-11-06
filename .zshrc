@@ -1,38 +1,33 @@
+# vim:set fdm=marker:
 
 bindkey -e
 
-
-### compinit ###
+### compinit ### {{{
 autoload -U compinit
 compinit -u
+# }}}
 
-
-
-### promptinit ###
+### promptinit ### {{{
 if [ $UID != 0 ]; then
     autoload promptinit
     promptinit
     prompt adam2
     # prompt elite2
 fi
+# }}}
 
-
-
-### color ###
+### color ### {{{
 # ${fg[...]} や $reset_color をロード
 autoload -U colors; colors
+# }}}
 
-
-
-### completion ###
-
+### completion ### {{{
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # ignore alphabet case when completion,
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+# }}}
 
-
-
-### search history ###
+### search history ### {{{
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
@@ -40,10 +35,9 @@ bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
 
 # bindkey "^I" menu-complete
+# }}}
 
-
-
-### setopt ###
+### setopt ### {{{
 
 # http://journal.mycom.co.jp/column/zsh/index.html
 # http://www.crimson-snow.net/tips/unix/zsh.html
@@ -87,10 +81,9 @@ setopt no_clobber
 # setopt auto_cd
 # setopt promptcr
 # setopt print_exit_value
+# }}}
 
-
-
-### alias ###
+### alias ### {{{
 if [ -x "$(which vim)" ]; then
     alias vi=vim
 fi
@@ -111,20 +104,15 @@ if [ "$OS" = "Cygwin" ]; then
 else
     alias ls='ls --color=tty'
 fi
+# }}}
 
-
-
-
-### misc ###
-
+### misc ### {{{
+# カレントディレクトリが変わると実行される {{{
 # via http://d.hatena.ne.jp/hiboma/20061005/1160026514
-# カレントディレクトリが変わると実行される
 chpwd () { ls }
+# }}}
 
-
-
-
-# via http://homepage1.nifty.com/blankspace/zsh/zsh.html
+# via http://homepage1.nifty.com/blankspace/zsh/zsh.html {{{
 typeset -A myabbrev
 myabbrev=(
     "l@" "| less"
@@ -142,13 +130,10 @@ my-expand-abbrev() {
 }
 zle -N my-expand-abbrev
 bindkey     " "         my-expand-abbrev
+# }}}
 
-
-
-
-### gitのブランチ名を右プロンプトに表示
+# gitのブランチ名を右プロンプトに表示 {{{
 # via http://d.hatena.ne.jp/uasi/20091017/1255712789
-
 rprompt-git-current-branch () {
     local name st color
     if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
@@ -173,17 +158,12 @@ rprompt-git-current-branch () {
     # これをしないと右プロンプトの位置がずれる
     echo "[%{$color%}$name%{$reset_color%}]"
 }
-
 # プロンプトが表示されるたびにプロンプト文字列を評価、置換する
 setopt prompt_subst
-
 RPROMPT='`rprompt-git-current-branch`'
+# }}}
 
-
-
-
-
-# via http://d.hatena.ne.jp/voidy21/20090902/1251918174
+# via http://d.hatena.ne.jp/voidy21/20090902/1251918174 {{{
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
 zstyle ':completion:*:messages' format $fg[yellow]'%d'$reset_color
@@ -197,15 +177,10 @@ zstyle ':completion:*' group-name ''
 
 # manの補完をセクション番号別に表示させる
 zstyle ':completion:*:manuals' separate-sections true
+# }}}
+# }}}
 
-
-
-
-
-
-
-### cygwin ###
-
+### cygwin ### {{{
 if [ "$OS" = 'Cygwin' ]; then
 
     function wwhich() {
@@ -225,11 +200,10 @@ if [ "$OS" = 'Cygwin' ]; then
         fi
     }
 fi
+# }}}
 
-
-
-### local ###
-
+### local ### {{{
 if [ -e "$HOME/.alias.local" ]; then
     source "$HOME/.alias.local"
 fi
+# }}}
