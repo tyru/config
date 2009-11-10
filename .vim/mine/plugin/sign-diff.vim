@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: sign-diff
 " Version: 0.0.3
 " Author:  tyru <tyru.exe+vim@gmail.com>
-" Last Change: 2009-08-31.
+" Last Change: 2009-11-10.
 "
 " GetLatestVimScripts: 2712 1 :AutoInstall: sign-diff
 "
@@ -967,19 +967,19 @@ endfunc
 " }}}
 
 " Commands {{{
-command! SDAdd
+command SDAdd
             \ call s:add_diff(expand('%'))
-command! SDUpdate
+command SDUpdate
             \ call s:update_diff_signs(expand('%'))
-command! SDEnable
+command SDEnable
             \ call s:update_diff_signs(expand('%')) |
             \ let s:enabled = 1
-command! SDDisable
+command SDDisable
             \ call s:clear_signs(expand('%')) |
             \ let s:enabled = 0
-command! SDToggle
+command SDToggle
             \ call s:toggle_signs()
-command! SDList
+command SDList
             \ call s:list_signs(expand('%'))
 " }}}
 " Mappings {{{

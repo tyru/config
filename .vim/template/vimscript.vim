@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: <% eval: expand('%:t:r') %>
 " Version: 0.0.0
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-11-10.
+" Last Change: 2009-11-11.
 "
 " Description:
 "   NO DESCRIPTION YET
@@ -77,10 +77,16 @@ endfunc
 " s:warn {{{
 func! s:warn(msg)
     echohl WarningMsg
-    echo msg
+    echomsg msg
     echohl None
 
     call add(s:debug_errmsg, msg)
+endfunc
+" }}}
+
+" s:warnf {{{
+func! s:warnf(fmt, ...)
+    call s:warn(call('printf', [a:fmt] + a:000))
 endfunc
 " }}}
 
