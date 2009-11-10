@@ -1,9 +1,8 @@
 " vim:set fen fdm=marker:
 scriptencoding utf-8
-let s:save_cpo = &cpo
 set cpo&vim
 
-syntax on
+syntax enable
 filetype plugin indent on
 
 let mapleader = ';'
@@ -739,12 +738,6 @@ func! s:SetCompiler(ft)
     endtry
 endfunc
 " }}}
-" s:SetMisc {{{
-func! s:SetMisc(ft)
-    if !exists('s:filetype_vs_misc')
-    endif
-endfunc
-" }}}
 " TODO Move these settings to ~/.vim/ftplugin/*
 " s:LoadWhenFileType() {{{
 func! s:LoadWhenFileType()
@@ -791,7 +784,7 @@ noremap <silent> ]k        :call search('^\S', 'Ws')<CR>
 noremap <silent> [k        :call search('^\S', 'Wsb')<CR>
 " }}}
 " }}}
-" n {{{
+" nmap {{{
 nnoremap <silent> <LocalLeader><LocalLeader>         <LocalLeader>
 nnoremap <silent> <Leader><Leader>                   <Leader>
 
@@ -898,7 +891,7 @@ noremap! <M-}>         \{\}<Left><Left>
 noremap! <C-r><C-o>  <C-r><C-p>"
 noremap! <C-r><C-r>  <C-r><C-p>+
 " }}}
-" i {{{
+" imap {{{
 inoremap <S-CR>  <C-o>O
 inoremap <C-CR>  <C-o>o
 
@@ -912,7 +905,7 @@ inoremap <C-z>                <C-o>di(
 inoremap <C-w><C-n>     <C-x><C-n>
 inoremap <C-w><C-p>     <C-x><C-p>
 " }}}
-" c {{{
+" cmap {{{
 if &wildmenu
     cnoremap <C-f> <Space><BS><Right>
     cnoremap <C-b> <Space><BS><Left>
@@ -951,9 +944,9 @@ nmap gO      <Leader>cO
 " nextfile {{{
 let g:nf_map_next = ',n'
 let g:nf_map_previous = ',p'
-let nf_include_dotfiles = 1    " don't skip dotfiles
-let nf_loop_files = 1    " loop at the end of file
-let nf_ignore_ext = ['o']    " ignore object file
+let g:nf_include_dotfiles = 1    " don't skip dotfiles
+let g:nf_loop_files = 1    " loop at the end of file
+let g:nf_ignore_ext = ['o']    " ignore object file
 " }}}
 " vimtemplate {{{
 let g:vt_template_dir_path = expand("$HOME/.vim/template")
@@ -1011,7 +1004,7 @@ let dumbbuf_remove_marked_when_close = 1
 " let dumbbuf_cursor_pos = 'keep'
 " let dumbbuf_shown_type = 'listed'
 
-" for test.
+" For (compatibility) test
 "
 " let dumbbuf_shown_type = 'foobar'
 " let dumbbuf_listed_buffer_name = "*foo bar*"
@@ -1110,7 +1103,7 @@ nnoremap <silent> <C-]>     :call <SID>JumpTags()<CR>
 let xptemplate_key = '<C-t>'
 " }}}
 " operator-replace {{{
-map ,r  <Plug>(operator-replace)
+map <Leader>r  <Plug>(operator-replace)
 " }}}
 " git {{{
 let g:git_no_map_default = 1

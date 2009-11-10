@@ -11,7 +11,7 @@ export LESS="--LONG-PROMPT --RAW-CONTROL-CHARS"
 export PAGER=less
 
 # gisty
-export GISTY_DIR="$HOME/work/gist"
+export GISTY_DIR="$HOME/work/gisty"
 
 
 eval `dircolors`

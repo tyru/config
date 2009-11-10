@@ -54,7 +54,6 @@ EOF
 }
 
 use subs qw(say warn);
-
 *say = sub { print @_, "\n" };
 *warn = sub { CORE::warn @_, "\n" };
 
@@ -110,17 +109,12 @@ if (defined $ENV{USER}) {
 
 my $help;
 GetOptions(
-    h => \$help,
-    help => \$help,
-    'u=s' => \$username,
-    'username=s' => \$username,
-    c => \$auto_commit,
-    commit => \$auto_commit,
-    p => \$auto_push,
-    push => \$auto_push,
-    x => \$extract,
-    extract => \$extract,
-    gc => \$auto_gc,
+    'h|help' => \$help,
+    'u|username=s' => \$username,
+    'c|commit' => \$auto_commit,
+    'p|push' => \$auto_push,
+    'x|extract' => \$extract,
+    'gc' => \$auto_gc,
 ) or usage;
 usage if $help;
 

@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: nextfile
 " Version: 0.0.3
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-09-30.
+" Last Change: 2009-11-10.
 "
 " Description:
 "   open the next or previous file
@@ -49,6 +49,9 @@ scriptencoding utf-8
 "           ignore files of these extensions.
 "           e.g.: "o", "obj", "exe"
 "
+"       g:nf_disable_if_empty_name (default: 0)
+"           do not run mapping if current file name is empty.
+"
 "
 "==================================================
 " }}}1
@@ -84,6 +87,9 @@ endif
 if ! exists('g:nf_ignore_ext') || type(g:nf_ignore_ext) != type([])
     let g:nf_ignore_ext = []
 endif
+if ! exists('g:nf_disable_if_empty_name')
+    let g:nf_disable_if_empty_name = 0
+endif
 " }}}1
 
 
@@ -115,36 +121,35 @@ func! s:GlobPath(path, expr)
 endfunc
 
 func! s:OpenNextFile(advance)
-    if expand('%') ==# ''
-        return s:Warn("you didn't open any file")
+    if g:nf_disable_if_empty_name && expand('%') ==# ''
+        return s:Warn("current file is empty.")
     endif
 
-    try
-        " get files list
-        let files = s:GlobPath(expand('%:p:h'), '*')
-        if g:nf_include_dotfiles
-            let files += s:GlobPath(expand('%:p:h'), '.*')
-        endif
-        if g:nf_ignore_dir
-            call filter(files, '! isdirectory(v:val)')
-        endif
-        for ext in g:nf_ignore_ext
-            call filter(files, 'fnamemodify(v:val, ":e") !=# ext')
-        endfor
+    " get files list
+    let files = s:GlobPath(expand('%:p:h'), '*')
+    if g:nf_include_dotfiles
+        let files += s:GlobPath(expand('%:p:h'), '.*')
+    endif
+    if g:nf_ignore_dir
+        call filter(files, '! isdirectory(v:val)')
+    endif
+    for ext in g:nf_ignore_ext
+        call filter(files, 'fnamemodify(v:val, ":e") !=# ext')
+    endfor
 
+    try
         " get current file idx
         let tailed = map(copy(files), 'fnamemodify(v:val, ":t")')
         let idx = s:GetListIdx(tailed, expand('%:t'))
-        " move next or previous
+        " move to next or previous
         let idx = a:advance ? idx + 1 : idx - 1
-
     catch /^not found$/
         " open the first file.
         let idx = 0
     endtry
 
 
-    " can access files[idx]
+    " can access to files[idx]
     if idx >= 0 && get(files, idx, -1) !=# -1
         execute g:nf_open_command . ' ' . fnameescape(files[idx])
     elseif g:nf_loop_files
@@ -158,8 +163,8 @@ endfunc
 " }}}1
 
 " MAPPING {{{1
-execute printf('nnoremap %s :call <SID>OpenNextFile(1)<CR>', g:nf_map_next)
-execute printf('nnoremap %s :call <SID>OpenNextFile(0)<CR>', g:nf_map_previous)
+execute printf('nnoremap <silent><unique> %s :call <SID>OpenNextFile(1)<CR>', g:nf_map_next)
+execute printf('nnoremap <silent><unique> %s :call <SID>OpenNextFile(0)<CR>', g:nf_map_previous)
 " }}}1
 
 " RESTORE CPO {{{1

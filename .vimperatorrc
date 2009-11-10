@@ -36,7 +36,7 @@ set! network.dns.disableIPv6=true
 " }}}
 "-----------------------------------------------------------------
 " misc. {{{
-" フィードアイコンをステータスバーに表示
+" フィードアイコンをステータスバーに表示 {{{
 " (via http://memo.officebrook.net/20090906.html)
 javascript <<EOF
 (function(){
@@ -48,6 +48,15 @@ javascript <<EOF
         .insertBefore(feedPanel, document.getElementById("security-button"));
 })();
 EOF
+" }}}
+" 閉じたタブ一覧を出すワンライナー {{{
+" (via http://vimperator.g.hatena.ne.jp/teramako/20091105/1257429235)
+command! ClosedTabs echo [<><img src={tab.image}/>{tab.title}</> for each(tab in tabs.closedTabs)]
+" }}}
+" vimperatorのコマンドラインを簡易Javascriptシェルにするワンライナー {{{
+" (via http://vimperator.g.hatena.ne.jp/snaka72/20090217/1234831065)
+command! JSShell js (function a(){commandline.input("js> ", function(inp){if(inp=="quit"){liberator.echo("bye!");return;}liberator.echo(liberator.eval(inp)); a();})})()
+" }}}
 " }}}
 "-----------------------------------------------------------------
 " set {{{

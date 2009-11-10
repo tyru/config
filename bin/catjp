@@ -9,9 +9,10 @@ fi
 
 while getopts e: opt; do
     case $opt in
-        "e" ) encoding="$OPTARG" ;;
+        "e" ) encoding="$OPTARG"; shift ;;
         *   ) usage ; exit 0 ;;
     esac
+    shift
 done
 
-cat $* | nkf --$encoding
+cat "$@" | nkf --$encoding

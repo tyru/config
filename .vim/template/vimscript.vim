@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: <% eval: expand('%:t:r') %>
 " Version: 0.0.0
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-10-03.
+" Last Change: 2009-11-10.
 "
 " Description:
 "   NO DESCRIPTION YET
@@ -25,7 +25,7 @@ scriptencoding utf-8
 " }}}
 
 " Load Once {{{
-if exists('g:loaded_<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>') && g:loaded_<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%> != 0
+if exists('g:loaded_<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>') && g:loaded_<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>
     finish
 endif
 let g:loaded_<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%> = 1
