@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.7
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-11-01.
+" Last Change: 2009-11-10.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -275,7 +275,7 @@ scriptencoding utf-8
 " }}}
 
 " Load Once {{{
-if exists('g:loaded_dumbbuf') && g:loaded_dumbbuf != 0
+if exists('g:loaded_dumbbuf') && g:loaded_dumbbuf
     finish
 endif
 let g:loaded_dumbbuf = 1
@@ -789,14 +789,14 @@ endfunc
 func! s:set_cursor_pos(curbufinfo)
     if g:dumbbuf_cursor_pos ==# 'current'
         if a:curbufinfo.lnum !=# -1
-            execute 'normal! ' . a:curbufinfo.lnum . 'gg'
+            execute 'normal!' a:curbufinfo.lnum . 'gg'
         endif
     elseif g:dumbbuf_cursor_pos ==# 'keep'
         call s:debug(printf("s:previous_lnum [%d]", s:previous_lnum))
         if s:previous_lnum == -1
             " same as above.
             if a:curbufinfo.lnum !=# -1
-                execute 'normal! ' . a:curbufinfo.lnum . 'gg'
+                execute 'normal!' a:curbufinfo.lnum . 'gg'
             endif
         else
             " keep.
@@ -1428,7 +1428,7 @@ endfunc
 " }}}
 
 " Mappings {{{
-execute 'nnoremap <silent><unique> '.g:dumbbuf_hotkey.' :call <SID>update_buffers_list()<CR>'
+execute 'nnoremap <silent><unique>' g:dumbbuf_hotkey ':call <SID>update_buffers_list()<CR>'
 
 " single key emulation
 "
@@ -1437,7 +1437,6 @@ noremap <silent><unique> <Plug>dumbbuf_try_to_emulate_single_key <Nop>
 noremap! <silent><unique> <Plug>dumbbuf_try_to_emulate_single_key <Nop>
 " redefine only mapmode-n.
 nnoremap <silent> <Plug>dumbbuf_try_to_emulate_single_key :<C-u>call <SID>try_to_emulate_single_key()<CR>
-
 " }}}
 
 " Autocmd {{{
@@ -1447,9 +1446,9 @@ if g:dumbbuf_single_key
 
         for i in [g:dumbbuf_listed_buffer_name, g:dumbbuf_unlisted_buffer_name]
             " single key emulation.
-            execute 'autocmd CursorHold '.i.' call feedkeys("\<Plug>dumbbuf_try_to_emulate_single_key", "m")'
+            execute 'autocmd CursorHold' i 'call feedkeys("\<Plug>dumbbuf_try_to_emulate_single_key", "m")'
             " restore &updatetime.
-            execute 'autocmd BufWipeout '.i.' call s:restore_options()'
+            execute 'autocmd BufWipeout' i 'call s:restore_options()'
         endfor
     augroup END
 endif
