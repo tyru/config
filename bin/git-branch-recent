@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+# via http://github.com/cho45/dotfiles/blob/master/bin/git-branch-recent
+
+branches = `git branch -a --no-abbrev --verbose`
+branches.gsub!(/^\*?\s+/, "")
+
+branches = branches.split(/\n/).map {|i| i.split(/\s+/, 3) }
+
+branches = branches.map {|name, hash, desc|
+    time, author, rtime = *`git log -1 --pretty=format:'%ct\\0%an\\0%cr' #{hash}`.split(/\\0/)
+    [name, hash, desc, Time.at(time.to_i), author, rtime]
+}.sort_by { |_, _, _, time|
+    time
+}.last(10)
+
+remote_master = nil
+rtime_width = name_width = author_width = 0
+branches.each do |name,hash,_,_,author,rtime|
+    name_width   = name.size   if name.size   > name_width
+    author_width = author.size if author.size > author_width
+    rtime_width  = rtime.size  if rtime.size  > rtime_width
+    remote_master = hash if name == 'origin/master'
+end
+
+branches.each {|name, hash, desc, time, author, rtime|
+    out = "\e[32m% -#{name_width}s\e[39m % #{rtime_width}s %s \e[31m% -#{author_width}s\e[39m %s" % [
+        name,
+        rtime,
+        hash[/^.{7}/],
+        author,
+        desc
+    ]
+    puts (hash == remote_master) ? "\e[7m#{out}\e[m" : out
+}

@@ -3,13 +3,19 @@
 prereq_prog="pandoc firefox perl"
 
 
+usage() {
+    progname=`basename $0`
+    cat <<EOM >&2
+Usage: $progname <input file> [<pandoc arguments> ...]
+EOM
+    exit 1
+}
+
+
 if test $# = 0
 then
-    echo "specify markdown document." >&2
-    exit -1
-
+    usage
 fi
-
 
 for i in $prereq_prog
 do
@@ -20,21 +26,12 @@ do
     fi
 done
 
+infile=$1
+outfile="/tmp/$1.html"
+shift
 
-if test $# = 0
-then
-    fname=`perl -e 'print join q(), time, q(.html)'`
-else
-    fname=$1
-fi
+pandoc "$@" $infile > $outfile
+firefox $outfile
 
-if test ! -f $1
-then
-    echo "$1: No such a file" >&2
-    exit -1
-fi
-
-pandoc $1 > /tmp/$fname
-firefox /tmp/$fname
-# NOTE: not found if firefox reloads.
-# rm /tmp/$fname
+# not found if firefox reloads.
+# rm /tmp/$outfile

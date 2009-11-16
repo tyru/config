@@ -1074,7 +1074,7 @@ let changelog_username = "tyru"
 func! s:JumpTags()
     if expand('%') == '' | return | endif
 
-    if exists(':GtagsCursor')
+    if !exists(':GtagsCursor')
         echo "gtags.vim is not installed. do default <C-]>..."
         sleep 2
         " unmap this function.

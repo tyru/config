@@ -1,7 +1,8 @@
 " vim:set ft=vimperator fdm=marker:
 let mapleader = ','
 source $HOME/.vimperatorrc.local
-"-----------------------------------------------------------------
+
+
 " set! {{{
 " via http://retlet.net/log/2008/06/awesomebar-bookmarklet.html
 set! browser.urlbar.filter.javascript=false
@@ -35,30 +36,6 @@ set! javascript.options.jit.chrome=true
 set! network.dns.disableIPv6=true
 " }}}
 "-----------------------------------------------------------------
-" misc. {{{
-" フィードアイコンをステータスバーに表示 {{{
-" (via http://memo.officebrook.net/20090906.html)
-javascript <<EOF
-(function(){
-    var feedPanel = document.createElement("statusbarpanel");
-    feedPanel.setAttribute("id", "feed-panel-clone");
-    feedPanel.appendChild(document.getElementById("feed-button"));
-    feedPanel.firstChild.setAttribute("style", "padding: 0; max-height: 16px;");
-    document.getElementById("status-bar")
-        .insertBefore(feedPanel, document.getElementById("security-button"));
-})();
-EOF
-" }}}
-" 閉じたタブ一覧を出すワンライナー {{{
-" (via http://vimperator.g.hatena.ne.jp/teramako/20091105/1257429235)
-command! ClosedTabs echo [<><img src={tab.image}/>{tab.title}</> for each(tab in tabs.closedTabs)]
-" }}}
-" vimperatorのコマンドラインを簡易Javascriptシェルにするワンライナー {{{
-" (via http://vimperator.g.hatena.ne.jp/snaka72/20090217/1234831065)
-command! JSShell js (function a(){commandline.input("js> ", function(inp){if(inp=="quit"){liberator.echo("bye!");return;}liberator.echo(liberator.eval(inp)); a();})})()
-" }}}
-" }}}
-"-----------------------------------------------------------------
 " set {{{
 set activate=
 set complete=sfl
@@ -80,7 +57,9 @@ set wildoptions=auto
 " map {{{
 "
 " NOTE: <silent>つけるとむしろ遅いorz
-" ~ noremap ~ {{{
+" ~ n ~ {{{
+nnoremap ZZ <Nop>
+
 nnoremap <F5>    <Nop>
 nnoremap <BS>    <Nop>
 
@@ -118,9 +97,8 @@ nnoremap <Leader>gf     :tab normal gf<CR>
 
 nnoremap !       :set invum<CR>
 
-nnoremap ZZ <Nop>
-
-nnoremap <Leader>t :tab<Space>
+nnoremap <Leader>t  :tab<Space>
+nnoremap <Leader>n  :normal!<Space>
 " }}}
 " ~ c ~ {{{
 cnoremap <C-c>          <C-v><C-c>
@@ -137,7 +115,6 @@ cnoremap <C-d>      <Del>
 cnoremap <C-f>      <Right>
 cnoremap <C-b>      <Left>
 " }}}
-
 " ~ i ~ {{{
 " フォーカス中に<C-n>で新しくウィンドウを作らない
 inoremap <C-n> <Nop>
@@ -170,15 +147,15 @@ autocmd VimperatorEnter .* pluginmanager update
 "-----------------------------------------------------------------
 " プラグイン {{{
 " direct_bookmark.js {{{
-let direct_sbm_use_services_by_tag  = "d"
-let direct_sbm_use_services_by_post = "hd"
-let direct_sbm_is_use_migemo = 1
+let g:direct_sbm_use_services_by_tag  = "d"
+let g:direct_sbm_use_services_by_post = "hd"
+let g:direct_sbm_is_use_migemo = 1
 noremap a   :sbm<Space>
 noremap B   :tab bentry<CR>
 " }}}
 " sbmcommentsviewer.js {{{
-let def_sbm_format = "id,timestamp,tags,comment"
-let def_sbms       = "h"
+let g:def_sbm_format = "id,timestamp,tags,comment"
+let g:def_sbms       = "h"
 noremap b   :viewSBMComments<CR>
 " }}}
 " migemo_hint.js {{{
@@ -189,14 +166,15 @@ noremap <C-k>       :mr<Space>
 noremap <Leader>a   :mr alc<Space>
 " }}}
 " ime_controller.js {{{
-let ex_ime_mode = "inactive"  
-let textarea_ime_mode = "inactive"
+let g:ex_ime_mode = "inactive"  
+let g:textarea_ime_mode = "inactive"
 " }}}
 " appendAnchor.js {{{
-let auto_append_anchor_once = "true"
+let g:auto_append_anchor_once = "true"
 " }}}
 " nextlink.js {{{
-let nextlink_nositeinfo_act = "f"
+let g:nextlink_nositeinfo_act = "f"
+let g:nextlink_followlink = "true"
 " }}}
 " toggler.js {{{
 js <<EOM
@@ -218,7 +196,7 @@ autocmd LocationChange .* :fmapc
 " GMail {{{
 "   add ! l gl g/
 "   delete /
-autocmd LocationChange 'mail\.google\.com/mail' :fmap -depth 4 c j k n p o u e x s r z # [ ] ! ? . gi gs gt gd ga gc gk gl <C-s> l *a *n *r *u *s *t T g/
+autocmd LocationChange 'mail\.google\.com/mail' :fmap c j k n p o u e x s r z # [ ] ! ? . gi gs gt gd ga gc gk gl <C-s> l *a *n *r *u *s *t T g/
 " }}}
 " Google Groups {{{
 autocmd LocationChange 'groups\.google\.\w+\/group' :fmap -event keydown -vkey n p o
@@ -262,11 +240,37 @@ liberator.globalVariables.copy_templates = [
 EOM
 " }}}
 " sbmincsearch {{{
-let sbmincsearch_service_name = "delicious"
-let sbmincsearch_max = 50
+let g:sbmincsearch_service_name = "delicious"
+let g:sbmincsearch_max = 50
 " }}}
 " pino.js {{{
 nnoremap ,p     :pino<Space>
 " }}}
 " }}}
 "-----------------------------------------------------------------
+" misc. {{{
+" フィードアイコンをステータスバーに表示 {{{
+" (via http://memo.officebrook.net/20090906.html)
+javascript <<EOF
+(function(){
+    var feedPanel = document.createElement("statusbarpanel");
+    feedPanel.setAttribute("id", "feed-panel-clone");
+    feedPanel.appendChild(document.getElementById("feed-button"));
+    feedPanel.firstChild.setAttribute("style", "padding: 0; max-height: 16px;");
+    document.getElementById("status-bar")
+        .insertBefore(feedPanel, document.getElementById("security-button"));
+})();
+EOF
+" }}}
+" 閉じたタブ一覧を出すワンライナー {{{
+" (via http://vimperator.g.hatena.ne.jp/teramako/20091105/1257429235)
+command! ClosedTabs echo [<><img src={tab.image}/>{tab.title}</> for each(tab in tabs.closedTabs)]
+" }}}
+" vimperatorのコマンドラインを簡易Javascriptシェルにするワンライナー {{{
+" (via http://vimperator.g.hatena.ne.jp/snaka72/20090217/1234831065)
+command! JSShell js (function a(){commandline.input("js> ", function(inp){if(inp=="quit"){liberator.echo("bye!");return;}liberator.echo(liberator.eval(inp)); a();})})()
+" }}}
+" :LoadConfig {{{
+command! LoadConfig source $HOME/.vimperatorrc
+" }}}
+" }}}
