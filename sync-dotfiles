@@ -4,14 +4,15 @@ use warnings;
 use utf8;
 
 use FindBin qw($Bin);
-# gnu_compat: --opt="..." is allowed.
-# no_bundling: single character option is not bundled.
-# no_ignore_case: no ignore case on long option.
-use Getopt::Long qw(:config gnu_compat no_bundling no_ignore_case);
 use File::Path qw(rmtree mkpath);
 use IO::Handle;
 use File::Spec::Functions qw(catfile);
 use File::Basename qw(dirname);
+
+# gnu_compat: --opt="..." is allowed.
+# no_bundling: single character option is not bundled.
+# no_ignore_case: no ignore case on long option.
+use Getopt::Long qw(:config gnu_compat no_bundling no_ignore_case);
 
 
 
@@ -49,13 +50,21 @@ my %dont_overwrite = map { $_ => 1 } qw(
 
 sub usage () {
     die <<EOF;
-    Usage: $0 [[-u|--username <user>] [-c|--commit] [-p|--push] [-x|--extract] [--gc]]
+    Usage: $0 [OPTIONS]
+
+OPTIONS:
+    -h, --help                  show this help.
+    -u, --username <user>       specify username.
+    -c, --commit                update working tree and commit it
+    -p, --push                  exec 'git push origin master'
+    -x, --extract               extract to current environment.
+    --gc                        exec 'git gc' automatically.
 EOF
 }
 
-use subs qw(say warn);
+# Don't use non-CORE module as possible
+use subs qw(say);
 *say = sub { print @_, "\n" };
-*warn = sub { CORE::warn @_, "\n" };
 
 sub install {
     # install $src to $dest as $user.
@@ -65,6 +74,8 @@ sub install {
         warn "$src:$!\n";
         return;
     }
+    # Delete destination
+    # TODO: Use rsync?
     rmtree($dest);
 
     say("$src -> $dest");
@@ -109,12 +120,12 @@ if (defined $ENV{USER}) {
 
 my $help;
 GetOptions(
-    'h|help' => \$help,
+    'h|help'       => \$help,
     'u|username=s' => \$username,
-    'c|commit' => \$auto_commit,
-    'p|push' => \$auto_push,
-    'x|extract' => \$extract,
-    'gc' => \$auto_gc,
+    'c|commit'     => \$auto_commit,
+    'p|push'       => \$auto_push,
+    'x|extract'    => \$extract,
+    'gc'           => \$auto_gc,
 ) or usage;
 usage if $help;
 
@@ -128,11 +139,12 @@ if ($username eq 'root') {
     $home = "/root";
 } else {
     $home = "/home/$username";
-    unless (-d $home) {
-        die "$home:$!"
-    }
+}
+unless (-d $home) {
+    die "$home:$!"
 }
 
+# -x: Extract to current environment
 if ($extract) {
     ask("may I replace the dotfiles in '$home'?");
 }
@@ -149,7 +161,7 @@ for my $file (@files) {
             $dest = catfile($home, $file);
         }
         if (exists $dont_overwrite{$file}) {
-            warn "skip $file...";
+            warn "skip $file...\n";
             next;
         }
 
@@ -168,7 +180,8 @@ for my $file (@files) {
     }
 }
 
-# update trees and commit all.
+
+# -c: Update trees and commit all.
 if ($auto_commit) {
     if (length qx(git diff -- .vimrc)) {
         # if .vimrc has changed
@@ -180,13 +193,11 @@ if ($auto_commit) {
     system(qw(git add .));
     system(qw(git commit));
 }
-
-# git gc
+# --gc: 'git gc'
 if ($auto_gc) {
     system(qw(git gc));
 }
-
-# git push origin master
+# -p: 'git push origin master'
 if ($auto_push) {
     system(qw(git push origin master));
 }
