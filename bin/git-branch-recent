@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
-# via http://github.com/cho45/dotfiles/blob/master/bin/git-branch-recent
+# via
+# - http://subtech.g.hatena.ne.jp/cho45/20091114/1258128091
+# - http://github.com/cho45/dotfiles/blob/master/bin/git-branch-recent
 
 branches = `git branch -a --no-abbrev --verbose`
 branches.gsub!(/^\*?\s+/, "")
