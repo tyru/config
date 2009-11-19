@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.7
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-11-18.
+" Last Change: 2009-11-19.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -1064,7 +1064,6 @@ func! s:run_from_local_map(code, opt)
     try
         " pre
         call s:do_tasks(opt.pre, cursor_buf, lnum)
-
         let bufs = s:get_buffers_being_processed(opt, cursor_buf)
 
         " dispatch a:code.
@@ -1206,7 +1205,7 @@ endfunc
 " }}}
 
 
-" these functions are called from dumbbuf's buffer {{{
+" these functions are called from s:dispatch_code() {{{
 
 " s:buflocal_move_lower {{{
 func! s:buflocal_move_lower()
