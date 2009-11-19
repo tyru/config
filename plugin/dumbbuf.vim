@@ -924,7 +924,7 @@ func! s:close_dumbbuf_buffer()
     endif
 
     " jump to previous window.
-    if winnr() != prevwinnr
+    if winnr() > prevwinnr
         execute prevwinnr.'wincmd w'
     endif
 endfunc
