@@ -1417,7 +1417,13 @@ func! s:init()
         if !has_key(s:mappings.mixed, mode)
             let s:mappings.mixed[mode] = {}
         endif
-        call extend(s:mappings.mixed[mode], maps, 'force')
+        for [from, to] in items(maps)
+            if has_key(to, 'alias_to') && has_key(s:mappings.default[mode], to.alias_to)
+                let s:mappings.mixed[mode][from] = s:mappings.default[mode][to.alias_to]
+            else
+                let s:mappings.mixed[mode][from] = to
+            endif
+        endfor
     endfor
     call s:warnf('s:mappings.user [%s]', string(s:mappings.user))
 
