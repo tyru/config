@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.7
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-11-21.
+" Last Change: 2009-11-22.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -1180,19 +1180,19 @@ func! s:dispatch_code(code, no, opt)
     if a:opt.type ==# 'cmd'
         if requires_args
             if ! empty(a:opt.cursor_buf)
-                silent execute printf(a:code, a:opt.cursor_buf.nr)
+                execute printf(a:code, a:opt.cursor_buf.nr)
             else
                 call s:warn("internal error: a:opt.cursor_buf is empty...")
             endif
         else
-            silent execute a:code
+            execute a:code
         endif
     elseif a:opt.type ==# 'func'
         if requires_args
             " NOTE: not used.
-            silent call call(a:code, [a:opt.args])
+            call call(a:code, [a:opt.args])
         else
-            silent call call(a:code, [a:opt])
+            call call(a:code, [a:opt])
         endif
     else
         throw "internal error: unknown type: ".a:opt.type
