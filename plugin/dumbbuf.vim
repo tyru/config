@@ -314,7 +314,7 @@ let s:bufs_info = {}    " buffers info. (key: bufnr)
 let s:misc_info = {'marked_bufs':{}, 'project_name':{}}
 let s:previous_lnum = -1    " lnum where a previous mapping executed.
 
-let s:current_shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
+let s:current_shown_type = ''    " this must be one of 'listed', 'unlisted', 'project' while runnning mappings.
 let s:mappings = {'default':{}, 'user':{}, 'compiled':[]}    " buffer local mappings.
 
 " used for single key emulation.
@@ -384,10 +384,30 @@ if ! exists('g:dumbbuf_remove_marked_when_close')
 endif
 
 
+let s:listed = 'printf("%s%s%s <%d> [%s]%s", (v:val.is_current ? "%" : " "), (v:val.is_marked ? "x" : " "), (v:val.is_modified ? "+" : " "), v:val.nr, bufname(v:val.nr), (v:val.project_name == "" ? "" : "@".v:val.project_name))'
+let s:project = 'printf("%s%s%s <%d> [%s]", (v:val.is_current ? "%" : " "), (v:val.is_marked ? "x" : " "), (v:val.is_modified ? "+" : " "), v:val.nr, bufname(v:val.nr))'
+let s:disp_expr = {'listed': s:listed, 'unlisted': s:listed, 'project': s:project}
+unlet s:listed
+unlet s:project
+
 if ! exists('g:dumbbuf_disp_expr')
-    " QuickBuf.vim like UI.
-    let g:dumbbuf_disp_expr = 'printf("%s%s%s <%d> [%s]%s", (v:val.is_current ? "%" : " "), (v:val.is_marked ? "x" : " "), (v:val.is_modified ? "+" : " "), v:val.nr, bufname(v:val.nr), (v:val.project_name == "" ? "" : "@".v:val.project_name))'
+    let g:dumbbuf_disp_expr = s:disp_expr
+else
+    if type(g:dumbbuf_disp_expr) == type("")
+        " for backward compatibility.
+        let s:tmp = copy(g:dumbbuf_disp_expr)
+        unlet g:dumbbuf_disp_expr
+        let g:dumbbuf_disp_expr = {'listed': s:tmp, 'unlisted': s:tmp}
+        call extend(g:dumbbuf_disp_expr, s:disp_expr, 'keep')
+        unlet s:tmp
+    else
+        " add missing shown types.
+        call extend(g:dumbbuf_disp_expr, s:disp_expr, 'keep')
+    endif
 endif
+unlet s:disp_expr
+
+
 if ! exists('g:dumbbuf_options')
     let g:dumbbuf_options = [
         \'bufhidden=wipe',
@@ -667,9 +687,9 @@ endfunc
 " s:eval_disp_expr {{{
 func! s:eval_disp_expr(bufs)
     if type(a:bufs) == type([])
-        return map(a:bufs, g:dumbbuf_disp_expr)
+        return map(a:bufs, g:dumbbuf_disp_expr[s:current_shown_type])
     else
-        return get(map([a:bufs], g:dumbbuf_disp_expr), 0)
+        return get(map([a:bufs], g:dumbbuf_disp_expr[s:current_shown_type]), 0)
     endif
 endfunc
 " }}}
@@ -779,9 +799,8 @@ func! s:get_cursor_buffer()
 endfunc
 " }}}
 " s:get_shown_type {{{
-"   this returns 'listed' or 'unlisted'.
-"   if s:current_shown_type or g:dumbbuf_shown_type value is invalid,
-"   this may throw exception.
+"   this returns exact shown type (this does NOT return '').
+"   see g:dumbbuf_shown_type in the document about shown type.
 func! s:get_shown_type(caller_bufnr)
     if g:dumbbuf_shown_type =~# '^\(unlisted\|listed\)$'.'\C'
         return g:dumbbuf_shown_type
