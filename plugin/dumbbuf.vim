@@ -835,6 +835,7 @@ func! s:set_cursor_pos(curbufinfo)
 endfunc
 " }}}
 " s:extend_misc_info {{{
+"   add s:misc_info to buf.
 func! s:extend_misc_info(buf)
     let buf = a:buf
     let buf.is_marked = has_key(s:misc_info.marked_bufs, buf.nr)
@@ -843,6 +844,7 @@ func! s:extend_misc_info(buf)
 endfunc
 " }}}
 " s:add_misc_info {{{
+"   add s:misc_info to all buffers in bufs_info.
 func! s:add_misc_info(bufs_info)
     for buf in values(a:bufs_info)
         let buf = s:extend_misc_info(buf)
@@ -959,7 +961,7 @@ func! s:open_dumbbuf_buffer(shown_type)
 
     " NOTE:
     " highlight group and updatetime are global settings.
-    " so I must restore it later (s:restore_options()).
+    " so I must restore it later (at s:restore_options()).
 
     " highlight
     let hl_cursorline = s:get_highlight('CursorLine')
