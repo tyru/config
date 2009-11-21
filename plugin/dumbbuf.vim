@@ -1401,28 +1401,34 @@ endfunc
 " autocmd's handlers {{{
 " s:init {{{
 func! s:init()
-    let unmap_code = []
-    for [mode, maps] in items(s:mappings.user) + items(s:mappings.default)
+    let map_vs_code = {}
+    " NOTE: Compile 'default' firstly, 'user' secondly.
+    " Because 'user' may unmap the default mappings.
+    for [mode, maps] in items(s:mappings.default) + items(s:mappings.user)
         for [from, to] in items(maps)
-            if empty(to)
-                " TODO Do not map 'from' at first.
-                call add(unmap_code, mode.'unmap <buffer> '.from)
-            elseif has_key(to, 'alias_to')
-            \ && has_key(s:mappings.default[mode], to.alias_to)
-            \ && has_key(s:mappings.default[mode][to.alias_to], 'mapto')
-                call add(s:mappings.mixed,
-                    \ printf('%snoremap <buffer>%s %s %s',
-                    \                 mode,
-                    \                 (has_key(to, 'opt') ? to.opt : ''),
-                    \                 from,
-                    \                 s:mappings.default[mode][to.alias_to].mapto))
-            elseif has_key(to, 'mapto')
-                call add(s:mappings.mixed,
-                    \ printf('%snoremap <buffer>%s %s %s',
-                    \                 mode,
-                    \                 (has_key(to, 'opt') ? to.opt : ''),
-                    \                 from,
-                    \                 to.mapto))
+            let map_from = mode . from
+            if has_key(map_vs_code, map_from)
+                if empty(to)
+                    unlet map_vs_code[map_from]
+                endif
+            else
+                if has_key(to, 'alias_to')
+                \ && has_key(s:mappings.default[mode], to.alias_to)
+                \ && has_key(s:mappings.default[mode][to.alias_to], 'mapto')
+                    let map_vs_code[map_from] =
+                        \ printf('%snoremap <buffer>%s %s %s',
+                        \       mode,
+                        \       (has_key(to, 'opt') ? to.opt : ''),
+                        \       from,
+                        \       s:mappings.default[mode][to.alias_to].mapto)
+                elseif has_key(to, 'mapto')
+                    let map_vs_code[map_from] =
+                        \ printf('%snoremap <buffer>%s %s %s',
+                        \       mode,
+                        \       (has_key(to, 'opt') ? to.opt : ''),
+                        \       from,
+                        \       to.mapto)
+                endif
             endif
 
             " Allow 'to' to be assigned with different types.
@@ -1430,7 +1436,8 @@ func! s:init()
             unlet to
         endfor
     endfor
-    let s:mappings.mixed = extend(s:mappings.mixed, unmap_code)
+
+    let s:mappings.mixed = values(map_vs_code)
 
     unlet s:mappings.user
     unlet s:mappings.default
