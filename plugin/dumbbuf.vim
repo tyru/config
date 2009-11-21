@@ -416,7 +416,7 @@ let s:mappings.default = {
                         \'requires_args': 0,
                         \'prev_mode': 'v',
                         \'pre': ['return_if_empty'],
-                        \'post': ['save_lnum', 'update_marks']}))
+                        \'post': ['save_lnum', 'update_misc']}))
         \},
         \'j': {
             \'opt': '<silent>',
@@ -577,7 +577,7 @@ let s:mappings.default = {
                         \'type': 'func',
                         \'requires_args': 0,
                         \'pre': ['return_if_empty'],
-                        \'post': ['save_lnum', 'update_marks']}))
+                        \'post': ['save_lnum', 'update_misc']}))
         \},
         \'pp': {
             \'opt': '',
@@ -589,7 +589,7 @@ let s:mappings.default = {
                         \'requires_args': 0,
                         \'process_marked': 1,
                         \'pre': ['return_if_empty'],
-                        \'post': ['save_lnum', 'update_marks']}))
+                        \'post': ['save_lnum', 'update_misc']}))
         \},
     \}
 \}
@@ -953,17 +953,14 @@ func! s:close_dumbbuf_buffer()
     endif
 endfunc
 " }}}
-" s:update_only_marks {{{
-func! s:update_only_marks()
+" s:update_only_misc_info {{{
+func! s:update_only_misc_info()
     if s:jump_to_buffer(s:dumbbuf_bufnr) == -1
         return
     endif
 
-
     let save_modifiable = &l:modifiable
-
     setlocal modifiable
-
     try
         for buf in values(s:bufs_info)
             " update 'is_marked'.
@@ -1161,8 +1158,8 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
                 call s:update_buffers_list()
             endif
 
-        elseif p ==# 'update_marks'
-            call s:update_only_marks()
+        elseif p ==# 'update_misc'
+            call s:update_only_misc_info()
 
         else
             call s:warn("internal warning: unknown task name: ".p)
@@ -1339,7 +1336,8 @@ func! s:buflocal_pm_set(opt)
         redraw
         let name = input('Project Name:', a:opt.cursor_buf.project_name)
         if name != ''
-            let a:opt.cursor_buf.project_name = name
+            let s:misc_info.project_name[a:opt.cursor_buf.nr] = name
+            call s:update_only_misc_info()
         endif
     finally
         let &eventignore = save_ei
