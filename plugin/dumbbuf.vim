@@ -266,21 +266,20 @@ scriptencoding utf-8
 " TODO: {{{
 "   - manipulate buffers each project.
 "   - each keymap behaves like operator
-"     if operator-user.vim was installed.
+"     - single key emulation needs to emulate also visual mode.
 "   - :hide
 "   - option which decides the order of buffer's list.
 "   - support <Plug>... mapping as hotkey.
 "   - 変更されたバッファについては訊く
-"   - 現在のパス以下のものとそうでないものをラベリングする
+"   - 現在のパス以下のものとそうでないものをラベリングする (shown typeは'directory')
 "     - UIはプロジェクトごとに管理するものと同じ (なので上の機能を実装してから)
-"     - 新しい機能として提供するよりは上の機能と合わせて「プロジェクトごと」「同じ親ディレクトリごと」などグルーピングする機能を一つ追加する方がユーザにとっても分かりやすい
-"   - 次行にwrapしないよう頑張る
+"     - 新しい機能として提供するよりは上の機能と合わせて
+"       「プロジェクトごと」「同じ親ディレクトリごと」など
+"       グルーピングする機能を一つ追加する方がユーザにとっても分かりやすい
 " }}}
 " FIXME: {{{
 "   - sometimes Vim gets freezed when typed 'V'
 "     - 直ったっぽい？
-"   - `d`とか押す度に画面がチラつく
-" }}}
 " }}}
 "==================================================
 " }}}
@@ -1536,6 +1535,12 @@ endfunc
 " single key emulation {{{
 " s:emulate_single_key {{{
 "   emulate QuickBuf.vim's single key mappings.
+"
+" TODO
+"   emulate also visual mode.
+"   because CursorHold event won't perform while visual mode.
+" FIXME
+"   can't handle meta key sequence.
 func! s:emulate_single_key()
     call s:debug(printf('s:mapstack [%s], s:mapstack_count [%d]', s:mapstack, s:mapstack_count))
 
@@ -1587,7 +1592,6 @@ func! s:emulate_single_key()
 endfunc
 " }}}
 " s:try_to_emulate_single_key {{{
-" XXX can't handle meta key sequence?
 func! s:try_to_emulate_single_key()
     if bufnr('%') != s:dumbbuf_bufnr
         call s:restore_options()
