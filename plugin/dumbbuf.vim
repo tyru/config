@@ -907,6 +907,9 @@ func! s:open_dumbbuf_buffer(shown_type)
     endfor
 
     " mappings
+    if empty(s:mappings.mixed)
+        call s:init()
+    endif
     for code in s:mappings.mixed
         execute code
     endfor
@@ -1502,8 +1505,6 @@ if g:dumbbuf_single_key
             " restore &updatetime.
             execute 'autocmd BufWipeout' i 'call s:restore_options()'
         endfor
-
-        autocmd VimEnter * call s:init()
     augroup END
 endif
 " }}}
