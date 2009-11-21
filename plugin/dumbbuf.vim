@@ -415,6 +415,8 @@ if ! exists('g:dumbbuf_options')
         \'nobuflisted',
         \'nomodifiable',
         \'noswapfile',
+        \'lazyredraw',
+        \'nowrap',
     \]
 endif
 
