@@ -311,7 +311,7 @@ let s:debug_msg = []
 let s:caller_bufnr = -1    " caller buffer's bufnr which calls dumbbuf buffer.
 let s:dumbbuf_bufnr = -1    " dumbbuf buffer's bufnr.
 let s:bufs_info = {}    " buffers info. (key: bufnr)
-let s:misc_info = {'marked_bufs':{}}
+let s:misc_info = {'marked_bufs':{}, 'project_name':{}}
 let s:previous_lnum = -1    " lnum where a previous mapping executed.
 
 let s:current_shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
@@ -787,6 +787,7 @@ endfunc
 func! s:extend_misc_info(buf)
     let buf = a:buf
     let buf.is_marked = has_key(s:misc_info.marked_bufs, buf.nr)
+    let buf.project_name = get(s:misc_info.project_name, buf.nr, '')
     return buf
 endfunc
 " }}}
@@ -1328,6 +1329,18 @@ func! s:buflocal_mark(opt)
         endif
     endif
 endfunc
+" }}}
+
+
+" project manager {{{
+" s:buflocal_pm_set {{{
+func! s:buflocal_pm_set(opt)
+    let name = input('Project Name:', a:opt.cursor_buf.project_name)
+    if name != ''
+        let a:opt.cursor_buf.project_name = name
+    endif
+endfunc
+" }}}
 " }}}
 
 " }}}
