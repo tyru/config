@@ -1329,19 +1329,12 @@ endfunc
 " s:buflocal_pm_set {{{
 "   set project name.
 func! s:buflocal_pm_set(opt)
-    let save_ei = &eventignore
-    setlocal eventignore
-
-    try
-        redraw
-        let name = input('Project Name:', a:opt.cursor_buf.project_name)
-        if name != ''
-            let s:misc_info.project_name[a:opt.cursor_buf.nr] = name
-            call s:update_only_misc_info()
-        endif
-    finally
-        let &eventignore = save_ei
-    endtry
+    redraw
+    let name = input('Project Name:', a:opt.cursor_buf.project_name)
+    if name != ''
+        let s:misc_info.project_name[a:opt.cursor_buf.nr] = name
+        call s:update_only_misc_info()
+    endif
 endfunc
 " }}}
 
