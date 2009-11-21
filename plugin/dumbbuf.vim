@@ -679,7 +679,6 @@ endfunc
 
 " misc.
 " s:get_buffer_info {{{
-"   this returns the caller buffer's info
 func! s:get_buffer_info(bufnr)
     return has_key(s:bufs_info, a:bufnr) ? s:bufs_info[a:bufnr] : []
 endfunc
@@ -717,6 +716,7 @@ func! s:write_buffers_list(bufs)
 endfunc
 " }}}
 " s:parse_buffers_info {{{
+"   parse output of :ls! command.
 func! s:parse_buffers_info()
     " redirect output of :ls! to ls_out.
     redir => ls_out
@@ -781,7 +781,6 @@ func! s:parse_buffers_info()
             \'is_modified': plus_x ==# '+',
             \'is_err': plus_x ==# 'x',
             \'lnum': -1,
-            \'is_marked': 0,
         \}
     endfor
 
@@ -851,6 +850,16 @@ func! s:set_cursor_pos(curbufinfo)
 
         sleep 1
     endif
+endfunc
+" }}}
+" s:filter_shown_type_buffers {{{
+"   if current buffer is unlisted, filter unlisted buffers.
+"   if current buffers is listed, filter listed buffers.
+func! s:filter_shown_type_buffers(bufs_info, shown_type)
+    call s:debug(printf("filter only '%s' buffers.", a:shown_type))
+    return filter(a:bufs_info,
+                \'a:shown_type ==# "unlisted" ?' .
+                    \'v:val.is_unlisted : ! v:val.is_unlisted')
 endfunc
 " }}}
 " s:extend_misc_info {{{
@@ -926,28 +935,19 @@ func! s:open_dumbbuf_buffer(shown_type)
         return
     endif
 
-
-    " ======== begin - get buffers list and set up ========
-
     let curbufinfo = s:get_buffer_info(s:caller_bufnr)
     if empty(curbufinfo)
         call s:warn("internal error: can't get current buffer's info")
         return
     endif
-
-    " if current buffer is unlisted, filter unlisted buffers.
-    " if current buffers is listed, filter listed buffers.
-    call filter(s:bufs_info,
-                \'a:shown_type ==# "unlisted" ?' .
-                    \'v:val.is_unlisted : ! v:val.is_unlisted')
-    call s:debug(printf("filtered only '%s' buffers.", a:shown_type))
-
+    " filter buffers matching current shown type.
+    let s:bufs_info = s:filter_shown_type_buffers(s:bufs_info, a:shown_type)
     " add miscellaneous info about buffers.
     call s:add_misc_info(s:bufs_info)
 
-    " ======== begin - get buffers list and set up ========
 
 
+    " ======== set up dumbbuf buffer ========
 
     " name dumbbuf's buffer.
     if a:shown_type ==# 'unlisted'
@@ -961,9 +961,6 @@ func! s:open_dumbbuf_buffer(shown_type)
 
     " move cursor to specified position.
     call s:set_cursor_pos(curbufinfo)
-
-
-    "-------- buffer settings --------
 
     " options
     for i in g:dumbbuf_options
@@ -1099,7 +1096,7 @@ func! s:run_from_local_map(code, opt)
     let s:now_processing = 1
     let opt = extend(
                 \deepcopy(a:opt),
-                \{"process_marked":0, "prev_mode":"n", "pre":[], "post":[]},
+                \{"process_marked": 0, "prev_mode": "n", "pre": [], "post": []},
                 \"keep")
 
     " at now, current window should be dumbbuf buffer
@@ -1110,13 +1107,9 @@ func! s:run_from_local_map(code, opt)
     " this must be done in dumbbuf buffer.
     let lnum = line('.')
 
-    " current window should be dumbbuf buffer, though.
-    " if winnr('$') == 1
-    "     execute printf("%s %s new",
-    "                 \g:dumbbuf_vertical ? 'vertical' : '',
-    "                 \g:dumbbuf_open_with)
-    " endif
-
+    " TODO Remove 'v_selected_bufs'
+    " and Execute mapping each buffer
+    " (like marked buffer).
     let opt.v_selected_bufs = []
     if opt.prev_mode ==# 'v'
         let save_pos = getpos('.')
@@ -1129,7 +1122,6 @@ func! s:run_from_local_map(code, opt)
 
 
     try
-        " pre
         call s:do_tasks(opt.pre, cursor_buf, lnum)
         let bufs = s:get_buffers_being_processed(opt, cursor_buf)
 
@@ -1151,7 +1143,6 @@ func! s:run_from_local_map(code, opt)
             endfor
         endif
 
-        " post
         call s:do_tasks(opt.post, cursor_buf, lnum)
 
     catch /internal error:/
@@ -1160,7 +1151,8 @@ func! s:run_from_local_map(code, opt)
     catch /^nop$/
         " nop.
 
-    " catch    " NOTE: this traps also unknown other plugin's error...
+    " catch
+    "     " NOTE: this traps also unknown other plugin's error...
     "     echoerr printf("internal error: '%s' in '%s'", v:exception, v:throwpoint)
 
     finally
@@ -1202,7 +1194,8 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
                 throw 'nop'
             endif
 
-        elseif p ==# 'save_lnum'    " NOTE: do this before 'update'.
+        elseif p ==# 'save_lnum'
+            " NOTE: do this before 'update'.
             call s:debug("save_lnum:".a:lnum)
             let s:previous_lnum = a:lnum
 
@@ -1226,19 +1219,19 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
 endfunc
 " }}}
 " s:dispatch_code {{{
-func! s:dispatch_code(code, no, opt)
+func! s:dispatch_code(code, idx, opt)
     " NOTE: a:opt.cursor_buf may be empty.
     call s:debug(string(a:opt))
     let requires_args = type(a:opt.requires_args) == type([]) ?
-                \a:opt.requires_args[a:no] : a:opt.requires_args
+                \a:opt.requires_args[a:idx] : a:opt.requires_args
 
     if a:opt.type ==# 'cmd'
         if requires_args
-            if ! empty(a:opt.cursor_buf)
-                execute printf(a:code, a:opt.cursor_buf.nr)
-            else
+            if empty(a:opt.cursor_buf)
                 call s:warn("internal error: a:opt.cursor_buf is empty...")
+                return
             endif
+            execute printf(a:code, a:opt.cursor_buf.nr)
         else
             execute a:code
         endif
@@ -1268,6 +1261,7 @@ func! s:get_buffers_being_processed(opt, cursor_buf)
 endfunc
 " }}}
 " s:get_prev_count {{{
+" TODO Remove this (see TODO comment at where this function is called)
 func! s:get_prev_count()
     return [line("'<"), line("'>")]
 endfunc
@@ -1306,13 +1300,11 @@ endfunc
 " s:buflocal_open {{{
 "   this must be going to close dumbbuf buffer.
 func! s:buflocal_open(opt)
-    if ! empty(a:opt.cursor_buf)
-        let winnr = bufwinnr(a:opt.cursor_buf.nr)
-        if winnr == -1
-            execute a:opt.cursor_buf.nr.'buffer'
-        else
-            execute winnr.'wincmd w'
-        endif
+    let winnr = bufwinnr(a:opt.cursor_buf.nr)
+    if winnr == -1
+        execute a:opt.cursor_buf.nr.'buffer'
+    else
+        execute winnr.'wincmd w'
     endif
 endfunc
 " }}}
@@ -1358,7 +1350,6 @@ endfunc
  " }}}
 " s:buflocal_close {{{
 func! s:buflocal_close(opt)
-    if empty(a:opt.cursor_buf) | return | endif
     if s:jump_to_buffer(a:opt.cursor_buf.nr) != -1
         close
     endif
@@ -1388,9 +1379,12 @@ endfunc
 "   set project name.
 func! s:buflocal_pm_set(opt)
     redraw
-    let name = input('Project Name:', a:opt.cursor_buf.project_name)
-    if name != ''
-        let s:misc_info.project_name[a:opt.cursor_buf.nr] = name
+    let nr = a:opt.cursor_buf.nr
+    let name = fnamemodify(bufname(nr), ':t')
+    let proj_name = input(printf("%s's Project Name:", name),
+                    \     a:opt.cursor_buf.project_name)
+    if proj_name != ''
+        let s:misc_info.project_name[nr] = proj_name
         call s:update_only_misc_info()
     endif
 endfunc
