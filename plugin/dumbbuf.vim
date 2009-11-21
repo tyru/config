@@ -386,7 +386,7 @@ endif
 
 if ! exists('g:dumbbuf_disp_expr')
     " QuickBuf.vim like UI.
-    let g:dumbbuf_disp_expr = 'printf("%s %s[%s] %s <%d> %s", (v:val.is_marked ? "x" : " "), (v:val.is_current ? "*" : " "), bufname(v:val.nr), (v:val.is_modified ? "[+]" : "   "), v:val.nr, fnamemodify(bufname(v:val.nr), ":p:h"))'
+    let g:dumbbuf_disp_expr = 'printf("%s%s%s <%d> [%s]%s", (v:val.is_current ? "%" : " "), (v:val.is_marked ? "x" : " "), (v:val.is_modified ? "+" : " "), v:val.nr, bufname(v:val.nr), (v:val.project_name == "" ? "" : "@".v:val.project_name))'
 endif
 if ! exists('g:dumbbuf_options')
     let g:dumbbuf_options = [
@@ -688,7 +688,7 @@ func! s:write_buffers_list(bufs)
         endfor
     catch
         call s:warn("error occured while evaluating g:dumbbuf_disp_expr.")
-        call s:debug(v:exception)
+        call s:warn(v:exception)
         return
     endtry
 
