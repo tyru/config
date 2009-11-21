@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.7
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-11-21.
+" Last Change: 2009-11-22.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -386,7 +386,7 @@ endif
 
 if ! exists('g:dumbbuf_disp_expr')
     " QuickBuf.vim like UI.
-    let g:dumbbuf_disp_expr = 'printf("%s %s[%s] %s <%d> %s", (v:val.is_marked ? "x" : " "), (v:val.is_current ? "*" : " "), bufname(v:val.nr), (v:val.is_modified ? "[+]" : "   "), v:val.nr, fnamemodify(bufname(v:val.nr), ":p:h"))'
+    let g:dumbbuf_disp_expr = 'printf("%s%s%s <%d> [%s]%s", (v:val.is_current ? "%" : " "), (v:val.is_marked ? "x" : " "), (v:val.is_modified ? "+" : " "), v:val.nr, bufname(v:val.nr), (v:val.project_name == "" ? "" : "@".v:val.project_name))'
 endif
 if ! exists('g:dumbbuf_options')
     let g:dumbbuf_options = [
@@ -416,7 +416,7 @@ let s:mappings.default = {
                         \'requires_args': 0,
                         \'prev_mode': 'v',
                         \'pre': ['return_if_empty'],
-                        \'post': ['save_lnum', 'update_marks']}))
+                        \'post': ['save_lnum', 'update_misc']}))
         \},
         \'j': {
             \'opt': '<silent>',
@@ -577,7 +577,19 @@ let s:mappings.default = {
                         \'type': 'func',
                         \'requires_args': 0,
                         \'pre': ['return_if_empty'],
-                        \'post': ['save_lnum', 'update_marks']}))
+                        \'post': ['save_lnum', 'update_misc']}))
+        \},
+        \'pp': {
+            \'opt': '',
+            \'mapto':
+                \printf(s:fmt_tmp,
+                    \string('<SID>buflocal_pm_set'),
+                    \string({
+                        \'type': 'func',
+                        \'requires_args': 0,
+                        \'process_marked': 1,
+                        \'pre': ['return_if_empty'],
+                        \'post': ['save_lnum', 'update_misc']}))
         \},
     \}
 \}
@@ -597,6 +609,8 @@ if g:dumbbuf_single_key
         \'c': 'cc',
         \
         \'x': 'xx',
+        \
+        \'p': 'pp',
     \}
 endif
 
@@ -674,7 +688,7 @@ func! s:write_buffers_list(bufs)
         endfor
     catch
         call s:warn("error occured while evaluating g:dumbbuf_disp_expr.")
-        call s:debug(v:exception)
+        call s:warn(v:exception)
         return
     endtry
 
@@ -930,17 +944,14 @@ func! s:close_dumbbuf_buffer()
     endif
 endfunc
 " }}}
-" s:update_only_marks {{{
-func! s:update_only_marks()
+" s:update_only_misc_info {{{
+func! s:update_only_misc_info()
     if s:jump_to_buffer(s:dumbbuf_bufnr) == -1
         return
     endif
 
-
     let save_modifiable = &l:modifiable
-
     setlocal modifiable
-
     try
         for buf in values(s:bufs_info)
             " update 'is_marked'.
@@ -1138,8 +1149,8 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
                 call s:update_buffers_list()
             endif
 
-        elseif p ==# 'update_marks'
-            call s:update_only_marks()
+        elseif p ==# 'update_misc'
+            call s:update_only_misc_info()
 
         else
             call s:warn("internal warning: unknown task name: ".p)
@@ -1157,19 +1168,19 @@ func! s:dispatch_code(code, no, opt)
     if a:opt.type ==# 'cmd'
         if requires_args
             if ! empty(a:opt.cursor_buf)
-                silent execute printf(a:code, a:opt.cursor_buf.nr)
+                execute printf(a:code, a:opt.cursor_buf.nr)
             else
                 call s:warn("internal error: a:opt.cursor_buf is empty...")
             endif
         else
-            silent execute a:code
+            execute a:code
         endif
     elseif a:opt.type ==# 'func'
         if requires_args
             " NOTE: not used.
-            silent call call(a:code, [a:opt.args])
+            call call(a:code, [a:opt.args])
         else
-            silent call call(a:code, [a:opt])
+            call call(a:code, [a:opt])
         endif
     else
         throw "internal error: unknown type: ".a:opt.type
@@ -1309,9 +1320,11 @@ endfunc
 " s:buflocal_pm_set {{{
 "   set project name.
 func! s:buflocal_pm_set(opt)
+    redraw
     let name = input('Project Name:', a:opt.cursor_buf.project_name)
     if name != ''
-        let a:opt.cursor_buf.project_name = name
+        let s:misc_info.project_name[a:opt.cursor_buf.nr] = name
+        call s:update_only_misc_info()
     endif
 endfunc
 " }}}
