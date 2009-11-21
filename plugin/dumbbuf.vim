@@ -538,6 +538,15 @@ let s:mappings.default = {
                         \'pre': ['close_return_if_empty', 'close_dumbbuf'],
                         \'post': ['save_lnum', 'update_dumbbuf']}))
         \},
+        \'hh': {
+            \'opt': '<silent>',
+            \'mapto':
+                \printf(s:fmt_tmp,
+                    \string('<SID>buflocal_toggle_listed_type'),
+                    \string({
+                        \'type': 'func',
+                        \'requires_args': 0}))
+        \},
         \'ll': {
             \'opt': '<silent>',
             \'mapto':
@@ -576,14 +585,17 @@ unlet s:fmt_tmp
 
 if g:dumbbuf_single_key
     let s:mappings.single_key = {
+        \'h': 'hh',
+        \'l': 'll',
+        \
         \'u': 'uu',
         \'s': 'ss',
         \'v': 'vv',
         \'t': 'tt',
         \'d': 'dd',
         \'w': 'ww',
-        \'l': 'll',
         \'c': 'cc',
+        \
         \'x': 'xx',
     \}
 endif
