@@ -315,7 +315,7 @@ let s:misc_info = {'marked_bufs':{}, 'project_name':{}}
 let s:previous_lnum = -1    " lnum where a previous mapping executed.
 
 let s:current_shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
-let s:mappings = {'default':{}, 'user':{}, 'mixed':[]}    " buffer local mappings.
+let s:mappings = {'default':{}, 'user':{}, 'compiled':[]}    " buffer local mappings.
 
 " used for single key emulation.
 let s:mapstack_count = -1
@@ -849,6 +849,49 @@ func! s:add_misc_info(bufs_info)
     endfor
 endfunc
 " }}}
+" s:compile_mappings {{{
+func! s:compile_mappings()
+    let map_vs_code = {}
+    " NOTE: Compile 'default' firstly, 'user' secondly.
+    " Because 'user' may unmap the default mappings.
+    for [mode, maps] in items(s:mappings.default) + items(s:mappings.user)
+        for [from, to] in items(maps)
+            let map_from = mode . from
+            if has_key(map_vs_code, map_from)
+                if empty(to)
+                    unlet map_vs_code[map_from]
+                endif
+            else
+                if has_key(to, 'alias_to')
+                \ && has_key(s:mappings.default[mode], to.alias_to)
+                \ && has_key(s:mappings.default[mode][to.alias_to], 'mapto')
+                    let map_vs_code[map_from] =
+                        \ printf('%snoremap <buffer>%s %s %s',
+                        \       mode,
+                        \       (has_key(to, 'opt') ? to.opt : ''),
+                        \       from,
+                        \       s:mappings.default[mode][to.alias_to].mapto)
+                elseif has_key(to, 'mapto')
+                    let map_vs_code[map_from] =
+                        \ printf('%snoremap <buffer>%s %s %s',
+                        \       mode,
+                        \       (has_key(to, 'opt') ? to.opt : ''),
+                        \       from,
+                        \       to.mapto)
+                endif
+            endif
+
+            " Allow 'to' to be assigned with different types.
+            " (Why doesn't :for make variables each loop...?)
+            unlet to
+        endfor
+    endfor
+    let s:mappings.compiled = values(map_vs_code)
+
+    unlet s:mappings.user
+    unlet s:mappings.default
+endfunc
+" }}}
 
 
 " manipulate dumbbuf buffer.
@@ -907,10 +950,10 @@ func! s:open_dumbbuf_buffer(shown_type)
     endfor
 
     " mappings
-    if empty(s:mappings.mixed)
-        call s:init()
+    if empty(s:mappings.compiled)
+        call s:compile_mappings()
     endif
-    for code in s:mappings.mixed
+    for code in s:mappings.compiled
         execute code
     endfor
 
@@ -1415,50 +1458,6 @@ endfunc
 
 
 " autocmd's handlers {{{
-" s:init {{{
-func! s:init()
-    let map_vs_code = {}
-    " NOTE: Compile 'default' firstly, 'user' secondly.
-    " Because 'user' may unmap the default mappings.
-    for [mode, maps] in items(s:mappings.default) + items(s:mappings.user)
-        for [from, to] in items(maps)
-            let map_from = mode . from
-            if has_key(map_vs_code, map_from)
-                if empty(to)
-                    unlet map_vs_code[map_from]
-                endif
-            else
-                if has_key(to, 'alias_to')
-                \ && has_key(s:mappings.default[mode], to.alias_to)
-                \ && has_key(s:mappings.default[mode][to.alias_to], 'mapto')
-                    let map_vs_code[map_from] =
-                        \ printf('%snoremap <buffer>%s %s %s',
-                        \       mode,
-                        \       (has_key(to, 'opt') ? to.opt : ''),
-                        \       from,
-                        \       s:mappings.default[mode][to.alias_to].mapto)
-                elseif has_key(to, 'mapto')
-                    let map_vs_code[map_from] =
-                        \ printf('%snoremap <buffer>%s %s %s',
-                        \       mode,
-                        \       (has_key(to, 'opt') ? to.opt : ''),
-                        \       from,
-                        \       to.mapto)
-                endif
-            endif
-
-            " Allow 'to' to be assigned with different types.
-            " (Why doesn't :for make variables each loop...?)
-            unlet to
-        endfor
-    endfor
-
-    let s:mappings.mixed = values(map_vs_code)
-
-    unlet s:mappings.user
-    unlet s:mappings.default
-endfunc
-" }}}
 " s:restore_options {{{
 func! s:restore_options()
     call s:debug("s:restore_options()...")
