@@ -315,7 +315,7 @@ let s:misc_info = {'marked_bufs':{}, 'project_name':{}}
 let s:previous_lnum = -1    " lnum where a previous mapping executed.
 
 let s:current_shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
-let s:mappings = {'default':{}, 'user':{}, 'mixed':{}}    " buffer local mappings.
+let s:mappings = {'default':{}, 'user':{}, 'mixed':[]}    " buffer local mappings.
 
 " used for single key emulation.
 let s:mapstack_count = -1
@@ -893,20 +893,8 @@ func! s:open_dumbbuf_buffer(shown_type)
     endfor
 
     " mappings
-    for [mode, maps] in items(s:mappings.mixed)
-        for [from, map] in items(maps)
-            " if 'map' has 'mapto', map it.
-            if has_key(map, 'mapto')
-                execute printf('%snoremap <buffer>%s %s %s',
-                                \mode,
-                                \(has_key(map, 'opt') ? map.opt : ''),
-                                \from,
-                                \map.mapto)
-            " if 'map' is empty and 'from' is mapped, delete it.
-            elseif empty(map) && maparg(from, mode) != ''
-                execute mode.'unmap <buffer> '.from
-            endif
-        endfor
+    for code in s:mappings.mixed
+        execute code
     endfor
 
     " NOTE:
@@ -1413,19 +1401,36 @@ endfunc
 " autocmd's handlers {{{
 " s:init {{{
 func! s:init()
+    let unmap_code = []
     for [mode, maps] in items(s:mappings.user) + items(s:mappings.default)
-        if !has_key(s:mappings.mixed, mode)
-            let s:mappings.mixed[mode] = {}
-        endif
         for [from, to] in items(maps)
-            if has_key(to, 'alias_to') && has_key(s:mappings.default[mode], to.alias_to)
-                let s:mappings.mixed[mode][from] = s:mappings.default[mode][to.alias_to]
-            else
-                let s:mappings.mixed[mode][from] = to
+            if empty(to)
+                " TODO Do not map 'from' at first.
+                call add(unmap_code, mode.'unmap <buffer> '.from)
+            elseif has_key(to, 'alias_to')
+            \ && has_key(s:mappings.default[mode], to.alias_to)
+            \ && has_key(s:mappings.default[mode][to.alias_to], 'mapto')
+                call add(s:mappings.mixed,
+                    \ printf('%snoremap <buffer>%s %s %s',
+                    \                 mode,
+                    \                 (has_key(to, 'opt') ? to.opt : ''),
+                    \                 from,
+                    \                 s:mappings.default[mode][to.alias_to].mapto))
+            elseif has_key(to, 'mapto')
+                call add(s:mappings.mixed,
+                    \ printf('%snoremap <buffer>%s %s %s',
+                    \                 mode,
+                    \                 (has_key(to, 'opt') ? to.opt : ''),
+                    \                 from,
+                    \                 to.mapto))
             endif
+
+            " Allow 'to' to be assigned with different types.
+            " (Why doesn't :for make variables each loop...?)
+            unlet to
         endfor
     endfor
-    call s:warnf('s:mappings.user [%s]', string(s:mappings.user))
+    let s:mappings.mixed = extend(s:mappings.mixed, unmap_code)
 
     unlet s:mappings.user
     unlet s:mappings.default
