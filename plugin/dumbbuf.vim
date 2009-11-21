@@ -423,7 +423,7 @@ if exists('g:dumbbuf_mappings')
     let s:mappings.user = g:dumbbuf_mappings
     unlet g:dumbbuf_mappings
 endif
-let s:fmt_tmp = ':<C-u>call <SID>run_from_local_map(%s, %s)<CR>'
+let s:fmt_tmp = ':<C-u>call <SID>run_from_local_map(%s, %s, %s)<CR>'
 let s:mappings.default = {
     \'v': {
         \'x': {
@@ -434,9 +434,9 @@ let s:mappings.default = {
                     \string({
                         \'type': 'func',
                         \'requires_args': 0,
-                        \'prev_mode': 'v',
                         \'pre': ['return_if_empty'],
-                        \'post': ['save_lnum', 'update_misc']}))
+                        \'post': ['save_lnum', 'update_misc']}),
+                    \string('v'))
         \},
         \'j': {
             \'opt': '<silent>',
@@ -481,7 +481,8 @@ let s:mappings.default = {
                         \'type': 'func',
                         \'requires_args': 0,
                         \'pre': ['close_return_if_empty',
-                                \'close_dumbbuf', 'jump_to_caller']}))
+                                \'close_dumbbuf', 'jump_to_caller']}),
+                    \string('n'))
         \},
         \'uu': {
             \'opt': '<silent>',
@@ -493,7 +494,8 @@ let s:mappings.default = {
                         \'requires_args': 0,
                         \'pre': ['close_return_if_empty',
                                 \'close_dumbbuf', 'jump_to_caller'],
-                        \'post': ['save_lnum']}))
+                        \'post': ['save_lnum']}),
+                    \string('n'))
         \},
         \'ss': {
             \'opt': '<silent>',
@@ -506,7 +508,8 @@ let s:mappings.default = {
                         \'process_marked': 1,
                         \'pre': ['close_return_if_empty',
                                 \'close_dumbbuf', 'jump_to_caller'],
-                        \'post': ['save_lnum', 'update_dumbbuf']}))
+                        \'post': ['save_lnum', 'update_dumbbuf']}),
+                    \string('n'))
         \},
         \'vv': {
             \'opt': '<silent>',
@@ -519,7 +522,8 @@ let s:mappings.default = {
                         \'process_marked': 1,
                         \'pre': ['close_return_if_empty',
                                 \'close_dumbbuf', 'jump_to_caller'],
-                        \'post': ['save_lnum', 'update_dumbbuf']}))
+                        \'post': ['save_lnum', 'update_dumbbuf']}),
+                    \string('n'))
         \},
         \'tt': {
             \'opt': '<silent>',
@@ -532,7 +536,8 @@ let s:mappings.default = {
                         \'process_marked': 1,
                         \'pre': ['close_return_if_empty',
                                 \'close_dumbbuf', 'jump_to_caller'],
-                        \'post': ['save_lnum']}))
+                        \'post': ['save_lnum']}),
+                    \string('n'))
         \},
         \'dd': {
             \'opt': '<silent>',
@@ -544,7 +549,8 @@ let s:mappings.default = {
                         \'requires_args': 1,
                         \'process_marked': 1,
                         \'pre': ['close_return_if_empty', 'close_dumbbuf'],
-                        \'post': ['save_lnum', 'update_dumbbuf']}))
+                        \'post': ['save_lnum', 'update_dumbbuf']}),
+                    \string('n'))
         \},
         \'ww': {
             \'opt': '<silent>',
@@ -556,7 +562,8 @@ let s:mappings.default = {
                         \'requires_args': 1,
                         \'process_marked': 1,
                         \'pre': ['close_return_if_empty', 'close_dumbbuf'],
-                        \'post': ['save_lnum', 'update_dumbbuf']}))
+                        \'post': ['save_lnum', 'update_dumbbuf']}),
+                    \string('n'))
         \},
         \'hh': {
             \'opt': '<silent>',
@@ -565,7 +572,8 @@ let s:mappings.default = {
                     \string('<SID>buflocal_toggle_listed_type'),
                     \string({
                         \'type': 'func',
-                        \'requires_args': 0}))
+                        \'requires_args': 0}),
+                    \string('n'))
         \},
         \'ll': {
             \'opt': '<silent>',
@@ -574,7 +582,8 @@ let s:mappings.default = {
                     \string('<SID>buflocal_toggle_listed_type'),
                     \string({
                         \'type': 'func',
-                        \'requires_args': 0}))
+                        \'requires_args': 0}),
+                    \string('n'))
         \},
         \'cc': {
             \'opt': '<silent>',
@@ -586,7 +595,8 @@ let s:mappings.default = {
                         \'requires_args': 0,
                         \'process_marked': 1,
                         \'pre': ['close_return_if_empty', 'close_dumbbuf'],
-                        \'post': ['save_lnum', 'update_dumbbuf']}))
+                        \'post': ['save_lnum', 'update_dumbbuf']}),
+                    \string('n'))
         \},
         \'xx': {
             \'opt': '<silent>',
@@ -597,7 +607,8 @@ let s:mappings.default = {
                         \'type': 'func',
                         \'requires_args': 0,
                         \'pre': ['return_if_empty'],
-                        \'post': ['save_lnum', 'update_misc']}))
+                        \'post': ['save_lnum', 'update_misc']}),
+                    \string('n'))
         \},
         \'pp': {
             \'opt': '',
@@ -609,7 +620,8 @@ let s:mappings.default = {
                         \'requires_args': 0,
                         \'process_marked': 1,
                         \'pre': ['return_if_empty'],
-                        \'post': ['save_lnum', 'update_misc']}))
+                        \'post': ['save_lnum', 'update_misc']}),
+                    \string('n'))
         \},
     \}
 \}
@@ -1092,11 +1104,11 @@ endfunc
 
 " all mappings start from here.
 " s:run_from_local_map {{{
-func! s:run_from_local_map(code, opt)
+func! s:run_from_local_map(code, opt, map_mode)
     let s:now_processing = 1
     let opt = extend(
                 \deepcopy(a:opt),
-                \{"process_marked": 0, "prev_mode": "n", "pre": [], "post": []},
+                \{"process_marked": 0, "pre": [], "post": []},
                 \"keep")
 
     " at now, current window should be dumbbuf buffer
@@ -1107,23 +1119,10 @@ func! s:run_from_local_map(code, opt)
     " this must be done in dumbbuf buffer.
     let lnum = line('.')
 
-    " TODO Remove 'v_selected_bufs'
-    " and Execute mapping each buffer
-    " (like marked buffer).
-    let opt.v_selected_bufs = []
-    if opt.prev_mode ==# 'v'
-        let save_pos = getpos('.')
-        for lnum in call('range', s:get_prev_count())
-            call cursor(lnum, 0)
-            call add(opt.v_selected_bufs, s:get_cursor_buffer())
-        endfor
-        call setpos('.', save_pos)
-    endif
-
 
     try
         call s:do_tasks(opt.pre, cursor_buf, lnum)
-        let bufs = s:get_buffers_being_processed(opt, cursor_buf)
+        let bufs = s:get_buffers_being_processed(opt, cursor_buf, a:map_mode)
 
         " dispatch a:code.
         " NOTE: current buffer may not be caller buffer.
@@ -1250,20 +1249,26 @@ endfunc
 " s:get_buffers_being_processed {{{
 "   if a:code supports 'process_marked' and marked buffers exist,
 "   process marked buffers instead of current cursor buffer.
-func! s:get_buffers_being_processed(opt, cursor_buf)
-    if a:opt.process_marked && !empty(s:misc_info.marked_bufs)
+func! s:get_buffers_being_processed(opt, cursor_buf, map_mode)
+    if a:map_mode ==# 'v'
+        let v_selected_bufs = []
+        let save_pos = getpos('.')
+        for lnum in range(line("'<"), line("'>"))
+            call cursor(lnum, 0)
+            let buf = s:get_cursor_buffer()
+            if !empty(buf)
+                call add(v_selected_bufs, buf)
+            endif
+        endfor
+        call setpos('.', save_pos)
+        return v_selected_bufs
+    elseif a:opt.process_marked && !empty(s:misc_info.marked_bufs)
         let tmp = s:misc_info.marked_bufs
         let s:misc_info.marked_bufs = {}    " clear
         return map(keys(tmp), 's:bufs_info[v:val]')
     else
         return [a:cursor_buf]
     endif
-endfunc
-" }}}
-" s:get_prev_count {{{
-" TODO Remove this (see TODO comment at where this function is called)
-func! s:get_prev_count()
-    return [line("'<"), line("'>")]
 endfunc
 " }}}
 
@@ -1357,21 +1362,12 @@ endfunc
 " }}}
 " s:buflocal_mark {{{
 func! s:buflocal_mark(opt)
-    if a:opt.prev_mode ==# 'v'
-        let tmp = deepcopy(a:opt)
-        let tmp.prev_mode = 'n'
-        for i in a:opt.v_selected_bufs
-            let tmp.cursor_buf = i
-            call s:buflocal_mark(tmp)
-        endfor
+    if has_key(s:misc_info.marked_bufs, a:opt.cursor_buf.nr)
+        " remove from marked.
+        unlet s:misc_info.marked_bufs[a:opt.cursor_buf.nr]
     else
-        if has_key(s:misc_info.marked_bufs, a:opt.cursor_buf.nr)
-            " remove from marked.
-            unlet s:misc_info.marked_bufs[a:opt.cursor_buf.nr]
-        else
-            " add to marked.
-            let s:misc_info.marked_bufs[a:opt.cursor_buf.nr] = 1
-        endif
+        " add to marked.
+        let s:misc_info.marked_bufs[a:opt.cursor_buf.nr] = 1
     endif
 endfunc
 " }}}
