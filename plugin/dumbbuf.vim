@@ -954,18 +954,18 @@ func! s:update_only_misc_info()
     endif
 
     let save_modifiable = &l:modifiable
-    setlocal modifiable
+    let save_lazyredraw = &l:lazyredraw
+    setlocal modifiable lazyredraw
     try
         for buf in values(s:bufs_info)
             " update 'is_marked'.
             let buf = s:extend_misc_info(buf)
             " rewrite buffers list.
-            let r = s:eval_disp_expr(buf)
-            call s:debug(printf("replace line %d with '%s'", buf.lnum, string(r)))
-            call setline(buf.lnum, r)
+            call setline(buf.lnum, s:eval_disp_expr(buf))
         endfor
     finally
         let &l:modifiable = save_modifiable
+        let &l:lazyredraw = save_lazyredraw
     endtry
 endfunc
 " }}}
