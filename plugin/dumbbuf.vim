@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.7
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-11-19.
+" Last Change: 2009-11-21.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -783,15 +783,11 @@ func! s:get_shown_type(caller_bufnr)
 endfunc
 " }}}
 
-" s:filter_bufs_info {{{
-"   filter s:bufs_info.
-"   NOTE: that this modifies s:bufs_info.
-func! s:filter_bufs_info(curbufinfo, shown_type)
-    " if current buffer is unlisted, filter unlisted buffers.
-    " if current buffers is listed, filter listed buffers.
-    call filter(s:bufs_info,
-                \'a:shown_type ==# "unlisted" ?' .
-                    \'v:val.is_unlisted : ! v:val.is_unlisted')
+" s:add_misc_info {{{
+func! s:add_misc_info(bufs_info)
+    for buf in values(a:bufs_info)
+        let buf.is_marked = has_key(s:marked_bufs, buf.nr)
+    endfor
 endfunc
 " }}}
 
@@ -849,12 +845,15 @@ func! s:open_dumbbuf_buffer(shown_type)
         return
     endif
 
-    call s:filter_bufs_info(curbufinfo, a:shown_type)
+    " if current buffer is unlisted, filter unlisted buffers.
+    " if current buffers is listed, filter listed buffers.
+    call filter(s:bufs_info,
+                \'a:shown_type ==# "unlisted" ?' .
+                    \'v:val.is_unlisted : ! v:val.is_unlisted')
     call s:debug(printf("filtered only '%s' buffers.", a:shown_type))
 
-    for buf in values(s:bufs_info)
-        let buf.is_marked = has_key(s:marked_bufs, buf.nr)
-    endfor
+    " add miscellaneous info about buffers.
+    call s:add_misc_info(s:bufs_info)
 
     " ======== begin - get buffers list and set up ========
 
