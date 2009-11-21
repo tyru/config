@@ -592,8 +592,7 @@ endif
 
 " Functions {{{
 
-" util {{{
-
+" utility functions
 " Debug {{{
 if g:dumbbuf_verbose
     command -nargs=+ DumbBufDebug call s:debug_command(<f-args>)
@@ -606,7 +605,6 @@ if g:dumbbuf_verbose
         endif
     endfunc
 endif
-
 " s:debug {{{
 fun! s:debug(msg)
     if g:dumbbuf_verbose
@@ -618,9 +616,7 @@ fun! s:debug(msg)
     endif
 endfunc
 " }}}
-
 " }}}
-
 " s:warn {{{
 func! s:warn(msg)
     echohl WarningMsg
@@ -628,18 +624,20 @@ func! s:warn(msg)
     echohl None
 endfunc
 " }}}
-
+" s:warnf {{{
+func! s:warnf(fmt, ...)
+    call s:warn(call('printf', [a:fmt] + a:000))
+endfunc
 " }}}
 
-" misc. {{{
 
+" misc.
 " s:get_buffer_info {{{
 "   this returns the caller buffer's info
 func! s:get_buffer_info(bufnr)
     return has_key(s:bufs_info, a:bufnr) ? s:bufs_info[a:bufnr] : []
 endfunc
 " }}}
-
 " s:eval_disp_expr {{{
 func! s:eval_disp_expr(bufs)
     if type(a:bufs) == type([])
@@ -649,7 +647,6 @@ func! s:eval_disp_expr(bufs)
     endif
 endfunc
 " }}}
-
 " s:write_buffers_list {{{
 "   this determines s:bufs_info[i].lnum
 func! s:write_buffers_list(bufs)
@@ -673,7 +670,6 @@ func! s:write_buffers_list(bufs)
     normal! gg"_dd
 endfunc
 " }}}
-
 " s:parse_buffers_info {{{
 func! s:parse_buffers_info()
     " redirect output of :ls! to ls_out.
@@ -746,7 +742,6 @@ func! s:parse_buffers_info()
     return result
 endfunc
 " }}}
-
 " s:get_cursor_buffer {{{
 func! s:get_cursor_buffer()
     for buf in values(s:bufs_info)
@@ -757,7 +752,6 @@ func! s:get_cursor_buffer()
     return {}
 endfunc
 " }}}
-
 " s:get_shown_type {{{
 "   this returns 'listed' or 'unlisted'.
 "   if s:current_shown_type or g:dumbbuf_shown_type value is invalid,
@@ -782,24 +776,6 @@ func! s:get_shown_type(caller_bufnr)
     endif
 endfunc
 " }}}
-
-" s:extend_misc_info {{{
-func! s:extend_misc_info(buf)
-    let buf = a:buf
-    let buf.is_marked = has_key(s:misc_info.marked_bufs, buf.nr)
-    let buf.project_name = get(s:misc_info.project_name, buf.nr, '')
-    return buf
-endfunc
-" }}}
-
-" s:add_misc_info {{{
-func! s:add_misc_info(bufs_info)
-    for buf in values(a:bufs_info)
-        let buf = s:extend_misc_info(buf)
-    endfor
-endfunc
-" }}}
-
 " s:set_cursor_pos {{{
 "   move cursor to the pos which is specified by g:dumbbuf_cursor_pos.
 func! s:set_cursor_pos(curbufinfo)
@@ -832,9 +808,24 @@ func! s:set_cursor_pos(curbufinfo)
     endif
 endfunc
 " }}}
+" s:extend_misc_info {{{
+func! s:extend_misc_info(buf)
+    let buf = a:buf
+    let buf.is_marked = has_key(s:misc_info.marked_bufs, buf.nr)
+    let buf.project_name = get(s:misc_info.project_name, buf.nr, '')
+    return buf
+endfunc
+" }}}
+" s:add_misc_info {{{
+func! s:add_misc_info(bufs_info)
+    for buf in values(a:bufs_info)
+        let buf = s:extend_misc_info(buf)
+    endfor
+endfunc
+" }}}
 
 
-
+" manipulate dumbbuf buffer.
 " s:open_dumbbuf_buffer {{{
 "   open and set up dumbbuf buffer.
 func! s:open_dumbbuf_buffer(shown_type)
@@ -922,7 +913,6 @@ func! s:open_dumbbuf_buffer(shown_type)
     let &updatetime = g:dumbbuf_updatetime
 endfunc
 " }}}
-
 " s:close_dumbbuf_buffer {{{
 func! s:close_dumbbuf_buffer()
     let prevwinnr = winnr()
@@ -937,7 +927,6 @@ func! s:close_dumbbuf_buffer()
     endif
 endfunc
 " }}}
-
 " s:update_only_marks {{{
 func! s:update_only_marks()
     if s:jump_to_buffer(s:dumbbuf_bufnr) == -1
@@ -963,7 +952,6 @@ func! s:update_only_marks()
     endtry
 endfunc
 " }}}
-
 " s:update_buffers_list {{{
 func! s:update_buffers_list(...)
     " close if exists.
@@ -985,7 +973,6 @@ func! s:update_buffers_list(...)
     call s:open_dumbbuf_buffer(s:current_shown_type)
 endfunc
 " }}}
-
 " s:jump_to_buffer {{{
 func! s:jump_to_buffer(bufnr)
     if a:bufnr ==# bufnr('%') | return a:bufnr | endif
@@ -997,7 +984,6 @@ func! s:jump_to_buffer(bufnr)
     return winnr
 endfunc
 " }}}
-
 " s:create_dumbbuf_buffer {{{
 func! s:create_dumbbuf_buffer()
     execute printf("%s %s %dnew",
@@ -1009,13 +995,7 @@ endfunc
 " }}}
 
 
-" s:get_prev_count {{{
-func! s:get_prev_count()
-    return [line("'<"), line("'>")]
-endfunc
-" }}}
-
-
+" highlight
 " s:get_highlight {{{
 func! s:get_highlight(hl_name)
     redir => output
@@ -1024,7 +1004,6 @@ func! s:get_highlight(hl_name)
     return substitute(output, '\C' . '.*\<xxx\>\s\+\(.*\)$', '\1', 'g')
 endfunc
 " }}}
-
 " s:set_highlight {{{
 func! s:set_highlight(hl_name, value)
     call s:debug(printf("set highlight '%s' to '%s'.", a:hl_name, a:value))
@@ -1032,9 +1011,8 @@ func! s:set_highlight(hl_name, value)
 endfunc
 " }}}
 
-" }}}
 
-
+" all mappings start from here.
 " s:run_from_local_map {{{
 func! s:run_from_local_map(code, opt)
     let s:now_processing = 1
@@ -1110,7 +1088,6 @@ func! s:run_from_local_map(code, opt)
     endtry
 endfunc
 " }}}
-
 " s:do_tasks {{{
 func! s:do_tasks(tasks, cursor_buf, lnum)
     for p in a:tasks
@@ -1167,7 +1144,6 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
     endfor
 endfunc
 " }}}
-
 " s:dispatch_code {{{
 func! s:dispatch_code(code, no, opt)
     " NOTE: a:opt.cursor_buf may be empty.
@@ -1197,7 +1173,6 @@ func! s:dispatch_code(code, no, opt)
     endif
 endfunc
 "}}}
-
 " s:get_buffers_being_processed {{{
 "   if a:code supports 'process_marked' and marked buffers exist,
 "   process marked buffers instead of current cursor buffer.
@@ -1211,10 +1186,14 @@ func! s:get_buffers_being_processed(opt, cursor_buf)
     endif
 endfunc
 " }}}
+" s:get_prev_count {{{
+func! s:get_prev_count()
+    return [line("'<"), line("'>")]
+endfunc
+" }}}
 
 
-" these functions are called from s:dispatch_code() {{{
-
+" these functions are called from s:dispatch_code()
 " s:buflocal_move_lower {{{
 func! s:buflocal_move_lower()
     for i in range(1, v:count1)
@@ -1229,7 +1208,6 @@ func! s:buflocal_move_lower()
     endfor
 endfunc
 " }}}
-
 " s:buflocal_move_upper {{{
 func! s:buflocal_move_upper()
     for i in range(1, v:count1)
@@ -1244,7 +1222,6 @@ func! s:buflocal_move_upper()
     endfor
 endfunc
 " }}}
-
 " s:buflocal_open {{{
 "   this must be going to close dumbbuf buffer.
 func! s:buflocal_open(opt)
@@ -1258,7 +1235,6 @@ func! s:buflocal_open(opt)
     endif
 endfunc
 " }}}
-
 " s:buflocal_open_onebyone {{{
 "   this does NOT do update or close buffers list.
 func! s:buflocal_open_onebyone(opt)
@@ -1284,7 +1260,6 @@ func! s:buflocal_open_onebyone(opt)
     endtry
 endfunc
 " }}}
-
 " s:buflocal_toggle_listed_type {{{
 func! s:buflocal_toggle_listed_type(opt)
     " NOTE: s:current_shown_type SHOULD NOT be '', and MUST NOT be.
@@ -1300,7 +1275,6 @@ func! s:buflocal_toggle_listed_type(opt)
     endif
 endfunc
  " }}}
-
 " s:buflocal_close {{{
 func! s:buflocal_close(opt)
     if empty(a:opt.cursor_buf) | return | endif
@@ -1309,7 +1283,6 @@ func! s:buflocal_close(opt)
     endif
 endfunc
 " }}}
-
 " s:buflocal_mark {{{
 func! s:buflocal_mark(opt)
     if a:opt.prev_mode ==# 'v'
@@ -1330,10 +1303,8 @@ func! s:buflocal_mark(opt)
     endif
 endfunc
 " }}}
-
-
-" project manager {{{
 " s:buflocal_pm_set {{{
+"   set project name.
 func! s:buflocal_pm_set(opt)
     let name = input('Project Name:', a:opt.cursor_buf.project_name)
     if name != ''
@@ -1341,13 +1312,9 @@ func! s:buflocal_pm_set(opt)
     endif
 endfunc
 " }}}
-" }}}
-
-" }}}
 
 
 " single key emulation {{{
-
 " s:emulate_single_key {{{
 "   emulate QuickBuf.vim's single key mappings.
 func! s:emulate_single_key()
@@ -1400,7 +1367,6 @@ func! s:emulate_single_key()
     redraw
 endfunc
 " }}}
-
 " s:try_to_emulate_single_key {{{
 " XXX can't handle meta key sequence?
 func! s:try_to_emulate_single_key()
@@ -1426,12 +1392,10 @@ func! s:try_to_emulate_single_key()
     endtry
 endfunc
 " }}}
-
 " }}}
 
 
 " autocmd's handlers {{{
-
 " s:restore_options {{{
 func! s:restore_options()
     call s:debug("s:restore_options()...")
@@ -1452,9 +1416,7 @@ func! s:restore_options()
     endif
 endfunc
 " }}}
-
 " }}}
-
 " }}}
 
 " Mappings {{{
