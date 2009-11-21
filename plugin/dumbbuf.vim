@@ -311,7 +311,7 @@ let s:debug_msg = []
 let s:caller_bufnr = -1    " caller buffer's bufnr which calls dumbbuf buffer.
 let s:dumbbuf_bufnr = -1    " dumbbuf buffer's bufnr.
 let s:bufs_info = {}    " buffers info. (key: bufnr)
-let s:marked_bufs = {}    " marked buffers info.
+let s:misc_info = {'marked_bufs':{}}
 let s:previous_lnum = -1    " lnum where a previous mapping executed.
 
 let s:current_shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
@@ -783,10 +783,18 @@ func! s:get_shown_type(caller_bufnr)
 endfunc
 " }}}
 
+" s:extend_misc_info {{{
+func! s:extend_misc_info(buf)
+    let buf = a:buf
+    let buf.is_marked = has_key(s:misc_info.marked_bufs, buf.nr)
+    return buf
+endfunc
+" }}}
+
 " s:add_misc_info {{{
 func! s:add_misc_info(bufs_info)
     for buf in values(a:bufs_info)
-        let buf.is_marked = has_key(s:marked_bufs, buf.nr)
+        let buf = s:extend_misc_info(buf)
     endfor
 endfunc
 " }}}
@@ -943,7 +951,7 @@ func! s:update_only_marks()
     try
         for buf in values(s:bufs_info)
             " update 'is_marked'.
-            let buf.is_marked = has_key(s:marked_bufs, buf.nr)
+            let buf = s:extend_misc_info(buf)
             " rewrite buffers list.
             let r = s:eval_disp_expr(buf)
             call s:debug(printf("replace line %d with '%s'", buf.lnum, string(r)))
@@ -1193,9 +1201,9 @@ endfunc
 "   if a:code supports 'process_marked' and marked buffers exist,
 "   process marked buffers instead of current cursor buffer.
 func! s:get_buffers_being_processed(opt, cursor_buf)
-    if a:opt.process_marked && !empty(s:marked_bufs)
-        let tmp = s:marked_bufs
-        let s:marked_bufs = {}    " clear
+    if a:opt.process_marked && !empty(s:misc_info.marked_bufs)
+        let tmp = s:misc_info.marked_bufs
+        let s:misc_info.marked_bufs = {}    " clear
         return map(keys(tmp), 's:bufs_info[v:val]')
     else
         return [a:cursor_buf]
@@ -1311,12 +1319,12 @@ func! s:buflocal_mark(opt)
             call s:buflocal_mark(tmp)
         endfor
     else
-        if has_key(s:marked_bufs, a:opt.cursor_buf.nr)
+        if has_key(s:misc_info.marked_bufs, a:opt.cursor_buf.nr)
             " remove from marked.
-            unlet s:marked_bufs[a:opt.cursor_buf.nr]
+            unlet s:misc_info.marked_bufs[a:opt.cursor_buf.nr]
         else
             " add to marked.
-            let s:marked_bufs[a:opt.cursor_buf.nr] = 1
+            let s:misc_info.marked_bufs[a:opt.cursor_buf.nr] = 1
         endif
     endif
 endfunc
@@ -1427,7 +1435,7 @@ func! s:restore_options()
     endif
     " remove all marked buffers if g:dumbbuf_remove_marked_when_close
     if g:dumbbuf_remove_marked_when_close && ! s:now_processing
-        let s:marked_bufs = {}
+        let s:misc_info.marked_bufs = {}
     endif
 endfunc
 " }}}
