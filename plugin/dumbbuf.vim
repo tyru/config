@@ -315,7 +315,7 @@ let s:misc_info = {'marked_bufs':{}, 'project_name':{}}
 let s:previous_lnum = -1    " lnum where a previous mapping executed.
 
 let s:current_shown_type = ''    " this must be one of 'listed', 'unlisted', 'project' while runnning mappings.
-let s:mappings = {'default':{}, 'user':{}, 'compiled':[]}    " buffer local mappings.
+let s:mappings = {'user':{}, 'compiled':[]}    " buffer local mappings.
 
 " used for single key emulation.
 let s:mapstack_count = -1
@@ -423,209 +423,6 @@ if exists('g:dumbbuf_mappings')
     let s:mappings.user = g:dumbbuf_mappings
     unlet g:dumbbuf_mappings
 endif
-let s:fmt_tmp = ':<C-u>call <SID>run_from_local_map(%s, %s, %s)<CR>'
-let s:mappings.default = {
-    \'v': {
-        \'x': {
-            \'opt': '<silent>',
-            \'mapto':
-                \printf(s:fmt_tmp,
-                    \string('<SID>buflocal_mark'),
-                    \string({
-                        \'type': 'func',
-                        \'requires_args': 0,
-                        \'pre': ['return_if_empty'],
-                        \'post': ['save_lnum', 'update_misc']}),
-                    \string('v'))
-        \},
-        \'j': {
-            \'opt': '<silent>',
-            \'mapto': 'j',
-        \},
-        \'k': {
-            \'opt': '<silent>',
-            \'mapto': 'k',
-        \},
-    \},
-    \'n': {
-        \'j': {
-            \'opt': '<silent>',
-            \'mapto': ':<C-u>call <SID>buflocal_move_lower()<CR>',
-        \},
-        \'k': {
-            \'opt': '<silent>',
-            \'mapto': ':<C-u>call <SID>buflocal_move_upper()<CR>',
-        \},
-        \'gg': {
-            \'opt': '<silent>',
-            \'mapto': 'gg',
-        \},
-        \'G': {
-            \'opt': '<silent>',
-            \'mapto': 'G',
-        \},
-        \g:dumbbuf_hotkey : {
-            \'opt': '<silent>',
-            \'mapto': ':<C-u>close<CR>',
-        \},
-        \'q': {
-            \'opt': '<silent>',
-            \'mapto': ':<C-u>close<CR>',
-        \},
-        \'<CR>': {
-            \'opt': '<silent>',
-            \'mapto':
-                \printf(s:fmt_tmp,
-                    \string('<SID>buflocal_open'),
-                    \string({
-                        \'type': 'func',
-                        \'requires_args': 0,
-                        \'pre': ['close_return_if_empty',
-                                \'close_dumbbuf', 'jump_to_caller']}),
-                    \string('n'))
-        \},
-        \'uu': {
-            \'opt': '<silent>',
-            \'mapto':
-                \printf(s:fmt_tmp,
-                    \string('<SID>buflocal_open_onebyone'),
-                    \string({
-                        \'type': 'func',
-                        \'requires_args': 0,
-                        \'pre': ['close_return_if_empty',
-                                \'close_dumbbuf', 'jump_to_caller'],
-                        \'post': ['save_lnum']}),
-                    \string('n'))
-        \},
-        \'ss': {
-            \'opt': '<silent>',
-            \'mapto':
-                \printf(s:fmt_tmp,
-                    \string('split #%d'),
-                    \string({
-                        \'type': 'cmd',
-                        \'requires_args': 1,
-                        \'process_marked': 1,
-                        \'pre': ['close_return_if_empty',
-                                \'close_dumbbuf', 'jump_to_caller'],
-                        \'post': ['save_lnum', 'update_dumbbuf']}),
-                    \string('n'))
-        \},
-        \'vv': {
-            \'opt': '<silent>',
-            \'mapto':
-                \printf(s:fmt_tmp,
-                    \string('vsplit #%d'),
-                    \string({
-                        \'type': 'cmd',
-                        \'requires_args': 1,
-                        \'process_marked': 1,
-                        \'pre': ['close_return_if_empty',
-                                \'close_dumbbuf', 'jump_to_caller'],
-                        \'post': ['save_lnum', 'update_dumbbuf']}),
-                    \string('n'))
-        \},
-        \'tt': {
-            \'opt': '<silent>',
-            \'mapto':
-                \printf(s:fmt_tmp,
-                    \string('tabedit #%d'),
-                    \string({
-                        \'type': 'cmd',
-                        \'requires_args': [1, 0],
-                        \'process_marked': 1,
-                        \'pre': ['close_return_if_empty',
-                                \'close_dumbbuf', 'jump_to_caller'],
-                        \'post': ['save_lnum']}),
-                    \string('n'))
-        \},
-        \'dd': {
-            \'opt': '<silent>',
-            \'mapto':
-                \printf(s:fmt_tmp,
-                    \string('bdelete %d'),
-                    \string({
-                        \'type': 'cmd',
-                        \'requires_args': 1,
-                        \'process_marked': 1,
-                        \'pre': ['close_return_if_empty', 'close_dumbbuf'],
-                        \'post': ['save_lnum', 'update_dumbbuf']}),
-                    \string('n'))
-        \},
-        \'ww': {
-            \'opt': '<silent>',
-            \'mapto':
-                \printf(s:fmt_tmp,
-                    \string('bwipeout %d'),
-                    \string({
-                        \'type': 'cmd',
-                        \'requires_args': 1,
-                        \'process_marked': 1,
-                        \'pre': ['close_return_if_empty', 'close_dumbbuf'],
-                        \'post': ['save_lnum', 'update_dumbbuf']}),
-                    \string('n'))
-        \},
-        \'hh': {
-            \'opt': '<silent>',
-            \'mapto':
-                \printf(s:fmt_tmp,
-                    \string('<SID>buflocal_toggle_listed_type'),
-                    \string({
-                        \'type': 'func',
-                        \'requires_args': 0}),
-                    \string('n'))
-        \},
-        \'ll': {
-            \'opt': '<silent>',
-            \'mapto':
-                \printf(s:fmt_tmp,
-                    \string('<SID>buflocal_toggle_listed_type'),
-                    \string({
-                        \'type': 'func',
-                        \'requires_args': 0}),
-                    \string('n'))
-        \},
-        \'cc': {
-            \'opt': '<silent>',
-            \'mapto':
-                \printf(s:fmt_tmp,
-                    \string('<SID>buflocal_close'),
-                    \string({
-                        \'type': 'func',
-                        \'requires_args': 0,
-                        \'process_marked': 1,
-                        \'pre': ['close_return_if_empty', 'close_dumbbuf'],
-                        \'post': ['save_lnum', 'update_dumbbuf']}),
-                    \string('n'))
-        \},
-        \'xx': {
-            \'opt': '<silent>',
-            \'mapto':
-                \printf(s:fmt_tmp,
-                    \string('<SID>buflocal_mark'),
-                    \string({
-                        \'type': 'func',
-                        \'requires_args': 0,
-                        \'pre': ['return_if_empty'],
-                        \'post': ['save_lnum', 'update_misc']}),
-                    \string('n'))
-        \},
-        \'pp': {
-            \'opt': '',
-            \'mapto':
-                \printf(s:fmt_tmp,
-                    \string('<SID>buflocal_pm_set'),
-                    \string({
-                        \'type': 'func',
-                        \'requires_args': 0,
-                        \'process_marked': 1,
-                        \'pre': ['return_if_empty'],
-                        \'post': ['save_lnum', 'update_misc']}),
-                    \string('n'))
-        \},
-    \}
-\}
-unlet s:fmt_tmp
 
 if g:dumbbuf_single_key
     let s:mappings.single_key = {
@@ -893,10 +690,359 @@ endfunc
 " }}}
 " s:compile_mappings {{{
 func! s:compile_mappings()
+    let fmt_tmp = ':<C-u>call <SID>run_from_local_map(%s, %s, %s)<CR>'
+    let default_mappings = {
+        \'v': {
+            \'j': {
+                \'opt': '<silent>',
+                \'mapto': 'j',
+            \},
+            \'k': {
+                \'opt': '<silent>',
+                \'mapto': 'k',
+            \},
+            \
+            \'<CR>': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('<SID>buflocal_open'),
+                        \string({
+                            \'type': 'func',
+                            \'requires_args': 0,
+                            \'pre': ['close_return_if_empty',
+                                    \'close_dumbbuf', 'jump_to_caller']}),
+                        \string('v'))
+            \},
+            \'uu': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('<SID>buflocal_open_onebyone'),
+                        \string({
+                            \'type': 'func',
+                            \'requires_args': 0,
+                            \'pre': ['close_return_if_empty',
+                                    \'close_dumbbuf', 'jump_to_caller'],
+                            \'post': ['save_lnum']}),
+                        \string('v'))
+            \},
+            \'ss': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('split #%d'),
+                        \string({
+                            \'type': 'cmd',
+                            \'requires_args': 1,
+                            \'process_marked': 1,
+                            \'pre': ['close_return_if_empty',
+                                    \'close_dumbbuf', 'jump_to_caller'],
+                            \'post': ['save_lnum', 'update_dumbbuf']}),
+                        \string('v'))
+            \},
+            \'vv': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('vsplit #%d'),
+                        \string({
+                            \'type': 'cmd',
+                            \'requires_args': 1,
+                            \'process_marked': 1,
+                            \'pre': ['close_return_if_empty',
+                                    \'close_dumbbuf', 'jump_to_caller'],
+                            \'post': ['save_lnum', 'update_dumbbuf']}),
+                        \string('v'))
+            \},
+            \'tt': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('tabedit #%d'),
+                        \string({
+                            \'type': 'cmd',
+                            \'requires_args': [1, 0],
+                            \'process_marked': 1,
+                            \'pre': ['close_return_if_empty',
+                                    \'close_dumbbuf', 'jump_to_caller'],
+                            \'post': ['save_lnum']}),
+                        \string('v'))
+            \},
+            \'dd': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('bdelete %d'),
+                        \string({
+                            \'type': 'cmd',
+                            \'requires_args': 1,
+                            \'process_marked': 1,
+                            \'pre': ['close_return_if_empty', 'close_dumbbuf'],
+                            \'post': ['save_lnum', 'update_dumbbuf']}),
+                        \string('v'))
+            \},
+            \'ww': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('bwipeout %d'),
+                        \string({
+                            \'type': 'cmd',
+                            \'requires_args': 1,
+                            \'process_marked': 1,
+                            \'pre': ['close_return_if_empty', 'close_dumbbuf'],
+                            \'post': ['save_lnum', 'update_dumbbuf']}),
+                        \string('v'))
+            \},
+            \'hh': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('<SID>buflocal_toggle_listed_type'),
+                        \string({
+                            \'type': 'func',
+                            \'requires_args': 0}),
+                        \string('v'))
+            \},
+            \'ll': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('<SID>buflocal_toggle_listed_type'),
+                        \string({
+                            \'type': 'func',
+                            \'requires_args': 0}),
+                        \string('v'))
+            \},
+            \'cc': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('<SID>buflocal_close'),
+                        \string({
+                            \'type': 'func',
+                            \'requires_args': 0,
+                            \'process_marked': 1,
+                            \'pre': ['close_return_if_empty', 'close_dumbbuf'],
+                            \'post': ['save_lnum', 'update_dumbbuf']}),
+                        \string('v'))
+            \},
+            \
+            \'x': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('<SID>buflocal_mark'),
+                        \string({
+                            \'type': 'func',
+                            \'requires_args': 0,
+                            \'pre': ['return_if_empty'],
+                            \'post': ['save_lnum', 'update_misc']}),
+                        \string('v'))
+            \},
+            \
+            \'pp': {
+                \'opt': '',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('<SID>buflocal_pm_set'),
+                        \string({
+                            \'type': 'func',
+                            \'requires_args': 0,
+                            \'process_marked': 1,
+                            \'pre': ['return_if_empty'],
+                            \'post': ['save_lnum', 'update_misc']}),
+                        \string('v'))
+            \},
+        \},
+        \'n': {
+            \'j': {
+                \'opt': '<silent>',
+                \'mapto': ':<C-u>call <SID>buflocal_move_lower()<CR>',
+            \},
+            \'k': {
+                \'opt': '<silent>',
+                \'mapto': ':<C-u>call <SID>buflocal_move_upper()<CR>',
+            \},
+            \
+            \'gg': {
+                \'opt': '<silent>',
+                \'mapto': 'gg',
+            \},
+            \'G': {
+                \'opt': '<silent>',
+                \'mapto': 'G',
+            \},
+            \
+            \g:dumbbuf_hotkey : {
+                \'opt': '<silent>',
+                \'mapto': ':<C-u>close<CR>',
+            \},
+            \'q': {
+                \'opt': '<silent>',
+                \'mapto': ':<C-u>close<CR>',
+            \},
+            \
+            \'<CR>': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('<SID>buflocal_open'),
+                        \string({
+                            \'type': 'func',
+                            \'requires_args': 0,
+                            \'pre': ['close_return_if_empty',
+                                    \'close_dumbbuf', 'jump_to_caller']}),
+                        \string('n'))
+            \},
+            \'uu': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('<SID>buflocal_open_onebyone'),
+                        \string({
+                            \'type': 'func',
+                            \'requires_args': 0,
+                            \'pre': ['close_return_if_empty',
+                                    \'close_dumbbuf', 'jump_to_caller'],
+                            \'post': ['save_lnum']}),
+                        \string('n'))
+            \},
+            \'ss': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('split #%d'),
+                        \string({
+                            \'type': 'cmd',
+                            \'requires_args': 1,
+                            \'process_marked': 1,
+                            \'pre': ['close_return_if_empty',
+                                    \'close_dumbbuf', 'jump_to_caller'],
+                            \'post': ['save_lnum', 'update_dumbbuf']}),
+                        \string('n'))
+            \},
+            \'vv': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('vsplit #%d'),
+                        \string({
+                            \'type': 'cmd',
+                            \'requires_args': 1,
+                            \'process_marked': 1,
+                            \'pre': ['close_return_if_empty',
+                                    \'close_dumbbuf', 'jump_to_caller'],
+                            \'post': ['save_lnum', 'update_dumbbuf']}),
+                        \string('n'))
+            \},
+            \'tt': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('tabedit #%d'),
+                        \string({
+                            \'type': 'cmd',
+                            \'requires_args': [1, 0],
+                            \'process_marked': 1,
+                            \'pre': ['close_return_if_empty',
+                                    \'close_dumbbuf', 'jump_to_caller'],
+                            \'post': ['save_lnum']}),
+                        \string('n'))
+            \},
+            \'dd': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('bdelete %d'),
+                        \string({
+                            \'type': 'cmd',
+                            \'requires_args': 1,
+                            \'process_marked': 1,
+                            \'pre': ['close_return_if_empty', 'close_dumbbuf'],
+                            \'post': ['save_lnum', 'update_dumbbuf']}),
+                        \string('n'))
+            \},
+            \'ww': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('bwipeout %d'),
+                        \string({
+                            \'type': 'cmd',
+                            \'requires_args': 1,
+                            \'process_marked': 1,
+                            \'pre': ['close_return_if_empty', 'close_dumbbuf'],
+                            \'post': ['save_lnum', 'update_dumbbuf']}),
+                        \string('n'))
+            \},
+            \'hh': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('<SID>buflocal_toggle_listed_type'),
+                        \string({
+                            \'type': 'func',
+                            \'requires_args': 0}),
+                        \string('n'))
+            \},
+            \'ll': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('<SID>buflocal_toggle_listed_type'),
+                        \string({
+                            \'type': 'func',
+                            \'requires_args': 0}),
+                        \string('n'))
+            \},
+            \'cc': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('<SID>buflocal_close'),
+                        \string({
+                            \'type': 'func',
+                            \'requires_args': 0,
+                            \'process_marked': 1,
+                            \'pre': ['close_return_if_empty', 'close_dumbbuf'],
+                            \'post': ['save_lnum', 'update_dumbbuf']}),
+                        \string('n'))
+            \},
+            \'xx': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('<SID>buflocal_mark'),
+                        \string({
+                            \'type': 'func',
+                            \'requires_args': 0,
+                            \'pre': ['return_if_empty'],
+                            \'post': ['save_lnum', 'update_misc']}),
+                        \string('n'))
+            \},
+            \'pp': {
+                \'opt': '',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('<SID>buflocal_pm_set'),
+                        \string({
+                            \'type': 'func',
+                            \'requires_args': 0,
+                            \'process_marked': 1,
+                            \'pre': ['return_if_empty'],
+                            \'post': ['save_lnum', 'update_misc']}),
+                        \string('n'))
+            \},
+        \}
+    \}
+
+
     let map_vs_code = {}
     " NOTE: Compile 'default' firstly, 'user' secondly.
     " Because 'user' may unmap the default mappings.
-    for [mode, maps] in items(s:mappings.default) + items(s:mappings.user)
+    for [mode, maps] in items(default_mappings) + items(s:mappings.user)
         for [from, to] in items(maps)
             let map_from = mode . from
             if has_key(map_vs_code, map_from)
@@ -905,14 +1051,14 @@ func! s:compile_mappings()
                 endif
             else
                 if has_key(to, 'alias_to')
-                \ && has_key(s:mappings.default[mode], to.alias_to)
-                \ && has_key(s:mappings.default[mode][to.alias_to], 'mapto')
+                \ && has_key(default_mappings[mode], to.alias_to)
+                \ && has_key(default_mappings[mode][to.alias_to], 'mapto')
                     let map_vs_code[map_from] =
                         \ printf('%snoremap <buffer>%s %s %s',
                         \       mode,
                         \       (has_key(to, 'opt') ? to.opt : ''),
                         \       from,
-                        \       s:mappings.default[mode][to.alias_to].mapto)
+                        \       default_mappings[mode][to.alias_to].mapto)
                 elseif has_key(to, 'mapto')
                     let map_vs_code[map_from] =
                         \ printf('%snoremap <buffer>%s %s %s',
@@ -929,9 +1075,7 @@ func! s:compile_mappings()
         endfor
     endfor
     let s:mappings.compiled = values(map_vs_code)
-
     unlet s:mappings.user
-    unlet s:mappings.default
 endfunc
 " }}}
 
@@ -1110,6 +1254,8 @@ func! s:run_from_local_map(code, opt, map_mode)
                 \deepcopy(a:opt),
                 \{"process_marked": 0, "pre": [], "post": []},
                 \"keep")
+    " save current range for s:get_buffers_being_processed().
+    let [first, last] = [line("'<"), line("'>")]
 
     " at now, current window should be dumbbuf buffer
     " because this func is called only from dumbbuf buffer local mappings.
@@ -1122,7 +1268,7 @@ func! s:run_from_local_map(code, opt, map_mode)
 
     try
         call s:do_tasks(opt.pre, cursor_buf, lnum)
-        let bufs = s:get_buffers_being_processed(opt, cursor_buf, a:map_mode)
+        let bufs = s:get_buffers_being_processed(opt, cursor_buf, a:map_mode, first, last)
 
         " dispatch a:code.
         " NOTE: current buffer may not be caller buffer.
@@ -1249,11 +1395,11 @@ endfunc
 " s:get_buffers_being_processed {{{
 "   if a:code supports 'process_marked' and marked buffers exist,
 "   process marked buffers instead of current cursor buffer.
-func! s:get_buffers_being_processed(opt, cursor_buf, map_mode)
+func! s:get_buffers_being_processed(opt, cursor_buf, map_mode, first, last)
     if a:map_mode ==# 'v'
         let v_selected_bufs = []
         let save_pos = getpos('.')
-        for lnum in range(line("'<"), line("'>"))
+        for lnum in range(a:first, a:last)
             call cursor(lnum, 0)
             let buf = s:get_cursor_buffer()
             if !empty(buf)
