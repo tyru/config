@@ -579,6 +579,18 @@ let s:mappings.default = {
                         \'pre': ['return_if_empty'],
                         \'post': ['save_lnum', 'update_marks']}))
         \},
+        \'pp': {
+            \'opt': '',
+            \'mapto':
+                \printf(s:fmt_tmp,
+                    \string('<SID>buflocal_pm_set'),
+                    \string({
+                        \'type': 'func',
+                        \'requires_args': 0,
+                        \'process_marked': 1,
+                        \'pre': ['return_if_empty'],
+                        \'post': ['save_lnum', 'update_marks']}))
+        \},
     \}
 \}
 unlet s:fmt_tmp
@@ -597,6 +609,8 @@ if g:dumbbuf_single_key
         \'c': 'cc',
         \
         \'x': 'xx',
+        \
+        \'p': 'pp',
     \}
 endif
 
@@ -1318,10 +1332,18 @@ endfunc
 " s:buflocal_pm_set {{{
 "   set project name.
 func! s:buflocal_pm_set(opt)
-    let name = input('Project Name:', a:opt.cursor_buf.project_name)
-    if name != ''
-        let a:opt.cursor_buf.project_name = name
-    endif
+    let save_ei = &eventignore
+    setlocal eventignore
+
+    try
+        redraw
+        let name = input('Project Name:', a:opt.cursor_buf.project_name)
+        if name != ''
+            let a:opt.cursor_buf.project_name = name
+        endif
+    finally
+        let &eventignore = save_ei
+    endtry
 endfunc
 " }}}
 
