@@ -315,7 +315,7 @@ let s:misc_info = {'marked_bufs':{}, 'project_name':{}}
 let s:previous_lnum = -1    " lnum where a previous mapping executed.
 
 let s:current_shown_type = ''    " this must be one of '', 'listed', 'unlisted'.
-let s:mappings = {'default': {}, 'user': {}}    " buffer local mappings.
+let s:mappings = {'default':{}, 'user':{}, 'mixed':{}}    " buffer local mappings.
 
 " used for single key emulation.
 let s:mapstack_count = -1
@@ -893,12 +893,15 @@ func! s:open_dumbbuf_buffer(shown_type)
     endfor
 
     " mappings
-    for [mode, maps] in items(s:mappings.default) + items(s:mappings.user)
+    for [mode, maps] in items(s:mappings.mixed)
         for [from, map] in items(maps)
             " if 'map' has 'mapto', map it.
             if has_key(map, 'mapto')
                 execute printf('%snoremap <buffer>%s %s %s',
-                                \mode, (has_key(map, 'opt') ? map.opt : ''), from, map.mapto)
+                                \mode,
+                                \(has_key(map, 'opt') ? map.opt : ''),
+                                \from,
+                                \map.mapto)
             " if 'map' is empty and 'from' is mapped, delete it.
             elseif empty(map) && maparg(from, mode) != ''
                 execute mode.'unmap <buffer> '.from
@@ -1408,6 +1411,20 @@ endfunc
 
 
 " autocmd's handlers {{{
+" s:init {{{
+func! s:init()
+    for [mode, maps] in items(s:mappings.user) + items(s:mappings.default)
+        if !has_key(s:mappings.mixed, mode)
+            let s:mappings.mixed[mode] = {}
+        endif
+        call extend(s:mappings.mixed[mode], maps, 'force')
+    endfor
+    call s:warnf('s:mappings.user [%s]', string(s:mappings.user))
+
+    unlet s:mappings.user
+    unlet s:mappings.default
+endfunc
+" }}}
 " s:restore_options {{{
 func! s:restore_options()
     call s:debug("s:restore_options()...")
@@ -1454,6 +1471,8 @@ if g:dumbbuf_single_key
             " restore &updatetime.
             execute 'autocmd BufWipeout' i 'call s:restore_options()'
         endfor
+
+        autocmd VimEnter * call s:init()
     augroup END
 endif
 " }}}
