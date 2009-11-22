@@ -181,6 +181,8 @@ scriptencoding utf-8
 "           show always unlisted buffers list.
 "       'listed':
 "           show always listed buffers list.
+"       'project':
+"           show buffers each project.
 "
 "   g:dumbbuf_close_when_exec (default: 0)
 "       if true, close when execute local mapping from dumbbuf buffer.
@@ -349,6 +351,9 @@ endif
 if ! exists('g:dumbbuf_unlisted_buffer_name')
     let g:dumbbuf_unlisted_buffer_name = '__unlisted_buffers__'
 endif
+if ! exists('g:dumbbuf_project_buffer_name')
+    let g:dumbbuf_project_buffer_name = '__project_buffers__'
+endif
 if ! exists('g:dumbbuf_cursor_pos')
     let g:dumbbuf_cursor_pos = 'current'
 endif
@@ -508,7 +513,10 @@ func! s:write_buffers_list(bufs)
     let disp_line = []
     try
         let lnum = 1
-        for buf in map(sort(keys(a:bufs)), 'a:bufs[v:val]')
+        " sort by bufnr.
+        " TODO sort by numeric
+        let sorted = map(sort(keys(a:bufs)), 'a:bufs[v:val]')
+        for buf in sorted
             let buf.lnum = lnum
             let lnum += 1
             call add(disp_line, s:eval_disp_expr(buf))
@@ -605,11 +613,18 @@ func! s:get_cursor_buffer()
     return {}
 endfunc
 " }}}
+" s:is_shown_type {{{
+func! s:is_shown_type(shown_type)
+    return a:shown_type ==# 'listed'
+      \ || a:shown_type ==# 'unlisted'
+      \ || a:shown_type ==# 'project'
+endfunc
+" }}}
 " s:get_shown_type {{{
 "   this returns exact shown type (this does NOT return '').
 "   see g:dumbbuf_shown_type in the document about shown type.
 func! s:get_shown_type(caller_bufnr)
-    if g:dumbbuf_shown_type =~# '^\(unlisted\|listed\)$'.'\C'
+    if s:is_shown_type(g:dumbbuf_shown_type)
         return g:dumbbuf_shown_type
     elseif g:dumbbuf_shown_type == ''
         let info = s:get_buffer_info(a:caller_bufnr)
@@ -665,9 +680,14 @@ endfunc
 "   if current buffers is listed, filter listed buffers.
 func! s:filter_shown_type_buffers(bufs_info, shown_type)
     call s:debug(printf("filter only '%s' buffers.", a:shown_type))
-    return filter(a:bufs_info,
-                \'a:shown_type ==# "unlisted" ?' .
-                    \'v:val.is_unlisted : ! v:val.is_unlisted')
+
+    if a:shown_type ==# 'listed'
+        return filter(a:bufs_info, '! v:val.is_unlisted')
+    elseif a:shown_type ==# 'unlisted'
+        return filter(a:bufs_info, 'v:val.is_unlisted')
+    else
+        return a:bufs_info
+    endif
 endfunc
 " }}}
 " s:extend_misc_info {{{
@@ -1104,12 +1124,8 @@ func! s:open_dumbbuf_buffer(shown_type)
 
     " ======== set up dumbbuf buffer ========
 
-    " name dumbbuf's buffer.
-    if a:shown_type ==# 'unlisted'
-        silent execute 'file `=g:dumbbuf_unlisted_buffer_name`'
-    else
-        silent execute 'file `=g:dumbbuf_listed_buffer_name`'
-    endif
+    " name dumbbuf buffer.
+    call s:name_dumbbuf_buffer(a:shown_type)
 
     " write buffers list.
     call s:write_buffers_list(s:bufs_info)
@@ -1197,6 +1213,10 @@ func! s:update_buffers_list(...)
     let s:bufs_info = s:parse_buffers_info()
     " decide which type dumbbuf shows.
     if a:0 > 0
+        if ! s:is_shown_type(a:1)
+            call s:warnf('internal error: %s is not correct shown type.')
+            return
+        endif
         let s:current_shown_type = a:1
     else
         let s:current_shown_type = s:get_shown_type(s:caller_bufnr)
@@ -1224,6 +1244,17 @@ func! s:create_dumbbuf_buffer()
                 \g:dumbbuf_open_with,
                 \g:dumbbuf_vertical ? g:dumbbuf_buffer_width : g:dumbbuf_buffer_height)
     return bufnr('%')
+endfunc
+" }}}
+" s:name_dumbbuf_buffer {{{
+func! s:name_dumbbuf_buffer(shown_type)
+    if a:shown_type ==# 'listed'
+        silent file `=g:dumbbuf_listed_buffer_name`
+    elseif a:shown_type ==# 'unlisted'
+        silent file `=g:dumbbuf_unlisted_buffer_name`
+    else
+        silent file `=g:dumbbuf_project_buffer_name`
+    endif
 endfunc
 " }}}
 
