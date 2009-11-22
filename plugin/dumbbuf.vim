@@ -262,17 +262,22 @@ scriptencoding utf-8
 "           this variable is for the experienced users.
 "           these settings will override default value.
 "
-"           e.g.:
 "           if your .vimrc setting is
 "
 "             let g:dumbbuf_mappings = {
 "                 \'n': {
-"                     \'<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
+"                     \'<Esc>': {'alias_to': 'q'}
 "                 \}
 "             \}
 "
 "           you can type <Esc> to close dumbbuf buffer.
 "           no influences for other default mappings.
+"
+"           and there are some special keys:
+"               'alias_to': 'map'
+"                   make an alias for 'map'.
+"               'swap_with': 'map'
+"                   swap mapping with 'map'.
 "   }}}
 " }}}
 "
