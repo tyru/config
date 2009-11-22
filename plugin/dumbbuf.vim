@@ -314,7 +314,27 @@ let s:misc_info = {'marked_bufs':{}, 'project_name':{}}
 let s:previous_lnum = -1    " lnum where a previous mapping executed.
 
 let s:current_shown_type = ''    " this must be one of 'listed', 'unlisted', 'project' while runnning mappings.
+let s:shown_type_idx = 0    " index for g:dumbbuf_all_shown_types.
+
 let s:mappings = {'user':{}, 'compiled':[]}    " buffer local mappings.
+if g:dumbbuf_single_key
+    let s:mappings.single_key = {
+        \'h': 'hh',
+        \'l': 'll',
+        \
+        \'u': 'uu',
+        \'s': 'ss',
+        \'v': 'vv',
+        \'t': 'tt',
+        \'d': 'dd',
+        \'w': 'ww',
+        \'c': 'cc',
+        \
+        \'x': 'xx',
+        \
+        \'p': 'pp',
+    \}
+endif
 
 " used for single key emulation.
 let s:mapstack_count = -1
@@ -384,6 +404,9 @@ endif
 if ! exists('g:dumbbuf_remove_marked_when_close')
     let g:dumbbuf_remove_marked_when_close = 0
 endif
+if ! exists('g:dumbbuf_all_shown_types')
+    let g:dumbbuf_all_shown_types = ['listed', 'unlisted', 'project']
+endif
 
 
 let s:listed = 'printf("%s%s%s <%d> [%s]%s", (v:val.is_current ? "%" : " "), (v:val.is_marked ? "x" : " "), (v:val.is_modified ? "+" : " "), v:val.nr, bufname(v:val.nr), (v:val.project_name == "" ? "" : "@".v:val.project_name))'
@@ -427,26 +450,6 @@ if exists('g:dumbbuf_mappings')
     let s:mappings.user = g:dumbbuf_mappings
     unlet g:dumbbuf_mappings
 endif
-
-if g:dumbbuf_single_key
-    let s:mappings.single_key = {
-        \'h': 'hh',
-        \'l': 'll',
-        \
-        \'u': 'uu',
-        \'s': 'ss',
-        \'v': 'vv',
-        \'t': 'tt',
-        \'d': 'dd',
-        \'w': 'ww',
-        \'c': 'cc',
-        \
-        \'x': 'xx',
-        \
-        \'p': 'pp',
-    \}
-endif
-
 " }}}
 
 " Functions {{{
@@ -524,7 +527,7 @@ func! s:sort_by_shown_type(bufs)
         let sorted = map(sort(keys(bufs), 's:sortfunc_numeric'), 'bufs[v:val]')
     elseif s:current_shown_type ==# 'project'
         " nop.
-        let sorted = bufs
+        let sorted = values(bufs)
     endif
     return sorted
 endfunc
@@ -536,12 +539,36 @@ func! s:eval_sorted_bufs(sorted_bufs)
 
     if s:current_shown_type ==# 'project'
         let proj_vs_bufs = {}
+        " use string which includes control chars as dict key.
+        let no_projects_are_belong_to_us =
+                    \ nr2char(255)."\Y\o\u\i\s\b\i\g\f\o\o\l\m\a\n\.\h\a\h\a\h\a"
+
         for buf in a:sorted_bufs
-            let proj_vs_bufs[buf.project_name] = buf
+            if buf.project_name == ''
+                let key_val = no_projects_are_belong_to_us
+            else
+                " buf.project_name must not include control chars.
+                let key_val = buf.project_name
+            endif
+            if has_key(proj_vs_bufs, key_val)
+                let proj_vs_bufs[key_val] += [buf]
+            else
+                let proj_vs_bufs[key_val] = [buf]
+            endif
         endfor
+
         for proj_name in sort(keys(proj_vs_bufs))
-            call add(disp_line, proj_name . ':')
-            let lnum += 1
+            " write project name.
+            if proj_name ==# no_projects_are_belong_to_us
+                " TODO option
+                call add(disp_line, '<Other Buffers>:')
+                let lnum += 1
+            else
+                " TODO option
+                call add(disp_line, printf("<%s>:", proj_name))
+                let lnum += 1
+            endif
+            " write buffers who belong to its project.
             for buf in proj_vs_bufs[proj_name]
                 let buf.lnum = lnum
                 call add(disp_line, s:eval_disp_expr(buf))
@@ -733,7 +760,8 @@ func! s:filter_shown_type_buffers(bufs_info)
     elseif s:current_shown_type ==# 'unlisted'
         return filter(a:bufs_info, 'v:val.is_unlisted')
     else
-        return a:bufs_info
+        " TODO option
+        return filter(a:bufs_info, '! v:val.is_unlisted')
     endif
 endfunc
 " }}}
@@ -868,7 +896,8 @@ func! s:compile_mappings()
                         \string('<SID>buflocal_toggle_listed_type'),
                         \string({
                             \'type': 'func',
-                            \'requires_args': 0}),
+                            \'requires_args': 1,
+                            \'args': [0]}),
                         \string('v'))
             \},
             \'ll': {
@@ -878,7 +907,8 @@ func! s:compile_mappings()
                         \string('<SID>buflocal_toggle_listed_type'),
                         \string({
                             \'type': 'func',
-                            \'requires_args': 0}),
+                            \'requires_args': 1,
+                            \'args': [1]}),
                         \string('v'))
             \},
             \'cc': {
@@ -1050,7 +1080,8 @@ func! s:compile_mappings()
                         \string('<SID>buflocal_toggle_listed_type'),
                         \string({
                             \'type': 'func',
-                            \'requires_args': 0}),
+                            \'requires_args': 1,
+                            \'args': [0]}),
                         \string('n'))
             \},
             \'ll': {
@@ -1060,7 +1091,8 @@ func! s:compile_mappings()
                         \string('<SID>buflocal_toggle_listed_type'),
                         \string({
                             \'type': 'func',
-                            \'requires_args': 0}),
+                            \'requires_args': 1,
+                            \'args': [1]}),
                         \string('n'))
             \},
             \'cc': {
@@ -1459,8 +1491,7 @@ func! s:dispatch_code(code, idx, opt)
         endif
     elseif a:opt.type ==# 'func'
         if requires_args
-            " NOTE: not used.
-            call call(a:code, [a:opt.args])
+            call call(a:code, [a:opt] + a:opt.args)
         else
             call call(a:code, [a:opt])
         endif
@@ -1562,15 +1593,32 @@ func! s:buflocal_open_onebyone(opt)
 endfunc
 " }}}
 " s:buflocal_toggle_listed_type {{{
-func! s:buflocal_toggle_listed_type(opt)
-    if s:current_shown_type ==# 'unlisted'
-        call s:update_buffers_list('listed')
-    elseif s:current_shown_type ==# 'listed'
-        call s:update_buffers_list('unlisted')
-    else
+func! s:buflocal_toggle_listed_type(opt, advance)
+    if ! s:is_shown_type(s:current_shown_type)
         " NOTE: s:current_shown_type MUST NOT be ''.
         call s:warn("internal warning: strange s:current_shown_type value...: ".s:current_shown_type)
+        return
     endif
+    if ! (0 <= s:shown_type_idx && s:shown_type_idx < len(g:dumbbuf_all_shown_types))
+        call s:warn("out of range")
+        return
+    endif
+
+    if a:advance    " mapping 'll'.
+        if s:shown_type_idx == len(g:dumbbuf_all_shown_types) - 1
+            let s:shown_type_idx = 0
+        else
+            let s:shown_type_idx += 1
+        endif
+    else    " mapping 'hh'.
+        if s:shown_type_idx == 0
+            let s:shown_type_idx = len(g:dumbbuf_all_shown_types) - 1
+        else
+            let s:shown_type_idx -= 1
+        endif
+    endif
+
+    call s:update_buffers_list(g:dumbbuf_all_shown_types[s:shown_type_idx])
 endfunc
  " }}}
 " s:buflocal_close {{{
@@ -1600,7 +1648,8 @@ func! s:buflocal_pm_set(opt)
     let proj_name = input(printf("%s's Project Name:", name),
                     \     a:opt.cursor_buf.project_name)
     if proj_name != ''
-        let s:misc_info.project_name[nr] = proj_name
+        " NOTE: use strtrans() for buffers who belong to no project.
+        let s:misc_info.project_name[nr] = strtrans(proj_name)
         call s:update_only_misc_info()
     endif
 endfunc
@@ -1734,7 +1783,7 @@ if g:dumbbuf_single_key
     augroup DumbBuf
         autocmd!
 
-        for i in [g:dumbbuf_listed_buffer_name, g:dumbbuf_unlisted_buffer_name]
+        for i in [g:dumbbuf_listed_buffer_name, g:dumbbuf_unlisted_buffer_name, g:dumbbuf_project_buffer_name]
             " single key emulation.
             execute 'autocmd CursorHold' i 'call feedkeys("\<Plug>dumbbuf_try_to_emulate_single_key", "m")'
             " restore &updatetime.
