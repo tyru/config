@@ -60,6 +60,14 @@ scriptencoding utf-8
 "       - fix minor bugs and do some optimizations.
 "       - replace the words 'select' to 'mark' in document and source code.
 "         I would use 'select' for only visual mode's region.
+"   0.0.8:
+"       - change default values of g:dumbbuf_disp_expr, g:dumbbuf_options
+"       - implement operator-like mappings
+"         (mappings also work in visual mode, receive range, etc.)
+"       - implement g:dumbbuf_all_shown_types.
+"       - suppress flicker when command executed.
+"       - some optimizations.
+"       - some fixes of minor bugs.
 " }}}
 "
 "
@@ -69,9 +77,10 @@ scriptencoding utf-8
 "   " which was mapped to close QuickBuf's list :)
 "   let dumbbuf_mappings = {
 "       \'n': {
-"           \'<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
+"           \'<Esc>': {'alias_to': 'q'},
 "       \}
 "   \}
+"
 "   let dumbbuf_single_key  = 1
 "   let dumbbuf_updatetime  = 1    " mininum value of updatetime.
 "   let dumbbuf_wrap_cursor = 0
@@ -232,6 +241,9 @@ scriptencoding utf-8
 "
 "   g:dumbbuf_wrap_cursor (default: 1)
 "       wrap the cursor at the top or bottom of dumbbuf buffer.
+"
+"   g:dumbbuf_all_shown_types (default: ['listed', 'unlisted', 'project'])
+"       all available shown types.
 "
 "
 "
