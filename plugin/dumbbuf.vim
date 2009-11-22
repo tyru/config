@@ -496,11 +496,6 @@ func! s:sortfunc_numeric(i1, i2)
     return a:i1 - a:i2
 endfunc
 " }}}
-" s:sortfunc_proj_name {{{
-func! s:sortfunc_proj_name(v1, v2)
-    return a:v1[1] == a:v2[1] ? 0 : a:v1[1] > a:v2[1] ? 1 : -1
-endfunc
-" }}}
 
 
 " misc.
@@ -519,30 +514,49 @@ func! s:eval_disp_expr(bufs)
 endfunc
 " }}}
 " s:sort_by_shown_type {{{
-func! s:sort_by_shown_type(lis)
-    let lis = a:lis
+func! s:sort_by_shown_type(bufs)
+    let bufs = a:bufs
     if s:current_shown_type ==# 'listed'
         " sort by bufnr.
-        let sorted = map(sort(keys(lis), 's:sortfunc_numeric'), 'lis[v:val]')
+        let sorted = map(sort(keys(bufs), 's:sortfunc_numeric'), 'bufs[v:val]')
     elseif s:current_shown_type ==# 'unlisted'
         " sort by bufnr.
-        let sorted = map(sort(keys(lis), 's:sortfunc_numeric'), 'lis[v:val]')
+        let sorted = map(sort(keys(bufs), 's:sortfunc_numeric'), 'bufs[v:val]')
     elseif s:current_shown_type ==# 'project'
-        " sort by project_name.
-        let sorted = map(sort(map(lis, '[v:val, v:val.project_name]'), 's:sortfunc_proj_name'), 'v:val[0]')
+        " nop.
+        let sorted = bufs
     endif
     return sorted
 endfunc
 " }}}
 " s:eval_sorted_bufs {{{
 func! s:eval_sorted_bufs(sorted_bufs)
-    let disp_line = []
     let lnum = 1
-    for buf in a:sorted_bufs
-        let buf.lnum = lnum
-        let lnum += 1
-        call add(disp_line, s:eval_disp_expr(buf))
-    endfor
+    let disp_line = []
+
+    if s:current_shown_type ==# 'project'
+        let proj_vs_bufs = {}
+        for buf in a:sorted_bufs
+            let proj_vs_bufs[buf.project_name] = buf
+        endfor
+        for proj_name in sort(keys(proj_vs_bufs))
+            call add(disp_line, proj_name . ':')
+            let lnum += 1
+            for buf in proj_vs_bufs[proj_name]
+                let buf.lnum = lnum
+                call add(disp_line, s:eval_disp_expr(buf))
+                let lnum += 1
+            endfor
+        endfor
+    else
+        " a:sorted_bufs are sorted by bufnr.
+        for buf in a:sorted_bufs
+            let buf.lnum = lnum
+            call add(disp_line, s:eval_disp_expr(buf))
+            let lnum += 1
+        endfor
+    endif
+
     return disp_line
 endfunc
 " }}}
