@@ -270,16 +270,14 @@ scriptencoding utf-8
 "   - :hide
 "   - option which decides the order of buffer's list.
 "   - support <Plug>... mapping as hotkey.
-"   - 変更されたバッファについては訊く
-"   - 現在のパス以下のものとそうでないものをラベリングする (shown typeは'directory')
-"     - UIはプロジェクトごとに管理するものと同じ (なので上の機能を実装してから)
-"     - 新しい機能として提供するよりは上の機能と合わせて
-"       「プロジェクトごと」「同じ親ディレクトリごと」など
-"       グルーピングする機能を一つ追加する方がユーザにとっても分かりやすい
+"   - ask if dumbbuf might execute mapping when current buffer has changed.
+"   - labeling the files under the current directory or not.
+"     (shown type is 'directory')
+"     - same UI as shown type 'project'. so implement 'project' at first.
 " }}}
 " FIXME: {{{
 "   - sometimes Vim gets freezed when typed 'V'
-"     - 直ったっぽい？
+"     - it got fixed?
 " }}}
 "==================================================
 " }}}
