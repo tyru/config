@@ -496,6 +496,11 @@ func! s:sortfunc_numeric(i1, i2)
     return a:i1 - a:i2
 endfunc
 " }}}
+" s:sortfunc_proj_name {{{
+func! s:sortfunc_proj_name(v1, v2)
+    return a:v1[1] == a:v2[1] ? 0 : a:v1[1] > a:v2[1] ? 1 : -1
+endfunc
+" }}}
 
 
 " misc.
@@ -513,6 +518,34 @@ func! s:eval_disp_expr(bufs)
     endif
 endfunc
 " }}}
+" s:sort_by_shown_type {{{
+func! s:sort_by_shown_type(lis)
+    let lis = a:lis
+    if s:current_shown_type ==# 'listed'
+        " sort by bufnr.
+        let sorted = map(sort(keys(lis), 's:sortfunc_numeric'), 'lis[v:val]')
+    elseif s:current_shown_type ==# 'unlisted'
+        " sort by bufnr.
+        let sorted = map(sort(keys(lis), 's:sortfunc_numeric'), 'lis[v:val]')
+    elseif s:current_shown_type ==# 'project'
+        " sort by project_name.
+        let sorted = map(sort(map(lis, '[v:val, v:val.project_name]'), 's:sortfunc_proj_name'), 'v:val[0]')
+    endif
+    return sorted
+endfunc
+" }}}
+" s:eval_sorted_bufs {{{
+func! s:eval_sorted_bufs(sorted_bufs)
+    let disp_line = []
+    let lnum = 1
+    for buf in a:sorted_bufs
+        let buf.lnum = lnum
+        let lnum += 1
+        call add(disp_line, s:eval_disp_expr(buf))
+    endfor
+    return disp_line
+endfunc
+" }}}
 " s:write_buffers_list {{{
 "   this determines s:bufs_info[i].lnum
 func! s:write_buffers_list(bufs)
@@ -520,14 +553,7 @@ func! s:write_buffers_list(bufs)
 
     let disp_line = []
     try
-        let lnum = 1
-        " sort by bufnr.
-        let sorted = map(sort(keys(a:bufs), 's:sortfunc_numeric'), 'a:bufs[v:val]')
-        for buf in sorted
-            let buf.lnum = lnum
-            let lnum += 1
-            call add(disp_line, s:eval_disp_expr(buf))
-        endfor
+        let disp_line = s:eval_sorted_bufs(s:sort_by_shown_type(a:bufs))
     catch
         call s:warn("error occured while evaluating g:dumbbuf_disp_expr.")
         call s:warn(v:exception)
@@ -685,12 +711,12 @@ endfunc
 " s:filter_shown_type_buffers {{{
 "   if current buffer is unlisted, filter unlisted buffers.
 "   if current buffers is listed, filter listed buffers.
-func! s:filter_shown_type_buffers(bufs_info, shown_type)
-    call s:debug(printf("filter only '%s' buffers.", a:shown_type))
+func! s:filter_shown_type_buffers(bufs_info)
+    call s:debug(printf("filter only '%s' buffers.", s:current_shown_type))
 
-    if a:shown_type ==# 'listed'
+    if s:current_shown_type ==# 'listed'
         return filter(a:bufs_info, '! v:val.is_unlisted')
-    elseif a:shown_type ==# 'unlisted'
+    elseif s:current_shown_type ==# 'unlisted'
         return filter(a:bufs_info, 'v:val.is_unlisted')
     else
         return a:bufs_info
@@ -1109,7 +1135,7 @@ endfunc
 " manipulate dumbbuf buffer.
 " s:open_dumbbuf_buffer {{{
 "   open and set up dumbbuf buffer.
-func! s:open_dumbbuf_buffer(shown_type)
+func! s:open_dumbbuf_buffer()
     " open and switch to dumbbuf's buffer.
     let s:dumbbuf_bufnr = s:create_dumbbuf_buffer()
     if s:dumbbuf_bufnr ==# -1
@@ -1123,7 +1149,7 @@ func! s:open_dumbbuf_buffer(shown_type)
         return
     endif
     " filter buffers matching current shown type.
-    let s:bufs_info = s:filter_shown_type_buffers(s:bufs_info, a:shown_type)
+    let s:bufs_info = s:filter_shown_type_buffers(s:bufs_info)
     " add miscellaneous info about buffers.
     call s:add_misc_info(s:bufs_info)
 
@@ -1132,7 +1158,7 @@ func! s:open_dumbbuf_buffer(shown_type)
     " ======== set up dumbbuf buffer ========
 
     " name dumbbuf buffer.
-    call s:name_dumbbuf_buffer(a:shown_type)
+    call s:name_dumbbuf_buffer()
 
     " write buffers list.
     call s:write_buffers_list(s:bufs_info)
@@ -1230,7 +1256,7 @@ func! s:update_buffers_list(...)
     endif
 
     " open.
-    call s:open_dumbbuf_buffer(s:current_shown_type)
+    call s:open_dumbbuf_buffer()
 endfunc
 " }}}
 " s:jump_to_buffer {{{
@@ -1254,10 +1280,10 @@ func! s:create_dumbbuf_buffer()
 endfunc
 " }}}
 " s:name_dumbbuf_buffer {{{
-func! s:name_dumbbuf_buffer(shown_type)
-    if a:shown_type ==# 'listed'
+func! s:name_dumbbuf_buffer()
+    if s:current_shown_type ==# 'listed'
         silent file `=g:dumbbuf_listed_buffer_name`
-    elseif a:shown_type ==# 'unlisted'
+    elseif s:current_shown_type ==# 'unlisted'
         silent file `=g:dumbbuf_unlisted_buffer_name`
     else
         silent file `=g:dumbbuf_project_buffer_name`
@@ -1523,15 +1549,12 @@ endfunc
 " }}}
 " s:buflocal_toggle_listed_type {{{
 func! s:buflocal_toggle_listed_type(opt)
-    " NOTE: s:current_shown_type SHOULD NOT be '', and MUST NOT be.
-
     if s:current_shown_type ==# 'unlisted'
         call s:update_buffers_list('listed')
-
     elseif s:current_shown_type ==# 'listed'
         call s:update_buffers_list('unlisted')
-
     else
+        " NOTE: s:current_shown_type MUST NOT be ''.
         call s:warn("internal warning: strange s:current_shown_type value...: ".s:current_shown_type)
     endif
 endfunc
