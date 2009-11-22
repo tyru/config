@@ -67,17 +67,12 @@ setopt pushd_ignore_dups
 setopt rm_star_silent
 setopt sh_word_split
 setopt share_history
-
-unsetopt beep
-unsetopt listbeep
-
+setopt no_beep
+setopt no_listbeep
 setopt notify
-
 setopt rm_star_wait
-#setopt rm_star_silent
 setopt no_clobber
-#setopt no_clobber
-
+setopt no_hup
 # setopt auto_cd
 # setopt promptcr
 # setopt print_exit_value
@@ -177,6 +172,14 @@ zstyle ':completion:*' group-name ''
 
 # manの補完をセクション番号別に表示させる
 zstyle ':completion:*:manuals' separate-sections true
+# }}}
+
+# 起動済みバックグランドプロセスの標準出力を見るワンライナー {{{
+# via http://subtech.g.hatena.ne.jp/cho45/20091118/1258554176
+function snatch () {
+    gdb -p $1 -batch -n -x =( echo -e "p (int)open(\"/proc/$$/fd/1\", 1)\np (int)dup2(\$1, 1)\np (int)dup2(\$1, 2)" )
+}
+
 # }}}
 # }}}
 

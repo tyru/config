@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: nextfile
 " Version: 0.0.3
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-11-11.
+" Last Change: 2009-11-18.
 "
 " Description:
 "   open the next or previous file
@@ -15,10 +15,26 @@ scriptencoding utf-8
 "   0.0.0: Initial upload.
 "   0.0.1: add g:nf_ignore_dir
 "   0.0.2: implement g:nf_ignore_ext.
+"   0.0.3:
+"     - fix edge case bug
+"     - add command :NFLoadGlob
+"     - mappings support range
+"       ('10<Leader>n' opens a file which is 10 files away from current file.
+"        '10<Leader>p' is reverse sequence)
+"     - add options g:nf_disable_if_empty_name, g:nf_sort_funcref, g:nf_commands
+"     - etc.
 " }}}
 "
 "
 " Usage:
+"
+"   COMMANDS:
+"       :NFLoadGlob
+"           load globbed files.
+"           this command just load files to buffers, does not edit them.
+"           options do NOT influence globbed file's list.
+"               :NFLoadGlob *   " to load all files in current directory.
+"               :NFLoadGlob .*  " to load all dotfiles in current directory.
 "
 "   MAPPING:
 "       default:
@@ -51,6 +67,7 @@ scriptencoding utf-8
 "
 "       g:nf_disable_if_empty_name (default: 0)
 "           do not run mapping if current file name is empty.
+"           behave like old version if this is true.
 "
 "       g:nf_commands (default: see below)
 "           command's names.
@@ -61,8 +78,6 @@ scriptencoding utf-8
 "           default value:
 "               let g:nf_commands = {
 "               \   'NFLoadGlob' : 'NFLoadGlob',
-"               \   'NFNext'     : 'NFNext',
-"               \   'NFPrev'     : 'NFPrev',
 "               \ }
 "
 "       g:nf_sort_funcref (default: '<SID>sort_compare')
@@ -73,19 +88,6 @@ scriptencoding utf-8
 "                   " alphabetically
 "                   return a:i > a:j
 "               endfunc
-"
-"   COMMANDS:
-"       :NFLoadGlob
-"           load globbed files.
-"           this command just load files to buffers, does not edit them.
-"           g:nf_include_dotfiles, g:nf_ignore_*, etc. influence globbed file's list.
-"               :NFLoadGlob *   " to load all files in current directory.
-"       :NFNext
-"           open next file.
-"           you can pass the number of loading buffers.
-"       :NFPrev
-"           open previous file.
-"           you can pass the number of loading buffers.
 "
 "
 " TODO
@@ -133,8 +135,6 @@ endif
 
 let s:commands = {
 \   'NFLoadGlob' : 'NFLoadGlob',
-\   'NFNext'     : 'NFNext',
-\   'NFPrev'     : 'NFPrev',
 \ }
 if ! exists('g:nf_commands')
     let g:nf_commands = s:commands
@@ -148,16 +148,19 @@ unlet s:commands
 " FUNCTION DEFINITION {{{
 
 " UTIL FUNCTION {{{
+" s:warn {{{
 func! s:warn(msg)
     echohl WarningMsg
     echomsg a:msg
     echohl None
 endfunc
-
+" }}}
+" s:warnf {{{
 func! s:warnf(fmt, ...)
     call s:warn(call('printf', [a:fmt] + a:000))
 endfunc
-
+" }}}
+" s:get_idx_of_list {{{
 func! s:get_idx_of_list(lis, elem)
     let i = 0
     while i < len(a:lis)
@@ -168,22 +171,25 @@ func! s:get_idx_of_list(lis, elem)
     endwhile
     throw "not found"
 endfunc
-
+" }}}
+" s:glob_list {{{
 func! s:glob_list(expr)
     let files = split(glob(a:expr), '\n')
     " get rid of '.' and '..'
     call filter(files, 'fnamemodify(v:val, ":t") !=# "." && fnamemodify(v:val, ":t") !=# ".."')
     return files
 endfunc
-
+" }}}
+" s:sort_compare {{{
 func! s:sort_compare(i, j)
     " alphabetically
     return a:i > a:j
 endfunc
 " }}}
+" }}}
 
 
-
+" s:get_files_list {{{
 func! s:get_files_list(...)
     let glob_expr = a:0 == 0 ? '*' : a:1
     " get files list
@@ -200,21 +206,23 @@ func! s:get_files_list(...)
 
     return sort(files, g:nf_sort_funcref)
 endfunc
-
-func! s:get_idx(files, advance)
+" }}}
+" s:get_next_idx {{{
+func! s:get_next_idx(files, advance, cnt)
     try
         " get current file idx
         let tailed = map(copy(a:files), 'fnamemodify(v:val, ":t")')
         let idx = s:get_idx_of_list(tailed, expand('%:t'))
         " move to next or previous
-        let idx = a:advance ? idx + 1 : idx - 1
+        let idx = a:advance ? idx + a:cnt : idx - a:cnt
     catch /^not found$/
         " open the first file.
         let idx = 0
     endtry
     return idx
 endfunc
-
+" }}}
+" s:open_next_file {{{
 func! s:open_next_file(advance)
     if g:nf_disable_if_empty_name && expand('%') ==# ''
         return s:warn("current file is empty.")
@@ -222,19 +230,32 @@ func! s:open_next_file(advance)
 
     let files = s:get_files_list()
     if empty(files) | return | endif
-    let idx   = s:get_idx(files, a:advance)
+    let idx   = s:get_next_idx(files, a:advance, v:count1)
 
-    if get(files, idx, -1) !=# -1
+    if 0 <= idx && idx < len(files)
         " can access to files[idx]
         execute g:nf_open_command fnameescape(files[idx])
     elseif g:nf_loop_files
-        let idx = idx < 0 ? idx : idx - len(files)
+        " wrap around
+        if idx < 0
+            " fortunately recent LL languages support negative index :)
+            let idx = -(abs(idx) % len(files))
+            " But if you want to access to 'real' index:
+            " if idx != 0
+            "     let idx = len(files) + idx
+            " endif
+        else
+            let idx = idx % len(files)
+        endif
         execute g:nf_open_command fnameescape(files[idx])
     else
         call s:warnf('no %s file.', a:advance ? 'next' : 'previous')
     endif
 endfunc
+" }}}
 
+
+" s:cmd_load_glob {{{
 func! s:cmd_load_glob(...)
     let files = []
     for glob_expr in a:000
@@ -242,12 +263,12 @@ func! s:cmd_load_glob(...)
         let files += filter(s:glob_list(glob_expr), 'filereadable(v:val)')
     endfor
     " call sort(files, g:nf_sort_funcref)
-    call s:warnf('a:000 [%s], files [%s]', string(a:000), string(files))
 
     let save_pos   = getpos('.')
     let save_bufnr = bufnr('%')
     try
         for f in files
+            " XXX: Adding :silent will NOT load anything. (Vim's bug?)
             execute 'edit' f
         endfor
     finally
@@ -255,31 +276,17 @@ func! s:cmd_load_glob(...)
         execute save_bufnr . 'buffer'
     endtry
 endfunc
-
-func! s:cmd_next_prev(is_next, ...)
-    try
-        let times = range(1, a:0 == 0 ? 1 : str2nr(a:1))
-    catch
-        " out of range
-        return
-    endtry
-    for i in times
-        call s:open_next_file(a:is_next)
-    endfor
-endfunc
-
+" }}}
 " }}}
 
 " MAPPING {{{
-execute printf('nnoremap <silent><unique> %s :call <SID>open_next_file(1)<CR>', g:nf_map_next)
-execute printf('nnoremap <silent><unique> %s :call <SID>open_next_file(0)<CR>', g:nf_map_previous)
+execute printf('nnoremap <silent><unique> %s :<C-u>call <SID>open_next_file(1)<CR>', g:nf_map_next)
+execute printf('nnoremap <silent><unique> %s :<C-u>call <SID>open_next_file(0)<CR>', g:nf_map_previous)
 " }}}
 
 " COMMANDS {{{
 let s:command_def = {
-\   'NFLoadGlob' : ['-nargs=+', 'call s:cmd_load_glob(<f-args>)'],
-\   'NFNext'     : ['-nargs=?', 'call s:cmd_next_prev(1,<f-args>)'],
-\   'NFPrev'     : ['-nargs=?', 'call s:cmd_next_prev(0,<f-args>)'],
+\   'NFLoadGlob' : ['-complete=file -nargs=+', 'call s:cmd_load_glob(<f-args>)'],
 \ }
 for [cmd, name] in items(g:nf_commands)
     if !empty(name)

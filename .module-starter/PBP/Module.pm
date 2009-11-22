@@ -4,8 +4,7 @@ use strict;
 use warnings;
 use Carp;
 
-use version;
-our $VERSION = qv('0.0.0');
+our $VERSION = eval '0.001';
 
 use Exporter;
 use base qw(Exporter);
@@ -49,6 +48,9 @@ This document describes <MODULE NAME> version 0.0.1
 
 =over
 
+=item new()
+
+create instance.
 
 =back
 

@@ -629,6 +629,8 @@ augroup MyVimrc
                 \ setlocal ft=c
     autocmd BufNewFile,BufReadPre *.cpp
                 \ setlocal ft=cpp
+    autocmd BufNewFile,BufReadPre *.h
+                \ setlocal ft=c.cpp
     autocmd BufNewFile,BufReadPre *.cs
                 \ setlocal ft=cs
     autocmd BufNewFile,BufReadPre *.java
@@ -783,6 +785,11 @@ noremap <silent> L  5l
 noremap <silent> ]k        :call search('^\S', 'Ws')<CR>
 noremap <silent> [k        :call search('^\S', 'Wsb')<CR>
 " }}}
+" misc. {{{
+noremap <silent> <Space>j           <C-f>
+noremap <silent> <Space>k           <C-b>
+noremap <silent> <Space><Space>     <Space>
+" }}}
 " }}}
 " nmap {{{
 nnoremap <silent> <LocalLeader><LocalLeader>         <LocalLeader>
@@ -792,6 +799,7 @@ nnoremap <silent> n     nzz
 nnoremap <silent> N     Nzz
 
 " add '\C' to the pattern
+" FIXME behave like option 'c' included...
 for [s:pat, s:flags] in [['*', 's'], ['#', 'bs'], ['g*', 's'], ['g#', 'bs']]
     execute printf("nnoremap <silent> %s :call <SID>dont_ignore_case(%s, %s)<CR>", s:pat, string(s:pat), string(s:flags))
 endfor
@@ -808,7 +816,7 @@ func! s:dont_ignore_case(cmd, flags)
 endfunc
 
 " fix up all indents
-nnoremap <silent> =<Space>    mqgg=G`qzz<CR>
+nnoremap <silent> <Space>=    mqgg=G`qzz<CR>
 
 " do not destroy noname register when pressed 'x'
 nnoremap <silent> x       "_x
@@ -902,8 +910,8 @@ inoremap <C-l>  <Space><BS><C-o><C-l>
 inoremap <C-z>                <C-o>di(
 
 " omni
-inoremap <C-w><C-n>     <C-x><C-n>
-inoremap <C-w><C-p>     <C-x><C-p>
+inoremap <C-n>     <C-x><C-n>
+inoremap <C-p>     <C-x><C-p>
 " }}}
 " cmap {{{
 if &wildmenu
@@ -992,7 +1000,7 @@ let dumbbuf_hotkey = '<Leader>b'
 " たまにQuickBuf.vimの名残で<Esc>を押してしまう
 let dumbbuf_mappings = {
     \'n': {
-        \'<Esc>': { 'opt': '<silent>', 'mapto': ':<C-u>close<CR>' }
+        \'<Esc>': {'alias_to': 'q'},
     \}
 \}
 let dumbbuf_single_key  = 1
@@ -1119,6 +1127,10 @@ nnoremap <Leader>gL :<C-u>GitLog -p<Enter>
 " nnoremap <Leader>gc :<C-u>GitCommit<Enter>
 " nnoremap <Leader>gC :<C-u>GitCommit --amend<Enter>
 " nnoremap <Leader>gp :<C-u>Git push
+" }}}
+" EasyGrep {{{
+let EasyGrepMode = 2
+let EasyGrepInvertWholeWord = 1
 " }}}
 " }}}
 " }}}

@@ -122,7 +122,9 @@ inoremap <C-n> <Nop>
 " }}}
 "-----------------------------------------------------------------
 " qmark {{{
-qmark H http://hatenadiary.g.hatena.ne.jp/keyword/%e3%81%af%e3%81%a6%e3%81%aa%e8%a8%98%e6%b3%95%e4%b8%80%e8%a6%a7
+" qmark H http://hatenadiary.g.hatena.ne.jp/keyword/%e3%81%af%e3%81%a6%e3%81%aa%e8%a8%98%e6%b3%95%e4%b8%80%e8%a6%a7
+
+qmark H http://www.hatena.ne.jp/tyru/config/account
 qmark P http://pipes.yahoo.com/pipes/
 qmark R http://www.rememberthemilk.com/
 qmark T http://tyru.tumblr.com/
