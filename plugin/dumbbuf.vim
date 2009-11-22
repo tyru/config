@@ -490,6 +490,14 @@ endfunc
 " }}}
 
 
+" sort functions
+" s:sortfunc_numeric {{{
+func! s:sortfunc_numeric(i1, i2)
+    return a:i1 - a:i2
+endfunc
+" }}}
+
+
 " misc.
 " s:get_buffer_info {{{
 func! s:get_buffer_info(bufnr)
@@ -514,8 +522,7 @@ func! s:write_buffers_list(bufs)
     try
         let lnum = 1
         " sort by bufnr.
-        " TODO sort by numeric
-        let sorted = map(sort(keys(a:bufs)), 'a:bufs[v:val]')
+        let sorted = map(sort(keys(a:bufs), 's:sortfunc_numeric'), 'a:bufs[v:val]')
         for buf in sorted
             let buf.lnum = lnum
             let lnum += 1
