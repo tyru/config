@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.7
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-11-22.
+" Last Change: 2009-11-23.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -1150,25 +1150,43 @@ func! s:compile_mappings()
 
 
     let map_vs_code = {}
+    let unmap_list = []
     " NOTE: Compile 'default' firstly, 'user' secondly.
     " Because 'user' may unmap the default mappings.
     for [mode, maps] in items(default_mappings) + items(s:mappings.user)
         for [from, to] in items(maps)
+            " The key 'map_from' works like identifier
+            " for map in its mode.
             let map_from = mode . from
+
             if has_key(map_vs_code, map_from)
                 if empty(to)
-                    unlet map_vs_code[map_from]
+                    call add(unmap_list, map_from)
                 endif
             else
+                let def_map = default_mappings[mode]
+
                 if has_key(to, 'alias_to')
-                \ && has_key(default_mappings[mode], to.alias_to)
-                \ && has_key(default_mappings[mode][to.alias_to], 'mapto')
+                \ && has_key(def_map, to.alias_to)
+                \ && has_key(def_map[to.alias_to], 'mapto')
                     let map_vs_code[map_from] =
                         \ printf('%snoremap <buffer>%s %s %s',
                         \       mode,
                         \       (has_key(to, 'opt') ? to.opt : ''),
                         \       from,
-                        \       default_mappings[mode][to.alias_to].mapto)
+                        \       def_map[to.alias_to].mapto)
+                elseif has_key(to, 'swap_with')
+                \ && has_key(def_map, to.swap_with)
+                \ && has_key(def_map[to.swap_with], 'mapto')
+                    " Add 'map_from' mapping.
+                    let map_vs_code[map_from] =
+                        \ printf('%snoremap <buffer>%s %s %s',
+                        \       mode,
+                        \       (has_key(to, 'opt') ? to.opt : ''),
+                        \       from,
+                        \       def_map[to.swap_with].mapto)
+                    " Remove 'to.swap_with' mapping.
+                    call add(unmap_list, mode . to.swap_with)
                 elseif has_key(to, 'mapto')
                     let map_vs_code[map_from] =
                         \ printf('%snoremap <buffer>%s %s %s',
@@ -1184,7 +1202,12 @@ func! s:compile_mappings()
             unlet to
         endfor
     endfor
+
+    for map in unmap_list
+        unlet map_vs_code[map]
+    endfor
     let s:mappings.compiled = values(map_vs_code)
+
     unlet s:mappings.user
 endfunc
 " }}}
