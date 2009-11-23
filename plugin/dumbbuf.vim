@@ -959,7 +959,7 @@ func! s:compile_mappings()
                 \'opt': '',
                 \'mapto':
                     \printf(fmt_tmp,
-                        \string('<SID>buflocal_pm_set'),
+                        \string('<SID>buflocal_set_project'),
                         \string({
                             \'type': 'func',
                             \'requires_args': 0,
@@ -1141,7 +1141,7 @@ func! s:compile_mappings()
                 \'opt': '',
                 \'mapto':
                     \printf(fmt_tmp,
-                        \string('<SID>buflocal_pm_set'),
+                        \string('<SID>buflocal_set_project'),
                         \string({
                             \'type': 'func',
                             \'requires_args': 0,
@@ -1254,7 +1254,7 @@ func! s:open_dumbbuf_buffer()
 
     " options
     for i in g:dumbbuf_options
-        execute printf('setlocal %s', i)
+        execute 'setlocal' i
     endfor
 
     " mappings
@@ -1382,7 +1382,7 @@ endfunc
 " s:get_highlight {{{
 func! s:get_highlight(hl_name)
     redir => output
-    silent execute 'hi ' . a:hl_name
+    silent execute 'hi' a:hl_name
     redir END
     return substitute(output, '\C' . '.*\<xxx\>\s\+\(.*\)$', '\1', 'g')
 endfunc
@@ -1390,7 +1390,7 @@ endfunc
 " s:set_highlight {{{
 func! s:set_highlight(hl_name, value)
     call s:debug(printf("set highlight '%s' to '%s'.", a:hl_name, a:value))
-    execute printf('hi %s %s', a:hl_name, a:value)
+    execute 'hi' a:hl_name a:value
 endfunc
 " }}}
 
@@ -1426,14 +1426,14 @@ func! s:run_from_local_map(code, opt, map_mode)
                 let i = 0
                 let len = len(a:code)
                 while i < len
-                    call s:dispatch_code(a:code[i], i, extend(copy(opt), {'lnum': lnum, 'cursor_buf': buf}))
+                    call s:dispatch_code(a:code[i], i, buf, lnum, opt)
                     let i += 1
                 endwhile
             endfor
         else
             for buf in bufs
                 let i = 0
-                call s:dispatch_code(a:code, i, extend(copy(opt), {'lnum': lnum, 'cursor_buf': buf}))
+                call s:dispatch_code(a:code, i, buf, lnum, opt)
             endfor
         endif
 
@@ -1513,27 +1513,27 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
 endfunc
 " }}}
 " s:dispatch_code {{{
-func! s:dispatch_code(code, idx, opt)
-    " NOTE: a:opt.cursor_buf may be empty.
+func! s:dispatch_code(code, idx, cursor_buf, lnum, opt)
+    " NOTE: a:cursor_buf may be empty.
     call s:debug(string(a:opt))
     let requires_args = type(a:opt.requires_args) == type([]) ?
                 \a:opt.requires_args[a:idx] : a:opt.requires_args
 
     if a:opt.type ==# 'cmd'
         if requires_args
-            if empty(a:opt.cursor_buf)
-                call s:warn("internal error: a:opt.cursor_buf is empty...")
+            if empty(a:cursor_buf)
+                call s:warn("internal error: a:cursor_buf is empty...")
                 return
             endif
-            execute printf(a:code, a:opt.cursor_buf.nr)
+            execute printf(a:code, a:cursor_buf.nr)
         else
             execute a:code
         endif
     elseif a:opt.type ==# 'func'
         if requires_args
-            call call(a:code, [a:opt] + a:opt.args)
+            call call(a:code, [a:cursor_buf, a:lnum, a:opt] + a:opt.args)
         else
-            call call(a:code, [a:opt])
+            call call(a:code, [a:cursor_buf, a:lnum, a:opt])
         endif
     else
         throw "internal error: unknown type: ".a:opt.type
@@ -1598,10 +1598,10 @@ endfunc
 " }}}
 " s:buflocal_open {{{
 "   this must be going to close dumbbuf buffer.
-func! s:buflocal_open(opt)
-    let winnr = bufwinnr(a:opt.cursor_buf.nr)
+func! s:buflocal_open(cursor_buf, lnum, opt)
+    let winnr = bufwinnr(a:cursor_buf.nr)
     if winnr == -1
-        execute a:opt.cursor_buf.nr.'buffer'
+        execute a:cursor_buf.nr.'buffer'
     else
         execute winnr.'wincmd w'
     endif
@@ -1609,15 +1609,13 @@ endfunc
 " }}}
 " s:buflocal_open_onebyone {{{
 "   this does NOT do update or close buffers list.
-func! s:buflocal_open_onebyone(opt)
-    call s:debug("current lnum:" . a:opt.lnum)
-
+func! s:buflocal_open_onebyone(cursor_buf, lnum, opt)
     " open buffer on the cursor and close dumbbuf buffer.
     call s:buflocal_open(a:opt)
     " open dumbbuf's buffer again.
     call s:update_buffers_list()
     " go to previous lnum.
-    execute a:opt.lnum
+    execute a:lnum
 
     let save_wrap_cursor = g:dumbbuf_wrap_cursor
     let g:dumbbuf_wrap_cursor = 1
@@ -1633,7 +1631,7 @@ func! s:buflocal_open_onebyone(opt)
 endfunc
 " }}}
 " s:buflocal_toggle_listed_type {{{
-func! s:buflocal_toggle_listed_type(opt, advance)
+func! s:buflocal_toggle_listed_type(cursor_buf, lnum, opt, advance)
     if ! s:is_shown_type(s:current_shown_type)
         " NOTE: s:current_shown_type MUST NOT be ''.
         call s:warn("internal warning: strange s:current_shown_type value...: ".s:current_shown_type)
@@ -1662,14 +1660,14 @@ func! s:buflocal_toggle_listed_type(opt, advance)
 endfunc
  " }}}
 " s:buflocal_close {{{
-func! s:buflocal_close(opt)
-    if s:jump_to_buffer(a:opt.cursor_buf.nr) != -1
+func! s:buflocal_close(cursor_buf, lnum, opt)
+    if s:jump_to_buffer(a:cursor_buf.nr) != -1
         close
     endif
 endfunc
 " }}}
 " s:buflocal_mark {{{
-func! s:buflocal_mark(opt)
+func! s:buflocal_mark(cursor_buf, lnum, opt)
     if has_key(s:misc_info.marked_bufs, a:opt.cursor_buf.nr)
         " remove from marked.
         unlet s:misc_info.marked_bufs[a:opt.cursor_buf.nr]
@@ -1679,14 +1677,14 @@ func! s:buflocal_mark(opt)
     endif
 endfunc
 " }}}
-" s:buflocal_pm_set {{{
+" s:buflocal_set_project {{{
 "   set project name.
-func! s:buflocal_pm_set(opt)
+func! s:buflocal_set_project(cursor_buf, lnum, opt)
     redraw
-    let nr = a:opt.cursor_buf.nr
+    let nr   = a:cursor_buf.nr
     let name = fnamemodify(bufname(nr), ':t')
     let proj_name = input(printf("%s's Project Name:", name),
-                    \     a:opt.cursor_buf.project_name)
+                    \     a:cursor_buf.project_name)
     if proj_name != ''
         " NOTE: use strtrans() for buffers who belong to no project.
         let s:misc_info.project_name[nr] = strtrans(proj_name)
@@ -1696,7 +1694,7 @@ endfunc
 " }}}
 
 
-" single key emulation {{{
+" single key emulation
 " s:emulate_single_key {{{
 "   emulate QuickBuf.vim's single key mappings.
 "
@@ -1779,10 +1777,9 @@ func! s:try_to_emulate_single_key()
     endtry
 endfunc
 " }}}
-" }}}
 
 
-" autocmd's handlers {{{
+" autocmd's handlers
 " s:restore_options {{{
 func! s:restore_options()
     call s:debug("s:restore_options()...")
@@ -1802,7 +1799,6 @@ func! s:restore_options()
         let s:misc_info.marked_bufs = {}
     endif
 endfunc
-" }}}
 " }}}
 " }}}
 
