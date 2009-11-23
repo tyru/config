@@ -1683,10 +1683,14 @@ func! s:buflocal_set_project(cursor_buf, lnum, opt)
     redraw
     let nr   = a:cursor_buf.nr
     let name = fnamemodify(bufname(nr), ':t')
+    " TODO option
+    " 1. fmt of printf()
+    " 2. default input value of input()
     let proj_name = input(printf("%s's Project Name:", name),
                     \     a:cursor_buf.project_name)
     if proj_name != ''
         " NOTE: use strtrans() for buffers who belong to no project.
+        " see s:eval_sorted_bufs().
         let s:misc_info.project_name[nr] = strtrans(proj_name)
         call s:update_only_misc_info()
     endif
