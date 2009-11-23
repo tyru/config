@@ -1668,12 +1668,12 @@ endfunc
 " }}}
 " s:buflocal_mark {{{
 func! s:buflocal_mark(cursor_buf, lnum, opt)
-    if has_key(s:misc_info.marked_bufs, a:opt.cursor_buf.nr)
+    if has_key(s:misc_info.marked_bufs, a:cursor_buf.nr)
         " remove from marked.
-        unlet s:misc_info.marked_bufs[a:opt.cursor_buf.nr]
+        unlet s:misc_info.marked_bufs[a:cursor_buf.nr]
     else
         " add to marked.
-        let s:misc_info.marked_bufs[a:opt.cursor_buf.nr] = 1
+        let s:misc_info.marked_bufs[a:cursor_buf.nr] = 1
     endif
 endfunc
 " }}}
