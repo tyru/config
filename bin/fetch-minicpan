@@ -2,6 +2,6 @@
 
 mirror_url="ftp://ftp.kddilabs.jp/CPAN/"
 if [ $# -gt 0 ]; then
-    mirror_url=$1
+    mirror_url="$1"
 fi
 minicpan -r $mirror_url -l $HOME/work/minicpan

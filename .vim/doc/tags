@@ -99,6 +99,8 @@ GetLatestVimScripts_dat	pi_getscript.txt	/*GetLatestVimScripts_dat*
 Nread	pi_netrw.txt	/*Nread*
 Nsource	pi_netrw.txt	/*Nsource*
 Nwrite	pi_netrw.txt	/*Nwrite*
+SurroundRegister	surround.txt	/*SurroundRegister*
+SurroundUnregister	surround.txt	/*SurroundUnregister*
 Vimball-copyright	pi_vimball.txt	/*Vimball-copyright*
 abc	fuf.txt	/*abc*
 align	Align.txt	/*align*
@@ -794,12 +796,14 @@ scp	pi_netrw.txt	/*scp*
 sftp	pi_netrw.txt	/*sftp*
 surround	surround.txt	/*surround*
 surround-author	surround.txt	/*surround-author*
+surround-changelog	surround.txt	/*surround-changelog*
 surround-customizing	surround.txt	/*surround-customizing*
 surround-issues	surround.txt	/*surround-issues*
 surround-mappings	surround.txt	/*surround-mappings*
 surround-replacements	surround.txt	/*surround-replacements*
 surround-targets	surround.txt	/*surround-targets*
 surround.txt	surround.txt	/*surround.txt*
+surrounding-customizing-difference	surround.txt	/*surrounding-customizing-difference*
 textobj#user#define()	textobj-user.txt	/*textobj#user#define()*
 textobj#user#move()	textobj-user.txt	/*textobj#user#move()*
 textobj#user#plugin()	textobj-user.txt	/*textobj#user#plugin()*

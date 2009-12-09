@@ -1,7 +1,7 @@
 # vim:set fdm=marker:
 
 # Basic {{{
-export PATH="$PATH:/usr/local/bin:$HOME/local/bin:$HOME/bin"
+export PATH="$PATH:/usr/local/bin:$HOME/local/bin:$HOME/bin:$HOME/private-bin"
 if [ -x "$(which vim)" ]; then
     export EDITOR="$(which vim)"
 elif [ -x "$(which vi)" ]; then

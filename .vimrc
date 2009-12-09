@@ -687,6 +687,7 @@ endfunc
 func! s:SetDict(ft)
     if !exists('s:filetype_vs_dictionary')
         let s:filetype_vs_dictionary = {
+        \   'c': ['c', 'cpp'],
         \   'cpp': ['c', 'cpp'],
         \   'html': ['html', 'css', 'javascript'],
         \   'scala': ['scala', 'java'],
@@ -896,6 +897,12 @@ noremap! <M-]>         \[\]<Left><Left>
 noremap! <M->>         \<\><Left><Left>
 noremap! <M-}>         \{\}<Left><Left>
 
+noremap! <M-;>         「」<Left>
+noremap! <M-+>         『』<Left>
+noremap! <M-@>         【】<Left>
+noremap! <M-`>         〔〕<Left>
+noremap! <M-:>          ：
+
 noremap! <C-r><C-o>  <C-r><C-p>"
 noremap! <C-r><C-r>  <C-r><C-p>+
 " }}}
@@ -910,8 +917,8 @@ inoremap <C-l>  <Space><BS><C-o><C-l>
 inoremap <C-z>                <C-o>di(
 
 " omni
-inoremap <C-n>     <C-x><C-n>
-inoremap <C-p>     <C-x><C-p>
+" inoremap <C-n>     <C-x><C-n>
+" inoremap <C-p>     <C-x><C-p>
 " }}}
 " cmap {{{
 if &wildmenu
@@ -1007,10 +1014,10 @@ let dumbbuf_single_key  = 1
 let dumbbuf_updatetime  = 1    " mininum value of updatetime.
 let dumbbuf_wrap_cursor = 0
 let dumbbuf_remove_marked_when_close = 1
+let dumbbuf_shown_type = 'project'
 
 
 " let dumbbuf_cursor_pos = 'keep'
-" let dumbbuf_shown_type = 'listed'
 
 " For (compatibility) test
 "
@@ -1040,8 +1047,9 @@ let fuf_keyOpenVsplit  = '<C-v>'
 
 " abbrev {{{
 let fuf_abbrevMap = {
-    \ '^plug' : ['~/.vim/plugin/', '~/.vim/plugin/', '~/.vim/mine/plugin/'],
-    \ '^home' : ['~/'],
+    \ '^plug@': ['~/.vim/plugin/', '~/.vim/plugin/', '~/.vim/mine/plugin/'],
+    \ '^home@': ['~/'],
+    \ '^memo@' : ['~/work/memo'],
 \}
 if exists('$CYGHOME')  | let fuf_abbrevMap['^cyg']  = $CYGHOME  | endif
 if exists('$MSYSHOME') | let fuf_abbrevMap['^msys'] = $MSYSHOME | endif
@@ -1131,6 +1139,10 @@ nnoremap <Leader>gL :<C-u>GitLog -p<Enter>
 " EasyGrep {{{
 let EasyGrepMode = 2
 let EasyGrepInvertWholeWord = 1
+" }}}
+" quickrun {{{
+nmap ,r <Plug>(quickrun)
+map  ,R <Plug>(quickrun-op)
 " }}}
 " }}}
 " }}}
