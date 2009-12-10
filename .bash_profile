@@ -5,7 +5,7 @@ if [ -f "$HOME/.bashrc" ]; then
 fi
 
 # Basic {{{
-export PATH="$PATH:/usr/local/bin:$HOME/local/bin:$HOME/bin:$HOME/private-bin"
+export PATH="$PATH:/usr/local/bin:$HOME/local/bin:$HOME/bin"
 if [ -x "$(which vim)" ]; then
     export EDITOR="$(which vim)"
 elif [ -x "$(which vi)" ]; then
