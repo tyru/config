@@ -38,6 +38,10 @@ my @files = qw(
     .emacs.d
     .w3m/keymap
 );
+my @removed_files = qw(
+    .vim/backup
+    .vim/.netrwhist
+);
 # do not delete these files in home directory if --extract was given
 # (if file exists, skip it)
 my %dont_overwrite = map { $_ => 1 } qw(
@@ -178,6 +182,10 @@ for my $file (@files) {
 
         install($src, $dest, $username);
     }
+}
+
+unless ($extract) {
+    rmtree($_) or warn "cannot remove $_: $!" for @removed_files;
 }
 
 
