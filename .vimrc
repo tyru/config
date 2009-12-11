@@ -22,16 +22,6 @@ func! s:system(command, ...)
     return system(join(args, ' '))
 endfunc
 " }}}
-" s:has_errored {{{
-func! s:has_errored(exe)
-    try
-        execute a:exe
-        return 0
-    catch
-        return 1
-    endtry
-endfunc
-" }}}
 " s:ListAndExecute() {{{
 func! s:ListAndExecute( lis, template )
     " display the list
@@ -525,13 +515,17 @@ command! -nargs=* GccSyntaxCheck
 command! Restart    call s:restart()
 func! s:restart()
     if !has('gui_running')
-        call s:warn("can't restart 'vim'.")
+        call s:warn("can't restart vim, not gvim.")
         return;
     endif
-    if !s:has_errored('bmodified')
-        call s:warn("modified buffer exists!")
+
+    try
+        bmodified
+        call s:warn("modified buffer(s) exist!")
         return
-    endif
+    catch
+        " nop.
+    endtry
 
     call s:system('gvim')
     qall
@@ -770,7 +764,7 @@ endfunc
 " }}}
 " }}}
 "-----------------------------------------------------------------
-" Mappings or Abbreviation {{{
+" Mappings and/or Abbreviations {{{
 " map {{{
 " operator {{{
 " paste to clipboard
