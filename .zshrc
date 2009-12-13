@@ -104,7 +104,7 @@ fi
 ### misc ### {{{
 # カレントディレクトリが変わると実行される {{{
 # via http://d.hatena.ne.jp/hiboma/20061005/1160026514
-chpwd () { ls }
+chpwd () { ll }
 # }}}
 
 # via http://homepage1.nifty.com/blankspace/zsh/zsh.html {{{
