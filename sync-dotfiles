@@ -185,7 +185,11 @@ for my $file (@files) {
 }
 
 unless ($extract) {
-    rmtree($_) or warn "cannot remove $_: $!" for @removed_files;
+    for my $f (@removed_files) {
+        if (-e $f) {
+            rmtree($f) or warn "cannot remove $_: $!";
+        }
+    }
 }
 
 
