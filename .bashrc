@@ -18,9 +18,10 @@ alias df='df -h'
 alias du='du -h'
 alias less='less -r'
 alias l='ls'
-alias lh='ls -lh'
+alias ll='ls -lh'
 alias la='ls -A'
 alias l.='ls -d .*'
+alias free='free -m -l -t'
 
 OS="$(uname -o)"
 if [ "$OS" = "Cygwin" ]; then
