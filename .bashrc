@@ -63,6 +63,13 @@ if [ "$OS" = 'Cygwin' ]; then
 fi
 # }}}
 
+# misc. {{{
+# C-sによる画面の停止を無効{{{
+# http://d.hatena.ne.jp/hogem/20090411/1239451878
+stty stop undef
+# }}}
+# }}}
+
 ### local ### {{{
 if [ -e "$HOME/.alias.local" ]; then
     source "$HOME/.alias.local"

@@ -881,39 +881,32 @@ nnoremap ZZ <Nop>
 " map! {{{
 noremap! <C-f>   <Right>
 noremap! <C-b>   <Left>
-noremap! <M-f>   <C-Right>
-noremap! <M-b>   <C-Left>
 noremap! <C-a>   <Home>
 noremap! <C-e>   <End>
 noremap! <C-d>   <Del>
 noremap! <C-k>   <C-o>D
 
-noremap! <M-(>         ()<Left>
-noremap! <M-[>         []<Left>
-noremap! <M-<>         <><Left>
-noremap! <M-{>         {}<Left>
-noremap! <M-)>         \(\)<Left><Left>
-noremap! <M-]>         \[\]<Left><Left>
-noremap! <M->>         \<\><Left><Left>
-noremap! <M-}>         \{\}<Left><Left>
+noremap! <C-h><C-f>         ()<Left>
+noremap! <C-h><C-d>         []<Left>
+noremap! <C-h><C-s>         <><Left>
+noremap! <C-h><C-a>         {}<Left>
+noremap! <C-h>f         \(\)<Left><Left>
+noremap! <C-h>d         \[\]<Left><Left>
+noremap! <C-h>s         \<\><Left><Left>
+noremap! <C-h>a         \{\}<Left><Left>
 
-noremap! <M-;>         「」<Left>
-noremap! <M-+>         『』<Left>
-noremap! <M-@>         【】<Left>
-noremap! <M-`>         〔〕<Left>
-noremap! <M-:>          ：
+noremap! <C-h><C-h>         「」<Left>
+noremap! <C-h><C-j>         『』<Left>
+noremap! <C-h><C-k>         【】<Left>
 
 noremap! <C-r><C-o>  <C-r><C-p>"
 noremap! <C-r><C-r>  <C-r><C-p>+
 " }}}
 " imap {{{
-inoremap <S-CR>  <C-o>O
-inoremap <C-CR>  <C-o>o
+inoremap <C-h>o         <C-o>O
+inoremap <C-h><C-o>     <C-o>o
 
-" <Space><BS> for saving current pos
-inoremap <C-l>  <Space><BS><C-o><C-l>
-
-" delete in parenthesis
+" delete characters in parenthesis
 inoremap <C-z>                <C-o>di(
 
 " omni
