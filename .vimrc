@@ -1124,8 +1124,11 @@ nnoremap <Leader>gL :<C-u>GitLog -p<Enter>
 " nnoremap <Leader>gp :<C-u>Git push
 " }}}
 " EasyGrep {{{
+let EasyGrepFileAssociations = expand("$HOME/.vim/EasyGrepFileAssociations")
 let EasyGrepMode = 2
 let EasyGrepInvertWholeWord = 1
+let EasyGrepRecursive = 1
+let EasyGrepIgnoreCase = 0
 " }}}
 " quickrun {{{
 nmap ,r <Plug>(quickrun)
