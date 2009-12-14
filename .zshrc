@@ -2,6 +2,11 @@
 
 bindkey -e
 
+### fpath ### {{{
+fpath=(~/.zsh/functions $fpath)
+autoload -U ~/.zsh/functions/*(:t)
+# }}}
+
 ### compinit ### {{{
 autoload -U compinit
 compinit -u
