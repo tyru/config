@@ -86,7 +86,7 @@ fi
 alias df='df -h'
 alias du='du -h'
 alias less='less -r'
-alias l='ls'
+alias l='ll'
 alias ll='ls -lh'
 alias la='ls -A'
 alias l.='ls -d .*'
