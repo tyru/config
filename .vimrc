@@ -541,6 +541,7 @@ nnoremap <silent> <Leader>cd   :CdCurrent<CR>
 " Encoding {{{
 set fencs-=iso-2022-jp-3
 set fencs+=iso-2022-jp,iso-2022-jp-3
+let &fencs = 'utf-8,' . &fencs
 " set enc=... {{{
 func! <SID>ChangeEncoding()
     if expand( '%' ) == ''
