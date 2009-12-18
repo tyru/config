@@ -773,6 +773,8 @@ noremap <Leader>y     "+y
 " motion/textobj {{{
 noremap <silent> j          gj
 noremap <silent> k          gk
+noremap <silent> gj         j
+noremap <silent> gk         k
 
 noremap <silent> H  5h
 noremap <silent> L  5l
