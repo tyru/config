@@ -150,14 +150,14 @@ autocmd VimperatorEnter .* pluginmanager update
 " プラグイン {{{
 " direct_bookmark.js {{{
 let g:direct_sbm_use_services_by_tag  = "d"
-let g:direct_sbm_use_services_by_post = "hd"
+let g:direct_sbm_use_services_by_post = "d"
 let g:direct_sbm_is_use_migemo = 1
 noremap a   :sbm<Space>
 noremap B   :tab bentry<CR>
 " }}}
 " sbmcommentsviewer.js {{{
 let g:def_sbm_format = "id,timestamp,tags,comment"
-let g:def_sbms       = "h"
+let g:def_sbms       = "hd"
 noremap b   :viewSBMComments<CR>
 " }}}
 " migemo_hint.js {{{
