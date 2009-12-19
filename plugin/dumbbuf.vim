@@ -81,8 +81,6 @@ scriptencoding utf-8
 "       \}
 "   \}
 "
-"   let dumbbuf_single_key  = 1
-"   let dumbbuf_updatetime  = 1    " mininum value of updatetime.
 "   let dumbbuf_wrap_cursor = 0
 "   let dumbbuf_remove_marked_when_close = 1
 " }}}
@@ -205,36 +203,6 @@ scriptencoding utf-8
 "   g:dumbbuf_downward (default: 1)
 "       if true, go downwardly when 'uu' mapping.
 "       if false, go upwardly.
-"
-"   g:dumbbuf_single_key (default: 0)
-"       if true, use single key mappings like QuickBuf.vim.
-"       here is the single key mappings that are defined:
-"           "u" as "uu"
-"           "s" as "ss"
-"           "v" as "vv"
-"           "t" as "tt"
-"           "d" as "dd"
-"           "w" as "ww"
-"           "l" as "ll"
-"           "c" as "cc"
-"           "x" as "xx"
-"       the reason why these mappings are defined as 'plain' mappings
-"       in dumbbuf buffer is due to avoiding conflicts of Vim's default mappings.
-"       however, making this global variable true, that mappings are
-"       safely used without any conflicts.
-"
-"       this is implemented by doing getchar() and executing it on normal
-"       mode. but you can enter to other modes while waiting a key.
-"       so, like MRU, you can search string in dumbbuf buffer.
-"
-"   g:dumbbuf_single_key_echo_stack (default: 1)
-"       if true, show the keys which was input.
-"       this option is meaningless if g:dumbbuf_single_key is not true.
-"
-"   g:dumbbuf_updatetime (default: 100)
-"       local value of &updatetime in dumbbuf buffer.
-"       recommended value is 1(minimum value of &updatetime).
-"       this default value is for only backward compatibility.
 "
 "   g:dumbbuf_hl_cursorline (default: "guibg=Red  guifg=White")
 "       local value of highlight 'CursorLine'.
