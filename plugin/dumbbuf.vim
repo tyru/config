@@ -355,6 +355,8 @@ let s:mappings.single_key = {
 let s:mapstack_count = -1
 let s:mapstack = ''
 let s:orig_updatetime = &updatetime
+let s:orig_timeout = &timeout
+let s:orig_timeoutlen = &timeoutlen
 
 let s:orig_hl_cursorline = 0
 let s:now_processing = 0
@@ -823,7 +825,7 @@ func! s:compile_mappings()
                                     \'close_dumbbuf', 'jump_to_caller']}),
                         \string('v'))
             \},
-            \'uu': {
+            \'u': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -836,7 +838,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum']}),
                         \string('v'))
             \},
-            \'ss': {
+            \'s': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -850,7 +852,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('v'))
             \},
-            \'vv': {
+            \'v': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -864,7 +866,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('v'))
             \},
-            \'tt': {
+            \'t': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -878,7 +880,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum']}),
                         \string('v'))
             \},
-            \'dd': {
+            \'d': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -891,7 +893,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('v'))
             \},
-            \'ww': {
+            \'w': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -904,7 +906,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('v'))
             \},
-            \'hh': {
+            \'h': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -915,7 +917,7 @@ func! s:compile_mappings()
                             \'args': [0]}),
                         \string('v'))
             \},
-            \'ll': {
+            \'l': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -926,7 +928,7 @@ func! s:compile_mappings()
                             \'args': [1]}),
                         \string('v'))
             \},
-            \'cc': {
+            \'c': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -953,7 +955,7 @@ func! s:compile_mappings()
                         \string('v'))
             \},
             \
-            \'pp': {
+            \'p': {
                 \'opt': '',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1007,7 +1009,7 @@ func! s:compile_mappings()
                                     \'close_dumbbuf', 'jump_to_caller']}),
                         \string('n'))
             \},
-            \'uu': {
+            \'u': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1020,7 +1022,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum']}),
                         \string('n'))
             \},
-            \'ss': {
+            \'s': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1034,7 +1036,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
-            \'vv': {
+            \'v': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1048,7 +1050,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
-            \'tt': {
+            \'t': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1062,7 +1064,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum']}),
                         \string('n'))
             \},
-            \'dd': {
+            \'d': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1075,7 +1077,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
-            \'ww': {
+            \'w': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1088,7 +1090,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
-            \'hh': {
+            \'h': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1099,7 +1101,7 @@ func! s:compile_mappings()
                             \'args': [0]}),
                         \string('n'))
             \},
-            \'ll': {
+            \'l': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1110,7 +1112,7 @@ func! s:compile_mappings()
                             \'args': [1]}),
                         \string('n'))
             \},
-            \'cc': {
+            \'c': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1123,7 +1125,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
-            \'xx': {
+            \'x': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1135,7 +1137,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_misc']}),
                         \string('n'))
             \},
-            \'pp': {
+            \'p': {
                 \'opt': '',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1280,6 +1282,12 @@ func! s:open_dumbbuf_buffer()
     " updatetime
     let s:orig_updatetime = &updatetime
     let &updatetime = g:dumbbuf_updatetime
+
+    " timeout, timeoutlen
+    let s:orig_timeout = &timeout
+    let s:orig_timeoutlen = &timeoutlen
+    let &timeout = 1
+    let &timeoutlen = 0
 endfunc
 " }}}
 " s:close_dumbbuf_buffer {{{
@@ -1792,6 +1800,9 @@ func! s:restore_options()
     let s:mapstack  = ''
     " &updatetime
     let &updatetime = s:orig_updatetime
+    " &timeout, &timeoutlen
+    let &timeout = s:orig_timeout
+    let &timeoutlen = s:orig_timeoutlen
     " highlight 'CursorLine'
     if type(s:orig_hl_cursorline) != type(0)
         call s:set_highlight('CursorLine', s:orig_hl_cursorline)
@@ -1817,18 +1828,16 @@ nnoremap <silent> <Plug>dumbbuf_try_to_emulate_single_key :<C-u>call <SID>try_to
 " }}}
 
 " Autocmd {{{
-if g:dumbbuf_single_key
-    augroup DumbBuf
-        autocmd!
+augroup DumbBuf
+    autocmd!
 
-        for i in [g:dumbbuf_listed_buffer_name, g:dumbbuf_unlisted_buffer_name, g:dumbbuf_project_buffer_name]
-            " single key emulation.
-            execute 'autocmd CursorHold' i 'call feedkeys("\<Plug>dumbbuf_try_to_emulate_single_key", "m")'
-            " restore &updatetime.
-            execute 'autocmd BufWipeout' i 'call s:restore_options()'
-        endfor
-    augroup END
-endif
+    for i in [g:dumbbuf_listed_buffer_name, g:dumbbuf_unlisted_buffer_name, g:dumbbuf_project_buffer_name]
+        " single key emulation.
+        execute 'autocmd CursorHold' i 'call feedkeys("\<Plug>dumbbuf_try_to_emulate_single_key", "m")'
+        " restore &updatetime.
+        execute 'autocmd BufWipeout' i 'call s:restore_options()'
+    endfor
+augroup END
 " }}}
 
 " Restore 'cpoptions' {{{
