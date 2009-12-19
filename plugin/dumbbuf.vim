@@ -101,26 +101,26 @@ scriptencoding utf-8
 "           toggle dumbbuf buffer.
 "       <CR>
 "           :edit buffer.
-"       uu
-"           open one by one. this is same as QuickBuf's u.
-"       ss
-"           :split buffer.
-"       vv
-"           :vspilt buffer.
-"       tt
-"           :tabedit buffer.
-"       dd
-"           :bdelete buffer.
-"       ww
-"           :bwipeout buffer.
-"       ll
-"           toggle listed buffers or unlisted buffers.
-"       cc
-"           :close buffer.
-"       xx
+"       u
+"          open one by one. this is same as QuickBuf's u.
+"       s
+"          :split buffer.
+"       v
+"          :vspilt buffer.
+"       t
+"          :tabedit buffer.
+"       d
+"          :bdelete buffer.
+"       w
+"          :bwipeout buffer.
+"       l
+"          toggle listed buffers or unlisted buffers.
+"       c
+"          :close buffer.
+"       x
 "           mark buffer.
 "           if one or more marked buffers exist,
-"           'ss', 'vv', 'tt', 'dd', 'ww', 'cc'
+"           's', 'v', 't', 'd', 'w', 'c'
 "           get to be able to execute for that buffers at a time.
 "
 "   and, if you turn on 'g:dumbbuf_single_key',
@@ -201,7 +201,7 @@ scriptencoding utf-8
 "        'dumbbuf_close_when_exec' => 'dumbbuf_close_on_exec')
 "
 "   g:dumbbuf_downward (default: 1)
-"       if true, go downwardly when 'uu' mapping.
+"       if true, go downwardly when 'u' mapping.
 "       if false, go upwardly.
 "
 "   g:dumbbuf_hl_cursorline (default: "guibg=Red  guifg=White")
@@ -261,10 +261,6 @@ scriptencoding utf-8
 "     (shown type is 'directory')
 "     - same UI as shown type 'project'. so implement 'project' at first.
 " }}}
-" FIXME: {{{
-"   - sometimes Vim gets freezed when typed 'V'
-"     - it got fixed?
-" }}}
 "==================================================
 " }}}
 
@@ -300,6 +296,7 @@ let s:previous_lnum = -1    " lnum where a previous mapping executed.
 let s:current_shown_type = ''    " this must be one of 'listed', 'unlisted', 'project' while runnning mappings.
 let s:shown_type_idx = 0    " index for g:dumbbuf_all_shown_types.
 
+" NOTE: See s:compile_mappings() about mappings and those infos.
 let s:mappings = {'user':{}, 'compiled':[]}    " buffer local mappings.
 
 let s:orig_timeout = &timeout
@@ -489,7 +486,9 @@ func! s:eval_sorted_bufs(sorted_bufs)
 
     if s:current_shown_type ==# 'project'
         let proj_vs_bufs = {}
-        " use string which includes control chars as dict key.
+        " Use string which includes control chars
+        " as 'no project buffer' dict key.
+        " This must be unique Because buf.project_name must be strtrans()ed.
         let no_projects_are_belong_to_us =
                     \ nr2char(255)."\Y\o\u\i\s\b\i\g\f\o\o\l\m\a\n\.\h\a\h\a\h\a"
 
@@ -1398,6 +1397,7 @@ endfunc
 " s:do_tasks {{{
 func! s:do_tasks(tasks, cursor_buf, lnum)
     for p in a:tasks
+        " TODO Prepare dispatch table
         if p ==# 'close_dumbbuf'
             call s:close_dumbbuf_buffer()
 
@@ -1498,7 +1498,8 @@ func! s:get_buffers_being_processed(opt, cursor_buf, map_mode, first, last)
         return v_selected_bufs
     elseif a:opt.process_marked && !empty(s:misc_info.marked_bufs)
         let tmp = s:misc_info.marked_bufs
-        let s:misc_info.marked_bufs = {}    " clear
+        " Clear marked buffers.
+        let s:misc_info.marked_bufs = {}
         return map(keys(tmp), 's:bufs_info[v:val]')
     else
         return [a:cursor_buf]
@@ -1582,13 +1583,13 @@ func! s:buflocal_toggle_listed_type(cursor_buf, lnum, opt, advance)
         return
     endif
 
-    if a:advance    " mapping 'll'.
+    if a:advance    " mapping 'l'.
         if s:shown_type_idx == len(g:dumbbuf_all_shown_types) - 1
             let s:shown_type_idx = 0
         else
             let s:shown_type_idx += 1
         endif
-    else    " mapping 'hh'.
+    else    " mapping 'h'.
         if s:shown_type_idx == 0
             let s:shown_type_idx = len(g:dumbbuf_all_shown_types) - 1
         else
