@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.7
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-11-23.
+" Last Change: 2009-12-20.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -334,24 +334,22 @@ let s:current_shown_type = ''    " this must be one of 'listed', 'unlisted', 'pr
 let s:shown_type_idx = 0    " index for g:dumbbuf_all_shown_types.
 
 let s:mappings = {'user':{}, 'compiled':[]}    " buffer local mappings.
-if g:dumbbuf_single_key
-    let s:mappings.single_key = {
-        \'h': 'hh',
-        \'l': 'll',
-        \
-        \'u': 'uu',
-        \'s': 'ss',
-        \'v': 'vv',
-        \'t': 'tt',
-        \'d': 'dd',
-        \'w': 'ww',
-        \'c': 'cc',
-        \
-        \'x': 'xx',
-        \
-        \'p': 'pp',
-    \}
-endif
+let s:mappings.single_key = {
+    \'h': 'hh',
+    \'l': 'll',
+    \
+    \'u': 'uu',
+    \'s': 'ss',
+    \'v': 'vv',
+    \'t': 'tt',
+    \'d': 'dd',
+    \'w': 'ww',
+    \'c': 'cc',
+    \
+    \'x': 'xx',
+    \
+    \'p': 'pp',
+\}
 
 " used for single key emulation.
 let s:mapstack_count = -1
