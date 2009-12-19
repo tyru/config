@@ -390,12 +390,7 @@ unlet s:disp_expr
 
 if ! exists('g:dumbbuf_options')
     let g:dumbbuf_options = [
-        \'bufhidden=wipe',
-        \'buftype=nofile',
         \'cursorline',
-        \'nobuflisted',
-        \'nomodifiable',
-        \'noswapfile',
         \'lazyredraw',
         \'nowrap',
     \]
@@ -1194,6 +1189,11 @@ func! s:open_dumbbuf_buffer()
     for i in g:dumbbuf_options
         execute 'setlocal' i
     endfor
+    setlocal bufhidden=wipe
+    setlocal buftype=nofile
+    setlocal nobuflisted
+    setlocal nomodifiable
+    setlocal noswapfile
 
     " mappings
     if empty(s:mappings.compiled)
