@@ -285,7 +285,6 @@ scriptencoding utf-8
 " TODO: {{{
 "   - manipulate buffers each project.
 "   - each keymap behaves like operator
-"     - single key emulation needs to emulate also visual mode.
 "   - :hide
 "   - option which decides the order of buffer's list.
 "   - support <Plug>... mapping as hotkey.
@@ -334,27 +333,7 @@ let s:current_shown_type = ''    " this must be one of 'listed', 'unlisted', 'pr
 let s:shown_type_idx = 0    " index for g:dumbbuf_all_shown_types.
 
 let s:mappings = {'user':{}, 'compiled':[]}    " buffer local mappings.
-let s:mappings.single_key = {
-    \'h': 'hh',
-    \'l': 'll',
-    \
-    \'u': 'uu',
-    \'s': 'ss',
-    \'v': 'vv',
-    \'t': 'tt',
-    \'d': 'dd',
-    \'w': 'ww',
-    \'c': 'cc',
-    \
-    \'x': 'xx',
-    \
-    \'p': 'pp',
-\}
 
-" used for single key emulation.
-let s:mapstack_count = -1
-let s:mapstack = ''
-let s:orig_updatetime = &updatetime
 let s:orig_timeout = &timeout
 let s:orig_timeoutlen = &timeoutlen
 
@@ -402,15 +381,6 @@ if ! exists('g:dumbbuf_close_when_exec')
 endif
 if ! exists('g:dumbbuf_downward')
     let g:dumbbuf_downward = 1
-endif
-if ! exists('g:dumbbuf_single_key')
-    let g:dumbbuf_single_key = 0
-endif
-if ! exists('g:dumbbuf_single_key_echo_stack')
-    let g:dumbbuf_single_key_echo_stack = 1
-endif
-if ! exists('g:dumbbuf_updatetime')
-    let g:dumbbuf_updatetime = 100
 endif
 if ! exists('g:dumbbuf_wrap_cursor')
     let g:dumbbuf_wrap_cursor = 1
@@ -1266,7 +1236,7 @@ func! s:open_dumbbuf_buffer()
     endfor
 
     " NOTE:
-    " highlight group and updatetime are global settings.
+    " highlight group and some options are global settings.
     " so I must restore it later (at s:restore_options()).
 
     " highlight
@@ -1278,10 +1248,6 @@ func! s:open_dumbbuf_buffer()
     if hl_cursorline !=# g:dumbbuf_hl_cursorline
         call s:set_highlight('CursorLine', g:dumbbuf_hl_cursorline)
     endif
-
-    " updatetime
-    let s:orig_updatetime = &updatetime
-    let &updatetime = g:dumbbuf_updatetime
 
     " timeout, timeoutlen
     let s:orig_timeout = &timeout
@@ -1704,91 +1670,6 @@ endfunc
 " }}}
 
 
-" single key emulation
-" s:emulate_single_key {{{
-"   emulate QuickBuf.vim's single key mappings.
-"
-" TODO
-"   emulate also visual mode.
-"   because CursorHold event won't perform while visual mode.
-" FIXME
-"   can't handle meta key sequence.
-func! s:emulate_single_key()
-    call s:debug(printf('s:mapstack [%s], s:mapstack_count [%d]', s:mapstack, s:mapstack_count))
-
-    " NOTE: 'count' is same as 'v:count'. for Vi's compatibility.
-
-    let count1 = (s:mapstack_count == -1 ? '' : s:mapstack_count)
-    if g:dumbbuf_single_key_echo_stack
-        echon count1 . s:mapstack
-        redraw    " in order that getchar() does not skip getting character.
-    endif
-
-    let c = nr2char(getchar())
-    call s:debug(printf('getchar:[%s]', c))
-    let key = s:mapstack . c
-
-    let reset = 'let s:mapstack = "" | let s:mapstack_count = -1'
-
-    if s:mapstack == '' && c =~ '[1-9]'    " range
-        if s:mapstack_count == -1
-            let s:mapstack_count = str2nr(c)
-        else
-            let s:mapstack_count = str2nr(s:mapstack_count . c)
-        endif
-    elseif has_key(s:mappings.single_key, key)    " single key mappings
-        " NOTE: don't have to check if candidate mappings exist,
-        " because s:mappings.single_key has only keys of one character.
-        "
-        " do it.
-        call s:debug("run single key")
-        call feedkeys(count1 . s:mappings.single_key[key], 'm')
-        execute reset
-    elseif mapcheck(key, 'n') != ''
-        if maparg(key, 'n') != ''    " exact mapping exists
-            " do it.
-            call s:debug("run real mapping")
-            call feedkeys(count1 . key, 'm')
-            execute reset
-        else    " candidate mapping exists
-            let s:mapstack = s:mapstack . c
-        endif
-    else    " no mappings
-        " do it.
-        call s:debug("run no mappings")
-        call feedkeys(count1 . key, "m")
-        execute reset
-    endif
-
-    redraw
-endfunc
-" }}}
-" s:try_to_emulate_single_key {{{
-func! s:try_to_emulate_single_key()
-    if bufnr('%') != s:dumbbuf_bufnr
-        call s:restore_options()
-        return
-    endif
-    " if mode() !=# 'n'
-    "     call s:restore_options()
-    "     return
-    " endif
-
-    try
-        call s:emulate_single_key()
-    catch
-        " ignore all!
-        if v:exception != ''
-            call s:debug(printf("ignore following error: '%s' in '%s'", v:exception, v:throwpoint))
-        endif
-        " clear
-        let s:mapstack = ''
-        let s:mapstack_count = -1
-    endtry
-endfunc
-" }}}
-
-
 " autocmd's handlers
 " s:restore_options {{{
 func! s:restore_options()
@@ -1796,10 +1677,6 @@ func! s:restore_options()
 
     " restore ...
 
-    " s:mapstack
-    let s:mapstack  = ''
-    " &updatetime
-    let &updatetime = s:orig_updatetime
     " &timeout, &timeoutlen
     let &timeout = s:orig_timeout
     let &timeoutlen = s:orig_timeoutlen
@@ -1817,14 +1694,6 @@ endfunc
 
 " Mappings {{{
 execute 'nnoremap <silent><unique>' g:dumbbuf_hotkey ':call <SID>update_buffers_list()<CR>'
-
-" single key emulation
-"
-" nop.
-noremap <silent><unique> <Plug>dumbbuf_try_to_emulate_single_key <Nop>
-noremap! <silent><unique> <Plug>dumbbuf_try_to_emulate_single_key <Nop>
-" redefine only mapmode-n.
-nnoremap <silent> <Plug>dumbbuf_try_to_emulate_single_key :<C-u>call <SID>try_to_emulate_single_key()<CR>
 " }}}
 
 " Autocmd {{{
@@ -1832,9 +1701,7 @@ augroup DumbBuf
     autocmd!
 
     for i in [g:dumbbuf_listed_buffer_name, g:dumbbuf_unlisted_buffer_name, g:dumbbuf_project_buffer_name]
-        " single key emulation.
-        execute 'autocmd CursorHold' i 'call feedkeys("\<Plug>dumbbuf_try_to_emulate_single_key", "m")'
-        " restore &updatetime.
+        " restore global settings
         execute 'autocmd BufWipeout' i 'call s:restore_options()'
     endfor
 augroup END
