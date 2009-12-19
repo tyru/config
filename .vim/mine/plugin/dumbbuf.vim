@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.7
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-11-23.
+" Last Change: 2009-12-20.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -81,8 +81,6 @@ scriptencoding utf-8
 "       \}
 "   \}
 "
-"   let dumbbuf_single_key  = 1
-"   let dumbbuf_updatetime  = 1    " mininum value of updatetime.
 "   let dumbbuf_wrap_cursor = 0
 "   let dumbbuf_remove_marked_when_close = 1
 " }}}
@@ -103,26 +101,26 @@ scriptencoding utf-8
 "           toggle dumbbuf buffer.
 "       <CR>
 "           :edit buffer.
-"       uu
-"           open one by one. this is same as QuickBuf's u.
-"       ss
-"           :split buffer.
-"       vv
-"           :vspilt buffer.
-"       tt
-"           :tabedit buffer.
-"       dd
-"           :bdelete buffer.
-"       ww
-"           :bwipeout buffer.
-"       ll
-"           toggle listed buffers or unlisted buffers.
-"       cc
-"           :close buffer.
-"       xx
+"       u
+"          open one by one. this is same as QuickBuf's u.
+"       s
+"          :split buffer.
+"       v
+"          :vspilt buffer.
+"       t
+"          :tabedit buffer.
+"       d
+"          :bdelete buffer.
+"       w
+"          :bwipeout buffer.
+"       l
+"          toggle listed buffers or unlisted buffers.
+"       c
+"          :close buffer.
+"       x
 "           mark buffer.
 "           if one or more marked buffers exist,
-"           'ss', 'vv', 'tt', 'dd', 'ww', 'cc'
+"           's', 'v', 't', 'd', 'w', 'c'
 "           get to be able to execute for that buffers at a time.
 "
 "   and, if you turn on 'g:dumbbuf_single_key',
@@ -203,38 +201,8 @@ scriptencoding utf-8
 "        'dumbbuf_close_when_exec' => 'dumbbuf_close_on_exec')
 "
 "   g:dumbbuf_downward (default: 1)
-"       if true, go downwardly when 'uu' mapping.
+"       if true, go downwardly when 'u' mapping.
 "       if false, go upwardly.
-"
-"   g:dumbbuf_single_key (default: 0)
-"       if true, use single key mappings like QuickBuf.vim.
-"       here is the single key mappings that are defined:
-"           "u" as "uu"
-"           "s" as "ss"
-"           "v" as "vv"
-"           "t" as "tt"
-"           "d" as "dd"
-"           "w" as "ww"
-"           "l" as "ll"
-"           "c" as "cc"
-"           "x" as "xx"
-"       the reason why these mappings are defined as 'plain' mappings
-"       in dumbbuf buffer is due to avoiding conflicts of Vim's default mappings.
-"       however, making this global variable true, that mappings are
-"       safely used without any conflicts.
-"
-"       this is implemented by doing getchar() and executing it on normal
-"       mode. but you can enter to other modes while waiting a key.
-"       so, like MRU, you can search string in dumbbuf buffer.
-"
-"   g:dumbbuf_single_key_echo_stack (default: 1)
-"       if true, show the keys which was input.
-"       this option is meaningless if g:dumbbuf_single_key is not true.
-"
-"   g:dumbbuf_updatetime (default: 100)
-"       local value of &updatetime in dumbbuf buffer.
-"       recommended value is 1(minimum value of &updatetime).
-"       this default value is for only backward compatibility.
 "
 "   g:dumbbuf_hl_cursorline (default: "guibg=Red  guifg=White")
 "       local value of highlight 'CursorLine'.
@@ -285,7 +253,6 @@ scriptencoding utf-8
 " TODO: {{{
 "   - manipulate buffers each project.
 "   - each keymap behaves like operator
-"     - single key emulation needs to emulate also visual mode.
 "   - :hide
 "   - option which decides the order of buffer's list.
 "   - support <Plug>... mapping as hotkey.
@@ -293,10 +260,6 @@ scriptencoding utf-8
 "   - labeling the files under the current directory or not.
 "     (shown type is 'directory')
 "     - same UI as shown type 'project'. so implement 'project' at first.
-" }}}
-" FIXME: {{{
-"   - sometimes Vim gets freezed when typed 'V'
-"     - it got fixed?
 " }}}
 "==================================================
 " }}}
@@ -306,16 +269,6 @@ if exists('g:loaded_dumbbuf') && g:loaded_dumbbuf
     finish
 endif
 let g:loaded_dumbbuf = 1
-
-" do not load anymore if g:dumbbuf_hotkey is not defined.
-if ! exists('g:dumbbuf_hotkey')
-    " g:dumbbuf_hotkey is not defined!
-    echomsg "g:dumbbuf_hotkey is not defined!"
-    finish
-elseif maparg(g:dumbbuf_hotkey, 'n') != ''
-    echomsg printf("'%s' is already defined!", g:dumbbuf_hotkey)
-    finish
-endif
 " }}}
 " Saving 'cpoptions' {{{
 let s:save_cpo = &cpo
@@ -333,30 +286,11 @@ let s:previous_lnum = -1    " lnum where a previous mapping executed.
 let s:current_shown_type = ''    " this must be one of 'listed', 'unlisted', 'project' while runnning mappings.
 let s:shown_type_idx = 0    " index for g:dumbbuf_all_shown_types.
 
+" NOTE: See s:compile_mappings() about mappings and those infos.
 let s:mappings = {'user':{}, 'compiled':[]}    " buffer local mappings.
-if g:dumbbuf_single_key
-    let s:mappings.single_key = {
-        \'h': 'hh',
-        \'l': 'll',
-        \
-        \'u': 'uu',
-        \'s': 'ss',
-        \'v': 'vv',
-        \'t': 'tt',
-        \'d': 'dd',
-        \'w': 'ww',
-        \'c': 'cc',
-        \
-        \'x': 'xx',
-        \
-        \'p': 'pp',
-    \}
-endif
 
-" used for single key emulation.
-let s:mapstack_count = -1
-let s:mapstack = ''
-let s:orig_updatetime = &updatetime
+let s:orig_timeout = &timeout
+let s:orig_timeoutlen = &timeoutlen
 
 let s:orig_hl_cursorline = 0
 let s:now_processing = 0
@@ -365,11 +299,9 @@ let s:now_processing = 0
 if ! exists('g:dumbbuf_verbose')
     let g:dumbbuf_verbose = 0
 endif
-
-"--- if g:dumbbuf_hotkey is not defined,
-" do not load this script.
-" see 'Load Once'. ---
-
+if ! exists('g:dumbbuf_no_default_hotkey')
+    let g:dumbbuf_no_default_hotkey = 0
+endif
 if ! exists('g:dumbbuf_buffer_height')
     let g:dumbbuf_buffer_height = 10
 endif
@@ -402,15 +334,6 @@ if ! exists('g:dumbbuf_close_when_exec')
 endif
 if ! exists('g:dumbbuf_downward')
     let g:dumbbuf_downward = 1
-endif
-if ! exists('g:dumbbuf_single_key')
-    let g:dumbbuf_single_key = 0
-endif
-if ! exists('g:dumbbuf_single_key_echo_stack')
-    let g:dumbbuf_single_key_echo_stack = 1
-endif
-if ! exists('g:dumbbuf_updatetime')
-    let g:dumbbuf_updatetime = 100
 endif
 if ! exists('g:dumbbuf_wrap_cursor')
     let g:dumbbuf_wrap_cursor = 1
@@ -452,12 +375,7 @@ unlet s:disp_expr
 
 if ! exists('g:dumbbuf_options')
     let g:dumbbuf_options = [
-        \'bufhidden=wipe',
-        \'buftype=nofile',
         \'cursorline',
-        \'nobuflisted',
-        \'nomodifiable',
-        \'noswapfile',
         \'lazyredraw',
         \'nowrap',
     \]
@@ -556,7 +474,9 @@ func! s:eval_sorted_bufs(sorted_bufs)
 
     if s:current_shown_type ==# 'project'
         let proj_vs_bufs = {}
-        " use string which includes control chars as dict key.
+        " Use string which includes control chars
+        " as 'no project buffer' dict key.
+        " This must be unique Because buf.project_name must be strtrans()ed.
         let no_projects_are_belong_to_us =
                     \ nr2char(255)."\Y\o\u\i\s\b\i\g\f\o\o\l\m\a\n\.\h\a\h\a\h\a"
 
@@ -825,7 +745,7 @@ func! s:compile_mappings()
                                     \'close_dumbbuf', 'jump_to_caller']}),
                         \string('v'))
             \},
-            \'uu': {
+            \'u': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -838,7 +758,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum']}),
                         \string('v'))
             \},
-            \'ss': {
+            \'s': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -852,7 +772,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('v'))
             \},
-            \'vv': {
+            \'v': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -866,7 +786,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('v'))
             \},
-            \'tt': {
+            \'t': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -880,7 +800,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum']}),
                         \string('v'))
             \},
-            \'dd': {
+            \'d': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -893,7 +813,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('v'))
             \},
-            \'ww': {
+            \'w': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -906,7 +826,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('v'))
             \},
-            \'hh': {
+            \'h': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -917,7 +837,7 @@ func! s:compile_mappings()
                             \'args': [0]}),
                         \string('v'))
             \},
-            \'ll': {
+            \'l': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -928,7 +848,7 @@ func! s:compile_mappings()
                             \'args': [1]}),
                         \string('v'))
             \},
-            \'cc': {
+            \'c': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -955,7 +875,7 @@ func! s:compile_mappings()
                         \string('v'))
             \},
             \
-            \'pp': {
+            \'p': {
                 \'opt': '',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1009,7 +929,7 @@ func! s:compile_mappings()
                                     \'close_dumbbuf', 'jump_to_caller']}),
                         \string('n'))
             \},
-            \'uu': {
+            \'u': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1022,7 +942,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum']}),
                         \string('n'))
             \},
-            \'ss': {
+            \'s': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1036,7 +956,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
-            \'vv': {
+            \'v': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1050,7 +970,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
-            \'tt': {
+            \'t': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1064,7 +984,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum']}),
                         \string('n'))
             \},
-            \'dd': {
+            \'d': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1077,7 +997,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
-            \'ww': {
+            \'w': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1090,7 +1010,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
-            \'hh': {
+            \'h': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1101,7 +1021,7 @@ func! s:compile_mappings()
                             \'args': [0]}),
                         \string('n'))
             \},
-            \'ll': {
+            \'l': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1112,7 +1032,7 @@ func! s:compile_mappings()
                             \'args': [1]}),
                         \string('n'))
             \},
-            \'cc': {
+            \'c': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1125,7 +1045,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
-            \'xx': {
+            \'x': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1137,7 +1057,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum', 'update_misc']}),
                         \string('n'))
             \},
-            \'pp': {
+            \'p': {
                 \'opt': '',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -1256,6 +1176,11 @@ func! s:open_dumbbuf_buffer()
     for i in g:dumbbuf_options
         execute 'setlocal' i
     endfor
+    setlocal bufhidden=wipe
+    setlocal buftype=nofile
+    setlocal nobuflisted
+    setlocal nomodifiable
+    setlocal noswapfile
 
     " mappings
     if empty(s:mappings.compiled)
@@ -1266,7 +1191,7 @@ func! s:open_dumbbuf_buffer()
     endfor
 
     " NOTE:
-    " highlight group and updatetime are global settings.
+    " highlight group and some options are global settings.
     " so I must restore it later (at s:restore_options()).
 
     " highlight
@@ -1279,9 +1204,11 @@ func! s:open_dumbbuf_buffer()
         call s:set_highlight('CursorLine', g:dumbbuf_hl_cursorline)
     endif
 
-    " updatetime
-    let s:orig_updatetime = &updatetime
-    let &updatetime = g:dumbbuf_updatetime
+    " timeout, timeoutlen
+    let s:orig_timeout = &timeout
+    let s:orig_timeoutlen = &timeoutlen
+    let &timeout = 1
+    let &timeoutlen = 0
 endfunc
 " }}}
 " s:close_dumbbuf_buffer {{{
@@ -1458,6 +1385,7 @@ endfunc
 " s:do_tasks {{{
 func! s:do_tasks(tasks, cursor_buf, lnum)
     for p in a:tasks
+        " TODO Prepare dispatch table
         if p ==# 'close_dumbbuf'
             call s:close_dumbbuf_buffer()
 
@@ -1558,7 +1486,8 @@ func! s:get_buffers_being_processed(opt, cursor_buf, map_mode, first, last)
         return v_selected_bufs
     elseif a:opt.process_marked && !empty(s:misc_info.marked_bufs)
         let tmp = s:misc_info.marked_bufs
-        let s:misc_info.marked_bufs = {}    " clear
+        " Clear marked buffers.
+        let s:misc_info.marked_bufs = {}
         return map(keys(tmp), 's:bufs_info[v:val]')
     else
         return [a:cursor_buf]
@@ -1642,13 +1571,13 @@ func! s:buflocal_toggle_listed_type(cursor_buf, lnum, opt, advance)
         return
     endif
 
-    if a:advance    " mapping 'll'.
+    if a:advance    " mapping 'l'.
         if s:shown_type_idx == len(g:dumbbuf_all_shown_types) - 1
             let s:shown_type_idx = 0
         else
             let s:shown_type_idx += 1
         endif
-    else    " mapping 'hh'.
+    else    " mapping 'h'.
         if s:shown_type_idx == 0
             let s:shown_type_idx = len(g:dumbbuf_all_shown_types) - 1
         else
@@ -1698,91 +1627,6 @@ endfunc
 " }}}
 
 
-" single key emulation
-" s:emulate_single_key {{{
-"   emulate QuickBuf.vim's single key mappings.
-"
-" TODO
-"   emulate also visual mode.
-"   because CursorHold event won't perform while visual mode.
-" FIXME
-"   can't handle meta key sequence.
-func! s:emulate_single_key()
-    call s:debug(printf('s:mapstack [%s], s:mapstack_count [%d]', s:mapstack, s:mapstack_count))
-
-    " NOTE: 'count' is same as 'v:count'. for Vi's compatibility.
-
-    let count1 = (s:mapstack_count == -1 ? '' : s:mapstack_count)
-    if g:dumbbuf_single_key_echo_stack
-        echon count1 . s:mapstack
-        redraw    " in order that getchar() does not skip getting character.
-    endif
-
-    let c = nr2char(getchar())
-    call s:debug(printf('getchar:[%s]', c))
-    let key = s:mapstack . c
-
-    let reset = 'let s:mapstack = "" | let s:mapstack_count = -1'
-
-    if s:mapstack == '' && c =~ '[1-9]'    " range
-        if s:mapstack_count == -1
-            let s:mapstack_count = str2nr(c)
-        else
-            let s:mapstack_count = str2nr(s:mapstack_count . c)
-        endif
-    elseif has_key(s:mappings.single_key, key)    " single key mappings
-        " NOTE: don't have to check if candidate mappings exist,
-        " because s:mappings.single_key has only keys of one character.
-        "
-        " do it.
-        call s:debug("run single key")
-        call feedkeys(count1 . s:mappings.single_key[key], 'm')
-        execute reset
-    elseif mapcheck(key, 'n') != ''
-        if maparg(key, 'n') != ''    " exact mapping exists
-            " do it.
-            call s:debug("run real mapping")
-            call feedkeys(count1 . key, 'm')
-            execute reset
-        else    " candidate mapping exists
-            let s:mapstack = s:mapstack . c
-        endif
-    else    " no mappings
-        " do it.
-        call s:debug("run no mappings")
-        call feedkeys(count1 . key, "m")
-        execute reset
-    endif
-
-    redraw
-endfunc
-" }}}
-" s:try_to_emulate_single_key {{{
-func! s:try_to_emulate_single_key()
-    if bufnr('%') != s:dumbbuf_bufnr
-        call s:restore_options()
-        return
-    endif
-    " if mode() !=# 'n'
-    "     call s:restore_options()
-    "     return
-    " endif
-
-    try
-        call s:emulate_single_key()
-    catch
-        " ignore all!
-        if v:exception != ''
-            call s:debug(printf("ignore following error: '%s' in '%s'", v:exception, v:throwpoint))
-        endif
-        " clear
-        let s:mapstack = ''
-        let s:mapstack_count = -1
-    endtry
-endfunc
-" }}}
-
-
 " autocmd's handlers
 " s:restore_options {{{
 func! s:restore_options()
@@ -1790,10 +1634,9 @@ func! s:restore_options()
 
     " restore ...
 
-    " s:mapstack
-    let s:mapstack  = ''
-    " &updatetime
-    let &updatetime = s:orig_updatetime
+    " &timeout, &timeoutlen
+    let &timeout = s:orig_timeout
+    let &timeoutlen = s:orig_timeoutlen
     " highlight 'CursorLine'
     if type(s:orig_hl_cursorline) != type(0)
         call s:set_highlight('CursorLine', s:orig_hl_cursorline)
@@ -1807,30 +1650,21 @@ endfunc
 " }}}
 
 " Mappings {{{
-execute 'nnoremap <silent><unique>' g:dumbbuf_hotkey ':call <SID>update_buffers_list()<CR>'
-
-" single key emulation
-"
-" nop.
-noremap <silent><unique> <Plug>dumbbuf_try_to_emulate_single_key <Nop>
-noremap! <silent><unique> <Plug>dumbbuf_try_to_emulate_single_key <Nop>
-" redefine only mapmode-n.
-nnoremap <silent> <Plug>dumbbuf_try_to_emulate_single_key :<C-u>call <SID>try_to_emulate_single_key()<CR>
+nnoremap <silent> <Plug>(dumbbuf-open)   :call <SID>update_buffers_list()<CR>
+if !g:dumbbuf_no_default_hotkey
+    silent! map <unique> <Leader>b  <Plug>(dumbbuf-open)
+endif
 " }}}
 
 " Autocmd {{{
-if g:dumbbuf_single_key
-    augroup DumbBuf
-        autocmd!
+augroup DumbBuf
+    autocmd!
 
-        for i in [g:dumbbuf_listed_buffer_name, g:dumbbuf_unlisted_buffer_name, g:dumbbuf_project_buffer_name]
-            " single key emulation.
-            execute 'autocmd CursorHold' i 'call feedkeys("\<Plug>dumbbuf_try_to_emulate_single_key", "m")'
-            " restore &updatetime.
-            execute 'autocmd BufWipeout' i 'call s:restore_options()'
-        endfor
-    augroup END
-endif
+    for i in [g:dumbbuf_listed_buffer_name, g:dumbbuf_unlisted_buffer_name, g:dumbbuf_project_buffer_name]
+        " restore global settings
+        execute 'autocmd BufWipeout' i 'call s:restore_options()'
+    endfor
+augroup END
 " }}}
 
 " Restore 'cpoptions' {{{

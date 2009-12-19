@@ -516,7 +516,7 @@ command! Restart    call s:restart()
 func! s:restart()
     if !has('gui_running')
         call s:warn("can't restart vim, not gvim.")
-        return;
+        return
     endif
 
     try
@@ -560,7 +560,7 @@ func! <SID>ChangeEncoding()
         echo "Change the encoding to " . enc
     endif
 endfunc
-nnoremap <silent> <F2>    :call <SID>ChangeEncoding()<CR>
+nnoremap <silent> <C-l>2    :call <SID>ChangeEncoding()<CR>
 " }}}
 " set fenc=... {{{
 func! <SID>ChangeFileEncoding()
@@ -581,7 +581,7 @@ func! <SID>ChangeFileEncoding()
         echo "Change the file encoding to " . enc
     endif
 endfunc
-nnoremap <silent> <F3>    :call <SID>ChangeFileEncoding()<CR>
+nnoremap <silent> <C-l>3    :call <SID>ChangeFileEncoding()<CR>
 " }}}
 " set ff=... {{{
 func! <SID>ChangeNL()
@@ -590,7 +590,7 @@ func! <SID>ChangeNL()
         echo 'Converting newline...' . result
     endif
 endfunc
-nnoremap <silent> <F4>    :call <SID>ChangeNL()<CR>
+nnoremap <silent> <C-l>4    :call <SID>ChangeNL()<CR>
 " }}}
 " }}}
 "-----------------------------------------------------------------
@@ -801,7 +801,6 @@ nnoremap <silent> N     Nzz
 for [s:pat, s:flags] in [['*', 's'], ['#', 'bs'], ['g*', 's'], ['g#', 'bs']]
     execute printf("nnoremap <silent> %s :call <SID>dont_ignore_case(%s, %s)<CR>", s:pat, string(s:pat), string(s:flags))
 endfor
-nnoremap <silent> ;*    :call <SID>dont_ignore_case('*', 's')<CR>:vimgrep /<C-r>// %<CR>
 
 func! s:dont_ignore_case(cmd, flags)
     let pos = getpos('.')
@@ -849,21 +848,6 @@ func! s:FoldAllExpand()
 endfunc
 nnoremap <silent> <Leader>nn   :call <SID>FoldAllExpand()<CR>
 
-" wrap () with ().
-nnoremap <Leader>a        %%i(<Esc>l%a)<Esc>%a
-" change () to [].
-nnoremap <Leader>A        %%mz%s]<Esc>`zs[<Esc>
-" delete ().
-nnoremap <Leader>z        %%mz%x`zx
-" move current atoms in () to upper ().
-nnoremap <Leader>Z        %%da(h"_da(P
-
-nnoremap <silent> Q     gQ
-
-" :vimgrep
-nnoremap g/    :<C-u>vimgrep /<C-r>// *
-nnoremap ,/    :<C-u>vimgrep // *<Left><Left><Left>
-
 " hlsearch
 nnoremap gh    :set hlsearch!<CR>
 
@@ -874,6 +858,8 @@ nnoremap gh    :set hlsearch!<CR>
 " nnoremap ,+*    :let @* = @+<CR>:echo printf('[%s]', @*)<CR>
 
 nnoremap ZZ <Nop>
+
+nnoremap <Space>w :<C-u>w<CR>
 " }}}
 " map! {{{
 noremap! <C-f>   <Right>
@@ -883,28 +869,19 @@ noremap! <C-e>   <End>
 noremap! <C-d>   <Del>
 noremap! <C-k>   <C-o>D
 
-noremap! <C-h><C-f>         ()<Left>
-noremap! <C-h><C-d>         []<Left>
-noremap! <C-h><C-s>         <><Left>
-noremap! <C-h><C-a>         {}<Left>
-noremap! <C-h>f         \(\)<Left><Left>
-noremap! <C-h>d         \[\]<Left><Left>
-noremap! <C-h>s         \<\><Left><Left>
-noremap! <C-h>a         \{\}<Left><Left>
-
-noremap! <C-h><C-h>         「」<Left>
-noremap! <C-h><C-j>         『』<Left>
-noremap! <C-h><C-k>         【】<Left>
-
+noremap! <C-r><C-u>  <C-r><C-p>+
+noremap! <C-r><C-i>  <C-r><C-p>*
 noremap! <C-r><C-o>  <C-r><C-p>"
-noremap! <C-r><C-r>  <C-r><C-p>+
+
+" SKK like mappings (japanese arrows)
+noremap! zk    ↑
+noremap! zl    →
+noremap! zj    ↓
+noremap! zh    ←
 " }}}
 " imap {{{
-inoremap <C-h>o         <C-o>O
-inoremap <C-h><C-o>     <C-o>o
-
-" delete characters in parenthesis
-inoremap <C-z>                <C-o>di(
+" delete characters in ...
+inoremap <C-z>                <C-o>di
 
 " omni
 " inoremap <C-n>     <C-x><C-n>
@@ -917,13 +894,11 @@ if &wildmenu
 endif
 " }}}
 " abbr {{{
-iabbrev <expr> date@      strftime("%Y-%m-%d")
-iabbrev <expr> time@      strftime("%H:%M")
-iabbrev <expr> datetime@  strftime("%Y-%m-%d %H:%M")
-iabbrev <expr> w3cdtf@    strftime("%Y-%m-%dT%H:%M:%S+09:00")
+inoreab <expr> date@      strftime("%Y-%m-%d")
+inoreab <expr> time@      strftime("%H:%M")
+inoreab <expr> dt@        strftime("%Y-%m-%d %H:%M")
 
-
-cabbrev   h@     tab help
+cnoreab   h@     tab help
 " }}}
 " }}}
 "-----------------------------------------------------------------
@@ -951,7 +926,7 @@ let g:nf_map_next = ',n'
 let g:nf_map_previous = ',p'
 let g:nf_include_dotfiles = 1    " don't skip dotfiles
 let g:nf_loop_files = 1    " loop at the end of file
-let g:nf_ignore_ext = ['o']    " ignore object file
+let g:nf_ignore_ext = ['o', 'obj', 'exe', 'bin']
 " }}}
 " vimtemplate {{{
 let g:vt_template_dir_path = expand("$HOME/.vim/template")
@@ -1000,8 +975,6 @@ let dumbbuf_mappings = {
         \'<Esc>': {'alias_to': 'q'},
     \}
 \}
-let dumbbuf_single_key  = 1
-let dumbbuf_updatetime  = 1    " mininum value of updatetime.
 let dumbbuf_wrap_cursor = 0
 let dumbbuf_remove_marked_when_close = 1
 let dumbbuf_shown_type = 'project'
@@ -1029,7 +1002,7 @@ nnoremap <silent> <Leader>fh        :FufRenewCache<CR>:FufMruFile<CR>
 
 let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem', 'buffer', 'tag', 'taggedfile']
 
-let fuf_keyOpenTabpage = '<C-CR>'
+let fuf_keyOpenTabpage = '<C-t>'
 let fuf_keyNextMode    = '<C-l>'
 let fuf_keyPrevMode    = '<C-h>'
 let fuf_keyOpenSplit   = '<C-s>'
@@ -1105,26 +1078,8 @@ endfunc
 nnoremap <silent> g<C-i>    :Gtags -f %<CR>
 nnoremap <silent> <C-]>     :call <SID>JumpTags()<CR>
 " }}}
-" xptemplate {{{
-let xptemplate_key = '<C-t>'
-" }}}
 " operator-replace {{{
 map <Leader>r  <Plug>(operator-replace)
-" }}}
-" git {{{
-let g:git_no_map_default = 1
-let g:git_command_edit = 'rightbelow vnew'
-" let g:git_bufhidden = 'wipe'
-nnoremap <Leader>gd :<C-u>GitDiff<Enter>
-nnoremap <Leader>gD :<C-u>GitDiff --cached<Enter>
-nnoremap <Leader>gs :<C-u>GitStatus<Enter>
-nnoremap <Leader>gl :<C-u>GitLog<Enter>
-nnoremap <Leader>gL :<C-u>GitLog -p<Enter>
-" nnoremap <Leader>ga :<C-u>GitAdd<Enter>
-" nnoremap <Leader>gA :<C-u>GitAdd <cfile><Enter>
-" nnoremap <Leader>gc :<C-u>GitCommit<Enter>
-" nnoremap <Leader>gC :<C-u>GitCommit --amend<Enter>
-" nnoremap <Leader>gp :<C-u>Git push
 " }}}
 " EasyGrep {{{
 let EasyGrepFileAssociations = expand("$HOME/.vim/EasyGrepFileAssociations")
@@ -1133,9 +1088,27 @@ let EasyGrepInvertWholeWord = 1
 let EasyGrepRecursive = 1
 let EasyGrepIgnoreCase = 0
 " }}}
-" quickrun {{{
-nmap ,r <Plug>(quickrun)
-map  ,R <Plug>(quickrun-op)
+" arpeggio {{{
+let g:arpeggio_timeoutlen = 70
+call arpeggio#load()
+
+Arpeggio noremap! $( ()<Left>
+Arpeggio noremap! $[ []<Left>
+Arpeggio noremap! $< <><Left>
+Arpeggio noremap! ${ {}<Left>
+
+Arpeggio noremap! %( \(\)<Left><Left>
+Arpeggio noremap! %[ \[\]<Left><Left>
+Arpeggio noremap! %< \<\><Left><Left>
+Arpeggio noremap! %{ \{\}<Left><Left>
+
+Arpeggio noremap! #( 「」<Left>
+Arpeggio noremap! #[ 『』<Left>
+Arpeggio noremap! #< 【】<Left>
+Arpeggio noremap! #{ 〔〕<Left>
+
+Arpeggio inoremap GO     <C-o>O
+Arpeggio inoremap go     <C-o>o
 " }}}
 " }}}
 " }}}
