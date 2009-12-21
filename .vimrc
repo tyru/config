@@ -22,42 +22,6 @@ func! s:system(command, ...)
     return system(join(args, ' '))
 endfunc
 " }}}
-" s:ListAndExecute() {{{
-func! s:ListAndExecute( lis, template )
-    " display the list
-    let i = 0
-    while i < len( a:lis )
-        echo printf('%d: %s', i + 1, a:lis[i])
-        let i = i + 1
-    endwhile
-
-    while 1
-        echon "\n:"
-        let ch = getchar()
-        if ch == char2nr( "\<ESC>" )
-            return ""
-        endif
-        let num = ch - 48
-
-        " is digit?
-        if string( num ) =~ '^\d\+$'
-            if num < 1 || len( a:lis ) < num
-                " out of range
-                call s:warn( 'out of num number. Try again.' )
-            else
-                break
-            endif
-        else
-            call s:warn( 'non-digit characters found. Try again.' )
-        endif
-    endwhile
-
-    execute substitute( a:template, '%embed%', a:lis[num - 1], 'g' )
-    redraw
-
-    return a:lis[num - 1]
-endfunc
-" }}}
 " }}}
 "-----------------------------------------------------------------
 " basic settings (bundled with kaoriya vim's .vimrc & etc.) {{{
@@ -397,12 +361,14 @@ endif
 " }}}
 " ListChars {{{
 command! ListChars
-            \ call s:ListAndExecute([
+            \ call prompt#prompt('changing &listchars to...', {
+            \   'menu': [
             \       'tab:>-,extends:>,precedes:<,eol:.',
             \       'tab:>-',
-            \       'tab:\\ \\ ',
+            \       'tab:\ \ ',
             \   ],
-            \   'set listchars=%embed%')
+            \   'one_char': 1,
+            \   'execute': 'set listchars=%s'})
 " }}}
 " FastEdit {{{
 "   this is useful when Vim is very slow?
@@ -512,23 +478,25 @@ command! -nargs=* GccSyntaxCheck
             \ call s:GccSyntaxCheck(<f-args>)
 " }}}
 " Restart {{{
-command! Restart    call s:restart()
-func! s:restart()
+command! -bang Restart    call s:restart("<bang>")
+func! s:restart(bang)
     if !has('gui_running')
         call s:warn("can't restart vim, not gvim.")
         return
     endif
 
-    try
-        bmodified
-        call s:warn("modified buffer(s) exist!")
-        return
-    catch
-        " nop.
-    endtry
+    if a:bang !=# '!'
+        try
+            bmodified
+            call s:warn("modified buffer(s) exist!")
+            return
+        catch
+            " nop.
+        endtry
+    endif
 
     call s:system('gvim')
-    qall
+    execute 'qall'.a:bang
 endfunc
 " }}}
 " CdCurrent {{{
@@ -543,35 +511,40 @@ set fencs-=iso-2022-jp-3
 set fencs+=iso-2022-jp,iso-2022-jp-3
 let &fencs = 'utf-8,' . &fencs
 " set enc=... {{{
-func! <SID>ChangeEncoding()
+func! ChangeEncoding()
     if expand( '%' ) == ''
         echo "current file is empty."
         return
     endif
-    let enc = s:ListAndExecute([
-                \ 'cp932',
-                \ 'shift-jis',
-                \ 'iso-2022-jp',
-                \ 'euc-jp',
-                \ 'utf-8',
-                \ 'ucs-bom'
-                \ ], 'edit ++enc=%embed%')
+    let enc = prompt#prompt("re-open with...", {
+                \ 'menu': [
+                \   'cp932',
+                \   'shift-jis',
+                \   'iso-2022-jp',
+                \   'euc-jp',
+                \   'utf-8',
+                \   'ucs-bom'
+                \ ],
+                \ 'one_char': 1,
+                \ 'execute': 'edit ++enc=%s'})
     if enc != ''
         echo "Change the encoding to " . enc
     endif
 endfunc
-nnoremap <silent> <C-l>2    :call <SID>ChangeEncoding()<CR>
 " }}}
 " set fenc=... {{{
-func! <SID>ChangeFileEncoding()
-    let enc = s:ListAndExecute([
+func! ChangeFileEncoding()
+    let enc = prompt#prompt("changing file encoding to...", {
+                \ 'menu': [
                 \ 'cp932',
                 \ 'shift-jis',
                 \ 'iso-2022-jp',
                 \ 'euc-jp',
                 \ 'utf-8',
                 \ 'ucs-bom'
-                \ ], 'set fenc=%embed%')
+                \ ],
+                \ 'one_char': 1,
+                \ 'execute': 'set fenc=%s'})
     if enc == 'ucs-bom'
         set bomb
     else
@@ -581,16 +554,17 @@ func! <SID>ChangeFileEncoding()
         echo "Change the file encoding to " . enc
     endif
 endfunc
-nnoremap <silent> <C-l>3    :call <SID>ChangeFileEncoding()<CR>
 " }}}
 " set ff=... {{{
-func! <SID>ChangeNL()
-    let result = s:ListAndExecute( [ 'dos', 'unix', 'mac' ], 'set ff=%embed%' )
+func! ChangeNL()
+    let result = prompt#prompt("changing newline format to...", {
+                \ 'menu': ['dos', 'unix', 'mac'],
+                \ 'one_char': 1,
+                \ 'execute': 'set ff=%s'})
     if result != ''
         echo 'Converting newline...' . result
     endif
 endfunc
-nnoremap <silent> <C-l>4    :call <SID>ChangeNL()<CR>
 " }}}
 " }}}
 "-----------------------------------------------------------------
@@ -990,6 +964,9 @@ let dumbbuf_shown_type = 'project'
 "
 " let dumbbuf_verbose = 1
 " }}}
+" prompt {{{
+" let prompt_debug = 1
+" }}}
 " }}}
 " others {{{
 " AutoDate {{{
@@ -1010,9 +987,9 @@ let fuf_keyOpenVsplit  = '<C-v>'
 
 " abbrev {{{
 let fuf_abbrevMap = {
-    \ '^plug@': ['~/.vim/plugin/', '~/.vim/plugin/', '~/.vim/mine/plugin/'],
-    \ '^home@': ['~/'],
-    \ '^memo@' : ['~/work/memo'],
+    \ '^p@': ['~/.vim/plugin/', '~/.vim/plugin/', '~/.vim/mine/plugin/'],
+    \ '^h@': ['~/'],
+    \ '^m@' : ['~/work/memo'],
 \}
 if exists('$CYGHOME')  | let fuf_abbrevMap['^cyg']  = $CYGHOME  | endif
 if exists('$MSYSHOME') | let fuf_abbrevMap['^msys'] = $MSYSHOME | endif
@@ -1093,22 +1070,30 @@ let g:arpeggio_timeoutlen = 70
 call arpeggio#load()
 
 Arpeggio noremap! $( ()<Left>
-Arpeggio noremap! $[ []<Left>
+Arpeggio noremap! 4[ []<Left>
 Arpeggio noremap! $< <><Left>
 Arpeggio noremap! ${ {}<Left>
 
-Arpeggio noremap! %( \(\)<Left><Left>
-Arpeggio noremap! %[ \[\]<Left><Left>
-Arpeggio noremap! %< \<\><Left><Left>
-Arpeggio noremap! %{ \{\}<Left><Left>
+Arpeggio noremap! $) \(\)<Left><Left>
+Arpeggio noremap! 4] \[\]<Left><Left>
+Arpeggio noremap! $> \<\><Left><Left>
+Arpeggio noremap! $} \{\}<Left><Left>
 
 Arpeggio noremap! #( 「」<Left>
-Arpeggio noremap! #[ 『』<Left>
+Arpeggio noremap! 3[ 『』<Left>
 Arpeggio noremap! #< 【】<Left>
 Arpeggio noremap! #{ 〔〕<Left>
 
-Arpeggio inoremap GO     <C-o>O
-Arpeggio inoremap go     <C-o>o
+" arpeggio recognizes " as beginning of the comment...
+" Arpeggio noremap! "J ""<Left>
+Arpeggio noremap! 'F ''<Left>
+
+Arpeggio inoremap gk     <C-o>O
+Arpeggio inoremap gj     <C-o>o
+
+silent Arpeggio nnoremap <silent> <Leader>1    :call ChangeEncoding()<CR>
+silent Arpeggio nnoremap <silent> <Leader>2    :call ChangeFileEncoding()<CR>
+silent Arpeggio nnoremap <silent> <Leader>3    :call ChangeNL()<CR>
 " }}}
 " }}}
 " }}}

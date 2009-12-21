@@ -96,6 +96,14 @@ alias ll='ls -lh'
 alias la='ls -A'
 alias l.='ls -d .*'
 alias free='free -m -l -t'
+alias sc='screen'
+alias c='cd'
+alias g='git'
+alias v='vi'
+alias gm='gvim'
+alias diff='diff -u'
+alias di='diff -u'
+alias jobs='jobs -l'
 
 OS="$(uname -o)"
 if [ "$OS" = "Cygwin" ]; then
@@ -112,7 +120,8 @@ fi
 chpwd () { ll }
 # }}}
 
-# via http://homepage1.nifty.com/blankspace/zsh/zsh.html {{{
+# abbrev {{{
+# via http://homepage1.nifty.com/blankspace/zsh/zsh.html
 typeset -A myabbrev
 myabbrev=(
     "l@" "| less"
@@ -188,9 +197,31 @@ function snatch () {
 
 # }}}
 
-# C-sによる画面の停止を無効{{{
+# C-sによる画面の停止を無効 {{{
 # http://d.hatena.ne.jp/hogem/20090411/1239451878
 stty stop undef
+# }}}
+
+# surround.vimみたいにクォートで囲む {{{
+# http://d.hatena.ne.jp/mollifier/20091220/p1
+
+autoload -U modify-current-argument
+
+# シングルクォート用
+_quote-previous-word-in-single() {
+    modify-current-argument '${(qq)${(Q)ARG}}'
+    zle vi-forward-blank-word
+}
+zle -N _quote-previous-word-in-single
+bindkey '^[s' _quote-previous-word-in-single
+
+# ダブルクォート用
+_quote-previous-word-in-double() {
+    modify-current-argument '${(qqq)${(Q)ARG}}'
+    zle vi-forward-blank-word
+}
+zle -N _quote-previous-word-in-double
+bindkey '^[d' _quote-previous-word-in-double
 # }}}
 # }}}
 
@@ -213,11 +244,5 @@ if [ "$OS" = 'Cygwin' ]; then
             command screen "$@"
         fi
     }
-fi
-# }}}
-
-### local ### {{{
-if [ -e "$HOME/.alias.local" ]; then
-    source "$HOME/.alias.local"
 fi
 # }}}

@@ -22,6 +22,14 @@ alias ll='ls -lh'
 alias la='ls -A'
 alias l.='ls -d .*'
 alias free='free -m -l -t'
+alias sc='screen'
+alias c='cd'
+alias g='git'
+alias v='vi'
+alias gm='gvim'
+alias diff='diff -u'
+alias di='diff -u'
+alias jobs='jobs -l'
 
 OS="$(uname -o)"
 if [ "$OS" = "Cygwin" ]; then

@@ -39,10 +39,14 @@ set cpo&vim
 let s:debug_errmsg = []
 " }}}
 " Global Variables {{{
+if !exists('g:g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug')
+    let g:g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug = 0
+endif
 " }}}
 
 " Functions {{{
 
+" utility functions
 " Debug {{{
 if g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug
     func! s:debug(cmd, ...)
@@ -60,7 +64,7 @@ if g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug
         endif
     endfunc
 
-    com! -nargs=+ SDDebug
+    com! -nargs=+ <%filename_camel%>Debug
         \ call s:debug(<f-args>)
 endif
 
@@ -73,17 +77,15 @@ endfunc
 " }}}
 
 " }}}
-
 " s:warn {{{
 func! s:warn(msg)
     echohl WarningMsg
-    echomsg msg
+    echomsg a:msg
     echohl None
 
-    call add(s:debug_errmsg, msg)
+    call add(s:debug_errmsg, a:msg)
 endfunc
 " }}}
-
 " s:warnf {{{
 func! s:warnf(fmt, ...)
     call s:warn(call('printf', [a:fmt] + a:000))
