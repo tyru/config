@@ -48,14 +48,15 @@ bindkey "^N" history-beginning-search-forward-end
 # http://www.crimson-snow.net/tips/unix/zsh.html
 
 setopt always_last_prompt
+setopt auto_cd
 setopt auto_menu
 setopt auto_name_dirs
 setopt auto_param_keys
 setopt auto_param_slash
 setopt auto_pushd
 setopt auto_remove_slash
-setopt mark_dirs
 setopt cdable_vars
+setopt complete_in_word
 setopt correct
 setopt extended_glob
 setopt extended_history
@@ -65,20 +66,19 @@ setopt interactive_comments
 setopt list_packed
 setopt list_types
 setopt magic_equal_subst
-setopt complete_in_word
+setopt mark_dirs
+setopt no_beep
+setopt no_clobber
+setopt no_hup
+setopt no_listbeep
+setopt notify
 setopt print_eight_bit
 setopt prompt_subst
 setopt pushd_ignore_dups
 setopt rm_star_silent
+setopt rm_star_wait
 setopt sh_word_split
 setopt share_history
-setopt no_beep
-setopt no_listbeep
-setopt notify
-setopt rm_star_wait
-setopt no_clobber
-setopt no_hup
-# setopt auto_cd
 # setopt promptcr
 # setopt print_exit_value
 # }}}
@@ -89,21 +89,17 @@ if [ -x "$(which vim)" ]; then
 fi
 
 alias df='df -h'
-alias du='du -h'
-alias less='less -r'
-alias l='ll'
-alias ll='ls -lh'
-alias la='ls -A'
-alias l.='ls -d .*'
-alias free='free -m -l -t'
-alias sc='screen'
-alias c='cd'
-alias g='git'
-alias v='vi'
-alias gm='gvim'
+alias di='diff'
 alias diff='diff -u'
-alias di='diff -u'
+alias du='du -h'
+alias free='free -m -l -t'
 alias jobs='jobs -l'
+alias l.='ls -d .*'
+alias l='ll'
+alias la='ls -A'
+alias less='less -r'
+alias ll='ls -lh'
+alias sc='screen'
 
 OS="$(uname -o)"
 if [ "$OS" = "Cygwin" ]; then

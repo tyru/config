@@ -15,21 +15,17 @@ set bell-style visible
 
 ### alias ### {{{
 alias df='df -h'
-alias du='du -h'
-alias less='less -r'
-alias l='ll'
-alias ll='ls -lh'
-alias la='ls -A'
-alias l.='ls -d .*'
-alias free='free -m -l -t'
-alias sc='screen'
-alias c='cd'
-alias g='git'
-alias v='vi'
-alias gm='gvim'
+alias di='diff'
 alias diff='diff -u'
-alias di='diff -u'
+alias du='du -h'
+alias free='free -m -l -t'
 alias jobs='jobs -l'
+alias l.='ls -d .*'
+alias l='ll'
+alias la='ls -A'
+alias less='less -r'
+alias ll='ls -lh'
+alias sc='screen'
 
 OS="$(uname -o)"
 if [ "$OS" = "Cygwin" ]; then
