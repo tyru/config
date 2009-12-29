@@ -163,11 +163,11 @@ autocmd VimperatorEnter .* pluginmanager update
 " plugin {{{
 " direct_bookmark.js {{{
 let g:direct_sbm_use_services_by_tag  = "d"
-let g:direct_sbm_use_services_by_post = "d"
+let g:direct_sbm_use_services_by_post = "hd"
 let g:direct_sbm_is_use_migemo = 1
 noremap a   :sbm<Space>
 noremap B   :tab bentry h<CR>
-noremap ,b   :tab bentry<Space>
+noremap ,b  :tab bentry<Space>
 " }}}
 " sbmcommentsviewer.js {{{
 let g:def_sbm_format = "id,timestamp,tags,comment"
@@ -262,19 +262,6 @@ let g:sbmincsearch_max = 50
 " }}}
 "-----------------------------------------------------------------
 " misc. {{{
-" フィードアイコンをステータスバーに表示 {{{
-" (via http://memo.officebrook.net/20090906.html)
-javascript <<EOF
-(function(){
-    var feedPanel = document.createElement("statusbarpanel");
-    feedPanel.setAttribute("id", "feed-panel-clone");
-    feedPanel.appendChild(document.getElementById("feed-button"));
-    feedPanel.firstChild.setAttribute("style", "padding: 0; max-height: 16px;");
-    document.getElementById("status-bar")
-        .insertBefore(feedPanel, document.getElementById("security-button"));
-})();
-EOF
-" }}}
 " 閉じたタブ一覧を出すワンライナー {{{
 " (via http://vimperator.g.hatena.ne.jp/teramako/20091105/1257429235)
 command! ClosedTabs echo [<><img src={tab.image}/>{tab.title}</> for each(tab in tabs.closedTabs)]
@@ -285,5 +272,39 @@ command! JSShell js (function a(){commandline.input("js> ", function(inp){if(inp
 " }}}
 " :LoadConfig {{{
 command! LoadConfig source $HOME/.vimperatorrc
+" }}}
+" {{{
+javascript <<EOF
+liberator.globalVariables.migrate_elements = [
+    {
+        // star button of awesome bar
+        id:    'star-button',
+        dest:  'security-button',
+        after: true,
+    },
+    {
+        // icon that show the existence of RSS and Atom on current page
+        id:    'feed-button',
+        dest:  'security-button',
+        after: true,
+    },
+    {
+        // favicon of awesome bar
+        id:    'page-proxy-stack',
+        dest:  'liberator-statusline',
+        after: false,
+    },
+    {
+        id:    'isRitL-later',
+        dest:  'security-button',
+        after: true,
+    },
+    {
+        id:    'isRitL-mark1',
+        dest:  'security-button',
+        after: true,
+    },
+];
+EOF
 " }}}
 " }}}
