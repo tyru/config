@@ -66,7 +66,6 @@ set switchbuf="useopen,usetab"
 set tabstop=4
 set textwidth=0
 set viminfo='50,h,f1,n$HOME/.viminfo
-set visualbell
 set whichwrap=b,s
 set wildchar=<Tab>
 set wildignore=*.o,*.obj,*.la,*.a,*.exe,*.com,*.tds
@@ -148,6 +147,7 @@ endif
 set runtimepath+=$HOME/.vim/mine
 
 " visual bell
+set visualbell
 set t_vb=
 
 set t_ti= t_te=
@@ -360,15 +360,21 @@ if has('gui_running')
 endif
 " }}}
 " ListChars {{{
-command! ListChars
-            \ call prompt#prompt('changing &listchars to...', {
-            \   'menu': [
-            \       'tab:>-,extends:>,precedes:<,eol:.',
-            \       'tab:>-',
-            \       'tab:\ \ ',
-            \   ],
-            \   'one_char': 1,
-            \   'execute': 'set listchars=%s'})
+command! ListChars call s:ListChars()
+func! s:ListChars()
+    let lcs = prompt#prompt('changing &listchars to...', {
+    \       'menu': [
+    \           'tab:>-,extends:>,precedes:<,eol:.',
+    \           'tab:>-',
+    \           'tab:\ \ ',
+    \       ],
+    \       'one_char': 1,
+    \       'escape': 1,
+    \       'execute': 'set listchars=%s'})
+    if lcs !=# "\e"
+        echomsg printf("changing &listchars to '%s'.", lcs)
+    endif
+endfunc
 " }}}
 " FastEdit {{{
 "   this is useful when Vim is very slow?
@@ -513,22 +519,24 @@ let &fencs = 'utf-8,' . &fencs
 " set enc=... {{{
 func! ChangeEncoding()
     if expand( '%' ) == ''
-        echo "current file is empty."
+        call s:warn("current file is empty.")
         return
     endif
-    let enc = prompt#prompt("re-open with...", {
-                \ 'menu': [
-                \   'cp932',
-                \   'shift-jis',
-                \   'iso-2022-jp',
-                \   'euc-jp',
-                \   'utf-8',
-                \   'ucs-bom'
-                \ ],
-                \ 'one_char': 1,
-                \ 'execute': 'edit ++enc=%s'})
-    if enc != ''
-        echo "Change the encoding to " . enc
+    let result =
+                \ prompt#prompt("re-open with...", {
+                \   'menu': [
+                \     'cp932',
+                \     'shift-jis',
+                \     'iso-2022-jp',
+                \     'euc-jp',
+                \     'utf-8',
+                \     'ucs-bom'
+                \   ],
+                \   'escape': 1,
+                \   'one_char': 1,
+                \   'execute': 'edit ++enc=%s'})
+    if result !=# "\e"
+        echomsg printf("re-open with '%s'.", result)
     endif
 endfunc
 " }}}
@@ -543,16 +551,18 @@ func! ChangeFileEncoding()
                 \ 'utf-8',
                 \ 'ucs-bom'
                 \ ],
+                \ 'escape': 1,
                 \ 'one_char': 1,
                 \ 'execute': 'set fenc=%s'})
+    if enc ==# "\e"
+        return
+    endif
     if enc == 'ucs-bom'
         set bomb
     else
         set nobomb
     endif
-    if enc != ''
-        echo "Change the file encoding to " . enc
-    endif
+    echomsg printf("changing file encoding to '%s'.", enc)
 endfunc
 " }}}
 " set ff=... {{{
@@ -560,9 +570,10 @@ func! ChangeNL()
     let result = prompt#prompt("changing newline format to...", {
                 \ 'menu': ['dos', 'unix', 'mac'],
                 \ 'one_char': 1,
+                \ 'escape': 1,
                 \ 'execute': 'set ff=%s'})
-    if result != ''
-        echo 'Converting newline...' . result
+    if result !=# "\e"
+        echomsg printf("changing newline format to '%s'.", result)
     endif
 endfunc
 " }}}
@@ -846,12 +857,6 @@ noremap! <C-k>   <C-o>D
 noremap! <C-r><C-u>  <C-r><C-p>+
 noremap! <C-r><C-i>  <C-r><C-p>*
 noremap! <C-r><C-o>  <C-r><C-p>"
-
-" SKK like mappings (japanese arrows)
-noremap! zk    ↑
-noremap! zl    →
-noremap! zj    ↓
-noremap! zh    ←
 " }}}
 " imap {{{
 " delete characters in ...
@@ -965,7 +970,7 @@ let dumbbuf_shown_type = 'project'
 " let dumbbuf_verbose = 1
 " }}}
 " prompt {{{
-" let prompt_debug = 1
+let prompt_debug = 1
 " }}}
 " }}}
 " others {{{
@@ -973,9 +978,9 @@ let dumbbuf_shown_type = 'project'
 let g:autodate_format = "%Y-%m-%d"
 " }}}
 " FuzzyFinder {{{
-nnoremap <silent> <Leader>fd        :FufRenewCache<CR>:FufDir<CR>
-nnoremap <silent> <Leader>ff        :FufRenewCache<CR>:FufFile<CR>
-nnoremap <silent> <Leader>fh        :FufRenewCache<CR>:FufMruFile<CR>
+nnoremap <silent> <Leader>fd        :FufDir<CR>
+nnoremap <silent> <Leader>ff        :FufFile<CR>
+nnoremap <silent> <Leader>fh        :FufMruFile<CR>
 
 let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem', 'buffer', 'tag', 'taggedfile']
 
@@ -984,12 +989,17 @@ let fuf_keyNextMode    = '<C-l>'
 let fuf_keyPrevMode    = '<C-h>'
 let fuf_keyOpenSplit   = '<C-s>'
 let fuf_keyOpenVsplit  = '<C-v>'
+let fuf_enumeratingLimit = 20
 
 " abbrev {{{
 let fuf_abbrevMap = {
     \ '^p@': ['~/.vim/plugin/', '~/.vim/plugin/', '~/.vim/mine/plugin/'],
     \ '^h@': ['~/'],
-    \ '^m@' : ['~/work/memo'],
+    \ '^m@' : ['~/work/memo/'],
+    \ '^v@' : ['~/.vim/'],
+    \ '^d@' : ['~/q/diary/'],
+    \ '^s@' : ['~/work/scratch/'],
+    \ '^w@' : ['~/work/'],
 \}
 if exists('$CYGHOME')  | let fuf_abbrevMap['^cyg']  = $CYGHOME  | endif
 if exists('$MSYSHOME') | let fuf_abbrevMap['^msys'] = $MSYSHOME | endif
@@ -1094,6 +1104,12 @@ Arpeggio inoremap gj     <C-o>o
 silent Arpeggio nnoremap <silent> <Leader>1    :call ChangeEncoding()<CR>
 silent Arpeggio nnoremap <silent> <Leader>2    :call ChangeFileEncoding()<CR>
 silent Arpeggio nnoremap <silent> <Leader>3    :call ChangeNL()<CR>
+
+" SKK like mappings (japanese arrows)
+Arpeggio noremap! zk ↑
+Arpeggio noremap! zl →
+Arpeggio noremap! zj ↓
+Arpeggio noremap! zh ←
 " }}}
 " }}}
 " }}}

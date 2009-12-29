@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: prompt.vim
 " Version: 0.0.0
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-12-22.
+" Last Change: 2009-12-28.
 "
 " Description:
 "   Prompt with Vimperator-like keybind.
@@ -14,12 +14,23 @@ scriptencoding utf-8
 " Change Log: {{{
 " }}}
 " Usage: {{{
-"   Commands: {{{
-"   }}}
-"   Mappings: {{{
-"   }}}
 "   Global Variables: {{{
 "   }}}
+" }}}
+"
+"
+" TODO: {{{
+" - support migemo.
+" - support FuzzyFinder.vim like interface.
+" - treat EOF(C-d) as "\<CR>" when input is empty string.
+" - :redraw menu's list when too many bad choices.
+" - incremental filtering about menu's list
+" -- currently I don't think run_menu() shows many such list.
+" -- IO::Prompt also warns like "Too many -menu items ..."
+"    if -menu's list is greater than 26.
+" - echo warning at current line.
+" - iPod touch/iPhone like password input interface.
+" -- show only last character for a while.
 " }}}
 "==================================================
 " }}}
@@ -41,13 +52,15 @@ func! s:no_validate(val)
     return 1
 endfunc
 func! s:is_int(val)
-    return a:val =~# '^'.'0\+'.'$'
-    \   || str2float(a:val) != 0
+    return type(a:val) == type(0)
+    \   || (type(a:val) == type("")
+    \      && a:val =~# '^'.'\d\+'.'$')
 endfunc
 func! s:is_num(val)
     return s:is_int(a:val)
-    \   || a:val =~# '^'.'0\+'.'\.'.'0\+'.'$'
-    \   || str2float(a:val) != 0
+    \   || type(a:val) == type(0.0)
+    \   || (type(a:val) == type("")
+    \       && a:val =~# '^'.'\d\+'.'\.'.'\d\+'.'$')
 endfunc
 func! s:is_str(val)
     return type(a:val) == type("")
@@ -70,10 +83,8 @@ func! s:is_callable(val)
 endfunc
 
 func! s:is_menutype(val)
-    " TODO
     return a:val =~#
-    \       '^'.'\(allcmdline\|cmdline\|'.
-    \       'buffer\|allbuffer\|dialog\)'.'$'
+    \       '^'.'\(cmdline\|buffer\|allbuffer\|dialog\)'.'$'
 endfunc
 " }}}
 " Sort functions {{{
@@ -85,25 +96,11 @@ func! s:sortfn_number(i1, i2)
 endfunc
 " }}}
 " Candidates generator functions {{{
-"   len(a:seq) must NOT be 0, maybe.
-func! s:gen_seq_str(seq, idx)
-    let div  = (a:idx + 1) / len(a:seq)
-    let quot = (a:idx + 1) % len(a:seq)
-    if div < 1 || (div == 1 && quot == 0)
-        if quot == 0
-            " NOTE: "abc"[-1] is ''. [1,2,3][-1] is 3, though...
-            let quot = len(a:seq)
-        endif
-        return a:seq[quot - 1]
-    else
-        return a:seq[quot - 1] . s:gen_seq_str(a:seq, div - 1)
-    endif
-endfunc
 func! s:generate_alpha(idx, key)
-    return s:gen_seq_str("abcdefghijklmnopqrstuvwxyz", a:idx)
+    return prompt#gen_seq_str("abcdefghijklmnopqrstuvwxyz", a:idx)
 endfunc
 func! s:generate_asdf(idx, key)
-    return s:gen_seq_str("asdfghjkl;", a:idx)
+    return prompt#gen_seq_str("asdfghjkl;", a:idx)
 endfunc
 func! s:generate_num(idx, key)
     return a:idx + 1
@@ -113,26 +110,6 @@ endfunc
 
 " Scope Variables {{{
 let s:debug_errmsg = []
-let s:validate_fn = {
-\   'str': function('<SID>no_validate'),
-\   'int': function('<SID>is_int'),
-\   'num': function('<SID>is_num'),
-\   'bool': function('<SID>no_validate'),
-\   'dict': function('<SID>is_dict'),
-\   'list': function('<SID>is_list'),
-\   'function': function('<SID>is_function'),
-\}
-
-let s:YESNO_PAT = {
-\   'yes': '[\w\W]*',
-\   'yesno': '^\s*[yYnN]',
-\   'YES': '[\w\W]*',
-\   'YESNO': '^\s*[YN]',
-\}
-let s:YESNO_ERR_MSG = {
-\   'yesno': "Please answer 'y' or 'n'",
-\   'YESNO': "Please answer 'Y' or 'N'",
-\}
 " }}}
 " Global Variables {{{
 if !exists('g:prompt_debug')
@@ -140,9 +117,6 @@ if !exists('g:prompt_debug')
 endif
 if !exists('g:prompt_prompt')
     let g:prompt_prompt = '> '
-endif
-if !exists('g:prompt_menu_display_once')
-    let g:prompt_menu_display_once = 0
 endif
 " }}}
 
@@ -204,16 +178,9 @@ func! s:bad_choice(msg)
     sleep 1
 endfunc
 " }}}
-" s:getc {{{
-func! s:getc(...)
-    return nr2char(call('getchar', a:000))
-endfunc
-" }}}
 
 
 " Objects.
-" FIXME Do not derive from any classes.
-" Just create s:Prompt object.
 " s:Object {{{
 let s:Object = {}
 
@@ -224,17 +191,18 @@ endfunc
 func! s:Object.clone() dict
     return deepcopy(self)
 endfunc
-
-func! s:Object.call(Fn, args) dict
-    return call(a:Fn, a:args, self)
-endfunc
-let s:Object.apply = s:Object.call
 " }}}
 " s:OptionManager {{{
 let s:OptionManager = s:Object.clone()
 
 " s:OptionManager.init {{{
 func! s:OptionManager.init() dict
+    " TODO
+    " - speed
+    " - require
+    " - until
+    " - while
+    " - menutype
     let self.opt_info_all = {
     \   'speed': {'arg_type': 'num'},
     \   'echo': {'arg_type': 'str'},
@@ -250,11 +218,7 @@ func! s:OptionManager.init() dict
     \   },
     \   'onechar': {'arg_type': 'bool'},
     \   'escape': {'arg_type': 'bool'},
-    \   'clear': {'arg_type': 'bool'},
-    \   'clearfirst': {'arg_type': 'bool'},
-    \   'argv': {'arg_type': 'bool'},
     \   'line': {'arg_type': 'bool'},
-    \   'tty': {'arg_type': 'bool'},
     \   'yes': {'arg_type': 'bool'},
     \   'yesno': {'arg_type': 'bool'},
     \   'YES': {'arg_type': 'bool'},
@@ -263,7 +227,7 @@ func! s:OptionManager.init() dict
     \   'integer': {'arg_type': 'bool'},
     \
     \   'execute': {'arg_type': 'str'},
-    \   'menuidfunc': {'arg_type': 'function'},
+    \   'menuidfunc': {'arg_type': 'fn'},
     \   'menualpha': {
     \       'arg_type': 'bool',
     \       'expand_to': {
@@ -294,7 +258,7 @@ func! s:OptionManager.init() dict
     \       'arg_type': 'bool',
     \   },
     \   'sortby': {
-    \       'arg_type': 'function',
+    \       'arg_type': 'fn',
     \   },
     \}
 
@@ -305,9 +269,9 @@ func! s:OptionManager.init() dict
     \   'd': 'default',
     \   'r': 'require',
     \   'u': 'until',
-    \   'failif': 'until',
+    \   'okayif': 'until',
     \   'w': 'while',
-    \   'okayif': 'while',
+    \   'failif': 'while',
     \   'm': 'menu',
     \   '1': 'onechar',
     \   'x': 'escape',
@@ -344,8 +308,9 @@ endfunc
 " s:OptionManager.get {{{
 func! s:OptionManager.get(name, ...) dict
     if self.is_alias(a:name)
-        return self.apply('s:OptionManager.get',
-        \       [self.opt_alias[a:name]] + a:000)
+        return call(self.get,
+        \       [self.opt_alias[a:name]] + a:000,
+        \       self)
     endif
     if !self.exists(a:name)
         if a:0 == 0
@@ -378,7 +343,7 @@ func! s:OptionManager.filter_alias(options, extend_opt) dict
 endfunc
 " }}}
 " s:OptionManager.expand {{{
-"   expand options if it has 'expand_to'.
+"   expand abbrev options if it has 'expand_to'.
 func! s:OptionManager.expand(options, extend_opt) dict
     let ret = {}
     for k in keys(a:options)
@@ -406,6 +371,28 @@ let s:Prompt = s:Object.clone()
 " s:Prompt.init {{{
 func! s:Prompt.init(option_manager) dict
     let self.opt_info = a:option_manager
+
+    let self.validate_fn = {
+    \   'str': function('<SID>no_validate'),
+    \   'int': function('<SID>is_int'),
+    \   'num': function('<SID>is_num'),
+    \   'bool': function('<SID>no_validate'),
+    \   'dict': function('<SID>is_dict'),
+    \   'list': function('<SID>is_list'),
+    \   'fn': function('<SID>is_function'),
+    \}
+
+    let self.YESNO_PAT = {
+    \   'yes': '[\w\W]*',
+    \   'yesno': '^\s*[yYnN]',
+    \   'YES': '[\w\W]*',
+    \   'YESNO': '^\s*[YN]',
+    \}
+
+    let self.YESNO_ERR_MSG = {
+    \   'yesno': "Please answer 'y' or 'n'",
+    \   'YESNO': "Please answer 'Y' or 'N'",
+    \}
 endfunc
 " }}}
 call s:Prompt.init(s:OptionManager)
@@ -440,7 +427,12 @@ func! s:Prompt.run() dict
     call s:debugmsg('options = ' . string(self.options))
 
 
-    let value = self.dispatch()
+    try
+        let value = self.dispatch()
+    catch /^pressed_esc_with:/
+        return substitute(v:exception, '^pressed_esc_with:', '', '')."\e"
+    endtry
+
     if has_key(self.options, 'execute') && !empty(value)
         redraw
         execute printf(self.options.execute, value)
@@ -451,57 +443,65 @@ endfunc
 " s:Prompt.dispatch {{{
 func! s:Prompt.dispatch() dict
     let yesno_type =
-    \   has_key(self.options, 'yes') ? 'yes'
-    \   : has_key(self.options, 'yesno') ? 'yesno'
-    \   : has_key(self.options, 'YES') ? 'YES'
-    \   : has_key(self.options, 'YESNO') ? 'YESNO'
+    \   get(self.options, 'yes', 0)     ? 'yes'
+    \   : get(self.options, 'yesno', 0) ? 'yesno'
+    \   : get(self.options, 'YES', 0)   ? 'YES'
+    \   : get(self.options, 'YESNO', 0) ? 'YESNO'
     \   : ''
 
-    try
-        if yesno_type != ''
-            return self.run_yesno(yesno_type)
-        elseif has_key(self.options, 'menu')
-            let self.options.escape = 1
-            return self.run_menu(self.options.menu)
-        else
-            echo self.msg
-            return self.get_input()
-        endif
-    catch /^pressed_esc$/
-        return "\e"
-    endtry
+    if yesno_type != ''
+        call s:debugmsg('run_yesno()')
+        return self.run_yesno(yesno_type)
+    elseif has_key(self.options, 'menu')
+        call s:debugmsg('run_menu()')
+        let self.options.escape = 1
+        return self.run_menu(self.options.menu)
+    else
+        call s:debugmsg('run_other()')
+        return self.run_other()
+    endif
 endfunc
 " }}}
 " s:Prompt.run_menu {{{
-"   TODO nested a:list
 func! s:Prompt.run_menu(list) dict
     " Make displaying list.
     let choice = {}
-    for idx in range(0, len(a:list) - 1)
-        let key = self.options.menuidfunc(idx, '') . ""
-        let choice[key] = a:list[idx]
-    endfor
+    if type(a:list) == type({})
+        let i = 0
+        for key in keys(a:list)
+            let id = self.options.menuidfunc(i, key) . ""
+            let choice[id] = {'show_value': key, 'dict_value': a:list[key]}
+            let i += 1
+        endfor
+    elseif type(a:list) == type([])
+        for idx in range(0, len(a:list) - 1)
+            let id = self.options.menuidfunc(idx, '') . ""
+            let choice[id] = {'show_value': a:list[idx]}
+        endfor
+    else
+        throw "internal_error: "
+        \    ."'menu' allows only List or Dictionary."
+    endif
+    call s:debugmsg('choice = '.string(choice))
 
     " Show candidates.
     echo self.msg
-    call s:debugmsg('choice = '.string(choice))
     for k in self.sort_menu_ids(keys(choice))
-        echon printf("\n%s. %s", k, choice[k])
+        echon printf("\n%s. %s", k, choice[k].show_value)
     endfor
-    call s:debugmsg('choice = '.string(choice))
 
     while 1
-        echon "\n" g:prompt_prompt
-        let input = self.get_input()
-        call s:debugmsg(input)
+        echon "\n"
+        let input = self.get_input(g:prompt_prompt)
+        call s:debugmsg('input = '.input)
 
-        if input == '' && has_key(self.options, 'default')
-            return self.options.default
-        elseif has_key(choice, input)
-            if s:is_dict(choice[input]) || s:is_list(choice[input])
-                return self.run_menu(choice[input])
+        if has_key(choice, input)
+            let value = get(choice[input], 'dict_value', choice[input].show_value)
+            if s:is_dict(value) || s:is_list(value)
+                return self.run_menu(value)
             else
-                return choice[input]
+                " Return result.
+                return value
             endif
         else
             call s:bad_choice('bad choice.')
@@ -511,58 +511,151 @@ func! s:Prompt.run_menu(list) dict
 endfunc
 " }}}
 " s:Prompt.run_yesno {{{
-func! s:Prompt.run_yesno(opt) dict
+func! s:Prompt.run_yesno(yn_type) dict
     while 1
-        let input = self.get_input()
+        let input = self.get_input(self.msg)
         call s:debugmsg(input)
 
-        if input =~# s:YESNO_PAT[a:opt]
+        if input =~# self.YESNO_PAT[a:yn_type]
             return input
         else
-            call s:bad_choice(s:YESNO_ERR_MSG[a:opt])
+            call s:bad_choice(self.YESNO_ERR_MSG[a:yn_type])
+        endif
+    endwhile
+endfunc
+" }}}
+" s:Prompt.run_other {{{
+func! s:Prompt.run_other() dict
+    " NOTE:
+    " s:Prompt.run_other() has some different points
+    " with other methods like 's:Prompt.run_*()'.
+    "
+    " - Replace input with self.options.default
+    "   if input is empty string.
+    " - Check input. (self.check_input(input))
+    let args =
+    \   has_key(self.options, 'default') ?
+    \       [self.msg, self.options.default]
+    \       : [self.msg]
+
+    while 1
+        let input = call(self.get_input, args, self)
+        if self.check_input(input)
+            return input
         endif
     endwhile
 endfunc
 " }}}
 
 " s:Prompt.get_input {{{
-func! s:Prompt.get_input() dict
+func! s:Prompt.get_input(prompt, ...) dict
     let input = ''
+    let has_default = a:0 !=# 0
+
     let opt_escape =
-    \   has_key(self.options, 'escape')
+    \   get(self.options, 'escape', 0)
     \   && self.options.escape
     let opt_onechar =
-    \   has_key(self.options, 'onechar')
+    \   get(self.options, 'onechar', 0)
     \   && self.options.onechar
 
+    " TODO Global variable to decide
+    " if Vim echoes option 'default' value.
+    if has_default
+        if a:prompt =~# ':$'
+            let pr = printf('%s [%s]:',
+            \     strpart(a:prompt, 0, strlen(a:prompt) - 1),
+            \     a:1)
+        else
+            let pr = printf('%s [%s]',
+            \     a:prompt,
+            \     a:1)
+        endif
+    else
+        let pr = a:prompt
+    endif
+    echon pr
+
     while 1
-        let c = s:getc()
+        let c = getchar()
+        let c = type(c) == type(0) ? nr2char(c) : c
+
         if opt_escape && c ==# "\<Esc>"
-            throw 'pressed_esc'
+            throw 'pressed_esc_with:'.input
+        elseif c ==# "\<CR>"
+            echon get(self.options, 'newline', "\n")
+
+            if input == '' && has_default
+                let input = a:1
+            elseif get(self.options, 'line', 0)
+                " NOTE: 'line' is exclusive. (elseif)
+                let input .= "\n"
+            endif
+
+            if opt_onechar
+                " NOTE: Return one character anyway if opt_onechar.
+                let input = strpart(input, 0, 1)
+            endif
+            return input
+        elseif c == "\<BS>"
+            " Dispose "\<BS>" and one char.
+            let input = strpart(input, 0, strlen(input) - 1)
+
+            if has_key(self.options, 'echo')
+                let sp  = repeat(' ', strlen(self.options.echo))
+                let msg = repeat(self.options.echo, strlen(input))
+            else
+                let sp  = ' '
+                let msg = input
+            endif
+
+            " Clear rest of input.
+            " (Overwrite deleted one character with spaces)
+            echon sp . "\<CR>"
+            " Overwrite current input.
+            echon pr . msg
+
+            continue
+        " elseif c == "\<C-d>" && input == ''
+        "     " TODO Global variable to allow <C-d>
+        "     " return empty string or "\<C-d>".
+        "     return ''
         endif
         if opt_onechar
             return c
-        endif
-        if c ==# "\<CR>"
-            break
         endif
 
         if has_key(self.options, 'echo')
             echon self.options.echo
         else
-            " TODO Backspace
             echon c
         endif
 
         let input .= c
     endwhile
-    return input
+
+    throw 'internal_error: this block will never be reached'
+endfunc
+" }}}
+" s:Prompt.check_input {{{
+func! s:Prompt.check_input(input)
+    if get(self.options, 'integer', 0)
+        return s:is_int(a:input)
+    elseif get(self.options, 'number', 0)
+        return s:is_num(a:input)
+    elseif has_key(self.options, 'while')
+        return a:input !~# self.options.while
+    elseif has_key(self.options, 'until')
+        return a:input =~# self.options.until
+    else
+        return 1
+    endif
 endfunc
 " }}}
 " s:Prompt.sort_menu_ids {{{
 func! s:Prompt.sort_menu_ids(keys) dict
     let keys = a:keys
-    if has_key(self.options, 'sortmenu') && self.options.sortmenu
+    if get(self.options, 'sortmenu', 0)
         call sort(keys, self.options.sortby)
     endif
     return keys
@@ -575,7 +668,7 @@ func! s:Prompt.add_default_options() dict
     \   {
     \      'speed': '0.075',
     \      'menualpha': 1,
-    \      'menutype': 'allcmdline',
+    \      'menutype': 'cmdline',
     \      'sortby': function('<SID>sortfn_string'),
     \   },
     \   'force'),
@@ -608,7 +701,7 @@ func! s:Prompt.__validate(opt_name, opt_val) dict
             let fn_str = substitute(a:opt_name, '^custom:', '', '')
             return eval(fn_str)(a:opt_val)
         else
-            return s:validate_fn[a:opt_name](a:opt_val)
+            return self.validate_fn[a:opt_name](a:opt_val)
         endif
     elseif s:is_list(a:opt_name)
         if len(a:opt_name) == 1
@@ -625,17 +718,38 @@ endfunc
 " }}}
 
 
-" prompt#prompt() {{{
-func! prompt#prompt(msg, options)
+" Autoload functions.
+" prompt#gen_seq_str {{{
+"   len(a:seq) must NOT be 0, maybe.
+func! prompt#gen_seq_str(seq, idx)
+    let div  = (a:idx + 1) / len(a:seq)
+    let quot = (a:idx + 1) % len(a:seq)
+    if div < 1 || (div == 1 && quot == 0)
+        if quot == 0
+            " NOTE: "abc"[-1] is ''. [1,2,3][-1] is 3, though...
+            let quot = len(a:seq)
+        endif
+        return a:seq[quot - 1]
+    else
+        return a:seq[quot - 1] . prompt#gen_seq_str(a:seq, div - 1)
+    endif
+endfunc
+" }}}
+" prompt#prompt {{{
+func! prompt#prompt(msg, ...)
+    if a:0 == 0
+        let options = {}
+    elseif a:0 == 1 && type(a:1) == type({})
+        let options = a:1
+    else
+        throw "prompt() can receive only 1 dictionary arg."
+    endif
+
     call s:Prompt.set_msg(a:msg)
-    call s:Prompt.set_options(a:options)
+    call s:Prompt.set_options(options)
     return s:Prompt.run()
 endfunc
 " }}}
-" }}}
-
-" Commands {{{
-" TODO
 " }}}
 
 " Restore 'cpoptions' {{{
