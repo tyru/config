@@ -210,7 +210,7 @@ scriptencoding utf-8
 "       if false, go upwardly.
 "
 "   g:dumbbuf_hl_cursorline (default: "guibg=Red  guifg=White")
-"       local value of highlight 'CursorLine'.
+"       local value of highlight 'CursorLine' in dumbbuf buffer.
 "
 "   g:dumbbuf_wrap_cursor (default: 1)
 "       wrap the cursor at the top or bottom of dumbbuf buffer.
@@ -218,6 +218,8 @@ scriptencoding utf-8
 "   g:dumbbuf_all_shown_types (default: ['listed', 'unlisted', 'project'])
 "       all available shown types.
 "
+"   g:dumbbuf_timeoutlen (default: 0)
+"       local value of &timeoutlen in dumbbuf buffer.
 "
 "
 "   For The Experienced User: {{{
@@ -363,6 +365,9 @@ if ! exists('g:dumbbuf_remove_marked_when_close')
 endif
 if ! exists('g:dumbbuf_all_shown_types')
     let g:dumbbuf_all_shown_types = ['listed', 'unlisted', 'project']
+endif
+if ! exists('g:dumbbuf_timeoutlen')
+    let g:dumbbuf_timeoutlen = 0
 endif
 
 
@@ -1225,7 +1230,7 @@ func! s:open_dumbbuf_buffer()
     let s:orig_timeout = &timeout
     let s:orig_timeoutlen = &timeoutlen
     let &timeout = 1
-    let &timeoutlen = 0
+    let &timeoutlen = g:dumbbuf_timeoutlen
 endfunc
 " }}}
 " s:close_dumbbuf_buffer {{{
