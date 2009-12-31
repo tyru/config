@@ -61,18 +61,25 @@ scriptencoding utf-8
 "       - replace the words 'select' to 'mark' in document and source code.
 "         I would use 'select' for only visual mode's region.
 "   0.0.8:
-"       - change default values of g:dumbbuf_disp_expr, g:dumbbuf_options
-"       - implement g:dumbbuf_all_shown_types.
-"       - remove g:dumbbuf_single_key, g:dumbbuf_single_key_echo_stack,
+"       - NOTE: If you want to use mapping
+"         2 more than characters to toggle dumbbuf buffer,
+"         you have to change g:dumbbuf_timeoutlen.
+"         for e.g.: let g:dumbbuf_timeoutlen = 100
+"         But you can always use 'q' to close buffer.
+"       - Change default values of g:dumbbuf_disp_expr, g:dumbbuf_options
+"         (Options written in 'For The Experienced User' may be changed
+"         in the future. sorry)
+"       - Implement g:dumbbuf_all_shown_types.
+"       - Remove g:dumbbuf_single_key, g:dumbbuf_single_key_echo_stack,
 "         g:dumbbuf_updatetime
-"       - remove single key emulation.
-"         this emulates normal key input
+"       - Remove single key emulation.
+"         This emulates normal key input
 "         in order to prevent Vim from waiting candidate keys.
-"         now I know I have invented the wheel :)
+"         Now I know I have invented the wheel :)
 "         (I changed &timeout, &timeoutlen)
-"       - suppress flicker when mapping executed.
-"       - some optimizations.
-"       - some fixes of minor bugs.
+"       - Suppress flicker when mapping executed.
+"       - Some optimizations.
+"       - Some fixes of minor bugs.
 " }}}
 "
 "
