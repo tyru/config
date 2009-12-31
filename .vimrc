@@ -820,6 +820,8 @@ nnoremap <silent> <C-n>         gt
 nnoremap <silent> <C-p>         gT
 nnoremap <silent> <C-Tab>       gt
 nnoremap <silent> <C-S-Tab>     gT
+nnoremap <silent> g$            :tablast<CR>
+nnoremap <silent> g0            :tabfirst<CR>
 
 " make
 nnoremap <silent>   gm      :make<CR>
