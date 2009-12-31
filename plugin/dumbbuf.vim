@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.7
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-12-20.
+" Last Change: 2010-01-01.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -62,10 +62,15 @@ scriptencoding utf-8
 "         I would use 'select' for only visual mode's region.
 "   0.0.8:
 "       - change default values of g:dumbbuf_disp_expr, g:dumbbuf_options
-"       - implement operator-like mappings
-"         (mappings also work in visual mode, receive range, etc.)
 "       - implement g:dumbbuf_all_shown_types.
-"       - suppress flicker when command executed.
+"       - remove g:dumbbuf_single_key, g:dumbbuf_single_key_echo_stack,
+"         g:dumbbuf_updatetime
+"       - remove single key emulation.
+"         this emulates normal key input
+"         in order to prevent Vim from waiting candidate keys.
+"         now I know I have invented the wheel :)
+"         (I changed &timeout, &timeoutlen)
+"       - suppress flicker when mapping executed.
 "       - some optimizations.
 "       - some fixes of minor bugs.
 " }}}
