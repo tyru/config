@@ -38,6 +38,11 @@ my @files = qw(
     .emacs.d
     .w3m/keymap
 );
+my %cygwin_files = (
+    '.vimperator/plugin' => 'vimperator/plugin',
+    '.vimperator/colors' => 'vimperator/colors',
+    '.vimperatorrc' => '_vimperatorrc',
+);
 my @removed_files = qw(
     .vim/backup
     .vim/.netrwhist
@@ -157,9 +162,9 @@ for my $file (@files) {
     my ($src, $dest);
 
     if ($extract) {
-        if ($^O eq 'cygwin' && $file eq '.vimperator') {
+        if ($^O eq 'cygwin' && exists $cygwin_files{$file}) {
             $src  = $file;
-            $dest = catfile($home, 'vimperator');
+            $dest = catfile($home, $cygwin_files{$file});
         } else {
             $src  = $file;
             $dest = catfile($home, $file);
@@ -172,8 +177,8 @@ for my $file (@files) {
         install($src, $dest, $username);
 
     } else {
-        if ($^O eq 'cygwin' && $file eq '.vimperator') {
-            $src  = catfile($home, 'vimperator');
+        if ($^O eq 'cygwin' && exists $cygwin_files{$file}) {
+            $src  = catfile($home, $cygwin_files{$file});
             $dest = $file;
         } else {
             $src  = catfile($home, $file);
