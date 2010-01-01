@@ -4,9 +4,9 @@ scriptencoding utf-8
 " Document {{{
 "==================================================
 " Name: DumbBuf
-" Version: 0.0.7
+" Version: 0.0.8
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-12-20.
+" Last Change: 2010-01-01.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -61,13 +61,25 @@ scriptencoding utf-8
 "       - replace the words 'select' to 'mark' in document and source code.
 "         I would use 'select' for only visual mode's region.
 "   0.0.8:
-"       - change default values of g:dumbbuf_disp_expr, g:dumbbuf_options
-"       - implement operator-like mappings
-"         (mappings also work in visual mode, receive range, etc.)
-"       - implement g:dumbbuf_all_shown_types.
-"       - suppress flicker when command executed.
-"       - some optimizations.
-"       - some fixes of minor bugs.
+"       - NOTE: If you want to use mapping
+"         2 more than characters to toggle dumbbuf buffer,
+"         you have to change g:dumbbuf_timeoutlen.
+"         for e.g.: let g:dumbbuf_timeoutlen = 100
+"         But you can always use 'q' to close buffer.
+"       - Change default values of g:dumbbuf_disp_expr, g:dumbbuf_options
+"         (Options written in 'For The Experienced User' may be changed
+"         in the future. sorry)
+"       - Implement g:dumbbuf_all_shown_types.
+"       - Remove g:dumbbuf_single_key, g:dumbbuf_single_key_echo_stack,
+"         g:dumbbuf_updatetime
+"       - Remove single key emulation.
+"         This emulates normal key input
+"         in order to prevent Vim from waiting candidate keys.
+"         Now I know I have invented the wheel :)
+"         (I changed &timeout, &timeoutlen)
+"       - Suppress flicker when mapping executed.
+"       - Some optimizations.
+"       - Some fixes of minor bugs.
 " }}}
 "
 "
@@ -205,7 +217,7 @@ scriptencoding utf-8
 "       if false, go upwardly.
 "
 "   g:dumbbuf_hl_cursorline (default: "guibg=Red  guifg=White")
-"       local value of highlight 'CursorLine'.
+"       local value of highlight 'CursorLine' in dumbbuf buffer.
 "
 "   g:dumbbuf_wrap_cursor (default: 1)
 "       wrap the cursor at the top or bottom of dumbbuf buffer.
@@ -213,6 +225,8 @@ scriptencoding utf-8
 "   g:dumbbuf_all_shown_types (default: ['listed', 'unlisted', 'project'])
 "       all available shown types.
 "
+"   g:dumbbuf_timeoutlen (default: 0)
+"       local value of &timeoutlen in dumbbuf buffer.
 "
 "
 "   For The Experienced User: {{{
@@ -269,6 +283,16 @@ if exists('g:loaded_dumbbuf') && g:loaded_dumbbuf
     finish
 endif
 let g:loaded_dumbbuf = 1
+
+" do not load anymore if g:dumbbuf_hotkey is not defined.
+if ! exists('g:dumbbuf_hotkey')
+    " g:dumbbuf_hotkey is not defined!
+    echomsg "g:dumbbuf_hotkey is not defined!"
+    finish
+elseif maparg(g:dumbbuf_hotkey, 'n') != ''
+    echomsg printf("'%s' is already defined!", g:dumbbuf_hotkey)
+    finish
+endif
 " }}}
 " Saving 'cpoptions' {{{
 let s:save_cpo = &cpo
@@ -299,9 +323,11 @@ let s:now_processing = 0
 if ! exists('g:dumbbuf_verbose')
     let g:dumbbuf_verbose = 0
 endif
-if ! exists('g:dumbbuf_no_default_hotkey')
-    let g:dumbbuf_no_default_hotkey = 0
-endif
+
+"--- if g:dumbbuf_hotkey is not defined,
+" do not load this script.
+" see 'Load Once'. ---
+
 if ! exists('g:dumbbuf_buffer_height')
     let g:dumbbuf_buffer_height = 10
 endif
@@ -346,6 +372,9 @@ if ! exists('g:dumbbuf_remove_marked_when_close')
 endif
 if ! exists('g:dumbbuf_all_shown_types')
     let g:dumbbuf_all_shown_types = ['listed', 'unlisted', 'project']
+endif
+if ! exists('g:dumbbuf_timeoutlen')
+    let g:dumbbuf_timeoutlen = 0
 endif
 
 
@@ -1208,7 +1237,7 @@ func! s:open_dumbbuf_buffer()
     let s:orig_timeout = &timeout
     let s:orig_timeoutlen = &timeoutlen
     let &timeout = 1
-    let &timeoutlen = 0
+    let &timeoutlen = g:dumbbuf_timeoutlen
 endfunc
 " }}}
 " s:close_dumbbuf_buffer {{{
@@ -1650,10 +1679,7 @@ endfunc
 " }}}
 
 " Mappings {{{
-nnoremap <silent> <Plug>(dumbbuf-open)   :call <SID>update_buffers_list()<CR>
-if !g:dumbbuf_no_default_hotkey
-    silent! map <unique> <Leader>b  <Plug>(dumbbuf-open)
-endif
+execute 'nnoremap <silent><unique>' g:dumbbuf_hotkey ':call <SID>update_buffers_list()<CR>'
 " }}}
 
 " Autocmd {{{
