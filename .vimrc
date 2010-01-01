@@ -290,6 +290,17 @@ endif
 " }}}
 "-----------------------------------------------------------------
 " Commands {{{
+" commands related to specific environments {{{
+if has('gui_running')
+    if has( 'win32' )
+        command! GoDesktop   execute 'lcd C:' . $HOMEPATH . '\デスクトップ'
+        command! SH          !start cmd.exe
+    else
+        command! GoDesktop   lcd '~/Desktop'
+    endif
+endif
+" }}}
+
 " HelpTagAll {{{
 "   do :helptags to all doc/ in &runtimepath
 command! HelpTagAll
@@ -348,16 +359,6 @@ func! s:Open( ... )
         call s:system('gnome-open', dir)
     endif
 endfunc
-" }}}
-" commands related to specific environments {{{
-if has('gui_running')
-    if has( 'win32' )
-        command! GoDesktop   execute 'lcd C:' . $HOMEPATH . '\デスクトップ'
-        command! SH          !start cmd.exe
-    else
-        command! GoDesktop   lcd '~/Desktop'
-    endif
-endif
 " }}}
 " ListChars {{{
 command! ListChars call s:ListChars()
@@ -482,28 +483,6 @@ endfunc
 
 command! -nargs=* GccSyntaxCheck
             \ call s:GccSyntaxCheck(<f-args>)
-" }}}
-" Restart {{{
-command! -bang Restart    call s:restart("<bang>")
-func! s:restart(bang)
-    if !has('gui_running')
-        call s:warn("can't restart vim, not gvim.")
-        return
-    endif
-
-    if a:bang !=# '!'
-        try
-            bmodified
-            call s:warn("modified buffer(s) exist!")
-            return
-        catch
-            " nop.
-        endtry
-    endif
-
-    call s:system('gvim')
-    execute 'qall'.a:bang
-endfunc
 " }}}
 " CdCurrent {{{
 "   Change current directory to current file's one.
@@ -755,6 +734,9 @@ endfunc
 " operator {{{
 " paste to clipboard
 noremap <Leader>y     "+y
+
+" do not destroy noname register when pressed 'x'
+noremap x   "_x
 " }}}
 " motion/textobj {{{
 noremap <silent> j          gj
@@ -799,9 +781,6 @@ endfunc
 
 " fix up all indents
 nnoremap <silent> <Space>=    mqgg=G`qzz<CR>
-
-" do not destroy noname register when pressed 'x'
-nnoremap <silent> x       "_x
 
 " window size of gVim itself
 nnoremap <C-Right>    :set columns+=5<CR>
@@ -958,7 +937,7 @@ let dumbbuf_mappings = {
 \}
 let dumbbuf_wrap_cursor = 0
 let dumbbuf_remove_marked_when_close = 1
-let dumbbuf_shown_type = 'project'
+" let dumbbuf_shown_type = 'project'
 
 
 " let dumbbuf_cursor_pos = 'keep'
@@ -972,7 +951,7 @@ let dumbbuf_shown_type = 'project'
 " let dumbbuf_verbose = 1
 " }}}
 " prompt {{{
-let prompt_debug = 1
+" let prompt_debug = 1
 " }}}
 " }}}
 " others {{{
@@ -1095,10 +1074,6 @@ Arpeggio noremap! #( 「」<Left>
 Arpeggio noremap! 3[ 『』<Left>
 Arpeggio noremap! #< 【】<Left>
 Arpeggio noremap! #{ 〔〕<Left>
-
-" arpeggio recognizes " as beginning of the comment...
-" Arpeggio noremap! "J ""<Left>
-Arpeggio noremap! 'F ''<Left>
 
 Arpeggio inoremap gk     <C-o>O
 Arpeggio inoremap gj     <C-o>o
