@@ -6,10 +6,10 @@ scriptencoding utf-8
 " Name: prompt.vim
 " Version: 0.0.0
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-12-28.
+" Last Change: 2010-01-02.
 "
 " Description:
-"   Prompt with Vimperator-like keybind.
+"   Smart prompt function like IO::Prompt.
 "
 " Change Log: {{{
 " }}}
