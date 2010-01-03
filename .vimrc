@@ -1048,6 +1048,7 @@ nnoremap <silent> <C-]>     :call <SID>JumpTags()<CR>
 " }}}
 " operator-replace {{{
 map <Leader>r  <Plug>(operator-replace)
+map <Leader>R  <Leader>r$
 " }}}
 " EasyGrep {{{
 let EasyGrepFileAssociations = expand("$HOME/.vim/EasyGrepFileAssociations")
