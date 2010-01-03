@@ -1,9 +1,11 @@
 # vim:set fdm=marker:
 
-# root should use /bin/bash {{{
-if [ $UID != 0 -a -x "$(which zsh)" ]; then
-    exec zsh
-fi
+# exec zsh? {{{
+# NOTE: "$PS1" to confirm user to login in interactively.
+# (scp, sftp will freeze when login)
+#if [ -x "$(which zsh)" && -z "$PS1" ]; then
+#    exec zsh
+#fi
 # }}}
 
 ### shopt/set ### {{{
