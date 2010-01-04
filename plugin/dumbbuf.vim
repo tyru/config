@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: DumbBuf
 " Version: 0.0.8
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2010-01-01.
+" Last Change: 2010-01-04.
 "
 " GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
 "
@@ -1346,6 +1346,13 @@ endfunc
 " s:set_highlight {{{
 func! s:set_highlight(hl_name, value)
     call s:debug(printf("set highlight '%s' to '%s'.", a:hl_name, a:value))
+
+    " Disable un-specified (by a:value) options.
+    let cur_value = s:get_highlight(a:hl_name)
+    for [hl_key, hl_val] in map(split(cur_value, '\s\+'), 'split(v:val, "=")')
+        execute printf('hi %s %s=NONE', a:hl_name, hl_key)
+    endfor
+
     execute 'hi' a:hl_name a:value
 endfunc
 " }}}
