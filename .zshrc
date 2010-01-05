@@ -101,6 +101,10 @@ alias less='less -r'
 alias ll='ls -lh'
 alias sc='screen'
 
+if [ -x "$(which perldocjp)" ]; then
+    alias perldoc='perldocjp'
+fi
+
 OS="$(uname -o)"
 if [ "$OS" = "Cygwin" ]; then
     alias less='less -r'

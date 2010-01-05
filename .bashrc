@@ -16,6 +16,10 @@ set bell-style visible
 # }}}
 
 ### alias ### {{{
+if [ -x "$(which vim)" ]; then
+    alias vi=vim
+fi
+
 alias df='df -h'
 alias di='diff'
 alias diff='diff -u'
@@ -29,16 +33,16 @@ alias less='less -r'
 alias ll='ls -lh'
 alias sc='screen'
 
+if [ -x "$(which perldocjp)" ]; then
+    alias perldoc='perldocjp'
+fi
+
 OS="$(uname -o)"
 if [ "$OS" = "Cygwin" ]; then
     alias less='less -r'
     alias ls='ls --color=tty --show-control-chars'
 else
     alias ls='ls --color=tty'
-fi
-
-if [ -x "$(which vim)" ]; then
-    alias vi=vim
 fi
 # }}}
 
