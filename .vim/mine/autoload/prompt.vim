@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: prompt.vim
 " Version: 0.0.0
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2010-01-02.
+" Last Change: 2010-01-04.
 "
 " Description:
 "   Smart prompt function like IO::Prompt.
@@ -742,7 +742,7 @@ func! prompt#prompt(msg, ...)
     elseif a:0 == 1 && type(a:1) == type({})
         let options = a:1
     else
-        throw "prompt() can receive only 1 dictionary arg."
+        throw "prompt#prompt() can take message to display and optional options."
     endif
 
     call s:Prompt.set_msg(a:msg)
