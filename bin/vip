@@ -1,0 +1,53 @@
+#! /usr/bin/perl
+
+use strict;
+use warnings;
+use Errno;
+
+my $opt_print_fn = @ARGV && $ARGV[0] eq '-f' && shift @ARGV;
+
+my $fn = shift @ARGV || do {
+    # create dir
+    my $datadir = $ENV{VIP_HOME} || "$ENV{HOME}/vip";
+    mkdir $datadir or do {
+        die "failed to create data dir:$datadir:$!"
+            unless $! == Errno::EEXIST;
+    };
+    # build filename
+    my @t = localtime;
+    my $fn;
+    for (my $i = 1; ; $i++) {
+        $fn = sprintf(
+            '%s/%04d%02d%02d-%02d%02d%02d-%d',
+	    $datadir,
+            $t[5] + 1900, $t[4] + 1, $t[3], $t[2], $t[1], $t[0],
+            $i,
+        );
+        last unless -e $fn;
+    }
+    $fn;
+};
+
+# run vi
+unless (my $pid = fork) {
+    die "fork failed:$!" unless defined $pid;
+    # child process
+    open STDOUT, '>&', STDERR
+        or die "failed to reopen stderr:$!";
+    system($ENV{EDITOR} || 'vi', $fn) == 0
+        or die "vi exited with non-zero return code:$?";
+    exit 0;
+}
+while (wait == -1) {}
+
+# print file, if exists
+if (-e $fn) {
+    if ($opt_print_fn) {
+	print "$fn\n";
+    } else {
+	open my $fh, '<', $fn
+	    or die "failed to open file:$fn:$!";
+	print join '', <$fh>;
+	close $fh;
+    }
+}
