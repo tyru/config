@@ -146,13 +146,22 @@ bindkey     " "         my-expand-abbrev
 # via http://d.hatena.ne.jp/uasi/20091017/1255712789
 rprompt-git-current-branch () {
     local name st color
+
     if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
         return
     fi
+
+    touch .git/index.lock 2>/dev/null
+    if [[ %? != 0 ]]; then
+        return
+    fi
+    rm .git/index.lock
+
     name=`git branch 2> /dev/null | grep '^\*' | cut -b 3-`
     if [[ -z $name ]]; then
         return
     fi
+
     st=`git status`
     if [[ -n `echo "$st" | grep "^nothing to"` ]]; then
         color=${fg[green]}
