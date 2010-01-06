@@ -983,23 +983,21 @@ let fuf_abbrevMap = {
     \ '^s@' : ['~/work/scratch/'],
     \ '^w@' : ['~/work/'],
 \}
-if exists('$CYGHOME')  | let fuf_abbrevMap['^cyg']  = $CYGHOME  | endif
-if exists('$MSYSHOME') | let fuf_abbrevMap['^msys'] = $MSYSHOME | endif
 
 if has('win32')
-    let fuf_abbrevMap['^desk'] = [
-                \   'C:' . substitute( $HOMEPATH, '\', '/', 'g' ) . '/デスクトップ/'
-                \ ]
-    let fuf_abbrevMap['^cyg'] = [
-                \   'C:/cygwin/home/'. $USERNAME .'/'
-                \ ]
-    let fuf_abbrevMap['^msys'] = [
-                \   'C:/msys/home/'. $USERNAME .'/'
-                \ ]
+    let fuf_abbrevMap['^de@'] = [
+    \   'C:' . substitute( $HOMEPATH, '\', '/', 'g' ) . '/デスクトップ/'
+    \]
+    let fuf_abbrevMap['^cy@'] = [
+    \   exists('$CYGHOME') ? $CYGHOME : 'C:/cygwin/home/'. $USERNAME .'/'
+    \]
+    let fuf_abbrevMap['^ms@'] = [
+    \   exists('$MSYSHOME') ? $MSYSHOME : 'C:/msys/home/'. $USERNAME .'/'
+    \]
 else
-    let fuf_abbrevMap['^desk'] = [
-                \     '~/Desktop/'
-                \ ]
+    let fuf_abbrevMap['^de@'] = [
+    \   '~/Desktop/'
+    \]
 endif
 " }}}
 " }}}
