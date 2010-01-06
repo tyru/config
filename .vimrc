@@ -735,8 +735,9 @@ endfunc
 " paste to clipboard
 noremap <Leader>y     "+y
 
-" do not destroy noname register when pressed 'x'
+" do not destroy noname register.
 noremap x   "_x
+noremap <Leader>d   "_d
 " }}}
 " motion/textobj {{{
 noremap <silent> j          gj
