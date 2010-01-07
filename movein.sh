@@ -1,6 +1,7 @@
 #!/bin/sh
 # Original script is from oreilly book "Linuxサーバ Hacks" (Linux Server Hacks)
 
+movein_dir="send_config"
 
 die () {
     echo "$*" >&2
@@ -12,5 +13,5 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-cd `dirname $0` || die "failed to chdir: $!"
-tar zcf - . | ssh $1 "tar zpvxf -"
+cd "`dirname $0`/$movein_dir" || die "failed to chdir: $!"
+tar zhcf - . | ssh $1 "tar zpvxf -"
