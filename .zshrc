@@ -79,7 +79,7 @@ setopt rm_star_silent
 setopt rm_star_wait
 setopt sh_word_split
 setopt share_history
-# setopt promptcr
+setopt no_promptcr
 # setopt print_exit_value
 # }}}
 
@@ -150,12 +150,6 @@ rprompt-git-current-branch () {
     if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
         return
     fi
-
-    touch .git/index.lock 2>/dev/null
-    if [[ %? != 0 ]]; then
-        return
-    fi
-    rm .git/index.lock
 
     name=`git branch 2> /dev/null | grep '^\*' | cut -b 3-`
     if [[ -z $name ]]; then
