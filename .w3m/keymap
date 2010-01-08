@@ -7,3 +7,10 @@ keymap t TAB_GOTO
 keymap C-n PREV_TAB
 keymap C-p NEXT_TAB
 keymap M-h HELP
+keymap C-f NEXT_PAGE
+keymap C-b PREV_PAGE
+
+# Show inline image.
+keymap I DISPLAY_IMAGE
+keymap C-c STOP_IMAGE
+keymap T SET_OPTION display_image=toggle
