@@ -1,3 +1,0 @@
-;; -*- mode: emacs-lisp -*-
-;; History entries used for anything adaptive display.
-(setq anything-c-adaptive-history (quote ((file ("~/.emacs" ("" . 1))) (buffer ("*scratch*" ("sc" . 1)) ("*Messages*" ("*" . 1) ("" . 1))))))
