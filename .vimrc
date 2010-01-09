@@ -1081,12 +1081,14 @@ Arpeggio inoremap gj     <C-o>o
 silent Arpeggio nnoremap <silent> <Leader>1    :call ChangeEncoding()<CR>
 silent Arpeggio nnoremap <silent> <Leader>2    :call ChangeFileEncoding()<CR>
 silent Arpeggio nnoremap <silent> <Leader>3    :call ChangeNL()<CR>
-
-" SKK like mappings (japanese arrows)
-Arpeggio noremap! zk ↑
-Arpeggio noremap! zl →
-Arpeggio noremap! zj ↓
-Arpeggio noremap! zh ←
+" }}}
+" skk.vim {{{
+let skk_jisyo = '~/.skk-jisyo'
+let skk_large_jisyo = '/usr/share/skk/SKK-JISYO'
+let skk_control_j_key = '<C-y>'
+let skk_manual_save_jisyo_keys = ''
+let skk_egg_like_newline = 1
+let skk_auto_save_jisyo = 1
 " }}}
 " }}}
 " }}}
