@@ -216,7 +216,7 @@ _quote-previous-word-in-single() {
     zle vi-forward-blank-word
 }
 zle -N _quote-previous-word-in-single
-bindkey '^[s' _quote-previous-word-in-single
+bindkey '^[g' _quote-previous-word-in-single
 
 # ダブルクォート用
 _quote-previous-word-in-double() {
@@ -224,7 +224,7 @@ _quote-previous-word-in-double() {
     zle vi-forward-blank-word
 }
 zle -N _quote-previous-word-in-double
-bindkey '^[d' _quote-previous-word-in-double
+bindkey '^[G' _quote-previous-word-in-double
 # }}}
 # }}}
 
