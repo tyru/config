@@ -25,6 +25,7 @@ alias di='diff'
 alias diff='diff -u'
 alias du='du -h'
 alias free='free -m -l -t'
+alias j=jobs
 alias jobs='jobs -l'
 alias l.='ls -d .*'
 alias l='ll'

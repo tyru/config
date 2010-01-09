@@ -93,6 +93,7 @@ alias di='diff'
 alias diff='diff -u'
 alias du='du -h'
 alias free='free -m -l -t'
+alias j=jobs
 alias jobs='jobs -l'
 alias l.='ls -d .*'
 alias l='ll'
@@ -146,6 +147,10 @@ bindkey     " "         my-expand-abbrev
 # via http://d.hatena.ne.jp/uasi/20091017/1255712789
 rprompt-git-current-branch () {
     local name st color
+
+    if [[ -n "$WONT_PROMPT_ME" ]]; then
+        return
+    fi
 
     if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
         return
