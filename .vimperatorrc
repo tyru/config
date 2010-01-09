@@ -46,19 +46,20 @@ set! network.dns.disableIPv6=true
 " }}}
 "-----------------------------------------------------------------
 " set {{{
-set activate=
-set complete=sfl
 " set focuscontent
 " set guioptions=nbr
+" set noinsertmode
+set activate=
+set complete=sfl
 set hlsearch
 set ignorecase
 set incsearch
 set nextpattern+=\b次
-" set noinsertmode
 set previouspattern+=\b前
 set scroll=8
 set smartcase
 set titlestring=Firefox
+set urlseparator=
 set visualbell
 set wildoptions=auto
 " }}}
