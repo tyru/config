@@ -260,6 +260,41 @@ EOM
 let g:sbmincsearch_service_name = "delicious"
 let g:sbmincsearch_max = 50
 " }}}
+" proxy.js {{{
+javascript <<EOM
+liberator.globalVariables.proxy_settings = [
+   {
+      conf_name: 'disable',
+      conf_usage: 'direct connection',
+      settings: [
+      {
+         label: 'type',
+         param: 0
+      }
+      ]
+   },
+   {
+      conf_name: 'moxy',
+      conf_usage: 'use Moxy as internal proxy',
+      settings: [
+      {
+         label: 'type',
+         param: 1
+      },
+      {
+         label: 'http',
+         param: 'localhost'
+      },
+      {
+         label: 'http_port',
+         param: 9999
+      }
+      ]
+   },
+];
+EOM
+
+" }}}
 " }}}
 "-----------------------------------------------------------------
 " misc. {{{
