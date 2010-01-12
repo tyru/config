@@ -128,7 +128,8 @@ myabbrev=(
     "l@" "| less"
     "g@" "| grep"
     "p@" "| perl"
-    "s@" "| sort -u"
+    "s@" "| sort"
+    "u@" "| sort -u"
     "n@" ">/dev/null 2>/dev/null"
     "e@" "2>&1"
     "h@" "--help 2>&1"
@@ -144,41 +145,16 @@ bindkey     " "         my-expand-abbrev
 # }}}
 
 # gitのブランチ名を右プロンプトに表示 {{{
-# via http://d.hatena.ne.jp/uasi/20091017/1255712789
-rprompt-git-current-branch () {
-    local name st color
-
-    if [[ -n "$WONT_PROMPT_ME" ]]; then
-        return
-    fi
-
-    if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
-        return
-    fi
-
-    name=`git branch 2> /dev/null | grep '^\*' | cut -b 3-`
-    if [[ -z $name ]]; then
-        return
-    fi
-
-    st=`git status`
-    if [[ -n `echo "$st" | grep "^nothing to"` ]]; then
-        color=${fg[green]}
-    elif [[ -n `echo "$st" | grep "^nothing added"` ]]; then
-        color=${fg[yellow]}
-    elif [[ -n `echo "$st" | grep "^# Untracked"` ]]; then
-        color=${fg_bold[red]}
-    else
-        color=${fg[red]}
-    fi
-
-    # %{...%} は囲まれた文字列がエスケープシーケンスであることを明示する
-    # これをしないと右プロンプトの位置がずれる
-    echo "[%{$color%}$name%{$reset_color%}]"
+# http://d.hatena.ne.jp/mollifier/20090814/p1
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' formats '(%s)-[%b]'
+zstyle ':vcs_info:*' actionformats '(%s)-[%b|%a]'
+precmd () {
+    psvar=()
+    LANG=en_US.UTF-8 vcs_info
+    [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
 }
-# プロンプトが表示されるたびにプロンプト文字列を評価、置換する
-setopt prompt_subst
-RPROMPT='`rprompt-git-current-branch`'
+RPROMPT="%1(v|%F{green}%1v%f|)"
 # }}}
 
 # via http://d.hatena.ne.jp/voidy21/20090902/1251918174 {{{
