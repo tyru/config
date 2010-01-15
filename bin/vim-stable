@@ -1,0 +1,3 @@
+#!/bin/sh
+
+VIMRC_DONT_ADD_RUNTIMEPATH=1 vim "$*"
