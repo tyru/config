@@ -12,7 +12,7 @@ let maplocalleader = '\'
 
 
 " &runtimepath {{{
-let s:runtimepath = []
+let s:runtimepath = split(&runtimepath, ',')
 func! s:add_runtimepath()
     for d in map(s:runtimepath, 'expand(v:val)')
         if isdirectory(d)
@@ -26,8 +26,9 @@ if has("win32")
 endif
 call add(s:runtimepath, '$HOME/.vim/mine')
 " }}}
-"-----------------------------------------------------------------
-" Util Functions {{{
+
+
+" Util Functions/Commands {{{
 " s:warn {{{
 func! s:warn(msg)
     echohl WarningMsg
@@ -42,9 +43,276 @@ func! s:system(command, ...)
 endfunc
 " }}}
 " }}}
-"-----------------------------------------------------------------
-" basic settings (bundled with kaoriya vim's .vimrc & etc.) {{{
-" set options {{{
+
+
+" arpeggio {{{
+" arpeggio's function should be Vim built-in :p
+let g:arpeggio_timeoutlen = 70
+call arpeggio#load()
+" }}}
+
+
+" AutoCommand {{{
+func! s:vimenter_handler()
+    " Color
+    set bg=dark
+    colorscheme desert
+endfunc
+
+command! -buffer -nargs=* AutoCommand call s:my_autocmd(<q-args>)
+func! s:my_autocmd(arg)
+    " Register 'MyVimrc' group autocmd.
+    augroup MyVimrc
+        execute 'autocmd' a:arg
+    augroup END
+endfunc
+
+augroup MyVimrc
+    autocmd!
+
+    " colorscheme (on windows, setting colorscheme in .vimrc does not work)
+    autocmd VimEnter * call s:vimenter_handler()
+
+    " open on read-only if swap exists
+    autocmd SwapExists * let v:swapchoice = 'o'
+
+    " autocmd CursorHold,CursorHoldI *   silent! update
+    autocmd QuickfixCmdPost make,grep,grepadd,vimgrep,helpgrep   copen
+
+    " sometimes &modeline becomes false
+    autocmd BufReadPre *    setlocal modeline
+
+    " filetype {{{
+    autocmd BufNewFile,BufReadPre *.as
+                \ setlocal ft=actionscript syntax=actionscript
+    autocmd BufNewFile,BufReadPre *.c
+                \ setlocal ft=c
+    autocmd BufNewFile,BufReadPre *.cpp
+                \ setlocal ft=cpp
+    autocmd BufNewFile,BufReadPre *.h
+                \ setlocal ft=c.cpp
+    autocmd BufNewFile,BufReadPre *.cs
+                \ setlocal ft=cs
+    autocmd BufNewFile,BufReadPre *.java
+                \ setlocal ft=java
+    autocmd BufNewFile,BufReadPre *.js
+                \ setlocal ft=javascript
+    autocmd BufNewFile,BufReadPre *.pl,*.pm
+                \ setlocal ft=perl
+    autocmd BufNewFile,BufReadPre *.ps1
+                \ setlocal ft=powershell
+    autocmd BufNewFile,BufReadPre *.py,*.pyc
+                \ setlocal ft=python
+    autocmd BufNewFile,BufReadPre *.rb
+                \ setlocal ft=ruby
+    autocmd BufNewFile,BufReadPre *.scm
+                \ setlocal ft=scheme
+    autocmd BufNewFile,BufReadPre _vimperatorrc,.vimperatorrc
+                \ setlocal ft=vimperator syntax=vimperator
+    autocmd BufNewFile,BufReadPre *.scala
+                \ setlocal ft=scala
+    autocmd BufNewFile,BufReadPre *.lua
+                \ setlocal ft=lua
+    autocmd BufNewFile,BufReadPre *.avs
+                \ setlocal syntax=avs
+    autocmd BufNewFile,BufReadPre *.tmpl
+                \ setlocal ft=html
+    autocmd BufNewFile,BufReadPre *.mkd
+                \ setlocal ft=mkd
+    autocmd BufNewFile,BufReadPre *.md
+                \ setlocal ft=mkd
+
+    " delete for ft=mkd
+    autocmd! filetypedetect BufNewFile,BufRead *.md
+    " }}}
+augroup END
+" }}}
+
+
+" Encoding {{{
+set fencs-=iso-2022-jp-3
+set fencs-=utf-8
+set fencs+=iso-2022-jp,iso-2022-jp-3
+let &fencs = 'utf-8,' . &fencs
+
+" set enc=... {{{
+func! ChangeEncoding()
+    if expand( '%' ) == ''
+        call s:warn("current file is empty.")
+        return
+    endif
+    let result =
+                \ prompt#prompt("re-open with...", {
+                \   'menu': [
+                \     'cp932',
+                \     'shift-jis',
+                \     'iso-2022-jp',
+                \     'euc-jp',
+                \     'utf-8',
+                \     'ucs-bom'
+                \   ],
+                \   'escape': 1,
+                \   'one_char': 1,
+                \   'execute': 'edit ++enc=%s'})
+    if result !=# "\e"
+        echomsg printf("re-open with '%s'.", result)
+    endif
+endfunc
+
+silent Arpeggio nnoremap <silent> <Leader>1    :call ChangeEncoding()<CR>
+" }}}
+" set fenc=... {{{
+func! ChangeFileEncoding()
+    let enc = prompt#prompt("changing file encoding to...", {
+                \ 'menu': [
+                \ 'cp932',
+                \ 'shift-jis',
+                \ 'iso-2022-jp',
+                \ 'euc-jp',
+                \ 'utf-8',
+                \ 'ucs-bom'
+                \ ],
+                \ 'escape': 1,
+                \ 'one_char': 1,
+                \ 'execute': 'set fenc=%s'})
+    if enc ==# "\e"
+        return
+    endif
+    if enc == 'ucs-bom'
+        set bomb
+    else
+        set nobomb
+    endif
+    echomsg printf("changing file encoding to '%s'.", enc)
+endfunc
+
+silent Arpeggio nnoremap <silent> <Leader>2    :call ChangeFileEncoding()<CR>
+" }}}
+" set ff=... {{{
+func! ChangeNL()
+    let result = prompt#prompt("changing newline format to...", {
+                \ 'menu': ['dos', 'unix', 'mac'],
+                \ 'one_char': 1,
+                \ 'escape': 1,
+                \ 'execute': 'set ff=%s'})
+    if result !=# "\e"
+        echomsg printf("changing newline format to '%s'.", result)
+    endif
+endfunc
+
+silent Arpeggio nnoremap <silent> <Leader>3    :call ChangeNL()<CR>
+" }}}
+" }}}
+
+" FileType {{{
+" ToggleFileType {{{
+command! ToggleFileType call s:ToggleFileType()
+
+let s:load_filetype = 1
+func! s:ToggleFileType()
+    if s:load_filetype
+        let s:load_filetype = 0
+        echomsg "DON'T load my filetype config"
+    else
+        let s:load_filetype = 1
+        echomsg "load my filetype config"
+    endif
+endfunc
+" }}}
+" s:SetDict {{{
+func! s:SetDict(ft)
+    if !exists('s:filetype_vs_dictionary')
+        let s:filetype_vs_dictionary = {
+        \   'c': ['c', 'cpp'],
+        \   'cpp': ['c', 'cpp'],
+        \   'html': ['html', 'css', 'javascript'],
+        \   'scala': ['scala', 'java'],
+        \ }
+    endif
+    let ftypes = has_key(s:filetype_vs_dictionary, a:ft) ?
+                \   s:filetype_vs_dictionary[a:ft]
+                \   : [a:ft]
+    for ft in ftypes
+        let dict_path = expand(printf('$HOME/.vim/dict/%s.dict', ft))
+        if filereadable(dict_path)
+            execute 'setlocal dictionary+=' . dict_path
+        endif
+    endfor
+endfunc
+" }}}
+" s:SetTabWidth {{{
+func! s:SetTabWidth(ft)
+    if !exists('s:filetype_vs_tabwidth')
+        let s:filetype_vs_tabwidth = {
+        \   'css': 2,
+        \   'xml': 2,
+        \   'html': 2,
+        \   'lisp': 2,
+        \   'scheme': 2,
+        \   'yaml': 2,
+        \ }
+    endif
+    execute 'TabChange'
+            \ has_key(s:filetype_vs_tabwidth, a:ft) ?
+            \   s:filetype_vs_tabwidth[a:ft]
+            \   : 4
+endfunc
+" }}}
+" s:SetCompiler {{{
+func! s:SetCompiler(ft)
+    if !exists('s:filetype_vs_compiler')
+        let s:filetype_vs_compiler = {
+        \   'c': 'gcc',
+        \   'cpp': 'gcc',
+        \   'html': 'tidy',
+        \   'java': 'javac',
+        \}
+    endif
+    try
+        execute 'compiler'
+                \ has_key(s:filetype_vs_compiler, a:ft) ?
+                \   s:filetype_vs_compiler[a:ft]
+                \   : a:ft
+    catch
+        " to supress warnings
+    endtry
+endfunc
+" }}}
+" TODO Move these settings to ~/.vim/ftplugin/*
+" s:LoadWhenFileType() {{{
+func! s:LoadWhenFileType()
+    if ! s:load_filetype
+        " call s:warn("skip loading filetype config...")
+        return
+    endif
+
+    " Set default &omnifunc
+    if exists("+omnifunc") && &omnifunc == ""
+        setlocal omnifunc=syntaxcomplete#Complete
+    endif
+    " Set dictionary for reserved keywords, etc.
+    call s:SetDict(&filetype)
+    " Set tab width
+    call s:SetTabWidth(&filetype)
+    " Set compiler
+    call s:SetCompiler(&filetype)
+
+    " Misc.
+    if &filetype == 'xml' || &filetype == 'html'
+        inoremap <buffer>   </    </<C-x><C-o>
+    elseif &filetype == 'vimperator'
+        setl comments=f:\"
+    endif
+endfunc
+
+" do what ~/.vim/ftplugin/* does in .vimrc
+" because of my laziness :p
+AutoCommand FileType *   call s:LoadWhenFileType()
+" }}}
+" }}}
+
+
+" Options {{{
 set autoindent
 set autoread
 set backspace=indent,eol,start
@@ -166,142 +434,170 @@ set t_vb=
 set t_ti= t_te=
 
 " }}}
-" delete old files in ~/.vim/backup {{{
-func! s:DeleteBackUp()
-    if has('win32')
-        if exists('$TMP')
-            let stamp_file = $TMP . '/.vimbackup_deleted'
-        elseif exists('$TEMP')
-            let stamp_file = $TEMP . '/.vimbackup_deleted'
-        else
-            return
-        endif
-    else
-        let stamp_file = '/tmp/.vimbackup_deleted'
-    endif
 
-    if !filereadable(stamp_file)
-        call writefile([localtime()], stamp_file)
-        return
-    endif
+" Mappings and/or Abbreviations {{{
+" map {{{
+" operator {{{
+" paste to clipboard
+noremap <Leader>y     "+y
+noremap <Leader>Y     "*y
 
-    let [line] = readfile(stamp_file)
-    let one_day_sec = 60 * 60 * 24    " 1日に何回も削除しようとしない
+" do not destroy noname register.
+noremap x   "_x
+noremap <Leader>d   "_d
+" }}}
+" motion/textobj {{{
+noremap <silent> j          gj
+noremap <silent> k          gk
+noremap <silent> gj         j
+noremap <silent> gk         k
 
-    if localtime() - str2nr(line) > one_day_sec
-        let backup_files = split(expand(&backupdir . '/*'), "\n")
-        let thirty_days_sec = one_day_sec * 30
-        call filter(backup_files, 'localtime() - getftime(v:val) > thirty_days_sec')
-        for i in backup_files
-            if delete(i) != 0
-                call s:warn("can't delete " . i)
-            endif
-        endfor
-        call writefile([localtime()], stamp_file)
-    endif
+noremap <silent> H  w
+noremap <silent> L  b
+
+noremap <silent> ]k        :call search('^\S', 'Ws')<CR>
+noremap <silent> [k        :call search('^\S', 'Wsb')<CR>
+" }}}
+" misc. {{{
+noremap <silent> <Space>j           <C-f>
+noremap <silent> <Space>k           <C-b>
+noremap <silent> <Space><Space>     <Space>
+
+Arpeggio noremap A(    %i)<Esc>%i(
+Arpeggio noremap A[    %i]<Esc>%i[
+" }}}
+" }}}
+" nmap {{{
+nnoremap <silent> <LocalLeader><LocalLeader>         <LocalLeader>
+nnoremap <silent> <Leader><Leader>                   <Leader>
+
+nnoremap <silent> n     nzz
+nnoremap <silent> N     Nzz
+
+" add '\C' to the pattern
+" FIXME behave like option 'c' included...
+for [s:pat, s:flags] in [['*', 's'], ['#', 'bs'], ['g*', 's'], ['g#', 'bs']]
+    execute printf("nnoremap <silent> %s :call <SID>dont_ignore_case(%s, %s)<CR>", s:pat, string(s:pat), string(s:flags))
+endfor
+
+func! s:dont_ignore_case(cmd, flags)
+    let pos = getpos('.')
+    execute 'normal! ' . a:cmd
+    let @/ .= '\C'
+    call setpos('.', pos)
+
+    call search(@/, a:flags)
+    call feedkeys(":set hls\<CR>", 'n')
 endfunc
 
-call s:DeleteBackUp()
-delfunc s:DeleteBackUp
-" }}}
-" japanese encodings {{{
-if &encoding !=# 'utf-8'
-    set encoding=japan
-    set fileencoding=japan
-endif
-if has('iconv')
-    let s:enc_euc = 'euc-jp'
-    let s:enc_jis = 'iso-2022-jp'
-    " iconvがeucJP-msに対応しているかをチェック
-    if iconv("\x87\x64\x87\x6a", 'cp932', 'eucjp-ms') ==# "\xad\xc5\xad\xcb"
-        let s:enc_euc = 'eucjp-ms'
-        let s:enc_jis = 'iso-2022-jp-3'
-        " iconvがJISX0213に対応しているかをチェック
-    elseif iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
-        let s:enc_euc = 'euc-jisx0213'
-        let s:enc_jis = 'iso-2022-jp-3'
-    endif
-    " fileencodingsを構築
-    if &encoding ==# 'utf-8'
-        let s:fileencodings_default = &fileencodings
-        let &fileencodings = s:enc_jis .','. s:enc_euc .',cp932'
-        let &fileencodings = &fileencodings .','. s:fileencodings_default
-        unlet s:fileencodings_default
-    else
-        let &fileencodings = &fileencodings .','. s:enc_jis
-        set fileencodings+=utf-8,ucs-2le,ucs-2
-        if &encoding =~# '^\(euc-jp\|euc-jisx0213\|eucjp-ms\)$'
-            set fileencodings+=cp932
-            set fileencodings-=euc-jp
-            set fileencodings-=euc-jisx0213
-            set fileencodings-=eucjp-ms
-            let &encoding = s:enc_euc
-            let &fileencoding = s:enc_euc
-        else
-            let &fileencodings = &fileencodings .','. s:enc_euc
-        endif
-    endif
-endif
-function! s:AU_ReCheck_FENC()
-    if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
-        let &fileencoding=&encoding
-    endif
-endfunction
+" fix up all indents
+nnoremap <silent> <Space>=    mqgg=G`qzz<CR>
 
-" supports fileformats in this order
-set fileformats=unix,dos,mac
-" assume the specific characters like "□" or "○" as 2 bytes to
-" display (for vim in terminal)
-if exists('&ambiwidth')
-    set ambiwidth=double
+" window size of gVim itself
+nnoremap <C-Right>    :set columns+=5<CR>
+nnoremap <C-Left>     :set columns-=5<CR>
+nnoremap <C-Up>       :set lines+=1<CR>
+nnoremap <C-Down>     :set lines-=1<CR>
+
+" window size in gVim
+nnoremap <S-Right>  <C-w>>
+nnoremap <S-Left>   <C-w><
+nnoremap <S-Up>     <C-w>+
+nnoremap <S-Down>   <C-w>-
+
+" tab
+nnoremap <silent> <C-n>         gt
+nnoremap <silent> <C-p>         gT
+nnoremap <silent> <C-Tab>       gt
+nnoremap <silent> <C-S-Tab>     gT
+nnoremap <silent> g$            :tablast<CR>
+nnoremap <silent> g0            :tabfirst<CR>
+
+" make
+nnoremap <silent>   gm      :make<CR>
+nnoremap <silent>   gc      :cclose<CR>
+
+" open only current line's fold.
+func! FoldAllExpand()
+    %foldclose
+    silent! %foldclose!
+    normal! zvzz
+endfunc
+silent Arpeggio nnoremap <silent> <Leader>f   :call FoldAllExpand()<CR>
+
+" hlsearch
+nnoremap gh    :set hlsearch!<CR>
+
+" sync @* and @+
+" @* -> @+
+" nnoremap ,*+    :let @+ = @*<CR>:echo printf('[%s]', @+)<CR>
+" @+ -> @*
+" nnoremap ,+*    :let @* = @+<CR>:echo printf('[%s]', @*)<CR>
+
+nnoremap ZZ <Nop>
+
+nnoremap <Space>w :<C-u>w<CR>
+nnoremap <Space>q :<C-u>q<CR>
+" }}}
+" map! {{{
+noremap! <C-f>   <Right>
+noremap! <C-b>   <Left>
+noremap! <C-a>   <Home>
+noremap! <C-e>   <End>
+noremap! <C-d>   <Del>
+noremap! <C-k>   <C-o>D
+
+Arpeggio noremap! $( ()<Left>
+Arpeggio noremap! 4[ []<Left>
+Arpeggio noremap! $< <><Left>
+Arpeggio noremap! ${ {}<Left>
+
+Arpeggio noremap! $) \(\)<Left><Left>
+Arpeggio noremap! 4] \[\]<Left><Left>
+Arpeggio noremap! $> \<\><Left><Left>
+Arpeggio noremap! $} \{\}<Left><Left>
+
+Arpeggio noremap! #( 「」<Left>
+Arpeggio noremap! 3[ 『』<Left>
+Arpeggio noremap! #< 【】<Left>
+Arpeggio noremap! #{ 〔〕<Left>
+" }}}
+" imap {{{
+" delete characters in ...
+inoremap <C-z>                <C-o>di
+
+" omni
+" inoremap <C-n>     <C-x><C-n>
+" inoremap <C-p>     <C-x><C-p>
+
+" paste register
+inoremap <C-r><C-u>  <C-r><C-p>+
+inoremap <C-r><C-i>  <C-r><C-p>*
+inoremap <C-r><C-o>  <C-r><C-p>"
+
+Arpeggio inoremap gk     <C-o>O
+Arpeggio inoremap gj     <C-o>o
+" }}}
+" cmap {{{
+if &wildmenu
+    cnoremap <C-f> <Space><BS><Right>
+    cnoremap <C-b> <Space><BS><Left>
 endif
+
+" paste register
+cnoremap <C-r><C-u>  <C-r>+
+cnoremap <C-r><C-i>  <C-r>*
+cnoremap <C-r><C-o>  <C-r>"
 " }}}
-" support of colors in terminal (unix only) {{{
-if has('unix') && !has('gui_running')
-    let uname = system('uname')
-    if uname =~? "linux"
-        set term=builtin_linux
-    elseif uname =~? "freebsd"
-        set term=builtin_cons25
-    elseif uname =~? "Darwin"
-        set term=beos-ansi
-    else
-        set term=builtin_xterm
-    endif
-endif
-" }}}
-" when $DISPLAY is set and vim runs under terminal, vim's start-up will be very slow {{{
-if !has('gui_running') && has('xterm_clipboard')
-    set clipboard=exclude:cons\\\|linux\\\|cygwin\\\|rxvt\\\|screen
-endif
-let did_install_default_menus = 1
-" }}}
-" " WinではPATHに$VIMが含まれていないときにexeを見つけ出せないので修正 {{{
-" if has('win32') && $PATH !~? '\(^\|;\)' . escape($VIM, '\\') . '\(;\|$\)'
-"     let $PATH = $VIM . ';' . $PATH
-" endif
-" if has('mac')
-"     " Macではデフォルトの'iskeyword'がcp932に対応しきれていないので修正
-"     set iskeyword=@,48-57,_,128-167,224-235
-" endif
-" }}}
-" about japanese input method {{{
-if has('multi_byte_ime') || has('xim')
-  " IME ON時のカーソルの色を設定(設定例:紫)
-  highlight CursorIM guibg=Purple guifg=NONE
-  " 挿入モード・検索モードでのデフォルトのIME状態設定
-  set iminsert=0 imsearch=0
-  if has('xim') && has('GUI_GTK')
-    " XIMの入力開始キーを設定:
-    " 下記の s-space はShift+Spaceの意味でkinput2+canna用設定
-    "set imactivatekey=s-space
-  endif
-  " 挿入モードでのIME状態を記憶させない場合、次行のコメントを解除
-  "inoremap <silent> <ESC> <ESC>:set iminsert=0<CR>
-endif
+" abbr {{{
+inoreab <expr> date@      strftime("%Y-%m-%d")
+inoreab <expr> time@      strftime("%H:%M")
+inoreab <expr> dt@        strftime("%Y-%m-%d %H:%M")
+
+cnoreab   h@     tab help
 " }}}
 " }}}
-"-----------------------------------------------------------------
+
 " Commands {{{
 " commands related to specific environments {{{
 if has('gui_running')
@@ -503,396 +799,13 @@ command! -nargs=0 CdCurrent lcd %:p:h
 nnoremap <silent> <Leader>cd   :CdCurrent<CR>
 " }}}
 " }}}
-"-----------------------------------------------------------------
-" Encoding {{{
-set fencs-=iso-2022-jp-3
-set fencs+=iso-2022-jp,iso-2022-jp-3
-let &fencs = 'utf-8,' . &fencs
-" set enc=... {{{
-func! ChangeEncoding()
-    if expand( '%' ) == ''
-        call s:warn("current file is empty.")
-        return
-    endif
-    let result =
-                \ prompt#prompt("re-open with...", {
-                \   'menu': [
-                \     'cp932',
-                \     'shift-jis',
-                \     'iso-2022-jp',
-                \     'euc-jp',
-                \     'utf-8',
-                \     'ucs-bom'
-                \   ],
-                \   'escape': 1,
-                \   'one_char': 1,
-                \   'execute': 'edit ++enc=%s'})
-    if result !=# "\e"
-        echomsg printf("re-open with '%s'.", result)
-    endif
-endfunc
-" }}}
-" set fenc=... {{{
-func! ChangeFileEncoding()
-    let enc = prompt#prompt("changing file encoding to...", {
-                \ 'menu': [
-                \ 'cp932',
-                \ 'shift-jis',
-                \ 'iso-2022-jp',
-                \ 'euc-jp',
-                \ 'utf-8',
-                \ 'ucs-bom'
-                \ ],
-                \ 'escape': 1,
-                \ 'one_char': 1,
-                \ 'execute': 'set fenc=%s'})
-    if enc ==# "\e"
-        return
-    endif
-    if enc == 'ucs-bom'
-        set bomb
-    else
-        set nobomb
-    endif
-    echomsg printf("changing file encoding to '%s'.", enc)
-endfunc
-" }}}
-" set ff=... {{{
-func! ChangeNL()
-    let result = prompt#prompt("changing newline format to...", {
-                \ 'menu': ['dos', 'unix', 'mac'],
-                \ 'one_char': 1,
-                \ 'escape': 1,
-                \ 'execute': 'set ff=%s'})
-    if result !=# "\e"
-        echomsg printf("changing newline format to '%s'.", result)
-    endif
-endfunc
-" }}}
-" }}}
-"-----------------------------------------------------------------
-" AutoCommand {{{
-func! s:vimenter_handler()
-    " Color
-    set bg=dark
-    colorscheme desert
-endfunc
 
-augroup MyVimrc
-    autocmd!
 
-    " check encoding
-    autocmd BufReadPost * call s:AU_ReCheck_FENC()
-
-    " colorscheme (on windows, setting colorscheme in .vimrc does not work)
-    autocmd VimEnter * call s:vimenter_handler()
-
-    " open on read-only if swap exists
-    autocmd SwapExists * let v:swapchoice = 'o'
-
-    " autocmd CursorHold,CursorHoldI *   silent! update
-    autocmd QuickfixCmdPost make,grep,grepadd,vimgrep,helpgrep   copen
-
-    " do what ~/.vim/ftplugin/* does in .vimrc
-    " because of my laziness :p
-    autocmd FileType *   call s:LoadWhenFileType()
-
-    " sometimes &modeline becomes false
-    autocmd BufReadPre *    setlocal modeline
-
-    " filetype {{{
-    autocmd BufNewFile,BufReadPre *.as
-                \ setlocal ft=actionscript syntax=actionscript
-    autocmd BufNewFile,BufReadPre *.c
-                \ setlocal ft=c
-    autocmd BufNewFile,BufReadPre *.cpp
-                \ setlocal ft=cpp
-    autocmd BufNewFile,BufReadPre *.h
-                \ setlocal ft=c.cpp
-    autocmd BufNewFile,BufReadPre *.cs
-                \ setlocal ft=cs
-    autocmd BufNewFile,BufReadPre *.java
-                \ setlocal ft=java
-    autocmd BufNewFile,BufReadPre *.js
-                \ setlocal ft=javascript
-    autocmd BufNewFile,BufReadPre *.pl,*.pm
-                \ setlocal ft=perl
-    autocmd BufNewFile,BufReadPre *.ps1
-                \ setlocal ft=powershell
-    autocmd BufNewFile,BufReadPre *.py,*.pyc
-                \ setlocal ft=python
-    autocmd BufNewFile,BufReadPre *.rb
-                \ setlocal ft=ruby
-    autocmd BufNewFile,BufReadPre *.scm
-                \ setlocal ft=scheme
-    autocmd BufNewFile,BufReadPre _vimperatorrc,.vimperatorrc
-                \ setlocal ft=vimperator syntax=vimperator
-    autocmd BufNewFile,BufReadPre *.scala
-                \ setlocal ft=scala
-    autocmd BufNewFile,BufReadPre *.lua
-                \ setlocal ft=lua
-    autocmd BufNewFile,BufReadPre *.avs
-                \ setlocal syntax=avs
-    autocmd BufNewFile,BufReadPre *.tmpl
-                \ setlocal ft=html
-    autocmd BufNewFile,BufReadPre *.mkd
-                \ setlocal ft=mkd
-    autocmd BufNewFile,BufReadPre *.md
-                \ setlocal ft=mkd
-
-    " delete for ft=mkd
-    autocmd! filetypedetect BufNewFile,BufRead *.md
-    " }}}
-augroup END
-" }}}
-"-----------------------------------------------------------------
-" FileType {{{
-" ToggleFileType {{{
-command! ToggleFileType call s:ToggleFileType()
-
-let s:load_filetype = 1
-func! s:ToggleFileType()
-    if s:load_filetype
-        let s:load_filetype = 0
-        echomsg "DON'T load my filetype config"
-    else
-        let s:load_filetype = 1
-        echomsg "load my filetype config"
-    endif
-endfunc
-" }}}
-" s:SetDict {{{
-func! s:SetDict(ft)
-    if !exists('s:filetype_vs_dictionary')
-        let s:filetype_vs_dictionary = {
-        \   'c': ['c', 'cpp'],
-        \   'cpp': ['c', 'cpp'],
-        \   'html': ['html', 'css', 'javascript'],
-        \   'scala': ['scala', 'java'],
-        \ }
-    endif
-    let ftypes = has_key(s:filetype_vs_dictionary, a:ft) ?
-                \   s:filetype_vs_dictionary[a:ft]
-                \   : [a:ft]
-    for ft in ftypes
-        let dict_path = expand(printf('$HOME/.vim/dict/%s.dict', ft))
-        if filereadable(dict_path)
-            execute 'setlocal dictionary+=' . dict_path
-        endif
-    endfor
-endfunc
-" }}}
-" s:SetTabWidth {{{
-func! s:SetTabWidth(ft)
-    if !exists('s:filetype_vs_tabwidth')
-        let s:filetype_vs_tabwidth = {
-        \   'css': 2,
-        \   'xml': 2,
-        \   'html': 2,
-        \   'lisp': 2,
-        \   'scheme': 2,
-        \   'yaml': 2,
-        \ }
-    endif
-    execute 'TabChange'
-            \ has_key(s:filetype_vs_tabwidth, a:ft) ?
-            \   s:filetype_vs_tabwidth[a:ft]
-            \   : 4
-endfunc
-" }}}
-" s:SetCompiler {{{
-func! s:SetCompiler(ft)
-    if !exists('s:filetype_vs_compiler')
-        let s:filetype_vs_compiler = {
-        \   'c': 'gcc',
-        \   'cpp': 'gcc',
-        \   'html': 'tidy',
-        \   'java': 'javac',
-        \}
-    endif
-    try
-        execute 'compiler'
-                \ has_key(s:filetype_vs_compiler, a:ft) ?
-                \   s:filetype_vs_compiler[a:ft]
-                \   : a:ft
-    catch
-        " to supress warnings
-    endtry
-endfunc
-" }}}
-" TODO Move these settings to ~/.vim/ftplugin/*
-" s:LoadWhenFileType() {{{
-func! s:LoadWhenFileType()
-    if ! s:load_filetype
-        " call s:warn("skip loading filetype config...")
-        return
-    endif
-
-    " Set default &omnifunc
-    if exists("+omnifunc") && &omnifunc == ""
-        setlocal omnifunc=syntaxcomplete#Complete
-    endif
-    " Set dictionary for reserved keywords, etc.
-    call s:SetDict(&filetype)
-    " Set tab width
-    call s:SetTabWidth(&filetype)
-    " Set compiler
-    call s:SetCompiler(&filetype)
-
-    " Misc.
-    if &filetype == 'xml' || &filetype == 'html'
-        inoremap <buffer>   </    </<C-x><C-o>
-    elseif &filetype == 'vimperator'
-        setl comments=f:\"
-    endif
-endfunc
-" }}}
-" }}}
-"-----------------------------------------------------------------
-" Mappings and/or Abbreviations {{{
-" map {{{
-" operator {{{
-" paste to clipboard
-noremap <Leader>y     "+y
-noremap <Leader>Y     "*y
-
-" do not destroy noname register.
-noremap x   "_x
-noremap <Leader>d   "_d
-" }}}
-" motion/textobj {{{
-noremap <silent> j          gj
-noremap <silent> k          gk
-noremap <silent> gj         j
-noremap <silent> gk         k
-
-noremap <silent> H  w
-noremap <silent> L  b
-
-noremap <silent> ]k        :call search('^\S', 'Ws')<CR>
-noremap <silent> [k        :call search('^\S', 'Wsb')<CR>
-" }}}
-" misc. {{{
-noremap <silent> <Space>j           <C-f>
-noremap <silent> <Space>k           <C-b>
-noremap <silent> <Space><Space>     <Space>
-" }}}
-" }}}
-" nmap {{{
-nnoremap <silent> <LocalLeader><LocalLeader>         <LocalLeader>
-nnoremap <silent> <Leader><Leader>                   <Leader>
-
-nnoremap <silent> n     nzz
-nnoremap <silent> N     Nzz
-
-" add '\C' to the pattern
-" FIXME behave like option 'c' included...
-for [s:pat, s:flags] in [['*', 's'], ['#', 'bs'], ['g*', 's'], ['g#', 'bs']]
-    execute printf("nnoremap <silent> %s :call <SID>dont_ignore_case(%s, %s)<CR>", s:pat, string(s:pat), string(s:flags))
-endfor
-
-func! s:dont_ignore_case(cmd, flags)
-    let pos = getpos('.')
-    execute 'normal! ' . a:cmd
-    let @/ .= '\C'
-    call setpos('.', pos)
-
-    call search(@/, a:flags)
-    call feedkeys(":set hls\<CR>", 'n')
-endfunc
-
-" fix up all indents
-nnoremap <silent> <Space>=    mqgg=G`qzz<CR>
-
-" window size of gVim itself
-nnoremap <C-Right>    :set columns+=5<CR>
-nnoremap <C-Left>     :set columns-=5<CR>
-nnoremap <C-Up>       :set lines+=1<CR>
-nnoremap <C-Down>     :set lines-=1<CR>
-
-" window size in gVim
-nnoremap <S-Right>  <C-w>>
-nnoremap <S-Left>   <C-w><
-nnoremap <S-Up>     <C-w>+
-nnoremap <S-Down>   <C-w>-
-
-" tab
-nnoremap <silent> <C-n>         gt
-nnoremap <silent> <C-p>         gT
-nnoremap <silent> <C-Tab>       gt
-nnoremap <silent> <C-S-Tab>     gT
-nnoremap <silent> g$            :tablast<CR>
-nnoremap <silent> g0            :tabfirst<CR>
-
-" make
-nnoremap <silent>   gm      :make<CR>
-nnoremap <silent>   gc      :cclose<CR>
-
-" open only current line's fold.
-func! s:FoldAllExpand()
-    %foldclose
-    silent! %foldclose!
-    normal! zvzz
-endfunc
-nnoremap <silent> <Leader>nn   :call <SID>FoldAllExpand()<CR>
-
-" hlsearch
-nnoremap gh    :set hlsearch!<CR>
-
-" sync @* and @+
-" @* -> @+
-" nnoremap ,*+    :let @+ = @*<CR>:echo printf('[%s]', @+)<CR>
-" @+ -> @*
-" nnoremap ,+*    :let @* = @+<CR>:echo printf('[%s]', @*)<CR>
-
-nnoremap ZZ <Nop>
-
-nnoremap <Space>w :<C-u>w<CR>
-nnoremap <Space>q :<C-u>q<CR>
-" }}}
-" map! {{{
-noremap! <C-f>   <Right>
-noremap! <C-b>   <Left>
-noremap! <C-a>   <Home>
-noremap! <C-e>   <End>
-noremap! <C-d>   <Del>
-noremap! <C-k>   <C-o>D
-" }}}
-" imap {{{
-" delete characters in ...
-inoremap <C-z>                <C-o>di
-
-" omni
-" inoremap <C-n>     <C-x><C-n>
-" inoremap <C-p>     <C-x><C-p>
-
-" paste register
-inoremap <C-r><C-u>  <C-r><C-p>+
-inoremap <C-r><C-i>  <C-r><C-p>*
-inoremap <C-r><C-o>  <C-r><C-p>"
-" }}}
-" cmap {{{
-if &wildmenu
-    cnoremap <C-f> <Space><BS><Right>
-    cnoremap <C-b> <Space><BS><Left>
-endif
-
-" paste register
-cnoremap <C-r><C-u>  <C-r>+
-cnoremap <C-r><C-i>  <C-r>*
-cnoremap <C-r><C-o>  <C-r>"
-" }}}
-" abbr {{{
-inoreab <expr> date@      strftime("%Y-%m-%d")
-inoreab <expr> time@      strftime("%H:%M")
-inoreab <expr> dt@        strftime("%Y-%m-%d %H:%M")
-
-cnoreab   h@     tab help
-" }}}
-" }}}
-"-----------------------------------------------------------------
 " For Plugins {{{
 " my plugins {{{
+" shell-mode {{{
+let g:loaded_shell_mode = 1
+" }}}
 " CommentAnyWay {{{
 let ca_prefix  = '<Leader>c'
 let ca_verbose = 1    " debug
@@ -1002,31 +915,36 @@ let fuf_keyOpenVsplit  = '<C-v>'
 let fuf_enumeratingLimit = 20
 
 " abbrev {{{
-let fuf_abbrevMap = {
-    \ '^p@': ['~/.vim/plugin/', '~/.vim/plugin/', '~/.vim/mine/plugin/'],
-    \ '^h@': ['~/'],
-    \ '^m@' : ['~/work/memo/'],
-    \ '^v@' : ['~/.vim/'],
-    \ '^d@' : ['~/q/diary/'],
-    \ '^s@' : ['~/work/scratch/'],
-    \ '^w@' : ['~/work/'],
-\}
+func! s:register_fuf_abbrev()
+    let g:fuf_abbrevMap = {
+        \ '^r@': map(copy(s:runtimepath), 'v:val . ""'),
+        \ '^p@': map(copy(s:runtimepath), 'v:val . "/plugin/"'),
+        \ '^h@': ['~/'],
+        \ '^m@' : ['~/work/memo/'],
+        \ '^v@' : ['~/.vim/'],
+        \ '^d@' : ['~/q/diary/'],
+        \ '^s@' : ['~/work/scratch/'],
+        \ '^w@' : ['~/work/'],
+    \}
 
-if has('win32')
-    let fuf_abbrevMap['^de@'] = [
-    \   'C:' . substitute( $HOMEPATH, '\', '/', 'g' ) . '/デスクトップ/'
-    \]
-    let fuf_abbrevMap['^cy@'] = [
-    \   exists('$CYGHOME') ? $CYGHOME : 'C:/cygwin/home/'. $USERNAME .'/'
-    \]
-    let fuf_abbrevMap['^ms@'] = [
-    \   exists('$MSYSHOME') ? $MSYSHOME : 'C:/msys/home/'. $USERNAME .'/'
-    \]
-else
-    let fuf_abbrevMap['^de@'] = [
-    \   '~/Desktop/'
-    \]
-endif
+    if has('win32')
+        let g:fuf_abbrevMap['^de@'] = [
+        \   'C:' . substitute( $HOMEPATH, '\', '/', 'g' ) . '/デスクトップ/'
+        \]
+        let g:fuf_abbrevMap['^cy@'] = [
+        \   exists('$CYGHOME') ? $CYGHOME : 'C:/cygwin/home/'. $USERNAME .'/'
+        \]
+        let g:fuf_abbrevMap['^ms@'] = [
+        \   exists('$MSYSHOME') ? $MSYSHOME : 'C:/msys/home/'. $USERNAME .'/'
+        \]
+    else
+        let g:fuf_abbrevMap['^de@'] = [
+        \   '~/Desktop/'
+        \]
+    endif
+endfunc
+
+AutoCommand VimEnter * call s:register_fuf_abbrev()
 " }}}
 " }}}
 " MRU {{{
@@ -1084,35 +1002,6 @@ let EasyGrepInvertWholeWord = 1
 let EasyGrepRecursive = 1
 let EasyGrepIgnoreCase = 0
 " }}}
-" arpeggio {{{
-let g:arpeggio_timeoutlen = 70
-call arpeggio#load()
-
-Arpeggio noremap! $( ()<Left>
-Arpeggio noremap! 4[ []<Left>
-Arpeggio noremap! $< <><Left>
-Arpeggio noremap! ${ {}<Left>
-
-Arpeggio noremap! $) \(\)<Left><Left>
-Arpeggio noremap! 4] \[\]<Left><Left>
-Arpeggio noremap! $> \<\><Left><Left>
-Arpeggio noremap! $} \{\}<Left><Left>
-
-Arpeggio noremap! #( 「」<Left>
-Arpeggio noremap! 3[ 『』<Left>
-Arpeggio noremap! #< 【】<Left>
-Arpeggio noremap! #{ 〔〕<Left>
-
-Arpeggio noremap A(    %i)<Esc>%i(
-Arpeggio noremap A[    %i]<Esc>%i[
-
-Arpeggio inoremap gk     <C-o>O
-Arpeggio inoremap gj     <C-o>o
-
-silent Arpeggio nnoremap <silent> <Leader>1    :call ChangeEncoding()<CR>
-silent Arpeggio nnoremap <silent> <Leader>2    :call ChangeFileEncoding()<CR>
-silent Arpeggio nnoremap <silent> <Leader>3    :call ChangeNL()<CR>
-" }}}
 " skk.vim {{{
 let skk_jisyo = '~/.skk-jisyo'
 let skk_large_jisyo = '/usr/share/skk/SKK-JISYO'
@@ -1130,7 +1019,148 @@ let g:VimShell_EnableInteractive = 1
 " }}}
 " }}}
 " }}}
-"-----------------------------------------------------------------
+
+
+" Misc. (bundled with kaoriya vim's .vimrc & etc.) {{{
+" delete old files in ~/.vim/backup {{{
+func! s:DeleteBackUp()
+    if has('win32')
+        if exists('$TMP')
+            let stamp_file = $TMP . '/.vimbackup_deleted'
+        elseif exists('$TEMP')
+            let stamp_file = $TEMP . '/.vimbackup_deleted'
+        else
+            return
+        endif
+    else
+        let stamp_file = '/tmp/.vimbackup_deleted'
+    endif
+
+    if !filereadable(stamp_file)
+        call writefile([localtime()], stamp_file)
+        return
+    endif
+
+    let [line] = readfile(stamp_file)
+    let one_day_sec = 60 * 60 * 24    " 1日に何回も削除しようとしない
+
+    if localtime() - str2nr(line) > one_day_sec
+        let backup_files = split(expand(&backupdir . '/*'), "\n")
+        let thirty_days_sec = one_day_sec * 30
+        call filter(backup_files, 'localtime() - getftime(v:val) > thirty_days_sec')
+        for i in backup_files
+            if delete(i) != 0
+                call s:warn("can't delete " . i)
+            endif
+        endfor
+        call writefile([localtime()], stamp_file)
+    endif
+endfunc
+
+call s:DeleteBackUp()
+delfunc s:DeleteBackUp
+" }}}
+" japanese encodings {{{
+if &encoding !=# 'utf-8'
+    set encoding=japan
+    set fileencoding=japan
+endif
+if has('iconv')
+    let s:enc_euc = 'euc-jp'
+    let s:enc_jis = 'iso-2022-jp'
+    " iconvがeucJP-msに対応しているかをチェック
+    if iconv("\x87\x64\x87\x6a", 'cp932', 'eucjp-ms') ==# "\xad\xc5\xad\xcb"
+        let s:enc_euc = 'eucjp-ms'
+        let s:enc_jis = 'iso-2022-jp-3'
+        " iconvがJISX0213に対応しているかをチェック
+    elseif iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
+        let s:enc_euc = 'euc-jisx0213'
+        let s:enc_jis = 'iso-2022-jp-3'
+    endif
+    " fileencodingsを構築
+    if &encoding ==# 'utf-8'
+        let s:fileencodings_default = &fileencodings
+        let &fileencodings = s:enc_jis .','. s:enc_euc .',cp932'
+        let &fileencodings = &fileencodings .','. s:fileencodings_default
+        unlet s:fileencodings_default
+    else
+        let &fileencodings = &fileencodings .','. s:enc_jis
+        set fileencodings+=utf-8,ucs-2le,ucs-2
+        if &encoding =~# '^\(euc-jp\|euc-jisx0213\|eucjp-ms\)$'
+            set fileencodings+=cp932
+            set fileencodings-=euc-jp
+            set fileencodings-=euc-jisx0213
+            set fileencodings-=eucjp-ms
+            let &encoding = s:enc_euc
+            let &fileencoding = s:enc_euc
+        else
+            let &fileencodings = &fileencodings .','. s:enc_euc
+        endif
+    endif
+endif
+function! s:AU_ReCheck_FENC()
+    if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
+        let &fileencoding=&encoding
+    endif
+endfunction
+
+AutoCommand BufReadPost * call s:AU_ReCheck_FENC()
+
+" supports fileformats in this order
+set fileformats=unix,dos,mac
+" assume the specific characters like "□" or "○" as 2 bytes to
+" display (for vim in terminal)
+if exists('&ambiwidth')
+    set ambiwidth=double
+endif
+" }}}
+" support of colors in terminal (unix only) {{{
+if has('unix') && !has('gui_running')
+    let uname = system('uname')
+    if uname =~? "linux"
+        set term=builtin_linux
+    elseif uname =~? "freebsd"
+        set term=builtin_cons25
+    elseif uname =~? "Darwin"
+        set term=beos-ansi
+    else
+        set term=builtin_xterm
+    endif
+endif
+" }}}
+" when $DISPLAY is set and vim runs under terminal, vim's start-up will be very slow {{{
+if !has('gui_running') && has('xterm_clipboard')
+    set clipboard=exclude:cons\\\|linux\\\|cygwin\\\|rxvt\\\|screen
+endif
+let did_install_default_menus = 1
+" }}}
+" " WinではPATHに$VIMが含まれていないときにexeを見つけ出せないので修正 {{{
+if has('win32') && $PATH !~? '\(^\|;\)' . escape($VIM, '\\') . '\(;\|$\)'
+    let $PATH = $VIM . ';' . $PATH
+endif
+if has('mac')
+    " Macではデフォルトの'iskeyword'がcp932に対応しきれていないので修正
+    set iskeyword=@,48-57,_,128-167,224-235
+endif
+" }}}
+" about japanese input method {{{
+if has('multi_byte_ime') || has('xim')
+  " IME ON時のカーソルの色を設定(設定例:紫)
+  highlight CursorIM guibg=Purple guifg=NONE
+  " 挿入モード・検索モードでのデフォルトのIME状態設定
+  set iminsert=0 imsearch=0
+  if has('xim') && has('GUI_GTK')
+    " XIMの入力開始キーを設定:
+    " 下記の s-space はShift+Spaceの意味でkinput2+canna用設定
+    "set imactivatekey=s-space
+  endif
+  " 挿入モードでのIME状態を記憶させない場合、次行のコメントを解除
+  "inoremap <silent> <ESC> <ESC>:set iminsert=0<CR>
+endif
+" }}}
+" }}}
+
+
 " Call s:add_runtimepath(). {{{
 if !(exists('$VIMRC_DONT_ADD_RUNTIMEPATH') && $VIMRC_DONT_ADD_RUNTIMEPATH)
     call s:add_runtimepath()
