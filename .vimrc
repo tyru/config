@@ -734,6 +734,7 @@ endfunc
 " operator {{{
 " paste to clipboard
 noremap <Leader>y     "+y
+noremap <Leader>Y     "*y
 
 " do not destroy noname register.
 noremap x   "_x
@@ -1074,6 +1075,9 @@ Arpeggio noremap! #( 「」<Left>
 Arpeggio noremap! 3[ 『』<Left>
 Arpeggio noremap! #< 【】<Left>
 Arpeggio noremap! #{ 〔〕<Left>
+
+Arpeggio noremap A(    %i)<Esc>%i(
+Arpeggio noremap A[    %i]<Esc>%i[
 
 Arpeggio inoremap gk     <C-o>O
 Arpeggio inoremap gj     <C-o>o

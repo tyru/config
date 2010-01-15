@@ -3,7 +3,7 @@
 ;;; <%filename%> - DESCRIPTION HERE
 ;;; 
 ;;; Written By: <%author%> <<%email%>>
-;;; Last Change: 2009-06-17.
+;;; Last Change: .
 
 
 (use srfi-1)
@@ -11,11 +11,10 @@
 (require 'trace)
 (use gauche.interactive)
 
-(define main
-  (lambda (args)
+(define (main args)
 
     (if (pair? (cdr args))
       (print (cons "args:" (cdr args)) "\n"))
 
 
-    0))
+    0)
