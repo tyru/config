@@ -13,7 +13,7 @@ let maplocalleader = '\'
 
 " &runtimepath {{{
 let s:runtimepath = split(&runtimepath, ',')
-func! s:add_runtimepath()
+func! s:update_runtimepath()
     for d in map(s:runtimepath, 'expand(v:val)')
         if isdirectory(d)
             let &runtimepath .= ',' . d
@@ -21,10 +21,14 @@ func! s:add_runtimepath()
     endfor
 endfunc
 
+
+command! -buffer -nargs=+ AddRuntimePath call add(s:runtimepath, <f-args>)
+
+
 if has("win32")
-    call add(s:runtimepath, '$HOME/.vim')
+    AddRuntimePath $HOME/.vim
 endif
-call add(s:runtimepath, '$HOME/.vim/mine')
+AddRuntimePath $HOME/.vim/mine
 " }}}
 
 
@@ -1013,9 +1017,10 @@ let skk_imdisable_state = -1
 " let skk_keep_state = 1
 " }}}
 " vimshell {{{
-call add(s:runtimepath, '$HOME/work/git/vimproc')
-call add(s:runtimepath, '$HOME/work/git/vimshell')
-let g:VimShell_EnableInteractive = 1
+AddRuntimePath $HOME/work/git/vimproc
+AddRuntimePath $HOME/work/git/vimshell
+
+let g:VimShell_EnableInteractive = 2
 " }}}
 " }}}
 " }}}
@@ -1058,7 +1063,6 @@ func! s:DeleteBackUp()
 endfunc
 
 call s:DeleteBackUp()
-delfunc s:DeleteBackUp
 " }}}
 " japanese encodings {{{
 if &encoding !=# 'utf-8'
@@ -1161,8 +1165,8 @@ endif
 " }}}
 
 
-" Call s:add_runtimepath(). {{{
+" Call s:update_runtimepath(). {{{
 if !(exists('$VIMRC_DONT_ADD_RUNTIMEPATH') && $VIMRC_DONT_ADD_RUNTIMEPATH)
-    call s:add_runtimepath()
+    call s:update_runtimepath()
 endif
 " }}}
