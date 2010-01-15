@@ -2,11 +2,30 @@
 scriptencoding utf-8
 set cpo&vim
 
+
 syntax enable
 filetype plugin indent on
 
+
 let mapleader = ';'
 let maplocalleader = '\'
+
+
+" &runtimepath {{{
+let s:runtimepath = []
+func! s:add_runtimepath()
+    for d in map(s:runtimepath, 'expand(v:val)')
+        if isdirectory(d)
+            let &runtimepath .= ',' . d
+        endif
+    endfor
+endfunc
+
+if has("win32")
+    call add(s:runtimepath, '$HOME/.vim')
+endif
+call add(s:runtimepath, '$HOME/.vim/mine')
+" }}}
 "-----------------------------------------------------------------
 " Util Functions {{{
 " s:warn {{{
@@ -139,12 +158,6 @@ endif
 if exists('+shellslash')
     set shellslash
 endif
-
-" &runtimepath
-if has("win32")
-    set runtimepath+=$HOME/.vim
-endif
-set runtimepath+=$HOME/.vim/mine
 
 " visual bell
 set visualbell
@@ -559,6 +572,12 @@ endfunc
 " }}}
 "-----------------------------------------------------------------
 " AutoCommand {{{
+func! s:vimenter_handler()
+    " Color
+    set bg=dark
+    colorscheme desert
+endfunc
+
 augroup MyVimrc
     autocmd!
 
@@ -566,7 +585,7 @@ augroup MyVimrc
     autocmd BufReadPost * call s:AU_ReCheck_FENC()
 
     " colorscheme (on windows, setting colorscheme in .vimrc does not work)
-    autocmd VimEnter * set bg=dark | colorscheme desert
+    autocmd VimEnter * call s:vimenter_handler()
 
     " open on read-only if swap exists
     autocmd SwapExists * let v:swapchoice = 'o'
@@ -669,6 +688,7 @@ func! s:SetTabWidth(ft)
         let s:filetype_vs_tabwidth = {
         \   'css': 2,
         \   'xml': 2,
+        \   'html': 2,
         \   'lisp': 2,
         \   'scheme': 2,
         \   'yaml': 2,
@@ -746,8 +766,8 @@ noremap <silent> k          gk
 noremap <silent> gj         j
 noremap <silent> gk         k
 
-noremap <silent> H  5h
-noremap <silent> L  5l
+noremap <silent> H  w
+noremap <silent> L  b
 
 noremap <silent> ]k        :call search('^\S', 'Ws')<CR>
 noremap <silent> [k        :call search('^\S', 'Wsb')<CR>
@@ -828,6 +848,7 @@ nnoremap gh    :set hlsearch!<CR>
 nnoremap ZZ <Nop>
 
 nnoremap <Space>w :<C-u>w<CR>
+nnoremap <Space>q :<C-u>q<CR>
 " }}}
 " map! {{{
 noremap! <C-f>   <Right>
@@ -836,10 +857,6 @@ noremap! <C-a>   <Home>
 noremap! <C-e>   <End>
 noremap! <C-d>   <Del>
 noremap! <C-k>   <C-o>D
-
-noremap! <C-r><C-u>  <C-r><C-p>+
-noremap! <C-r><C-i>  <C-r><C-p>*
-noremap! <C-r><C-o>  <C-r><C-p>"
 " }}}
 " imap {{{
 " delete characters in ...
@@ -848,12 +865,22 @@ inoremap <C-z>                <C-o>di
 " omni
 " inoremap <C-n>     <C-x><C-n>
 " inoremap <C-p>     <C-x><C-p>
+
+" paste register
+inoremap <C-r><C-u>  <C-r><C-p>+
+inoremap <C-r><C-i>  <C-r><C-p>*
+inoremap <C-r><C-o>  <C-r><C-p>"
 " }}}
 " cmap {{{
 if &wildmenu
     cnoremap <C-f> <Space><BS><Right>
     cnoremap <C-b> <Space><BS><Left>
 endif
+
+" paste register
+cnoremap <C-r><C-u>  <C-r>+
+cnoremap <C-r><C-i>  <C-r>*
+cnoremap <C-r><C-o>  <C-r>"
 " }}}
 " abbr {{{
 inoreab <expr> date@      strftime("%Y-%m-%d")
@@ -1093,7 +1120,19 @@ let skk_control_j_key = '<C-y>'
 let skk_manual_save_jisyo_keys = ''
 let skk_egg_like_newline = 1
 let skk_auto_save_jisyo = 1
+let skk_imdisable_state = -1
+" let skk_keep_state = 1
+" }}}
+" vimshell {{{
+call add(s:runtimepath, '$HOME/work/git/vimproc')
+call add(s:runtimepath, '$HOME/work/git/vimshell')
+let g:VimShell_EnableInteractive = 1
 " }}}
 " }}}
 " }}}
 "-----------------------------------------------------------------
+" Call s:add_runtimepath(). {{{
+if !(exists('$VIMRC_DONT_ADD_RUNTIMEPATH') && $VIMRC_DONT_ADD_RUNTIMEPATH)
+    call s:add_runtimepath()
+endif
+" }}}
