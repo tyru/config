@@ -101,6 +101,7 @@ alias la='ls -A'
 alias less='less -r'
 alias ll='ls -lh'
 alias sc='screen'
+alias ev='evince'
 
 if [ -x "$(which perldocjp)" ]; then
     alias perldoc='perldocjp'
@@ -130,6 +131,7 @@ myabbrev=(
     "p@" "| perl"
     "s@" "| sort"
     "u@" "| sort -u"
+    "x@" "| xclip"
     "n@" ">/dev/null 2>/dev/null"
     "e@" "2>&1"
     "h@" "--help 2>&1"
@@ -157,7 +159,8 @@ precmd () {
 RPROMPT="%1(v|%F{green}%1v%f|)"
 # }}}
 
-# via http://d.hatena.ne.jp/voidy21/20090902/1251918174 {{{
+# 補完時に色んな情報を出す {{{
+# via http://d.hatena.ne.jp/voidy21/20090902/1251918174
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
 zstyle ':completion:*:messages' format $fg[yellow]'%d'$reset_color
@@ -168,8 +171,15 @@ zstyle ':completion:*:options' description 'yes'
 # グループ名に空文字列を指定すると，マッチ対象のタグ名がグループ名に使われる。
 # したがって，すべての マッチ種別を別々に表示させたいなら以下のようにする
 zstyle ':completion:*' group-name ''
+# }}}
 
-# manの補完をセクション番号別に表示させる
+# 補完のセパレータを設定する {{{
+# via http://d.hatena.ne.jp/voidy21/20090902/1251918174
+zstyle ':completion:*' list-separator '-->'
+# }}}
+
+# manの補完をセクション番号別に表示させる {{{
+# via http://d.hatena.ne.jp/voidy21/20090902/1251918174
 zstyle ':completion:*:manuals' separate-sections true
 # }}}
 
@@ -178,7 +188,6 @@ zstyle ':completion:*:manuals' separate-sections true
 function snatch () {
     gdb -p $1 -batch -n -x =( echo -e "p (int)open(\"/proc/$$/fd/1\", 1)\np (int)dup2(\$1, 1)\np (int)dup2(\$1, 2)" )
 }
-
 # }}}
 
 # C-sによる画面の停止を無効 {{{

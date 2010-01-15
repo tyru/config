@@ -33,6 +33,7 @@ alias la='ls -A'
 alias less='less -r'
 alias ll='ls -lh'
 alias sc='screen'
+alias ev='evince'
 
 if [ -x "$(which perldocjp)" ]; then
     alias perldoc='perldocjp'
@@ -80,10 +81,4 @@ fi
 # http://d.hatena.ne.jp/hogem/20090411/1239451878
 stty stop undef
 # }}}
-# }}}
-
-### local ### {{{
-if [ -e "$HOME/.alias.local" ]; then
-    source "$HOME/.alias.local"
-fi
 # }}}
