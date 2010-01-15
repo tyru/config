@@ -814,6 +814,20 @@ command! -nargs=* GccSyntaxCheck
 command! -nargs=0 CdCurrent lcd %:p:h
 nnoremap <silent> <Leader>cd   :CdCurrent<CR>
 " }}}
+" Ack {{{
+if executable('ack')
+    func! s:ack(...)
+        let save_grepprg = &l:grepprg
+        try
+            let &l:grepprg = 'ack -a'
+            execute 'grep' join(a:000, ' ')
+        finally
+            let &l:grepprg = save_grepprg
+        endtry
+    endfunc
+    command! -nargs=+ Ack call s:ack(<f-args>)
+endif
+" }}}
 " }}}
 
 
