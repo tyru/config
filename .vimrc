@@ -594,16 +594,7 @@ cnoremap <C-r><C-u>  <C-r>+
 cnoremap <C-r><C-i>  <C-r>*
 cnoremap <C-r><C-o>  <C-r>"
 
-" '<C-k>' deletes string to the end of line.
-let g:vimrc_saved_cmdline = ''
-func! s:save_front()
-    let g:vimrc_saved_cmdline = strpart(getcmdline(), 0, getcmdpos() - 1)
-    return ''
-endfunc
-cnoremap <Plug>(vimrc-save-front) <C-r>=<SID>save_front()<CR>
-cnoremap <Plug>(vimrc-delete-all) <End><C-u>
-cnoremap <Plug>(vimrc-insert-saved) <C-r>=g:vimrc_saved_cmdline<CR>
-cmap <C-k> <Plug>(vimrc-save-front)<Plug>(vimrc-delete-all)<Plug>(vimrc-insert-saved)
+cnoremap <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 " }}}
 " abbr {{{
 inoreab <expr> date@      strftime("%Y-%m-%d")
