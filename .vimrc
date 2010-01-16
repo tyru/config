@@ -11,24 +11,177 @@ let mapleader = ';'
 let maplocalleader = '\'
 
 
-" &runtimepath {{{
-let s:runtimepath = split(&runtimepath, ',')
-func! s:update_runtimepath()
-    for d in map(s:runtimepath, 'expand(v:val)')
-        if isdirectory(d)
-            let &runtimepath .= ',' . d
+" Buffer local commands {{{
+" Buffer local commands are useful to manage to make .vimrc reloadable.
+
+" s:runtimepath {{{
+let s:runtimepath = {}
+
+func! s:runtimepath.init() dict
+    let self.runtimepath = {}
+    let self.counter = 0
+    let self.updated = 0
+    " Set current &runtimepath.
+    for p in map(split(&runtimepath, ','), 'expand(v:val)')
+        if !has_key(self.runtimepath, p)
+            let self.runtimepath[p] = self.counter
+            let self.counter += 1
         endif
     endfor
 endfunc
 
+func! s:runtimepath.add(...) dict
+    for p in map(copy(a:000), 'expand(v:val)')
+        if !has_key(self.runtimepath, p)
+            let self.runtimepath[p] = self.counter
+            let self.counter += 1
+            let self.updated = 1
+        endif
+    endfor
+endfunc
 
-command! -buffer -nargs=+ AddRuntimePath call add(s:runtimepath, <f-args>)
+func! s:runtimepath.get() dict
+    return sort(keys(self.runtimepath), 's:_sort_runtimepath')
+endfunc
+func! s:_sort_runtimepath(s1, s2)
+    let p = s:runtimepath.runtimepath
+    if p[a:s1] ==# p[a:s2]
+        return 0
+    elseif p[a:s1] > p[a:s2]
+        return 1
+    else
+        return -1
+    endif
+endfunc
+
+func! s:runtimepath.update() dict
+    if !self.updated | return | endif
+
+    let runtimepath_list = self.get()
+    " let runtimepath_list = filter(runtimepath_list, 'isdirectory(v:val)')
+    let &runtimepath = join(runtimepath_list, ',')
+
+    call self.init()
+endfunc
 
 
+call s:runtimepath.init()
+
+
+command! -buffer -nargs=+ AddRuntimePath call s:runtimepath.add(<f-args>)
+command! -buffer          UpdateRuntimePath call s:runtimepath.update()
+" }}}
+" s:lazy_autocmd {{{
+let s:lazy_autocmd = {}
+
+func! s:lazy_autocmd.init() dict
+    let self.autocmd_list = []
+    let self.autocmd_delete_list = []
+endfunc
+
+func! s:lazy_autocmd.register(arg) dict
+    call add(self.autocmd_list, a:arg)
+endfunc
+
+func! s:lazy_autocmd.delete(arg) dict
+    call add(self.autocmd_delete_list, a:arg)
+endfunc
+
+func! s:lazy_autocmd.execute() dict
+    augroup MyVimrc
+        autocmd!
+
+        for i in self.autocmd_list
+            execute 'autocmd' i
+        endfor
+
+        for i in self.autocmd_delete_list
+            execute 'autocmd!' i
+        endfor
+    augroup END
+
+    call self.init()
+endfunc
+
+
+call s:lazy_autocmd.init()
+
+
+command! -buffer -nargs=* AutoCommand call s:lazy_autocmd.register(<q-args>)
+command! -buffer          ExecuteAutoCommand call s:lazy_autocmd.execute()
+" }}}
+" }}}
+
+" &runtimepath {{{
 if has("win32")
     AddRuntimePath $HOME/.vim
 endif
 AddRuntimePath $HOME/.vim/mine
+" }}}
+
+" autocmd {{{
+func! s:vimenter_handler()
+    " Color
+    set bg=dark
+    colorscheme desert
+endfunc
+
+" colorscheme (on windows, setting colorscheme in .vimrc does not work)
+AutoCommand VimEnter * call s:vimenter_handler()
+
+" open on read-only if swap exists
+AutoCommand SwapExists * let v:swapchoice = 'o'
+
+" autocmd CursorHold,CursorHoldI *   silent! update
+AutoCommand QuickfixCmdPost make,grep,grepadd,vimgrep,helpgrep   copen
+
+" sometimes &modeline becomes false
+AutoCommand BufReadPre *    setlocal modeline
+
+" filetype {{{
+AutoCommand BufNewFile,BufReadPre *.as
+            \ setlocal ft=actionscript syntax=actionscript
+AutoCommand BufNewFile,BufReadPre *.c
+            \ setlocal ft=c
+AutoCommand BufNewFile,BufReadPre *.cpp
+            \ setlocal ft=cpp
+AutoCommand BufNewFile,BufReadPre *.h
+            \ setlocal ft=c.cpp
+AutoCommand BufNewFile,BufReadPre *.cs
+            \ setlocal ft=cs
+AutoCommand BufNewFile,BufReadPre *.java
+            \ setlocal ft=java
+AutoCommand BufNewFile,BufReadPre *.js
+            \ setlocal ft=javascript
+AutoCommand BufNewFile,BufReadPre *.pl,*.pm
+            \ setlocal ft=perl
+AutoCommand BufNewFile,BufReadPre *.ps1
+            \ setlocal ft=powershell
+AutoCommand BufNewFile,BufReadPre *.py,*.pyc
+            \ setlocal ft=python
+AutoCommand BufNewFile,BufReadPre *.rb
+            \ setlocal ft=ruby
+AutoCommand BufNewFile,BufReadPre *.scm
+            \ setlocal ft=scheme
+AutoCommand BufNewFile,BufReadPre _vimperatorrc,.vimperatorrc
+            \ setlocal ft=vimperator syntax=vimperator
+AutoCommand BufNewFile,BufReadPre *.scala
+            \ setlocal ft=scala
+AutoCommand BufNewFile,BufReadPre *.lua
+            \ setlocal ft=lua
+AutoCommand BufNewFile,BufReadPre *.avs
+            \ setlocal syntax=avs
+AutoCommand BufNewFile,BufReadPre *.tmpl
+            \ setlocal ft=html
+AutoCommand BufNewFile,BufReadPre *.mkd
+            \ setlocal ft=mkd
+AutoCommand BufNewFile,BufReadPre *.md
+            \ setlocal ft=mkd
+
+" delete autocmd for ft=mkd.
+" TODO -bang for s:lazy_autocmd.delete().
+" AutoCommand! filetypedetect BufNewFile,BufRead *.md
+" }}}
 " }}}
 
 
@@ -53,83 +206,6 @@ endfunc
 " arpeggio's function should be Vim built-in :p
 let g:arpeggio_timeoutlen = 70
 call arpeggio#load()
-" }}}
-
-
-" AutoCommand {{{
-func! s:vimenter_handler()
-    " Color
-    set bg=dark
-    colorscheme desert
-endfunc
-
-command! -buffer -nargs=* AutoCommand call s:my_autocmd(<q-args>)
-func! s:my_autocmd(arg)
-    " Register 'MyVimrc' group autocmd.
-    augroup MyVimrc
-        execute 'autocmd' a:arg
-    augroup END
-endfunc
-
-augroup MyVimrc
-    autocmd!
-
-    " colorscheme (on windows, setting colorscheme in .vimrc does not work)
-    autocmd VimEnter * call s:vimenter_handler()
-
-    " open on read-only if swap exists
-    autocmd SwapExists * let v:swapchoice = 'o'
-
-    " autocmd CursorHold,CursorHoldI *   silent! update
-    autocmd QuickfixCmdPost make,grep,grepadd,vimgrep,helpgrep   copen
-
-    " sometimes &modeline becomes false
-    autocmd BufReadPre *    setlocal modeline
-
-    " filetype {{{
-    autocmd BufNewFile,BufReadPre *.as
-                \ setlocal ft=actionscript syntax=actionscript
-    autocmd BufNewFile,BufReadPre *.c
-                \ setlocal ft=c
-    autocmd BufNewFile,BufReadPre *.cpp
-                \ setlocal ft=cpp
-    autocmd BufNewFile,BufReadPre *.h
-                \ setlocal ft=c.cpp
-    autocmd BufNewFile,BufReadPre *.cs
-                \ setlocal ft=cs
-    autocmd BufNewFile,BufReadPre *.java
-                \ setlocal ft=java
-    autocmd BufNewFile,BufReadPre *.js
-                \ setlocal ft=javascript
-    autocmd BufNewFile,BufReadPre *.pl,*.pm
-                \ setlocal ft=perl
-    autocmd BufNewFile,BufReadPre *.ps1
-                \ setlocal ft=powershell
-    autocmd BufNewFile,BufReadPre *.py,*.pyc
-                \ setlocal ft=python
-    autocmd BufNewFile,BufReadPre *.rb
-                \ setlocal ft=ruby
-    autocmd BufNewFile,BufReadPre *.scm
-                \ setlocal ft=scheme
-    autocmd BufNewFile,BufReadPre _vimperatorrc,.vimperatorrc
-                \ setlocal ft=vimperator syntax=vimperator
-    autocmd BufNewFile,BufReadPre *.scala
-                \ setlocal ft=scala
-    autocmd BufNewFile,BufReadPre *.lua
-                \ setlocal ft=lua
-    autocmd BufNewFile,BufReadPre *.avs
-                \ setlocal syntax=avs
-    autocmd BufNewFile,BufReadPre *.tmpl
-                \ setlocal ft=html
-    autocmd BufNewFile,BufReadPre *.mkd
-                \ setlocal ft=mkd
-    autocmd BufNewFile,BufReadPre *.md
-                \ setlocal ft=mkd
-
-    " delete for ft=mkd
-    autocmd! filetypedetect BufNewFile,BufRead *.md
-    " }}}
-augroup END
 " }}}
 
 
@@ -938,8 +1014,8 @@ let fuf_enumeratingLimit = 20
 " abbrev {{{
 func! s:register_fuf_abbrev()
     let g:fuf_abbrevMap = {
-        \ '^r@': map(copy(s:runtimepath), 'v:val . ""'),
-        \ '^p@': map(copy(s:runtimepath), 'v:val . "/plugin/"'),
+        \ '^r@': map(copy(s:runtimepath.get()), 'v:val . "/"'),
+        \ '^p@': map(copy(s:runtimepath.get()), 'v:val . "/plugin/"'),
         \ '^h@': ['~/'],
         \ '^m@' : ['~/work/memo/'],
         \ '^v@' : ['~/.vim/'],
@@ -1182,8 +1258,12 @@ endif
 " }}}
 
 
-" Call s:update_runtimepath(). {{{
+" Update &runtimepath. {{{
 if !(exists('$VIMRC_DONT_ADD_RUNTIMEPATH') && $VIMRC_DONT_ADD_RUNTIMEPATH)
-    call s:update_runtimepath()
+    UpdateRuntimePath
 endif
+" }}}
+
+" Register autocmd. {{{
+ExecuteAutoCommand
 " }}}
