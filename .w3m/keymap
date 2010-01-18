@@ -9,6 +9,8 @@ keymap C-p NEXT_TAB
 keymap M-h HELP
 keymap C-f NEXT_PAGE
 keymap C-b PREV_PAGE
+keymap w   NEXT_WORD
+keymap b   PREV_WORD
 
 # Show inline image.
 keymap I DISPLAY_IMAGE
