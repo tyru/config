@@ -598,12 +598,12 @@ nnoremap <silent>   gm      :make<CR>
 nnoremap <silent>   gc      :cclose<CR>
 
 " open only current line's fold.
-func! FoldAllExpand()
-    %foldclose
+func! s:fold_all_expand()
     silent! %foldclose!
     normal! zvzz
 endfunc
-silent Arpeggio nnoremap <silent> <Leader>f   :call FoldAllExpand()<CR>
+nnoremap <Plug>(vimrc-fold-all-expand) :call <SID>fold_all_expand()<CR>
+silent Arpeggio nmap <Leader>f   <Plug>(vimrc-fold-all-expand)
 
 " hlsearch
 nnoremap gh    :set hlsearch!<CR>
