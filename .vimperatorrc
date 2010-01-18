@@ -1,6 +1,5 @@
 " vim:set ft=vimperator fdm=marker:
 let mapleader = ','
-source $HOME/.vimperatorrc.local
 
 
 " set! {{{
@@ -291,6 +290,24 @@ liberator.globalVariables.proxy_settings = [
       }
       ]
    },
+   {
+      conf_name: 'ssb',
+      conf_usage: 'use ssb as internal proxy',
+      settings: [
+      {
+         label: 'type',
+         param: 1
+      },
+      {
+         label: 'http',
+         param: 'localhost'
+      },
+      {
+         label: 'http_port',
+         param: 10080
+      }
+      ]
+   },
 ];
 EOM
 
@@ -344,3 +361,6 @@ liberator.globalVariables.migrate_elements = [
 EOF
 " }}}
 " }}}
+
+
+source $HOME/.vimperatorrc.local
