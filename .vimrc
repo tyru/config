@@ -602,8 +602,7 @@ func! s:fold_all_expand()
     silent! %foldclose!
     normal! zvzz
 endfunc
-nnoremap <Plug>(vimrc-fold-all-expand) :call <SID>fold_all_expand()<CR>
-silent Arpeggio nmap <Leader>f   <Plug>(vimrc-fold-all-expand)
+nnoremap z<Space>   :call <SID>fold_all_expand()<CR>
 
 " hlsearch
 nnoremap gh    :set hlsearch!<CR>
@@ -878,8 +877,10 @@ command! -nargs=* GccSyntaxCheck
 " }}}
 " CdCurrent {{{
 "   Change current directory to current file's one.
-command! -nargs=0 CdCurrent lcd %:p:h
-nnoremap <silent> <Leader>cd   :CdCurrent<CR>
+command! -nargs=0 LcdCurrent lcd %:p:h
+command! -nargs=0 CdCurrent  cd %:p:h
+nnoremap <silent> <Leader>cd   :LcdCurrent<CR>
+nnoremap <silent> ,cd          :CdCurrent<CR>
 " }}}
 " Ack {{{
 if executable('ack')
@@ -1114,6 +1115,10 @@ AddRuntimePath $HOME/work/git/vimproc
 AddRuntimePath $HOME/work/git/vimshell
 
 let g:VimShell_EnableInteractive = 2
+" }}}
+" quickrun {{{
+let g:quickrun_no_default_key_mappings = 1
+map <Space>r <Plug>(quickrun)
 " }}}
 " }}}
 " }}}
