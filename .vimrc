@@ -624,6 +624,7 @@ noremap! <C-b>   <Left>
 noremap! <C-a>   <Home>
 noremap! <C-e>   <End>
 noremap! <C-d>   <Del>
+noremap! <C-g><C-i>  <Insert>
 
 Arpeggio noremap! $( ()<Left>
 Arpeggio noremap! 4[ []<Left>
@@ -653,10 +654,12 @@ inoremap <C-r><C-u>  <C-r><C-p>+
 inoremap <C-r><C-i>  <C-r><C-p>*
 inoremap <C-r><C-o>  <C-r><C-p>"
 
-Arpeggio inoremap gk     <C-o>O
-Arpeggio inoremap gj     <C-o>o
-
+" delete string to the end of line.
 inoremap <C-k>   <C-o>D
+
+" jump to next/previous line.
+Arpeggio inoremap gk    <C-o>O
+Arpeggio inoremap gj    <C-o>o
 " }}}
 " cmap {{{
 if &wildmenu
@@ -669,6 +672,7 @@ cnoremap <C-r><C-u>  <C-r>+
 cnoremap <C-r><C-i>  <C-r>*
 cnoremap <C-r><C-o>  <C-r>"
 
+" delete string to the end of line.
 cnoremap <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 " }}}
 " abbr {{{
