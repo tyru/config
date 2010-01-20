@@ -1,0 +1,209 @@
+*ref.txt*	Integrated reference viewer.
+
+Version: 0.1.0
+Author : thinca <thinca+vim@gmail.com>
+License: Creative Commons Attribution 2.1 Japan License
+         <http://creativecommons.org/licenses/by/2.1/jp/deed.en>
+
+==============================================================================
+CONTENTS					*ref-contents*
+
+INTRODUCTION			|ref-introduction|
+REFERENCE VIEWER		|ref-viewer|
+INTERFACE			|ref-interface|
+  COMMANDS			  |ref-command|
+  KEY MAPPINGS			  |ref-key-mappings|
+CUSTOMIZING			|ref-customizing|
+SOURCES				|ref-sources|
+TODO				|ref-todo|
+CHANGELOG			|ref-changelog|
+
+
+==============================================================================
+INTRODUCTION					*ref-introduction*
+
+*ref* is a Vim plugin to view the reference.  This plugin can be separated to
+core of viewer and sources of reference.  As a result, various references can
+be viewed by the same interface.
+
+Following sources are included in this plugin:
+- detect	(|ref-detect.txt|)
+- man		(|ref-man.txt|)
+- refe		(|ref-refe.txt|)
+- phpmanual	(|ref-phpmanual.txt|)
+- pydoc		(|ref-pydoc.txt|)
+- perldoc	(|ref-perldoc.txt|)
+
+
+==============================================================================
+REFERENCE VIEWER				*ref-viewer*
+
+|ref-viewer| is mere a buffer to view the reference.  This is opened by |:Ref|
+command or |<Plug>(ref-keyword)| key sequence like |:help|.  If |ref-viewer|
+is already opened in current tab page, it is used again.
+Each |ref-viewer| have a history of viewed pages, you can return at any time.
+
+
+==============================================================================
+INTERFACE					*ref-interface*
+
+------------------------------------------------------------------------------
+FUNCTIONS					*ref-functions*
+
+The following functions are used by |ref-sources| mainly.
+
+ref#cache({source}, {name}, {gather})		*ref#cache()*
+			It is a function to cache a time-consuming list to
+			acquisition.  The list is cached in the automatic
+			operation in using this function. The cached list is
+			returned at the following.
+			{source} is a name of source.
+			{name} is a arbitrary name for identification.
+			{gather} is one of the following.
+			- A |Funcref| for getting the list.
+			- A evaluatable string by |eval()|.  (Note scope.)
+			- A dictionary with dictionary function "call" in
+			  member.
+			In any case, it is necessary to return the list.
+
+
+------------------------------------------------------------------------------
+COMMANDS					*ref-commands*
+
+:Ref {source} [query]				*:Ref*
+			Open the |ref-viewer|.  [query] is used by
+			|ref-sources| as query.
+
+:RefHistory					*:RefHistory*
+			List the history in |ref-viewer|.  It is possible to
+			jump there by inputting the number.
+			This command is available only in the |ref-viewer|.
+
+
+------------------------------------------------------------------------------
+KEY MAPPINGS					*ref-key-mappings*
+
+<Plug>(ref-keyword)				*<Plug>(ref-keyword)*
+			Jump to reference of the keyword under the cursor.
+			When the source that should be used is not found, the
+			same behavior as |K|.
+
+
+The following key mappings are available in |ref-viewer|.
+
+[count] <Plug>(ref-forward)			*<Plug>(ref-forward)*
+[count] <Plug>(ref-back)			*<Plug>(ref-back)*
+			Follow the history in |ref-viewer|.
+
+
+					    *g:ref_no_default_key_mappings*
+The following key mappings will be also available unless
+g:ref_no_default_key_mappings is defined:
+
+(In global)
+{lhs}			{rhs}
+--------		-----------------------------
+K			<Plug>(ref-keyword)
+
+(In |ref-viewer|)
+{lhs}			{rhs}
+--------		-----------------------------
+<CR>			<Plug>(ref-keyword)
+<2-LeftMouse>		<Plug>(ref-keyword)
+<C-]>			<Plug>(ref-keyword)
+<C-t>			<Plug>(ref-back)
+<C-o>			<Plug>(ref-back)
+<C-i>			<Plug>(ref-forward)
+
+
+==============================================================================
+CUSTOMIZING					*ref-customizing*
+
+FileType ref					*filetype-ref*
+	This event occurs after the initialization of the |ref-viewer|.
+	Example: >
+	autocmd FileType ref call s:initialize_ref_viewer()
+	function! s:initialize_ref_viewer()
+	  nmap <buffer> b <Plug>(ref-back)
+	  nmap <buffer> f <Plug>(ref-forward)
+	  nnoremap <buffer> q <C-w>c
+	  setlocal nonumber
+	  " ... and more settings ...
+	endfunction
+<
+
+g:ref_open					*g:ref_open*
+	The Assistance command used when |ref-viewer| is opened.  For example,
+	|:vsplit|, |:tabnew|, and so on.  The default value is "split".
+
+g:ref_cache_dir					*g:ref_cache_dir*
+	The directory for caching complete list.  Some sources uses this via
+	|ref#cache()|.  The default value is "~/.vim_ref_cache".  ~ means home
+	directory.
+
+
+==============================================================================
+SOURCES						*ref-sources*
+
+A source must provide the following functions.  The {query} is a string passed
+by |:Ref| command.
+
+ref#{source}#available()			*ref#{source}#available()*
+			Required.  Return true if this source is available.
+
+ref#{source}#get_body({query})			*ref#{source}#get_body()*
+			Required.  Return the body of reference by List of
+			line break delimitation or String.
+			Throws an exception with an error message if body is
+			not found.
+
+ref#{source}#opened({query})			*ref#{source}#opened()*
+			Optional.  When every reference page is opened, this
+			function is called.  You can edit the |ref-viewer|
+			buffer in this timing to initialization.
+
+ref#{source}#get_keyword()			*ref#{source}#get_keyword()*
+			Optional.  Pick up the keyword from current cursor
+			position.  If omitted, "expand('<cword>')" is used.
+			You can move the cursor because cursor position are
+			restored.
+
+ref#{source}#complete({query})			*ref#{source}#complete()*
+			Optional.  Return the completion list for command-line.
+
+ref#{source}#leave()				*ref#{source}#leave()*
+			Optional.  This function is called when move to other
+			source page.
+
+
+==============================================================================
+TODO						*ref-todo*
+
+- Append sources.
+  - href
+  - javadoc
+  - refe2
+  - etc...
+- More customizable.
+- Global command line options.
+  - :Ref [-option ...] {source} ...
+  - Example: split
+
+
+==============================================================================
+CHANGELOG					*ref-changelog*
+
+0.1.0	2009-12-22
+	- Added |ref#cache()|.
+
+0.0.2	2009-08-20
+	- Changed the name and the means of g:ref_split.
+	  - Changed to g:ref_open.
+	- Fixed the bug that same items appears in completion of source.
+
+0.0.1	2009-08-09
+	- Initial version.
+
+
+==============================================================================
+vim:tw=78:fo=tcq2mM:ts=8:ft=help:norl

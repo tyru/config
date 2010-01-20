@@ -1,0 +1,188 @@
+*ref.txt*	総合リファレンスビューア。
+
+Version: 0.1.0
+Author : thinca <thinca+vim@gmail.com>
+License: クリエイティブ・コモンズの表示 2.1 日本ライセンス
+         <http://creativecommons.org/licenses/by/2.1/jp/>
+
+==============================================================================
+目次						*ref-contents*
+
+概要				|ref-introduction|
+リファレンスビューア		|ref-viewer|
+インターフェース		|ref-interface|
+  コマンド			  |ref-commands|
+  キーマッピング		  |ref-key-mappings|
+カスタマイズ			|ref-customizing|
+ソース				|ref-sources|
+更新履歴			|ref-changelog|
+
+
+==============================================================================
+概要						*ref-introduction*
+
+*ref* はリファレンスを見るための Vim プラグインです。このプラグインはビューア
+のコアの部分とリファレンスのソースに分かれています。これにより、同じインターフ
+ェースで複数のリファレンスを閲覧できます。
+
+このプラグインには以下のソースが含まれています:
+- detect	(|ref-detect.txt|)
+- man		(|ref-man.txt|)
+- refe		(|ref-refe.txt|)
+- phpmanual	(|ref-phpmanual.txt|)
+- pydoc		(|ref-pydoc.txt|)
+- perldoc	(|ref-perldoc.txt|)
+
+
+==============================================================================
+リファレンスビューア				*ref-viewer*
+
+|ref-viewer| は、リファレンスを見るための単なるバッファです。これは |:help| と
+同じように |:Ref| コマンドや |<Plug>(ref-keyword)| キーシーケンスによって開か
+れます。|ref-viewer| がカレントタブページ内で既に開かれていた場合はそれが再利
+用されます。
+|ref-viewer| はバッファ毎にそれぞれ表示したページの履歴を保持していて、いつで
+も戻ることができます。
+
+
+==============================================================================
+インターフェース				*ref-interface*
+
+------------------------------------------------------------------------------
+関数						*ref-functions*
+
+以下の関数は主に |ref-sources| によって使われます。
+
+ref#cache({source}, {name}, {gather})		*ref#cache()*
+			取得に時間のかかるリストをキャッシュするための関数で
+			す。この関数を介することでリストは自動でキャッシュされ
+			ます。以降はキャッシュされたリストを返します。
+			{source} はソース名です。
+			{name} は識別のための任意の名前です。
+			{gather} は以下のうちのいずれかです。
+			- リストを取得するための |Funcref|。
+			- |eval()| によって評価可能な文字列。(スコープに注意。)
+			- 辞書関数 "call" をメンバに持つ辞書。
+			いずれの場合もリストを返す必要があります。
+
+
+------------------------------------------------------------------------------
+コマンド					*ref-commands*
+
+:Ref {source} [query]				*:Ref*
+			|ref-viewer| を開きます。 [query] は |ref-sources| の
+			クエリに使われます。
+
+:RefHistory					*:RefHistory*
+			|ref-viewer| の履歴をリスト表示します。数字を入力する
+			ことでそこへジャンプできます。
+			|ref-viewer| 内でのみ使用できます。
+
+
+------------------------------------------------------------------------------
+キーマッピング 					*ref-key-mappings*
+
+<Plug>(ref-keyword)				*<Plug>(ref-keyword)*
+			カーソル位置のキーワードのリファレンスにジャンプしま
+			す。ソースが見つからなかった場合は |K| を押したのと同
+			じになります。
+
+
+以下のキーマッピングは |ref-viewer| 内で利用可能です。
+
+[count] <Plug>(ref-forward)			*<Plug>(ref-forward)*
+[count] <Plug>(ref-back)			*<Plug>(ref-back)*
+			|ref-viewer| 内での履歴を辿ります。
+
+
+					    *g:ref_no_default_key_mappings*
+以下のキーマッピングは g:ref_no_default_key_mappings を定義していなかった場合
+に利用可能です。
+
+(全体)
+{lhs}			{rhs}
+--------		-----------------------------
+K			<Plug>(ref-keyword)
+
+(|ref-viewer| 内)
+{lhs}			{rhs}
+--------		-----------------------------
+<CR>			<Plug>(ref-keyword)
+<2-LeftMouse>		<Plug>(ref-keyword)
+<C-]>			<Plug>(ref-keyword)
+<C-t>			<Plug>(ref-back)
+<C-o>			<Plug>(ref-back)
+<C-i>			<Plug>(ref-forward)
+
+
+==============================================================================
+カスタマイズ					*ref-customizing*
+
+FileType ref					*filetype-ref*
+	このイベントは |ref-viewer| の初期化後に発生します。
+	例: >
+	autocmd FileType ref call s:initialize_ref_viewer()
+	function! s:initialize_ref_viewer()
+	  nmap <buffer> b <Plug>(ref-back)
+	  nmap <buffer> f <Plug>(ref-forward)
+	  nnoremap <buffer> q <C-w>c
+	  setlocal nonumber
+	  " ... and more settings ...
+	endfunction
+<
+
+g:ref_open					*g:ref_open*
+	|ref-viewer| を開く際の補助コマンドです。例えば、|:vsplit| や
+	|:tabnew|などを指定します。デフォルト値は "split" です。
+
+
+==============================================================================
+ソース						*ref-sources*
+
+ソースは以下の関数を提供する必要があります。{query} は |:Ref| で渡される文字列
+です。
+
+ref#{source}#available()			*ref#{source}#available()*
+			必須。ソースが利用可能ならば真を返します。
+
+ref#{source}#get_body({query})			*ref#{source}#get_body()*
+			必須。リファレンスの本文を改行区切りの文字列かリストで
+			返します。
+			本文が見つからない場合はエラーメッセージと共に例外を投
+			げます。
+
+ref#{source}#opened({query})			*ref#{source}#opened()*
+			任意。この関数はリファレンスページが開かれる度に呼ばれ
+			ます。このタイミングで |ref-viewer| を初期化のために
+			編集することができます。
+
+ref#{source}#get_keyword()			*ref#{source}#get_keyword()*
+			任意。現在のカーソル位置からキーワードを取得します。未
+			定義の場合は "expand('<cword>')" が使われます。カーソ
+			ル位置は復元されるので、カーソルを動かしても問題ありま
+			せん。
+
+ref#{source}#complete({query})			*ref#{source}#complete()*
+			任意。コマンドラインの補完リストを返します。
+
+ref#{source}#leave()				*ref#{source}#leave()*
+			任意。この関数は別のソースに移動する際に呼ばれます。
+
+
+==============================================================================
+更新履歴					*ref-changelog*
+
+0.1.0	2009-12-22
+	- |ref#cache()| を追加。
+
+0.0.2	2009-08-20
+	- g:ref_split の名前と意味を変更。
+	  - g:ref_open へ変更。
+	- ソースの補完時に同じ項目が出ることがあるバグを修正。
+
+0.0.1	2009-08-09
+	- 初版。
+
+
+==============================================================================
+vim:tw=78:fo=tcq2mM:ts=8:ft=help:norl

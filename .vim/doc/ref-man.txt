@@ -1,0 +1,82 @@
+*ref-man.txt*	A ref source for manpage.
+
+Version: 0.1.2
+Author : thinca <thinca+vim@gmail.com>
+License: Creative Commons Attribution 2.1 Japan License
+         <http://creativecommons.org/licenses/by/2.1/jp/deed.en>
+
+==============================================================================
+CONTENTS					*ref-man-contents*
+
+INTRODUCTION			|ref-man-introduction|
+CUSTOMIZING			|ref-man-customizing|
+BUGS				|ref-man-bugs|
+CHANGELOG			|ref-man-changelog|
+
+
+==============================================================================
+INTRODUCTION					*ref-man-introduction*
+
+*ref-man* is a source for |ref| to man command.  man is a command to view
+manual pages on UNIX-like operationg systems.
+
+
+Requirements:
+- man
+
+
+==============================================================================
+CUSTOMIZING					*ref-man-customizing*
+
+g:ref_man_cmd					*g:ref_man_cmd*
+			Specifies the man command.
+			The default value is "man" if it is executable.
+			Otherwise, it is "".
+
+g:ref_man_use_escape_sequence			*g:ref_man_use_escape_sequence*
+			Highlight using escape sequence.
+			The default value is 0.
+
+g:ref_man_highlight_limit			*g:ref_man_highlight_limit*
+			If line number of body of man is greater than this
+			value, highlight with escape sequence is disabled.
+			Because very heavy.
+			The default value is 1000.
+
+
+==============================================================================
+BUGS						*ref-man-bugs*
+
+- The completion function for command line is not tested enough.
+
+- If you enabled |g:ref_man_use_escape_sequence|, it is not highlighted when
+  following the history.
+
+
+==============================================================================
+CHANGELOG					*ref-man-changelog*
+
+0.1.2	2009-12-22
+	- Using |ref#cache()|.
+	- Improved the matching of keyword.
+
+0.1.1	2009-12-16
+	- Improved the matching of keyword.
+
+0.1.0	2009-09-01
+	- Improved the matching of keyword.
+	- Fixed a bug that an error might occur when a page is moved.
+	- Added |g:ref_man_use_escape_sequence| option.
+
+0.0.2	2009-08-19
+	- Added |g:ref_man_highlight_limit| option.
+	- Improved the completion function.
+	  - For performance.
+	  - Removed duplication items.
+
+0.0.1	2009-08-12
+	- Initial version.
+
+
+==============================================================================
+vim:tw=78:fo=tcq2mM:ts=8:ft=help:norl
