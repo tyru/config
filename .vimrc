@@ -11,6 +11,27 @@ let mapleader = ';'
 let maplocalleader = '\'
 
 
+" Util Functions/Commands {{{
+" s:warn {{{
+func! s:warn(msg)
+    echohl WarningMsg
+    echomsg a:msg
+    echohl None
+endfunc
+" }}}
+" s:system {{{
+func! s:system(command, ...)
+    let args = [a:command] + map(copy(a:000), 'shellescape(v:val)')
+    return system(join(args, ' '))
+endfunc
+" }}}
+" s:glob
+func! s:glob(expr)
+    return split(glob(a:expr), "\n")
+endfunc
+" }}}
+
+
 " Buffer local commands {{{
 " Buffer local commands are useful to manage to make .vimrc reloadable.
 
@@ -117,6 +138,11 @@ if has("win32")
     AddRuntimePath $HOME/.vim
 endif
 AddRuntimePath $HOME/.vim/mine
+
+for s:rtp in s:glob('$HOME/.vim/+vcs/*')
+    call s:runtimepath.add(s:rtp)
+endfor
+unlet s:rtp
 " }}}
 
 " autocmd {{{
@@ -181,23 +207,6 @@ AutoCommand BufNewFile,BufReadPre *.md
 " delete autocmd for ft=mkd.
 " TODO -bang for s:lazy_autocmd.delete().
 " AutoCommand! filetypedetect BufNewFile,BufRead *.md
-" }}}
-" }}}
-
-
-" Util Functions/Commands {{{
-" s:warn {{{
-func! s:warn(msg)
-    echohl WarningMsg
-    echomsg a:msg
-    echohl None
-endfunc
-" }}}
-" s:system {{{
-func! s:system(command, ...)
-    let args = [a:command] + map(copy(a:000), 'shellescape(v:val)')
-    return system(join(args, ' '))
-endfunc
 " }}}
 " }}}
 
@@ -393,6 +402,11 @@ AutoCommand FileType *   call s:LoadWhenFileType()
 
 
 " Options {{{
+
+" TODO
+" command -buffer -nargs=* Set
+"             \   set <q-args>
+
 set autoindent
 set autoread
 set backspace=indent,eol,start
@@ -617,6 +631,8 @@ nnoremap ZZ <Nop>
 
 nnoremap <Space>w :<C-u>w<CR>
 nnoremap <Space>q :<C-u>q<CR>
+
+nnoremap <silent> gK    K
 " }}}
 " map! {{{
 noremap! <C-f>   <Right>
