@@ -140,7 +140,7 @@ inoremap <C-n> <Nop>
 qmark H http://www.hatena.ne.jp/tyru/config/account
 qmark P http://pipes.yahoo.com/pipes/
 qmark R http://www.rememberthemilk.com/
-qmark T http://tyru.tumblr.com/
+qmark T http://tumblr.com/
 qmark d http://delicious.com/tyru/
 qmark g http://github.com/tyru
 qmark h http://www.hatena.ne.jp/
