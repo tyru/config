@@ -1,6 +1,10 @@
 #!/bin/sh
 # Original script is from oreilly book "Linuxサーバ Hacks" (Linux Server Hacks)
 
+# TODO
+# - install as given user
+
+
 movein_dir="send_config"
 
 die () {
