@@ -6,7 +6,7 @@ scriptencoding utf-8
 " Name: nextfile
 " Version: 0.0.3
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2009-11-18.
+" Last Change: 2010-01-20.
 "
 " Description:
 "   open the next or previous file
@@ -84,14 +84,15 @@ scriptencoding utf-8
 "           function string or Funcref passed to sort().
 "
 "           default function's definition:
-"               func! s:sort_compare(i, j)
-"                   " alphabetically
-"                   return a:i > a:j
+"               func! s:sort_compare(a, b)
+"                   let [a, b] = [string(a:a), string(a:b)]
+"                   return a ==# b ? 0 : a > b ? 1 : -1
 "               endfunc
 "
 "
 " TODO
 " - add option of list of patterns to skip specified files
+" - mappings to open the first/last file.
 "==================================================
 " }}}
 
@@ -181,9 +182,9 @@ func! s:glob_list(expr)
 endfunc
 " }}}
 " s:sort_compare {{{
-func! s:sort_compare(i, j)
-    " alphabetically
-    return a:i > a:j
+func! s:sort_compare(a, b)
+    let [a, b] = [string(a:a), string(a:b)]
+    return a ==# b ? 0 : a > b ? 1 : -1
 endfunc
 " }}}
 " }}}
