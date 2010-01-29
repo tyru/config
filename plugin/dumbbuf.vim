@@ -126,6 +126,8 @@ scriptencoding utf-8
 "           :edit buffer.
 "       u
 "          open one by one. this is same as QuickBuf's u.
+"       g
+"          :sbuffer buffer.
 "       s
 "          :split buffer.
 "       v
@@ -798,6 +800,20 @@ func! s:compile_mappings()
                             \'post': ['save_lnum']}),
                         \string('v'))
             \},
+            \'g': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('sbuffer %d'),
+                        \string({
+                            \'type': 'cmd',
+                            \'requires_args': 1,
+                            \'process_marked': 1,
+                            \'pre': ['close_return_if_empty',
+                                    \'close_dumbbuf', 'jump_to_caller'],
+                            \'post': ['save_lnum', 'update_dumbbuf']}),
+                        \string('v'))
+            \},
             \'s': {
                 \'opt': '<silent>',
                 \'mapto':
@@ -980,6 +996,20 @@ func! s:compile_mappings()
                             \'pre': ['close_return_if_empty',
                                     \'close_dumbbuf', 'jump_to_caller'],
                             \'post': ['save_lnum']}),
+                        \string('n'))
+            \},
+            \'g': {
+                \'opt': '<silent>',
+                \'mapto':
+                    \printf(fmt_tmp,
+                        \string('sbuffer %d'),
+                        \string({
+                            \'type': 'cmd',
+                            \'requires_args': 1,
+                            \'process_marked': 1,
+                            \'pre': ['close_return_if_empty',
+                                    \'close_dumbbuf', 'jump_to_caller'],
+                            \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
             \'s': {
