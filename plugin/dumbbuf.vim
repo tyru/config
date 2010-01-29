@@ -811,7 +811,7 @@ func! s:compile_mappings()
                             \'process_marked': 1,
                             \'pre': ['close_return_if_empty',
                                     \'close_dumbbuf', 'jump_to_caller'],
-                            \'post': ['save_lnum']}),
+                            \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('v'))
             \},
             \'s': {
@@ -1009,7 +1009,7 @@ func! s:compile_mappings()
                             \'process_marked': 1,
                             \'pre': ['close_return_if_empty',
                                     \'close_dumbbuf', 'jump_to_caller'],
-                            \'post': ['save_lnum']}),
+                            \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
             \'s': {
