@@ -13,19 +13,7 @@ scriptencoding utf-8
 "
 "   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 " }}}
-" Document {{{
-"==================================================
-" Name: DumbBuf
-" Version: 0.0.8
-" Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2010-01-24.
-"
-" GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
-"
-" Description:
-"   simple buffer manager like QuickBuf.vim
-"
-" Change Log: {{{
+" Change Log {{{
 "   0.0.0:
 "       Initial upload
 "   0.0.1:
@@ -93,6 +81,17 @@ scriptencoding utf-8
 "       - Some optimizations.
 "       - Some fixes of minor bugs.
 " }}}
+" Document {{{
+"==================================================
+" Name: DumbBuf
+" Version: 0.0.8
+" Author:  tyru <tyru.exe@gmail.com>
+" Last Change: 2010-01-24.
+"
+" GetLatestVimScripts: 2783 1 :AutoInstall: dumbbuf.vim
+"
+" Description:
+"   simple buffer manager like QuickBuf.vim
 "
 "
 " My .vimrc: {{{
