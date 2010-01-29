@@ -1431,15 +1431,15 @@ endfunc
 " }}}
 " s:do_tasks {{{
 func! s:do_tasks(tasks, cursor_buf, lnum)
-    for p in a:tasks
+    for t in a:tasks
         " TODO Prepare dispatch table
-        if p ==# 'close_dumbbuf'
+        if t ==# 'close_dumbbuf'
             call s:close_dumbbuf_buffer()
 
-        elseif p ==# 'jump_to_caller'    " jump to caller buffer.
+        elseif t ==# 'jump_to_caller'    " jump to caller buffer.
             call s:jump_to_buffer(s:caller_bufnr)
 
-        elseif p ==# 'close_return_if_empty'
+        elseif t ==# 'close_return_if_empty'
             " if buffer is not available, close dumbbuf and do nothing.
             try
                 call s:do_tasks(['return_if_empty'], a:cursor_buf, a:lnum)
@@ -1448,7 +1448,7 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
                 throw 'nop'
             endtry
 
-        elseif p ==# 'return_if_empty'
+        elseif t ==# 'return_if_empty'
             " check buffer's availability.
             if empty(a:cursor_buf)
                 call s:warn("can't get buffer on cursor...")
@@ -1463,12 +1463,12 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
                 throw 'nop'
             endif
 
-        elseif p ==# 'save_lnum'
+        elseif t ==# 'save_lnum'
             " NOTE: do this before 'update'.
             call s:debug("save_lnum:".a:lnum)
             let s:previous_lnum = a:lnum
 
-        elseif p ==# 'update_dumbbuf'
+        elseif t ==# 'update_dumbbuf'
             " close or update dumbbuf buffer.
             if g:dumbbuf_close_when_exec
                 call s:debug("just close")
@@ -1478,11 +1478,11 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
                 call s:update_buffers_list()
             endif
 
-        elseif p ==# 'update_misc'
+        elseif t ==# 'update_misc'
             call s:update_only_misc_info()
 
         else
-            call s:warn("internal warning: unknown task name: ".p)
+            call s:warn("internal warning: unknown task name: ".t)
         endif
     endfor
 endfunc
