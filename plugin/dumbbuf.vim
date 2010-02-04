@@ -126,7 +126,7 @@ scriptencoding utf-8
 "           :edit buffer.
 "       u
 "          open one by one. this is same as QuickBuf's u.
-"       g
+"       o
 "          :sbuffer buffer.
 "       s
 "          :split buffer.
@@ -800,7 +800,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum']}),
                         \string('v'))
             \},
-            \'g': {
+            \'o': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
@@ -998,7 +998,7 @@ func! s:compile_mappings()
                             \'post': ['save_lnum']}),
                         \string('n'))
             \},
-            \'g': {
+            \'o': {
                 \'opt': '<silent>',
                 \'mapto':
                     \printf(fmt_tmp,
