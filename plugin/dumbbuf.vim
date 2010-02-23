@@ -42,8 +42,7 @@ let s:shown_type_idx = 0    " index for g:dumbbuf_all_shown_types.
 " NOTE: See s:compile_mappings() about mappings and those infos.
 let s:mappings = {'user':{}, 'compiled':[]}    " buffer local mappings.
 
-let s:orig_timeout = &timeout
-let s:orig_timeoutlen = &timeoutlen
+let s:options_restored = []
 
 let s:orig_hl_cursorline = 0
 let s:now_processing = 0
@@ -133,9 +132,11 @@ unlet s:disp_expr
 
 if ! exists('g:dumbbuf_options')
     let g:dumbbuf_options = [
-        \'cursorline',
-        \'lazyredraw',
-        \'nowrap',
+    \   {'name': 'cursorline', 'value': 1},
+    \   {'name': 'lazyredraw', 'value': 1},
+    \   {'name': 'wrap', 'value': 0},
+    \   {'name': 'timeout', 'value': 1, 'restore': 1},
+    \   {'name': 'timeoutlen', 'value': g:dumbbuf_timeoutlen, 'restore': 1},
     \]
 endif
 
@@ -959,9 +960,20 @@ func! s:open_dumbbuf_buffer()
     call s:set_cursor_pos(curbufinfo)
 
     " options
-    for i in g:dumbbuf_options
-        execute 'setlocal' i
+    for opt in g:dumbbuf_options
+        let optvarname = '&' . opt.name
+        if get(opt, 'restore', 0)
+            call add(
+            \   s:options_restored,
+            \   {
+            \       'name': opt.name,
+            \       'value': getbufvar(s:caller_bufnr, optvarname),
+            \   }
+            \)
+        endif
+        call setbufvar(s:dumbbuf_bufnr, optvarname, opt.value)
     endfor
+    " necessary option settings.
     setlocal bufhidden=wipe
     setlocal buftype=nofile
     setlocal nobuflisted
@@ -989,12 +1001,6 @@ func! s:open_dumbbuf_buffer()
     if hl_cursorline !=# g:dumbbuf_hl_cursorline
         call s:set_highlight('CursorLine', g:dumbbuf_hl_cursorline)
     endif
-
-    " timeout, timeoutlen
-    let s:orig_timeout = &timeout
-    let s:orig_timeoutlen = &timeoutlen
-    let &timeout = 1
-    let &timeoutlen = g:dumbbuf_timeoutlen
 endfunc
 " }}}
 " s:close_dumbbuf_buffer {{{
@@ -1424,12 +1430,15 @@ endfunc
 " s:restore_options {{{
 func! s:restore_options()
     call s:debug("s:restore_options()...")
+    " Assumption: Already out of dumbbuf buffer.
 
     " restore ...
 
     " &timeout, &timeoutlen
-    let &timeout = s:orig_timeout
-    let &timeoutlen = s:orig_timeoutlen
+    for opt in s:options_restored
+        call setbufvar('%', '&' . opt.name, opt.value)
+    endfor
+    let s:options_restored = []
     " highlight 'CursorLine'
     if type(s:orig_hl_cursorline) != type(0)
         call s:set_highlight('CursorLine', s:orig_hl_cursorline)
