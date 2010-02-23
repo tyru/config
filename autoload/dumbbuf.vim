@@ -773,6 +773,10 @@ endfunc "}}}
 
 " manipulating dumbbuf buffer.
 func! dumbbuf#open(...) "{{{
+    if s:dumbbuf_bufnr != -1 && s:dumbbuf_bufnr == bufnr('%')
+        return
+    endif
+
     " remember current bufnr.
     let s:caller_bufnr = bufnr('%')
     call s:debug('caller buffer name is '.bufname(s:caller_bufnr))
