@@ -867,7 +867,7 @@ func! dumbbuf#open(...) "{{{
         call s:set_highlight('CursorLine', g:dumbbuf_hl_cursorline)
     endif
 endfunc "}}}
-func! s:close_dumbbuf_buffer() "{{{
+func! dumbbuf#close() "{{{
     let prevwinnr = winnr()
 
     if s:jump_to_buffer(s:dumbbuf_bufnr) != -1
@@ -879,6 +879,13 @@ func! s:close_dumbbuf_buffer() "{{{
         execute prevwinnr.'wincmd w'
     endif
 endfunc "}}}
+func! dumbbuf#update(...) "{{{
+    " close if exists.
+    call dumbbuf#close()
+    " open.
+    call call('dumbbuf#open', a:000)
+endfunc "}}}
+
 func! s:update_only_misc_info() "{{{
     if s:jump_to_buffer(s:dumbbuf_bufnr) == -1
         return
@@ -898,12 +905,6 @@ func! s:update_only_misc_info() "{{{
         let &l:modifiable = save_modifiable
         let &l:lazyredraw = save_lazyredraw
     endtry
-endfunc "}}}
-func! s:update_buffers_list(...) "{{{
-    " close if exists.
-    call s:close_dumbbuf_buffer()
-    " open.
-    call call('dumbbuf#open', a:000)
 endfunc "}}}
 func! s:jump_to_buffer(bufnr) "{{{
     if a:bufnr ==# bufnr('%') | return a:bufnr | endif
@@ -1014,7 +1015,7 @@ func! s:do_tasks(tasks, cursor_buf, lnum) "{{{
     for t in a:tasks
         " TODO Prepare dispatch table
         if t ==# 'close_dumbbuf'
-            call s:close_dumbbuf_buffer()
+            call dumbbuf#close()
 
         elseif t ==# 'jump_to_caller'    " jump to caller buffer.
             call s:jump_to_buffer(s:caller_bufnr)
@@ -1024,7 +1025,7 @@ func! s:do_tasks(tasks, cursor_buf, lnum) "{{{
             try
                 call s:do_tasks(['return_if_empty'], a:cursor_buf, a:lnum)
             catch /^nop$/
-                call s:close_dumbbuf_buffer()
+                call dumbbuf#close()
                 throw 'nop'
             endtry
 
@@ -1052,10 +1053,10 @@ func! s:do_tasks(tasks, cursor_buf, lnum) "{{{
             " close or update dumbbuf buffer.
             if g:dumbbuf_close_when_exec
                 call s:debug("just close")
-                call s:close_dumbbuf_buffer()
+                call dumbbuf#close()
             else
                 call s:debug("close and re-open")
-                call s:update_buffers_list()
+                call dumbbuf#update()
             endif
 
         elseif t ==# 'update_misc'
@@ -1160,7 +1161,7 @@ func! s:buflocal_open_onebyone(cursor_buf, lnum, opt) "{{{
     " open buffer on the cursor and close dumbbuf buffer.
     call s:buflocal_open(a:opt)
     " re-open dumbbuf buffer.
-    call s:update_buffers_list()
+    call dumbbuf#update()
     " go to previous lnum.
     execute a:lnum
 
@@ -1201,7 +1202,7 @@ func! s:buflocal_toggle_listed_type(cursor_buf, lnum, opt, advance) "{{{
         endif
     endif
 
-    call s:update_buffers_list(g:dumbbuf_all_shown_types[s:shown_type_idx])
+    call dumbbuf#update(g:dumbbuf_all_shown_types[s:shown_type_idx])
 endfunc "}}}
 func! s:buflocal_close(cursor_buf, lnum, opt) "{{{
     if s:jump_to_buffer(a:cursor_buf.nr) != -1
