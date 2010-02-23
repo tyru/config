@@ -928,7 +928,24 @@ endfunc
 " manipulate dumbbuf buffer.
 " s:open_dumbbuf_buffer {{{
 "   open and set up dumbbuf buffer.
-func! s:open_dumbbuf_buffer()
+func! s:open_dumbbuf_buffer(...)
+    " remember current bufnr.
+    let s:caller_bufnr = bufnr('%')
+    call s:debug('caller buffer name is '.bufname(s:caller_bufnr))
+    " save current buffers to s:bufs_info.
+    let s:bufs_info = s:parse_buffers_info()
+    " decide which type dumbbuf shows.
+    if a:0 > 0
+        if ! s:is_shown_type(a:1)
+            call s:warnf('internal error: %s is not correct shown type.')
+            return
+        endif
+        let s:current_shown_type = a:1
+    else
+        let s:current_shown_type = s:get_shown_type(s:caller_bufnr)
+    endif
+
+
     " open and switch to dumbbuf's buffer.
     let s:dumbbuf_bufnr = s:create_dumbbuf_buffer()
     if s:dumbbuf_bufnr ==# -1
@@ -1043,25 +1060,8 @@ endfunc
 func! s:update_buffers_list(...)
     " close if exists.
     call s:close_dumbbuf_buffer()
-
-    " remember current bufnr.
-    let s:caller_bufnr = bufnr('%')
-    call s:debug('caller buffer name is '.bufname(s:caller_bufnr))
-    " save current buffers to s:bufs_info.
-    let s:bufs_info = s:parse_buffers_info()
-    " decide which type dumbbuf shows.
-    if a:0 > 0
-        if ! s:is_shown_type(a:1)
-            call s:warnf('internal error: %s is not correct shown type.')
-            return
-        endif
-        let s:current_shown_type = a:1
-    else
-        let s:current_shown_type = s:get_shown_type(s:caller_bufnr)
-    endif
-
     " open.
-    call s:open_dumbbuf_buffer()
+    call call('s:open_dumbbuf_buffer', a:000)
 endfunc
 " }}}
 " s:jump_to_buffer {{{
@@ -1340,7 +1340,7 @@ endfunc
 func! s:buflocal_open_onebyone(cursor_buf, lnum, opt)
     " open buffer on the cursor and close dumbbuf buffer.
     call s:buflocal_open(a:opt)
-    " open dumbbuf's buffer again.
+    " re-open dumbbuf buffer.
     call s:update_buffers_list()
     " go to previous lnum.
     execute a:lnum
@@ -1452,7 +1452,7 @@ endfunc
 " }}}
 
 " Mappings {{{
-execute 'nnoremap <silent><unique>' g:dumbbuf_hotkey ':call <SID>update_buffers_list()<CR>'
+execute 'nnoremap <silent><unique>' g:dumbbuf_hotkey ':call <SID>open_dumbbuf_buffer()<CR>'
 " }}}
 
 " Autocmd {{{
