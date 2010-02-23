@@ -42,8 +42,7 @@ if g:dumbbuf_verbose
         endif
     endfunc
 endif
-" s:debug {{{
-fun! s:debug(msg)
+fun! s:debug(msg) "{{{
     if g:dumbbuf_verbose
         call s:warn(a:msg)
         call add(s:debug_msg, a:msg)
@@ -51,48 +50,36 @@ fun! s:debug(msg)
             let s:debug_msg = s:debug_msg[-30:-1]
         endif
     endif
-endfunc
+endfunc "}}}
 " }}}
-" }}}
-" s:warn {{{
-func! s:warn(msg)
+func! s:warn(msg) "{{{
     echohl WarningMsg
     echomsg a:msg
     echohl None
-endfunc
-" }}}
-" s:warnf {{{
-func! s:warnf(fmt, ...)
+endfunc "}}}
+func! s:warnf(fmt, ...) "{{{
     call s:warn(call('printf', [a:fmt] + a:000))
-endfunc
-" }}}
+endfunc "}}}
 
 
 " sort functions
-" s:sortfunc_numeric {{{
-func! s:sortfunc_numeric(i1, i2)
+func! s:sortfunc_numeric(i1, i2) "{{{
     return a:i1 - a:i2
-endfunc
-" }}}
+endfunc "}}}
 
 
 " misc.
-" s:get_buffer_info {{{
-func! s:get_buffer_info(bufnr)
+func! s:get_buffer_info(bufnr) "{{{
     return has_key(s:bufs_info, a:bufnr) ? s:bufs_info[a:bufnr] : []
-endfunc
-" }}}
-" s:eval_disp_expr {{{
-func! s:eval_disp_expr(bufs)
+endfunc "}}}
+func! s:eval_disp_expr(bufs) "{{{
     if type(a:bufs) == type([])
         return map(a:bufs, g:dumbbuf_disp_expr[s:current_shown_type])
     else
         return get(map([a:bufs], g:dumbbuf_disp_expr[s:current_shown_type]), 0)
     endif
-endfunc
-" }}}
-" s:sort_by_shown_type {{{
-func! s:sort_by_shown_type(bufs)
+endfunc "}}}
+func! s:sort_by_shown_type(bufs) "{{{
     let bufs = a:bufs
     if s:current_shown_type ==# 'listed'
         " sort by bufnr.
@@ -105,10 +92,8 @@ func! s:sort_by_shown_type(bufs)
         let sorted = values(bufs)
     endif
     return sorted
-endfunc
-" }}}
-" s:eval_sorted_bufs {{{
-func! s:eval_sorted_bufs(sorted_bufs)
+endfunc "}}}
+func! s:eval_sorted_bufs(sorted_bufs) "{{{
     let lnum = 1
     let disp_line = []
 
@@ -162,11 +147,10 @@ func! s:eval_sorted_bufs(sorted_bufs)
     endif
 
     return disp_line
-endfunc
-" }}}
-" s:write_buffers_list {{{
-"   this determines s:bufs_info[i].lnum
-func! s:write_buffers_list(bufs)
+endfunc "}}}
+func! s:write_buffers_list(bufs) "{{{
+    " NOTE: this function determines s:bufs_info[i].lnum
+
     call s:jump_to_buffer(s:dumbbuf_bufnr)
 
     let disp_line = []
@@ -180,11 +164,8 @@ func! s:write_buffers_list(bufs)
 
     silent put =disp_line
     normal! gg"_dd
-endfunc
-" }}}
-" s:parse_buffers_info {{{
-"   parse output of :ls! command.
-func! s:parse_buffers_info()
+endfunc "}}}
+func! s:parse_buffers_info() "{{{
     " redirect output of :ls! to ls_out.
     redir => ls_out
     silent ls!
@@ -252,29 +233,24 @@ func! s:parse_buffers_info()
     endfor
 
     return result
-endfunc
-" }}}
-" s:get_cursor_buffer {{{
-func! s:get_cursor_buffer()
+endfunc "}}}
+func! s:get_cursor_buffer() "{{{
     for buf in values(s:bufs_info)
         if buf.lnum ==# line('.')
             return buf
         endif
     endfor
     return {}
-endfunc
-" }}}
-" s:is_shown_type {{{
-func! s:is_shown_type(shown_type)
+endfunc "}}}
+func! s:is_shown_type(shown_type) "{{{
     return a:shown_type ==# 'listed'
       \ || a:shown_type ==# 'unlisted'
       \ || a:shown_type ==# 'project'
-endfunc
-" }}}
-" s:get_shown_type {{{
-"   this returns exact shown type (this does NOT return '').
-"   see g:dumbbuf_shown_type in the document about shown type.
-func! s:get_shown_type(caller_bufnr)
+endfunc "}}}
+func! s:get_shown_type(caller_bufnr) "{{{
+    " this returns exact shown type (this does NOT return '').
+    " see g:dumbbuf_shown_type in the document about shown type.
+
     if s:is_shown_type(g:dumbbuf_shown_type)
         return g:dumbbuf_shown_type
     elseif g:dumbbuf_shown_type == ''
@@ -292,11 +268,11 @@ func! s:get_shown_type(caller_bufnr)
 
         return s:get_shown_type(a:caller_bufnr)
     endif
-endfunc
-" }}}
-" s:set_cursor_pos {{{
-"   move cursor to the pos which is specified by g:dumbbuf_cursor_pos.
-func! s:set_cursor_pos(curbufinfo)
+endfunc "}}}
+func! s:set_cursor_pos(curbufinfo) "{{{
+    " move cursor to the pos
+    " which is specified by g:dumbbuf_cursor_pos.
+
     if g:dumbbuf_cursor_pos ==# 'current'
         if a:curbufinfo.lnum !=# -1
             execute 'normal!' a:curbufinfo.lnum . 'gg'
@@ -324,12 +300,11 @@ func! s:set_cursor_pos(curbufinfo)
 
         sleep 1
     endif
-endfunc
-" }}}
-" s:filter_shown_type_buffers {{{
-"   if current buffer is unlisted, filter unlisted buffers.
-"   if current buffers is listed, filter listed buffers.
-func! s:filter_shown_type_buffers(bufs_info)
+endfunc "}}}
+func! s:filter_shown_type_buffers(bufs_info) "{{{
+    " if current buffer is unlisted, filter unlisted buffers.
+    " if current buffers is listed, filter listed buffers.
+
     call s:debug(printf("filter only '%s' buffers.", s:current_shown_type))
 
     if s:current_shown_type ==# 'listed'
@@ -340,27 +315,19 @@ func! s:filter_shown_type_buffers(bufs_info)
         " TODO option
         return filter(a:bufs_info, '! v:val.is_unlisted')
     endif
-endfunc
-" }}}
-" s:extend_misc_info {{{
-"   add s:misc_info to buf.
-func! s:extend_misc_info(buf)
+endfunc "}}}
+func! s:extend_misc_info(buf) "{{{
     let buf = a:buf
     let buf.is_marked = has_key(s:misc_info.marked_bufs, buf.nr)
     let buf.project_name = get(s:misc_info.project_name, buf.nr, '')
     return buf
-endfunc
-" }}}
-" s:add_misc_info {{{
-"   add s:misc_info to all buffers in bufs_info.
-func! s:add_misc_info(bufs_info)
+endfunc "}}}
+func! s:add_misc_info(bufs_info) "{{{
     for buf in values(a:bufs_info)
         let buf = s:extend_misc_info(buf)
     endfor
-endfunc
-" }}}
-" s:compile_mappings {{{
-func! s:compile_mappings()
+endfunc "}}}
+func! s:compile_mappings() "{{{
     let fmt_tmp = ':<C-u>call <SID>run_from_local_map(%s, %s, %s)<CR>'
     let default_mappings = {
         \'v': {
@@ -800,14 +767,11 @@ func! s:compile_mappings()
         unlet map_vs_code[map]
     endfor
     let s:mappings.compiled = values(map_vs_code)
-endfunc
-" }}}
+endfunc "}}}
 
 
-" manipulate dumbbuf buffer.
-" dumbbuf#open {{{
-"   open and set up dumbbuf buffer.
-func! dumbbuf#open(...)
+" manipulating dumbbuf buffer.
+func! dumbbuf#open(...) "{{{
     " remember current bufnr.
     let s:caller_bufnr = bufnr('%')
     call s:debug('caller buffer name is '.bufname(s:caller_bufnr))
@@ -897,10 +861,8 @@ func! dumbbuf#open(...)
     if hl_cursorline !=# g:dumbbuf_hl_cursorline
         call s:set_highlight('CursorLine', g:dumbbuf_hl_cursorline)
     endif
-endfunc
-" }}}
-" s:close_dumbbuf_buffer {{{
-func! s:close_dumbbuf_buffer()
+endfunc "}}}
+func! s:close_dumbbuf_buffer() "{{{
     let prevwinnr = winnr()
 
     if s:jump_to_buffer(s:dumbbuf_bufnr) != -1
@@ -911,10 +873,8 @@ func! s:close_dumbbuf_buffer()
     if winnr() > prevwinnr
         execute prevwinnr.'wincmd w'
     endif
-endfunc
-" }}}
-" s:update_only_misc_info {{{
-func! s:update_only_misc_info()
+endfunc "}}}
+func! s:update_only_misc_info() "{{{
     if s:jump_to_buffer(s:dumbbuf_bufnr) == -1
         return
     endif
@@ -933,18 +893,14 @@ func! s:update_only_misc_info()
         let &l:modifiable = save_modifiable
         let &l:lazyredraw = save_lazyredraw
     endtry
-endfunc
-" }}}
-" s:update_buffers_list {{{
-func! s:update_buffers_list(...)
+endfunc "}}}
+func! s:update_buffers_list(...) "{{{
     " close if exists.
     call s:close_dumbbuf_buffer()
     " open.
     call call('dumbbuf#open', a:000)
-endfunc
-" }}}
-" s:jump_to_buffer {{{
-func! s:jump_to_buffer(bufnr)
+endfunc "}}}
+func! s:jump_to_buffer(bufnr) "{{{
     if a:bufnr ==# bufnr('%') | return a:bufnr | endif
     let winnr = bufwinnr(a:bufnr)
     if winnr != -1 && winnr != winnr()
@@ -952,19 +908,15 @@ func! s:jump_to_buffer(bufnr)
         execute winnr.'wincmd w'
     endif
     return winnr
-endfunc
-" }}}
-" s:create_dumbbuf_buffer {{{
-func! s:create_dumbbuf_buffer()
+endfunc "}}}
+func! s:create_dumbbuf_buffer() "{{{
     execute printf("%s %s %dnew",
                 \g:dumbbuf_vertical ? 'vertical' : '',
                 \g:dumbbuf_open_with,
                 \g:dumbbuf_vertical ? g:dumbbuf_buffer_width : g:dumbbuf_buffer_height)
     return bufnr('%')
-endfunc
-" }}}
-" s:name_dumbbuf_buffer {{{
-func! s:name_dumbbuf_buffer()
+endfunc "}}}
+func! s:name_dumbbuf_buffer() "{{{
     if s:current_shown_type ==# 'listed'
         silent file `=g:dumbbuf_listed_buffer_name`
     elseif s:current_shown_type ==# 'unlisted'
@@ -972,21 +924,17 @@ func! s:name_dumbbuf_buffer()
     else
         silent file `=g:dumbbuf_project_buffer_name`
     endif
-endfunc
-" }}}
+endfunc "}}}
 
 
 " highlight
-" s:get_highlight {{{
-func! s:get_highlight(hl_name)
+func! s:get_highlight(hl_name) "{{{
     redir => output
     silent execute 'hi' a:hl_name
     redir END
     return substitute(output, '\C' . '.*\<xxx\>\s\+\(.*\)$', '\1', 'g')
-endfunc
-" }}}
-" s:set_highlight {{{
-func! s:set_highlight(hl_name, value)
+endfunc "}}}
+func! s:set_highlight(hl_name, value) "{{{
     call s:debug(printf("set highlight '%s' to '%s'.", a:hl_name, a:value))
 
     " Disable un-specified (by a:value) options.
@@ -996,13 +944,11 @@ func! s:set_highlight(hl_name, value)
     endfor
 
     execute 'hi' a:hl_name a:value
-endfunc
-" }}}
+endfunc "}}}
 
 
 " all mappings start from here.
-" s:run_from_local_map {{{
-func! s:run_from_local_map(code, opt, map_mode)
+func! s:run_from_local_map(code, opt, map_mode) "{{{
     let s:now_processing = 1
     let opt = extend(
                 \deepcopy(a:opt),
@@ -1058,10 +1004,8 @@ func! s:run_from_local_map(code, opt, map_mode)
         let s:now_processing = 0
 
     endtry
-endfunc
-" }}}
-" s:do_tasks {{{
-func! s:do_tasks(tasks, cursor_buf, lnum)
+endfunc "}}}
+func! s:do_tasks(tasks, cursor_buf, lnum) "{{{
     for t in a:tasks
         " TODO Prepare dispatch table
         if t ==# 'close_dumbbuf'
@@ -1116,10 +1060,8 @@ func! s:do_tasks(tasks, cursor_buf, lnum)
             call s:warn("internal warning: unknown task name: ".t)
         endif
     endfor
-endfunc
-" }}}
-" s:dispatch_code {{{
-func! s:dispatch_code(code, idx, cursor_buf, lnum, opt)
+endfunc "}}}
+func! s:dispatch_code(code, idx, cursor_buf, lnum, opt) "{{{
     " NOTE: a:cursor_buf may be empty.
     call s:debug(string(a:opt))
     let requires_args = type(a:opt.requires_args) == type([]) ?
@@ -1144,12 +1086,11 @@ func! s:dispatch_code(code, idx, cursor_buf, lnum, opt)
     else
         throw "internal error: unknown type: ".a:opt.type
     endif
-endfunc
-"}}}
-" s:get_buffers_being_processed {{{
-"   if a:code supports 'process_marked' and marked buffers exist,
-"   process marked buffers instead of current cursor buffer.
-func! s:get_buffers_being_processed(opt, cursor_buf, map_mode, first, last)
+endfunc "}}}
+func! s:get_buffers_being_processed(opt, cursor_buf, map_mode, first, last) "{{{
+    " if a:code supports 'process_marked' and marked buffers exist,
+    " do process marked buffers instead of current cursor buffer.
+
     if a:map_mode ==# 'v'
         let v_selected_bufs = []
         let save_pos = getpos('.')
@@ -1170,13 +1111,11 @@ func! s:get_buffers_being_processed(opt, cursor_buf, map_mode, first, last)
     else
         return [a:cursor_buf]
     endif
-endfunc
-" }}}
+endfunc "}}}
 
 
 " these functions are called from s:dispatch_code()
-" s:buflocal_move_lower {{{
-func! s:buflocal_move_lower()
+func! s:buflocal_move_lower() "{{{
     for i in range(1, v:count1)
         if line('.') == line('$')
             if g:dumbbuf_wrap_cursor
@@ -1187,10 +1126,8 @@ func! s:buflocal_move_lower()
             normal! j
         endif
     endfor
-endfunc
-" }}}
-" s:buflocal_move_upper {{{
-func! s:buflocal_move_upper()
+endfunc "}}}
+func! s:buflocal_move_upper() "{{{
     for i in range(1, v:count1)
         if line('.') == 1
             if g:dumbbuf_wrap_cursor
@@ -1201,22 +1138,20 @@ func! s:buflocal_move_upper()
             normal! k
         endif
     endfor
-endfunc
-" }}}
-" s:buflocal_open {{{
-"   this must be going to close dumbbuf buffer.
-func! s:buflocal_open(cursor_buf, lnum, opt)
+endfunc "}}}
+func! s:buflocal_open(cursor_buf, lnum, opt) "{{{
+    " this must be going to close dumbbuf buffer.
+
     let winnr = bufwinnr(a:cursor_buf.nr)
     if winnr == -1
         execute a:cursor_buf.nr.'buffer'
     else
         execute winnr.'wincmd w'
     endif
-endfunc
-" }}}
-" s:buflocal_open_onebyone {{{
-"   this does NOT do update or close buffers list.
-func! s:buflocal_open_onebyone(cursor_buf, lnum, opt)
+endfunc "}}}
+func! s:buflocal_open_onebyone(cursor_buf, lnum, opt) "{{{
+    " this does NOT do update or close buffers list.
+
     " open buffer on the cursor and close dumbbuf buffer.
     call s:buflocal_open(a:opt)
     " re-open dumbbuf buffer.
@@ -1235,10 +1170,8 @@ func! s:buflocal_open_onebyone(cursor_buf, lnum, opt)
     finally
         let g:dumbbuf_wrap_cursor = save_wrap_cursor
     endtry
-endfunc
-" }}}
-" s:buflocal_toggle_listed_type {{{
-func! s:buflocal_toggle_listed_type(cursor_buf, lnum, opt, advance)
+endfunc "}}}
+func! s:buflocal_toggle_listed_type(cursor_buf, lnum, opt, advance) "{{{
     if ! s:is_shown_type(s:current_shown_type)
         " NOTE: s:current_shown_type MUST NOT be ''.
         call s:warn("internal warning: strange s:current_shown_type value...: ".s:current_shown_type)
@@ -1264,17 +1197,13 @@ func! s:buflocal_toggle_listed_type(cursor_buf, lnum, opt, advance)
     endif
 
     call s:update_buffers_list(g:dumbbuf_all_shown_types[s:shown_type_idx])
-endfunc
- " }}}
-" s:buflocal_close {{{
-func! s:buflocal_close(cursor_buf, lnum, opt)
+endfunc "}}}
+func! s:buflocal_close(cursor_buf, lnum, opt) "{{{
     if s:jump_to_buffer(a:cursor_buf.nr) != -1
         close
     endif
-endfunc
-" }}}
-" s:buflocal_mark {{{
-func! s:buflocal_mark(cursor_buf, lnum, opt)
+endfunc "}}}
+func! s:buflocal_mark(cursor_buf, lnum, opt) "{{{
     if has_key(s:misc_info.marked_bufs, a:cursor_buf.nr)
         " remove from marked.
         unlet s:misc_info.marked_bufs[a:cursor_buf.nr]
@@ -1282,11 +1211,8 @@ func! s:buflocal_mark(cursor_buf, lnum, opt)
         " add to marked.
         let s:misc_info.marked_bufs[a:cursor_buf.nr] = 1
     endif
-endfunc
-" }}}
-" s:buflocal_set_project {{{
-"   set project name.
-func! s:buflocal_set_project(cursor_buf, lnum, opt)
+endfunc "}}}
+func! s:buflocal_set_project(cursor_buf, lnum, opt) "{{{
     redraw
     let nr   = a:cursor_buf.nr
     let name = fnamemodify(bufname(nr), ':t')
@@ -1301,13 +1227,11 @@ func! s:buflocal_set_project(cursor_buf, lnum, opt)
         let s:misc_info.project_name[nr] = strtrans(proj_name)
         call s:update_only_misc_info()
     endif
-endfunc
-" }}}
+endfunc "}}}
 
 
 " autocmd's handlers
-" s:restore_options {{{
-func! s:restore_options()
+func! s:restore_options() "{{{
     call s:debug("s:restore_options()...")
     " Assumption: Already out of dumbbuf buffer.
 
@@ -1326,8 +1250,7 @@ func! s:restore_options()
     if g:dumbbuf_remove_marked_when_close && ! s:now_processing
         let s:misc_info.marked_bufs = {}
     endif
-endfunc
-" }}}
+endfunc "}}}
 " }}}
 
 " Autocmd {{{
