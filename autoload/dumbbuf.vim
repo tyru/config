@@ -1234,9 +1234,9 @@ func! s:buflocal_set_project(cursor_buf, lnum, opt) "{{{
         call s:update_only_misc_info()
     endif
 endfunc "}}}
+" }}}
 
-
-" autocmd's handlers
+" Autocmd {{{
 func! s:restore_options() "{{{
     call s:debug("s:restore_options()...")
     " Assumption: Already out of dumbbuf buffer.
@@ -1257,9 +1257,7 @@ func! s:restore_options() "{{{
         let s:misc_info.marked_bufs = {}
     endif
 endfunc "}}}
-" }}}
 
-" Autocmd {{{
 augroup DumbBuf
     autocmd!
 
