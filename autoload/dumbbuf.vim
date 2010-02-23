@@ -63,8 +63,9 @@ endfunc "}}}
 
 
 " sort functions
-func! s:sortfunc_numeric(i1, i2) "{{{
-    return a:i1 - a:i2
+func! s:sortfunc_numeric(a, b) "{{{
+    let [a, b] = [a:a + 0, a:b + 0]
+    return a ==# b ? 0 : a > b ? 1 : -1
 endfunc "}}}
 
 
