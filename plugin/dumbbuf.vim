@@ -126,7 +126,11 @@ endif
 " }}}
 
 " Mappings {{{
-execute 'nnoremap <silent><unique>' g:dumbbuf_hotkey ':call dumbbuf#open()<CR>'
+nnoremap <silent> <Plug>(dumbbuf-open) :call dumbbuf#open()<CR>
+
+if g:dumbbuf_hotkey != ''
+    silent execute 'nmap <unique>' g:dumbbuf_hotkey '<Plug>(dumbbuf-open)'
+endif
 " }}}
 
 " Restore 'cpoptions' {{{
