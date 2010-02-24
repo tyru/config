@@ -1,0 +1,33 @@
+[submodule "ext/command-buffer.vim"]
+	path = ext/command-buffer.vim
+	url = git@github.com:tyru/command-buffer.vim.git
+[submodule "ext/skk.vim"]
+	path = ext/skk.vim
+	url = git@github.com:tyru/skk.vim.git
+[submodule "ext/stickykey.vim"]
+	path = ext/stickykey.vim
+	url = git@github.com:tyru/stickykey.vim.git
+[submodule "ext/winmove.vim"]
+	path = ext/winmove.vim
+	url = git@github.com:tyru/winmove.vim.git
+[submodule "ext/prompt.vim"]
+	path = ext/prompt.vim
+	url = git@github.com:tyru/prompt.vim.git
+[submodule "ext/DumbBuf.vim"]
+	path = ext/DumbBuf.vim
+	url = git@github.com:tyru/DumbBuf.vim.git
+[submodule "ext/vimtemplate.vim"]
+	path = ext/vimtemplate.vim
+	url = git@github.com:tyru/vimtemplate.vim.git
+[submodule "ext/sign-diff.vim"]
+	path = ext/sign-diff.vim
+	url = git@github.com:tyru/sign-diff.vim.git
+[submodule "ext/restart.vim"]
+	path = ext/restart.vim
+	url = git@github.com:tyru/restart.vim.git
+[submodule "ext/nextfile.vim"]
+	path = ext/nextfile.vim
+	url = git@github.com:tyru/nextfile.vim.git
+[submodule "ext/simpletap.vim"]
+	path = ext/simpletap.vim
+	url = git@github.com:tyru/simpletap.vim.git
