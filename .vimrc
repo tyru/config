@@ -650,6 +650,12 @@ Arpeggio inoremap qj    <C-o>o
 
 " shift left (indent)
 inoremap <C-q>   <C-d>
+
+" completion
+Arpeggio inoremap qn    <C-n>
+Arpeggio inoremap qp    <C-p>
+Arpeggio inoremap xn    <C-x><C-n>
+Arpeggio inoremap xp    <C-x><C-p>
 " }}}
 " cmap {{{
 if &wildmenu
