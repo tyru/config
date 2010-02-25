@@ -114,6 +114,12 @@ if [ "$OS" = "Cygwin" ]; then
 else
     alias ls='ls --color=tty'
 fi
+
+if [ -x "/usr/local/share/vim/vim72/macros/less.sh" ]; then
+    alias vless="/usr/local/share/vim/vim72/macros/less.sh"
+elif [ -x "/usr/share/vim/vim72/macros/less.sh" ]; then
+    alias vless="/usr/share/vim/vim72/macros/less.sh"
+fi
 # }}}
 
 ### misc ### {{{
@@ -131,7 +137,8 @@ myabbrev=(
     "p@" "| perl"
     "s@" "| sort"
     "u@" "| sort -u"
-    "x@" "| xclip"
+    "c@" "| xclip"
+    "x@" "| xargs"
     "n@" ">/dev/null 2>/dev/null"
     "e@" "2>&1"
     "h@" "--help 2>&1"
@@ -216,6 +223,18 @@ _quote-previous-word-in-double() {
 zle -N _quote-previous-word-in-double
 bindkey '^[G' _quote-previous-word-in-double
 # }}}
+
+# Gitのリポジトリのトップレベルにcdするコマンド {{{
+# http://d.hatena.ne.jp/hitode909/20100211/1265879271
+function u()
+{
+    cd ./$(git rev-parse --show-cdup)
+    if [ $# = 1 ]; then
+        cd $1
+    fi
+}
+# }}}
+
 # }}}
 
 ### cygwin ### {{{
