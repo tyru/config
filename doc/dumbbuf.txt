@@ -29,11 +29,11 @@ Changelog					|dumbbuf-changelog|
 
 
 ==============================================================================
-Introduction				*dumbbuf-introduction*
+Introduction				*dumbbuf-introduction* {{{
 
 DumbBuf is flexible buffer manager like QuickBuf.vim.
 
-
+}}}
 ==============================================================================
 Interface				*dumbbuf-interface* {{{
 ------------------------------------------------------------------------------
