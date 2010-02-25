@@ -49,7 +49,7 @@ syn match hatenaAutoLinkAntenna     +a:id:[A-Za-z]\w*+
 syn match hatenaAutoLinkBookmark    +b:id:[A-Za-z]\w*\(:\d\{8}\|:favorite\|:asin\)\=+
 syn match hatenaAutoLinkBookmark    +\[b:id:[A-Za-z]\w*:t:.\{-}\]+
 syn match hatenaAutoLinkBookmark    +\[b:\(keyword\|t\):.\{-}\]+
-syn match hatenaAutoLinkFotolife    +f:id:[A-Za-z]\w*\(:favorite\|:.\{-}:image\(:small\|:[wh]\d\+\)\=\)\=+
+syn match hatenaAutoLinkFotolife    +f:id:[A-Za-z]\w*\(:favorite\|:.\{-}:image\(:small\|:medium\|:[wh]\d\+\|:left\|:right\|:movie\)\=\)\=+
 syn match hatenaAutoLinkGroup       +g:[A-Za-z]\w*\(:id:[A-Za-z]\w*\(:\d\{6}\|:\d\{8}\|:archive\)\=\)\=+
 syn match hatenaAutoLinkGroup       +\[g:[A-Za-z]\w*:keyword:.\{-}\]+
 syn match hatenaAutoLinkIdea        +idea:\d\+\(:title\)\=+
