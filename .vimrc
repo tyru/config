@@ -1042,6 +1042,7 @@ command!
 \   map <buffer> | map! <buffer> | lmap <buffer>
 " }}}
 
+" hacks from web. {{{
 " from kana's .vimrc {{{
 nnoremap <silent> <Leader>cd   :CD %:p:h<CR>
 
@@ -1060,6 +1061,28 @@ MyAutocmd TabEnter *
 \ |   let t:cwd = getcwd()
 \ | endif
 \ | execute 'cd' fnameescape(expand(t:cwd))
+" }}}
+" }}}
+" SelectColorScheme {{{
+" via http://gist.github.com/314439
+" via http://gist.github.com/314597
+fun! s:SelectColorScheme()
+  30vnew
+
+  let files = split(globpath(&rtp, 'colors/*.vim'), "\n")
+  for idx in range(0, len(files) - 1)
+    let file = files[idx]
+    let name = matchstr(file , '\w\+\(\.vim\)\@=')
+    call setline(idx + 1, name)
+  endfor
+
+  setlocal bufhidden=wipe
+  setlocal buftype=nofile
+  setlocal nonu
+  nmap <buffer>  <Enter>  :<C-u>exec 'colors' getline('.')<CR>
+  nmap <buffer>  q        :<C-u>close<CR>
+endf
+com! SelectColorScheme   :cal s:SelectColorScheme()
 " }}}
 " }}}
 " }}}
