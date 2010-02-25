@@ -34,7 +34,7 @@ diff_filler
 diff_hlID
 empty
 endfor
-endfunc
+endfunction
 endif
 endwhile
 escape
@@ -49,6 +49,7 @@ feedkeys
 filereadable
 filewritable
 filter
+finally
 finddir
 findfile
 finish
@@ -61,7 +62,6 @@ foldtext
 foldtextresult
 for
 foreground
-func
 function
 garbagecollect
 get

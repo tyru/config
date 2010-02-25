@@ -12,140 +12,191 @@ let maplocalleader = '\'
 
 
 " Util Functions/Commands {{{
-" s:warn {{{
-func! s:warn(msg)
+" Function {{{
+func! s:warn(msg) "{{{
     echohl WarningMsg
     echomsg a:msg
     echohl None
-endfunc
-" }}}
-" s:system {{{
-func! s:system(command, ...)
+endfunc "}}}
+func! s:system(command, ...) "{{{
     let args = [a:command] + map(copy(a:000), 'shellescape(v:val)')
     return system(join(args, ' '))
-endfunc
-" }}}
-" s:glob
-func! s:glob(expr)
+endfunc "}}}
+func! s:glob(expr) "{{{
     return split(glob(a:expr), "\n")
-endfunc
+endfunc "}}}
 " }}}
+" Commands {{{
+augroup MyVimrc
+    autocmd!
+    " Create 'MyVimrc' augroup.
+augroup END
 
-
-" Buffer local commands {{{
-" Buffer local commands are useful to manage to make .vimrc reloadable.
-
-" s:runtimepath {{{
-let s:runtimepath = {}
-
-func! s:runtimepath.init() dict
-    let self.runtimepath = {}
-    let self.counter = 0
-    let self.updated = 0
-    " Set current &runtimepath.
-    for p in map(split(&runtimepath, ','), 'expand(v:val)')
-        if !has_key(self.runtimepath, p)
-            let self.runtimepath[p] = self.counter
-            let self.counter += 1
-        endif
-    endfor
-endfunc
-
-func! s:runtimepath.add(...) dict
-    for p in map(copy(a:000), 'expand(v:val)')
-        if !has_key(self.runtimepath, p)
-            let self.runtimepath[p] = self.counter
-            let self.counter += 1
-            let self.updated = 1
-        endif
-    endfor
-endfunc
-
-func! s:runtimepath.get() dict
-    return sort(keys(self.runtimepath), 's:_sort_runtimepath')
-endfunc
-func! s:_sort_runtimepath(s1, s2)
-    let p = s:runtimepath.runtimepath
-    if p[a:s1] ==# p[a:s2]
-        return 0
-    elseif p[a:s1] > p[a:s2]
-        return 1
-    else
-        return -1
-    endif
-endfunc
-
-func! s:runtimepath.update() dict
-    if !self.updated | return | endif
-
-    let runtimepath_list = self.get()
-    " let runtimepath_list = filter(runtimepath_list, 'isdirectory(v:val)')
-    let &runtimepath = join(runtimepath_list, ',')
-
-    call self.init()
-endfunc
-
-
-call s:runtimepath.init()
-
-
-command! -buffer -nargs=+ AddRuntimePath call s:runtimepath.add(<f-args>)
-command! -buffer          UpdateRuntimePath call s:runtimepath.update()
-" }}}
-" s:lazy_autocmd {{{
-let s:lazy_autocmd = {}
-
-func! s:lazy_autocmd.init() dict
-    let self.autocmd_list = []
-    let self.autocmd_delete_list = []
-endfunc
-
-func! s:lazy_autocmd.register(arg) dict
-    call add(self.autocmd_list, a:arg)
-endfunc
-
-func! s:lazy_autocmd.delete(arg) dict
-    call add(self.autocmd_delete_list, a:arg)
-endfunc
-
-func! s:lazy_autocmd.execute() dict
-    augroup MyVimrc
-        autocmd!
-
-        for i in self.autocmd_list
-            execute 'autocmd' i
-        endfor
-
-        for i in self.autocmd_delete_list
-            execute 'autocmd!' i
-        endfor
-    augroup END
-
-    call self.init()
-endfunc
-
-
-call s:lazy_autocmd.init()
-
-
-command! -buffer -nargs=* AutoCommand call s:lazy_autocmd.register(<q-args>)
-command! -buffer          ExecuteAutoCommand call s:lazy_autocmd.execute()
+command! -bang -nargs=* MyAutocmd autocmd<bang> MyVimrc <args>
 " }}}
 " }}}
+" Options {{{
+set all&
 
-" &runtimepath {{{
-if has("win32")
-    AddRuntimePath $HOME/.vim
+" indent
+set autoindent
+set smartindent
+set expandtab
+set smarttab
+set tabstop=4
+
+" search
+set hlsearch
+set incsearch
+set smartcase
+
+" listchars
+set list
+set listchars=tab:>-,extends:>,precedes:<,eol:.
+
+" scroll
+set scroll=5
+set scrolloff=15
+" set scrolloff=9999
+
+" shift
+set shiftround
+set shiftwidth=4
+
+" window
+set splitbelow
+set nosplitright
+
+" completion
+set complete=.,w,b,u,t,i,d,k,kspell
+set wildmenu
+set wildchar=<Tab>
+set wildignore=*.o,*.obj,*.la,*.a,*.exe,*.com,*.tds
+
+" tags
+if has('path_extra')
+    " find 'tags' rewinding current directory
+    set tags&
+    set tags+=.;
 endif
-AddRuntimePath $HOME/.vim/mine
+set showfulltag
 
-for s:rtp in s:glob('$HOME/.vim/+vcs/*')
-    call s:runtimepath.add(s:rtp)
-endfor
-unlet s:rtp
+" virtualedit
+if has('virtualedit')
+    set virtualedit=all
+endif
+
+" swap
+set noswapfile
+set updatecount=0
+" set directory=$HOME/.vim/swap
+" if !isdirectory(&directory)
+"     call mkdir(&directory)
+" endif
+
+" fsync() is slow...
+if has('unix')
+    set nofsync
+    set swapsync=
+endif
+
+" backup
+set backup
+set backupdir=$HOME/.vim/backup
+if !isdirectory(&backupdir)
+    call mkdir(&backupdir)
+endif
+
+" title
+set title
+let &titlestring = '%{haslocaldir() ? "[local]" : ""}(%{Dir()})'
+func! Dir()
+    let d = fnamemodify(getcwd(), ':~')
+    let d = substitute(d, '\/$', '', '')
+    return d
+endfunc
+
+" tab
+set showtabline=2
+let &tabline     = '%{tabpagenr()}:%{expand("%:t")} [%M%R%H%W]'
+let &guitablabel = '%{tabpagenr()}:%{expand("%:t")} [%M%R%H%W]'
+
+" statusline
+set laststatus=2
+let &statusline = '(%{&ft})(%{&fenc})(%{&ff})/(%p%%)(%l/%L)/(%{skk7#get_mode()})'
+
+" gui
+set guioptions=aegitrhpF
+
+" &migemo
+if has("migemo")
+    set migemo
+endif
+
+" convert "\\" to "/" on win32 like environment
+if exists('+shellslash')
+    set shellslash
+endif
+
+" visual bell
+set novisualbell
+MyAutocmd VimEnter * set t_vb=
+set debug=beep
+
+" restore screen
+set norestorescreen
+set t_ti=
+set t_te=
+
+" timeout
+set notimeout
+
+" fillchars
+set fillchars=stl:\:,vert:\ ,fold:-,diff:-
+
+" cursor behavior in insertmode
+set whichwrap=b,s
+set backspace=indent,eol,start
+set formatoptions=mMcroqnl2
+
+" misc.
+set wrap
+set autoread
+set diffopt=filler,vertical
+set helplang=ja,en
+set history=50
+set keywordprg=
+set nojoinspaces
+set noshowcmd
+set nrformats=hex
+set shortmess=aI
+set switchbuf=useopen,usetab
+set textwidth=0
+set viminfo='50,h,f1,n$HOME/.viminfo
+
+
+" runtimepath
+if has("win32")
+    set runtimepath+=$HOME/.vim
+endif
+
+func! s:add_rtp_from_file(file)
+    let file = expand(a:file)
+    if !filereadable(file) | return | endif
+
+    for line in readfile(file)
+        if line =~# '^\s*$' || line =~# '^\s*#'
+            continue
+        endif
+        for path in s:glob(line)
+            let &runtimepath .= ',' . path
+        endfor
+    endfor
+endfunc
+call s:add_rtp_from_file('$HOME/.vimruntimepath.lst')
 " }}}
+" Autocmd {{{
 
-" autocmd {{{
 func! s:vimenter_handler()
     " Color
     set bg=dark
@@ -153,71 +204,63 @@ func! s:vimenter_handler()
 endfunc
 
 " colorscheme (on windows, setting colorscheme in .vimrc does not work)
-AutoCommand VimEnter * call s:vimenter_handler()
+MyAutocmd VimEnter * call s:vimenter_handler()
 
 " open on read-only if swap exists
-AutoCommand SwapExists * let v:swapchoice = 'o'
+MyAutocmd SwapExists * let v:swapchoice = 'o'
 
 " autocmd CursorHold,CursorHoldI *   silent! update
-AutoCommand QuickfixCmdPost make,grep,grepadd,vimgrep,helpgrep   copen
+MyAutocmd QuickfixCmdPost make,grep,grepadd,vimgrep,helpgrep   copen
 
 " sometimes &modeline becomes false
-AutoCommand BufReadPre *    setlocal modeline
+MyAutocmd BufReadPre *    setlocal modeline
 
 " filetype {{{
-AutoCommand BufNewFile,BufReadPre *.as
+MyAutocmd BufNewFile,BufReadPre *.as
             \ setlocal ft=actionscript syntax=actionscript
-AutoCommand BufNewFile,BufReadPre *.c
+MyAutocmd BufNewFile,BufReadPre *.c
             \ setlocal ft=c
-AutoCommand BufNewFile,BufReadPre *.cpp
+MyAutocmd BufNewFile,BufReadPre *.cpp
             \ setlocal ft=cpp
-AutoCommand BufNewFile,BufReadPre *.h
+MyAutocmd BufNewFile,BufReadPre *.h
             \ setlocal ft=c.cpp
-AutoCommand BufNewFile,BufReadPre *.cs
+MyAutocmd BufNewFile,BufReadPre *.cs
             \ setlocal ft=cs
-AutoCommand BufNewFile,BufReadPre *.java
+MyAutocmd BufNewFile,BufReadPre *.java
             \ setlocal ft=java
-AutoCommand BufNewFile,BufReadPre *.js
+MyAutocmd BufNewFile,BufReadPre *.js
             \ setlocal ft=javascript
-AutoCommand BufNewFile,BufReadPre *.pl,*.pm
+MyAutocmd BufNewFile,BufReadPre *.pl,*.pm
             \ setlocal ft=perl
-AutoCommand BufNewFile,BufReadPre *.ps1
+MyAutocmd BufNewFile,BufReadPre *.ps1
             \ setlocal ft=powershell
-AutoCommand BufNewFile,BufReadPre *.py,*.pyc
+MyAutocmd BufNewFile,BufReadPre *.py,*.pyc
             \ setlocal ft=python
-AutoCommand BufNewFile,BufReadPre *.rb
+MyAutocmd BufNewFile,BufReadPre *.rb
             \ setlocal ft=ruby
-AutoCommand BufNewFile,BufReadPre *.scm
+MyAutocmd BufNewFile,BufReadPre *.scm
             \ setlocal ft=scheme
-AutoCommand BufNewFile,BufReadPre _vimperatorrc,.vimperatorrc
+MyAutocmd BufNewFile,BufReadPre _vimperatorrc,.vimperatorrc
             \ setlocal ft=vimperator syntax=vimperator
-AutoCommand BufNewFile,BufReadPre *.scala
+MyAutocmd BufNewFile,BufReadPre *.scala
             \ setlocal ft=scala
-AutoCommand BufNewFile,BufReadPre *.lua
+MyAutocmd BufNewFile,BufReadPre *.lua
             \ setlocal ft=lua
-AutoCommand BufNewFile,BufReadPre *.avs
+MyAutocmd BufNewFile,BufReadPre *.avs
             \ setlocal syntax=avs
-AutoCommand BufNewFile,BufReadPre *.tmpl
+MyAutocmd BufNewFile,BufReadPre *.tmpl
             \ setlocal ft=html
-AutoCommand BufNewFile,BufReadPre *.mkd
-            \ setlocal ft=mkd
-AutoCommand BufNewFile,BufReadPre *.md
-            \ setlocal ft=mkd
+MyAutocmd BufNewFile,BufReadPre *.mkd
+            \ setlocal ft=markdown
+MyAutocmd BufNewFile,BufReadPre *.md
+            \ setlocal ft=markdown
+MyAutocmd FileType mkd
+            \ setlocal ft=markdown
 
 " delete autocmd for ft=mkd.
-" TODO -bang for s:lazy_autocmd.delete().
-" AutoCommand! filetypedetect BufNewFile,BufRead *.md
+MyAutocmd VimEnter * autocmd! filetypedetect BufNewFile,BufRead *.md
 " }}}
 " }}}
-
-
-" arpeggio {{{
-" arpeggio's function should be Vim built-in :p
-let g:arpeggio_timeoutlen = 70
-call arpeggio#load()
-" }}}
-
-
 " Encoding {{{
 set fencs-=iso-2022-jp-3
 set fencs-=utf-8
@@ -242,13 +285,15 @@ func! ChangeEncoding()
                 \   ],
                 \   'escape': 1,
                 \   'one_char': 1,
-                \   'execute': 'edit ++enc=%s'})
+                \   'execute_if': 'val != ""',
+                \   'executef': 'edit ++enc=%s'})
     if result !=# "\e"
         echomsg printf("re-open with '%s'.", result)
     endif
 endfunc
 
-silent Arpeggio nnoremap <silent> <Leader>1    :call ChangeEncoding()<CR>
+nnoremap <silent> ,ta     :call ChangeEncoding()<CR>
+nnoremap <silent> <F1>    :call ChangeEncoding()<CR>
 " }}}
 " set fenc=... {{{
 func! ChangeFileEncoding()
@@ -263,7 +308,8 @@ func! ChangeFileEncoding()
                 \ ],
                 \ 'escape': 1,
                 \ 'one_char': 1,
-                \ 'execute': 'set fenc=%s'})
+                \ 'execute_if': 'val != ""',
+                \ 'executef': 'set fenc=%s'})
     if enc ==# "\e"
         return
     endif
@@ -275,7 +321,8 @@ func! ChangeFileEncoding()
     echomsg printf("changing file encoding to '%s'.", enc)
 endfunc
 
-silent Arpeggio nnoremap <silent> <Leader>2    :call ChangeFileEncoding()<CR>
+nnoremap <silent> ,ts     :call ChangeFileEncoding()<CR>
+nnoremap <silent> <F2>    :call ChangeFileEncoding()<CR>
 " }}}
 " set ff=... {{{
 func! ChangeNL()
@@ -283,16 +330,17 @@ func! ChangeNL()
                 \ 'menu': ['dos', 'unix', 'mac'],
                 \ 'one_char': 1,
                 \ 'escape': 1,
-                \ 'execute': 'set ff=%s'})
+                \ 'execute_if': 'val != ""',
+                \ 'executef': 'set ff=%s'})
     if result !=# "\e"
         echomsg printf("changing newline format to '%s'.", result)
     endif
 endfunc
 
-silent Arpeggio nnoremap <silent> <Leader>3    :call ChangeNL()<CR>
+nnoremap <silent> ,td     :call ChangeNL()<CR>
+nnoremap <silent> <F3>    :call ChangeNL()<CR>
 " }}}
 " }}}
-
 " FileType {{{
 " ToggleFileType {{{
 command! ToggleFileType call s:ToggleFileType()
@@ -396,149 +444,42 @@ endfunc
 
 " do what ~/.vim/ftplugin/* does in .vimrc
 " because of my laziness :p
-AutoCommand FileType *   call s:LoadWhenFileType()
+MyAutocmd FileType *   call s:LoadWhenFileType()
 " }}}
 " }}}
-
-
-" Options {{{
-
-" TODO
-" command -buffer -nargs=* Set
-"             \   set <q-args>
-
-set autoindent
-set autoread
-set backspace=indent,eol,start
-set helplang=ja,en
-set browsedir=buffer
-set clipboard=
-set complete=.,w,b,k,t
-set diffopt=filler,vertical
-set expandtab
-set formatoptions=mMcroqnl2
-set guioptions-=T
-set guioptions-=m
-set history=50
-set hlsearch
-set ignorecase
-set incsearch
-set keywordprg=
-set laststatus=2
-set list
-set listchars=tab:>-,extends:>,precedes:<,eol:.
-set noshowcmd
-set nosplitright
-set notimeout
-set nrformats-=octal
-set ruler
-set scroll=5
-set scrolloff=15
-set shiftround
-set shiftwidth=4
-set shortmess+=I
-set showfulltag
-set showmatch
-set smartcase
-set smartindent
-set smarttab
-set splitbelow
-set switchbuf="useopen,usetab"
-set tabstop=4
-set textwidth=0
-set viminfo='50,h,f1,n$HOME/.viminfo
-set whichwrap=b,s
-set wildchar=<Tab>
-set wildignore=*.o,*.obj,*.la,*.a,*.exe,*.com,*.tds
-set wildmenu
-set wrap
-
-if has('emacs_tags') && has('path_extra')
-    " find 'tags' rewinding current directory
-    set tags+=.;
-endif
-
-if has('virtualedit')
-    set virtualedit=all
-endif
-
-" speed optimization related to fsync...
-if has('unix')
-    set nofsync
-    set swapsync=
-endif
-
-set backup
-set backupdir=$HOME/.vim/backup
-set directory=$HOME/.vim/backup
-if !isdirectory(&backupdir)
-    call mkdir(&backupdir)
-endif
-
-if has('gui_running')
-    set title
-else
-    set notitle
-endif
-
-set statusline=%f%m%r%h%w\ [%{&fenc}][%{&ff}]\ [%p%%][%l/%L]\ [%{ShrinkPath('%:p:h',20)}]
-func! ShrinkPath( path, maxwidth )
-    let path = expand( a:path )
-
-    " split current directory into 'dirs'.
-    if has( 'win32' )
-        let sep = "\\"
-    else
-        let sep = "/"
-    endif
-    let dirs =  reverse( split( path, sep ) )   " 後ろから参照
-
-    let path_str = ''
-    for dir in dirs
-        if path_str == ''
-            let path_str = dir . path_str
-        else
-            let path_str = dir . sep . path_str
-        endif
-
-        if strlen( path_str ) > a:maxwidth
-            let path_str = strpart( path_str, strlen( path_str ) - a:maxwidth - 3 )
-            let path_str = "..." . path_str
-            break
-        endif
-    endfor
-
-    return path_str
-endfunc
-
-" &migemo
-if has("migemo")
-    set migemo
-endif
-
-" convert "\\" to "/" on win32 like environment
-if exists('+shellslash')
-    set shellslash
-endif
-
-" visual bell
-set visualbell
-set t_vb=
-
-set t_ti= t_te=
-
-" }}}
-
 " Mappings and/or Abbreviations {{{
+let g:arpeggio_timeoutlen = 40
+call arpeggio#load()
+
 " map {{{
 " operator {{{
 " paste to clipboard
-noremap <Leader>y     "+y
-noremap <Leader>Y     "*y
+noremap <Leader>y   "+y
+noremap <Leader>Y   "*y
+noremap <Leader>d   "+d
+noremap <Leader>D   "*d
 
 " do not destroy noname register.
 noremap x   "_x
-noremap <Leader>d   "_d
+noremap ,d   "_d
+
+
+" operator-sort {{{
+map <Leader>s <Plug>(operator-sort)
+
+call operator#user#define('sort', 'Op_command',
+\                         'call Set_op_command("sort")')
+
+let s:op_command_command = ''
+
+function! Set_op_command(command)
+    let s:op_command_command = a:command
+endfunction
+
+function! Op_command(motion_wiseness)
+    execute "'[,']" s:op_command_command
+endfunction
+" }}}
 " }}}
 " motion/textobj {{{
 noremap <silent> j          gj
@@ -553,36 +494,29 @@ noremap <silent> ]k        :call search('^\S', 'Ws')<CR>
 noremap <silent> [k        :call search('^\S', 'Wsb')<CR>
 " }}}
 " misc. {{{
-noremap <silent> <Space>j           <C-f>
-noremap <silent> <Space>k           <C-b>
 noremap <silent> <Space><Space>     <Space>
 
-Arpeggio noremap A(    %i)<Esc>%i(
-Arpeggio noremap A[    %i]<Esc>%i[
+noremap <silent> <Space>j           <C-f>
+noremap <silent> <Space>k           <C-b>
 " }}}
 " }}}
 " nmap {{{
-nnoremap <silent> <LocalLeader><LocalLeader>         <LocalLeader>
-nnoremap <silent> <Leader><Leader>                   <Leader>
+" All 'suffix key' should be like the following.
+nnoremap <silent> <LocalLeader><LocalLeader>    <LocalLeader>
+nnoremap <silent> <Leader><Leader>              <Leader>
+nnoremap <silent> <Space><Space>                <Space>
+nnoremap <silent> ,,                            ,
 
+nnoremap <expr> <Plug>(vimrc-lastpat-next)      <SID>last_pattern(1)
+nnoremap <expr> <Plug>(vimrc-lastpat-previous)  <SID>last_pattern(0)
+
+func! s:last_pattern(next) "{{{
+endfunc "}}}
+
+" TODO Ignore last pattern direction
+" I want the way to know last searched direction...
 nnoremap <silent> n     nzz
 nnoremap <silent> N     Nzz
-
-" add '\C' to the pattern
-" FIXME behave like option 'c' included...
-for [s:pat, s:flags] in [['*', 's'], ['#', 'bs'], ['g*', 's'], ['g#', 'bs']]
-    execute printf("nnoremap <silent> %s :call <SID>dont_ignore_case(%s, %s)<CR>", s:pat, string(s:pat), string(s:flags))
-endfor
-
-func! s:dont_ignore_case(cmd, flags)
-    let pos = getpos('.')
-    execute 'normal! ' . a:cmd
-    let @/ .= '\C'
-    call setpos('.', pos)
-
-    call search(@/, a:flags)
-    call feedkeys(":set hls\<CR>", 'n')
-endfunc
 
 " fix up all indents
 nnoremap <silent> <Space>=    mqgg=G`qzz<CR>
@@ -604,35 +538,56 @@ nnoremap <silent> <C-n>         gt
 nnoremap <silent> <C-p>         gT
 nnoremap <silent> <C-Tab>       gt
 nnoremap <silent> <C-S-Tab>     gT
-nnoremap <silent> g$            :tablast<CR>
-nnoremap <silent> g0            :tabfirst<CR>
 
 " make
-nnoremap <silent>   gm      :make<CR>
-nnoremap <silent>   gc      :cclose<CR>
+nnoremap <silent>   gm      :<C-u>make<CR>
+nnoremap <silent>   gc      :<C-u>cclose<CR>
 
 " open only current line's fold.
-func! s:fold_all_expand()
-    silent! %foldclose!
-    normal! zvzz
-endfunc
-nnoremap z<Space>   :call <SID>fold_all_expand()<CR>
+nnoremap <silent> z<Space> zMzvzz
 
 " hlsearch
-nnoremap gh    :set hlsearch!<CR>
-
-" sync @* and @+
-" @* -> @+
-" nnoremap ,*+    :let @+ = @*<CR>:echo printf('[%s]', @+)<CR>
-" @+ -> @*
-" nnoremap ,+*    :let @* = @+<CR>:echo printf('[%s]', @*)<CR>
+nnoremap gh    :<C-u>set hlsearch!<CR>
 
 nnoremap ZZ <Nop>
 
 nnoremap <Space>w :<C-u>w<CR>
 nnoremap <Space>q :<C-u>q<CR>
 
-nnoremap <silent> gK    K
+nnoremap <silent> <C-g><C-n>    :<C-u>tablast<CR>
+nnoremap <silent> <C-g><C-p>    :<C-u>tabfirst<CR>
+
+nnoremap <silent> <Space>ev     :<C-u>edit $MYVIMRC<CR>
+nnoremap <silent> <Space>e.     :<C-u>edit .<CR>
+
+nnoremap <silent> <Space>tv     :<C-u>tabedit $MYVIMRC<CR>
+nnoremap <silent> <Space>t.     :<C-u>tabedit .<CR>
+
+" cmdwin {{{
+set cedit=<C-z>
+func! s:cmdwin_enter()
+    inoremap <buffer> <C-z>     <C-c>
+    nnoremap <buffer> <C-z>     <C-c>
+    inoremap <buffer> <Tab>     <C-X><C-V>
+    inoremap <buffer> <S-Tab>   <C-p>
+
+    startinsert!
+endfunc
+MyAutocmd CmdwinEnter * call s:cmdwin_enter()
+
+" nnoremap g: q:
+" nnoremap g/ q/
+" nnoremap g? q?
+
+
+" }}}
+
+" gVim only {{{
+nnoremap <silent> <M-j>     <C-w>j
+nnoremap <silent> <M-k>     <C-w>k
+nnoremap <silent> <M-h>     <C-w>h
+nnoremap <silent> <M-l>     <C-w>l
+" }}}
 " }}}
 " map! {{{
 noremap! <C-f>   <Right>
@@ -640,12 +595,15 @@ noremap! <C-b>   <Left>
 noremap! <C-a>   <Home>
 noremap! <C-e>   <End>
 noremap! <C-d>   <Del>
-noremap! <C-g><C-i>  <Insert>
 
 Arpeggio noremap! $( ()<Left>
 Arpeggio noremap! 4[ []<Left>
 Arpeggio noremap! $< <><Left>
 Arpeggio noremap! ${ {}<Left>
+
+Arpeggio noremap! $' ''<Left>
+call arpeggio#map('ic', '', 0, '*"', '""<Left>')
+Arpeggio noremap! $` ``<Left>
 
 Arpeggio noremap! $) \(\)<Left><Left>
 Arpeggio noremap! 4] \[\]<Left><Left>
@@ -659,7 +617,7 @@ Arpeggio noremap! #{ 〔〕<Left>
 " }}}
 " imap {{{
 " delete characters in ...
-inoremap <C-z>                <C-o>di
+" inoremap <C-z>                <C-o>di
 
 " omni
 " inoremap <C-n>     <C-x><C-n>
@@ -671,11 +629,23 @@ inoremap <C-r><C-i>  <C-r><C-p>*
 inoremap <C-r><C-o>  <C-r><C-p>"
 
 " delete string to the end of line.
-inoremap <C-k>   <C-o>D
+func! s:kill_line()
+    let curcol = col('.')
+    if curcol == col('$')
+        join!
+        call cursor(line('.'), curcol)
+    else
+        normal! D
+    endif
+endfunc
+inoremap <C-k>  <C-o>:<C-u>call <SID>kill_line()<CR>
 
 " jump to next/previous line.
-Arpeggio inoremap gk    <C-o>O
-Arpeggio inoremap gj    <C-o>o
+Arpeggio inoremap qk    <C-o>O
+Arpeggio inoremap qj    <C-o>o
+
+" shift left (indent)
+inoremap <C-q>   <C-d>
 " }}}
 " cmap {{{
 if &wildmenu
@@ -696,10 +666,11 @@ inoreab <expr> date@      strftime("%Y-%m-%d")
 inoreab <expr> time@      strftime("%H:%M")
 inoreab <expr> dt@        strftime("%Y-%m-%d %H:%M")
 
-cnoreab   h@     tab help
+call altercmd#load()
+AlterCommand th     tab<Space>help
+AlterCommand t      tabedit
 " }}}
 " }}}
-
 " Commands {{{
 " commands related to specific environments {{{
 if has('gui_running')
@@ -782,7 +753,8 @@ func! s:ListChars()
     \       ],
     \       'one_char': 1,
     \       'escape': 1,
-    \       'execute': 'set listchars=%s'})
+    \       'execute_if': 'val != ""',
+    \       'executef': 'set listchars=%s'})
     if lcs !=# "\e"
         echomsg printf("changing &listchars to '%s'.", lcs)
     endif
@@ -856,7 +828,9 @@ endfunc
 " }}}
 " Mkdir {{{
 func! s:Mkdir(...)
-    for i in a:000 | call mkdir(i, 'p') | endfor
+    for i in a:000
+        call mkdir(expand(i), 'p')
+    endfor
 endfunc
 command! -nargs=+ -complete=dir Mkdir
             \ call s:Mkdir(<f-args>)
@@ -899,26 +873,186 @@ command! -nargs=* GccSyntaxCheck
 "   Change current directory to current file's one.
 command! -nargs=0 LcdCurrent lcd %:p:h
 command! -nargs=0 CdCurrent  cd %:p:h
-nnoremap <silent> <Leader>cd   :LcdCurrent<CR>
-nnoremap <silent> ,cd          :CdCurrent<CR>
 " }}}
 " Ack {{{
-if executable('ack')
-    func! s:ack(...)
-        let save_grepprg = &l:grepprg
-        try
-            let &l:grepprg = 'ack -a'
-            execute 'grep' join(a:000, ' ')
-        finally
-            let &l:grepprg = save_grepprg
-        endtry
-    endfunc
-    command! -nargs=+ Ack call s:ack(<f-args>)
-endif
+func! s:ack(...)
+    let save_grepprg = &l:grepprg
+    try
+        let &l:grepprg = 'ack'
+        execute 'grep' join(a:000, ' ')
+    finally
+        let &l:grepprg = save_grepprg
+    endtry
+endfunc
+command! -nargs=+ Ack call s:ack(<f-args>)
 " }}}
+" SetTitle {{{
+command! -nargs=+ SetTitle
+\   let &titlestring = <q-args>
+" }}}
+" ShowPath {{{
+command!
+\   -nargs=+ -complete=option
+\   ShowPath
+\   call s:show_path(<f-args>)
+
+func! s:show_path(...) "{{{
+    let optname = a:1
+    let delim = a:0 >= 2 ? a:2 : ','
+    let optval = getbufvar('%', '&' . optname)
+    for i in split(optval, delim)
+        echo i
+    endfor
+endfunc "}}}
+" }}}
+" Write {{{
+AlterCommand w[rite]    Write
+
+" AlterCommand w[rite]    confirm<Space>write
+" set directory=$HOME/.vim/backup
+
+command!
+\   -bang -nargs=? -complete=file
+\   Write
+\   call s:write("<bang>", <f-args>)
+
+" :Write has some different points as follows:
+" - It will ask when &readonly is true.
+"
+" TODO
+" - It will ask when it rewrites a file
+"   when specified the path.
+" - :WriteQuit
+func! s:write(bang, ...) "{{{
+    let file = a:0 == 0 ? expand('%') : expand(a:1)
+    let write_cmd = printf('write%s %s', a:bang, file)
+    try
+        if &l:readonly
+            let msg = file . ': this file is readonly! overwrite?:'
+            let r = prompt#prompt(msg, {
+            \   'yes_no': 1,
+            \   'escape': 1,
+            \   'one_char': 1,
+            \})
+            " TODO prompt#prompt should return boolean value
+            " when 'yesno' option is given.
+            if r =~# '^\s*[yY]\%[[eE][sS]]'
+                let write_cmd = 'setlocal noreadonly | ' . write_cmd
+            else
+                return
+            endif
+        endif
+
+        " TODO when rewring a file
+
+        execute write_cmd
+    catch
+        call s:warn(v:exception)
+    endtry
+endfunc "}}}
+" }}}
+" TR, TRR {{{
+AlterCommand tr  TR
+AlterCommand trr TRR
+
+command!
+\   -nargs=+ -range
+\   TR
+\   <C-u>call s:tr(<f-line1>, <f-line2>, <q-args>)
+
+command!
+\   -nargs=+ -range
+\   TRR
+\   <C-u>call s:trr(<f-line1>, <f-line2>, <q-args>)
+
+func! s:tr_split_arg(arg) "{{{
+    let arg = a:arg
+    let arg = substitute(arg, '^\s*', '', '')
+    if arg == ''
+        throw 'argument_error'
+    endif
+
+    let sep = arg[0]
+    return split(arg, '\%(\\\)\@<!' . sep)
+endfunc "}}}
+
+func! s:tr(lnum_from, lnum_to, arg) "{{{
+    " TODO :lockmarks
+    let reg_str = getreg('z', 1)
+    let reg_type = getregtype('z')
+    mark z
+    call cursor(a:lnum_from, 1)
+    try
+        let [pat1, pat2] = s:tr_split_arg(a:arg)
+        call call(
+        \   's:tr_replace',
+        \   [a:lnum_from, a:lnum_to, pat1, pat2, pat2, pat1]
+        \)
+    catch /^argument_error$/
+        return
+    catch
+        call s:warn(v:exception)
+    finally
+        normal! 'z
+        call setreg('z', reg_str, reg_type)
+    endtry
+endfunc "}}}
+
+func! s:trr(lnum_from, lnum_to, arg) "{{{
+    " TODO :lockmarks
+    let reg_str = getreg('z', 1)
+    let reg_type = getregtype('z')
+    mark z
+    call cursor(a:lnum_from, 1)
+    try
+        call call(
+        \   's:tr_replace',
+        \   [a:lnum_from, a:lnum_to]
+        \       + s:tr_split_arg(a:arg)
+        \)
+    catch /^argument_error$/
+        return
+    catch
+        call s:warn(v:exception)
+    finally
+        normal! 'z
+        call setreg('z', reg_str, reg_type)
+    endtry
+endfunc "}}}
+
+" Replace pat1 to str1, pat2 to str2,
+" from current position to the end of the file.
+func! s:tr_replace(lnum_from, lnum_to, pat1, str1, pat2, str2) "{{{
+    " TODO
+endfunc "}}}
+" }}}
+" AllBufMaps {{{
+command!
+\   AllBufMaps
+\   map <buffer> | map! <buffer> | lmap <buffer>
 " }}}
 
+" from kana's .vimrc {{{
+nnoremap <silent> <Leader>cd   :CD %:p:h<CR>
 
+" CD - alternative :cd with more user-friendly completion  "{{{
+command! -complete=dir -nargs=+ CD  TabpageCD <args>
+
+AlterCommand cd  CD
+" }}}
+" TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
+command! -nargs=? TabpageCD
+\   execute 'cd' fnameescape(expand(<q-args>))
+\ | let t:cwd = getcwd()
+
+MyAutocmd TabEnter *
+\   if !exists('t:cwd')
+\ |   let t:cwd = getcwd()
+\ | endif
+\ | execute 'cd' fnameescape(expand(t:cwd))
+" }}}
+" }}}
+" }}}
 " For Plugins {{{
 " my plugins {{{
 " shell-mode {{{
@@ -998,7 +1132,12 @@ let dumbbuf_mappings = {
 let dumbbuf_wrap_cursor = 0
 let dumbbuf_remove_marked_when_close = 1
 " let dumbbuf_shown_type = 'project'
+" let dumbbuf_close_when_exec = 1
 
+
+" DumbBuf nmap s    split #<bufnr>
+" DumbBuf nmap g    sbuffer <bufnr>
+" call dumbbuf#map('n', '', 0, 'g', ':sbuffer %d')
 
 " let dumbbuf_cursor_pos = 'keep'
 
@@ -1006,12 +1145,36 @@ let dumbbuf_remove_marked_when_close = 1
 "
 " let dumbbuf_shown_type = 'foobar'
 " let dumbbuf_listed_buffer_name = "*foo bar*"
-" let g:dumbbuf_close_when_exec = 1
 "
 " let dumbbuf_verbose = 1
 " }}}
 " prompt {{{
 " let prompt_debug = 1
+" }}}
+" skk7 {{{
+let skk7_debug = 1
+let skk7_debug_wait_ms = 0
+" }}}
+" stickykey {{{
+Arpeggio map  ,a <Plug>(stickykey-shift-remap)
+Arpeggio map! ,a <Plug>(stickykey-shift-remap)
+Arpeggio lmap ,a <Plug>(stickykey-shift-remap)
+
+Arpeggio map  ,s <Plug>(stickykey-ctrl-remap)
+Arpeggio map! ,s <Plug>(stickykey-ctrl-remap)
+Arpeggio lmap ,s <Plug>(stickykey-ctrl-remap)
+
+Arpeggio map  ,d <Plug>(stickykey-alt-remap)
+Arpeggio map! ,d <Plug>(stickykey-alt-remap)
+Arpeggio lmap ,d <Plug>(stickykey-alt-remap)
+
+" I don't have Macintosh :(
+" map  ,f <Plug>(stickykey-command-remap)
+" map! ,f <Plug>(stickykey-command-remap)
+" lmap ,f <Plug>(stickykey-command-remap)
+" }}}
+" restart {{{
+AlterCommand res[tart] Restart
 " }}}
 " }}}
 " others {{{
@@ -1031,12 +1194,13 @@ let fuf_keyPrevMode    = '<C-h>'
 let fuf_keyOpenSplit   = '<C-s>'
 let fuf_keyOpenVsplit  = '<C-v>'
 let fuf_enumeratingLimit = 20
+let fuf_previewHeight = 0
 
 " abbrev {{{
 func! s:register_fuf_abbrev()
     let g:fuf_abbrevMap = {
-        \ '^r@': map(copy(s:runtimepath.get()), 'v:val . "/"'),
-        \ '^p@': map(copy(s:runtimepath.get()), 'v:val . "/plugin/"'),
+        \ '^r@': map(split(&runtimepath, ','), 'v:val . "/"'),
+        \ '^p@': map(split(&runtimepath, ','), 'v:val . "/plugin/"'),
         \ '^h@': ['~/'],
         \ '^m@' : ['~/work/memo/'],
         \ '^v@' : ['~/.vim/'],
@@ -1062,7 +1226,7 @@ func! s:register_fuf_abbrev()
     endif
 endfunc
 
-AutoCommand VimEnter * call s:register_fuf_abbrev()
+MyAutocmd VimEnter * call s:register_fuf_abbrev()
 " }}}
 " }}}
 " MRU {{{
@@ -1071,17 +1235,11 @@ let MRU_Max_Entries   = 500
 let MRU_Add_Menu      = 0
 let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\c\'
 " }}}
-" Align {{{
-let Align_xstrlen    = 3       " multibyte
-let DrChipTopLvlMenu = ""
-command! -nargs=0 AlignReset call Align#AlignCtrl("default")
-cabbrev   al    Align
-" }}}
 " changelog {{{
 let changelog_username = "tyru"
 " }}}
 " Gtags {{{
-func! s:JumpTags()
+func! s:JumpTags() "{{{
     if expand('%') == '' | return | endif
 
     if !exists(':GtagsCursor')
@@ -1104,46 +1262,72 @@ func! s:JumpTags()
         " or use ctags.
         execute "normal! \<C-]>"
     endif
-endfunc
+endfunc "}}}
 
 nnoremap <silent> g<C-i>    :Gtags -f %<CR>
 nnoremap <silent> <C-]>     :call <SID>JumpTags()<CR>
 " }}}
 " operator-replace {{{
 map <Leader>r  <Plug>(operator-replace)
-map <Leader>R  <Leader>r$
 " }}}
-" EasyGrep {{{
-let EasyGrepFileAssociations = expand("$HOME/.vim/EasyGrepFileAssociations")
-let EasyGrepMode = 2
-let EasyGrepInvertWholeWord = 1
-let EasyGrepRecursive = 1
-let EasyGrepIgnoreCase = 0
-" }}}
-" skk.vim {{{
+" skk {{{
 let skk_jisyo = '~/.skk-jisyo'
 let skk_large_jisyo = '/usr/share/skk/SKK-JISYO'
+
 let skk_control_j_key = '<C-y>'
+" let skk_control_j_key = ''
+" Arpeggio map! fj    <Plug>(skk-enable-im)
+
 let skk_manual_save_jisyo_keys = ''
+
 let skk_egg_like_newline = 1
 let skk_auto_save_jisyo = 1
 let skk_imdisable_state = -1
 " let skk_keep_state = 1
+
+" applied krogue's patch ver.
+let skk_sticky_key = ';'
 " }}}
 " vimshell {{{
-AddRuntimePath $HOME/work/git/vimproc
-AddRuntimePath $HOME/work/git/vimshell
-
 let g:VimShell_EnableInteractive = 2
+let g:VimShell_NoDefaultKeyMappings = 1
 " }}}
 " quickrun {{{
 let g:quickrun_no_default_key_mappings = 1
 map <Space>r <Plug>(quickrun)
-" }}}
-" }}}
-" }}}
 
+let g:loaded_quicklaunch = 1
+" }}}
+" submode {{{
 
+" Moving window.
+call submode#enter_with('window-move', 'n', '', 'gwm', '<Nop>')
+call submode#leave_with('window-move', 'n', '', "\<Esc>")
+call submode#map('window-move', 'n', 'r', 'j', '<Plug>(winmove-down)')
+call submode#map('window-move', 'n', 'r', 'k', '<Plug>(winmove-up)')
+call submode#map('window-move', 'n', 'r', 'h', '<Plug>(winmove-left)')
+call submode#map('window-move', 'n', 'r', 'l', '<Plug>(winmove-right)')
+
+" Change the size of window.
+call submode#enter_with('window-size', 'n', '', 'gwe', '<Nop>')
+call submode#leave_with('window-size', 'n', '', "\<Esc>")
+call submode#map('window-size', 'n', 'r', 'j', '<C-w>-')
+call submode#map('window-size', 'n', 'r', 'k', '<C-w>+')
+call submode#map('window-size', 'n', 'r', 'h', '<C-w><')
+call submode#map('window-size', 'n', 'r', 'l', '<C-w>>')
+
+" }}}
+" prettyprint {{{
+AlterCommand p      PP
+AlterCommand pp     PrettyPrint
+" }}}
+" ref {{{
+" 'K' for ':Ref'.
+nnoremap          <C-k>     :Ref<Space>
+nnoremap <silent> gK        K
+" }}}
+" }}}
+" }}}
 " Misc. (bundled with kaoriya vim's .vimrc & etc.) {{{
 " delete old files in ~/.vim/backup {{{
 func! s:DeleteBackUp()
@@ -1226,7 +1410,7 @@ function! s:AU_ReCheck_FENC()
     endif
 endfunction
 
-AutoCommand BufReadPost * call s:AU_ReCheck_FENC()
+MyAutocmd BufReadPost * call s:AU_ReCheck_FENC()
 
 " supports fileformats in this order
 set fileformats=unix,dos,mac
@@ -1280,15 +1464,4 @@ if has('multi_byte_ime') || has('xim')
   "inoremap <silent> <ESC> <ESC>:set iminsert=0<CR>
 endif
 " }}}
-" }}}
-
-
-" Update &runtimepath. {{{
-if !(exists('$VIMRC_DONT_ADD_RUNTIMEPATH') && $VIMRC_DONT_ADD_RUNTIMEPATH)
-    UpdateRuntimePath
-endif
-" }}}
-
-" Register autocmd. {{{
-ExecuteAutoCommand
 " }}}

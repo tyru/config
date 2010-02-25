@@ -1,4 +1,4 @@
-*chalice.txt*	www.2ch.net browser.  Last Change: 2009-08-31.
+*chalice.txt*	www.2ch.net browser.  Last Change: 2010-01-22.
 
 
 		Chalice 取扱説明書    by MURAOKA Taro (KoRoN)

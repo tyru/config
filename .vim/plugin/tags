@@ -1,0 +1,743 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+%	matchit.vim	/^nnoremap <silent> %  :<C-U>call <SID>Match_wrapper('',1,'n') <CR>$/;"	m
+%	matchit.vim	/^onoremap <silent> %  v:<C-U>call <SID>Match_wrapper('',1,'o') <CR>$/;"	m
+%	matchit.vim	/^vnoremap <silent> %  :<C-U>call <SID>Match_wrapper('',1,'v') <CR>m'gv``$/;"	m
+<C-G>S	surround.vim	/^    imap        <C-G>S <Plug>ISurround$/;"	m
+<C-G>s	surround.vim	/^    imap        <C-G>s <Plug>Isurround$/;"	m
+<C-S>	surround.vim	/^        imap     <C-S> <Plug>Isurround$/;"	m
+<Leader>vA	EasyGrep.vim	/^    map <silent> <Leader>vA <plug>EgMapGrepCurrentWord_A$/;"	m
+<Leader>vA	EasyGrep.vim	/^    vmap <silent> <Leader>vA <plug>EgMapGrepSelection_A$/;"	m
+<Leader>vR	EasyGrep.vim	/^    map <silent> <Leader>vR <plug>EgMapReplaceCurrentWord_R$/;"	m
+<Leader>vR	EasyGrep.vim	/^    vmap <silent> <Leader>vR <plug>EgMapReplaceSelection_R$/;"	m
+<Leader>vV	EasyGrep.vim	/^    map <silent> <Leader>vV <plug>EgMapGrepCurrentWord_V$/;"	m
+<Leader>vV	EasyGrep.vim	/^    vmap <silent> <Leader>vV <plug>EgMapGrepSelection_V$/;"	m
+<Leader>va	EasyGrep.vim	/^    map <silent> <Leader>va <plug>EgMapGrepCurrentWord_a$/;"	m
+<Leader>va	EasyGrep.vim	/^    vmap <silent> <Leader>va <plug>EgMapGrepSelection_a$/;"	m
+<Leader>vo	EasyGrep.vim	/^    map <silent> <Leader>vo <plug>EgMapGrepOptions$/;"	m
+<Leader>vr	EasyGrep.vim	/^    map <silent> <Leader>vr <plug>EgMapReplaceCurrentWord_r$/;"	m
+<Leader>vr	EasyGrep.vim	/^    vmap <silent> <Leader>vr <plug>EgMapReplaceSelection_r$/;"	m
+<Leader>vv	EasyGrep.vim	/^    map <silent> <Leader>vv <plug>EgMapGrepCurrentWord_v$/;"	m
+<Leader>vv	EasyGrep.vim	/^    vmap <silent> <Leader>vv <plug>EgMapGrepSelection_v$/;"	m
+<Plug>(skk-enable-im)	skk.vim	/^cnoremap <Plug>(skk-enable-im)  <C-r>=SkkMode(1)<CR>$/;"	m
+<Plug>(skk-enable-im)	skk.vim	/^inoremap <silent> <Plug>(skk-enable-im)  <C-r>=SkkMode(1)<CR>$/;"	m
+<Plug>(skk-save-jisyo)	skk.vim	/^nnoremap <silent> <Plug>(skk-save-jisyo)    :call <SID>SkkSaveJisyo(1, 0)<CR>$/;"	m
+<Plug>(surround-.)	surround.vim	/^nnoremap <Plug>(surround-.)  .$/;"	m
+<Plug>AM_Htd	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_Htd <SID>WS:'y,'zs%<[tT][rR]><[tT][dD][^>]\\{-}>\\<Bar><\/[tT][dD]><[tT][dD][^>]\\{-}>\\<Bar><\/[tT][dD]><\/[tT][rR]>%@&@%g<CR>'yjma'zk:AlignCtrl m=Ilp1P0 @<CR>:'a,.Align<CR>:'y,'zs\/ @\/@\/<CR>:'y,'zs\/@ <[tT][rR]>\/<[tT][rR]>\/ge<CR>:'y,'zs\/@\/\/ge<CR><SID>WE$/;"	m
+<Plug>AM_T|	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_T| <SID>WS:AlignCtrl mIp0P0=r <Bar><CR>:'a,.Align<CR><SID>WE$/;"	m
+<Plug>AM_T#	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_T#   <SID>WS:AlignCtrl mIp0P0=r #<CR>:'a,.Align<CR><SID>WE$/;"	m
+<Plug>AM_T,	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_T,   <SID>WS:AlignCtrl mIp0P1=r ,<CR>:'a,.Align<CR><SID>WE$/;"	m
+<Plug>AM_T:	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_T:   <SID>WS:AlignCtrl mIp1P1=r :<CR>:'a,.Align<CR><SID>WE$/;"	m
+<Plug>AM_T;	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_T;   <SID>WS:AlignCtrl mIp0P0=r ;<CR>:'a,.Align<CR><SID>WE$/;"	m
+<Plug>AM_T<	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_T<   <SID>WS:AlignCtrl mIp0P0=r <<CR>:'a,.Align<CR><SID>WE$/;"	m
+<Plug>AM_T=	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_T=   <SID>WS:'a,'z-1s\/\\s\\+\\([*\/+\\-%<Bar>&\\~^]\\==\\)\/ \\1\/e<CR>:'a,'z-1s@ \\+\\([*\/+\\-%<Bar>&\\~^]\\)=@\\1=@ge<CR>:'a,'z-1s\/; *\/;@\/e<CR>:'a,'z-1s\/==\/\\="\\<Char-0x0f>\\<Char-0x0f>"\/ge<CR>:'a,'z-1s\/!=\/\\x="!\\<Char-0x0f>"\/ge<CR>:AlignCtrl mIp1P1=r = @<CR>:AlignCtrl g =<CR>:'a,'z-1Align<CR>:'a,'z-1s\/; *@\/;\/e<CR>:'a,'z-1s\/; *$\/;\/e<CR>:'a,'z-1s@\\([*\/+\\-%<Bar>&\\~^]\\)\\( \\+\\)=@\\2\\1=@ge<CR>:'a,'z-1s\/\\( \\+\\);\/;\\1\/ge<CR>:'a,'z-1s\/\\xff\/=\/ge<CR><SID>WE:exe "norm <Plug>acom"$/;"	m
+<Plug>AM_T?	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_T?   <SID>WS:AlignCtrl mIp0P0=r ?<CR>:'a,.Align<CR>:'y,'zs\/ \\( *\\);\/;\\1\/ge<CR><SID>WE$/;"	m
+<Plug>AM_T@	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_T@   <SID>WS:AlignCtrl mIp0P0=r @<CR>:'a,.Align<CR><SID>WE$/;"	m
+<Plug>AM_Tab	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_Tab  <SID>WS:'a,.s\/^\\(\\t*\\)\\(.*\\)\/\\=submatch(1).escape(substitute(submatch(2),'\\t','@','g'),'\\')\/<CR>:AlignCtrl mI=r @<CR>:'a,.Align<CR>:'y+1,'z-1s\/@\/ \/g<CR><SID>WE$/;"	m
+<Plug>AM_Ts,	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_Ts,  <SID>WS:AlignCtrl mIp0P1=r ,<CR>:'a,.Align<CR>:'a,.s\/\\(\\s*\\),\/,\\1\/ge<CR><SID>WE$/;"	m
+<Plug>AM_Tsp	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_Tsp  <SID>WS:'a,.s\/^\\(\\s*\\)\\(.*\\)\/\\=submatch(1).escape(substitute(submatch(2),'\\s\\+','@','g'),'\\')\/<CR>:AlignCtrl mI=r @<CR>:'a,.Align<CR>:'y+1,'z-1s\/@\/ \/g<CR><SID>WE$/;"	m
+<Plug>AM_T~	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_T~   <SID>WS:AlignCtrl mIp0P0=r ~<CR>:'a,.Align<CR>:'y,'zs\/ \\( *\\);\/;\\1\/ge<CR><SID>WE$/;"	m
+<Plug>AM_a(	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_a(       <SID>WS:AlignCtrl mIp0P1=l<CR>:'a,.Align [(,]<CR>:sil 'y+1,'z-1s\/\\(\\s\\+\\),\/,\\1\/ge<CR><SID>WE$/;"	m
+<Plug>AM_a,		<SID>WS:'y,'zs/\(\S\)\s\+/\1	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_a,		<SID>WS:'y,'zs\/\\(\\S\\)\\s\\+\/\\1 \/ge<CR>'yjma'zk:call AlignMaps#CharJoiner(",")<cr>:silent 'y,'zg\/,\/call AlignMaps#FixMultiDec()<CR>'z:exe "norm \\<Plug>AM_adec"<cr><SID>WE$/;"	m
+<Plug>AM_a<		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_a<		<SID>WS:AlignCtrl mIp1P1=l << >><CR>:'a,.Align<CR><SID>WE$/;"	m
+<Plug>AM_a=		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_a=		<SID>WS:AlignCtrl mIp1P1=l<CR>:AlignCtrl g :=<CR>:'a,'zAlign :\\==<CR><SID>WE$/;"	m
+<Plug>AM_a?		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_a?		<SID>WS:AlignCtrl mIp1P1lC ? : : : : <CR>:'a,.Align<CR>:'a,'z-1s\/\\(\\s\\+\\)? \/?\\1\/e<CR><SID>WE$/;"	m
+<Plug>AM_abox		<SID>WS:let	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_abox		<SID>WS:let g:alignmaps_iws=substitute(getline("'a"),'^\\(\\s*\\).*$','\\1','e')<CR>:'a,'z-1s\/^\\s\\+\/\/e<CR>:'a,'z-1s\/^.*$\/@&@\/<CR>:AlignCtrl m=p01P0w @<CR>:'a,.Align<CR>:'a,'z-1s\/@\/ * \/<CR>:'a,'z-1s\/@$\/*\/<CR>'aYP:s\/.\/*\/g<CR>0r\/'zkYp:s\/.\/*\/g<CR>0r A\/<Esc>:exe "'a-1,'z-1s\/^\/".g:alignmaps_iws."\/e"<CR><SID>WE$/;"	m
+<Plug>AM_acom		<SID>WS:'a,.s/\/[*/]\/\=/@&@/e<CR>:'a,.s/\*\//@&/e<CR>:'y,'zs/^\(	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_acom		<SID>WS:'a,.s\/\\\/[*\/]\\\/\\=\/@&@\/e<CR>:'a,.s\/\\*\\\/\/@&\/e<CR>:'y,'zs\/^\\( *\\) @\/\\1@\/e<CR>'zk:call AlignMaps#StdAlign(2)<CR>:'y,'zs\/^\\(\\s*\\) @\/\\1\/e<CR>:'y,'zs\/ @\/\/eg<CR><SID>WE$/;"	m
+<Plug>AM_adcom	<SID>WS:'a,.v/^\s*\/[/*]/s/\/[*/]\*\=/@&@/e<CR>:'a,.v/^\s*\/[/*]/s/\*\//@&/e<CR>:'y,'zv/^\s*\/[/*]/s/^\(	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_adcom	<SID>WS:'a,.v\/^\\s*\\\/[\/*]\/s\/\\\/[*\/]\\*\\=\/@&@\/e<CR>:'a,.v\/^\\s*\\\/[\/*]\/s\/\\*\\\/\/@&\/e<CR>:'y,'zv\/^\\s*\\\/[\/*]\/s\/^\\( *\\) @\/\\1@\/e<CR>'zk:call AlignMaps#StdAlign(3)<cr>:'y,'zv\/^\\s*\\\/[\/*]\/s\/^\\(\\s*\\) @\/\\1\/e<CR>:'y,'zs\/ @\/\/eg<CR><SID>WE$/;"	m
+<Plug>AM_adec		<SID>WS:'a,'zs/\([^	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_adec		<SID>WS:'a,'zs\/\\([^ \\t\/(]\\)\\([*&]\\)\/\\1 \\2\/e<CR>:'y,'zv\/^\\\/\/s\/\\([^ \\t]\\)\\s\\+\/\\1 \/ge<CR>:'y,'zv\/^\\s*[*\/]\/s\/\\([^\/][*&]\\)\\s\\+\/\\1\/ge<CR>:'y,'zv\/^\\s*[*\/]\/s\/^\\(\\s*\\%(\\K\\k*\\s\\+\\%([a-zA-Z_*(&]\\)\\@=\\)\\+\\)\\([*(&]*\\)\\s*\\([a-zA-Z0-9_()]\\+\\)\\s*\\(\\(\\[.\\{-}]\\)*\\)\\s*\\(=\\)\\=\\s*\\(.\\{-}\\)\\=\\s*;\/\\1@\\2#@\\3\\4@\\6@\\7;@\/e<CR>:'y,'zv\/^\\s*[*\/]\/s\/\\*\\\/\\s*$\/@*\\\/\/e<CR>:'y,'zv\/^\\s*[*\/]\/s\/^\\s\\+\\*\/@@@@@* \/e<CR>:'y,'zv\/^\\s*[*\/]\/s\/^@@@@@\\*\\(.*[^*\/]\\)$\/&@*\/e<CR>'yjma'zk:AlignCtrl v ^\\s*[*\/#]<CR>:call AlignMaps#StdAlign(1)<cr>:'y,'zv\/^\\s*[*\/]\/s\/@ \/\/ge<CR>:'y,'zv\/^\\s*[*\/]\/s\/\\(\\s*\\);\/;\\1\/e<CR>:'y,'zv\/^#\/s\/# \/\/e<CR>:'y,'zv\/^\\s\\+[*\/#]\/s\/\\([^\/*]\\)\\(\\*\\+\\)\\( \\+\\)\/\\1\\3\\2\/e<CR>:'y,'zv\/^\\s\\+[*\/#]\/s\/\\((\\+\\)\\( \\+\\)\\*\/\\2\\1*\/e<CR>:'y,'zv\/^\\s\\+[*\/#]\/s\/^\\(\\s\\+\\) \\*\/\\1*\/e<CR>:'y,'zv\/^\\s\\+[*\/#]\/s\/[ \\t@]*$\/\/e<CR>:'y,'zs\/^[*]\/ *\/e<CR><SID>WE$/;"	m
+<Plug>AM_adef		<SID>WS:AlignPush<CR>:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_adef		<SID>WS:AlignPush<CR>:AlignCtrl v ^\\s*\\(\\\/\\*\\<bar>\\\/\\\/\\)<CR>:'a,.v\/^\\s*\\(\\\/\\*\\<bar>\\\/\\\/\\)\/s\/^\\(\\s*\\)#\\(\\s\\)*define\\s*\\(\\I[a-zA-Z_0-9(),]*\\)\\s*\\(.\\{-}\\)\\($\\<Bar>\\\/\\*\\)\/#\\1\\2define @\\3@\\4@\\5\/e<CR>:'a,.v\/^\\s*\\(\\\/\\*\\<bar>\\\/\\\/\\)\/s\/\\($\\<Bar>\\*\\\/\\)\/@&\/e<CR>'zk:call AlignMaps#StdAlign(1)<cr>'yjma'zk:'a,.v\/^\\s*\\(\\\/\\*\\<bar>\\\/\\\/\\)\/s\/ @\/\/g<CR><SID>WE$/;"	m
+<Plug>AM_aenum	<SID>WS:'a,'zs/\%([0-9.]\)\s\+\([-+]\=\d\)/\1@\2/ge<CR>:'a,'zs/\.@/\.0@/ge<CR>:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_aenum	<SID>WS:'a,'zs\/\\%([0-9.]\\)\\s\\+\\([-+]\\=\\d\\)\/\\1@\\2\/ge<CR>:'a,'zs\/\\.@\/\\.0@\/ge<CR>:AlignCtrl wmp0P0r<CR>:'a,'zAlign [,@]<CR>:'a,'zs\/@\/ \/ge<CR>:'a,'zs\/\\(,\\)\\(\\s\\+\\)\\([-0-9.,eE+]\\+\\)\/\\1\\3\\2\/ge<CR>:'a,'zs\/\\([eE]\\)\\(\\s\\+\\)\\([0-9+\\-+]\\+\\)\/\\1\\3\\2\/ge<CR><SID>WE$/;"	m
+<Plug>AM_afnc		:<c-u>set	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_afnc		:<c-u>set lz<CR>:silent call AlignMaps#Afnc()<CR>:set nolz<CR>$/;"	m
+<Plug>AM_aocom	<SID>WS:AlignPush<CR>:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_aocom	<SID>WS:AlignPush<CR>:AlignCtrl g \/[*\/]<CR>:exe "norm \\<Plug>AM_acom"<cr>:AlignPop<CR><SID>WE$/;"	m
+<Plug>AM_ascom	<SID>WS:'a,.s/\/[*/]/@&@/e<CR>:'a,.s/\*\//@&/e<CR>:silent!	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_ascom	<SID>WS:'a,.s\/\\\/[*\/]\/@&@\/e<CR>:'a,.s\/\\*\\\/\/@&\/e<CR>:silent! 'a,.g\/^\\s*@\\\/[*\/]\/s\/@\/\/ge<CR>:AlignCtrl v ^\\s*\\\/[*\/]<CR>:AlignCtrl g \\\/[*\/]<CR>'zk:call AlignMaps#StdAlign(2)<cr>:'y,'zs\/^\\(\\s*\\) @\/\\1\/e<CR>:'y,'zs\/ @\/\/eg<CR><SID>WE$/;"	m
+<Plug>AM_aunum	<SID>WS:'a,'zs/\%([0-9.]\)\s\+\zs\([-+.]\=\d\)/@\1/ge<CR>:'a,'zs/\(\(^\|\s\)\d\+\)\(\s\+\)@/\1@\3@/ge<CR>:'a,'zs/\.@/\.0@/ge<CR>:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_aunum	<SID>WS:'a,'zs\/\\%([0-9.]\\)\\s\\+\\zs\\([-+.]\\=\\d\\)\/@\\1\/ge<CR>:'a,'zs\/\\(\\(^\\|\\s\\)\\d\\+\\)\\(\\s\\+\\)@\/\\1@\\3@\/ge<CR>:'a,'zs\/\\.@\/\\.0@\/ge<CR>:AlignCtrl wmp0P0r<CR>:'a,'zAlign [.@]<CR>:'a,'zs\/@\/ \/ge<CR>:'a,'zs\/\\(\\.\\)\\(\\s\\+\\)\\([0-9.,eE+]\\+\\)\/\\1\\3\\2\/ge<CR>:'a,'zs\/\\([eE]\\)\\(\\s\\+\\)\\([0-9+\\-+]\\+\\)\/\\1\\3\\2\/ge<CR><SID>WE$/;"	m
+<Plug>AM_m=		<SID>WS:'a,'zs/\s\+\([*/+\-%<Bar>&\~^]\==\)/	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_m=		<SID>WS:'a,'zs\/\\s\\+\\([*\/+\\-%<Bar>&\\~^]\\==\\)\/ \\1\/e<CR>:'a,'zs@ \\+\\([*\/+\\-%<Bar>&\\~^]\\)=@\\1=@ge<CR>:'a,'zs\/==\/\\="\\<Char-0x0f>\\<Char-0x0f>"\/ge<CR>:'a,'zs\/!=\/\\="!\\<Char-0x0f>"\/ge<CR>'zk:AlignCtrl mIp1P1=l =<CR>:AlignCtrl g =<CR>:'a,'z-1Align<CR>:'a,'z-1s@\\([*\/+\\-%<Bar>&\\~^!=]\\)\\( \\+\\)=@\\2\\1=@ge<CR>:'a,'z-1s\/\\( \\+\\);\/;\\1\/ge<CR>:'a,'z-s\/%\\ze[^=]\/ @%@ \/e<CR>'zk:call AlignMaps#StdAlign(1)<cr>:'y,'zs\/^\\(\\s*\\) @\/\\1\/e<CR>:'a,'z-1s\/\\xff\/=\/ge<CR>:'y,'zs\/ @\/\/eg<CR><SID>WE$/;"	m
+<Plug>AM_t|		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_t|		<SID>WS:AlignCtrl mIp0P0=l <Bar><CR>:'a,.Align<CR><SID>WE$/;"	m
+<Plug>AM_t#		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_t#		<SID>WS:AlignCtrl mIp0P0=l #<CR>:'a,.Align<CR><SID>WE$/;"	m
+<Plug>AM_t,		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_t,		<SID>WS:AlignCtrl mIp0P1=l ,<CR>:'a,.Align<CR><SID>WE$/;"	m
+<Plug>AM_t:		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_t:		<SID>WS:AlignCtrl mIp1P1=l :<CR>:'a,.Align<CR><SID>WE$/;"	m
+<Plug>AM_t;		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_t;		<SID>WS:AlignCtrl mIp0P1=l ;<CR>:'a,.Align<CR>:sil 'y,'zs\/\\( *\\);\/;\\1\/ge<CR><SID>WE$/;"	m
+<Plug>AM_t<		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_t<		<SID>WS:AlignCtrl mIp0P0=l <<CR>:'a,.Align<CR><SID>WE$/;"	m
+<Plug>AM_t=		<SID>WS:call	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_t=		<SID>WS:call AlignMaps#Equals()<CR><SID>WE$/;"	m
+<Plug>AM_t?		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_t?		<SID>WS:AlignCtrl mIp0P0=l ?<CR>:'a,.Align<CR>:.,'zs\/ \\( *\\);\/;\\1\/ge<CR><SID>WE$/;"	m
+<Plug>AM_t@		<SID>WS::call	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_t@		<SID>WS::call AlignMaps#StdAlign(1)<cr>:<SID>WE$/;"	m
+<Plug>AM_tab		<SID>WS:'a,.s/^\(\t*\)\(.*\)$/\=submatch(1).escape(substitute(submatch(2),'\t',"\<Char-0x0f>",'g'),'\')/<CR>:if	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_tab		<SID>WS:'a,.s\/^\\(\\t*\\)\\(.*\\)$\/\\=submatch(1).escape(substitute(submatch(2),'\\t',"\\<Char-0x0f>",'g'),'\\')\/<CR>:if &ts == 1<bar>exe "AlignCtrl mI=lp0P0 \\<Char-0x0f>"<bar>else<bar>exe "AlignCtrl mI=l \\<Char-0x0f>"<bar>endif<CR>:'a,.Align<CR>:exe "'y+1,'z-1s\/\\<Char-0x0f>\/".((&ts == 1)? '\\t' : ' ')."\/g"<CR><SID>WE$/;"	m
+<Plug>AM_tml		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_tml		<SID>WS:AlignCtrl mWp1P0=l \\\\\\@<!\\\\\\s*$<CR>:'a,.Align<CR><SID>WE$/;"	m
+<Plug>AM_ts,		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_ts,		<SID>WS:AlignCtrl mIp0P1=l #<CR>:'a,.Align<CR>:sil 'y+1,'z-1s\/\\(\\s*\\)#\/,\\1\/ge<CR><SID>WE$/;"	m
+<Plug>AM_ts,		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_ts,		<SID>WS:AlignCtrl mIp0P1=l ,<CR>:'a,.Align<CR>:sil 'y+1,'z-1s\/\\(\\s*\\),\/,\\1\/ge<CR><SID>WE$/;"	m
+<Plug>AM_ts:		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_ts:		<SID>WS:AlignCtrl mIp1P1=l :<CR>:'a,.Align<CR>:sil 'y+1,'z-1s\/\\(\\s*\\):\/:\\1\/ge<CR><SID>WE$/;"	m
+<Plug>AM_ts;		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_ts;		<SID>WS:AlignCtrl mIp1P1=l ;<CR>:'a,.Align<CR>:sil 'y+1,'z-1s\/\\(\\s*\\);\/;\\1\/ge<CR><SID>WE$/;"	m
+<Plug>AM_ts<		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_ts<		<SID>WS:AlignCtrl mIp1P1=l <<CR>:'a,.Align<CR>:sil 'y+1,'z-1s\/\\(\\s*\\)<\/<\\1\/ge<CR><SID>WE$/;"	m
+<Plug>AM_ts=		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_ts=		<SID>WS:AlignCtrl mIp1P1=l =<CR>:'a,.Align<CR>:sil 'y+1,'z-1s\/\\(\\s*\\)=\/=\\1\/ge<CR><SID>WE$/;"	m
+<Plug>AM_tsp		<SID>WS:'a,.s/^\(\s*\)\(.*\)/\=submatch(1).escape(substitute(submatch(2),'\s\+','@','g'),'\')/<CR>:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_tsp		<SID>WS:'a,.s\/^\\(\\s*\\)\\(.*\\)\/\\=submatch(1).escape(substitute(submatch(2),'\\s\\+','@','g'),'\\')\/<CR>:AlignCtrl mI=lp0P0 @<CR>:'a,.Align<CR>:'y+1,'z-1s\/@\/ \/g<CR><SID>WE$/;"	m
+<Plug>AM_tsq		<SID>WS:'a,.AlignReplaceQuotedSpaces<CR>:'a,.s/^\(\s*\)\(.*\)/\=submatch(1).substitute(submatch(2),'\s\+','@','g')/<CR>:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_tsq		<SID>WS:'a,.AlignReplaceQuotedSpaces<CR>:'a,.s\/^\\(\\s*\\)\\(.*\\)\/\\=submatch(1).substitute(submatch(2),'\\s\\+','@','g')\/<CR>:AlignCtrl mIp0P0=l @<CR>:'a,.Align<CR>:'y+1,'z-1s\/[%@]\/ \/g<CR><SID>WE$/;"	m
+<Plug>AM_tt		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_tt		<SID>WS:AlignCtrl mIp1P1=l \\\\\\@<!& \\\\\\\\<CR>:'a,.Align<CR><SID>WE$/;"	m
+<Plug>AM_t~		<SID>WS:AlignCtrl	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_t~		<SID>WS:AlignCtrl mIp0P0=l ~<CR>:'a,.Align<CR>:'y,'zs\/ \\( *\\);\/;\\1\/ge<CR><SID>WE$/;"	m
+<Plug>AM_w=		<SID>WS:'a,'zg/=/s/\s\+\([*/+\-%<Bar>&\~^]\==\)/	AlignMapsPlugin.vim	/^map <silent> <script> <Plug>AM_w=		<SID>WS:'a,'zg\/=\/s\/\\s\\+\\([*\/+\\-%<Bar>&\\~^]\\==\\)\/ \\1\/e<CR>:'a,'zg\/=\/s@ \\+\\([*\/+\\-%<Bar>&\\~^]\\)=@\\1=@ge<CR>:'a,'zg\/=\/s\/==\/\\="\\<Char-0x0f>\\<Char-0x0f>"\/ge<CR>:'a,'zg\/=\/s\/!=\/\\="!\\<Char-0x0f>"\/ge<CR>'zk:AlignCtrl mWp1P1=l =<CR>:AlignCtrl g =<CR>:'a,'z-1g\/=\/Align<CR>:'a,'z-1g\/=\/s@\\([*\/+\\-%<Bar>&\\~^!=]\\)\\( \\+\\)=@\\2\\1=@ge<CR>:'a,'z-1g\/=\/s\/\\( \\+\\);\/;\\1\/ge<CR>:'a,'z-1v\/^\\s*\\\/[*\/]\/s\/\\\/[*\/]\/@&@\/e<CR>:'a,'z-1v\/^\\s*\\\/[*\/]\/s\/\\*\\\/\/@&\/e<CR>'zk:call AlignMaps#StdAlign(1)<cr>:'y,'zs\/^\\(\\s*\\) @\/\\1\/e<CR>:'a,'z-1g\/=\/s\/\\xff\/=\/ge<CR>:'y,'zg\/=\/s\/ @\/\/eg<CR><SID>WE$/;"	m
+<Plug>AlignMapsWrapperEnd	:call	AlignMapsPlugin.vim	/^nmap <silent> <script> <Plug>AlignMapsWrapperEnd	:call AlignMaps#WrapperEnd()<CR>:set nolz<CR>$/;"	m
+<Plug>AlignMapsWrapperStart	:<c-u>set	AlignMapsPlugin.vim	/^vmap <silent> <script> <Plug>AlignMapsWrapperStart	:<c-u>set lz<CR>:call AlignMaps#WrapperStart(1)<CR>$/;"	m
+<Plug>AlignMapsWrapperStart	:set	AlignMapsPlugin.vim	/^nmap <silent> <script> <Plug>AlignMapsWrapperStart	:set lz<CR>:call AlignMaps#WrapperStart(0)<CR>$/;"	m
+<Plug>Csurround	surround.vim	/^nnoremap <silent> <Plug>Csurround  :<C-U>call <SID>changesurround()<CR>$/;"	m
+<Plug>Dsurround	surround.vim	/^nnoremap <silent> <Plug>Dsurround  :<C-U>call <SID>dosurround(<SID>inputtarget())<CR>$/;"	m
+<Plug>ISurround	surround.vim	/^inoremap <silent> <Plug>ISurround  <C-R>=<SID>insert(1)<CR>$/;"	m
+<Plug>Isurround	surround.vim	/^inoremap <silent> <Plug>Isurround  <C-R>=<SID>insert()<CR>$/;"	m
+<Plug>NetrwBrowseX	netrwPlugin.vim	/^ nno <silent> <Plug>NetrwBrowseX :call netrw#NetrwBrowseX(expand("<cWORD>"),0)<cr>$/;"	m
+<Plug>VSurround	surround.vim	/^vnoremap <silent> <Plug>VSurround  :<C-U>call <SID>opfunc2(visualmode())<CR>$/;"	m
+<Plug>Vsurround	surround.vim	/^vnoremap <silent> <Plug>Vsurround  :<C-U>call <SID>opfunc(visualmode())<CR>$/;"	m
+<Plug>YSsurround	surround.vim	/^nnoremap <silent> <Plug>YSsurround :<C-U>call <SID>opfunc2(v:count1)<CR>$/;"	m
+<Plug>YSurround	surround.vim	/^nnoremap <silent> <Plug>YSurround  :<C-U>set opfunc=<SID>opfunc2<CR>g@$/;"	m
+<Plug>Yssurround	surround.vim	/^nnoremap <silent> <Plug>Yssurround :<C-U>call <SID>opfunc(v:count1)<CR>$/;"	m
+<Plug>Ysurround	surround.vim	/^nnoremap <silent> <Plug>Ysurround  :<C-U>set opfunc=<SID>opfunc<CR>g@$/;"	m
+<SID>WE	<Plug>AlignMapsWrapperEnd	AlignMapsPlugin.vim	/^ nmap <unique> <SID>WE	<Plug>AlignMapsWrapperEnd$/;"	m
+<SID>WS	<Plug>AlignMapsWrapperStart	AlignMapsPlugin.vim	/^ map <unique> <SID>WS	<Plug>AlignMapsWrapperStart$/;"	m
+<plug>EgMapGrepCurrentWord_A	EasyGrep.vim	/^nmap <silent> <unique> <script> <plug>EgMapGrepCurrentWord_A    :call <sid>GrepCurrentWord("add", 1)<CR>$/;"	m
+<plug>EgMapGrepCurrentWord_V	EasyGrep.vim	/^nmap <silent> <unique> <script> <plug>EgMapGrepCurrentWord_V    :call <sid>GrepCurrentWord("", 1)<CR>$/;"	m
+<plug>EgMapGrepCurrentWord_a	EasyGrep.vim	/^nmap <silent> <unique> <script> <plug>EgMapGrepCurrentWord_a    :call <sid>GrepCurrentWord("add", 0)<CR>$/;"	m
+<plug>EgMapGrepCurrentWord_v	EasyGrep.vim	/^nmap <silent> <unique> <script> <plug>EgMapGrepCurrentWord_v    :call <sid>GrepCurrentWord("", 0)<CR>$/;"	m
+<plug>EgMapGrepOptions	EasyGrep.vim	/^nmap <silent> <unique> <script> <plug>EgMapGrepOptions          :call <sid>GrepOptions()<CR>$/;"	m
+<plug>EgMapGrepSelection_A	EasyGrep.vim	/^vmap <silent> <unique> <script> <plug>EgMapGrepSelection_A     y:call <sid>GrepSelection("add", 1)<CR>$/;"	m
+<plug>EgMapGrepSelection_V	EasyGrep.vim	/^vmap <silent> <unique> <script> <plug>EgMapGrepSelection_V     y:call <sid>GrepSelection("", 1)<CR>$/;"	m
+<plug>EgMapGrepSelection_a	EasyGrep.vim	/^vmap <silent> <unique> <script> <plug>EgMapGrepSelection_a     y:call <sid>GrepSelection("add", 0)<CR>$/;"	m
+<plug>EgMapGrepSelection_v	EasyGrep.vim	/^vmap <silent> <unique> <script> <plug>EgMapGrepSelection_v     y:call <sid>GrepSelection("", 0)<CR>$/;"	m
+<plug>EgMapReplaceCurrentWord_R	EasyGrep.vim	/^nmap <silent> <unique> <script> <plug>EgMapReplaceCurrentWord_R :call <sid>ReplaceCurrentWord(1)<CR>$/;"	m
+<plug>EgMapReplaceCurrentWord_r	EasyGrep.vim	/^nmap <silent> <unique> <script> <plug>EgMapReplaceCurrentWord_r :call <sid>ReplaceCurrentWord(0)<CR>$/;"	m
+<plug>EgMapReplaceSelection_R	EasyGrep.vim	/^vmap <silent> <unique> <script> <plug>EgMapReplaceSelection_R  y:call <sid>ReplaceSelection(1)<CR>$/;"	m
+<plug>EgMapReplaceSelection_r	EasyGrep.vim	/^vmap <silent> <unique> <script> <plug>EgMapReplaceSelection_r  y:call <sid>ReplaceSelection(0)<CR>$/;"	m
+ActivateAll	EasyGrep.vim	/^function! <sid>ActivateAll()$/;"	f
+ActivateBuffers	EasyGrep.vim	/^function! <sid>ActivateBuffers()$/;"	f
+ActivateChoice	EasyGrep.vim	/^function! s:ActivateChoice(choice)$/;"	f
+ActivateTracked	EasyGrep.vim	/^function! <sid>ActivateTracked()$/;"	f
+ActivateUser	EasyGrep.vim	/^function! <sid>ActivateUser()$/;"	f
+Align	AlignPlugin.vim	/^com! -bang -range -nargs=* Align <line1>,<line2>call Align#Align(<bang>0,<q-args>)$/;"	c
+AlignCtrl	AlignPlugin.vim	/^com!              -nargs=* AlignCtrl call Align#AlignCtrl(<q-args>)$/;"	c
+AlignPop	AlignPlugin.vim	/^com!              -nargs=0 AlignPop  call Align#AlignPop()$/;"	c
+AlignPush	AlignPlugin.vim	/^com!              -nargs=0 AlignPush call Align#AlignPush()$/;"	c
+AlignReplaceQuotedSpaces	AlignPlugin.vim	/^com!       -range -nargs=0 AlignReplaceQuotedSpaces <line1>,<line2>call Align#AlignReplaceQuotedSpaces()$/;"	c
+AlreadyExists	EasyGrep.vim	/^function! s:AlreadyExists(pat)$/;"	f
+ApplyBufferDir	EasyGrep.vim	/^function! s:ApplyBufferDir(...)$/;"	f
+Arpeggio	arpeggio.vim	/^command! -bar -complete=command -nargs=+ Arpeggio  call arpeggio#_do(<q-args>)$/;"	c
+Autodate	autodate.vim	/^  augroup Autodate$/;"	a
+Autodate	autodate.vim	/^command! -range Autodate call <SID>Autodate(<line1>, <line2>)$/;"	c
+Autodate	autodate.vim	/^function! s:Autodate(...)$/;"	f
+AutodateOFF	autodate.vim	/^command! AutodateOFF let b:autodate_disable = 1$/;"	c
+AutodateON	autodate.vim	/^command! AutodateON let b:autodate_disable = 0$/;"	c
+AutodateStub	autodate.vim	/^function! s:AutodateStub(first, last)$/;"	f
+BackToForwardSlash	EasyGrep.vim	/^function! s:BackToForwardSlash(arg)$/;"	f
+BreakDown	EasyGrep.vim	/^function! s:BreakDown(keyList)$/;"	f
+BuildPatternList	EasyGrep.vim	/^function! s:BuildPatternList(...)$/;"	f
+Candidate	gtags.vim	/^function Candidate(lead, line, pos)$/;"	f
+CheckLinks	EasyGrep.vim	/^function! s:CheckLinks()$/;"	f
+Choose	matchit.vim	/^fun! s:Choose(patterns, string, comma, branch, prefix, suffix, ...)$/;"	f
+CleanUp	matchit.vim	/^fun! s:CleanUp(options, mode, startline, startcol, ...)$/;"	f
+ClearActivated	EasyGrep.vim	/^function! s:ClearActivated()$/;"	f
+ClearGatewayVariables	EasyGrep.vim	/^function! s:ClearGatewayVariables()$/;"	f
+CloseSession	sessionman.vim	/^function! s:CloseSession()$/;"	f
+CompareCurrentFileCurrentDirectory	EasyGrep.vim	/^function! s:CompareCurrentFileCurrentDirectory()$/;"	f
+Count	matchit.vim	/^fun! s:Count(string, pattern, ...)$/;"	f
+CreateDict	EasyGrep.vim	/^function! s:CreateDict()$/;"	f
+CreateOptionMappings	EasyGrep.vim	/^function! s:CreateOptionMappings()$/;"	f
+CreateOptions	EasyGrep.vim	/^function! s:CreateOptions()$/;"	f
+DaynameString	autodate.vim	/^function! DaynameString(...)$/;"	f
+DeleteSession	sessionman.vim	/^function! s:DeleteSession(name)$/;"	f
+DoBreakDown	EasyGrep.vim	/^function! s:DoBreakDown(key)$/;"	f
+DoEscapeList	EasyGrep.vim	/^function! s:DoEscapeList(lst, seperator, func)$/;"	f
+DoGrep	EasyGrep.vim	/^function! s:DoGrep(word, add, whole, count, escapeArgs)$/;"	f
+DoInclude	skk.vim	/^function! s:DoInclude(parent, ch)$/;"	f
+DoReplace	EasyGrep.vim	/^function! s:DoReplace(target, replacement, whole, escapeArgs)$/;"	f
+E2v	eregex.vim	/^command! -nargs=? -range E2v :<line1>,<line2>call <SID>ExtendedRegex2VimRegexLineWise(<q-args>)$/;"	c
+E2v	eregex.vim	/^function! E2v(extendedregex, ...)$/;"	f
+Echo	EasyGrep.vim	/^function! <sid>Echo(message)$/;"	f
+EchoFilesSearched	EasyGrep.vim	/^function! <sid>EchoFilesSearched()$/;"	f
+EchoOptionsSet	EasyGrep.vim	/^function! <sid>EchoOptionsSet()$/;"	f
+EditSession	sessionman.vim	/^function! s:EditSession(name)$/;"	f
+EditSessionExtra	sessionman.vim	/^function! s:EditSessionExtra(name)$/;"	f
+Eglobal	eregex.vim	/^function! s:Eglobal(bang, ...) range$/;"	f
+Ematch	eregex.vim	/^function! s:Ematch(...)$/;"	f
+Error	EasyGrep.vim	/^function! s:Error(message)$/;"	f
+Error	gtags.vim	/^function s:Error(msg)$/;"	f
+Escape	EasyGrep.vim	/^function! s:Escape(str, lst)$/;"	f
+EscapeAndUnescape	eregex.vim	/^function! s:EscapeAndUnescape(vimregex, delim)$/;"	f
+EscapeList	EasyGrep.vim	/^function! s:EscapeList(lst, seperator)$/;"	f
+EscapeSpecial	EasyGrep.vim	/^function! s:EscapeSpecial(str)$/;"	f
+Esubstitute	eregex.vim	/^function! s:Esubstitute(...) range$/;"	f
+Evglobal	eregex.vim	/^function! s:Evglobal(...) range$/;"	f
+ExchangeReplaceSpecials	eregex.vim	/^function! s:ExchangeReplaceSpecials(replacement, sort)$/;"	f
+ExecLoad	gtags.vim	/^function! s:ExecLoad(option, long_option, pattern)$/;"	f
+ExpandAtomsInBrackets	eregex.vim	/^function! s:ExpandAtomsInBrackets(bracket)$/;"	f
+Explore	netrwPlugin.vim	/^com! -nargs=* -bar -bang -count=0 -complete=dir	Explore		call netrw#Explore(<count>,0,0+<bang>0,<q-args>)$/;"	c
+ExtendedRegex2VimRegex	eregex.vim	/^function! s:ExtendedRegex2VimRegex(extendedregex, ...)$/;"	f
+ExtendedRegex2VimRegexLineWise	eregex.vim	/^function! s:ExtendedRegex2VimRegexLineWise(...) range$/;"	f
+Extract	gtags.vim	/^function s:Extract(line, target)$/;"	f
+FileEscape	EasyGrep.vim	/^function! s:FileEscape(item)$/;"	f
+FileExplorer	netrwPlugin.vim	/^augroup FileExplorer$/;"	a
+FillWindow	EasyGrep.vim	/^function! s:FillWindow()$/;"	f
+FindByKey	EasyGrep.vim	/^function! s:FindByKey(key)$/;"	f
+FindByPattern	EasyGrep.vim	/^function! s:FindByPattern(pattern)$/;"	f
+G	eregex.vim	/^command! -nargs=? -range=% -bang G :<line1>,<line2>call <SID>Eglobal(<q-bang>, <q-args>)$/;"	c
+GetAutodateLines	autodate.vim	/^function! s:GetAutodateLines()$/;"	f
+GetAutodateStartLine	autodate.vim	/^function! s:GetAutodateStartLine()$/;"	f
+GetBufferIdList	EasyGrep.vim	/^function! s:GetBufferIdList()$/;"	f
+GetBufferNamesList	EasyGrep.vim	/^function! s:GetBufferNamesList()$/;"	f
+GetBuffersOutput	EasyGrep.vim	/^function! s:GetBuffersOutput()$/;"	f
+GetDelim	eregex.vim	/^function! s:GetDelim(str)$/;"	f
+GetErrorList	EasyGrep.vim	/^function! s:GetErrorList()$/;"	f
+GetErrorListName	EasyGrep.vim	/^function! s:GetErrorListName()$/;"	f
+GetFileAssociationList	EasyGrep.vim	/^function! s:GetFileAssociationList()$/;"	f
+GetKeyFromLink	EasyGrep.vim	/^function! s:GetKeyFromLink(str)$/;"	f
+GetLatestVimScripts	getscriptPlugin.vim	/^com!        -nargs=0 GetLatestVimScripts call getscript#GetLatestVimScripts()$/;"	c
+GetReplaceWindowModeString	EasyGrep.vim	/^function! s:GetReplaceWindowModeString(mode)$/;"	f
+GetRest	skk.vim	/^function! s:GetRest(rom)$/;"	f
+GetSavedName	EasyGrep.vim	/^function! s:GetSavedName(var)$/;"	f
+GetScripts	getscriptPlugin.vim	/^com!        -nargs=0 GetScripts          call getscript#GetLatestVimScripts()$/;"	c
+GetSearchPatternFriendlyName	EasyGrep.vim	/^function! s:GetSearchPatternFriendlyName()$/;"	f
+GetVisibleBuffers	EasyGrep.vim	/^function! s:GetVisibleBuffers()$/;"	f
+Gozilla	gtags.vim	/^command! -nargs=0 Gozilla call s:Gozilla()$/;"	c
+Gozilla	gtags.vim	/^function! s:Gozilla()$/;"	f
+Grep	EasyGrep.vim	/^command! -bang -nargs=+ Grep :call s:GrepCommandLine( <q-args> , "", "<bang>")$/;"	c
+GrepAdd	EasyGrep.vim	/^command! -bang -nargs=+ GrepAdd :call s:GrepCommandLine( <q-args>, "add", "<bang>")$/;"	c
+GrepCommandLine	EasyGrep.vim	/^function! s:GrepCommandLine(argv, add, bang)$/;"	f
+GrepCurrentWord	EasyGrep.vim	/^function! <sid>GrepCurrentWord(add, whole)$/;"	f
+GrepOptions	EasyGrep.vim	/^command! GrepOptions :call <sid>GrepOptions()$/;"	c
+GrepOptions	EasyGrep.vim	/^function! <sid>GrepOptions()$/;"	f
+GrepSelection	EasyGrep.vim	/^function! <sid>GrepSelection(add, whole)$/;"	f
+GrepSetManual	EasyGrep.vim	/^function! s:GrepSetManual(str)$/;"	f
+Gtags	gtags.vim	/^command! -nargs=* -complete=custom,Candidate Gtags call s:RunGlobal(<q-args>)$/;"	c
+GtagsCursor	gtags.vim	/^command! -nargs=0 GtagsCursor call s:GtagsCursor()$/;"	c
+GtagsCursor	gtags.vim	/^function! s:GtagsCursor()$/;"	f
+Gtags_Double_Quote_Char	gtags.vim	/^        let Gtags_Double_Quote_Char = '"'$/;"	v
+Gtags_Double_Quote_Char	gtags.vim	/^        let Gtags_Double_Quote_Char = '\\"'$/;"	v
+Gtags_OpenQuickfixWindow	gtags.vim	/^    let Gtags_OpenQuickfixWindow = 1$/;"	v
+Gtags_Shell_Quote_Char	gtags.vim	/^        let Gtags_Shell_Quote_Char = "'"$/;"	v
+Gtags_Shell_Quote_Char	gtags.vim	/^        let Gtags_Shell_Quote_Char = '"'$/;"	v
+Gtags_Single_Quote_Char	gtags.vim	/^        let Gtags_Single_Quote_Char = "'"$/;"	v
+Gtags_Single_Quote_Char	gtags.vim	/^        let Gtags_Single_Quote_Char = sq . dq . sq . dq . sq$/;"	v
+HasActivatedItem	EasyGrep.vim	/^function! s:HasActivatedItem()$/;"	f
+HasChild	skk.vim	/^function! s:HasChild(parent)$/;"	f
+HasFilesThatMatch	EasyGrep.vim	/^function! s:HasFilesThatMatch()$/;"	f
+HasMatches	EasyGrep.vim	/^function! s:HasMatches()$/;"	f
+Hexplore	netrwPlugin.vim	/^com! -nargs=* -bar -bang -count=0 -complete=dir	Hexplore	call netrw#Explore(<count>,1,2+<bang>0,<q-args>)$/;"	c
+Info	EasyGrep.vim	/^function! s:Info(message)$/;"	f
+InsertRefs	matchit.vim	/^fun! s:InsertRefs(groupBR, prefix, group, suffix, matchline)$/;"	f
+IsInclude	skk.vim	/^function! s:IsInclude(parent, ch)$/;"	f
+IsLink	EasyGrep.vim	/^function! s:IsLink(str)$/;"	f
+IsModeAll	EasyGrep.vim	/^function! s:IsModeAll()$/;"	f
+IsModeBuffers	EasyGrep.vim	/^function! s:IsModeBuffers()$/;"	f
+IsModeTracked	EasyGrep.vim	/^function! s:IsModeTracked()$/;"	f
+IsModeUser	EasyGrep.vim	/^function! s:IsModeUser()$/;"	f
+IsRecursive	EasyGrep.vim	/^function! s:IsRecursive(pattern)$/;"	f
+ListSessions	sessionman.vim	/^function! s:ListSessions()$/;"	f
+LocalBrowse	netrwPlugin.vim	/^fun! s:LocalBrowse(dirname)$/;"	f
+M	eregex.vim	/^command! -nargs=? M :call <SID>Ematch(<q-args>)$/;"	c
+MRU	mru.vim	/^command! -nargs=? -complete=customlist,s:MRU_Complete MRU$/;"	c
+MRU_AddFile	mru.vim	/^function! s:MRU_AddFile(acmd_bufnr)$/;"	f
+MRU_Add_Menu	mru.vim	/^    let MRU_Add_Menu = 1$/;"	v
+MRU_Auto_Close	mru.vim	/^    let MRU_Auto_Close = 1$/;"	v
+MRU_Cmd	mru.vim	/^function! s:MRU_Cmd(pat)$/;"	f
+MRU_Complete	mru.vim	/^function! s:MRU_Complete(ArgLead, CmdLine, CursorPos)$/;"	f
+MRU_Edit_File	mru.vim	/^function! s:MRU_Edit_File(filename)$/;"	f
+MRU_Exclude_Files	mru.vim	/^    let MRU_Exclude_Files = ''$/;"	v
+MRU_File	mru.vim	/^        let MRU_File = $HOME . "\/.vim_mru_files"$/;"	v
+MRU_File	mru.vim	/^        let MRU_File = $VIM . "\/_vim_mru_files"$/;"	v
+MRU_LoadList	mru.vim	/^function! s:MRU_LoadList()$/;"	f
+MRU_Max_Entries	mru.vim	/^    let MRU_Max_Entries = 10$/;"	v
+MRU_Open_Window	mru.vim	/^function! s:MRU_Open_Window(...)$/;"	f
+MRU_Refresh_Menu	mru.vim	/^function! s:MRU_Refresh_Menu()$/;"	f
+MRU_SaveList	mru.vim	/^function! s:MRU_SaveList()$/;"	f
+MRU_Use_Current_Window	mru.vim	/^    let MRU_Use_Current_Window = 0$/;"	v
+MRU_Warn_Msg	mru.vim	/^function! s:MRU_Warn_Msg(msg)$/;"	f
+MRU_Window_Edit_File	mru.vim	/^function! s:MRU_Window_Edit_File(win_opt)$/;"	f
+MRU_Window_Height	mru.vim	/^    let MRU_Window_Height = 8$/;"	v
+MRU_add_files_to_menu	mru.vim	/^function! s:MRU_add_files_to_menu(prefix, file_list)$/;"	f
+MatchDebug	matchit.vim	/^  command! -nargs=0 MatchDebug call s:Match_debug()$/;"	c
+Match_debug	matchit.vim	/^fun! s:Match_debug()$/;"	f
+Match_wrapper	matchit.vim	/^function! s:Match_wrapper(word, forward, mode) range$/;"	f
+MkVimball	vimballPlugin.vim	/^com! -ra   -complete=file -na=+ -bang MkVimball call vimball#MkVimball(<line1>,<line2>,<bang>0,<f-args>)$/;"	c
+MonthnameString	autodate.vim	/^function! MonthnameString(...)$/;"	f
+MultiMatch	matchit.vim	/^fun! s:MultiMatch(spflag, mode)$/;"	f
+NetUserPass	netrwPlugin.vim	/^com! -nargs=*		NetUserPass	call NetUserPass(<f-args>)$/;"	c
+NetUserPass	netrwPlugin.vim	/^fun! NetUserPass(...)$/;"	f
+NetrwClean	netrwPlugin.vim	/^com! -bang	NetrwClean	call netrw#NetrwClean(<bang>0)$/;"	c
+NetrwSettings	netrwPlugin.vim	/^com! -nargs=0	NetrwSettings	call netrwSettings#NetrwSettings()$/;"	c
+NetrwStatusLine	netrwPlugin.vim	/^fun! NetrwStatusLine()$/;"	f
+Network	netrwPlugin.vim	/^augroup Network$/;"	a
+Nexplore	netrwPlugin.vim	/^com! -nargs=* -bar -bang			Nexplore	call netrw#Explore(-1,0,0,<q-args>)$/;"	c
+Nread	netrwPlugin.vim	/^com! -count=1 -nargs=*	Nread		call netrw#NetrwSavePosn()<bar>call netrw#NetRead(<count>,<f-args>)<bar>call netrw#NetrwRestorePosn()$/;"	c
+Nsource	netrwPlugin.vim	/^com! -nargs=*	        Nsource		call netrw#NetrwSavePosn()<bar>call netrw#NetSource(<f-args>)<bar>call netrw#NetrwRestorePosn()$/;"	c
+Nwrite	netrwPlugin.vim	/^com! -range=% -nargs=*	Nwrite		call netrw#NetrwSavePosn()<bar><line1>,<line2>call netrw#NetWrite(<f-args>)<bar>call netrw#NetrwRestorePosn()$/;"	c
+OnOrOff	EasyGrep.vim	/^function! s:OnOrOff(num)$/;"	f
+OpenOptionsExplorer	EasyGrep.vim	/^function! s:OpenOptionsExplorer()$/;"	f
+OpenSession	sessionman.vim	/^function! s:OpenSession(name)$/;"	f
+ParseCommandLine	EasyGrep.vim	/^function! s:ParseCommandLine(argv)$/;"	f
+ParseFileAssociationList	EasyGrep.vim	/^function! s:ParseFileAssociationList()$/;"	f
+ParseSkip	matchit.vim	/^fun! s:ParseSkip(str)$/;"	f
+ParseWords	matchit.vim	/^fun! s:ParseWords(groups)$/;"	f
+Pexplore	netrwPlugin.vim	/^com! -nargs=* -bar -bang			Pexplore	call netrw#Explore(-2,0,0,<q-args>)$/;"	c
+Pop	eregex.vim	/^function! s:Pop()$/;"	f
+PostCreate	EasyGrep.vim	/^function! s:PostCreate(str, sp)$/;"	f
+Push	eregex.vim	/^function! s:Push(fct, kind)$/;"	f
+Quit	EasyGrep.vim	/^function! <sid>Quit()$/;"	f
+Ref	matchit.vim	/^fun! s:Ref(string, d, ...)$/;"	f
+Replace	EasyGrep.vim	/^command! -bang -nargs=+ Replace :call s:Replace("<bang>", <q-args>)$/;"	c
+Replace	EasyGrep.vim	/^function! s:Replace(whole, argv)$/;"	f
+ReplaceAsStr	eregex.vim	/^function! s:ReplaceAsStr(str, search, replacement, ...)$/;"	f
+ReplaceCurrentWord	EasyGrep.vim	/^function! <sid>ReplaceCurrentWord(whole)$/;"	f
+ReplaceExtendedRegexFactorWithNumberFactor	eregex.vim	/^function! s:ReplaceExtendedRegexFactorWithNumberFactor(extendedregex)$/;"	f
+ReplaceNumberFactorWithVimRegexFactor	eregex.vim	/^function! s:ReplaceNumberFactorWithVimRegexFactor(halfway)$/;"	f
+ReplaceRemainFactorWithVimRegexFactor	eregex.vim	/^function! s:ReplaceRemainFactorWithVimRegexFactor(halfway)$/;"	f
+ReplaceSelection	EasyGrep.vim	/^function! <sid>ReplaceSelection(whole)$/;"	f
+ReplaceString	EasyGrep.vim	/^function! s:ReplaceString(str, whole, escapeArgs)$/;"	f
+ReplaceUndo	EasyGrep.vim	/^command! -bang ReplaceUndo :call s:ReplaceUndo("<bang>")$/;"	c
+ReplaceUndo	EasyGrep.vim	/^function! s:ReplaceUndo(bang)$/;"	f
+Resolve	matchit.vim	/^fun! s:Resolve(source, target, output)$/;"	f
+RestoreCommandLineOptions	EasyGrep.vim	/^function! s:RestoreCommandLineOptions(opts)$/;"	f
+RestoreDefaults	sessionman.vim	/^function! s:RestoreDefaults()$/;"	f
+RestoreVariable	EasyGrep.vim	/^function! s:RestoreVariable(var, ...)$/;"	f
+RmVimball	vimballPlugin.vim	/^com! -na=* -complete=dir  RmVimball   call vimball#SaveSettings()|call vimball#RmVimball(<f-args>)|call vimball#RestoreSettings()$/;"	c
+RunGlobal	gtags.vim	/^function! s:RunGlobal(line)$/;"	f
+S	eregex.vim	/^command! -nargs=? -range S :<line1>,<line2>call <SID>Esubstitute(<q-args>) <Bar> :noh$/;"	c
+S	surround.vim	/^            vmap  S    <Plug>VSurround$/;"	m
+SaveSession	sessionman.vim	/^function! s:SaveSession()$/;"	f
+SaveSessionAs	sessionman.vim	/^function! s:SaveSessionAs(...)$/;"	f
+SaveVariable	EasyGrep.vim	/^function! s:SaveVariable(var)$/;"	f
+SearchLimitTest	skk.vim	/^  function! SearchLimitTest(...)$/;"	f
+SearchTest	skk.vim	/^  function! SearchTest()$/;"	f
+Select	EasyGrep.vim	/^function! <sid>Select()$/;"	f
+SessionClose	sessionman.vim	/^command! -nargs=0 SessionClose call s:CloseSession()$/;"	c
+SessionList	sessionman.vim	/^command! -nargs=0 SessionList call s:ListSessions()$/;"	c
+SessionOpen	sessionman.vim	/^command! -nargs=1 -complete=custom,s:SessionOpenComplete SessionOpen call s:OpenSession(<f-args>)$/;"	c
+SessionOpenComplete	sessionman.vim	/^function! s:SessionOpenComplete(A, L, P)$/;"	f
+SessionOpenLast	sessionman.vim	/^command! -nargs=0 SessionOpenLast if exists('g:LAST_SESSION') | call s:OpenSession(g:LAST_SESSION) | endif$/;"	c
+SessionSave	sessionman.vim	/^command! -nargs=0 SessionSave call s:SaveSession()$/;"	c
+SessionSaveAs	sessionman.vim	/^command! -nargs=? SessionSaveAs call s:SaveSessionAs(<f-args>)$/;"	c
+SessionShowLast	sessionman.vim	/^command! -nargs=0 SessionShowLast call s:ShowLastSession()$/;"	c
+SetCommandLineOptions	EasyGrep.vim	/^function! s:SetCommandLineOptions(opts)$/;"	f
+SetCurrentExtension	EasyGrep.vim	/^function! s:SetCurrentExtension()$/;"	f
+SetGatewayVariables	EasyGrep.vim	/^function! s:SetGatewayVariables()$/;"	f
+SetModifiers	eregex.vim	/^function! s:SetModifiers(mods)$/;"	f
+SetWatchExtension	EasyGrep.vim	/^function! s:SetWatchExtension()$/;"	f
+Sexplore	netrwPlugin.vim	/^com! -nargs=* -bar -bang -count=0 -complete=dir	Sexplore	call netrw#Explore(<count>,1,0+<bang>0,<q-args>)$/;"	c
+ShellEscape	EasyGrep.vim	/^function! s:ShellEscape(item)$/;"	f
+ShellEscapeList	EasyGrep.vim	/^function! s:ShellEscapeList(lst, seperator)$/;"	f
+ShowLastSession	sessionman.vim	/^function! s:ShowLastSession()$/;"	f
+SkkAbbrev2Zenei	skk.vim	/^function! SkkAbbrev2Zenei()$/;"	f
+SkkAbbrevMode	skk.vim	/^function! SkkAbbrevMode(kana)$/;"	f
+SkkAddCand	skk.vim	/^function! s:SkkAddCand(cand, str, compare)$/;"	f
+SkkAddCandidates	skk.vim	/^function! s:SkkAddCandidates(str)$/;"	f
+SkkAddRulesSection	skk.vim	/^function! SkkAddRulesSection()$/;"	f
+SkkAllCombination	skk.vim	/^function! s:SkkAllCombination(cand, combi, ...)$/;"	f
+SkkAppend	skk.vim	/^function! s:SkkAppend(line, str)$/;"	f
+SkkAppendRules	skk.vim	/^function! s:SkkAppendRules(line)$/;"	f
+SkkAscii2Zenei	skk.vim	/^function! s:SkkAscii2Zenei(str)$/;"	f
+SkkAsciiMode	skk.vim	/^function! SkkAsciiMode(kana)$/;"	f
+SkkBackspace	skk.vim	/^function! s:SkkBackspace()$/;"	f
+SkkBufInit	skk.vim	/^function! s:SkkBufInit()$/;"	f
+SkkCanBS	skk.vim	/^function! s:SkkCanBS(dell, delc, curl, curc)$/;"	f
+SkkCancel	skk.vim	/^function! s:SkkCancel()$/;"	f
+SkkCheckMarker	skk.vim	/^function! s:SkkCheckMarker(mark, point)$/;"	f
+SkkCleanRom	skk.vim	/^function! s:SkkCleanRom()$/;"	f
+SkkCleanupCandidates	skk.vim	/^function! s:SkkCleanupCandidates()$/;"	f
+SkkCmdCancel	skk.vim	/^function! s:SkkCmdCancel()$/;"	f
+SkkCompSearch	skk.vim	/^function! s:SkkCompSearch(first, key, flag)$/;"	f
+SkkCompletion	skk.vim	/^function! s:SkkCompletion(first)$/;"	f
+SkkConcat	skk.vim	/^function! s:SkkConcat(str)$/;"	f
+SkkConcatCmdStr	skk.vim	/^function! s:SkkConcatCmdStr(str)$/;"	f
+SkkConfirm	skk.vim	/^function! s:SkkConfirm()$/;"	f
+SkkControlJ	skk.vim	/^function! s:SkkControlJ()$/;"	f
+SkkCurrentKuten	skk.vim	/^function! SkkCurrentKuten(kana)$/;"	f
+SkkCurrentTouten	skk.vim	/^function! SkkCurrentTouten(kana)$/;"	f
+SkkCursorCol	skk.vim	/^function! s:SkkCursorCol()$/;"	f
+SkkCursorLine	skk.vim	/^function! s:SkkCursorLine()$/;"	f
+SkkDeleteRange	skk.vim	/^function! s:SkkDeleteRange(line, start, end)$/;"	f
+SkkDeleteRulesSection	skk.vim	/^function! SkkDeleteRulesSection()$/;"	f
+SkkDoAutoFill	skk.vim	/^function! s:SkkDoAutoFill()$/;"	f
+SkkDowncase	skk.vim	/^function! s:SkkDowncase(ch)$/;"	f
+SkkEcho	skk.vim	/^function! s:SkkEcho(msg, highlight, wait)$/;"	f
+SkkEraseRom	skk.vim	/^function! s:SkkEraseRom()$/;"	f
+SkkEraseYomi	skk.vim	/^function! s:SkkEraseYomi()$/;"	f
+SkkEraseYomi2	skk.vim	/^function! s:SkkEraseYomi2(lstart, start, lend, end)$/;"	f
+SkkFaceOff	skk.vim	/^function! s:SkkFaceOff()$/;"	f
+SkkFaceOn	skk.vim	/^function! s:SkkFaceOn(cand)$/;"	f
+SkkGetCand	skk.vim	/^function! s:SkkGetCand(nr)$/;"	f
+SkkGetCandStr	skk.vim	/^function! s:SkkGetCandStr(nr)$/;"	f
+SkkGetCandStrConverted	skk.vim	/^function! s:SkkGetCandStrConverted(nr)$/;"	f
+SkkGetCandStrWithAnnotation	skk.vim	/^function! s:SkkGetCandStrWithAnnotation(nr)$/;"	f
+SkkGetCompKey	skk.vim	/^function! s:SkkGetCompKey(key)$/;"	f
+SkkGetHenkanKey	skk.vim	/^function! s:SkkGetHenkanKey(midasi, okuri)$/;"	f
+SkkGetJisyoBuf	skk.vim	/^function! s:SkkGetJisyoBuf(var)$/;"	f
+SkkGetKana	skk.vim	/^function! s:SkkGetKana(elem)$/;"	f
+SkkGetLine	skk.vim	/^function! s:SkkGetLine(lnum)$/;"	f
+SkkGetModeStr	skk.vim	/^function! SkkGetModeStr()$/;"	f
+SkkGetNumHenkanKey	skk.vim	/^function! s:SkkGetNumHenkanKey(key)$/;"	f
+SkkGetNumKanji	skk.vim	/^function! s:SkkGetNumKanji(num, type)$/;"	f
+SkkHenkan	skk.vim	/^function! SkkHenkan(char)$/;"	f
+SkkHira2Kata	skk.vim	/^function! s:SkkHira2Kata(str)$/;"	f
+SkkHiraMode	skk.vim	/^function! SkkHiraMode(kana)$/;"	f
+SkkIgnoreWords	skk.vim	/^function! s:SkkIgnoreWords(words)$/;"	f
+SkkInCompletion	skk.vim	/^function! s:SkkInCompletion()$/;"	f
+SkkInsert	skk.vim	/^function! s:SkkInsert(char)$/;"	f
+SkkInsertKana	skk.vim	/^function! s:SkkInsertKana(char)$/;"	f
+SkkInsertZenei	skk.vim	/^function! s:SkkInsertZenei(char)$/;"	f
+SkkKakutei	skk.vim	/^function! s:SkkKakutei()$/;"	f
+SkkKata2Hira	skk.vim	/^function! s:SkkKata2Hira(str)$/;"	f
+SkkKataMode	skk.vim	/^function! SkkKataMode(kana)$/;"	f
+SkkKey	skk.vim	/^function! s:SkkKey(key)$/;"	f
+SkkLargeJisyoHasWord	skk.vim	/^function! s:SkkLargeJisyoHasWord(word)$/;"	f
+SkkMakeBS	skk.vim	/^function! s:SkkMakeBS(n)$/;"	f
+SkkMakeCandidates	skk.vim	/^function! s:SkkMakeCandidates(str)$/;"	f
+SkkMakeCmdStr	skk.vim	/^function! s:SkkMakeCmdStr(str)$/;"	f
+SkkMakeNewEntry	skk.vim	/^function! s:SkkMakeNewEntry(key, cand, line)$/;"	f
+SkkMap	skk.vim	/^function! SkkMap(silent)$/;"	f
+SkkMapCR	skk.vim	/^function! s:SkkMapCR()$/;"	f
+SkkMapNormal	skk.vim	/^function! s:SkkMapNormal()$/;"	f
+SkkMerge	skk.vim	/^function! s:SkkMerge(s1, s2)$/;"	f
+SkkMode	skk.vim	/^function! SkkMode(on)$/;"	f
+SkkNotIgnoreWord	skk.vim	/^function! s:SkkNotIgnoreWord(word)$/;"	f
+SkkNum0	skk.vim	/^function! s:SkkNum0(num)$/;"	f
+SkkNum1	skk.vim	/^function! s:SkkNum1(num)$/;"	f
+SkkNum2	skk.vim	/^function! s:SkkNum2(num)$/;"	f
+SkkNum2Kanji	skk.vim	/^function! s:SkkNum2Kanji(num, type, conv1)$/;"	f
+SkkNum3	skk.vim	/^function! s:SkkNum3(num)$/;"	f
+SkkNum4	skk.vim	/^function! s:SkkNum4(num)$/;"	f
+SkkNum5	skk.vim	/^function! s:SkkNum5(num)$/;"	f
+SkkNum9	skk.vim	/^function! s:SkkNum9(num)$/;"	f
+SkkOn	skk.vim	/^function! s:SkkOn()$/;"	f
+SkkPrevComp	skk.vim	/^function! s:SkkPrevComp()$/;"	f
+SkkPreviousCand	skk.vim	/^function! SkkPreviousCand()$/;"	f
+SkkProcessNumCandidate	skk.vim	/^function! s:SkkProcessNumCandidate(cand)$/;"	f
+SkkPurge	skk.vim	/^function! s:SkkPurge(s1, s2)$/;"	f
+SkkPurgeFromJisyo	skk.vim	/^function! SkkPurgeFromJisyo()$/;"	f
+SkkQuoteChar	skk.vim	/^function! s:SkkQuoteChar(str, ...)$/;"	f
+SkkRemoveAnnotation	skk.vim	/^function! s:SkkRemoveAnnotation(str)$/;"	f
+SkkRestoreEnv	skk.vim	/^function! s:SkkRestoreEnv(env)$/;"	f
+SkkRestoreWincol	skk.vim	/^function! s:SkkRestoreWincol(cnum)$/;"	f
+SkkRuleCompile	skk.vim	/^function! SkkRuleCompile()$/;"	f
+SkkRulesTraverse	skk.vim	/^function! s:SkkRulesTraverse(v, line)$/;"	f
+SkkSaveEnv	skk.vim	/^function! s:SkkSaveEnv()$/;"	f
+SkkSaveJisyo	skk.vim	/^function! s:SkkSaveJisyo(confirm, silent)$/;"	f
+SkkSearch	skk.vim	/^function! s:SkkSearch(large)$/;"	f
+SkkSearchBinary	skk.vim	/^function! SkkSearchBinary(buf, key, okuri, limit)$/;"	f
+SkkSearchBinary	skk.vim	/^function! SkkSearchBinary(key, okuri, limit)$/;"	f
+SkkSearchBuf	skk.vim	/^function! s:SkkSearchBuf(buf, limit)$/;"	f
+SkkSearchLinear	skk.vim	/^function! SkkSearchLinear(buf, key, okuri)$/;"	f
+SkkSearchLinear	skk.vim	/^function! SkkSearchLinear(key, okuri)$/;"	f
+SkkSelectCandidate	skk.vim	/^function! s:SkkSelectCandidate()$/;"	f
+SkkSetAutoSaveJisyo	skk.vim	/^function! SkkSetAutoSaveJisyo(nr)$/;"	f
+SkkSetHenkanPoint	skk.vim	/^function! SkkSetHenkanPoint(char)$/;"	f
+SkkSetHenkanPoint1	skk.vim	/^function! SkkSetHenkanPoint1(kana)$/;"	f
+SkkSetup	skk.vim	/^function! s:SkkSetup()$/;"	f
+SkkShowBuf	skk.vim	/^function! s:SkkShowBuf(buf)$/;"	f
+SkkSplitCandidates	skk.vim	/^function! s:SkkSplitCandidates(str)$/;"	f
+SkkStartHenkan	skk.vim	/^function! SkkStartHenkan(...)$/;"	f
+SkkToggleKana	skk.vim	/^function! SkkToggleKana(kana)$/;"	f
+SkkTourokuMode	skk.vim	/^function! s:SkkTourokuMode()$/;"	f
+SkkUnmapNormal	skk.vim	/^function! s:SkkUnmapNormal()$/;"	f
+SkkUpdateJisyo	skk.vim	/^function! s:SkkUpdateJisyo(word)$/;"	f
+SkkValidCand	skk.vim	/^function! s:SkkValidCand(cand)$/;"	f
+SkkWait	skk.vim	/^function! s:SkkWait(sec)$/;"	f
+SkkYesNo	skk.vim	/^function! s:SkkYesNo(msg)$/;"	f
+SkkZeneiMode	skk.vim	/^function! SkkZeneiMode(kana)$/;"	f
+Sort	EasyGrep.vim	/^function! <sid>Sort()$/;"	f
+SortExtension	EasyGrep.vim	/^function! SortExtension(lhs, rhs)$/;"	f
+SortExtensionReversed	EasyGrep.vim	/^function! SortExtensionReversed(lhs, rhs)$/;"	f
+SortName	EasyGrep.vim	/^function! SortName(lhs, rhs)$/;"	f
+SortNameReversed	EasyGrep.vim	/^function! SortNameReversed(lhs, rhs)$/;"	f
+Strftime2	autodate.vim	/^function! Strftime2(...)$/;"	f
+SurroundRegister	surround.vim	/^function! SurroundRegister(type, key, template)$/;"	f
+SurroundUnregister	surround.vim	/^function! SurroundUnregister(type, key)$/;"	f
+TBrowseOutput	02tlib.vim	/^command! -nargs=1 -complete=command TBrowseOutput call tlib#cmd#BrowseOutput(<q-args>)$/;"	c
+TKeyArg	02tlib.vim	/^command! -nargs=+ TKeyArg exec tlib#arg#Key([<args>])$/;"	c
+TLet	02tlib.vim	/^command! -nargs=+ TLet if !exists(matchstr(<q-args>, '^[^=[:space:]]\\+')) | exec 'let '. <q-args> | endif$/;"	c
+TRequire	02tlib.vim	/^command! -nargs=+ TRequire let s:require = [<f-args>]$/;"	c
+TScratch	02tlib.vim	/^command! -bar -nargs=* -bang TScratch call tlib#scratch#UseScratch({'scratch_split': '<bang>' != '!', <args>})$/;"	c
+TVarArg	02tlib.vim	/^command! -nargs=+ TVarArg exec tlib#arg#Let([<args>])$/;"	c
+Texplore	netrwPlugin.vim	/^com! -nargs=* -bar       -count=0 -complete=dir	Texplore	call netrw#Explore(<count>,0,6        ,<q-args>)$/;"	c
+ToggleCommand	EasyGrep.vim	/^function! <sid>ToggleCommand()$/;"	f
+ToggleEveryMatch	EasyGrep.vim	/^function! <sid>ToggleEveryMatch()$/;"	f
+ToggleFileAssociationsInExplorer	EasyGrep.vim	/^function! <sid>ToggleFileAssociationsInExplorer()$/;"	f
+ToggleHidden	EasyGrep.vim	/^function! <sid>ToggleHidden()$/;"	f
+ToggleIgnoreCase	EasyGrep.vim	/^function! <sid>ToggleIgnoreCase()$/;"	f
+ToggleJumpToMatch	EasyGrep.vim	/^function! <sid>ToggleJumpToMatch()$/;"	f
+ToggleOpenWindow	EasyGrep.vim	/^function! <sid>ToggleOpenWindow()$/;"	f
+ToggleOptionsDisplay	EasyGrep.vim	/^function! <sid>ToggleOptionsDisplay()$/;"	f
+ToggleRecursion	EasyGrep.vim	/^function! <sid>ToggleRecursion()$/;"	f
+ToggleReplaceWindowMode	EasyGrep.vim	/^function! <sid>ToggleReplaceWindowMode()$/;"	f
+ToggleWholeWord	EasyGrep.vim	/^function! <sid>ToggleWholeWord()$/;"	f
+ToggleWindow	EasyGrep.vim	/^function! <sid>ToggleWindow()$/;"	f
+Trim	EasyGrep.vim	/^function! s:Trim(s)$/;"	f
+TrimOption	gtags.vim	/^function! s:TrimOption(option)$/;"	f
+UnletStack	eregex.vim	/^function! s:UnletStack()$/;"	f
+UpdateAll	EasyGrep.vim	/^function! s:UpdateAll()$/;"	f
+UpdateChoice	EasyGrep.vim	/^function! s:UpdateChoice(choice)$/;"	f
+UpdateOptions	EasyGrep.vim	/^function! s:UpdateOptions()$/;"	f
+UpdateRange	EasyGrep.vim	/^function! s:UpdateRange(first, last)$/;"	f
+UseVimball	vimballPlugin.vim	/^com! -na=? -complete=dir  UseVimball  call vimball#Vimball(1,<f-args>)$/;"	c
+V	eregex.vim	/^command! -nargs=? -range=% V :<line1>,<line2>call <SID>Evglobal(<q-args>)$/;"	c
+ValidVarChar	skk.vim	/^function! s:ValidVarChar(str)$/;"	f
+Vexplore	netrwPlugin.vim	/^com! -nargs=* -bar -bang -count=0 -complete=dir	Vexplore	call netrw#Explore(<count>,1,4+<bang>0,<q-args>)$/;"	c
+VimballList	vimballPlugin.vim	/^com! -na=0                VimballList call vimball#Vimball(0)$/;"	c
+WarnNoMatches	EasyGrep.vim	/^function! s:WarnNoMatches(pattern)$/;"	f
+Warning	EasyGrep.vim	/^function! s:Warning(message)$/;"	f
+Wholematch	matchit.vim	/^fun! s:Wholematch(string, pat, start)$/;"	f
+[%	matchit.vim	/^nnoremap <silent> [% :<C-U>call <SID>MultiMatch("bW", "n") <CR>$/;"	m
+[%	matchit.vim	/^onoremap <silent> [% v:<C-U>call <SID>MultiMatch("bW", "o") <CR>$/;"	m
+[%	matchit.vim	/^vmap [% <Esc>[%m'gv``$/;"	m
+]%	matchit.vim	/^nnoremap <silent> ]% :<C-U>call <SID>MultiMatch("W",  "n") <CR>$/;"	m
+]%	matchit.vim	/^onoremap <silent> ]% v:<C-U>call <SID>MultiMatch("W",  "o") <CR>$/;"	m
+]%	matchit.vim	/^vmap ]% <Esc>]%m'gv``$/;"	m
+_	arpeggio.vim	/^function! s:_(...)$/;"	f
+a%	matchit.vim	/^vmap a% <Esc>[%v]%$/;"	m
+beep	surround.vim	/^function! s:beep()$/;"	f
+changesurround	surround.vim	/^function! s:changesurround()  "{{{2$/;"	f
+closematch	surround.vim	/^function! s:closematch(str)  "{{{2$/;"	f
+countstr	EasyGrep.vim	/^function! s:countstr(str, ele)$/;"	f
+cs	surround.vim	/^    nmap          cs   <Plug>Csurround$/;"	m
+dosurround	surround.vim	/^function! s:dosurround(...)  "{{{2$/;"	f
+dq	gtags.vim	/^        let dq = '"'$/;"	v
+ds	surround.vim	/^    nmap          ds   <Plug>Dsurround$/;"	m
+extractafter	surround.vim	/^function! s:extractafter(str)$/;"	f
+extractbefore	surround.vim	/^function! s:extractbefore(str)$/;"	f
+fixindent	surround.vim	/^function! s:fixindent(str,spc)$/;"	f
+g%	matchit.vim	/^nnoremap <silent> g% :<C-U>call <SID>Match_wrapper('',0,'n') <CR>$/;"	m
+g%	matchit.vim	/^onoremap <silent> g% v:<C-U>call <SID>Match_wrapper('',0,'o') <CR>$/;"	m
+g%	matchit.vim	/^vnoremap <silent> g% :<C-U>call <SID>Match_wrapper('',0,'v') <CR>m'gv``$/;"	m
+g:DrChipTopLvlMenu	AlignMapsPlugin.vim	/^  let g:DrChipTopLvlMenu= "DrChip."$/;"	v
+g:EasyGrepAllOptionsInExplorer	EasyGrep.vim	/^    let g:EasyGrepAllOptionsInExplorer=0$/;"	v
+g:EasyGrepCommand	EasyGrep.vim	/^    let g:EasyGrepCommand=0$/;"	v
+g:EasyGrepEveryMatch	EasyGrep.vim	/^    let g:EasyGrepEveryMatch=0$/;"	v
+g:EasyGrepExtraWarnings	EasyGrep.vim	/^    let g:EasyGrepExtraWarnings=1$/;"	v
+g:EasyGrepFileAssociationsInExplorer	EasyGrep.vim	/^    let g:EasyGrepFileAssociationsInExplorer=0$/;"	v
+g:EasyGrepHidden	EasyGrep.vim	/^    let g:EasyGrepHidden=0$/;"	v
+g:EasyGrepIgnoreCase	EasyGrep.vim	/^    let g:EasyGrepIgnoreCase=&ignorecase$/;"	v
+g:EasyGrepInvertWholeWord	EasyGrep.vim	/^    let g:EasyGrepInvertWholeWord=0$/;"	v
+g:EasyGrepJumpToMatch	EasyGrep.vim	/^    let g:EasyGrepJumpToMatch=1$/;"	v
+g:EasyGrepMode	EasyGrep.vim	/^        let g:EasyGrepMode = 0$/;"	v
+g:EasyGrepMode	EasyGrep.vim	/^    let g:EasyGrepMode=0$/;"	v
+g:EasyGrepOpenWindowOnMatch	EasyGrep.vim	/^    let g:EasyGrepOpenWindowOnMatch=1$/;"	v
+g:EasyGrepOptionPrefix	EasyGrep.vim	/^    let g:EasyGrepOptionPrefix='<leader>vy'$/;"	v
+g:EasyGrepRecursive	EasyGrep.vim	/^    let g:EasyGrepRecursive=0$/;"	v
+g:EasyGrepReplaceAllPerFile	EasyGrep.vim	/^    let g:EasyGrepReplaceAllPerFile=0$/;"	v
+g:EasyGrepReplaceWindowMode	EasyGrep.vim	/^        let g:EasyGrepReplaceWindowMode = 0$/;"	v
+g:EasyGrepReplaceWindowMode	EasyGrep.vim	/^    let g:EasyGrepReplaceWindowMode=0$/;"	v
+g:EasyGrepSearchCurrentBufferDir	EasyGrep.vim	/^    let g:EasyGrepSearchCurrentBufferDir=1$/;"	v
+g:EasyGrepVersion	EasyGrep.vim	/^let g:EasyGrepVersion = ".96"$/;"	v
+g:EasyGrepWindow	EasyGrep.vim	/^    let g:EasyGrepWindow=0$/;"	v
+g:arpeggio_timeoutlen	arpeggio.vim	/^  let g:arpeggio_timeoutlen = 40$/;"	v
+g:arpeggio_timeoutlens	arpeggio.vim	/^  let g:arpeggio_timeoutlens = {}$/;"	v
+g:autodate_format	autodate.vim	/^  let g:autodate_format = '%d-%3m-%Y'$/;"	v
+g:autodate_keyword_post	autodate.vim	/^  let g:autodate_keyword_post = '\\.'$/;"	v
+g:autodate_keyword_pre	autodate.vim	/^  let g:autodate_keyword_pre = '\\cLast Change:'$/;"	v
+g:autodate_lines	autodate.vim	/^  let g:autodate_lines = 50$/;"	v
+g:autodate_start_line	autodate.vim	/^  let g:autodate_start_line = 1$/;"	v
+g:loaded_AlignMapsPlugin	AlignMapsPlugin.vim	/^let g:loaded_AlignMapsPlugin = "v41"$/;"	v
+g:loaded_AlignPlugin	AlignPlugin.vim	/^let g:loaded_AlignPlugin = "v35"$/;"	v
+g:loaded_arpeggio	arpeggio.vim	/^let g:loaded_arpeggio = 1$/;"	v
+g:loaded_getscriptPlugin	getscriptPlugin.vim	/^let g:loaded_getscriptPlugin = "v29"$/;"	v
+g:loaded_metarw	metarw.vim	/^let g:loaded_metarw = 1$/;"	v
+g:loaded_netrwPlugin	netrwPlugin.vim	/^let g:loaded_netrwPlugin = "v135"$/;"	v
+g:loaded_operator_replace	operator/replace.vim	/^let g:loaded_operator_replace = 1$/;"	v
+g:loaded_surround	surround.vim	/^let g:loaded_surround = 1$/;"	v
+g:loaded_textobj_fold	textobj/fold.vim	/^let g:loaded_textobj_fold = 1$/;"	v
+g:loaded_textobj_function	textobj/function.vim	/^let g:loaded_textobj_function = 1$/;"	v
+g:loaded_textobj_indent	textobj/indent.vim	/^let g:loaded_textobj_indent = 1$/;"	v
+g:loaded_textobj_jabraces	textobj/jabraces.vim	/^let g:loaded_textobj_jabraces = 1$/;"	v
+g:loaded_textobj_syntax	textobj/syntax.vim	/^let g:loaded_textobj_syntax = 1$/;"	v
+g:loaded_vimballPlugin	vimballPlugin.vim	/^let g:loaded_vimballPlugin = "v26"$/;"	v
+getchar	surround.vim	/^function! s:getchar()$/;"	f
+gx	netrwPlugin.vim	/^  nmap <unique> gx <Plug>NetrwBrowseX$/;"	m
+in_closed_fold_p	textobj/fold.vim	/^function! s:in_closed_fold_p()$/;"	f
+in_non_fold_p	textobj/fold.vim	/^function! s:in_non_fold_p()$/;"	f
+in_open_fold_p	textobj/fold.vim	/^function! s:in_open_fold_p()$/;"	f
+indent	surround.vim	/^function! s:indent(level)$/;"	f
+inputreplacement	surround.vim	/^function! s:inputreplacement(...)$/;"	f
+inputtarget	surround.vim	/^function! s:inputtarget(...)$/;"	f
+insert	surround.vim	/^function! s:insert(...)  "{{{2$/;"	f
+literalize_pattern	surround.vim	/^function! s:literalize_pattern(pattern)$/;"	f
+loaded_eregex	eregex.vim	/^let loaded_eregex=1$/;"	v
+loaded_gtags	gtags.vim	/^let loaded_gtags = 1$/;"	v
+loaded_matchit	matchit.vim	/^let loaded_matchit = 1$/;"	v
+loaded_mru	mru.vim	/^let loaded_mru=1$/;"	v
+loaded_sessionman	sessionman.vim	/^let loaded_sessionman = 1$/;"	v
+loaded_tlib	02tlib.vim	/^let loaded_tlib = 32$/;"	v
+move_to_the_end_of_closed_fold	textobj/fold.vim	/^function! s:move_to_the_end_of_closed_fold()$/;"	f
+move_to_the_end_of_non_fold	textobj/fold.vim	/^function! s:move_to_the_end_of_non_fold()$/;"	f
+move_to_the_end_of_open_fold	textobj/fold.vim	/^function! s:move_to_the_end_of_open_fold()$/;"	f
+move_to_the_end_point	textobj/fold.vim	/^function! s:move_to_the_end_point(mode, selection_starts_with_fold_p)$/;"	f
+move_to_the_start_of_closed_fold	textobj/fold.vim	/^function! s:move_to_the_start_of_closed_fold()$/;"	f
+move_to_the_start_of_non_fold	textobj/fold.vim	/^function! s:move_to_the_start_of_non_fold()$/;"	f
+move_to_the_start_of_open_fold	textobj/fold.vim	/^function! s:move_to_the_start_of_open_fold()$/;"	f
+move_to_the_start_point	textobj/fold.vim	/^function! s:move_to_the_start_point()$/;"	f
+opfunc	surround.vim	/^function! s:opfunc(type,...)  "{{{2$/;"	f
+opfunc2	surround.vim	/^function! s:opfunc2(arg)$/;"	f
+plugin	metarw.vim	/^augroup plugin-metarw$/;"	a
+process	surround.vim	/^function! s:process(string)$/;"	f
+redraw	surround.vim	/^function! s:redraw()$/;"	f
+reindent	surround.vim	/^function! s:reindent()  "{{{2$/;"	f
+repeat	surround.vim	/^function! s:repeat(str,count)$/;"	f
+s	surround.vim	/^            vmap  s    <Plug>Vsurround$/;"	m
+s:CommandChoice	EasyGrep.vim	/^let s:CommandChoice = g:EasyGrepCommand < len(s:Commands) ? g:EasyGrepCommand : 0$/;"	v
+s:Commands	EasyGrep.vim	/^let s:Commands = [ "vimgrep", "grep" ]$/;"	v
+s:CurrentFileCurrentDirChecked	EasyGrep.vim	/^let s:CurrentFileCurrentDirChecked = 0$/;"	v
+s:FALSE	surround.vim	/^let s:FALSE = 0$/;"	v
+s:FilesToGrep	EasyGrep.vim	/^let s:FilesToGrep="*"$/;"	v
+s:LastSeenBuffer	EasyGrep.vim	/^let s:LastSeenBuffer = ""$/;"	v
+s:NumReplaceModeOptions	EasyGrep.vim	/^let s:NumReplaceModeOptions = 3$/;"	v
+s:OBJS_ADDITION	surround.vim	/^let s:OBJS_ADDITION = "T\\<C-t>,l\\\\fF\\<C-[>\\<C-]>"$/;"	v
+s:OBJS_BUILTIN	surround.vim	/^let s:OBJS_BUILTIN = '"()<>BW`bpstw{}''[]'$/;"	v
+s:OBJS_DELETION	surround.vim	/^let s:OBJS_DELETION = '\/'$/;"	v
+s:OptionsExplorerOpen	EasyGrep.vim	/^let s:OptionsExplorerOpen = 0$/;"	v
+s:RE_A_OBJS	surround.vim	/^let s:RE_A_OBJS = '\\V\\^\\[' . escape(s:OBJS_BUILTIN.s:OBJS_ADDITION, '\\') . '\\]'$/;"	v
+s:RE_D_OBJS	surround.vim	/^let s:RE_D_OBJS = '\\V\\^\\[' . escape(s:OBJS_BUILTIN.s:OBJS_DELETION, '\\') . '\\]'$/;"	v
+s:SortChoice	EasyGrep.vim	/^let s:SortChoice = 0$/;"	v
+s:SortFunctions	EasyGrep.vim	/^let s:SortFunctions = [ "SortName", "SortNameReversed", "SortExtension", "SortExtensionReversed" ]$/;"	v
+s:SortOptions	EasyGrep.vim	/^let s:SortOptions = [ "Name", "Name Reversed", "Extension", "Extension Reversed" ]$/;"	v
+s:TRUE	surround.vim	/^let s:TRUE = !s:FALSE$/;"	v
+s:TrackedExt	EasyGrep.vim	/^let s:TrackedExt = "*"$/;"	v
+s:bakregex	eregex.vim	/^let s:bakregex=''$/;"	v
+s:bs_save	skk.vim	/^let s:bs_save = &backspace$/;"	v
+s:ch_braces	eregex.vim	/^let s:ch_braces=3$/;"	v
+s:ch_brackets	eregex.vim	/^let s:ch_brackets=2$/;"	v
+s:ch_parentheses	eregex.vim	/^let s:ch_parentheses=5$/;"	v
+s:ch_parentheses_option	eregex.vim	/^let s:ch_parentheses_option=4$/;"	v
+s:ch_posix_charclass	eregex.vim	/^let s:ch_posix_charclass=1$/;"	v
+s:ch_with_backslash	eregex.vim	/^let s:ch_with_backslash=0$/;"	v
+s:countermeasure	eregex.vim	/^let s:countermeasure=1$/;"	v
+s:cpo_save	mru.vim	/^let s:cpo_save = &cpo$/;"	v
+s:cpo_save	sessionman.vim	/^let s:cpo_save = &cpo$/;"	v
+s:cpo_save	skk.vim	/^let s:cpo_save = &cpo$/;"	v
+s:cpo_save	surround.vim	/^let s:cpo_save = &cpo$/;"	v
+s:debug	autodate.vim	/^let s:debug = 0$/;"	v
+s:eglobal_working	eregex.vim	/^let s:eglobal_working=0$/;"	v
+s:emapleader	AlignMapsPlugin.vim	/^  let s:emapleader= escape(s:mapleader,'\\ ')$/;"	v
+s:eregex_replacement	eregex.vim	/^    let s:eregex_replacement=eregex_replacement$/;"	v
+s:eregex_replacement	eregex.vim	/^let s:eregex_replacement=0$/;"	v
+s:et_save	sessionman.vim	/^let s:et_save = &et$/;"	v
+s:extended_complements	eregex.vim	/^let s:extended_complements=0$/;"	v
+s:extended_dots	eregex.vim	/^let s:extended_dots=0$/;"	v
+s:extended_spaces	eregex.vim	/^let s:extended_spaces=0$/;"	v
+s:firstmenu	AlignMapsPlugin.vim	/^ let s:firstmenu= 1$/;"	v
+s:ignorecase	eregex.vim	/^let s:ignorecase=0$/;"	v
+s:invert	eregex.vim	/^let s:invert=0$/;"	v
+s:keepcpo	AlignMapsPlugin.vim	/^let s:keepcpo                = &cpo$/;"	v
+s:keepcpo	AlignPlugin.vim	/^let s:keepcpo            = &cpo$/;"	v
+s:keepcpo	getscriptPlugin.vim	/^let s:keepcpo                = &cpo$/;"	v
+s:keepcpo	netrwPlugin.vim	/^let s:keepcpo = &cpo$/;"	v
+s:keepcpo	vimballPlugin.vim	/^let s:keepcpo              = &cpo$/;"	v
+s:last_mps	matchit.vim	/^let s:last_mps = ""$/;"	v
+s:last_words	matchit.vim	/^let s:last_words = ":"$/;"	v
+s:maj	eregex.vim	/^let s:maj=matchstr(s:tmp, '\\d\\+') * 100$/;"	v
+s:mapleader	AlignMapsPlugin.vim	/^  let s:mapleader = exists("g:mapleader")? g:mapleader : '\\'$/;"	v
+s:mark_complements	eregex.vim	/^let s:mark_complements=s:mark_left . 'cOmPLemEnTs' . s:mark_right$/;"	v
+s:mark_left	eregex.vim	/^let s:mark_left="\\<Esc>" . strftime("%X") . ":" . strftime("%d") . "\\<C-f>"$/;"	v
+s:mark_right	eregex.vim	/^let s:mark_right="\\<C-l>" . strftime("%X") . ":" . strftime("%d") . "\\<Esc>"$/;"	v
+s:meta_chars	eregex.vim	/^let s:meta_chars='$*.[\\]^~'$/;"	v
+s:min	eregex.vim	/^let s:min=matchstr(s:tmp, '\\.\\zs\\d\\+') + 0$/;"	v
+s:multiline	eregex.vim	/^let s:multiline=0$/;"	v
+s:notslash	matchit.vim	/^let s:notslash = '\\\\\\@<!\\%(\\\\\\\\\\)*'$/;"	v
+s:re_escaped	eregex.vim	/^let s:re_escaped='\\%(\\\\\\)\\@<!\\%(\\\\\\\\\\)*\\zs\\\\'$/;"	v
+s:re_factor	eregex.vim	/^let s:re_factor{0}='\\\\\\%([^x_]\\|x\\x\\{0,2}\\|_[.$^]\\=\\)'$/;"	v
+s:re_factor	eregex.vim	/^let s:re_factor{1}= '\\[:\\%(alnum\\|alpha\\|blank\\|cntrl\\|digit\\|graph\\|lower\\|print\\|punct\\|' .$/;"	v
+s:re_factor	eregex.vim	/^let s:re_factor{2}='\\[\\%([^^][^]]*\\|\\^.[^]]*\\)\\]'$/;"	v
+s:re_factor	eregex.vim	/^let s:re_factor{3}='{[0-9,]\\+}?\\='$/;"	v
+s:re_factor	eregex.vim	/^let s:re_factor{4}='(?[iImM]\\{1,2})'$/;"	v
+s:re_factor	eregex.vim	/^let s:re_factor{5}='(\\(?:\\|?=\\|?!\\|?<=\\|?<!\\|?>\\|?[-#ixm]\\)\\=[^()]*)'$/;"	v
+s:re_factor_size	eregex.vim	/^let s:re_factor_size=6$/;"	v
+s:re_unescaped	eregex.vim	/^let s:re_unescaped='\\%(\\\\\\)\\@<!\\%(\\\\\\\\\\)*\\zs'$/;"	v
+s:save_cpo	02tlib.vim	/^let s:save_cpo = &cpo$/;"	v
+s:save_cpo	matchit.vim	/^let s:save_cpo = &cpo$/;"	v
+s:sessions_path	sessionman.vim	/^	let s:sessions_path = $HOME . '\/.vim\/sessions'$/;"	v
+s:sessions_path	sessionman.vim	/^	let s:sessions_path = ($HOME != '') ? $HOME . '\/vimfiles' : ($APPDATA != '') ? $APPDATA . '\/Vim' : $VIM$/;"	v
+s:sessions_path	sessionman.vim	/^	let s:sessions_path = substitute(s:sessions_path, '\\\\', '\/', 'g') . '\/sessions'$/;"	v
+s:skk_hiragana	skk.vim	/^let s:skk_hiragana = "ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをん"$/;"	v
+s:skk_in_cmdline	skk.vim	/^let s:skk_in_cmdline = 0	" コマンドライン入力中か？$/;"	v
+s:skk_jisyo_modified	skk.vim	/^let s:skk_jisyo_modified = 0	" ユーザ辞書を変更したか？$/;"	v
+s:skk_katakana	skk.vim	/^let s:skk_katakana = "ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロヮワヰヱヲン"$/;"	v
+s:skk_num_type1	skk.vim	/^let s:skk_num_type1 = "0０1１2２3３4４5５6６7７8８9９"$/;"	v
+s:skk_num_type2	skk.vim	/^let s:skk_num_type2 = "0〇1一2二3三4四5五6六7七8八9九"$/;"	v
+s:skk_num_type3	skk.vim	/^let s:skk_num_type3 = s:skk_num_type2 . "10十100百1000千10000万100000000億1000000000000兆10000000000000000京"$/;"	v
+s:skk_num_type5	skk.vim	/^let s:skk_num_type5 = "0零1壱2弐3参4四5伍6六7七8八9九10拾100百1000阡10000萬100000000億1000000000000兆10000000000000000京"$/;"	v
+s:skk_rule_compiled	skk.vim	/^let s:skk_rule_compiled = 0	" ルールを解析済みか？$/;"	v
+s:skk_saved_ru	skk.vim	/^let s:skk_saved_ru = &ruler		" ruler を変更するため保存しておく。$/;"	v
+s:skk_saved_ruf	skk.vim	/^let s:skk_saved_ruf = &rulerformat	" rulerformat を変更するため保存しておく。$/;"	v
+s:stack_size	eregex.vim	/^let s:stack_size=0$/;"	v
+s:str_modifiers	eregex.vim	/^let s:str_modifiers='iISCDMm'$/;"	v
+s:sw_save	sessionman.vim	/^let s:sw_save = &sw$/;"	v
+s:thisfile	skk.vim	/^let s:thisfile = expand("<sfile>")	" for RULES section$/;"	v
+s:tmp	eregex.vim	/^let s:tmp=matchstr("$Revision: 2.55 $", '[0-9.]\\+')$/;"	v
+s:trie	surround.vim	/^let s:trie = {}$/;"	v
+s:trie	surround.vim	/^let s:trie.CONTINUED = ['CONTINUED']$/;"	v
+s:trie	surround.vim	/^let s:trie.FAILED = ['FAILED']$/;"	v
+s:trie	surround.vim	/^let s:trie.MATCHED = ['MATCHED']$/;"	v
+s:trie	surround.vim	/^let s:trie.node = {}  "{{{3$/;"	v
+s:ts_save	sessionman.vim	/^let s:ts_save = &ts$/;"	v
+s:version	eregex.vim	/^let s:version = s:maj + s:min$/;"	v
+search_literally	surround.vim	/^function! s:search_literally(pattern, flags)$/;"	f
+select	textobj/function.vim	/^function! s:select(object_type)$/;"	f
+select_a	textobj/fold.vim	/^function! s:select_a()$/;"	f
+select_a	textobj/function.vim	/^function! s:select_a()$/;"	f
+select_i	textobj/fold.vim	/^function! s:select_i()$/;"	f
+select_i	textobj/function.vim	/^function! s:select_i()$/;"	f
+sessionman	sessionman.vim	/^aug sessionman$/;"	a
+sessionman_save_on_exit	sessionman.vim	/^	let sessionman_save_on_exit = 1$/;"	v
+skk	skk.vim	/^augroup skk-setup$/;"	a
+skk_abbrev_to_zenei_key	skk.vim	/^  let skk_abbrev_to_zenei_key = "<C-q>"$/;"	v
+skk_auto_save_jisyo	skk.vim	/^  let skk_auto_save_jisyo = 0$/;"	v
+skk_autofill_toggle_key	skk.vim	/^  let skk_autofill_toggle_key = "<C-k>"$/;"	v
+skk_backup_jisyo	skk.vim	/^  let skk_backup_jisyo = skk_jisyo . ".BAK"$/;"	v
+skk_completion_key	skk.vim	/^  let skk_completion_key = "\\<Tab>"$/;"	v
+skk_control_j_key	skk.vim	/^  let skk_control_j_key = "<C-j>"$/;"	v
+skk_egg_like_newline	skk.vim	/^  let skk_egg_like_newline = 0$/;"	v
+skk_external_prog	skk.vim	/^  let skk_external_prog = ""$/;"	v
+skk_henkan_point_keys	skk.vim	/^  let skk_henkan_point_keys = 'ABCDEFGHIJKMNOPRSTUVWYZ'$/;"	v
+skk_imdisable_state	skk.vim	/^  let skk_imdisable_state = 1$/;"	v
+skk_initial_mode	skk.vim	/^  let skk_initial_mode = 'hira'$/;"	v
+skk_jisyo	skk.vim	/^  let skk_jisyo = "~\/.skk-jisyo"$/;"	v
+skk_keep_state	skk.vim	/^  let skk_keep_state = 0$/;"	v
+skk_kutouten_en	skk.vim	/^  let skk_kutouten_en = "．，"$/;"	v
+skk_kutouten_jp	skk.vim	/^  let skk_kutouten_jp = "。、"$/;"	v
+skk_kutouten_type	skk.vim	/^  let skk_kutouten_type = "jp"$/;"	v
+skk_large_jisyo	skk.vim	/^  let skk_large_jisyo = "\/usr\/local\/share\/skk\/SKK-JISYO.L"$/;"	v
+skk_manual_save_jisyo_keys	skk.vim	/^  let skk_manual_save_jisyo_keys = "gS"$/;"	v
+skk_marker_black	skk.vim	/^  let skk_marker_black = '▼'$/;"	v
+skk_marker_okuri	skk.vim	/^  let skk_marker_okuri = '*'$/;"	v
+skk_marker_white	skk.vim	/^  let skk_marker_white = '▽'$/;"	v
+skk_next_comp_key	skk.vim	/^  let skk_next_comp_key = "."$/;"	v
+skk_prev_cand_key	skk.vim	/^  let skk_prev_cand_key = "x"$/;"	v
+skk_prev_comp_key	skk.vim	/^  let skk_prev_comp_key = ","$/;"	v
+skk_purge_cand_key	skk.vim	/^  let skk_purge_cand_key = "X"$/;"	v
+skk_rom_func_rules	skk.vim	/^  let skk_rom_func_rules = ""$/;"	v
+skk_rom_kana_rules	skk.vim	/^  let skk_rom_kana_rules = ""$/;"	v
+skk_select_cand_keys	skk.vim	/^  let skk_select_cand_keys = "ASDFJKL"$/;"	v
+skk_show_annotation	skk.vim	/^  let skk_show_annotation = 0$/;"	v
+skk_show_candidates_count	skk.vim	/^  let skk_show_candidates_count = 4$/;"	v
+skk_special_midasi_keys	skk.vim	/^  let skk_special_midasi_keys = "<>?"$/;"	v
+skk_start_henkan_key	skk.vim	/^  let skk_start_henkan_key = " "$/;"	v
+skk_use_face	skk.vim	/^  let skk_use_face = 0$/;"	v
+skk_use_numeric_conversion	skk.vim	/^  let skk_use_numeric_conversion = 1$/;"	v
+skk_zenei_rules	skk.vim	/^  let skk_zenei_rules = ""$/;"	v
+sq	gtags.vim	/^        let sq = "'"$/;"	v
+trie.dump	surround.vim	/^function! s:trie.dump()  "{{{3$/;"	f
+trie.get	surround.vim	/^function! s:trie.get(sequence, accept_halfway_matchp, ...)  "{{{3$/;"	f
+trie.get_incremental	surround.vim	/^function! s:trie.get_incremental(accept_halfway_matchp, ...)  "{{{3$/;"	f
+trie.new	surround.vim	/^function! s:trie.new(default_value)  "{{{3$/;"	f
+trie.node.dump	surround.vim	/^function! s:trie.node.dump(label, lv)$/;"	f
+trie.node.leafp	surround.vim	/^function! s:trie.node.leafp()$/;"	f
+trie.node.new	surround.vim	/^function! s:trie.node.new(value)$/;"	f
+trie.put	surround.vim	/^function! s:trie.put(sequence, value)  "{{{3$/;"	f
+trie.take	surround.vim	/^function! s:trie.take(sequence)  "{{{3$/;"	f
+unique	EasyGrep.vim	/^function! s:unique(lst)$/;"	f
+user_obj_input	surround.vim	/^function! s:user_obj_input(lookahead_c)$/;"	f
+user_obj_input_sub	surround.vim	/^function! s:user_obj_input_sub(type, lookahead_s)$/;"	f
+user_obj_trie	surround.vim	/^function! s:user_obj_trie(type)$/;"	f
+user_obj_value	surround.vim	/^function! s:user_obj_value(key)$/;"	f
+wrap	surround.vim	/^function! s:wrap(string,char,type,...)$/;"	f
+wrapreg	surround.vim	/^function! s:wrapreg(reg,char,...)$/;"	f
+yS	surround.vim	/^    nmap          yS   <Plug>YSurround$/;"	m
+ySS	surround.vim	/^    nmap          ySS  <Plug>YSsurround$/;"	m
+ySs	surround.vim	/^    nmap          ySs  <Plug>YSsurround$/;"	m
+ys	surround.vim	/^    nmap          ys   <Plug>Ysurround$/;"	m
+yss	surround.vim	/^    nmap          yss  <Plug>Yssurround$/;"	m
