@@ -1209,6 +1209,11 @@ Arpeggio lmap ,d <Plug>(stickykey-alt-remap)
 " restart {{{
 AlterCommand res[tart] Restart
 " }}}
+" pummode {{{
+call pummode#map('i', '', 0, 'j', '<C-n>')
+call pummode#map('i', '', 0, 'k', '<C-p>')
+call pummode#map('i', '', 0, '<CR>', '<C-y>')
+" }}}
 " }}}
 " others {{{
 " AutoDate {{{
