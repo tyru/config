@@ -1,4 +1,5 @@
 " vim:set ft=vimperator fdm=marker:
+" FIXME: ' 'にしたいけどスペースキー押すとページがスクロールされてしまう
 let mapleader = ','
 
 
@@ -48,8 +49,7 @@ set! network.dns.disableIPv6=true
 " set focuscontent
 " set guioptions=nbr
 " set noinsertmode
-set activate=
-set complete=sfl
+set complete=stl
 set hlsearch
 set ignorecase
 set incsearch
@@ -102,16 +102,22 @@ nnoremap <C-g>   YP
 " マッチしなかった場合元の位置に戻らない
 nnoremap /   mz/
 
-nnoremap <Leader>gf     :tab normal gf<CR>
+nnoremap <Leader>gf :tab normal! gf<CR>
 
 nnoremap !       :set invum<CR>
 
 nnoremap <Leader>t  :tab<Space>
 nnoremap <Leader>n  :normal!<Space>
 
-nnoremap <Space>j           <C-f>
-nnoremap <Space>k           <C-b>
-nnoremap <Space><Space>     <Space>
+nnoremap <Leader>j           <C-f>
+nnoremap <Leader>k           <C-b>
+
+nnoremap <Leader><Leader> <Leader>
+
+nnoremap gh     :set hlsearch!<CR>
+
+" Yank での URL コピー時にマルチバイトを URL エンコードしたものにする
+nnoremap y :javascript util.copyToClipboard(buffer.URL);<CR>
 " }}}
 " ~ c ~ {{{
 cnoremap <C-c>          <C-v><C-c>
@@ -144,6 +150,7 @@ qmark T http://tumblr.com/
 qmark d http://delicious.com/tyru/
 qmark g http://github.com/tyru
 qmark h http://www.hatena.ne.jp/
+qmark l http://lingr.com/
 qmark m http://mail.google.com/mail?hl=ja
 qmark n http://tyru.yu-nagi.com/
 qmark p http://www.pixiv.net/mypage.php
@@ -167,25 +174,25 @@ let g:direct_sbm_use_services_by_post = "d"
 let g:direct_sbm_is_use_migemo = 1
 noremap a   :sbm<Space>
 noremap B   :tab bentry h<CR>
-noremap ,b  :tab bentry<Space>
+noremap <Leader>b  :tab bentry<Space>
 " }}}
 " sbmcommentsviewer.js {{{
 let g:def_sbm_format = "id,timestamp,tags,comment"
-let g:def_sbms       = "h"
+let g:def_sbms       = "hd"
 noremap b   :viewSBMComments<CR>
 " }}}
 " migemo_hint.js {{{
 set hintmatching=custom
 " }}}
 " multi_requester.js {{{
-noremap <C-k>       :mr<Space>
-noremap <Leader>a   :mr alc<Space>
+nnoremap s :mr<Space>
 " }}}
 " ime_controller.js {{{
 let g:ex_ime_mode = "inactive"  
 let g:textarea_ime_mode = "inactive"
 " }}}
 " appendAnchor.js {{{
+let g:auto_append_anchor = "true"
 let g:auto_append_anchor_once = "true"
 " }}}
 " nextlink.js {{{
@@ -195,7 +202,7 @@ let g:nextlink_followlink = "true"
 " toggler.js {{{
 js <<EOM
 liberator.globalVariables.toggler = {
-  go: ["set go=nbr","set go=nbrmBT"],
+  go: ["set go=br","set go=brmBT"],
   sb: ["sbclose","sbar Add-ons","sbar Console","sbar Downloads","sbar Preferences"],
   go_and_sb: [
     ["set go=","sbclose"],
@@ -312,21 +319,7 @@ liberator.globalVariables.proxy_settings = [
 EOM
 
 " }}}
-" }}}
-"-----------------------------------------------------------------
-" misc. {{{
-" 閉じたタブ一覧を出すワンライナー {{{
-" (via http://vimperator.g.hatena.ne.jp/teramako/20091105/1257429235)
-command! ClosedTabs echo [<><img src={tab.image}/>{tab.title}</> for each(tab in tabs.closedTabs)]
-" }}}
-" vimperatorのコマンドラインを簡易Javascriptシェルにするワンライナー {{{
-" (via http://vimperator.g.hatena.ne.jp/snaka72/20090217/1234831065)
-command! JSShell js (function a(){commandline.input("js> ", function(inp){if(inp=="quit"){liberator.echo("bye!");return;}liberator.echo(liberator.eval(inp)); a();})})()
-" }}}
-" :LoadConfig {{{
-command! LoadConfig source $HOME/.vimperatorrc
-" }}}
-" {{{
+" migratestatusbar.js {{{
 javascript <<EOF
 liberator.globalVariables.migrate_elements = [
     {
@@ -360,7 +353,37 @@ liberator.globalVariables.migrate_elements = [
 ];
 EOF
 " }}}
+" opener.js {{{
+nnoremap <Leader>o :opener<Space>
+" }}}
+" gmperator.js {{{
+nnoremap <Leader>g  :gmset!<CR>
+" }}}
+" }}}
+"-----------------------------------------------------------------
+" misc. {{{
+" 閉じたタブ一覧を出すワンライナー {{{
+" (via http://vimperator.g.hatena.ne.jp/teramako/20091105/1257429235)
+command! ClosedTabs echo [<><img src={tab.image}/>{tab.title}</> for each(tab in tabs.closedTabs)]
+" }}}
+" vimperatorのコマンドラインを簡易Javascriptシェルにするワンライナー {{{
+" (via http://vimperator.g.hatena.ne.jp/snaka72/20090217/1234831065)
+command! JSShell js (function a(){commandline.input("js> ", function(inp){if(inp=="quit"){liberator.echo("bye!");return;}liberator.echo(liberator.eval(inp)); a();})})()
+" }}}
+" :LoadConfig {{{
+command! LoadConfig source $HOME/.vimperatorrc
+" }}}
+" LDRでピンをバックグラウンドのタブで開くためのVimperatorスクリプト {{{
+" via http://d.hatena.ne.jp/mountain_dew/20091209/1260371082
+js <<EOM
+var dummy_open = function(url, name){
+    liberator.open(url, liberator.NEW_BACKGROUND_TAB);
+    return true;
+}
+EOM
+autocmd LocationChange 'reader\.livedoor\.com' :js content.window.open = dummy_open;
+" }}}
 " }}}
 
 
-source $HOME/.vimperatorrc.local
+source! $HOME/.vimperatorrc.local
