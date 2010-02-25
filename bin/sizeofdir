@@ -1,4 +1,5 @@
 #!/bin/bash
+# TODO Perlで書く
 
 myself=`basename $0`
 function usage () {

@@ -26,8 +26,8 @@ do
     fi
 done
 
-infile=$1
-outfile="/tmp/$1.html"
+infile="$1"
+outfile="/tmp/$(basename $1).html"
 shift
 
 pandoc "$@" $infile > $outfile
