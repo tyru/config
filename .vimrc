@@ -1326,6 +1326,9 @@ AlterCommand pp     PrettyPrint
 nnoremap          <C-k>     :Ref<Space>
 nnoremap <silent> gK        K
 " }}}
+" chalice {{{
+let chalice_bookmark = expand('$HOME/.vim/chalice.bmk')
+" }}}
 " }}}
 " }}}
 " Misc. (bundled with kaoriya vim's .vimrc & etc.) {{{
