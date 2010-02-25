@@ -46,6 +46,12 @@ if [ "$OS" = "Cygwin" ]; then
 else
     alias ls='ls --color=tty'
 fi
+
+if [ -x "/usr/local/share/vim/vim72/macros/less.sh" ]; then
+    alias vless="/usr/local/share/vim/vim72/macros/less.sh"
+elif [ -x "/usr/share/vim/vim72/macros/less.sh" ]; then
+    alias vless="/usr/share/vim/vim72/macros/less.sh"
+fi
 # }}}
 
 ### function ### {{{
