@@ -173,6 +173,7 @@ set shortmess=aI
 set switchbuf=useopen,usetab
 set textwidth=0
 set viminfo='50,h,f1,n$HOME/.viminfo
+set ignorecase
 
 
 " runtimepath
@@ -581,6 +582,9 @@ MyAutocmd CmdwinEnter * call s:cmdwin_enter()
 
 
 " }}}
+
+nnoremap /  /\C
+nnoremap ?  ?\C
 
 " gVim only {{{
 nnoremap <silent> <M-j>     <C-w>j
