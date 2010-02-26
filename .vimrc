@@ -1073,9 +1073,12 @@ fun! s:SelectColorScheme()
     call setline(idx + 1, name)
   endfor
 
+  file ColorSchemeSelector
   setlocal bufhidden=wipe
   setlocal buftype=nofile
   setlocal nonu
+  setlocal nomodifiable
+  setlocal cursorline
   nmap <buffer>  <Enter>  :<C-u>exec 'colors' getline('.')<CR>
   nmap <buffer>  q        :<C-u>close<CR>
 endf
