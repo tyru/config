@@ -123,7 +123,7 @@ let &guitablabel = '%{tabpagenr()}:%{expand("%:t")} [%M%R%H%W]'
 
 " statusline
 set laststatus=2
-let &statusline = '(%{&ft})(%{&fenc})(%{&ff})/(%p%%)(%l/%L)/(%{skk7#get_mode()})'
+let &statusline = '(%{&ft})(%{&fenc})(%{&ff})/(%p%%)(%l/%L)/(%{eskk#get_mode()})'
 
 " gui
 set guioptions=aegitrhpF
@@ -1184,9 +1184,9 @@ let dumbbuf_remove_marked_when_close = 1
 " prompt {{{
 " let prompt_debug = 1
 " }}}
-" skk7 {{{
-let skk7_debug = 1
-let skk7_debug_wait_ms = 0
+" eskk {{{
+let eskk_debug = 1
+let eskk_debug_wait_ms = 0
 " }}}
 " stickykey {{{
 Arpeggio map  ,a <Plug>(stickykey-shift-remap)
