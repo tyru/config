@@ -547,8 +547,7 @@ func! s:compile_mappings() "{{{
                         \string({
                             \'type': 'func',
                             \'requires_args': 0,
-                            \'pre': ['close_return_if_empty',
-                                    \'close_dumbbuf', 'jump_to_caller']}),
+                            \'pre': ['close_dumbbuf', 'jump_to_caller']}),
                         \string('n'))
             \},
             \'u': {
@@ -559,8 +558,7 @@ func! s:compile_mappings() "{{{
                         \string({
                             \'type': 'func',
                             \'requires_args': 0,
-                            \'pre': ['close_return_if_empty',
-                                    \'close_dumbbuf', 'jump_to_caller'],
+                            \'pre': ['close_dumbbuf', 'jump_to_caller'],
                             \'post': ['save_lnum']}),
                         \string('n'))
             \},
@@ -573,8 +571,7 @@ func! s:compile_mappings() "{{{
                             \'type': 'cmd',
                             \'requires_args': 1,
                             \'process_marked': 1,
-                            \'pre': ['close_return_if_empty',
-                                    \'close_dumbbuf', 'jump_to_caller'],
+                            \'pre': ['close_dumbbuf', 'jump_to_caller'],
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
@@ -587,8 +584,7 @@ func! s:compile_mappings() "{{{
                             \'type': 'cmd',
                             \'requires_args': 1,
                             \'process_marked': 1,
-                            \'pre': ['close_return_if_empty',
-                                    \'close_dumbbuf', 'jump_to_caller'],
+                            \'pre': ['close_dumbbuf', 'jump_to_caller'],
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
@@ -601,8 +597,7 @@ func! s:compile_mappings() "{{{
                             \'type': 'cmd',
                             \'requires_args': 1,
                             \'process_marked': 1,
-                            \'pre': ['close_return_if_empty',
-                                    \'close_dumbbuf', 'jump_to_caller'],
+                            \'pre': ['close_dumbbuf', 'jump_to_caller'],
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
@@ -615,8 +610,7 @@ func! s:compile_mappings() "{{{
                             \'type': 'cmd',
                             \'requires_args': [1, 0],
                             \'process_marked': 1,
-                            \'pre': ['close_return_if_empty',
-                                    \'close_dumbbuf', 'jump_to_caller'],
+                            \'pre': ['close_dumbbuf', 'jump_to_caller'],
                             \'post': ['save_lnum']}),
                         \string('n'))
             \},
@@ -629,7 +623,7 @@ func! s:compile_mappings() "{{{
                             \'type': 'cmd',
                             \'requires_args': 1,
                             \'process_marked': 1,
-                            \'pre': ['close_return_if_empty', 'close_dumbbuf'],
+                            \'pre': ['close_dumbbuf'],
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
@@ -642,7 +636,7 @@ func! s:compile_mappings() "{{{
                             \'type': 'cmd',
                             \'requires_args': 1,
                             \'process_marked': 1,
-                            \'pre': ['close_return_if_empty', 'close_dumbbuf'],
+                            \'pre': ['close_dumbbuf'],
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
@@ -677,7 +671,7 @@ func! s:compile_mappings() "{{{
                             \'type': 'func',
                             \'requires_args': 0,
                             \'process_marked': 1,
-                            \'pre': ['close_return_if_empty', 'close_dumbbuf'],
+                            \'pre': ['close_dumbbuf'],
                             \'post': ['save_lnum', 'update_dumbbuf']}),
                         \string('n'))
             \},
@@ -689,7 +683,7 @@ func! s:compile_mappings() "{{{
                         \string({
                             \'type': 'func',
                             \'requires_args': 0,
-                            \'pre': ['return_if_empty'],
+                            \'pre': [],
                             \'post': ['save_lnum', 'update_misc']}),
                         \string('n'))
             \},
@@ -702,7 +696,7 @@ func! s:compile_mappings() "{{{
                             \'type': 'func',
                             \'requires_args': 0,
                             \'process_marked': 1,
-                            \'pre': ['return_if_empty'],
+                            \'pre': [],
                             \'post': ['save_lnum', 'update_misc']}),
                         \string('n'))
             \},
