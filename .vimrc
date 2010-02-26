@@ -508,12 +508,6 @@ nnoremap <silent> <Leader><Leader>              <Leader>
 nnoremap <silent> <Space><Space>                <Space>
 nnoremap <silent> ,,                            ,
 
-nnoremap <expr> <Plug>(vimrc-lastpat-next)      <SID>last_pattern(1)
-nnoremap <expr> <Plug>(vimrc-lastpat-previous)  <SID>last_pattern(0)
-
-func! s:last_pattern(next) "{{{
-endfunc "}}}
-
 " TODO Ignore last pattern direction
 " I want the way to know last searched direction...
 nnoremap <silent> n     nzz
