@@ -517,8 +517,7 @@ nnoremap <silent> N     Nzz
 nnoremap <silent> <Space>=    mqgg=G`qzz<CR>
 
 " make
-nnoremap <silent>   gm      :<C-u>make<CR>
-nnoremap <silent>   gc      :<C-u>cclose<CR>
+nnoremap <Space>m :<C-u>make<CR>
 
 " open only current line's fold.
 nnoremap <silent> z<Space> zMzvzz
