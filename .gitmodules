@@ -31,3 +31,6 @@
 [submodule "ext/simpletap.vim"]
 	path = ext/simpletap.vim
 	url = git@github.com:tyru/simpletap.vim.git
+[submodule "ext/pummode.vim"]
+	path = ext/pummode.vim
+	url = git@github.com:tyru/pummode.vim.git
