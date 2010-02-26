@@ -4,7 +4,7 @@
 .vim/swap
 .vim/record
 .vim/sessions
-
+.vim/info
 .vim/.netrwhist
 
 .vim/chalice.bmk
