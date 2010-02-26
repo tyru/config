@@ -516,17 +516,6 @@ nnoremap <silent> N     Nzz
 " fix up all indents
 nnoremap <silent> <Space>=    mqgg=G`qzz<CR>
 
-" window size of gVim itself
-nnoremap <C-Right>    :set columns+=5<CR>
-nnoremap <C-Left>     :set columns-=5<CR>
-nnoremap <C-Up>       :set lines+=1<CR>
-nnoremap <C-Down>     :set lines-=1<CR>
-
-" window size in gVim
-nnoremap <S-Right>  <C-w>>
-nnoremap <S-Left>   <C-w><
-nnoremap <S-Up>     <C-w>+
-nnoremap <S-Down>   <C-w>-
 
 " tab
 nnoremap <silent> <C-n>         gt
@@ -1333,20 +1322,28 @@ let g:loaded_quicklaunch = 1
 " submode {{{
 
 " Moving window.
-call submode#enter_with('window-move', 'n', '', 'gwm', '<Nop>')
-call submode#leave_with('window-move', 'n', '', "\<Esc>")
-call submode#map('window-move', 'n', 'r', 'j', '<Plug>(winmove-down)')
-call submode#map('window-move', 'n', 'r', 'k', '<Plug>(winmove-up)')
-call submode#map('window-move', 'n', 'r', 'h', '<Plug>(winmove-left)')
-call submode#map('window-move', 'n', 'r', 'l', '<Plug>(winmove-right)')
+call submode#enter_with('winmove', 'n', '', 'g;a', '<Nop>')
+call submode#leave_with('winmove', 'n', '', "\<Esc>")
+call submode#map('winmove', 'n', 'r', 'j', '<Plug>(winmove-down)')
+call submode#map('winmove', 'n', 'r', 'k', '<Plug>(winmove-up)')
+call submode#map('winmove', 'n', 'r', 'h', '<Plug>(winmove-left)')
+call submode#map('winmove', 'n', 'r', 'l', '<Plug>(winmove-right)')
 
 " Change the size of window.
-call submode#enter_with('window-size', 'n', '', 'gwe', '<Nop>')
-call submode#leave_with('window-size', 'n', '', "\<Esc>")
-call submode#map('window-size', 'n', 'r', 'j', '<C-w>-')
-call submode#map('window-size', 'n', 'r', 'k', '<C-w>+')
-call submode#map('window-size', 'n', 'r', 'h', '<C-w><')
-call submode#map('window-size', 'n', 'r', 'l', '<C-w>>')
+call submode#enter_with('winsize', 'n', '', 'g;s', '<Nop>')
+call submode#leave_with('winsize', 'n', '', "\<Esc>")
+call submode#map('winsize', 'n', 'r', 'j', '<C-w>-')
+call submode#map('winsize', 'n', 'r', 'k', '<C-w>+')
+call submode#map('winsize', 'n', 'r', 'h', '<C-w><')
+call submode#map('winsize', 'n', 'r', 'l', '<C-w>>')
+
+" window size of gVim itself
+call submode#enter_with('guiwinsize', 'n', '', 'g;d', '<Nop>')
+call submode#leave_with('guiwinsize', 'n', '', "\<Esc>")
+call submode#map('guiwinsize', 'n', 'r', 'j', ':<C-u>set lines-=1<CR>')
+call submode#map('guiwinsize', 'n', 'r', 'k', ':<C-u>set lines+=1<CR>')
+call submode#map('guiwinsize', 'n', 'r', 'h', ':<C-u>set columns-=5<CR>')
+call submode#map('guiwinsize', 'n', 'r', 'l', ':<C-u>set columns+=5<CR>')
 
 " }}}
 " prettyprint {{{
