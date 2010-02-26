@@ -525,16 +525,21 @@ nnoremap <silent> z<Space> zMzvzz
 " hlsearch
 nnoremap gh    :<C-u>set hlsearch!<CR>
 
+" annoying for me
 nnoremap ZZ <Nop>
 
+" execute most used command quickly {{{
 nnoremap <Space>w :<C-u>w<CR>
 nnoremap <Space>q :<C-u>q<CR>
+nnoremap <Space>x :<C-u>x<CR>
+nnoremap <Space>t :<C-u>tabedit<CR>
+" }}}
+" edit .vimrc quickly {{{
 nnoremap <silent> <Space>ev     :<C-u>edit $MYVIMRC<CR>
 nnoremap <silent> <Space>e.     :<C-u>edit .<CR>
-
 nnoremap <silent> <Space>tv     :<C-u>tabedit $MYVIMRC<CR>
 nnoremap <silent> <Space>t.     :<C-u>tabedit .<CR>
-
+" }}}
 " cmdwin {{{
 set cedit=<C-z>
 func! s:cmdwin_enter()
