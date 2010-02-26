@@ -583,9 +583,6 @@ MyAutocmd CmdwinEnter * call s:cmdwin_enter()
 
 " }}}
 
-nnoremap /  /\C
-nnoremap ?  ?\C
-
 " gVim only {{{
 nnoremap <silent> <M-j>     <C-w>j
 nnoremap <silent> <M-k>     <C-w>k
