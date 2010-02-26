@@ -516,13 +516,6 @@ nnoremap <silent> N     Nzz
 " fix up all indents
 nnoremap <silent> <Space>=    mqgg=G`qzz<CR>
 
-
-" tab
-nnoremap <silent> <C-n>         gt
-nnoremap <silent> <C-p>         gT
-nnoremap <silent> <C-Tab>       gt
-nnoremap <silent> <C-S-Tab>     gT
-
 " make
 nnoremap <silent>   gm      :<C-u>make<CR>
 nnoremap <silent>   gc      :<C-u>cclose<CR>
@@ -537,10 +530,6 @@ nnoremap ZZ <Nop>
 
 nnoremap <Space>w :<C-u>w<CR>
 nnoremap <Space>q :<C-u>q<CR>
-
-nnoremap <silent> <C-g><C-n>    :<C-u>tablast<CR>
-nnoremap <silent> <C-g><C-p>    :<C-u>tabfirst<CR>
-
 nnoremap <silent> <Space>ev     :<C-u>edit $MYVIMRC<CR>
 nnoremap <silent> <Space>e.     :<C-u>edit .<CR>
 
@@ -562,11 +551,24 @@ MyAutocmd CmdwinEnter * call s:cmdwin_enter()
 " nnoremap g: q:
 " nnoremap g/ q/
 " nnoremap g? q?
-
-
 " }}}
-
-" gVim only {{{
+" walking between tabs {{{
+nnoremap <silent> <C-n>         gt
+nnoremap <silent> <C-p>         gT
+nnoremap <silent> <C-Tab>       gt
+nnoremap <silent> <C-S-Tab>     gT
+nnoremap <silent> <C-g><C-n>    :<C-u>tablast<CR>
+nnoremap <silent> <C-g><C-p>    :<C-u>tabfirst<CR>
+" }}}
+" moving tabs {{{
+nnoremap <silent> <Left>    :<C-u>execute 'tabmove' tabpagenr() - 2<CR>
+nnoremap <silent> <Right>   :<C-u>execute 'tabmove' tabpagenr()<CR>
+" NOTE: gVim only
+nnoremap <silent> <S-Left>  :<C-u>execute 'tabmove' 0<CR>
+nnoremap <silent> <S-Right> :<C-u>execute 'tabmove' tabpagenr('$')<CR>
+" }}}
+" walk between windows {{{
+" NOTE: gVim only
 nnoremap <silent> <M-j>     <C-w>j
 nnoremap <silent> <M-k>     <C-w>k
 nnoremap <silent> <M-h>     <C-w>h
