@@ -123,7 +123,8 @@ let &guitablabel = '%{tabpagenr()}:%{expand("%:t")} [%M%R%H%W]'
 
 " statusline
 set laststatus=2
-let &statusline = '(%{&ft})(%{&fenc})(%{&ff})/(%p%%)(%l/%L)/(%{eskk#get_mode()})'
+"let &statusline = '(%{&ft})(%{&fenc})(%{&ff})/(%p%%)(%l/%L)/(%{eskk#get_mode()})'
+let &statusline = '(%{&ft})(%{&fenc})(%{&ff})/(%p%%)(%l/%L)'
 
 " gui
 set guioptions=aegitrhpF
