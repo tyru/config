@@ -44,6 +44,12 @@ my %cygwin_files = (
 my @removed_files = qw(
     .vim/backup
     .vim/.netrwhist
+    .vim/.VimballRecord
+    .vim/chalice
+    .vim/info
+    .vim/record
+    .vim/sessions
+    .vim/swap
 );
 my @ignore_files = qw(
     .vim/+vcs
