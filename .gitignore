@@ -7,9 +7,7 @@
 .vim/info
 .vim/.netrwhist
 
-.vim/chalice.bmk
-.vim/chalice/cache
-.vim/chalice/*.bmk
+.vim/chalice*
 
 .vimperator/info
 
