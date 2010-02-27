@@ -34,3 +34,6 @@
 [submodule "ext/pummode.vim"]
 	path = ext/pummode.vim
 	url = git@github.com:tyru/pummode.vim.git
+[submodule "ext/caw.vim"]
+	path = ext/caw.vim
+	url = git@github.com:tyru/caw.vim.git
