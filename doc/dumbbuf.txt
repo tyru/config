@@ -1,7 +1,7 @@
 *dumbbuf.txt* *dumbbuf*
 
 Author: tyru <tyru.exe@gmail.com>
-Version: 0.0.8
+Version: 0.0.9
 License:
 " NEW BSD LICENSE {{{
 "   Copyright (c) 2009, tyru
