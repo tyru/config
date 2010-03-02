@@ -245,6 +245,12 @@ function mkcd() {
     [ $# = 1 ] && mkdir "$1" && cd "$1"
 }
 # }}}
+
+# viwi {{{
+function viwi() {
+    vi `which "$1"`
+}
+# }}}
 # }}}
 
 ### cygwin ### {{{
