@@ -539,8 +539,11 @@ nnoremap <Space>x :<C-u>x<CR>
 nnoremap <Space>t :<C-u>tabedit<CR>
 " }}}
 " edit .vimrc quickly {{{
+nnoremap <silent> <Space>ee     :<C-u>edit<CR>
 nnoremap <silent> <Space>ev     :<C-u>edit $MYVIMRC<CR>
 nnoremap <silent> <Space>e.     :<C-u>edit .<CR>
+
+nnoremap <silent> <Space>tt     :<C-u>tabedit<CR>
 nnoremap <silent> <Space>tv     :<C-u>tabedit $MYVIMRC<CR>
 nnoremap <silent> <Space>t.     :<C-u>tabedit .<CR>
 " }}}
