@@ -11,7 +11,6 @@ defkanji utf-8
 # bind ^E encoding euc
 # bind ^U encoding utf-8
 
-bind ^L windowlist
 
 # idle 600
 # blanker
@@ -33,7 +32,11 @@ attrcolor b ".I"
 termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
 defbce on
 
-bind e title
+bind j  title
+bind ^K copy
+bind ^L windowlist
+bind h prev
+bind l next
 
 
 # more options:
