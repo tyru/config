@@ -529,6 +529,9 @@ nnoremap gh    :<C-u>set hlsearch!<CR>
 " annoying for me
 nnoremap ZZ <Nop>
 
+nnoremap <silent> <Space>h  ^
+nnoremap <silent> <Space>l  $
+
 " execute most used command quickly {{{
 nnoremap <Space>w :<C-u>w<CR>
 nnoremap <Space>q :<C-u>q<CR>
