@@ -1360,7 +1360,7 @@ AlterCommand pp     PrettyPrint
 " }}}
 " ref {{{
 " 'K' for ':Ref'.
-nnoremap          <C-k>     :Ref<Space>
+AlterCommand ref Ref
 nnoremap <silent> gK        K
 " }}}
 " chalice {{{
