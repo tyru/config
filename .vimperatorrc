@@ -234,7 +234,7 @@ autocmd LocationChange 'www\.rememberthemilk\.com\/home\/tyru\/' :fmap -vkey a m
 " }}}
 " LDR {{{
 " add r g
-autocmd LocationChange 'reader\.livedoor\.com\/reader\/' :fmap j k s a p o v c <Space> <S-Space> Z z ZZ b < > r g
+autocmd LocationChange 'reader\.livedoor\.com\/reader\/' :fmap j k s a p o v c <Space> <S-Space> Z z ZZ b < > r g d
 " }}}
 " }}}
 " copy.js {{{
