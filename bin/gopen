@@ -21,4 +21,4 @@ else
 fi
 
 
-$open   $path    # exec
+"$open"   "$path"    # exec
