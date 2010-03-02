@@ -33,7 +33,9 @@ alias la='ls -A'
 alias less='less -r'
 alias ll='ls -lh'
 alias sc='screen'
-alias ev='evince'
+alias whi='which'
+alias whe='where'
+alias go='gopen'
 
 if [ -x "$(which perldocjp)" ]; then
     alias perldoc='perldocjp'
