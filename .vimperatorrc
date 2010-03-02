@@ -359,6 +359,9 @@ nnoremap <Leader>o :opener<Space>
 " gmperator.js {{{
 nnoremap <Leader>g  :gmset!<CR>
 " }}}
+" subscldr.js {{{
+nnoremap <Leader>s :subscldr<CR>
+" }}}
 " }}}
 "-----------------------------------------------------------------
 " misc. {{{
