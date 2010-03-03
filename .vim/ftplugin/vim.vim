@@ -6,5 +6,7 @@ let b:match_words += ',\<wh\%[ile]\>:\<endwh\%[ile]\>'
 let b:match_words += ',\<for\>:\<endfor\=\>'
 
 
-" vim: foldmethod=marker : fen :
+setlocal iskeyword+=#
 
+
+" vim: foldmethod=marker : fen :
