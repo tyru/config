@@ -649,6 +649,13 @@ Arpeggio inoremap qn    <C-n>
 Arpeggio inoremap qp    <C-p>
 Arpeggio inoremap xn    <C-x><C-n>
 Arpeggio inoremap xp    <C-x><C-p>
+
+" <Tab>: completion.
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : <SID>left_is_space() ? "\<TAB>" : "\<C-n>"
+function! s:left_is_space() "{{{
+  let col = col('.') - 1
+  return col == 0 || getline('.')[col - 1]  =~ '\s'
+endfunction "}}}
 " }}}
 " cmap {{{
 if &wildmenu
