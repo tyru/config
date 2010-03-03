@@ -649,6 +649,7 @@ Arpeggio inoremap qn    <C-n>
 Arpeggio inoremap qp    <C-p>
 Arpeggio inoremap xn    <C-x><C-n>
 Arpeggio inoremap xp    <C-x><C-p>
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
 " <Tab>: completion.
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : <SID>left_is_space() ? "\<TAB>" : "\<C-n>"
