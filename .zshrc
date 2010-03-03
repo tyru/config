@@ -6,12 +6,10 @@ bindkey -e
 fpath=(~/.zsh/functions $fpath)
 autoload -U ~/.zsh/functions/*(:t)
 # }}}
-
 ### compinit ### {{{
 autoload -U compinit
 compinit -u
 # }}}
-
 ### promptinit ### {{{
 if [ $UID != 0 ]; then
     autoload promptinit
@@ -20,18 +18,15 @@ if [ $UID != 0 ]; then
     # prompt elite2
 fi
 # }}}
-
 ### color ### {{{
 # ${fg[...]} や $reset_color をロード
 autoload -U colors; colors
 # }}}
-
 ### completion ### {{{
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # ignore alphabet case when completion,
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 # }}}
-
 ### search history ### {{{
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
@@ -41,7 +36,6 @@ bindkey "^N" history-beginning-search-forward-end
 
 # bindkey "^I" menu-complete
 # }}}
-
 ### setopt ### {{{
 
 # http://journal.mycom.co.jp/column/zsh/index.html
@@ -82,7 +76,6 @@ setopt share_history
 setopt no_promptcr
 # setopt print_exit_value
 # }}}
-
 ### alias ### {{{
 alias df='df -h'
 alias di='diff'
@@ -126,13 +119,11 @@ elif [ -x "/usr/share/vim/vim72/macros/less.sh" ]; then
     alias vless="/usr/share/vim/vim72/macros/less.sh"
 fi
 # }}}
-
 ### misc ### {{{
 # カレントディレクトリが変わると実行される {{{
 # via http://d.hatena.ne.jp/hiboma/20061005/1160026514
 chpwd () { ll }
 # }}}
-
 # abbrev {{{
 # via http://homepage1.nifty.com/blankspace/zsh/zsh.html
 typeset -A myabbrev
@@ -157,7 +148,6 @@ my-expand-abbrev() {
 zle -N my-expand-abbrev
 bindkey     " "         my-expand-abbrev
 # }}}
-
 # gitのブランチ名を右プロンプトに表示 {{{
 # http://d.hatena.ne.jp/mollifier/20090814/p1
 autoload -Uz vcs_info
@@ -170,7 +160,6 @@ precmd () {
 }
 RPROMPT="%1(v|%F{green}%1v%f|)"
 # }}}
-
 # 補完時に色んな情報を出す {{{
 # via http://d.hatena.ne.jp/voidy21/20090902/1251918174
 zstyle ':completion:*' verbose yes
@@ -184,29 +173,24 @@ zstyle ':completion:*:options' description 'yes'
 # したがって，すべての マッチ種別を別々に表示させたいなら以下のようにする
 zstyle ':completion:*' group-name ''
 # }}}
-
 # 補完のセパレータを設定する {{{
 # via http://d.hatena.ne.jp/voidy21/20090902/1251918174
 zstyle ':completion:*' list-separator '-->'
 # }}}
-
 # manの補完をセクション番号別に表示させる {{{
 # via http://d.hatena.ne.jp/voidy21/20090902/1251918174
 zstyle ':completion:*:manuals' separate-sections true
 # }}}
-
 # 起動済みバックグランドプロセスの標準出力を見るワンライナー {{{
 # via http://subtech.g.hatena.ne.jp/cho45/20091118/1258554176
 function snatch () {
     gdb -p $1 -batch -n -x =( echo -e "p (int)open(\"/proc/$$/fd/1\", 1)\np (int)dup2(\$1, 1)\np (int)dup2(\$1, 2)" )
 }
 # }}}
-
 # C-sによる画面の停止を無効 {{{
 # http://d.hatena.ne.jp/hogem/20090411/1239451878
 stty stop undef
 # }}}
-
 # surround.vimみたいにクォートで囲む {{{
 # http://d.hatena.ne.jp/mollifier/20091220/p1
 
@@ -228,7 +212,6 @@ _quote-previous-word-in-double() {
 zle -N _quote-previous-word-in-double
 bindkey '^[G' _quote-previous-word-in-double
 # }}}
-
 # Gitのリポジトリのトップレベルにcdするコマンド {{{
 # http://d.hatena.ne.jp/hitode909/20100211/1265879271
 function u()
@@ -239,20 +222,17 @@ function u()
     fi
 }
 # }}}
-
 # mkcd {{{
 function mkcd() {
     [ $# = 1 ] && mkdir "$1" && cd "$1"
 }
 # }}}
-
 # viwi {{{
 function viwi() {
     vi `which "$1"`
 }
 # }}}
 # }}}
-
 ### cygwin ### {{{
 if [ "$OS" = 'Cygwin' ]; then
 
