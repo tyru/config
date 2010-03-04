@@ -66,6 +66,25 @@ set wildoptions=auto
 " map {{{
 "
 " NOTE: <silent>つけるとむしろ遅いorz
+
+js <<EOM
+    mappings.addUserMap(
+      [modes.COMMAND_LINE],
+      ['<C-i>'],
+      'Edit commandline by external editor',
+      function () {
+        io.withTempFiles(
+          function (file) {
+            file.write(commandline.command);
+            editor.editFileExternally(file.path);
+            commandline.open(":", file.read(), modes.EX);
+            return true;
+          }
+        );
+      }
+    );
+EOM
+
 " ~ n ~ {{{
 nnoremap ZZ <Nop>
 
