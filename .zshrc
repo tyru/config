@@ -229,7 +229,8 @@ function mkcd() {
 # }}}
 # viwi {{{
 function viwi() {
-    vi `which "$1"`
+    local p
+    [ $# != 0 ] && p=`which $1` && vi "$p"
 }
 # }}}
 # }}}
