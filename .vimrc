@@ -658,6 +658,40 @@ function! s:left_is_space() "{{{
   return col == 0 || getline('.')[col - 1]  =~ '\s'
 endfunction "}}}
 " }}}
+
+
+" go to head, or tail. {{{
+inoremap <expr> <C-a> <SID>goto_head()
+func! s:goto_head() "{{{
+    let col = col('.')
+    let lnum = line('.')
+    let tilda_col = match(getline(lnum), '\S') + 1
+
+    if col > tilda_col
+        " go to ^ pos.
+        return "\<C-o>^"
+    else
+        " go to head.
+        return "\<Home>"
+    endif
+endfunc "}}}
+
+inoremap <expr> <C-e> <SID>goto_tail()
+func! s:goto_tail() "{{{
+    let col = col('.')
+    let lnum = line('.')
+    let tilda_col = match(getline(lnum), '\S') + 1
+
+    if col < tilda_col
+        " go to ^ pos.
+        return "\<C-o>^"
+    else
+        " go to tail.
+        return "\<End>"
+    endif
+endfunc "}}}
+" }}}
+" }}}
 " cmap {{{
 if &wildmenu
     cnoremap <C-f> <Space><BS><Right>
