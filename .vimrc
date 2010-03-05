@@ -651,11 +651,11 @@ Arpeggio inoremap xn    <C-x><C-n>
 Arpeggio inoremap xp    <C-x><C-p>
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
-" <Tab>: completion.
-inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : <SID>left_is_space() ? "\<TAB>" : "\<C-n>"
-function! s:left_is_space() "{{{
+" <Tab>: completion. {{{
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : <SID>left_is_keyword() ? "\<C-n>" : "\<Tab>"
+function! s:left_is_keyword() "{{{
   let col = col('.') - 1
-  return col == 0 || getline('.')[col - 1]  =~ '\s'
+  return col != 0 && getline('.')[col - 1]  =~# '\k'
 endfunction "}}}
 " }}}
 
