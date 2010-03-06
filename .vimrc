@@ -256,8 +256,11 @@ MyAutocmd BufNewFile,BufReadPre *.mkd
             \ setlocal ft=markdown
 MyAutocmd BufNewFile,BufReadPre *.md
             \ setlocal ft=markdown
+
 MyAutocmd FileType mkd
             \ setlocal ft=markdown
+MyAutocmd FileType js
+            \ setlocal ft=javascript
 
 " delete autocmd for ft=mkd.
 MyAutocmd VimEnter * autocmd! filetypedetect BufNewFile,BufRead *.md
