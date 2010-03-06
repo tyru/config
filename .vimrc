@@ -505,6 +505,11 @@ noremap <silent> gk         k
 
 noremap <silent> ]k        :call search('^\S', 'Ws')<CR>
 noremap <silent> [k        :call search('^\S', 'Wsb')<CR>
+
+omap iF <Plug>(textobj-fold-i)
+vmap iF <Plug>(textobj-fold-i)
+omap aF <Plug>(textobj-fold-a)
+vmap aF <Plug>(textobj-fold-a)
 " }}}
 " misc. {{{
 noremap <silent> <Space><Space>     <Space>
