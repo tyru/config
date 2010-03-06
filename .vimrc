@@ -476,6 +476,9 @@ noremap <Leader>D   "*d
 noremap x   "_x
 noremap ,d   "_d
 
+" map default keys to <Leader> sequence keys.
+noremap <Leader>? g?
+noremap <Leader>e =
 
 " operator-sort {{{
 map <Leader>s <Plug>(operator-sort)
