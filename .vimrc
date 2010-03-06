@@ -503,9 +503,6 @@ noremap <silent> k          gk
 noremap <silent> gj         j
 noremap <silent> gk         k
 
-noremap <silent> H  w
-noremap <silent> L  b
-
 noremap <silent> ]k        :call search('^\S', 'Ws')<CR>
 noremap <silent> [k        :call search('^\S', 'Wsb')<CR>
 " }}}
