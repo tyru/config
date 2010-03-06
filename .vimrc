@@ -267,10 +267,18 @@ MyAutocmd VimEnter * autocmd! filetypedetect BufNewFile,BufRead *.md
 " }}}
 " }}}
 " Encoding {{{
-set fencs-=iso-2022-jp-3
-set fencs-=utf-8
-set fencs+=iso-2022-jp,iso-2022-jp-3
-let &fencs = 'utf-8,' . &fencs
+set enc=utf-8
+set fenc=utf-8
+set fileencodings-=iso-2022-jp-3
+set fileencodings-=iso-2022-jp
+set fileencodings-=utf-8
+set fileencodings+=iso-2022-jp,iso-2022-jp-3
+let &fileencodings = 'utf-8,' . &fileencodings
+
+set fileformats=unix,dos,mac
+if exists('&ambiwidth')
+    set ambiwidth=double
+endif
 
 " set enc=... {{{
 func! ChangeEncoding()
