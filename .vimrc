@@ -737,6 +737,7 @@ AlterCommand th     tab<Space>help
 AlterCommand t      tabedit
 AlterCommand m      message
 AlterCommand qw     wq
+AlterCommand sf     setf
 " }}}
 " }}}
 " Commands {{{
