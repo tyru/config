@@ -11,6 +11,9 @@ let mapleader = ';'
 let maplocalleader = '\'
 
 
+language C
+
+
 " Util Functions/Commands {{{
 " Function {{{
 func! s:warn(msg) "{{{
