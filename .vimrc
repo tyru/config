@@ -565,6 +565,8 @@ nnoremap <silent> <Space>e.     :<C-u>edit .<CR>
 nnoremap <silent> <Space>tt     :<C-u>tabedit<CR>
 nnoremap <silent> <Space>tv     :<C-u>tabedit $MYVIMRC<CR>
 nnoremap <silent> <Space>t.     :<C-u>tabedit .<CR>
+
+nnoremap <silent> <Space>sv     :<C-u>source $MYVIMRC<CR>
 " }}}
 " cmdwin {{{
 set cedit=<C-z>
