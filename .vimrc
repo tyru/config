@@ -1100,6 +1100,14 @@ command!
 \   AllBufMaps
 \   map <buffer> | map! <buffer> | lmap <buffer>
 " }}}
+" Expand {{{
+command!
+\   -nargs=?
+\   Expand
+\   echo expand(<f-args> != '' ? <f-args> : '%')
+
+AlterCommand ex Expand
+" }}}
 
 " hacks from web. {{{
 " from kana's .vimrc {{{
