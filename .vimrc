@@ -1008,7 +1008,7 @@ func! s:write(bang, ...) "{{{
     let file = a:0 == 0 ? expand('%') : expand(a:1)
     let write_cmd = printf('write%s %s', a:bang, file)
     try
-        if &l:readonly
+        if &l:readonly && a:0 == 0
             let msg = file . ': this file is readonly! overwrite?:'
             let r = prompt#prompt(msg, {
             \   'yes_no': 1,
