@@ -190,12 +190,24 @@ func! s:add_rtp_from_file(file)
     if !filereadable(file) | return | endif
 
     for line in readfile(file)
-        if line =~# '^\s*$' || line =~# '^\s*#'
-            continue
+        let line = substitute(line, '^\s*', '', '')
+        if line =~# '^$\|^#' | continue | endif
+
+        let m = matchlist(line, '^\%(\(shift\|unshift\|push\|pop\)\s\+\)\=\(\S*\)\=')
+        if empty(m) | continue | endif
+
+        let [action, path] = m[1:2]
+        let action = action == '' ? 'push' : action
+
+        if action ==# 'shift'
+            let &rtp = join(split(&rtp, ',')[1:], ',')
+        elseif action ==# 'pop'
+            let &rtp = join(split(&rtp, ',')[:-2], ',')
+        elseif action ==# 'unshift'
+            let &rtp = join(s:glob(path) + split(&rtp, ','), ',')
+        elseif action ==# 'push'
+            let &rtp = join(split(&rtp, ',') + s:glob(path), ',')
         endif
-        for path in s:glob(line)
-            let &runtimepath .= ',' . path
-        endfor
     endfor
 endfunc
 call s:add_rtp_from_file('$HOME/.vimruntimepath.lst')
