@@ -1,16 +1,29 @@
+# Vim
 .vim/.vimbackup_deleted
 
-.vim/backup
-.vim/swap
-.vim/record
-.vim/sessions
-.vim/info
-.vim/.netrwhist
+!.vim/after
+!.vim/autoload
+!.vim/colors
+!.vim/compiler
+!.vim/doc
+!.vim/ftdetect
+!.vim/ftplugin
+!.vim/indent
+!.vim/keymap
+!.vim/lang
+!.vim/macros
+!.vim/plugin
+!.vim/spell
+!.vim/syntax
+!.vim/tutor
+!.vim/tools
 
-.vim/chalice*
-
-.vimperator/info
+!.vim/dict
+!.vim/template
 
 tags
 tags-ja
 .vim/.VimballRecord
+
+# Vimperator
+.vimperator/info
