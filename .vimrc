@@ -1452,6 +1452,9 @@ nnoremap <silent> gK        K
 " chalice {{{
 let chalice_bookmark = expand('$HOME/.vim/chalice.bmk')
 " }}}
+" indent/vim.vim {{{
+let g:vim_indent_cont = 0
+" }}}
 " }}}
 " }}}
 " Misc. (bundled with kaoriya vim's .vimrc & etc.) {{{
