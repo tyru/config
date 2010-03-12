@@ -401,6 +401,9 @@ var dummy_open = function(url, name){
 EOM
 autocmd LocationChange 'reader\.livedoor\.com' :js content.window.open = dummy_open;
 " }}}
+" :ShowTabNum {{{
+command! ShowTabNum echo config.browser.mTabs.length
+" }}}
 " }}}
 
 
