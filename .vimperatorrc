@@ -193,7 +193,7 @@ autocmd VimperatorEnter .* pluginmanager update
 " plugin {{{
 " direct_bookmark.js {{{
 let g:direct_sbm_use_services_by_tag  = "d"
-let g:direct_sbm_use_services_by_post = "d"
+let g:direct_sbm_use_services_by_post = "dh"
 let g:direct_sbm_is_use_migemo = 1
 noremap a   :sbm<Space>
 noremap B   :tab bentry h<CR>
