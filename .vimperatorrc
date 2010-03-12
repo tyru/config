@@ -2,6 +2,8 @@
 " FIXME: ' 'にしたいけどスペースキー押すとページがスクロールされてしまう
 let mapleader = ','
 
+command! -nargs=+ lazy autocmd VimperatorEnter .* <args>
+
 
 " set! {{{
 " via http://retlet.net/log/2008/06/awesomebar-bookmarklet.html
@@ -235,27 +237,19 @@ EOM
 noremap <Leader>tg      :toggle go<CR>
 noremap <Leader>ts      :toggle sb<CR>
 " }}}
-" feedSomeKeys_2.js {{{
-autocmd LocationChange .* :fmapc
+" feedSomeKeys_3.js {{{
 " GMail {{{
 "   add ! l gl g/
 "   delete /
-autocmd LocationChange 'mail\.google\.com/mail' :fmap c j k n p o u e x s r z # [ ] ! ? . gi gs gt gd ga gc gk gl <C-s> l *a *n *r *u *s *t T g/
-" }}}
-" Google Groups {{{
-autocmd LocationChange 'groups\.google\.\w+\/group' :fmap -event keydown -vkey n p o
-" }}}
-" Google Reader {{{
-"   add J K N P a
-autocmd LocationChange 'www\.google\.co\.jp/reader' :fmap -vkey a j k J K n p N P m s t v A r S N P X O gh ga gs gt gu u / ?
+lazy fmaps -u='mail\.google\.com/mail' c j k n p o u e x s r z # [ ] ! ? . gi gs gt gd ga gc gk gl <C-s> l *a *n *r *u *s *t T g/
 " }}}
 " RememberTheMilk {{{
 "   remove f <Esc> i d + - <Tab> <S-Tab>
-autocmd LocationChange 'www\.rememberthemilk\.com\/home\/tyru\/' :fmap -vkey a m c n p r g s h t u j y <Del> k z l 1 2 3 4 <C-S-Left> <C-S-Right> <C-S-0> <C-S-6> <C-S-7> <C-S-8> <C-S-9> <C-S-l> <Left> <Right> <Up> <Down> <PageUp> <PageDown> <Home> <End> <C-S-/>
+lazy fmaps -u='www\.rememberthemilk\.com/home/' a m c n p r g s h t u j y <Del> k z l 1 2 3 4 <C-S-Left> <C-S-Right> <C-S-0> <C-S-6> <C-S-7> <C-S-8> <C-S-9> <C-S-l> <Left> <Right> <Up> <Down> <PageUp> <PageDown> <Home> <End> <C-S-/>
 " }}}
 " LDR {{{
 " add r g
-autocmd LocationChange 'reader\.livedoor\.com\/reader\/' :fmap j k s a p o v c <Space> <S-Space> Z z ZZ b < > r g d
+lazy fmaps -u='reader\.livedoor\.com/reader/' j k s a p o v c <Space> <S-Space> Z z ZZ b < > r g d
 " }}}
 " }}}
 " copy.js {{{
