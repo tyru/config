@@ -230,7 +230,7 @@ MyAutocmd SwapExists * let v:swapchoice = 'o'
 MyAutocmd QuickfixCmdPost make,grep,grepadd,vimgrep,helpgrep   copen
 
 " sometimes &modeline becomes false
-MyAutocmd BufReadPre *    setlocal modeline
+MyAutocmd BufReadPre * setlocal modeline
 
 " filetype {{{
 MyAutocmd BufNewFile,BufReadPre *.as
@@ -276,6 +276,8 @@ MyAutocmd FileType mkd
             \ setlocal ft=markdown
 MyAutocmd FileType js
             \ setlocal ft=javascript
+MyAutocmd FileType c++
+            \ setlocal ft=cpp
 
 " delete autocmd for ft=mkd.
 MyAutocmd VimEnter * autocmd! filetypedetect BufNewFile,BufRead *.md
