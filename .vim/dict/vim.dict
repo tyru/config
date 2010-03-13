@@ -29,6 +29,7 @@ cscope_connection
 cursor
 deepcopy
 delete
+delfunction
 did_filetype
 diff_filler
 diff_hlID
