@@ -63,6 +63,7 @@ set titlestring=Firefox
 set urlseparator=
 set visualbell
 set wildoptions=auto
+set editor=gvim\ -f\ --remote-tab-silent-wait
 " }}}
 "-----------------------------------------------------------------
 " map {{{
