@@ -24,6 +24,7 @@ Introduction		|<%filename_noext%>-introduction|
 Interface			|<%filename_noext%>-interface|
   Keymappings		|<%filename_noext%>-keymappings|
   Variables			|<%filename_noext%>-variables|
+  Commands			|<%filename_noext%>-commands|
 TODO				|<%filename_noext%>-todo|
 Changelog			|<%filename_noext%>-changelog|
 
@@ -38,6 +39,9 @@ KEYMAPPINGS					*<%filename_noext%>-keymappings* {{{
 }}}
 ------------------------------------------------------------------------------
 VARIABLES					*<%filename_noext%>-variables* {{{
+}}}
+------------------------------------------------------------------------------
+COMMANDS					*<%filename_noext%>-commands* {{{
 }}}
 }}}
 ==============================================================================
