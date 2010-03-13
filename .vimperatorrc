@@ -142,6 +142,9 @@ nnoremap gh     :set hlsearch!<CR>
 nnoremap y :javascript util.copyToClipboard(buffer.URL);<CR>
 
 nnoremap <Leader>a :buffer<Space>
+
+nnoremap <Leader>f :anc<CR>f
+nnoremap <Leader>F :anc<CR>F
 " }}}
 " ~ c ~ {{{
 cnoremap <C-c>          <C-v><C-c>
@@ -217,7 +220,7 @@ let g:textarea_ime_mode = "inactive"
 " }}}
 " appendAnchor.js {{{
 let g:auto_append_anchor = "true"
-let g:auto_append_anchor_once = "true"
+let g:auto_append_anchor_once = "false"
 " }}}
 " nextlink.js {{{
 let g:nextlink_nositeinfo_act = "f"
