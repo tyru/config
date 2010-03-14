@@ -20,7 +20,7 @@ scriptencoding utf-8
 " Name: <% eval: expand('%:t:r') %>
 " Version: 0.0.0
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: .
+" Last Change: 2010-03-14.
 "
 " Description:
 "   NO DESCRIPTION YET
@@ -60,7 +60,7 @@ endif
 " utility functions
 " Debug {{{
 if g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug
-    func! s:debug(cmd, ...)
+    function! s:debug(cmd, ...)
         if a:cmd ==# 'on'
             let g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug = 1
         elseif a:cmd ==# 'off'
@@ -73,34 +73,34 @@ if g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug
             redraw
             execute join(a:000, ' ')
         endif
-    endfunc
+    endfunction
 
     com! -nargs=+ <%filename_camel%>Debug
         \ call s:debug(<f-args>)
 endif
 
 " s:debugmsg {{{
-func! s:debugmsg(msg)
+function! s:debugmsg(msg)
     if g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug
         call s:warn(a:msg)
     endif
-endfunc
+endfunction
 " }}}
 
 " }}}
 " s:warn {{{
-func! s:warn(msg)
+function! s:warn(msg)
     echohl WarningMsg
     echomsg a:msg
     echohl None
 
     call add(s:debug_errmsg, a:msg)
-endfunc
+endfunction
 " }}}
 " s:warnf {{{
-func! s:warnf(fmt, ...)
+function! s:warnf(fmt, ...)
     call s:warn(call('printf', [a:fmt] + a:000))
-endfunc
+endfunction
 " }}}
 
 " }}}
