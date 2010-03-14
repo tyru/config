@@ -508,12 +508,7 @@ noremap ,d   "_d
 noremap <Leader>? g?
 noremap <Leader>e =
 
-" operator-sort {{{
-map <Leader>s <Plug>(operator-sort)
-
-call operator#user#define('sort', 'Op_command',
-\                         'call Set_op_command("sort")')
-
+" operator-... for ex command {{{
 let s:op_command_command = ''
 
 function! Set_op_command(command)
@@ -523,6 +518,18 @@ endfunction
 function! Op_command(motion_wiseness)
     execute "'[,']" s:op_command_command
 endfunction
+" }}}
+" operator-sort {{{
+map <Leader>s <Plug>(operator-sort)
+
+call operator#user#define('sort', 'Op_command',
+\                         'call Set_op_command("sort")')
+" }}}
+" operator-retab {{{
+map <Leader>t <Plug>(operator-retab)
+
+call operator#user#define('retab', 'Op_command',
+\                         'call Set_op_command("retab")')
 " }}}
 " }}}
 " motion/textobj {{{
