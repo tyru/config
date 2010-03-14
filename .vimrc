@@ -185,31 +185,42 @@ if has("win32")
     set runtimepath+=$HOME/.vim
 endif
 
-func! s:add_rtp_from_file(file)
+func! s:is_action(name) "{{{
+    return s:get_action(a:name) !=# -1
+endfunc "}}}
+func! s:get_action(name) "{{{
+    let action = {
+    \   'shift'   : 'let &rtp = join(split(&rtp, ",")[1:], ",")',
+    \   'pop'     : 'let &rtp = join(split(&rtp, ",")[:-2], ",")',
+    \   'unshift' : 'let &rtp = join(s:glob(path) + split(&rtp, ","), ",")',
+    \   'push'    : 'let &rtp = join(split(&rtp, ",") + s:glob(path), ",")',
+    \   'clear'   : 'let &rtp = ""',
+    \}
+    return get(action, a:name, -1)
+endfunc "}}}
+func! s:add_rtp_from_file(file) "{{{
     let file = expand(a:file)
     if !filereadable(file) | return | endif
 
     for line in readfile(file)
-        let line = substitute(line, '^\s*', '', '')
+        let line = substitute(line, '^\s\+', '', '')
+        let line = substitute(line, '\s\+$', '', '')
         if line =~# '^$\|^#' | continue | endif
 
-        let m = matchlist(line, '^\%(\(shift\|unshift\|push\|pop\)\s\+\)\=\(\S*\)\=')
-        if empty(m) | continue | endif
-
-        let [action, path] = m[1:2]
-        let action = action == '' ? 'push' : action
-
-        if action ==# 'shift'
-            let &rtp = join(split(&rtp, ',')[1:], ',')
-        elseif action ==# 'pop'
-            let &rtp = join(split(&rtp, ',')[:-2], ',')
-        elseif action ==# 'unshift'
-            let &rtp = join(s:glob(path) + split(&rtp, ','), ',')
-        elseif action ==# 'push'
-            let &rtp = join(split(&rtp, ',') + s:glob(path), ',')
+        let m = matchlist(line, '\(\w\+\)\s\+\(\S\+\)')
+        if empty(m)
+            if s:is_action(line)
+                let [action, path] = [line, '']
+            else
+                let [action, path] = ['push', line]
+            endif
+        else
+            let [action, path] = m[1:2]
         endif
+
+        execute s:get_action(action)
     endfor
-endfunc
+endfunc "}}}
 call s:add_rtp_from_file('$HOME/.vimruntimepath.lst')
 " }}}
 " Autocmd {{{
