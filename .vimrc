@@ -1170,6 +1170,14 @@ command!
 
 AlterCommand ex Expand
 " }}}
+" Has {{{
+AlterCommand has Has
+
+command!
+\   -bar -nargs=1
+\   Has
+\   echo has(<q-args>)
+" }}}
 
 " hacks from web. {{{
 " from kana's .vimrc {{{
