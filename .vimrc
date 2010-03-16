@@ -24,6 +24,10 @@ endfunc "}}}
 func! s:glob(expr) "{{{
     return split(glob(a:expr), "\n")
 endfunc "}}}
+func! s:getchar(...) "{{{
+    let c = call('getchar', a:000)
+    return type(c) == type("") ? c : nr2char(c)
+endfunc "}}}
 " }}}
 " Commands {{{
 augroup MyVimrc
@@ -1178,6 +1182,42 @@ command!
 \   Has
 \   echo has(<q-args>)
 " }}}
+
+" ...Mode {{{
+" NoremapMode {{{
+
+" TODO
+" - submode
+" - feedkeys()
+" - Save and clear all mappings. Restore before leaving.
+
+command!
+\   -bar
+\   NoremapMode
+\   call s:mode_noremap()
+
+nmap <expr> <SID>(mode-noremap) <SID>mode_noremap()
+nmap <expr> <SID>(mode-noremap-feedkeys) <SID>mode_noremap_feedkeys()
+
+let s:mode_noremap_keys = ''
+
+func! s:mode_noremap() "{{{
+    let c = s:getchar()
+    if c == "\<Esc>"
+        return ''
+    else
+        let s:mode_noremap_feedkeys = c
+        call s:mode_noremap_feedkeys()
+        return "\<SID>(mode-noremap)"
+    endif
+endfunc "}}}
+
+func! s:mode_noremap_feedkeys() "{{{
+    call feedkeys(s:mode_noremap_feedkeys, 'n')
+    return ''
+endfunc "}}}
+" }}}
+"}}}
 
 " hacks from web. {{{
 " from kana's .vimrc {{{
