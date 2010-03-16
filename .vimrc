@@ -592,6 +592,8 @@ nnoremap ZZ <Nop>
 nnoremap <silent> gh  ^
 nnoremap <silent> gl  $
 
+nnoremap <silent> Y y$
+
 " execute most used command quickly {{{
 nnoremap [cmdleader]w :<C-u>update<CR>
 nnoremap [cmdleader]q :<C-u>q<CR>
