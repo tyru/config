@@ -1221,15 +1221,12 @@ endfunc "}}}
 
 " hacks from web. {{{
 " from kana's .vimrc {{{
-nnoremap <silent> <Leader>cd   :CD %:p:h<CR>
+nnoremap <silent> [cmdleader]cd   :TabpageCD %:p:h<CR>
 
-" CD - alternative :cd with more user-friendly completion  "{{{
-command! -complete=dir -nargs=+ CD  TabpageCD <args>
-
-AlterCommand cd  CD
-" }}}
 " TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
-command! -nargs=? TabpageCD
+AlterCommand cd  TabpageCD
+
+command! -complete=dir -nargs=? TabpageCD
 \   execute 'cd' fnameescape(expand(<q-args>))
 \ | let t:cwd = getcwd()
 
