@@ -516,7 +516,7 @@ noremap <Leader>D   "*d
 
 " do not destroy noname register.
 noremap x   "_x
-noremap ,d   "_d
+noremap [subleader]d   "_d
 
 " map default keys to <Leader> sequence keys.
 noremap <Leader>? g?
