@@ -1356,6 +1356,15 @@ silent Arpeggio lmap ,d <Plug>(stickykey-alt-remap)
 " restart {{{
 AlterCommand res[tart] Restart
 " }}}
+" submode-scroll {{{
+call submode#scroll#load()
+call submode#enter_with(g:submode_scroll_submode_name, 'n', 'rs', 'ss', '<Plug>(submode-scroll-enter)')
+call submode#leave_with(g:submode_scroll_submode_name, 'n', 'rs', '<Esc>')
+call submode#map(g:submode_scroll_submode_name, 'n', 'rs', 'j', '<Plug>(submode-scroll-scroll-down)')
+call submode#map(g:submode_scroll_submode_name, 'n', 'rs', 'k', '<Plug>(submode-scroll-scroll-up)')
+call submode#map(g:submode_scroll_submode_name, 'n', 'rs', 'a', '<Plug>(submode-scroll-pace-down)')
+call submode#map(g:submode_scroll_submode_name, 'n', 'rs', 's', '<Plug>(submode-scroll-pace-up)')
+" }}}
 " }}}
 " others {{{
 " AutoDate {{{
@@ -1477,28 +1486,33 @@ let g:quickrun_no_default_key_mappings = 1
 map <Space>r <Plug>(quickrun)
 
 let g:loaded_quicklaunch = 1
+
+if !exists('g:quickrun_config')
+    let g:quickrun_config = {}
+    let g:quickrun_config.markdown = {'command' : 'pandoc'}
+endif
 " }}}
 " submode {{{
 
 " Moving window.
-call submode#enter_with('winmove', 'n', '', 'g;a', '<Nop>')
-call submode#leave_with('winmove', 'n', '', "\<Esc>")
+call submode#enter_with('winmove', 'n', '', 'swm')
+call submode#leave_with('winmove', 'n', '', '<Esc>')
 call submode#map('winmove', 'n', 'r', 'j', '<Plug>(winmove-down)')
 call submode#map('winmove', 'n', 'r', 'k', '<Plug>(winmove-up)')
 call submode#map('winmove', 'n', 'r', 'h', '<Plug>(winmove-left)')
 call submode#map('winmove', 'n', 'r', 'l', '<Plug>(winmove-right)')
 
 " Change the size of window.
-call submode#enter_with('winsize', 'n', '', 'g;s', '<Nop>')
-call submode#leave_with('winsize', 'n', '', "\<Esc>")
+call submode#enter_with('winsize', 'n', '', 'sws', '<Nop>')
+call submode#leave_with('winsize', 'n', '', '<Esc>')
 call submode#map('winsize', 'n', 'r', 'j', '<C-w>-')
 call submode#map('winsize', 'n', 'r', 'k', '<C-w>+')
 call submode#map('winsize', 'n', 'r', 'h', '<C-w><')
 call submode#map('winsize', 'n', 'r', 'l', '<C-w>>')
 
 " window size of gVim itself
-call submode#enter_with('guiwinsize', 'n', '', 'g;d', '<Nop>')
-call submode#leave_with('guiwinsize', 'n', '', "\<Esc>")
+call submode#enter_with('guiwinsize', 'n', '', 'swS', '<Nop>')
+call submode#leave_with('guiwinsize', 'n', '', '<Esc>')
 call submode#map('guiwinsize', 'n', 'r', 'j', ':<C-u>set lines-=1<CR>')
 call submode#map('guiwinsize', 'n', 'r', 'k', ':<C-u>set lines+=1<CR>')
 call submode#map('guiwinsize', 'n', 'r', 'h', ':<C-u>set columns-=5<CR>')
