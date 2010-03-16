@@ -39,7 +39,56 @@ command! -bang -nargs=* MyAutocmd autocmd<bang> MyVimrc <args>
 " }}}
 " }}}
 " Options {{{
+
 set all&
+
+
+" runtimepath {{{
+
+if has("win32")
+    set runtimepath+=$HOME/.vim
+endif
+
+
+func! s:is_action(name) "{{{
+    return s:get_action(a:name) !=# -1
+endfunc "}}}
+func! s:get_action(name) "{{{
+    let action = {
+    \   'shift'   : 'let &rtp = join(split(&rtp, ",")[1:], ",")',
+    \   'pop'     : 'let &rtp = join(split(&rtp, ",")[:-2], ",")',
+    \   'unshift' : 'let &rtp = join(s:glob(path) + split(&rtp, ","), ",")',
+    \   'push'    : 'let &rtp = join(split(&rtp, ",") + s:glob(path), ",")',
+    \   'clear'   : 'let &rtp = ""',
+    \   'finish'  : 'return',
+    \}
+    return get(action, a:name, -1)
+endfunc "}}}
+func! s:add_rtp_from_file(file) "{{{
+    let file = expand(a:file)
+    if !filereadable(file) | return | endif
+
+    for line in readfile(file)
+        let line = substitute(line, '^\s\+', '', '')
+        let line = substitute(line, '\s\+$', '', '')
+        if line =~# '^$\|^#' | continue | endif
+
+        let m = matchlist(line, '\(\w\+\)\s\+\(\S\+\)')
+        if empty(m)
+            if s:is_action(line)
+                let [action, path] = [line, '']
+            else
+                let [action, path] = ['push', line]
+            endif
+        else
+            let [action, path] = m[1:2]
+        endif
+
+        execute s:get_action(action)
+    endfor
+endfunc "}}}
+call s:add_rtp_from_file('~/.vimruntimepath.lst')
+" }}}
 
 " indent
 set autoindent
@@ -178,50 +227,6 @@ set switchbuf=useopen,usetab
 set textwidth=0
 set viminfo='50,h,f1,n$HOME/.viminfo
 set ignorecase
-
-
-" runtimepath
-if has("win32")
-    set runtimepath+=$HOME/.vim
-endif
-
-func! s:is_action(name) "{{{
-    return s:get_action(a:name) !=# -1
-endfunc "}}}
-func! s:get_action(name) "{{{
-    let action = {
-    \   'shift'   : 'let &rtp = join(split(&rtp, ",")[1:], ",")',
-    \   'pop'     : 'let &rtp = join(split(&rtp, ",")[:-2], ",")',
-    \   'unshift' : 'let &rtp = join(s:glob(path) + split(&rtp, ","), ",")',
-    \   'push'    : 'let &rtp = join(split(&rtp, ",") + s:glob(path), ",")',
-    \   'clear'   : 'let &rtp = ""',
-    \}
-    return get(action, a:name, -1)
-endfunc "}}}
-func! s:add_rtp_from_file(file) "{{{
-    let file = expand(a:file)
-    if !filereadable(file) | return | endif
-
-    for line in readfile(file)
-        let line = substitute(line, '^\s\+', '', '')
-        let line = substitute(line, '\s\+$', '', '')
-        if line =~# '^$\|^#' | continue | endif
-
-        let m = matchlist(line, '\(\w\+\)\s\+\(\S\+\)')
-        if empty(m)
-            if s:is_action(line)
-                let [action, path] = [line, '']
-            else
-                let [action, path] = ['push', line]
-            endif
-        else
-            let [action, path] = m[1:2]
-        endif
-
-        execute s:get_action(action)
-    endfor
-endfunc "}}}
-call s:add_rtp_from_file('$HOME/.vimruntimepath.lst')
 " }}}
 " Autocmd {{{
 
