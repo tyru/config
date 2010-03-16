@@ -1251,8 +1251,6 @@ nmap go      <Leader>co
 nmap gO      <Leader>cO
 " }}}
 " nextfile {{{
-let g:nf_map_next = ',n'
-let g:nf_map_previous = ',p'
 let g:nf_include_dotfiles = 1    " don't skip dotfiles
 let g:nf_loop_files = 1    " loop at the end of file
 let g:nf_ignore_ext = ['o', 'obj', 'exe', 'bin']
