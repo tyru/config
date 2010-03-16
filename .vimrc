@@ -1584,9 +1584,12 @@ let g:vim_indent_cont = 0
 " }}}
 " }}}
 " }}}
-" Misc. (bundled with kaoriya vim's .vimrc & etc.) {{{
-" delete old files in ~/.vim/backup {{{
-func! s:DeleteBackUp()
+" Backup {{{
+" TODO Rotate backup files like writebackupversioncontrol.vim
+" (I didn't use it, though)
+
+" Delete old files in ~/.vim/backup {{{
+func! s:delete_backup()
     if has('win32')
         if exists('$TMP')
             let stamp_file = $TMP . '/.vimbackup_deleted'
@@ -1605,7 +1608,7 @@ func! s:DeleteBackUp()
     endif
 
     let [line] = readfile(stamp_file)
-    let one_day_sec = 60 * 60 * 24    " 1日に何回も削除しようとしない
+    let one_day_sec = 60 * 60 * 24    " Won't delete old files many times within one day.
 
     if localtime() - str2nr(line) > one_day_sec
         let backup_files = split(expand(&backupdir . '/*'), "\n")
@@ -1620,8 +1623,10 @@ func! s:DeleteBackUp()
     endif
 endfunc
 
-call s:DeleteBackUp()
+call s:delete_backup()
 " }}}
+" }}}
+" Misc. (bundled with kaoriya vim's .vimrc & etc.) {{{
 " support of colors in terminal (unix only) {{{
 if has('unix') && !has('gui_running')
     let uname = system('uname')
@@ -1642,28 +1647,17 @@ if !has('gui_running') && has('xterm_clipboard')
 endif
 let did_install_default_menus = 1
 " }}}
-" " WinではPATHに$VIMが含まれていないときにexeを見つけ出せないので修正 {{{
-if has('win32') && $PATH !~? '\(^\|;\)' . escape($VIM, '\\') . '\(;\|$\)'
-    let $PATH = $VIM . ';' . $PATH
-endif
-if has('mac')
-    " Macではデフォルトの'iskeyword'がcp932に対応しきれていないので修正
-    set iskeyword=@,48-57,_,128-167,224-235
-endif
-" }}}
 " about japanese input method {{{
 if has('multi_byte_ime') || has('xim')
-  " IME ON時のカーソルの色を設定(設定例:紫)
+  " Cursor color when IME is on.
   highlight CursorIM guibg=Purple guifg=NONE
-  " 挿入モード・検索モードでのデフォルトのIME状態設定
   set iminsert=0 imsearch=0
+
   if has('xim') && has('GUI_GTK')
     " XIMの入力開始キーを設定:
     " 下記の s-space はShift+Spaceの意味でkinput2+canna用設定
-    "set imactivatekey=s-space
+    set imactivatekey=Henkan
   endif
-  " 挿入モードでのIME状態を記憶させない場合、次行のコメントを解除
-  "inoremap <silent> <ESC> <ESC>:set iminsert=0<CR>
 endif
 " }}}
 " }}}
