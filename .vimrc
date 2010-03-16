@@ -997,6 +997,9 @@ command! -nargs=+ SetTitle
 \   let &titlestring = <q-args>
 " }}}
 " ShowPath {{{
+
+AlterCommand rtp ShowPath<Space>rtp
+
 command!
 \   -nargs=+ -complete=option
 \   ShowPath
