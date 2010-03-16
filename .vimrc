@@ -643,6 +643,24 @@ nnoremap <silent> <M-k>     <C-w>k
 nnoremap <silent> <M-h>     <C-w>h
 nnoremap <silent> <M-l>     <C-w>l
 " }}}
+" open <cfile> {{{
+nnoremap <silent> gf :<C-u>call <SID>open_cfile()<CR>
+
+func! s:open_cfile() "{{{
+    let option = {
+    \   'buffer': 'edit <cfile>',
+    \   'window': 'SplitNicely <cfile>',
+    \   'tab'   : 'tabedit <cfile>',
+    \}
+    let choice = prompt#prompt("open with...", {
+    \   'menu': keys(option),
+    \   'one_char': 1,
+    \})
+    if has_key(option, choice)
+        execute option[choice]
+    endif
+endfunc "}}}
+" }}}
 " }}}
 " map! {{{
 noremap! <C-f>   <Right>
