@@ -1170,7 +1170,7 @@ command!
 command!
 \   -nargs=?
 \   Expand
-\   echo expand(<f-args> != '' ? <f-args> : '%')
+\   echo expand(<q-args> != '' ? <q-args> : '%')
 
 AlterCommand ex Expand
 " }}}
