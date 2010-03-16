@@ -7,10 +7,6 @@ syntax enable
 filetype plugin indent on
 
 
-let mapleader = ';'
-let maplocalleader = '\'
-
-
 language C
 
 
@@ -338,8 +334,7 @@ func! ChangeEncoding()
     endif
 endfunc
 
-nnoremap <silent> ,ta     :call ChangeEncoding()<CR>
-nnoremap <silent> <F1>    :call ChangeEncoding()<CR>
+nnoremap <silent> [subleader]ta     :call ChangeEncoding()<CR>
 " }}}
 " set fenc=... {{{
 func! ChangeFileEncoding()
@@ -367,8 +362,7 @@ func! ChangeFileEncoding()
     echomsg printf("changing file encoding to '%s'.", enc)
 endfunc
 
-nnoremap <silent> ,ts     :call ChangeFileEncoding()<CR>
-nnoremap <silent> <F2>    :call ChangeFileEncoding()<CR>
+nnoremap <silent> [subleader]ts    :<C-u>call ChangeFileEncoding()<CR>
 " }}}
 " set ff=... {{{
 func! ChangeNL()
@@ -383,8 +377,7 @@ func! ChangeNL()
     endif
 endfunc
 
-nnoremap <silent> ,td     :call ChangeNL()<CR>
-nnoremap <silent> <F3>    :call ChangeNL()<CR>
+nnoremap <silent> [subleader]td    :<C-u>call ChangeNL()<CR>
 " }}}
 " }}}
 " FileType {{{
@@ -494,6 +487,22 @@ MyAutocmd FileType *   call s:LoadWhenFileType()
 " }}}
 " }}}
 " Mappings and/or Abbreviations {{{
+
+" Set up prefix keys. {{{
+let mapleader = ';'
+let maplocalleader = ','
+
+nnoremap    [subleader]     <Nop>
+nmap        \               [subleader]
+
+nnoremap    [cmdleader]     <Nop>
+nmap        <Space>         [cmdleader]
+
+" FIXME submode detects [submodeleader] is invalid.
+nnoremap    [submodeleader] <Nop>
+nmap        s               [submodeleader]
+" }}}
+
 let g:arpeggio_timeoutlen = 40
 call arpeggio#load()
 
@@ -552,58 +561,53 @@ omap aF <Plug>(textobj-fold-a)
 vmap aF <Plug>(textobj-fold-a)
 " }}}
 " misc. {{{
-noremap <silent> <Space><Space>     <Space>
-
 noremap <silent> <Space>j           <C-f>
 noremap <silent> <Space>k           <C-b>
 " }}}
 " }}}
 " nmap {{{
-" All 'suffix key' should be like the following.
-nnoremap <silent> <LocalLeader><LocalLeader>    <LocalLeader>
-nnoremap <silent> <Leader><Leader>              <Leader>
-nnoremap <silent> <Space><Space>                <Space>
-nnoremap <silent> ,,                            ,
+" All 'suffix key' should be like the following in the normal mode.
+nnoremap <LocalLeader><LocalLeader>    <LocalLeader>
+nnoremap <Leader><Leader>              <Leader>
+
 
 " TODO Ignore last pattern direction
 " I want the way to know last searched direction...
 nnoremap <silent> n     nzz
 nnoremap <silent> N     Nzz
 
-" fix up all indents
-nnoremap <silent> <Space>=    mqgg=G`qzz<CR>
-
 " make
-nnoremap <Space>m :<C-u>make<CR>
+nnoremap [cmdleader]m :<C-u>make<CR>
 
 " open only current line's fold.
 nnoremap <silent> z<Space> zMzvzz
 
 " hlsearch
-nnoremap gh    :<C-u>set hlsearch!<CR>
+nnoremap [cmdleader]h    :<C-u>set hlsearch!<CR>
 
 " annoying for me
 nnoremap ZZ <Nop>
 
-nnoremap <silent> <Space>h  ^
-nnoremap <silent> <Space>l  $
+" TODO More like i_CTRL-a, i_CTRL-e of my hack.
+nnoremap <silent> gh  ^
+nnoremap <silent> gl  $
 
 " execute most used command quickly {{{
-nnoremap <Space>w :<C-u>w<CR>
-nnoremap <Space>q :<C-u>q<CR>
-nnoremap <Space>x :<C-u>x<CR>
-nnoremap <Space>t :<C-u>tabedit<CR>
+nnoremap [cmdleader]w :<C-u>w<CR>
+nnoremap [cmdleader]q :<C-u>q<CR>
+nnoremap [cmdleader]x :<C-u>x<CR>
+nnoremap [cmdleader]t :<C-u>tabedit<CR>
 " }}}
 " edit .vimrc quickly {{{
-nnoremap <silent> <Space>ee     :<C-u>edit<CR>
-nnoremap <silent> <Space>ev     :<C-u>edit $MYVIMRC<CR>
-nnoremap <silent> <Space>e.     :<C-u>edit .<CR>
+nnoremap <silent> [cmdleader]ee     :<C-u>edit<CR>
+nnoremap <silent> [cmdleader]ev     :<C-u>edit $MYVIMRC<CR>
+nnoremap <silent> [cmdleader]e.     :<C-u>edit .<CR>
 
-nnoremap <silent> <Space>tt     :<C-u>tabedit<CR>
-nnoremap <silent> <Space>tv     :<C-u>tabedit $MYVIMRC<CR>
-nnoremap <silent> <Space>t.     :<C-u>tabedit .<CR>
+nnoremap <silent> [cmdleader]tt     :<C-u>tabedit<CR>
+nnoremap <silent> [cmdleader]tv     :<C-u>tabedit $MYVIMRC<CR>
+nnoremap <silent> [cmdleader]t.     :<C-u>tabedit .<CR>
 
-nnoremap <silent> <Space>sv     :<C-u>source $MYVIMRC<CR>
+nnoremap <silent> [cmdleader]sv     :<C-u>source $MYVIMRC<CR>
 " }}}
 " cmdwin {{{
 set cedit=<C-z>
@@ -1329,6 +1333,9 @@ let eskk_debug = 1
 let eskk_debug_wait_ms = 0
 " }}}
 " stickykey {{{
+
+" FIXME Use [subleader].
+
 Arpeggio map  ,a <Plug>(stickykey-shift-remap)
 Arpeggio map! ,a <Plug>(stickykey-shift-remap)
 Arpeggio lmap ,a <Plug>(stickykey-shift-remap)
