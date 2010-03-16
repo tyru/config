@@ -583,7 +583,7 @@ nnoremap [cmdleader]m :<C-u>make<CR>
 nnoremap <silent> z<Space> zMzvzz
 
 " hlsearch
-nnoremap [cmdleader]h    :<C-u>set hlsearch!<CR>
+nnoremap [cmdleader]/    :<C-u>set hlsearch!<CR>
 
 " annoying for me
 nnoremap ZZ <Nop>
