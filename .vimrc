@@ -671,24 +671,24 @@ noremap! <C-a>   <Home>
 noremap! <C-e>   <End>
 noremap! <C-d>   <Del>
 
-Arpeggio noremap! $( ()<Left>
-Arpeggio noremap! 4[ []<Left>
-Arpeggio noremap! $< <><Left>
-Arpeggio noremap! ${ {}<Left>
+silent Arpeggio noremap! $( ()<Left>
+silent Arpeggio noremap! 4[ []<Left>
+silent Arpeggio noremap! $< <><Left>
+silent Arpeggio noremap! ${ {}<Left>
 
-Arpeggio noremap! $' ''<Left>
-call arpeggio#map('ic', '', 0, '*"', '""<Left>')
-Arpeggio noremap! $` ``<Left>
+silent Arpeggio noremap! $' ''<Left>
+silent call arpeggio#map('ic', '', 0, '*"', '""<Left>')
+silent Arpeggio noremap! $` ``<Left>
 
-Arpeggio noremap! $) \(\)<Left><Left>
-Arpeggio noremap! 4] \[\]<Left><Left>
-Arpeggio noremap! $> \<\><Left><Left>
-Arpeggio noremap! $} \{\}<Left><Left>
+silent Arpeggio noremap! $) \(\)<Left><Left>
+silent Arpeggio noremap! 4] \[\]<Left><Left>
+silent Arpeggio noremap! $> \<\><Left><Left>
+silent Arpeggio noremap! $} \{\}<Left><Left>
 
-Arpeggio noremap! #( 「」<Left>
-Arpeggio noremap! 3[ 『』<Left>
-Arpeggio noremap! #< 【】<Left>
-Arpeggio noremap! #{ 〔〕<Left>
+silent Arpeggio noremap! #( 「」<Left>
+silent Arpeggio noremap! 3[ 『』<Left>
+silent Arpeggio noremap! #< 【】<Left>
+silent Arpeggio noremap! #{ 〔〕<Left>
 " }}}
 " imap {{{
 " delete characters in ...
@@ -716,17 +716,17 @@ endfunc
 inoremap <C-k>  <C-o>:<C-u>call <SID>kill_line()<CR>
 
 " jump to next/previous line.
-Arpeggio inoremap qk    <C-o>O
-Arpeggio inoremap qj    <C-o>o
+silent Arpeggio inoremap qk    <C-o>O
+silent Arpeggio inoremap qj    <C-o>o
 
 " shift left (indent)
 inoremap <C-q>   <C-d>
 
 " completion
-Arpeggio inoremap qn    <C-n>
-Arpeggio inoremap qp    <C-p>
-Arpeggio inoremap xn    <C-x><C-n>
-Arpeggio inoremap xp    <C-x><C-p>
+silent Arpeggio inoremap qn    <C-n>
+silent Arpeggio inoremap qp    <C-p>
+silent Arpeggio inoremap xn    <C-x><C-n>
+silent Arpeggio inoremap xp    <C-x><C-p>
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
 " <Tab>: completion. {{{
@@ -1334,17 +1334,17 @@ let eskk_debug_wait_ms = 0
 
 " FIXME Use [subleader].
 
-Arpeggio map  ,a <Plug>(stickykey-shift-remap)
-Arpeggio map! ,a <Plug>(stickykey-shift-remap)
-Arpeggio lmap ,a <Plug>(stickykey-shift-remap)
+silent Arpeggio map  ,a <Plug>(stickykey-shift-remap)
+silent Arpeggio map! ,a <Plug>(stickykey-shift-remap)
+silent Arpeggio lmap ,a <Plug>(stickykey-shift-remap)
 
-Arpeggio map  ,s <Plug>(stickykey-ctrl-remap)
-Arpeggio map! ,s <Plug>(stickykey-ctrl-remap)
-Arpeggio lmap ,s <Plug>(stickykey-ctrl-remap)
+silent Arpeggio map  ,s <Plug>(stickykey-ctrl-remap)
+silent Arpeggio map! ,s <Plug>(stickykey-ctrl-remap)
+silent Arpeggio lmap ,s <Plug>(stickykey-ctrl-remap)
 
-Arpeggio map  ,d <Plug>(stickykey-alt-remap)
-Arpeggio map! ,d <Plug>(stickykey-alt-remap)
-Arpeggio lmap ,d <Plug>(stickykey-alt-remap)
+silent Arpeggio map  ,d <Plug>(stickykey-alt-remap)
+silent Arpeggio map! ,d <Plug>(stickykey-alt-remap)
+silent Arpeggio lmap ,d <Plug>(stickykey-alt-remap)
 
 " I don't have Macintosh :(
 " map  ,f <Plug>(stickykey-command-remap)
