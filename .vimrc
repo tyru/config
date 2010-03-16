@@ -1169,6 +1169,20 @@ MyAutocmd TabEnter *
 \ | endif
 \ | execute 'cd' fnameescape(expand(t:cwd))
 " }}}
+" SplitNicely {{{
+command!
+\   -bar -nargs=* -complete=file
+\   SplitNicely
+\   call s:split_nicely(<q-args>)
+
+function! s:split_nicely(args)
+    if 80*2 * 15/16 <= winwidth(0)  " FIXME: threshold customization
+        execute 'vsplit' a:args
+    else
+        execute 'split' a:args
+    endif
+endfunction
+" }}}
 " }}}
 " SelectColorScheme {{{
 " via http://gist.github.com/314439
