@@ -738,22 +738,30 @@ silent Arpeggio inoremap qj    <C-o>o
 " shift left (indent)
 inoremap <C-q>   <C-d>
 
-" completion
+" completion {{{
+
 silent Arpeggio inoremap qn    <C-n>
 silent Arpeggio inoremap qp    <C-p>
 silent Arpeggio inoremap xn    <C-x><C-n>
 silent Arpeggio inoremap xp    <C-x><C-p>
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
+inoremap <expr> <CR>    pumvisible() ? "\<C-y>" : "\<CR>"
 
-" <Tab>: completion. {{{
-inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : <SID>left_is_keyword() ? "\<C-n>" : "\<Tab>"
-function! s:left_is_keyword() "{{{
-  let col = col('.') - 1
-  return col != 0 && getline('.')[col - 1]  =~# '\k'
-endfunction "}}}
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : <SID>complete(1)
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : <SID>complete(0)
+
+" This was originally from kana's hack <SID>keys_to_complete().
+func! s:complete(next) "{{{
+    if &l:filetype ==# 'vim'
+        return "\<C-x>\<C-v>"
+    elseif strlen(&l:omnifunc)
+        return "\<C-x>\<C-o>"
+    elseif strlen(&l:completefunc)
+        return "\<C-x>\<C-u>"
+    else
+        return a:next ? "\<C-n>" : "\<C-p>"
+    endif
+endfunc "}}}
 " }}}
-
-
 " go to head, or tail. {{{
 inoremap <expr> <C-a> <SID>goto_head()
 func! s:goto_head() "{{{
