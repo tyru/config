@@ -738,6 +738,12 @@ silent Arpeggio inoremap qj    <C-o>o
 " shift left (indent)
 inoremap <C-q>   <C-d>
 
+" make <C-w> and <C-u> undoable.
+inoremap <C-w> <C-g>u<C-w>
+inoremap <C-u> <C-g>u<C-u>
+
+inoremap <C-@> <C-a>
+
 " completion {{{
 
 silent Arpeggio inoremap qn    <C-n>
