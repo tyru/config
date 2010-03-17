@@ -826,8 +826,9 @@ endif
 
 " HelpTagAll {{{
 "   do :helptags to all doc/ in &runtimepath
-command! HelpTagAll
-            \ call s:HelpTagAll()
+command!
+\   HelpTagAll
+\   call s:HelpTagAll()
 
 func! s:HelpTagAll()
     for path in split( &runtimepath, ',' )
@@ -1010,7 +1011,7 @@ endfunc
 command! -nargs=* GccSyntaxCheck
             \ call s:GccSyntaxCheck(<f-args>)
 " }}}
-" CdCurrent {{{
+" LcdCurrent, CdCurrent {{{
 "   Change current directory to current file's one.
 command! -nargs=0 LcdCurrent lcd %:p:h
 command! -nargs=0 CdCurrent  cd %:p:h
@@ -1096,6 +1097,9 @@ func! s:write(bang, ...) "{{{
 endfunc "}}}
 " }}}
 " TR, TRR {{{
+"
+" TODO
+
 AlterCommand tr  TR
 AlterCommand trr TRR
 
