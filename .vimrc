@@ -798,6 +798,9 @@ cnoremap <C-r><C-o>  <C-r>"
 
 " delete string to the end of line.
 cnoremap <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
+
+cnoremap <expr> /  getcmdtype() == '/' ? '\/' : '/'
+cnoremap <expr> ?  getcmdtype() == '?' ? '\?' : '?'
 " }}}
 " abbr {{{
 inoreab <expr> date@      strftime("%Y-%m-%d")
