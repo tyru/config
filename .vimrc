@@ -1034,6 +1034,7 @@ command! -nargs=+ SetTitle
 " }}}
 " ShowPath {{{
 
+AlterCommand sp  ShowPath
 AlterCommand rtp ShowPath<Space>rtp
 
 command!
