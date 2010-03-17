@@ -685,6 +685,7 @@ noremap! <C-b>   <Left>
 noremap! <C-a>   <Home>
 noremap! <C-e>   <End>
 noremap! <C-d>   <Del>
+noremap! <C-l>   <Tab>
 
 silent Arpeggio noremap! $( ()<Left>
 silent Arpeggio noremap! 4[ []<Left>
