@@ -598,6 +598,15 @@ nnoremap <silent> gl  $
 
 nnoremap <silent> Y y$
 
+nnoremap <silent> +     #
+nnoremap <silent> g+    g#
+
+" folding mappings easy to remember.
+nnoremap <silent> zl    zo
+nnoremap <silent> zh    zc
+
+nnoremap <silent> dl    0D
+
 " execute most used command quickly {{{
 nnoremap [cmdleader]w :<C-u>update<CR>
 nnoremap [cmdleader]q :<C-u>q<CR>

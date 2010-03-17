@@ -136,7 +136,7 @@ nnoremap <Leader>k           <C-b>
 
 nnoremap <Leader><Leader> <Leader>
 
-nnoremap gh     :set hlsearch!<CR>
+nnoremap <Space>/   :set hlsearch!<CR>
 
 " Yank での URL コピー時にマルチバイトを URL エンコードしたものにする
 nnoremap y :javascript util.copyToClipboard(buffer.URL);<CR>
