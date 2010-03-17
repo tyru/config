@@ -829,6 +829,26 @@ AlterCommand m      message
 AlterCommand qw     wq
 AlterCommand sf     setf
 " }}}
+
+" hacks from web. {{{
+" from kana's .vimrc {{{
+
+" Make searching directions consistent
+  " 'zv' is harmful for Operator-pending mode and it should not be included.
+  " For example, 'cn' is expanded into 'cnzv' so 'zv' will be inserted.
+nnoremap <expr> n  <SID>search_forward_p() ? 'nzv' : 'Nzv'
+nnoremap <expr> N  <SID>search_forward_p() ? 'Nzv' : 'nzv'
+vnoremap <expr> n  <SID>search_forward_p() ? 'nzv' : 'Nzv'
+vnoremap <expr> N  <SID>search_forward_p() ? 'Nzv' : 'nzv'
+onoremap <expr> n  <SID>search_forward_p() ? 'n' : 'N'
+onoremap <expr> N  <SID>search_forward_p() ? 'N' : 'n'
+
+function! s:search_forward_p()
+  return exists('v:searchforward') ? v:searchforward : 1
+endfunction
+
+" }}}
+" }}}
 " }}}
 " Commands {{{
 " commands related to specific environments {{{
