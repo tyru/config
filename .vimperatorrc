@@ -145,6 +145,8 @@ nnoremap <Leader>a :buffer<Space>
 
 nnoremap <Leader>f :anc<CR>f
 nnoremap <Leader>F :anc<CR>F
+
+nnoremap <Leader>td :tabduplicate<CR>
 " }}}
 " ~ c ~ {{{
 cnoremap <C-c>          <C-v><C-c>
