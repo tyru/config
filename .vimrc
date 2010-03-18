@@ -1605,7 +1605,7 @@ call submode#map('winsize', 'n', 'r', 'k', '<C-w>+')
 call submode#map('winsize', 'n', 'r', 'h', '<C-w><')
 call submode#map('winsize', 'n', 'r', 'l', '<C-w>>')
 
-" window size of gVim itself
+" Change window size of gVim itself
 call submode#enter_with('guiwinsize', 'n', '', 'swS', '<Nop>')
 call submode#leave_with('guiwinsize', 'n', '', '<Esc>')
 call submode#map('guiwinsize', 'n', 'r', 'j', ':<C-u>set lines-=1<CR>')
@@ -1613,6 +1613,11 @@ call submode#map('guiwinsize', 'n', 'r', 'k', ':<C-u>set lines+=1<CR>')
 call submode#map('guiwinsize', 'n', 'r', 'h', ':<C-u>set columns-=5<CR>')
 call submode#map('guiwinsize', 'n', 'r', 'l', ':<C-u>set columns+=5<CR>')
 
+call submode#enter_with('undo/redo', 'n', '', 'g-', 'g-')
+call submode#enter_with('undo/redo', 'n', '', 'g+', 'g+')
+call submode#leave_with('undo/redo', 'n', '', '<Esc>')
+call submode#map('undo/redo', 'n', '', '-', 'g-')
+call submode#map('undo/redo', 'n', '', '+', 'g+')
 " }}}
 " prettyprint {{{
 AlterCommand p      PP
