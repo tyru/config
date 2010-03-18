@@ -1238,7 +1238,7 @@ command!
 \   Expand
 \   echo expand(<q-args> != '' ? <q-args> : '%')
 
-AlterCommand ex Expand
+AlterCommand ep Expand
 " }}}
 " Has {{{
 AlterCommand has Has
@@ -1247,6 +1247,17 @@ command!
 \   -bar -nargs=1
 \   Has
 \   echo has(<q-args>)
+" }}}
+" ExMode, ExModeInteractive {{{
+command!
+\   ExMode
+\   call feedkeys('Q', 'n')
+command!
+\   ExModeInteractive
+\   call feedkeys('gQ', 'n')
+
+AlterCommand ex     ExMode
+AlterCommand exi    ExModeInteractive
 " }}}
 
 " ...Mode {{{
