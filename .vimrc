@@ -820,6 +820,13 @@ AlterCommand qw     wq
 AlterCommand sf     setf
 " }}}
 
+" indent/dedent {{{
+nnoremap g, <<
+nnoremap g. >>
+vnoremap g, <
+vnoremap g. >
+" }}}
+
 " &hlsearch {{{
 nnoremap / :<C-u>set nohlsearch<CR>/
 nnoremap ? :<C-u>set nohlsearch<CR>?
