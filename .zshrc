@@ -133,7 +133,7 @@ myabbrev=(
     "p@" "| perl"
     "s@" "| sort"
     "u@" "| sort -u"
-    "c@" "| xclip"
+    "c@" "| xsel --input --clipboard"
     "x@" "| xargs"
     "n@" ">/dev/null 2>/dev/null"
     "e@" "2>&1"
