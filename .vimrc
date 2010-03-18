@@ -626,8 +626,7 @@ set cedit=<C-z>
 func! s:cmdwin_enter()
     inoremap <buffer> <C-z>     <C-c>
     nnoremap <buffer> <C-z>     <C-c>
-    inoremap <buffer> <Tab>     <C-X><C-V>
-    inoremap <buffer> <S-Tab>   <C-p>
+    nnoremap <buffer> q         :<C-u>quit<CR>
 
     startinsert!
 endfunc
