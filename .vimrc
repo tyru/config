@@ -487,17 +487,19 @@ MyAutocmd FileType *   call s:LoadWhenFileType()
 
 " Set up prefix keys. {{{
 let mapleader = ';'
-let maplocalleader = ','
+let maplocalleader = '\'
+
+nnoremap <Leader>       <Nop>
+nnoremap <LocalLeader>  <Nop>
 
 nnoremap    [subleader]     <Nop>
-nmap        \               [subleader]
+nmap        ,               [subleader]
 
 nnoremap    [cmdleader]     <Nop>
 nmap        <Space>         [cmdleader]
 
-" FIXME submode detects [submodeleader] is invalid.
-nnoremap    [submodeleader] <Nop>
-nmap        s               [submodeleader]
+let s:submode_leader = 's'
+execute 'nnoremap' s:submode_leader '<Nop>'
 " }}}
 
 let g:arpeggio_timeoutlen = 40
@@ -1271,7 +1273,7 @@ endfunc "}}}
 
 " hacks from web. {{{
 " from kana's .vimrc {{{
-nnoremap <silent> [cmdleader]cd   :TabpageCD %:p:h<CR>
+nnoremap <silent> [subleader]cd   :TabpageCD %:p:h<CR>
 
 " TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
 AlterCommand cd  TabpageCD
@@ -1453,8 +1455,8 @@ lmap <C-g><C-a> <Plug>(stickykey-alt-remap)
 AlterCommand res[tart] Restart
 " }}}
 " submode-scroll {{{
-call submode#scroll#load()
-call submode#enter_with(g:submode_scroll_submode_name, 'n', 'rs', 'ss', '<Plug>(submode-scroll-enter)')
+runtime! plugin/submode/scroll.vim
+call submode#enter_with(g:submode_scroll_submode_name, 'n', 'rs', s:submode_leader . 's', '<Plug>(submode-scroll-enter)')
 call submode#leave_with(g:submode_scroll_submode_name, 'n', 'rs', '<Esc>')
 call submode#map(g:submode_scroll_submode_name, 'n', 'rs', 'j', '<Plug>(submode-scroll-scroll-down)')
 call submode#map(g:submode_scroll_submode_name, 'n', 'rs', 'k', '<Plug>(submode-scroll-scroll-up)')
@@ -1591,7 +1593,7 @@ endif
 " submode {{{
 
 " Moving window.
-call submode#enter_with('winmove', 'n', '', 'swm')
+call submode#enter_with('winmove', 'n', '', s:submode_leader . 'wm')
 call submode#leave_with('winmove', 'n', '', '<Esc>')
 call submode#map('winmove', 'n', 'r', 'j', '<Plug>(winmove-down)')
 call submode#map('winmove', 'n', 'r', 'k', '<Plug>(winmove-up)')
@@ -1599,7 +1601,7 @@ call submode#map('winmove', 'n', 'r', 'h', '<Plug>(winmove-left)')
 call submode#map('winmove', 'n', 'r', 'l', '<Plug>(winmove-right)')
 
 " Change the size of window.
-call submode#enter_with('winsize', 'n', '', 'sws', '<Nop>')
+call submode#enter_with('winsize', 'n', '', s:submode_leader . 'ws', '<Nop>')
 call submode#leave_with('winsize', 'n', '', '<Esc>')
 call submode#map('winsize', 'n', 'r', 'j', '<C-w>-')
 call submode#map('winsize', 'n', 'r', 'k', '<C-w>+')
@@ -1607,7 +1609,7 @@ call submode#map('winsize', 'n', 'r', 'h', '<C-w><')
 call submode#map('winsize', 'n', 'r', 'l', '<C-w>>')
 
 " Change window size of gVim itself
-call submode#enter_with('guiwinsize', 'n', '', 'swS', '<Nop>')
+call submode#enter_with('guiwinsize', 'n', '', s:submode_leader . 'wS', '<Nop>')
 call submode#leave_with('guiwinsize', 'n', '', '<Esc>')
 call submode#map('guiwinsize', 'n', 'r', 'j', ':<C-u>set lines-=1<CR>')
 call submode#map('guiwinsize', 'n', 'r', 'k', ':<C-u>set lines+=1<CR>')
