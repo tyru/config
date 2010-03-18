@@ -1429,24 +1429,25 @@ let eskk_debug_wait_ms = 0
 " }}}
 " stickykey {{{
 
-" FIXME Use [subleader].
+" I use stickykey for emergency use.
+" So these mappings are little bit difficult to press, but I don't care.
 
-silent Arpeggio map  ,a <Plug>(stickykey-shift-remap)
-silent Arpeggio map! ,a <Plug>(stickykey-shift-remap)
-silent Arpeggio lmap ,a <Plug>(stickykey-shift-remap)
+map  <C-g><C-s> <Plug>(stickykey-shift-remap)
+map! <C-g><C-s> <Plug>(stickykey-shift-remap)
+lmap <C-g><C-s> <Plug>(stickykey-shift-remap)
 
-silent Arpeggio map  ,s <Plug>(stickykey-ctrl-remap)
-silent Arpeggio map! ,s <Plug>(stickykey-ctrl-remap)
-silent Arpeggio lmap ,s <Plug>(stickykey-ctrl-remap)
+map  <C-g><C-c> <Plug>(stickykey-ctrl-remap)
+map! <C-g><C-c> <Plug>(stickykey-ctrl-remap)
+lmap <C-g><C-c> <Plug>(stickykey-ctrl-remap)
 
-silent Arpeggio map  ,d <Plug>(stickykey-alt-remap)
-silent Arpeggio map! ,d <Plug>(stickykey-alt-remap)
-silent Arpeggio lmap ,d <Plug>(stickykey-alt-remap)
+map  <C-g><C-a> <Plug>(stickykey-alt-remap)
+map! <C-g><C-a> <Plug>(stickykey-alt-remap)
+lmap <C-g><C-a> <Plug>(stickykey-alt-remap)
 
 " I don't have Macintosh :(
-" map  ,f <Plug>(stickykey-command-remap)
-" map! ,f <Plug>(stickykey-command-remap)
-" lmap ,f <Plug>(stickykey-command-remap)
+" map  <C-g><C-m> <Plug>(stickykey-command-remap)
+" map! <C-g><C-m> <Plug>(stickykey-command-remap)
+" lmap <C-g><C-m> <Plug>(stickykey-command-remap)
 " }}}
 " restart {{{
 AlterCommand res[tart] Restart
