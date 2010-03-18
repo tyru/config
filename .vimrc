@@ -476,13 +476,6 @@ func! s:LoadWhenFileType()
     call s:SetTabWidth(&filetype)
     " Set compiler
     call s:SetCompiler(&filetype)
-
-    " Misc.
-    if &filetype == 'xml' || &filetype == 'html'
-        inoremap <buffer>   </    </<C-x><C-o>
-    elseif &filetype == 'vimperator'
-        setl comments=f:\"
-    endif
 endfunc
 
 " do what ~/.vim/ftplugin/* does in .vimrc
