@@ -750,12 +750,15 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : <SID>complete(0)
 
 " This was originally from kana's hack <SID>keys_to_complete().
 func! s:complete(next) "{{{
+    " TODO Get all items.
     if &l:filetype ==# 'vim'
         return "\<C-x>\<C-v>"
     elseif strlen(&l:omnifunc)
         return "\<C-x>\<C-o>"
     elseif strlen(&l:completefunc)
         return "\<C-x>\<C-u>"
+    " elseif strlen(&l:dictionary)
+    "     return "\<C-x>\<C-k>"
     else
         return a:next ? "\<C-n>" : "\<C-p>"
     endif
