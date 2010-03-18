@@ -587,12 +587,21 @@ nnoremap [cmdleader]m :<C-u>make<CR>
 " open only current line's fold.
 nnoremap <silent> z<Space> zMzvzz
 
-" hlsearch
-nnoremap [cmdleader]/    :<C-u>set hlsearch!<CR>
-
 " annoying for me
 nnoremap ZZ <Nop>
 
+" folding mappings easy to remember.
+nnoremap <silent> zl    zo
+nnoremap <silent> zh    zc
+
+nnoremap <silent> dl    0d$
+nnoremap <silent> yl    0y$
+nnoremap <silent> cl    0c$
+
+nnoremap r gr
+nnoremap R gR
+
+" remap far keys {{{
 " TODO More like i_CTRL-a, i_CTRL-e of my hack.
 nnoremap <silent> gh  ^
 nnoremap <silent> gl  $
@@ -602,12 +611,8 @@ nnoremap <silent> Y y$
 nnoremap <silent> +     #
 nnoremap <silent> g+    g#
 
-" folding mappings easy to remember.
-nnoremap <silent> zl    zo
-nnoremap <silent> zh    zc
-
-nnoremap <silent> dl    0D
-
+nnoremap gp %
+" }}}
 " execute most used command quickly {{{
 nnoremap [cmdleader]w :<C-u>update<CR>
 nnoremap [cmdleader]q :<C-u>q<CR>
