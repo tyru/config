@@ -598,9 +598,9 @@ nnoremap ZZ <Nop>
 nnoremap <silent> zl    zo
 nnoremap <silent> zh    zc
 
-nnoremap <silent> dl    0d$
-nnoremap <silent> yl    0y$
-nnoremap <silent> cl    0c$
+nnoremap <silent> d<Space>  0d$
+nnoremap <silent> y<Space>  0y$
+nnoremap <silent> c<Space>  0c$
 
 nnoremap r gr
 nnoremap R gR
