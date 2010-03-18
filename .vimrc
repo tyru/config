@@ -549,6 +549,12 @@ map <Leader>t <Plug>(operator-retab)
 call operator#user#define('retab', 'Op_command',
 \                         'call Set_op_command("retab")')
 " }}}
+" operator-join {{{
+map <Leader>j <Plug>(operator-join)
+
+call operator#user#define('join', 'Op_command',
+\                         'call Set_op_command("join")')
+" }}}
 " }}}
 " motion/textobj {{{
 noremap <silent> j          gj
