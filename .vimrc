@@ -820,6 +820,15 @@ AlterCommand qw     wq
 AlterCommand sf     setf
 " }}}
 
+" &hlsearch {{{
+nnoremap / :<C-u>set nohlsearch<CR>/
+nnoremap ? :<C-u>set nohlsearch<CR>?
+" FIXME: doesn't expand abbrev
+" cnoremap <silent> <CR> <CR>:set hlsearch<CR>
+nmap * *:set hlsearch<CR>
+nmap + +:set hlsearch<CR>
+nnoremap <Space>/ :<c-u>set hlsearch!<CR>
+" }}}
 
 " Emacs like kill-line. {{{
 inoremap <expr> <C-k>  (col('.') == col('$') ? '<C-o>gJ' : '<C-o>D')
