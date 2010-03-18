@@ -724,18 +724,6 @@ inoremap <C-r><C-u>  <C-r><C-p>+
 inoremap <C-r><C-i>  <C-r><C-p>*
 inoremap <C-r><C-o>  <C-r><C-p>"
 
-" delete string to the end of line.
-func! s:kill_line()
-    let curcol = col('.')
-    if curcol == col('$')
-        join!
-        call cursor(line('.'), curcol)
-    else
-        normal! D
-    endif
-endfunc
-inoremap <C-k>  <C-o>:<C-u>call <SID>kill_line()<CR>
-
 " jump to next/previous line.
 silent Arpeggio inoremap qk    <C-o>O
 silent Arpeggio inoremap qj    <C-o>o
@@ -816,9 +804,6 @@ cnoremap <C-r><C-u>  <C-r>+
 cnoremap <C-r><C-i>  <C-r>*
 cnoremap <C-r><C-o>  <C-r>"
 
-" delete string to the end of line.
-cnoremap <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
-
 cnoremap <expr> /  getcmdtype() == '/' ? '\/' : '/'
 cnoremap <expr> ?  getcmdtype() == '?' ? '\?' : '?'
 " }}}
@@ -835,6 +820,11 @@ AlterCommand qw     wq
 AlterCommand sf     setf
 " }}}
 
+
+" Emacs like kill-line. {{{
+inoremap <expr> <C-k>  (col('.') == col('$') ? '<C-o>gJ' : '<C-o>D')
+cnoremap <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
+" }}}
 
 " Make searching directions consistent {{{
   " 'zv' is harmful for Operator-pending mode and it should not be included.
