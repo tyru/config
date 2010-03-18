@@ -699,7 +699,7 @@ silent Arpeggio noremap! $< <><Left>
 silent Arpeggio noremap! ${ {}<Left>
 
 silent Arpeggio noremap! $' ''<Left>
-silent call arpeggio#map('ic', '', 0, '*"', '""<Left>')
+silent Arpeggio noremap! *" ""<Left>
 silent Arpeggio noremap! $` ``<Left>
 
 silent Arpeggio noremap! $) \(\)<Left><Left>
