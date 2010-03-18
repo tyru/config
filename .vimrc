@@ -564,6 +564,9 @@ omap iF <Plug>(textobj-fold-i)
 vmap iF <Plug>(textobj-fold-i)
 omap aF <Plug>(textobj-fold-a)
 vmap aF <Plug>(textobj-fold-a)
+
+onoremap gp %
+vnoremap gp %
 " }}}
 " misc. {{{
 noremap <silent> <Space>j           <C-f>
