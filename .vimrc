@@ -394,22 +394,24 @@ nnoremap <silent> [subleader]td    :<C-u>call ChangeNL()<CR>
 " FileType {{{
 " s:SetDict {{{
 func! s:SetDict(ft)
-    if !exists('s:filetype_vs_dictionary')
-        let s:filetype_vs_dictionary = {
-        \   'c': ['c', 'cpp'],
-        \   'cpp': ['c', 'cpp'],
-        \   'html': ['html', 'css', 'javascript'],
-        \   'scala': ['scala', 'java'],
-        \ }
-    endif
-    let ftypes = has_key(s:filetype_vs_dictionary, a:ft) ?
-                \   s:filetype_vs_dictionary[a:ft]
-                \   : [a:ft]
-    for ft in ftypes
+    let filetype_vs_dictionary = {
+    \   'c': ['c', 'cpp'],
+    \   'cpp': ['c', 'cpp'],
+    \   'html': ['html', 'css', 'javascript'],
+    \   'scala': ['scala', 'java'],
+    \}
+
+    let dicts = []
+    for ft in get(filetype_vs_dictionary, a:ft, [a:ft])
         let dict_path = expand(printf('$HOME/.vim/dict/%s.dict', ft))
         if filereadable(dict_path)
-            execute 'setlocal dictionary+=' . dict_path
+            call add(dicts, dict_path)
         endif
+    endfor
+
+    " FIXME Use pathogen.vim!!
+    for d in dicts
+        let &l:dictionary = join(split(&l:dictionary, ',') + dicts, ',')
     endfor
 endfunc
 " }}}
@@ -424,36 +426,27 @@ endfunc
 " }}}
 " s:SetCompiler {{{
 func! s:SetCompiler(ft)
-    if !exists('s:filetype_vs_compiler')
-        let s:filetype_vs_compiler = {
-        \   'c': 'gcc',
-        \   'cpp': 'gcc',
-        \   'html': 'tidy',
-        \   'java': 'javac',
-        \}
-    endif
+    let filetype_vs_compiler = {
+    \   'c': 'gcc',
+    \   'cpp': 'gcc',
+    \   'html': 'tidy',
+    \   'java': 'javac',
+    \}
     try
-        execute 'compiler'
-                \ has_key(s:filetype_vs_compiler, a:ft) ?
-                \   s:filetype_vs_compiler[a:ft]
-                \   : a:ft
-    catch
-        " to supress warnings
+        execute 'compiler' get(filetype_vs_compiler, a:ft, a:ft)
+    catch /E666:/    " compiler not supported: ...
     endtry
 endfunc
 " }}}
 " TODO Move these settings to ~/.vim/ftplugin/*
 " s:LoadWhenFileType() {{{
 func! s:LoadWhenFileType()
-    " Set default &omnifunc
     if exists("+omnifunc") && &omnifunc == ""
         setlocal omnifunc=syntaxcomplete#Complete
     endif
-    " Set dictionary for reserved keywords, etc.
+
     call s:SetDict(&filetype)
-    " Set tab width
     call s:SetTabWidth(&filetype)
-    " Set compiler
     call s:SetCompiler(&filetype)
 endfunc
 
