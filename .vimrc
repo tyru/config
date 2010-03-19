@@ -702,6 +702,20 @@ func! s:open_cfile() "{{{
     endif
 endfunc "}}}
 " }}}
+" toggle options {{{
+func! s:toggle_option(option_name) "{{{
+    if exists('&' . a:option_name)
+        execute 'setlocal' a:option_name . '!'
+        execute 'setlocal' a:option_name . '?'
+    endif
+endfunc "}}}
+
+nnoremap <silent> [cmdleader]oh :<C-u>call <SID>toggle_option('hlsearch')<CR>
+nnoremap <silent> [cmdleader]oi :<C-u>call <SID>toggle_option('ignorecase')<CR>
+nnoremap <silent> [cmdleader]op :<C-u>call <SID>toggle_option('paste')<CR>
+nnoremap <silent> [cmdleader]ow :<C-u>call <SID>toggle_option('wrap')<CR>
+nnoremap <silent> [cmdleader]oe :<C-u>call <SID>toggle_option('expandtab')<CR>
+" }}}
 " }}}
 " map! {{{
 noremap! <C-f>   <Right>
