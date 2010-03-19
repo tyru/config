@@ -862,14 +862,34 @@ vnoremap g, <
 vnoremap g. >
 " }}}
 
-" &hlsearch {{{
-nnoremap / :<C-u>set nohlsearch<CR>/
-nnoremap ? :<C-u>set nohlsearch<CR>?
-" FIXME: doesn't expand abbrev
-" cnoremap <silent> <CR> <CR>:set hlsearch<CR>
-nmap * *:set hlsearch<CR>
-nmap + +:set hlsearch<CR>
-nnoremap <Space>/ :<c-u>set hlsearch!<CR>
+" search {{{
+
+func! s:generate_assign_fn(dict) "{{{
+    let assign_fn = values(map(a:dict, "printf('let &l:%s = %s', v:key, string(v:val))"))
+    return empty(assign_fn) ? '' : ":\<C-u>" . join(assign_fn, '|') . "\<CR>"
+endfunc "}}}
+
+func! s:do_nmap_with(cmd, beforeopt, afteropt) "{{{
+    return
+    \   printf('%s%s%s',
+    \       s:generate_assign_fn(a:beforeopt),
+    \       a:cmd,
+    \       s:generate_assign_fn(a:afteropt))
+endfunc "}}}
+
+func! s:do_nmap_before(cmd, beforeopt) "{{{
+    return s:do_nmap_with(a:cmd, a:beforeopt, {})
+endfunc "}}}
+
+func! s:do_nmap_after(cmd, afteropt) "{{{
+    return s:do_nmap_with(a:cmd, {}, a:afteropt)
+endfunc "}}}
+
+nnoremap <expr> / <SID>do_nmap_before('/', {'hlsearch': 0})
+nnoremap <expr> ? <SID>do_nmap_before('?', {'hlsearch': 0})
+
+nnoremap <silent><expr> * <SID>do_nmap_before('*', {'hlsearch': 1, 'ignorecase': 0})
+nnoremap <silent><expr> + <SID>do_nmap_before('#', {'hlsearch': 1, 'ignorecase': 0})
 " }}}
 
 " Emacs like kill-line. {{{
