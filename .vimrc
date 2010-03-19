@@ -217,8 +217,11 @@ set formatoptions=mMcroqnl2
 set foldenable
 set foldmethod=marker
 
-" misc.
+" these options are sometimes toggled when vim is running.
 set wrap
+set ignorecase
+
+" misc.
 set autoread
 set diffopt=filler,vertical
 set helplang=ja,en
@@ -231,7 +234,7 @@ set shortmess=aI
 set switchbuf=useopen,usetab
 set textwidth=0
 set viminfo='50,h,f1,n$HOME/.viminfo
-set ignorecase
+set hidden
 " }}}
 " Autocmd {{{
 
