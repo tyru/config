@@ -1612,6 +1612,8 @@ let skk_imdisable_state = -1
 let skk_sticky_key = ';'
 " }}}
 " vimshell {{{
+AlterCommand vsh[ell] VimShell
+
 let g:VimShell_EnableInteractive = 2
 let g:VimShell_NoDefaultKeyMappings = 1
 " }}}
