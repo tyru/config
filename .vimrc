@@ -1321,6 +1321,9 @@ MyAutocmd TabEnter *
 \ | execute 'cd' fnameescape(expand(t:cwd))
 " }}}
 " SplitNicely {{{
+AlterCommand sp     SplitNicely
+AlterCommand vsp    SplitNicely
+
 command!
 \   -bar -nargs=* -complete=file
 \   SplitNicely
