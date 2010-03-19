@@ -598,9 +598,6 @@ nnoremap <Leader><Leader>              <Leader>
 nnoremap <silent> n     nzz
 nnoremap <silent> N     Nzz
 
-" make
-nnoremap [cmdleader]m :<C-u>make<CR>
-
 " open only current line's fold.
 nnoremap <silent> z<Space> zMzvzz
 
@@ -619,6 +616,7 @@ nnoremap r gr
 nnoremap R gR
 
 nnoremap [cmdleader]m :<C-u>messages<CR>
+nnoremap [cmdleader]r :<C-u>registers<CR>
 
 " remap far keys {{{
 " TODO More like i_CTRL-a, i_CTRL-e of my hack.
@@ -696,6 +694,7 @@ func! s:open_cfile() "{{{
     let choice = prompt#prompt("open with...", {
     \   'menu': keys(option),
     \   'one_char': 1,
+    \   'escape': 1,
     \})
     if has_key(option, choice)
         execute option[choice]
