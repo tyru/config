@@ -1524,11 +1524,12 @@ func! s:register_fuf_abbrev()
         \ '^r@': map(split(&runtimepath, ','), 'v:val . "/"'),
         \ '^p@': map(split(&runtimepath, ','), 'v:val . "/plugin/"'),
         \ '^h@': ['~/'],
-        \ '^m@' : ['~/work/memo/'],
         \ '^v@' : ['~/.vim/'],
         \ '^d@' : ['~/q/diary/'],
-        \ '^s@' : ['~/work/scratch/'],
         \ '^w@' : ['~/work/'],
+        \ '^s@' : ['~/work/scratch/'],
+        \ '^m@' : ['~/work/memo/'],
+        \ '^g@' : ['~/work/git/'],
     \}
 
     if has('win32')
