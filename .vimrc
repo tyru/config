@@ -1388,8 +1388,9 @@ let g:nf_loop_files = 1    " loop at the end of file
 let g:nf_ignore_ext = ['o', 'obj', 'exe', 'bin']
 " }}}
 " vimtemplate {{{
-let g:vt_template_dir_path = expand("$HOME/.vim/template")
+let g:vt_mapping = '[subleader]vt'
 let g:vt_command = ''
+let g:vt_template_dir_path = expand("~/.vim/template")
 let g:vt_author = "tyru"
 let g:vt_email = "tyru.exe@gmail.com"
 
