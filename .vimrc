@@ -1091,14 +1091,14 @@ command! -nargs=+ Ack call s:ack(<f-args>)
 command! -nargs=+ SetTitle
 \   let &titlestring = <q-args>
 " }}}
-" ShowPath {{{
+" EchoPath {{{
 
-AlterCommand sp  ShowPath
-AlterCommand rtp ShowPath<Space>rtp
+AlterCommand ept EchoPath
+AlterCommand rtp EchoPath<Space>rtp
 
 command!
 \   -nargs=+ -complete=option
-\   ShowPath
+\   EchoPath
 \   call s:show_path(<f-args>)
 
 func! s:show_path(...) "{{{
