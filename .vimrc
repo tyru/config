@@ -1471,11 +1471,14 @@ com! SelectColorScheme   :cal s:SelectColorScheme()
 " }}}
 " Grep {{{
 " http://vim-users.jp/2010/03/hack130/
+" http://webtech-walker.com/archive/2010/03/17093357.html
 AlterCommand grep Grep
 
-command! -complete=file -nargs=+ Grep  call s:grep([<f-args>])
+command! -complete=file -nargs=+ Grep call s:grep([<f-args>])
 function! s:grep(args)
-  execute 'vimgrep' '/'.a:args[-1].'/' join(a:args[:-2])
+    let target = len(a:args) > 1 ? join(a:args[1:]) : '*'
+    execute 'vimgrep' '/' . a:args[0] . '/j ' . target
+    if len(getqflist()) != 0 | copen | endif
 endfunction
 " }}}
 " }}}
