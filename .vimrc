@@ -687,7 +687,7 @@ nnoremap <silent> gf :<C-u>call <SID>open_cfile()<CR>
 func! s:open_cfile() "{{{
     let option = {
     \   'buffer': 'edit <cfile>',
-    \   'window': 'SplitNicely <cfile>',
+    \   'window': 'Split <cfile>',
     \   'tab'   : 'tabedit <cfile>',
     \}
     let choice = prompt#prompt("open with...", {
@@ -1307,12 +1307,9 @@ endfunc "}}}
 " }}}
 "}}}
 
-" hacks from web. {{{
-" from kana's .vimrc {{{
-nnoremap <silent> [subleader]cd   :TabpageCD %:p:h<CR>
-
 " TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
 AlterCommand cd  TabpageCD
+nnoremap <silent> [subleader]cd   :TabpageCD %:p:h<CR>
 
 command! -complete=dir -nargs=? TabpageCD
 \   execute 'cd' fnameescape(expand(<q-args>))
@@ -1324,23 +1321,39 @@ MyAutocmd TabEnter *
 \ | endif
 \ | execute 'cd' fnameescape(expand(t:cwd))
 " }}}
-" SplitNicely {{{
-AlterCommand sp     SplitNicely
-AlterCommand vsp    SplitNicely
+" s:split_nicely_with() {{{
+AlterCommand sp     Split
+AlterCommand h[elp] Help
+AlterCommand new    New
 
 command!
 \   -bar -nargs=* -complete=file
-\   SplitNicely
-\   call s:split_nicely(<q-args>)
+\   Split
+\   call s:split_nicely_with('split', <f-args>)
 
-function! s:split_nicely(args)
-    if 80*2 * 15/16 <= winwidth(0)  " FIXME: threshold customization
-        execute 'vsplit' a:args
+command!
+\   -bar -nargs=* -complete=help
+\   Help
+\   call s:split_nicely_with('help', <f-args>)
+
+command!
+\   -bar -nargs=* -complete=file
+\   New
+\   call s:split_nicely_with('new', <f-args>)
+
+
+function! s:vertically()
+    return 80*2 * 15/16 <= winwidth(0)  " FIXME: threshold customization
+endfunction
+
+" Originally from kana's s:split_nicely().
+function! s:split_nicely_with(...)
+    if s:vertically()
+        execute 'vertical' join(a:000, ' ')
     else
-        execute 'split' a:args
+        execute join(a:000, ' ')
     endif
 endfunction
-" }}}
 " }}}
 " SelectColorScheme {{{
 " via http://gist.github.com/314439
@@ -1365,7 +1378,6 @@ fun! s:SelectColorScheme()
   nmap <buffer>  q        :<C-u>close<CR>
 endf
 com! SelectColorScheme   :cal s:SelectColorScheme()
-" }}}
 " }}}
 " }}}
 " For Plugins {{{
