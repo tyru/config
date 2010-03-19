@@ -592,7 +592,9 @@ nnoremap <silent> Y y$
 nnoremap <silent> +     #
 nnoremap <silent> g+    g#
 
-nmap <silent> gp %
+" Use matchit.vim % or not.
+" nmap <silent> gp %
+nnoremap <silent> gp %
 
 nnoremap <silent> g; ~
 " }}}
