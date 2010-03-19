@@ -33,12 +33,12 @@ func! s:one_of(elem, list) "{{{
 endfunc "}}}
 " }}}
 " Commands {{{
-augroup MyVimrc
+augroup vimrc
     autocmd!
-    " Create 'MyVimrc' augroup.
+    " Create 'vimrc' augroup.
 augroup END
 
-command! -bang -nargs=* MyAutocmd autocmd<bang> MyVimrc <args>
+command! -bang -nargs=* MyAutocmd autocmd<bang> vimrc <args>
 " }}}
 " }}}
 " Options {{{
