@@ -162,17 +162,17 @@ endif
 
 " title
 set title
-let &titlestring = '%{haslocaldir() ? "[local]" : ""}(%{Dir()})'
-func! Dir()
-    let d = fnamemodify(getcwd(), ':~')
-    let d = substitute(d, '\/$', '', '')
-    return d
-endfunc
+let &titlestring = '%{getcwd()} %{haslocaldir() ? "(local)" : ""}'
+" func! Dir()
+"     let d = fnamemodify(getcwd(), ':~')
+"     let d = substitute(d, '\/$', '', '')
+"     return d
+" endfunc
 
 " tab
 set showtabline=2
-let &tabline     = '%{tabpagenr()}:%{expand("%:t")} [%M%R%H%W]'
-let &guitablabel = '%{tabpagenr()}:%{expand("%:t")} [%M%R%H%W]'
+let &tabline     = '%{tabpagenr()}:%{expand("%:t")}%( (%M%R%H%W)%)'
+let &guitablabel = '%{tabpagenr()}:%{expand("%:t")}%( (%M%R%H%W)%)'
 
 " statusline
 set laststatus=2
