@@ -217,10 +217,6 @@ set formatoptions=mMcroqnl2
 set foldenable
 set foldmethod=marker
 
-" these options are sometimes toggled when vim is running.
-set wrap
-set ignorecase
-
 " misc.
 set autoread
 set diffopt=filler,vertical
@@ -717,6 +713,43 @@ nnoremap <silent> [cmdleader]op :<C-u>call <SID>toggle_option('paste')<CR>
 nnoremap <silent> [cmdleader]ow :<C-u>call <SID>toggle_option('wrap')<CR>
 nnoremap <silent> [cmdleader]oe :<C-u>call <SID>toggle_option('expandtab')<CR>
 
+" TODO Comamnd to change style which has cmdline completion.
+nnoremap <silent> [cmdleader]ot :<C-u>call <SID>toggle_tab_options()<CR>
+
+function! s:toggle_tab_options() "{{{
+    " These settings is only about tab.
+    " See the followings for the details:
+    "   http://www.jukie.net/bart/blog/vim-and-linux-coding-style
+    "   http://yuanjie-huang.blogspot.com/2009/03/vim-in-gnu-coding-style.html
+    "   http://en.wikipedia.org/wiki/Indent_style
+    " But wikipedia is dubious, I think :(
+
+    let option = {}
+    let option['My style']      = 'set expandtab   tabstop=4 shiftwidth=4 softtabstop&'
+    let option['Short indent']  = 'set expandtab   tabstop=2 shiftwidth=2 softtabstop&'
+    let option['GNU']           = 'set expandtab   tabstop=8 shiftwidth=2 softtabstop=2'
+    let option['BSD']           = 'set noexpandtab tabstop=8 shiftwidth=4 softtabstop&'    " XXX
+    let option['Linux']         = 'set noexpandtab tabstop=8 shiftwidth=8 softtabstop&'
+
+    let choice = prompt#prompt('Which do you prefer?:', {
+    \   'one_char': 1,
+    \   'menu': keys(option),
+    \   'escape': 1,
+    \})
+    execute get(option, choice, '')
+endfunction "}}}
+
+
+" FIXME: Bad name :(
+command!
+\   -bar
+\   OptToggleInit
+\   set hlsearch ignorecase nopaste wrap expandtab
+
+nnoremap <silent> [cmdleader]OI :<C-u>OptToggleInit<CR>
+
+OptToggleInit
+" }}}
 " close help/quickfix window {{{
 " via kana's vimrc.
 
