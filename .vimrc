@@ -714,6 +714,54 @@ nnoremap <silent> [cmdleader]oi :<C-u>call <SID>toggle_option('ignorecase')<CR>
 nnoremap <silent> [cmdleader]op :<C-u>call <SID>toggle_option('paste')<CR>
 nnoremap <silent> [cmdleader]ow :<C-u>call <SID>toggle_option('wrap')<CR>
 nnoremap <silent> [cmdleader]oe :<C-u>call <SID>toggle_option('expandtab')<CR>
+
+" close help/quickfix window {{{
+" via kana's vimrc.
+
+function! s:get_windows_nr_like(expr) "{{{
+    let ret = []
+    let winnr = 1
+    while winnr <= winnr('$')
+        let bufnr = winbufnr(winnr)
+        if eval(a:expr)
+            call add(ret, winnr)
+        endif
+        let winnr = winnr + 1
+    endwhile
+    return ret
+endfunction "}}}
+
+function! s:close_first_window_like(expr) "{{{
+    let winnr_list = s:get_windows_nr_like(a:expr)
+    if empty(winnr_list)
+        return
+    endif
+
+    let prev_winnr = winnr()
+    try
+        for winnr in winnr_list
+            execute winnr . 'wincmd w'
+            execute 'wincmd c'
+            break    " close 1 window.
+        endfor
+    finally
+        let cur_winnr = winnr()
+        if cur_winnr !=# prev_winnr && winbufnr(prev_winnr) !=# -1
+            execute prev_winnr . 'wincmd w'
+        endif
+    endtry
+endfunction "}}}
+
+function! s:close_help_window() "{{{
+    return s:close_first_window_like('getbufvar(bufnr, "&buftype") == "help"')
+endfunction "}}}
+
+function! s:close_quickfix_window() "{{{
+    return s:close_first_window_like('getbufvar(bufnr, "&buftype") == "quickfix"')
+endfunction "}}}
+
+nnoremap <silent> [cmdleader]ch :<C-u>call <SID>close_help_window()<CR>
+nnoremap <silent> [cmdleader]ck :<C-u>call <SID>close_quickfix_window()<CR>
 " }}}
 " }}}
 " map! {{{
