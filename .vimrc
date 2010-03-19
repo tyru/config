@@ -629,6 +629,8 @@ nnoremap <silent> +     #
 nnoremap <silent> g+    g#
 
 nmap <silent> gp %
+
+nnoremap <silent> g; ~
 " }}}
 " execute most used command quickly {{{
 nnoremap [cmdleader]w :<C-u>update<CR>
