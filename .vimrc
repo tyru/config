@@ -486,6 +486,12 @@ MyAutocmd FileType *   call s:LoadWhenFileType()
 " }}}
 " Mappings and/or Abbreviations {{{
 
+" TODO Do not clear mappings set by plugins.
+" mapclear
+" mapclear!
+" " mapclear!!!!
+" lmapclear
+
 " Set up prefix keys. {{{
 let mapleader = ';'
 let maplocalleader = '\'
