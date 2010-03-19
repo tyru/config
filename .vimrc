@@ -1415,6 +1415,15 @@ fun! s:SelectColorScheme()
 endf
 com! SelectColorScheme   :cal s:SelectColorScheme()
 " }}}
+" Grep {{{
+" http://vim-users.jp/2010/03/hack130/
+AlterCommand grep Grep
+
+command! -complete=file -nargs=+ Grep  call s:grep([<f-args>])
+function! s:grep(args)
+  execute 'vimgrep' '/'.a:args[-1].'/' join(a:args[:-2])
+endfunction
+" }}}
 " }}}
 " For Plugins {{{
 " my plugins {{{
