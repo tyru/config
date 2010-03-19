@@ -28,6 +28,9 @@ func! s:getchar(...) "{{{
     let c = call('getchar', a:000)
     return type(c) == type("") ? c : nr2char(c)
 endfunc "}}}
+func! s:one_of(elem, list) "{{{
+    return !empty(filter(copy(a:list), 'v:val ==# a:elem'))
+endfunc "}}}
 " }}}
 " Commands {{{
 augroup MyVimrc
@@ -426,20 +429,11 @@ endfunc
 " }}}
 " s:SetTabWidth {{{
 func! s:SetTabWidth(ft)
-    if !exists('s:filetype_vs_tabwidth')
-        let s:filetype_vs_tabwidth = {
-        \   'css': 2,
-        \   'xml': 2,
-        \   'html': 2,
-        \   'lisp': 2,
-        \   'scheme': 2,
-        \   'yaml': 2,
-        \ }
+    if s:one_of(a:ft, ['css', 'xml', 'html', 'lisp', 'scheme', 'yaml'])
+        CodingStyle Short indent
+    else
+        CodingStyle My style
     endif
-    execute 'TabChange'
-            \ has_key(s:filetype_vs_tabwidth, a:ft) ?
-            \   s:filetype_vs_tabwidth[a:ft]
-            \   : 4
 endfunc
 " }}}
 " s:SetCompiler {{{
@@ -1149,17 +1143,6 @@ func! s:DelFile(...)
             endif
         endfor
     endfor
-endfunc
-" }}}
-" TabChange {{{
-command! -nargs=1 TabChange
-            \ call s:TabChange( <f-args> )
-
-func! s:TabChange( width )
-    if a:width =~ '^\d\+$'
-        exe "setlocal ts=" . a:width
-        exe "setlocal sw=" . a:width
-    endif
 endfunc
 " }}}
 " Mkdir {{{
