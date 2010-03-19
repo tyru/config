@@ -571,8 +571,8 @@ noremap <silent> k          gk
 noremap <silent> gj         j
 noremap <silent> gk         k
 
-noremap <silent> ]k        :call search('^\S', 'Ws')<CR>
-noremap <silent> [k        :call search('^\S', 'Wsb')<CR>
+noremap <silent> ]k        :<C-u>call search('^\S', 'Ws')<CR>
+noremap <silent> [k        :<C-u>call search('^\S', 'Wsb')<CR>
 
 omap iF <Plug>(textobj-fold-i)
 vmap iF <Plug>(textobj-fold-i)
