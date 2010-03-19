@@ -611,6 +611,8 @@ nnoremap <silent> c<Space>  0c$
 nnoremap r gr
 nnoremap R gR
 
+nnoremap [cmdleader]m :<C-u>messages<CR>
+
 " remap far keys {{{
 " TODO More like i_CTRL-a, i_CTRL-e of my hack.
 nnoremap <silent> gh  ^
@@ -828,7 +830,6 @@ inoreab <expr> dt@        strftime("%Y-%m-%d %H:%M")
 call altercmd#load()
 AlterCommand th     tab<Space>help
 AlterCommand t      tabedit
-AlterCommand m      message
 AlterCommand qw     wq
 AlterCommand sf     setf
 " }}}
