@@ -392,20 +392,6 @@ nnoremap <silent> [subleader]td    :<C-u>call ChangeNL()<CR>
 " }}}
 " }}}
 " FileType {{{
-" ToggleFileType {{{
-command! ToggleFileType call s:ToggleFileType()
-
-let s:load_filetype = 1
-func! s:ToggleFileType()
-    if s:load_filetype
-        let s:load_filetype = 0
-        echomsg "DON'T load my filetype config"
-    else
-        let s:load_filetype = 1
-        echomsg "load my filetype config"
-    endif
-endfunc
-" }}}
 " s:SetDict {{{
 func! s:SetDict(ft)
     if !exists('s:filetype_vs_dictionary')
@@ -459,11 +445,6 @@ endfunc
 " TODO Move these settings to ~/.vim/ftplugin/*
 " s:LoadWhenFileType() {{{
 func! s:LoadWhenFileType()
-    if ! s:load_filetype
-        " call s:warn("skip loading filetype config...")
-        return
-    endif
-
     " Set default &omnifunc
     if exists("+omnifunc") && &omnifunc == ""
         setlocal omnifunc=syntaxcomplete#Complete
