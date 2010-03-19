@@ -1500,9 +1500,13 @@ call submode#map(g:submode_scroll_submode_name, 'n', 'rs', 's', '<Plug>(submode-
 let g:autodate_format = "%Y-%m-%d"
 " }}}
 " FuzzyFinder {{{
-nnoremap <silent> <Leader>fd        :FufDir<CR>
-nnoremap <silent> <Leader>ff        :FufFile<CR>
-nnoremap <silent> <Leader>fh        :FufMruFile<CR>
+nmap     s                 [anything-leader]
+nnoremap [anything-leader] <Nop>
+
+nnoremap <silent> [anything-leader]d        :<C-u>FufDir<CR>
+nnoremap <silent> [anything-leader]f        :<C-u>FufFile<CR>
+nnoremap <silent> [anything-leader]h        :<C-u>FufMruFile<CR>
+nnoremap <silent> [anything-leader]r        :<C-u>FufRenewCache<CR>
 
 let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem', 'buffer', 'tag', 'taggedfile']
 
