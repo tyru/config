@@ -580,7 +580,7 @@ nnoremap r gr
 nnoremap R gR
 
 nnoremap [cmdleader]m :<C-u>messages<CR>
-nnoremap [cmdleader]r :<C-u>registers<CR>
+nnoremap [cmdleader]d :<C-u>display<CR>
 
 " remap far keys {{{
 " TODO More like i_CTRL-a, i_CTRL-e of my hack.
@@ -779,6 +779,7 @@ endfunction "}}}
 
 nnoremap <silent> [cmdleader]ch :<C-u>call <SID>close_help_window()<CR>
 nnoremap <silent> [cmdleader]ck :<C-u>call <SID>close_quickfix_window()<CR>
+nnoremap <silent> [cmdleader]cc :<C-u>call <SID>close_first_window_like('getbufvar(bufnr, "&buftype") != ""')<CR>
 " }}}
 " }}}
 " map! {{{
@@ -949,8 +950,8 @@ func! s:do_nmap_after(cmd, afteropt) "{{{
     return s:do_nmap_with(a:cmd, {}, a:afteropt)
 endfunc "}}}
 
-nnoremap <expr> / <SID>do_nmap_before('/', {'hlsearch': 0})
-nnoremap <expr> ? <SID>do_nmap_before('?', {'hlsearch': 0})
+nnoremap <expr> / <SID>do_nmap_before('/', {'hlsearch': 1})
+nnoremap <expr> ? <SID>do_nmap_before('?', {'hlsearch': 1})
 
 nnoremap <silent><expr> * <SID>do_nmap_before('*', {'hlsearch': 1, 'ignorecase': 0})
 nnoremap <silent><expr> + <SID>do_nmap_before('#', {'hlsearch': 1, 'ignorecase': 0})
