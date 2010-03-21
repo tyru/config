@@ -867,10 +867,6 @@ inoremap <C-r><C-u>  <C-r><C-p>+
 inoremap <C-r><C-i>  <C-r><C-p>*
 inoremap <C-r><C-o>  <C-r><C-p>"
 
-" jump to next/previous line.
-silent Arpeggio inoremap qk    <C-o>O
-silent Arpeggio inoremap qj    <C-o>o
-
 " shift left (indent)
 inoremap <C-q>   <C-d>
 
@@ -879,6 +875,9 @@ inoremap <C-w> <C-g>u<C-w>
 inoremap <C-u> <C-g>u<C-u>
 
 inoremap <C-@> <C-a>
+
+inoremap <S-CR> <C-o>O
+inoremap <C-CR> <C-o>o
 
 " completion {{{
 
