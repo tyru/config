@@ -1459,9 +1459,9 @@ MyAutocmd TabEnter *
 \ | execute 'cd' fnameescape(expand(t:cwd))
 " }}}
 " s:split_nicely_with() {{{
-AlterCommand sp     Split
-AlterCommand h[elp] Help
-AlterCommand new    New
+AlterCommand sp[lit]    Split
+AlterCommand h[elp]     Help
+AlterCommand new        New
 
 command!
 \   -bar -nargs=* -complete=file
@@ -1519,11 +1519,11 @@ com! SelectColorScheme   :cal s:SelectColorScheme()
 " Grep {{{
 " http://vim-users.jp/2010/03/hack130/
 " http://webtech-walker.com/archive/2010/03/17093357.html
-AlterCommand grep Grep
+AlterCommand gr[ep] Grep
 
 command! -complete=file -nargs=+ Grep call s:grep([<f-args>])
 function! s:grep(args)
-    let target = len(a:args) > 1 ? join(a:args[1:]) : '*'
+    let target = len(a:args) > 1 ? join(a:args[1:]) : '**/*'
     execute 'vimgrep' '/' . a:args[0] . '/j ' . target
     if len(getqflist()) != 0 | copen | endif
 endfunction
