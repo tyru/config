@@ -281,9 +281,6 @@ MyAutocmd SwapExists * let v:swapchoice = 'o'
 " autocmd CursorHold,CursorHoldI *   silent! update
 MyAutocmd QuickfixCmdPost make,grep,grepadd,vimgrep,helpgrep   copen
 
-" sometimes &modeline becomes false
-MyAutocmd BufReadPre * setlocal modeline
-
 " filetype {{{
 MyAutocmd BufNewFile,BufReadPre *.as
             \ setlocal ft=actionscript syntax=actionscript
@@ -723,6 +720,8 @@ nnoremap <silent> [cmdleader]oi :<C-u>call <SID>toggle_option('ignorecase')<CR>
 nnoremap <silent> [cmdleader]op :<C-u>call <SID>toggle_option('paste')<CR>
 nnoremap <silent> [cmdleader]ow :<C-u>call <SID>toggle_option('wrap')<CR>
 nnoremap <silent> [cmdleader]oe :<C-u>call <SID>toggle_option('expandtab')<CR>
+nnoremap <silent> [cmdleader]ol :<C-u>call <SID>toggle_option('list')<CR>
+nnoremap <silent> [cmdleader]om :<C-u>call <SID>toggle_option('modeline')<CR>
 
 " Select coding style. {{{
 "
@@ -766,12 +765,17 @@ endfunction "}}}
 " FIXME: Bad name :(
 command!
 \   -bar
-\   OptToggleInit
-\   set hlsearch ignorecase nopaste wrap expandtab
+\   OptInit
+\   call s:optinit()
+function! s:optinit() "{{{
+    set hlsearch ignorecase nopaste wrap expandtab list modeline
+    echo 'Initialized frequently toggled options.'
+endfunction "}}}
 
-nnoremap <silent> [cmdleader]OI :<C-u>OptToggleInit<CR>
+nnoremap <silent> [cmdleader]OI :<C-u>OptInit<CR>
 
-OptToggleInit
+
+silent OptInit
 " }}}
 " close help/quickfix window {{{
 " via kana's vimrc.
