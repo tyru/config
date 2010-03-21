@@ -31,6 +31,35 @@ endfunc "}}}
 func! s:one_of(elem, list) "{{{
     return !empty(filter(copy(a:list), 'v:val ==# a:elem'))
 endfunc "}}}
+function! s:uniq(list) "{{{
+    let s:dict = {}
+    let counter = 1
+    for i in a:list
+        if !has_key(s:dict, i)
+            let s:dict[i] = counter
+            let counter += 1
+        endif
+    endfor
+
+    function! s:cmp(a, b)
+        return a:a == a:b ? 0 : a:a > a:b ? 1 : -1
+    endfunction
+
+    function! s:c(a, b)
+        let [a, b] = [a:a, a:b]
+        return eval(s:expr)
+    endfunction
+
+    try
+        let s:expr = 's:cmp(s:dict[a], s:dict[b])'
+        return sort(keys(s:dict), 's:c')
+    finally
+        delfunc s:cmp
+        delfunc s:c
+        unlet s:expr
+        unlet s:dict
+    endtry
+endfunction "}}}
 " }}}
 " Commands {{{
 augroup vimrc
@@ -392,8 +421,12 @@ nnoremap <silent> [subleader]td    :<C-u>call ChangeNL()<CR>
 " }}}
 " }}}
 " FileType {{{
+func! s:each_filetype() "{{{
+    return split(&l:filetype, '\.')
+endfunc "}}}
+
 " s:SetDict {{{
-func! s:SetDict(ft)
+func! s:SetDict()
     let filetype_vs_dictionary = {
     \   'c': ['c', 'cpp'],
     \   'cpp': ['c', 'cpp'],
@@ -402,22 +435,24 @@ func! s:SetDict(ft)
     \}
 
     let dicts = []
-    for ft in get(filetype_vs_dictionary, a:ft, [a:ft])
-        let dict_path = expand(printf('$HOME/.vim/dict/%s.dict', ft))
-        if filereadable(dict_path)
-            call add(dicts, dict_path)
-        endif
+    for ft in s:each_filetype()
+        for ft in get(filetype_vs_dictionary, ft, [ft])
+            let dict_path = expand(printf('$HOME/.vim/dict/%s.dict', ft))
+            if filereadable(dict_path)
+                call add(dicts, dict_path)
+            endif
+        endfor
     endfor
 
     " FIXME Use pathogen.vim!!
     for d in dicts
-        let &l:dictionary = join(split(&l:dictionary, ',') + dicts, ',')
+        let &l:dictionary = join(s:uniq(dicts), ',')
     endfor
 endfunc
 " }}}
 " s:SetTabWidth {{{
-func! s:SetTabWidth(ft)
-    if s:one_of(a:ft, ['css', 'xml', 'html', 'lisp', 'scheme', 'yaml'])
+func! s:SetTabWidth()
+    if s:one_of(&l:filetype, ['css', 'xml', 'html', 'lisp', 'scheme', 'yaml'])
         CodingStyle Short indent
     else
         CodingStyle My style
@@ -425,7 +460,7 @@ func! s:SetTabWidth(ft)
 endfunc
 " }}}
 " s:SetCompiler {{{
-func! s:SetCompiler(ft)
+func! s:SetCompiler()
     let filetype_vs_compiler = {
     \   'c': 'gcc',
     \   'cpp': 'gcc',
@@ -433,21 +468,22 @@ func! s:SetCompiler(ft)
     \   'java': 'javac',
     \}
     try
-        execute 'compiler' get(filetype_vs_compiler, a:ft, a:ft)
+        for ft in s:each_filetype()
+            execute 'compiler' get(filetype_vs_compiler, ft, ft)
+        endfor
     catch /E666:/    " compiler not supported: ...
     endtry
 endfunc
 " }}}
-" TODO Move these settings to ~/.vim/ftplugin/*
 " s:LoadWhenFileType() {{{
 func! s:LoadWhenFileType()
     if exists("+omnifunc") && &omnifunc == ""
         setlocal omnifunc=syntaxcomplete#Complete
     endif
 
-    call s:SetDict(&filetype)
-    call s:SetTabWidth(&filetype)
-    call s:SetCompiler(&filetype)
+    call s:SetDict()
+    call s:SetTabWidth()
+    call s:SetCompiler()
 endfunc
 
 " do what ~/.vim/ftplugin/* does in .vimrc
