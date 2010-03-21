@@ -484,6 +484,11 @@ func! s:LoadWhenFileType()
     call s:SetDict()
     call s:SetTabWidth()
     call s:SetCompiler()
+
+    " Misc.
+    if s:one_of('perl', s:each_filetype())
+        setlocal complete=.,w,b,u,t,k,kspell
+    endif
 endfunc
 
 " do what ~/.vim/ftplugin/* does in .vimrc
