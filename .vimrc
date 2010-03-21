@@ -971,7 +971,7 @@ vnoremap g, <
 vnoremap g. >
 " }}}
 
-" search {{{
+" Mappings with option value. {{{
 
 func! s:generate_assign_fn(dict) "{{{
     let assign_fn = values(map(a:dict, "printf('let &l:%s = %s', v:key, string(v:val))"))
@@ -999,6 +999,9 @@ nnoremap <expr> ? <SID>do_nmap_before('?', {'hlsearch': 1})
 
 nnoremap <silent><expr> * <SID>do_nmap_before('*', {'hlsearch': 1, 'ignorecase': 0})
 nnoremap <silent><expr> + <SID>do_nmap_before('#', {'hlsearch': 1, 'ignorecase': 0})
+
+nnoremap <expr> : <SID>do_nmap_before(':', {'ignorecase': 1})
+" vnoremap <expr> : <SID>do_vmap_before(':', {'ignorecase': 1})
 " }}}
 
 " Emacs like kill-line. {{{
