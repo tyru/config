@@ -23,6 +23,10 @@
 " }}}
 " Interface  "{{{1
 function! altercmd#define(...)  "{{{2
+  if a:0 < 2
+    return
+  endif
+
   let buffer_p = (a:000[0] ==? '<buffer>')
   let original_name = a:000[buffer_p ? 1 : 0]
   let alternate_name = a:000[buffer_p ? 2 : 1]
@@ -38,7 +42,9 @@ function! altercmd#define(...)  "{{{2
   let original_name_tail = ' ' . original_name_tail
   for i in range(len(original_name_tail))
     let lhs = original_name_head . original_name_tail[1:i]
-    execute 'cnoreabbrev <expr>' lhs
+    execute
+    \ 'cnoreabbrev <expr>' . (buffer_p ? '<buffer>' : '')
+    \ lhs
     \ '(getcmdtype() == ":" && getcmdline() ==# "' . lhs  . '")'
     \ '?' ('"' . alternate_name . '"')
     \ ':' ('"' . lhs . '"')
@@ -49,7 +55,7 @@ endfunction
 
 
 function! altercmd#load()  "{{{2
-  runtime plugin/altercmd.vim
+  runtime! plugin/altercmd.vim
 endfunction
 
 
