@@ -1221,7 +1221,12 @@ func! s:ack(...)
         let &l:grepprg = save_grepprg
     endtry
 endfunc
-command! -nargs=+ Ack call s:ack(<f-args>)
+
+AlterCommand ack Ack
+command!
+\   -bar -nargs=+
+\   Ack
+\   call s:ack(<f-args>)
 " }}}
 " SetTitle {{{
 command! -nargs=+ SetTitle
