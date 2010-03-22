@@ -1837,6 +1837,11 @@ AlterCommand pp     PrettyPrint
 " 'K' for ':Ref'.
 AlterCommand ref Ref
 nnoremap <silent> gK        K
+let g:ref_use_vimproc = 0
+let g:ref_open = 'Split'
+if executable('perldocjp')
+    let g:ref_perldoc_cmd = 'perldocjp'
+endif
 " }}}
 " chalice {{{
 let chalice_bookmark = expand('$HOME/.vim/chalice.bmk')
