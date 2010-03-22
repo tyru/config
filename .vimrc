@@ -7,7 +7,8 @@ syntax enable
 filetype plugin indent on
 
 
-language C
+language messages C
+language time C
 
 
 " Util Functions/Commands {{{
