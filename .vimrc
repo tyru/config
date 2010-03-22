@@ -524,14 +524,14 @@ call arpeggio#load()
 " map {{{
 " operator {{{
 " paste to clipboard
-noremap <Leader>y   "+y
-noremap <Leader>Y   "*y
-noremap <Leader>d   "+d
-noremap <Leader>D   "*d
+noremap <Leader>y       "+y
+noremap [subleader]y    "*y
+noremap <Leader>d       "+d
+noremap [subleader]d    "*d
 
 " do not destroy noname register.
-noremap x   "_x
-noremap [subleader]d   "_d
+noremap x           "_x
+noremap <Space>d    "_d
 
 " map default keys to <Leader> sequence keys.
 noremap <Leader>? g?
