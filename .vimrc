@@ -637,8 +637,8 @@ nnoremap <silent> gp %
 nnoremap <silent> g; ~
 " }}}
 " execute most used command quickly {{{
-nnoremap [cmdleader]w :<C-u>update<CR>
-nnoremap [cmdleader]q :<C-u>q<CR>
+nnoremap [cmdleader]w :<C-u>write<CR>
+nnoremap [cmdleader]q :<C-u>quit<CR>
 " }}}
 " edit .vimrc quickly {{{
 nnoremap <silent> [cmdleader]ee     :<C-u>edit<CR>
