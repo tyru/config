@@ -61,6 +61,14 @@ function! s:uniq(list) "{{{
         unlet s:dict
     endtry
 endfunction "}}}
+function! s:uniq_path(path, ...) "{{{
+    let sep = a:0 != 0 ? a:1 : ','
+    if type(a:path) == type([])
+        return join(s:uniq(a:path), sep)
+    else
+        return join(s:uniq(split(a:path, sep)), sep)
+    endif
+endfunction "}}}
 " }}}
 " Commands {{{
 augroup vimrc
@@ -336,11 +344,12 @@ MyAutocmd VimEnter * autocmd! filetypedetect BufNewFile,BufRead *.md
 " Encoding {{{
 set enc=utf-8
 set fenc=utf-8
-set fileencodings-=iso-2022-jp-3
-set fileencodings-=iso-2022-jp
-set fileencodings-=utf-8
-set fileencodings+=iso-2022-jp,iso-2022-jp-3
-let &fileencodings = 'utf-8,' . &fileencodings
+set termencoding=utf-8
+let &fileencodings = s:uniq_path(
+\   ['utf-8']
+\   + split(&fileencodings, ',')
+\   + ['iso-2022-jp', 'iso-2022-jp-3']
+\)
 
 set fileformats=unix,dos,mac
 if exists('&ambiwidth')
