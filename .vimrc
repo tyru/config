@@ -485,7 +485,7 @@ endfunc
 " }}}
 " s:LoadWhenFileType() {{{
 func! s:LoadWhenFileType()
-    if exists("+omnifunc") && &omnifunc == ""
+    if &omnifunc == ""
         setlocal omnifunc=syntaxcomplete#Complete
     endif
 
