@@ -1059,6 +1059,7 @@ nnoremap <silent><expr> * <SID>do_nmap_before('*', {'hlsearch': 1, 'ignorecase':
 nnoremap <silent><expr> + <SID>do_nmap_before('#', {'hlsearch': 1, 'ignorecase': 0})
 
 nnoremap <expr> : <SID>do_nmap_before(':', {'ignorecase': 1})
+" TODO
 " vnoremap <expr> : <SID>do_vmap_before(':', {'ignorecase': 1})
 " }}}
 
@@ -1594,7 +1595,6 @@ endfunction
 " }}}
 " }}}
 " For Plugins {{{
-" my plugins {{{
 " shell-mode {{{
 let g:loaded_shell_mode = 1
 " }}}
@@ -1690,6 +1690,24 @@ let dumbbuf_remove_marked_when_close = 1
 " prompt {{{
 " let prompt_debug = 1
 " }}}
+" skk {{{
+let skk_jisyo = '~/.skk-jisyo'
+let skk_large_jisyo = '/usr/share/skk/SKK-JISYO'
+
+let skk_control_j_key = '<C-j>'
+" let skk_control_j_key = ''
+" Arpeggio map! fj    <Plug>(skk-enable-im)
+
+let skk_manual_save_jisyo_keys = ''
+
+let skk_egg_like_newline = 1
+let skk_auto_save_jisyo = 1
+let skk_imdisable_state = -1
+" let skk_keep_state = 1
+
+" applied krogue's patch ver.
+let skk_sticky_key = ';'
+" }}}
 " eskk {{{
 let eskk_debug = 1
 let eskk_debug_wait_ms = 0
@@ -1728,8 +1746,6 @@ call submode#map(g:submode_scroll_submode_name, 'n', 'rs', 'k', '<Plug>(submode-
 call submode#map(g:submode_scroll_submode_name, 'n', 'rs', 'a', '<Plug>(submode-scroll-pace-down)')
 call submode#map(g:submode_scroll_submode_name, 'n', 'rs', 's', '<Plug>(submode-scroll-pace-up)')
 " }}}
-" }}}
-" others {{{
 " AutoDate {{{
 let g:autodate_format = "%Y-%m-%d"
 " }}}
@@ -1827,24 +1843,6 @@ nnoremap <silent> <C-]>     :call <SID>JumpTags()<CR>
 " operator-replace {{{
 map <Leader>r  <Plug>(operator-replace)
 " }}}
-" skk {{{
-let skk_jisyo = '~/.skk-jisyo'
-let skk_large_jisyo = '/usr/share/skk/SKK-JISYO'
-
-let skk_control_j_key = '<C-y>'
-" let skk_control_j_key = ''
-" Arpeggio map! fj    <Plug>(skk-enable-im)
-
-let skk_manual_save_jisyo_keys = ''
-
-let skk_egg_like_newline = 1
-let skk_auto_save_jisyo = 1
-let skk_imdisable_state = -1
-" let skk_keep_state = 1
-
-" applied krogue's patch ver.
-let skk_sticky_key = ';'
-" }}}
 " vimshell {{{
 AlterCommand vsh[ell] VimShell
 
@@ -1905,7 +1903,6 @@ let chalice_bookmark = expand('$HOME/.vim/chalice.bmk')
 " }}}
 " indent/vim.vim {{{
 let g:vim_indent_cont = 0
-" }}}
 " }}}
 " }}}
 " Backup {{{
