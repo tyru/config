@@ -876,6 +876,13 @@ endfunction " }}}
 " move current buffer into a new tab.
 nnoremap <silent> [cmdleader]mt :<C-u>call <SID>move_window_into_tab_page(0)<Cr>
 " }}}
+" netrw - vimperator-like keymappings {{{
+function! s:filetype_netrw() "{{{
+    nmap     <buffer> gu -
+endfunction " }}}
+
+MyAutocmd FileType netrw call s:filetype_netrw()
+" }}}
 " }}}
 " map! {{{
 noremap! <C-f>   <Right>
