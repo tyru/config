@@ -751,11 +751,11 @@ let s:coding_styles['BSD']           = 'set noexpandtab tabstop=8 shiftwidth=4 s
 let s:coding_styles['Linux']         = 'set noexpandtab tabstop=8 shiftwidth=8 softtabstop&'
 
 command!
-\   -bar -nargs=1 -complete=customlist,s:complete_coding_style
+\   -bar -nargs=1 -complete=customlist,s:coding_style_complete
 \   CodingStyle
 \   execute get(s:coding_styles, <f-args>, '')
 
-function! s:complete_coding_style(...) "{{{
+function! s:coding_style_complete(...) "{{{
     return keys(s:coding_styles)
 endfunction "}}}
 
