@@ -673,9 +673,10 @@ func! s:cmdwin_enter()
 endfunc
 MyAutocmd CmdwinEnter * call s:cmdwin_enter()
 
-" nnoremap g: q:
-" nnoremap g/ q/
-" nnoremap g? q?
+let loaded_cmdbuf = 1
+nnoremap g: q:
+nnoremap g/ q/
+nnoremap g? q?
 " }}}
 " walking between tabs {{{
 nnoremap <silent> <C-n>         gt
