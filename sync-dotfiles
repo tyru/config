@@ -126,6 +126,7 @@ my $auto_commit;
 my $auto_push;
 my $extract;
 my $auto_gc;
+my $upload_to_vimrcbox;
 my $github_user = qx(git config github.user);
 
 if (defined $ENV{USER}) {
@@ -142,6 +143,7 @@ GetOptions(
     'p|push'       => \$auto_push,
     'x|extract'    => \$extract,
     'gc'           => \$auto_gc,
+    'v|vimrcbox'   => \$upload_to_vimrcbox,
 ) or usage;
 usage if $help;
 
@@ -207,12 +209,6 @@ unless ($extract) {
 
 # -c: Update trees and commit all.
 if ($auto_commit) {
-    if (length qx(git diff -- .vimrc)) {
-        # if .vimrc has changed
-        system(qw(vim -c RcbVimrc -c quit));
-        sleep 1;
-    }
-
     system(qw(git rm -fr --cached .));
     system(qw(git add .));
     system(qw(git commit));
@@ -224,4 +220,7 @@ if ($auto_gc) {
 # -p: 'git push origin master'
 if ($auto_push) {
     system(qw(git push origin master));
+}
+if ($upload_to_vimrcbox) {
+    system(q(vim -c 'source vimrcbox.vim | RcbVimrc' -c quit));
 }
