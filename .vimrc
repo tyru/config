@@ -257,7 +257,7 @@ set formatoptions=mMcroqnl2
 
 " fold
 set foldenable
-set foldmethod=marker
+" set foldmethod=marker
 
 " misc.
 set autoread
