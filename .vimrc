@@ -665,9 +665,11 @@ nnoremap <silent> [cmdleader]sv     :<C-u>source $MYVIMRC<CR>
 " cmdwin {{{
 set cedit=<C-z>
 func! s:cmdwin_enter()
-    inoremap <buffer> <C-z>     <C-c>
-    nnoremap <buffer> <C-z>     <C-c>
-    nnoremap <buffer> q         :<C-u>quit<CR>
+    inoremap <buffer> <C-z>         <C-c>
+    nnoremap <buffer> <C-z>         <C-c>
+    nnoremap <buffer> <Esc>         :<C-u>quit<CR>
+    nnoremap <buffer> <C-w>k        :<C-u>quit<CR>
+    nnoremap <buffer> <C-w><C-k>    :<C-u>quit<CR>
 
     startinsert!
 endfunc
