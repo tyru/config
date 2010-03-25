@@ -818,8 +818,9 @@ function! s:close_first_window_like(expr) "{{{
         for winnr in winnr_list
             execute winnr . 'wincmd w'
             execute 'wincmd c'
-            break    " close 1 window.
+            return 1    " closed.
         endfor
+        return 0
     finally
         let cur_winnr = winnr()
         if cur_winnr !=# prev_winnr && winbufnr(prev_winnr) !=# -1
@@ -836,9 +837,36 @@ function! s:close_quickfix_window() "{{{
     return s:close_first_window_like('getbufvar(bufnr, "&buftype") == "quickfix"')
 endfunction "}}}
 
+MyAutocmd CmdwinEnter * let s:in_cmdwin = 1
+MyAutocmd CmdwinLeave * let s:in_cmdwin = 0
+function! s:close_cmdwin_window() "{{{
+    if s:in_cmdwin
+        quit
+        return 1
+    else
+        return 0
+    endif
+endfunction "}}}
+
+function! s:close_certain_window() "{{{
+    " Close first window which is:
+    " - cmdwin
+    " - help window
+    " - quickfix window
+
+    if s:close_cmdwin_window()
+        return 1
+    else
+        return s:close_first_window_like(
+        \   'getbufvar(bufnr, "&buftype") ==# "help"'
+        \   . '|| getbufvar(bufnr, "&buftype") ==# "quickfix"'
+        \)
+    endif
+endfunction "}}}
+
 nnoremap <silent> [cmdleader]ch :<C-u>call <SID>close_help_window()<CR>
 nnoremap <silent> [cmdleader]ck :<C-u>call <SID>close_quickfix_window()<CR>
-nnoremap <silent> [cmdleader]cc :<C-u>call <SID>close_first_window_like('getbufvar(bufnr, "&buftype") != ""')<CR>
+nnoremap <silent> [cmdleader]cc :<C-u>call <SID>close_certain_window()<CR>
 " }}}
 " move window into tabpage {{{
 " http://vim-users.jp/2009/12/hack106/
