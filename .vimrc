@@ -1709,8 +1709,18 @@ let skk_imdisable_state = -1
 let skk_sticky_key = ';'
 " }}}
 " eskk {{{
-let eskk_debug = 1
-let eskk_debug_wait_ms = 0
+let g:eskk_debug = 1
+let g:eskk_debug_wait_ms = 0
+
+let g:eskk_no_default_mappings = 1
+map! <C-g><C-j> <Plug>(eskk-toggle)
+lmap ;      <Plug>(eskk-sticky-key)
+
+" let g:eskk_no_default_mappings = 1
+" Arpeggio map! fj <Plug>(eskk-enable)
+" Arpeggio lmap fk <Plug>(eskk-disable)
+" lmap ;      <Plug>(eskk-sticky-key)
+
 " }}}
 " stickykey {{{
 
