@@ -821,8 +821,25 @@ function! s:get_windows_nr_like(expr) "{{{
     return ret
 endfunction "}}}
 
+function! s:move_current_winnr_to_head(winnr_list) "{{{
+    let winnr_list = a:winnr_list
+    let curwinnr = winnr()
+    let counter = 0
+    while s:has_idx(winnr_list, counter)
+        let nr = winnr_list[counter]
+        if curwinnr ==# nr
+            call remove(winnr_list, counter)
+            return [nr] + winnr_list
+        endif
+        let counter += 1
+    endwhile
+    return winnr_list
+endfunction "}}}
+
 function! s:close_first_window_like(expr) "{{{
     let winnr_list = s:get_windows_nr_like(a:expr)
+    " Close current window if current matches a:expr.
+    let winnr_list = s:move_current_winnr_to_head(winnr_list)
     if empty(winnr_list)
         return
     endif
@@ -830,12 +847,12 @@ function! s:close_first_window_like(expr) "{{{
     let prev_winnr = winnr()
     try
         for winnr in winnr_list
-            execute winnr . 'wincmd w'
-            execute 'wincmd c'
+            call s:close_window(winnr)
             return 1    " closed.
         endfor
         return 0
     finally
+        " Back to previous window.
         let cur_winnr = winnr()
         if cur_winnr !=# prev_winnr && winbufnr(prev_winnr) !=# -1
             execute prev_winnr . 'wincmd w'
@@ -843,16 +860,40 @@ function! s:close_first_window_like(expr) "{{{
     endtry
 endfunction "}}}
 
+function! s:winexists(winnr) "{{{
+    return winbufnr(a:winnr) !=# -1
+endfunction "}}}
+
+function! s:close_window(winnr) "{{{
+    if s:winexists(a:winnr)
+        execute a:winnr . 'wincmd w'
+        execute 'wincmd c'
+        return 1
+    else
+        return 0
+    endif
+endfunction "}}}
+
+
 function! s:close_help_window() "{{{
-    return s:close_first_window_like('getbufvar(bufnr, "&buftype") == "help"')
+    return s:close_first_window_like('s:is_help_window(winnr)')
+endfunction "}}}
+function! s:is_help_window(winnr) "{{{
+    return getbufvar(winbufnr(a:winnr), '&buftype') ==# 'help'
 endfunction "}}}
 
 function! s:close_quickfix_window() "{{{
-    return s:close_first_window_like('getbufvar(bufnr, "&buftype") == "quickfix"')
+    return s:close_first_window_like('s:is_quickfix_window(winnr)')
+endfunction "}}}
+function! s:is_quickfix_window(winnr) "{{{
+    return getbufvar(winbufnr(a:winnr), '&buftype') ==# 'quickfix'
 endfunction "}}}
 
 function! s:close_ref_window() "{{{
-    return s:close_first_window_like('getbufvar(bufnr, "&filetype") == "ref"')
+    return s:close_first_window_like('s:is_ref_window(winnr)')
+endfunction "}}}
+function! s:is_ref_window(winnr) "{{{
+    return getbufvar(winbufnr(a:winnr), '&filetype') ==# 'ref'
 endfunction "}}}
 
 let s:in_cmdwin = 0
@@ -866,8 +907,27 @@ function! s:close_cmdwin_window() "{{{
         return 0
     endif
 endfunction "}}}
+function! s:is_cmdwin_window(winnr) "{{{
+    return s:in_cmdwin
+endfunction "}}}
+
 
 function! s:close_certain_window() "{{{
+    " Close current.
+    let curwinnr = winnr()
+    for pred_fn in [
+    \   's:is_cmdwin_window',
+    \   's:is_help_window',
+    \   's:is_quickfix_window',
+    \   's:is_ref_window',
+    \]
+        if {pred_fn}(curwinnr)
+            call s:close_window(curwinnr)
+            return
+        endif
+    endfor
+
+    " Or close outside buffer.
     for close_fn in [
     \   's:close_cmdwin_window',
     \   's:close_help_window',
@@ -879,6 +939,7 @@ function! s:close_certain_window() "{{{
         endif
     endfor
 endfunction "}}}
+
 
 nnoremap <silent> [cmdleader]ch :<C-u>call <SID>close_help_window()<CR>
 nnoremap <silent> [cmdleader]ck :<C-u>call <SID>close_quickfix_window()<CR>
