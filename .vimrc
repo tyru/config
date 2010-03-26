@@ -845,6 +845,11 @@ function! s:close_quickfix_window() "{{{
     return s:close_first_window_like('getbufvar(bufnr, "&buftype") == "quickfix"')
 endfunction "}}}
 
+function! s:close_ref_window() "{{{
+    return s:close_first_window_like('getbufvar(bufnr, "&filetype") == "ref"')
+endfunction "}}}
+
+let s:in_cmdwin = 0
 MyAutocmd CmdwinEnter * let s:in_cmdwin = 1
 MyAutocmd CmdwinLeave * let s:in_cmdwin = 0
 function! s:close_cmdwin_window() "{{{
@@ -857,23 +862,21 @@ function! s:close_cmdwin_window() "{{{
 endfunction "}}}
 
 function! s:close_certain_window() "{{{
-    " Close first window which is:
-    " - cmdwin
-    " - help window
-    " - quickfix window
-
-    if s:close_cmdwin_window()
-        return 1
-    else
-        return s:close_first_window_like(
-        \   'getbufvar(bufnr, "&buftype") ==# "help"'
-        \   . '|| getbufvar(bufnr, "&buftype") ==# "quickfix"'
-        \)
-    endif
+    for close_fn in [
+    \   's:close_cmdwin_window',
+    \   's:close_help_window',
+    \   's:close_quickfix_window',
+    \   's:close_ref_window'
+    \]
+        if {close_fn}()
+            return 1
+        endif
+    endfor
 endfunction "}}}
 
 nnoremap <silent> [cmdleader]ch :<C-u>call <SID>close_help_window()<CR>
 nnoremap <silent> [cmdleader]ck :<C-u>call <SID>close_quickfix_window()<CR>
+nnoremap <silent> [cmdleader]cr :<C-u>call <SID>close_ref_window()<CR>
 nnoremap <silent> [cmdleader]cc :<C-u>call <SID>close_certain_window()<CR>
 " }}}
 " move window into tabpage {{{
