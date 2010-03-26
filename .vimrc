@@ -331,12 +331,19 @@ MyAutocmd BufNewFile,BufReadPre *.mkd
 MyAutocmd BufNewFile,BufReadPre *.md
             \ setlocal ft=markdown
 
+" aliases
 MyAutocmd FileType mkd
             \ setlocal ft=markdown
 MyAutocmd FileType js
             \ setlocal ft=javascript
 MyAutocmd FileType c++
             \ setlocal ft=cpp
+MyAutocmd FileType py
+            \ setlocal ft=python
+MyAutocmd FileType pl
+            \ setlocal ft=perl
+MyAutocmd FileType sch
+            \ setlocal ft=scheme
 
 " delete autocmd for ft=mkd.
 MyAutocmd VimEnter * autocmd! filetypedetect BufNewFile,BufRead *.md
