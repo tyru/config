@@ -69,6 +69,12 @@ function! s:uniq_path(path, ...) "{{{
         return join(s:uniq(split(a:path, sep)), sep)
     endif
 endfunction "}}}
+function! s:has_idx(list, idx) "{{{
+    let idx = a:idx
+    " Support negative index?
+    " let idx = a:idx >= 0 ? a:idx : len(a:list) + a:idx
+    return 0 <= idx && idx < len(a:list)
+endfunction "}}}
 " }}}
 " Commands {{{
 augroup vimrc
