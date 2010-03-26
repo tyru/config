@@ -407,6 +407,9 @@ nnoremap <Leader>g  :gmset!<CR>
 " subscldr.js {{{
 nnoremap <Leader>s :subscldr<CR>
 " }}}
+" hints-for-embedded.js {{{
+let g:hints_for_embedded_mode = "e"
+" }}}
 " }}}
 "-----------------------------------------------------------------
 " misc. {{{
