@@ -609,8 +609,8 @@ call operator#user#define('uniq', 'Op_command',
 " motion/textobj {{{
 noremap <silent> j          gj
 noremap <silent> k          gk
-noremap <silent> gj         j
-noremap <silent> gk         k
+noremap <silent> [origleader]j j
+noremap <silent> [origleader]k k
 
 noremap <silent> ]k        :<C-u>call search('^\S', 'Ws')<CR>
 noremap <silent> [k        :<C-u>call search('^\S', 'Wsb')<CR>
@@ -629,11 +629,6 @@ noremap <silent> <Space>k           <C-b>
 " }}}
 " }}}
 " nmap {{{
-" All 'suffix key' should be like the following in the normal mode.
-nnoremap <LocalLeader><LocalLeader>    <LocalLeader>
-nnoremap <Leader><Leader>              <Leader>
-
-
 " TODO Ignore last pattern direction
 " I want the way to know last searched direction...
 nnoremap <silent> n     nzz
