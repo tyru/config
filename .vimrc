@@ -629,11 +629,6 @@ noremap <silent> <Space>k           <C-b>
 " }}}
 " }}}
 " nmap {{{
-" TODO Ignore last pattern direction
-" I want the way to know last searched direction...
-nnoremap <silent> n     nzz
-nnoremap <silent> N     Nzz
-
 " open only current line's fold.
 nnoremap <silent> z<Space> zMzvzz
 
@@ -648,8 +643,8 @@ nnoremap <silent> d<Space>  0d$
 nnoremap <silent> y<Space>  0y$
 nnoremap <silent> c<Space>  0c$
 
-nnoremap r gr
-nnoremap R gR
+nnoremap r gR
+nnoremap R gr
 
 nnoremap [cmdleader]m :<C-u>messages<CR>
 nnoremap [cmdleader]d :<C-u>display<CR>
@@ -658,6 +653,9 @@ nnoremap [cmdleader]d :<C-u>display<CR>
 " TODO More like i_CTRL-a, i_CTRL-e of my hack.
 nnoremap <silent> gh  ^
 nnoremap <silent> gl  $
+
+nnoremap <silent> g]  }
+nnoremap <silent> g[  {
 
 nnoremap <silent> Y y$
 
@@ -707,8 +705,6 @@ nnoremap g? q?
 " walking between tabs {{{
 nnoremap <silent> <C-n>         gt
 nnoremap <silent> <C-p>         gT
-nnoremap <silent> <C-Tab>       gt
-nnoremap <silent> <C-S-Tab>     gT
 nnoremap <silent> <C-g><C-n>    :<C-u>tablast<CR>
 nnoremap <silent> <C-g><C-p>    :<C-u>tabfirst<CR>
 " }}}
