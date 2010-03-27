@@ -1564,7 +1564,7 @@ command!
 command!
 \   -nargs=?
 \   Expand
-\   echo expand(<q-args> != '' ? <q-args> : '%')
+\   echo expand(<q-args> != '' ? <q-args> : '%:p')
 
 AlterCommand ep Expand
 " }}}
