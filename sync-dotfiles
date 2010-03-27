@@ -222,5 +222,5 @@ if ($auto_push) {
     system(qw(git push origin master));
 }
 if ($upload_to_vimrcbox) {
-    system(q(vim -c 'source vimrcbox.vim | RcbVimrc' -c quit));
+    system(q(vim -u NONE -U NONE --noplugin -c 'source vimrcbox.vim | RcbVimrc' -c quit));
 }
