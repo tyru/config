@@ -527,19 +527,28 @@ MyAutocmd FileType *   call s:LoadWhenFileType()
 
 " Set up prefix keys. {{{
 let mapleader = ';'
-let maplocalleader = '\'
-
 nnoremap <Leader>       <Nop>
+nnoremap [origleader]<Leader>   <Leader>
+
+let maplocalleader = '\'
 nnoremap <LocalLeader>  <Nop>
+nnoremap [origleader]<LocalLeader>  <LocalLeader>
 
 nnoremap    [subleader]     <Nop>
 nmap        ,               [subleader]
+nnoremap    [origleader],   ,
 
 nnoremap    [cmdleader]     <Nop>
 nmap        <Space>         [cmdleader]
+nnoremap    [origleader]<Space>     <Space>
 
-let s:submode_leader = 'gs'
+nnoremap    [origleader]    <Nop>
+nmap        q               [origleader]
+nnoremap    [origleader]q   q
+
+let s:submode_leader = 'm'
 execute 'nnoremap' s:submode_leader '<Nop>'
+nnoremap    [origleader]m   m
 " }}}
 
 let g:arpeggio_timeoutlen = 40
