@@ -599,6 +599,12 @@ map <Leader>j <Plug>(operator-join)
 call operator#user#define('join', 'Op_command',
 \                         'call Set_op_command("join")')
 " }}}
+" operator-uniq {{{
+map <Leader>u <Plug>(operator-uniq)
+
+call operator#user#define('uniq', 'Op_command',
+\                         'call Set_op_command("sort u")')
+" }}}
 " }}}
 " motion/textobj {{{
 noremap <silent> j          gj
