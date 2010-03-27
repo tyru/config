@@ -269,8 +269,10 @@ set foldenable
 set autoread
 set diffopt=filler,vertical
 set helplang=ja,en
+set hidden
 set history=50
 set keywordprg=
+set lazyredraw
 set nojoinspaces
 set noshowcmd
 set nrformats=hex
@@ -278,7 +280,6 @@ set shortmess=aI
 set switchbuf=useopen,usetab
 set textwidth=0
 set viminfo='50,h,f1,n$HOME/.viminfo
-set hidden
 " }}}
 " Autocmd {{{
 
