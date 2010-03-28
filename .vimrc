@@ -489,7 +489,7 @@ endfunc
 " }}}
 " s:SetTabWidth {{{
 func! s:SetTabWidth()
-    if s:one_of(&l:filetype, ['css', 'xml', 'html', 'lisp', 'scheme', 'yaml'])
+    if s:one_of(s:each_filetype(), ['css', 'xml', 'html', 'lisp', 'scheme', 'yaml'])
         CodingStyle Short indent
     else
         CodingStyle My style
