@@ -4,3 +4,6 @@
 [submodule "ext/cmdwincomplete.vim"]
 	path = ext/cmdwincomplete.vim
 	url = git://github.com/tyru/cmdwincomplete.vim.git
+[submodule "ext/command-buffer.vim"]
+	path = ext/command-buffer.vim
+	url = git://github.com/tyru/command-buffer.vim.git
