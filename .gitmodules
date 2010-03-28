@@ -7,3 +7,6 @@
 [submodule "ext/command-buffer.vim"]
 	path = ext/command-buffer.vim
 	url = git://github.com/tyru/command-buffer.vim.git
+[submodule "ext/DumbBuf.vim"]
+	path = ext/DumbBuf.vim
+	url = git://github.com/tyru/DumbBuf.vim.git
