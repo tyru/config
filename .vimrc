@@ -1618,6 +1618,14 @@ command!
 AlterCommand ex     ExMode
 AlterCommand exi    ExModeInteractive
 " }}}
+" GlobPath {{{
+command!
+\   -bar -nargs=1
+\   GlobPath
+\   echo globpath(&rtp, <q-args>)
+
+AlterCommand gp GlobPath
+" }}}
 
 " ...Mode {{{
 " NoremapMode {{{
