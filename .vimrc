@@ -280,7 +280,6 @@ set foldenable
 set autoread
 set diffopt=filler,vertical
 set helplang=ja,en
-set hidden
 set history=50
 set keywordprg=
 set lazyredraw
@@ -692,6 +691,7 @@ nnoremap g; ~
 nnoremap [cmdleader]w      :<C-u>write<CR>
 nnoremap [cmdleader]q      :<C-u>quit<CR>
 nnoremap [cmdleader]co     :<C-u>close<CR>
+nnoremap [cmdleader]h      :<C-u>hide<CR>
 " }}}
 " edit .vimrc quickly {{{
 nnoremap [cmdleader]ee     :<C-u>edit<CR>
