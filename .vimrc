@@ -651,6 +651,13 @@ onoremap ar a]
 vnoremap ar a]
 onoremap ir i]
 vnoremap ir i]
+
+noremap g] }
+noremap g[ {
+
+" TODO More like i_CTRL-a, i_CTRL-e of my hack.
+noremap gw ^
+noremap ge $
 " }}}
 " misc. {{{
 noremap <silent> <Space>j           <C-f>
@@ -676,13 +683,6 @@ nnoremap [cmdleader]m :<C-u>messages<CR>
 nnoremap [cmdleader]d :<C-u>display<CR>
 
 " remap far keys {{{
-" TODO More like i_CTRL-a, i_CTRL-e of my hack.
-nnoremap <silent> gh  ^
-nnoremap <silent> gl  $
-
-nnoremap <silent> g]  }
-nnoremap <silent> g[  {
-
 nnoremap <silent> Y y$
 
 nnoremap <silent> +     #
@@ -1085,7 +1085,7 @@ inoremap <C-CR> <C-o>o
 
 " completion {{{
 
-inoremap <expr> <CR>    pumvisible() ? "\<C-y>" : "\<CR>"
+" inoremap <expr> <CR>    pumvisible() ? "\<C-y>" : "\<CR>"
 
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : <SID>complete(1)
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : <SID>complete(0)
