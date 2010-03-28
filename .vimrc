@@ -1456,52 +1456,6 @@ function! s:show_path(...) "{{{
     endfor
 endfunction "}}}
 " }}}
-" Write {{{
-AlterCommand w[rite]    Write
-
-" AlterCommand w[rite]    confirm<Space>write
-" set directory=$HOME/.vim/backup
-
-command!
-\   -bang -nargs=? -complete=file
-\   Write
-\   call s:write("<bang>", <f-args>)
-
-" :Write has some different points as follows:
-" - It will ask when &readonly is true.
-"
-" TODO
-" - It will ask when it rewrites a file
-"   when specified the path.
-" - :WriteQuit
-function! s:write(bang, ...) "{{{
-    let file = a:0 == 0 ? expand('%') : expand(a:1)
-    let write_cmd = printf('write%s %s', a:bang, file)
-    try
-        if &l:readonly && a:0 == 0
-            let msg = file . ': this file is readonly! overwrite?:'
-            let r = prompt#prompt(msg, {
-            \   'yes_no': 1,
-            \   'escape': 1,
-            \   'one_char': 1,
-            \})
-            " TODO prompt#prompt should return boolean value
-            " when 'yesno' option is given.
-            if r =~# '^\s*[yY]\%[[eE][sS]]'
-                let write_cmd = 'setlocal noreadonly | ' . write_cmd
-            else
-                return
-            endif
-        endif
-
-        " TODO when rewring a file
-
-        execute write_cmd
-    catch
-        call s:warn(v:exception)
-    endtry
-endfunction "}}}
-" }}}
 " TR, TRR {{{
 "
 " TODO
