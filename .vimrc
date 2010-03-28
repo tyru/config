@@ -96,7 +96,6 @@ endfunction "}}}
 " Commands {{{
 augroup vimrc
     autocmd!
-    " Create 'vimrc' augroup.
 augroup END
 
 command! -bang -nargs=* MyAutocmd autocmd<bang> vimrc <args>
@@ -466,6 +465,7 @@ func! s:each_filetype() "{{{
     return split(&l:filetype, '\.')
 endfunc "}}}
 
+" TODO: Write 'operator-camel' and camelize these functions.
 " s:SetDict {{{
 func! s:SetDict()
     let filetype_vs_dictionary = {
@@ -1018,7 +1018,7 @@ function! s:move_window_into_tab_page(target_tabpagenr) "{{{
   endif
 
   execute target_tabpagenr 'tabnext'
-endfunction " }}}
+endfunction "}}}
 
 " move current buffer into a new tab.
 nnoremap <silent> [cmdleader]mt :<C-u>call <SID>move_window_into_tab_page(0)<Cr>
@@ -1026,7 +1026,7 @@ nnoremap <silent> [cmdleader]mt :<C-u>call <SID>move_window_into_tab_page(0)<Cr>
 " netrw - vimperator-like keymappings {{{
 function! s:filetype_netrw() "{{{
     nmap     <buffer> gu -
-endfunction " }}}
+endfunction "}}}
 
 MyAutocmd FileType netrw call s:filetype_netrw()
 " }}}
