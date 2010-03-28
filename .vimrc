@@ -85,6 +85,9 @@ function! s:has_idx(list, idx) "{{{
     " let idx = a:idx >= 0 ? a:idx : len(a:list) + a:idx
     return 0 <= idx && idx < len(a:list)
 endfunction "}}}
+function! s:stringf(fmt, ...) "{{{
+    return call('printf', [a:fmt] + map(copy(a:000), 'string(v:val)'))
+endfunction "}}}
 " }}}
 " Commands {{{
 augroup vimrc
