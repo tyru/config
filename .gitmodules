@@ -28,3 +28,6 @@
 [submodule "ext/sign-diff.vim"]
 	path = ext/sign-diff.vim
 	url = git://github.com/tyru/sign-diff.vim.git
+[submodule "ext/simpletap.vim"]
+	path = ext/simpletap.vim
+	url = git://github.com/tyru/simpletap.vim.git
