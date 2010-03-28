@@ -37,3 +37,6 @@
 [submodule "ext/stickykey.vim"]
 	path = ext/stickykey.vim
 	url = git://github.com/tyru/stickykey.vim.git
+[submodule "ext/submode-scroll.vim"]
+	path = ext/submode-scroll.vim
+	url = git://github.com/tyru/submode-scroll.vim.git
