@@ -40,3 +40,6 @@
 [submodule "ext/submode-scroll.vim"]
 	path = ext/submode-scroll.vim
 	url = git://github.com/tyru/submode-scroll.vim.git
+[submodule "ext/vimtemplate.vim"]
+	path = ext/vimtemplate.vim
+	url = git://github.com/tyru/vimtemplate.vim.git
