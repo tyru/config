@@ -1,3 +1,6 @@
 [submodule "ext/caw.vim"]
 	path = ext/caw.vim
 	url = git://github.com/tyru/caw.vim.git
+[submodule "ext/cmdwincomplete.vim"]
+	path = ext/cmdwincomplete.vim
+	url = git://github.com/tyru/cmdwincomplete.vim.git
