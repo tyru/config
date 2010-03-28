@@ -1085,10 +1085,6 @@ inoremap <C-CR> <C-o>o
 
 " completion {{{
 
-silent Arpeggio inoremap qn    <C-n>
-silent Arpeggio inoremap qp    <C-p>
-silent Arpeggio inoremap xn    <C-x><C-n>
-silent Arpeggio inoremap xp    <C-x><C-p>
 inoremap <expr> <CR>    pumvisible() ? "\<C-y>" : "\<CR>"
 
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : <SID>complete(1)
