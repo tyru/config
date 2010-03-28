@@ -2,6 +2,10 @@
 scriptencoding utf-8
 set cpo&vim
 
+" TODO:
+" - Rename func -> function
+" - Remove all <silent>.
+" Add <silent> if it is bother.
 
 syntax enable
 filetype plugin indent on
