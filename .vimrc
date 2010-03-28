@@ -3,7 +3,6 @@ scriptencoding utf-8
 set cpo&vim
 
 " TODO:
-" - Rename func -> function
 " - Remove all <silent>.
 " Add <silent> if it is bother.
 
@@ -17,23 +16,23 @@ language time C
 
 " Util Functions/Commands {{{
 " Function {{{
-func! s:warn(msg) "{{{
+function! s:warn(msg) "{{{
     echohl WarningMsg
     echomsg a:msg
     echohl None
-endfunc "}}}
-func! s:system(command, ...) "{{{
+endfunction "}}}
+function! s:system(command, ...) "{{{
     let args = [a:command] + map(copy(a:000), 'shellescape(v:val)')
     return system(join(args, ' '))
-endfunc "}}}
-func! s:glob(expr) "{{{
+endfunction "}}}
+function! s:glob(expr) "{{{
     return split(glob(a:expr), "\n")
-endfunc "}}}
-func! s:getchar(...) "{{{
+endfunction "}}}
+function! s:getchar(...) "{{{
     let c = call('getchar', a:000)
     return type(c) == type("") ? c : nr2char(c)
-endfunc "}}}
-func! s:one_of(elem, list) "{{{
+endfunction "}}}
+function! s:one_of(elem, list) "{{{
     if type(a:elem) == type([])
         " Same as `s:one_of(a:elem[0], a:list) || s:one_of(a:elem[1], a:list) ...`
         for i in a:elem
@@ -45,7 +44,7 @@ func! s:one_of(elem, list) "{{{
     else
         return !empty(filter(copy(a:list), 'v:val ==# a:elem'))
     endif
-endfunc "}}}
+endfunction "}}}
 function! s:uniq(list) "{{{
     let s:dict = {}
     let counter = 1
@@ -113,10 +112,10 @@ if has("win32")
 endif
 
 
-func! s:is_action(name) "{{{
+function! s:is_action(name) "{{{
     return s:get_action(a:name) !=# -1
-endfunc "}}}
-func! s:get_action(name) "{{{
+endfunction "}}}
+function! s:get_action(name) "{{{
     let action = {
     \   'shift'   : 'let &rtp = join(split(&rtp, ",")[1:], ",")',
     \   'pop'     : 'let &rtp = join(split(&rtp, ",")[:-2], ",")',
@@ -126,8 +125,8 @@ func! s:get_action(name) "{{{
     \   'finish'  : 'return',
     \}
     return get(action, a:name, -1)
-endfunc "}}}
-func! s:add_rtp_from_file(file) "{{{
+endfunction "}}}
+function! s:add_rtp_from_file(file) "{{{
     let file = expand(a:file)
     if !filereadable(file) | return | endif
 
@@ -149,7 +148,7 @@ func! s:add_rtp_from_file(file) "{{{
 
         execute s:get_action(action)
     endfor
-endfunc "}}}
+endfunction "}}}
 call s:add_rtp_from_file('~/.vimruntimepath.lst')
 " }}}
 
@@ -227,11 +226,11 @@ endif
 " title
 set title
 let &titlestring = '%{getcwd()} %{haslocaldir() ? "(local)" : ""}'
-" func! Dir()
+" function! Dir()
 "     let d = fnamemodify(getcwd(), ':~')
 "     let d = substitute(d, '\/$', '', '')
 "     return d
-" endfunc
+" endfunction
 
 " tab
 set showtabline=2
@@ -299,11 +298,11 @@ set viminfo='50,h,f1,n$HOME/.viminfo
 " }}}
 " Autocmd {{{
 
-func! s:vimenter_handler()
+function! s:vimenter_handler()
     " Color
     set bg=dark
     colorscheme desert
-endfunc
+endfunction
 
 " colorscheme (on windows, setting colorscheme in .vimrc does not work)
 MyAutocmd VimEnter * call s:vimenter_handler()
@@ -390,7 +389,7 @@ if exists('&ambiwidth')
 endif
 
 " set enc=... {{{
-func! ChangeEncoding()
+function! ChangeEncoding()
     if expand( '%' ) == ''
         call s:warn("current file is empty.")
         return
@@ -412,12 +411,12 @@ func! ChangeEncoding()
     if result !=# "\e"
         echomsg printf("re-open with '%s'.", result)
     endif
-endfunc
+endfunction
 
 nnoremap <silent> [subleader]ta     :call ChangeEncoding()<CR>
 " }}}
 " set fenc=... {{{
-func! ChangeFileEncoding()
+function! ChangeFileEncoding()
     let enc = prompt#prompt("changing file encoding to...", {
                 \ 'menu': [
                 \ 'cp932',
@@ -440,12 +439,12 @@ func! ChangeFileEncoding()
         set nobomb
     endif
     echomsg printf("changing file encoding to '%s'.", enc)
-endfunc
+endfunction
 
 nnoremap <silent> [subleader]ts    :<C-u>call ChangeFileEncoding()<CR>
 " }}}
 " set ff=... {{{
-func! ChangeNL()
+function! ChangeNL()
     let result = prompt#prompt("changing newline format to...", {
                 \ 'menu': ['dos', 'unix', 'mac'],
                 \ 'one_char': 1,
@@ -455,19 +454,19 @@ func! ChangeNL()
     if result !=# "\e"
         echomsg printf("changing newline format to '%s'.", result)
     endif
-endfunc
+endfunction
 
 nnoremap <silent> [subleader]td    :<C-u>call ChangeNL()<CR>
 " }}}
 " }}}
 " FileType {{{
-func! s:each_filetype() "{{{
+function! s:each_filetype() "{{{
     return split(&l:filetype, '\.')
-endfunc "}}}
+endfunction "}}}
 
 " TODO: Write 'operator-camel' and camelize these functions.
 " s:SetDict {{{
-func! s:SetDict()
+function! s:SetDict()
     let filetype_vs_dictionary = {
     \   'c': ['c', 'cpp'],
     \   'cpp': ['c', 'cpp'],
@@ -489,19 +488,19 @@ func! s:SetDict()
     for d in dicts
         let &l:dictionary = join(s:uniq(dicts), ',')
     endfor
-endfunc
+endfunction
 " }}}
 " s:SetTabWidth {{{
-func! s:SetTabWidth()
+function! s:SetTabWidth()
     if s:one_of(s:each_filetype(), ['css', 'xml', 'html', 'lisp', 'scheme', 'yaml'])
         CodingStyle Short indent
     else
         CodingStyle My style
     endif
-endfunc
+endfunction
 " }}}
 " s:SetCompiler {{{
-func! s:SetCompiler()
+function! s:SetCompiler()
     let filetype_vs_compiler = {
     \   'c': 'gcc',
     \   'cpp': 'gcc',
@@ -514,10 +513,10 @@ func! s:SetCompiler()
         endfor
     catch /E666:/    " compiler not supported: ...
     endtry
-endfunc
+endfunction
 " }}}
 " s:LoadWhenFileType() {{{
-func! s:LoadWhenFileType()
+function! s:LoadWhenFileType()
     if &omnifunc == ""
         setlocal omnifunc=syntaxcomplete#Complete
     endif
@@ -530,7 +529,7 @@ func! s:LoadWhenFileType()
     if s:one_of('perl', s:each_filetype())
         setlocal complete=.,w,b,u,t,k,kspell
     endif
-endfunc
+endfunction
 
 " do what ~/.vim/ftplugin/* does in .vimrc
 " because of my laziness :p
@@ -708,7 +707,7 @@ nnoremap <silent> [cmdleader]sv     :<C-u>source $MYVIMRC<CR>
 " }}}
 " cmdwin {{{
 set cedit=<C-z>
-func! s:cmdwin_enter()
+function! s:cmdwin_enter()
     inoremap <buffer> <C-z>         <C-c>
     nnoremap <buffer> <C-z>         <C-c>
     nnoremap <buffer> <Esc>         :<C-u>quit<CR>
@@ -716,7 +715,7 @@ func! s:cmdwin_enter()
     nnoremap <buffer> <C-w><C-k>    :<C-u>quit<CR>
 
     startinsert!
-endfunc
+endfunction
 MyAutocmd CmdwinEnter * call s:cmdwin_enter()
 
 let loaded_cmdbuf = 1
@@ -747,7 +746,7 @@ nnoremap <silent> <M-l>     <C-w>l
 " open <cfile> {{{
 nnoremap <silent> gf :<C-u>call <SID>open_cfile()<CR>
 
-func! s:open_cfile() "{{{
+function! s:open_cfile() "{{{
     let option = {
     \   'buffer': 'edit <cfile>',
     \   'window': 'Split <cfile>',
@@ -761,15 +760,15 @@ func! s:open_cfile() "{{{
     if has_key(option, choice)
         execute option[choice]
     endif
-endfunc "}}}
+endfunction "}}}
 " }}}
 " toggle options {{{
-func! s:toggle_option(option_name) "{{{
+function! s:toggle_option(option_name) "{{{
     if exists('&' . a:option_name)
         execute 'setlocal' a:option_name . '!'
         execute 'setlocal' a:option_name . '?'
     endif
-endfunc "}}}
+endfunction "}}}
 
 nnoremap <silent> [cmdleader]oh :<C-u>call <SID>toggle_option('hlsearch')<CR>
 nnoremap <silent> [cmdleader]oi :<C-u>call <SID>toggle_option('ignorecase')<CR>
@@ -1091,7 +1090,7 @@ inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : <SID>complete(1)
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : <SID>complete(0)
 
 " This was originally from kana's hack <SID>keys_to_complete().
-func! s:complete(next) "{{{
+function! s:complete(next) "{{{
     " TODO Get all items.
     if &l:filetype ==# 'vim'
         return "\<C-x>\<C-v>"
@@ -1104,11 +1103,11 @@ func! s:complete(next) "{{{
     else
         return a:next ? "\<C-n>" : "\<C-p>"
     endif
-endfunc "}}}
+endfunction "}}}
 " }}}
 " go to head, or tail. {{{
 inoremap <expr> <C-a> <SID>goto_head()
-func! s:goto_head() "{{{
+function! s:goto_head() "{{{
     let col = col('.')
     let lnum = line('.')
     let tilda_col = match(getline(lnum), '\S') + 1
@@ -1120,10 +1119,10 @@ func! s:goto_head() "{{{
         " go to head.
         return "\<Home>"
     endif
-endfunc "}}}
+endfunction "}}}
 
 inoremap <expr> <C-e> <SID>goto_tail()
-func! s:goto_tail() "{{{
+function! s:goto_tail() "{{{
     let col = col('.')
     let lnum = line('.')
     let tilda_col = match(getline(lnum), '\S') + 1
@@ -1135,7 +1134,7 @@ func! s:goto_tail() "{{{
         " go to tail.
         return "\<End>"
     endif
-endfunc "}}}
+endfunction "}}}
 " }}}
 " }}}
 " cmap {{{
@@ -1173,26 +1172,26 @@ vnoremap g. >
 
 " Mappings with option value. {{{
 
-func! s:generate_assign_fn(dict) "{{{
+function! s:generate_assign_fn(dict) "{{{
     let assign_fn = values(map(a:dict, "printf('let &l:%s = %s', v:key, string(v:val))"))
     return empty(assign_fn) ? '' : ":\<C-u>" . join(assign_fn, '|') . "\<CR>"
-endfunc "}}}
+endfunction "}}}
 
-func! s:do_nmap_with(cmd, beforeopt, afteropt) "{{{
+function! s:do_nmap_with(cmd, beforeopt, afteropt) "{{{
     return
     \   printf('%s%s%s',
     \       s:generate_assign_fn(a:beforeopt),
     \       a:cmd,
     \       s:generate_assign_fn(a:afteropt))
-endfunc "}}}
+endfunction "}}}
 
-func! s:do_nmap_before(cmd, beforeopt) "{{{
+function! s:do_nmap_before(cmd, beforeopt) "{{{
     return s:do_nmap_with(a:cmd, a:beforeopt, {})
-endfunc "}}}
+endfunction "}}}
 
-func! s:do_nmap_after(cmd, afteropt) "{{{
+function! s:do_nmap_after(cmd, afteropt) "{{{
     return s:do_nmap_with(a:cmd, {}, a:afteropt)
-endfunc "}}}
+endfunction "}}}
 
 nnoremap <expr> / <SID>do_nmap_before('/', {'hlsearch': 1})
 nnoremap <expr> ? <SID>do_nmap_before('?', {'hlsearch': 1})
@@ -1243,7 +1242,7 @@ command!
 \   HelpTagAll
 \   call s:HelpTagAll()
 
-func! s:HelpTagAll()
+function! s:HelpTagAll()
     for path in split( &runtimepath, ',' )
         if isdirectory( path . '/doc' )
             " add :silent! because Vim warns "No match ..."
@@ -1251,14 +1250,14 @@ func! s:HelpTagAll()
             silent! exe 'helptags ' . path . '/doc'
         endif
     endfor
-endfunc
+endfunction
 " }}}
 " MTest {{{
 "   convert Perl's regex to Vim's regex
 command! -nargs=? MTest
             \ call s:MTest( <q-args> )
 
-func! s:MTest( ... )
+function! s:MTest( ... )
 
     let regex = a:1
     " backup
@@ -1273,13 +1272,13 @@ func! s:MTest( ... )
     let &hlsearch = hilight
 
     echo @"
-endfunc
+endfunction
 " }}}
 " Open {{{
 command! -nargs=? -complete=dir Open
             \ call s:Open( <f-args> )
 
-func! s:Open( ... )
+function! s:Open( ... )
     let dir =   a:0 == 1 ? a:1 : '.'
 
     if !isdirectory( dir )
@@ -1295,11 +1294,11 @@ func! s:Open( ... )
     else
         call s:system('gnome-open', dir)
     endif
-endfunc
+endfunction
 " }}}
 " ListChars {{{
 command! ListChars call s:ListChars()
-func! s:ListChars()
+function! s:ListChars()
     let lcs = prompt#prompt('changing &listchars to...', {
     \       'menu': [
     \           'tab:>-,extends:>,precedes:<,eol:.',
@@ -1313,7 +1312,7 @@ func! s:ListChars()
     if lcs !=# "\e"
         echomsg printf("changing &listchars to '%s'.", lcs)
     endif
-endfunc
+endfunction
 " }}}
 " FastEdit {{{
 "   this is useful when Vim is very slow?
@@ -1321,7 +1320,7 @@ endfunc
 nnoremap <silent> <Leader>fe        :call <SID>FastEdit()<CR>
 
 let s:fast_editing = 0
-func! s:FastEdit()
+function! s:FastEdit()
     call garbagecollect()
 
     if s:fast_editing
@@ -1343,13 +1342,13 @@ func! s:FastEdit()
         let s:fast_editing = 1
         echo 'fast browsing.'
     endif
-endfunc
+endfunction
 " }}}
 " DelFile {{{
 command! -complete=file -nargs=+ DelFile
             \ call s:DelFile(<f-args>)
 
-func! s:DelFile(...)
+function! s:DelFile(...)
     if a:0 == 0 | return | endif
 
     for i in map(copy(a:000), 'expand(v:val)')
@@ -1368,19 +1367,19 @@ func! s:DelFile(...)
             endif
         endfor
     endfor
-endfunc
+endfunction
 " }}}
 " Mkdir {{{
-func! s:Mkdir(...)
+function! s:Mkdir(...)
     for i in a:000
         call mkdir(expand(i), 'p')
     endfor
-endfunc
+endfunction
 command! -nargs=+ -complete=dir Mkdir
             \ call s:Mkdir(<f-args>)
 " }}}
 " GccSyntaxCheck {{{
-func! s:GccSyntaxCheck(...)
+function! s:GccSyntaxCheck(...)
     if expand('%') ==# '' | return | endif
 
     " compiler
@@ -1408,7 +1407,7 @@ func! s:GccSyntaxCheck(...)
     endif
 
     let &l:makeprg = makeprg
-endfunc
+endfunction
 
 command! -nargs=* GccSyntaxCheck
             \ call s:GccSyntaxCheck(<f-args>)
@@ -1419,7 +1418,7 @@ command! -nargs=0 LcdCurrent lcd %:p:h
 command! -nargs=0 CdCurrent  cd %:p:h
 " }}}
 " Ack {{{
-func! s:ack(...)
+function! s:ack(...)
     let save_grepprg = &l:grepprg
     try
         let &l:grepprg = 'ack'
@@ -1427,7 +1426,7 @@ func! s:ack(...)
     finally
         let &l:grepprg = save_grepprg
     endtry
-endfunc
+endfunction
 
 AlterCommand ack Ack
 command!
@@ -1449,14 +1448,14 @@ command!
 \   EchoPath
 \   call s:show_path(<f-args>)
 
-func! s:show_path(...) "{{{
+function! s:show_path(...) "{{{
     let optname = a:1
     let delim = a:0 >= 2 ? a:2 : ','
     let optval = getbufvar('%', '&' . optname)
     for i in split(optval, delim)
         echo i
     endfor
-endfunc "}}}
+endfunction "}}}
 " }}}
 " Write {{{
 AlterCommand w[rite]    Write
@@ -1476,7 +1475,7 @@ command!
 " - It will ask when it rewrites a file
 "   when specified the path.
 " - :WriteQuit
-func! s:write(bang, ...) "{{{
+function! s:write(bang, ...) "{{{
     let file = a:0 == 0 ? expand('%') : expand(a:1)
     let write_cmd = printf('write%s %s', a:bang, file)
     try
@@ -1502,7 +1501,7 @@ func! s:write(bang, ...) "{{{
     catch
         call s:warn(v:exception)
     endtry
-endfunc "}}}
+endfunction "}}}
 " }}}
 " TR, TRR {{{
 "
@@ -1521,7 +1520,7 @@ command!
 \   TRR
 \   <C-u>call s:trr(<f-line1>, <f-line2>, <q-args>)
 
-func! s:tr_split_arg(arg) "{{{
+function! s:tr_split_arg(arg) "{{{
     let arg = a:arg
     let arg = substitute(arg, '^\s*', '', '')
     if arg == ''
@@ -1530,9 +1529,9 @@ func! s:tr_split_arg(arg) "{{{
 
     let sep = arg[0]
     return split(arg, '\%(\\\)\@<!' . sep)
-endfunc "}}}
+endfunction "}}}
 
-func! s:tr(lnum_from, lnum_to, arg) "{{{
+function! s:tr(lnum_from, lnum_to, arg) "{{{
     " TODO :lockmarks
     let reg_str = getreg('z', 1)
     let reg_type = getregtype('z')
@@ -1552,9 +1551,9 @@ func! s:tr(lnum_from, lnum_to, arg) "{{{
         normal! 'z
         call setreg('z', reg_str, reg_type)
     endtry
-endfunc "}}}
+endfunction "}}}
 
-func! s:trr(lnum_from, lnum_to, arg) "{{{
+function! s:trr(lnum_from, lnum_to, arg) "{{{
     " TODO :lockmarks
     let reg_str = getreg('z', 1)
     let reg_type = getregtype('z')
@@ -1574,13 +1573,13 @@ func! s:trr(lnum_from, lnum_to, arg) "{{{
         normal! 'z
         call setreg('z', reg_str, reg_type)
     endtry
-endfunc "}}}
+endfunction "}}}
 
 " Replace pat1 to str1, pat2 to str2,
 " from current position to the end of the file.
-func! s:tr_replace(lnum_from, lnum_to, pat1, str1, pat2, str2) "{{{
+function! s:tr_replace(lnum_from, lnum_to, pat1, str1, pat2, str2) "{{{
     " TODO
-endfunc "}}}
+endfunction "}}}
 " }}}
 " AllBufMaps {{{
 command!
@@ -1641,7 +1640,7 @@ nmap <expr> <SID>(mode-noremap-feedkeys) <SID>mode_noremap_feedkeys()
 
 let s:mode_noremap_keys = ''
 
-func! s:mode_noremap() "{{{
+function! s:mode_noremap() "{{{
     let c = s:getchar()
     if c == "\<Esc>"
         return ''
@@ -1650,12 +1649,12 @@ func! s:mode_noremap() "{{{
         call s:mode_noremap_feedkeys()
         return "\<SID>(mode-noremap)"
     endif
-endfunc "}}}
+endfunction "}}}
 
-func! s:mode_noremap_feedkeys() "{{{
+function! s:mode_noremap_feedkeys() "{{{
     call feedkeys(s:mode_noremap_feedkeys, 'n')
     return ''
-endfunc "}}}
+endfunction "}}}
 " }}}
 "}}}
 
@@ -1929,7 +1928,7 @@ let fuf_enumeratingLimit = 20
 let fuf_previewHeight = 0
 
 " abbrev {{{
-func! s:register_fuf_abbrev()
+function! s:register_fuf_abbrev()
     let g:fuf_abbrevMap = {
         \ '^r@': map(split(&runtimepath, ','), 'v:val . "/"'),
         \ '^p@': map(split(&runtimepath, ','), 'v:val . "/plugin/"'),
@@ -1957,7 +1956,7 @@ func! s:register_fuf_abbrev()
         \   '~/Desktop/'
         \]
     endif
-endfunc
+endfunction
 
 MyAutocmd VimEnter * call s:register_fuf_abbrev()
 " }}}
@@ -1972,7 +1971,7 @@ let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\c\'
 let changelog_username = "tyru"
 " }}}
 " Gtags {{{
-func! s:JumpTags() "{{{
+function! s:JumpTags() "{{{
     if expand('%') == '' | return | endif
 
     if !exists(':GtagsCursor')
@@ -1995,7 +1994,7 @@ func! s:JumpTags() "{{{
         " or use ctags.
         execute "normal! \<C-]>"
     endif
-endfunc "}}}
+endfunction "}}}
 
 nnoremap <silent> g<C-i>    :Gtags -f %<CR>
 nnoremap <silent> <C-]>     :call <SID>JumpTags()<CR>
@@ -2070,7 +2069,7 @@ let g:vim_indent_cont = 0
 " (I didn't use it, though)
 
 " Delete old files in ~/.vim/backup {{{
-func! s:delete_backup()
+function! s:delete_backup()
     if has('win32')
         if exists('$TMP')
             let stamp_file = $TMP . '/.vimbackup_deleted'
@@ -2102,7 +2101,7 @@ func! s:delete_backup()
         endfor
         call writefile([localtime()], stamp_file)
     endif
-endfunc
+endfunction
 
 call s:delete_backup()
 " }}}
