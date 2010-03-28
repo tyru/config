@@ -309,6 +309,9 @@ MyAutocmd SwapExists * let v:swapchoice = 'o'
 " autocmd CursorHold,CursorHoldI *   silent! update
 MyAutocmd QuickfixCmdPost make,grep,grepadd,vimgrep,helpgrep   copen
 
+" MyAutocmd InsertLeave * setlocal nocursorline nocursorcolumn
+" MyAutocmd InsertEnter * setlocal cursorline cursorcolumn
+
 " filetype {{{
 MyAutocmd BufNewFile,BufReadPre *.as
             \ setlocal ft=actionscript syntax=actionscript
