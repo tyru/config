@@ -542,6 +542,10 @@ MyAutocmd FileType *   call s:LoadWhenFileType()
 " lmapclear
 
 " Set up prefix keys. {{{
+nnoremap    [origleader]    <Nop>
+nmap        q               [origleader]
+nnoremap    [origleader]q   q
+
 let mapleader = ';'
 nnoremap <Leader>       <Nop>
 nnoremap [origleader]<Leader>   <Leader>
@@ -557,10 +561,6 @@ nnoremap    [origleader],   ,
 nnoremap    [cmdleader]     <Nop>
 nmap        <Space>         [cmdleader]
 nnoremap    [origleader]<Space>     <Space>
-
-nnoremap    [origleader]    <Nop>
-nmap        q               [origleader]
-nnoremap    [origleader]q   q
 
 let s:submode_leader = 'm'
 execute 'nnoremap' s:submode_leader '<Nop>'
@@ -638,6 +638,15 @@ vmap aF <Plug>(textobj-fold-a)
 
 onoremap gp %
 vnoremap gp %
+
+onoremap aa a>
+vnoremap aa a>
+onoremap ia i>
+vnoremap ia i>
+onoremap ar a]
+vnoremap ar a]
+onoremap ir i]
+vnoremap ir i]
 " }}}
 " misc. {{{
 noremap <silent> <Space>j           <C-f>
@@ -658,9 +667,6 @@ nnoremap <silent> zh    zc
 nnoremap <silent> d<Space>  0d$
 nnoremap <silent> y<Space>  0y$
 nnoremap <silent> c<Space>  0c$
-
-nnoremap r gR
-nnoremap R gr
 
 nnoremap [cmdleader]m :<C-u>messages<CR>
 nnoremap [cmdleader]d :<C-u>display<CR>
