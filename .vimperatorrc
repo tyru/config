@@ -66,8 +66,6 @@ set wildoptions=auto
 " }}}
 "-----------------------------------------------------------------
 " map {{{
-"
-" NOTE: <silent>つけるとむしろ遅いorz
 
 js <<EOM
     mappings.addUserMap(
@@ -128,7 +126,6 @@ nnoremap <Leader>gf :tab normal! gf<CR>
 nnoremap !       :set invum<CR>
 
 nnoremap <Leader>t  :tab<Space>
-nnoremap <Leader>n  :normal!<Space>
 
 nnoremap <Leader>j           <C-f>
 nnoremap <Leader>k           <C-b>
@@ -146,6 +143,9 @@ nnoremap <Leader>f :anc<CR>f
 nnoremap <Leader>F :anc<CR>F
 
 nnoremap <Leader>td :tabduplicate<CR>
+
+nnoremap <Leader>n  n
+nnoremap <Leader>N  N
 " }}}
 " ~ c ~ {{{
 cnoremap <C-c>          <C-v><C-c>
