@@ -34,3 +34,6 @@
 [submodule "ext/skk.vim"]
 	path = ext/skk.vim
 	url = git://github.com/tyru/skk.vim.git
+[submodule "ext/stickykey.vim"]
+	path = ext/stickykey.vim
+	url = git://github.com/tyru/stickykey.vim.git
