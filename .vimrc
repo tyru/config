@@ -30,7 +30,17 @@ func! s:getchar(...) "{{{
     return type(c) == type("") ? c : nr2char(c)
 endfunc "}}}
 func! s:one_of(elem, list) "{{{
-    return !empty(filter(copy(a:list), 'v:val ==# a:elem'))
+    if type(a:elem) == type([])
+        " Same as `s:one_of(a:elem[0], a:list) || s:one_of(a:elem[1], a:list) ...`
+        for i in a:elem
+            if s:one_of(i, a:list)
+                return 1
+            endif
+        endfor
+        return 0
+    else
+        return !empty(filter(copy(a:list), 'v:val ==# a:elem'))
+    endif
 endfunc "}}}
 function! s:uniq(list) "{{{
     let s:dict = {}
