@@ -640,8 +640,8 @@ vmap iF <Plug>(textobj-fold-i)
 omap aF <Plug>(textobj-fold-a)
 vmap aF <Plug>(textobj-fold-a)
 
-onoremap gp %
-vnoremap gp %
+noremap gp %
+noremap gp %
 
 onoremap aa a>
 vnoremap aa a>
@@ -687,10 +687,6 @@ nnoremap <silent> Y y$
 
 nnoremap <silent> +     #
 nnoremap <silent> g+    g#
-
-" Use matchit.vim % or not.
-" nmap <silent> gp %
-nnoremap <silent> gp %
 
 nnoremap <silent> g; ~
 " }}}
