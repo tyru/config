@@ -2,10 +2,6 @@
 scriptencoding utf-8
 set cpo&vim
 
-" TODO:
-" - Remove all <silent>.
-" Add <silent> if it is bother.
-
 syntax enable
 filetype plugin indent on
 
@@ -413,7 +409,7 @@ function! ChangeEncoding()
     endif
 endfunction
 
-nnoremap <silent> [subleader]ta     :call ChangeEncoding()<CR>
+nnoremap [subleader]ta     :call ChangeEncoding()<CR>
 " }}}
 " set fenc=... {{{
 function! ChangeFileEncoding()
@@ -441,7 +437,7 @@ function! ChangeFileEncoding()
     echomsg printf("changing file encoding to '%s'.", enc)
 endfunction
 
-nnoremap <silent> [subleader]ts    :<C-u>call ChangeFileEncoding()<CR>
+nnoremap [subleader]ts    :<C-u>call ChangeFileEncoding()<CR>
 " }}}
 " set ff=... {{{
 function! ChangeNL()
@@ -456,7 +452,7 @@ function! ChangeNL()
     endif
 endfunction
 
-nnoremap <silent> [subleader]td    :<C-u>call ChangeNL()<CR>
+nnoremap [subleader]td    :<C-u>call ChangeNL()<CR>
 " }}}
 " }}}
 " FileType {{{
@@ -626,13 +622,13 @@ call operator#user#define('uniq', 'Op_command',
 " }}}
 " }}}
 " motion/textobj {{{
-noremap <silent> j          gj
-noremap <silent> k          gk
-noremap <silent> [origleader]j j
-noremap <silent> [origleader]k k
+noremap j gj
+noremap k gk
+noremap [origleader]j j
+noremap [origleader]k k
 
-noremap <silent> ]k        :<C-u>call search('^\S', 'Ws')<CR>
-noremap <silent> [k        :<C-u>call search('^\S', 'Wsb')<CR>
+noremap ]k :<C-u>call search('^\S', 'Ws')<CR>
+noremap [k :<C-u>call search('^\S', 'Wsb')<CR>
 
 omap iF <Plug>(textobj-fold-i)
 vmap iF <Plug>(textobj-fold-i)
@@ -659,51 +655,51 @@ noremap gw ^
 noremap ge $
 " }}}
 " misc. {{{
-noremap <silent> <Space>j           <C-f>
-noremap <silent> <Space>k           <C-b>
+noremap <Space>j           <C-f>
+noremap <Space>k           <C-b>
 " }}}
 " }}}
 " nmap {{{
 " open only current line's fold.
-nnoremap <silent> z<Space> zMzvzz
+nnoremap z<Space> zMzvzz
 
 " annoying for me
 nnoremap ZZ <Nop>
 
 " folding mappings easy to remember.
-nnoremap <silent> zl    zo
-nnoremap <silent> zh    zc
+nnoremap zl    zo
+nnoremap zh    zc
 
-nnoremap <silent> d<Space>  0d$
-nnoremap <silent> y<Space>  0y$
-nnoremap <silent> c<Space>  0c$
+nnoremap d<Space>  0d$
+nnoremap y<Space>  0y$
+nnoremap c<Space>  0c$
 
 nnoremap [cmdleader]m :<C-u>messages<CR>
 nnoremap [cmdleader]d :<C-u>display<CR>
 
 " remap far keys {{{
-nnoremap <silent> Y y$
+nnoremap Y y$
 
-nnoremap <silent> +     #
-nnoremap <silent> g+    g#
+nnoremap +     #
+nnoremap g+    g#
 
-nnoremap <silent> g; ~
+nnoremap g; ~
 " }}}
 " execute most used command quickly {{{
-nnoremap <silent> [cmdleader]w      :<C-u>write<CR>
-nnoremap <silent> [cmdleader]q      :<C-u>quit<CR>
-nnoremap <silent> [cmdleader]co     :<C-u>close<CR>
+nnoremap [cmdleader]w      :<C-u>write<CR>
+nnoremap [cmdleader]q      :<C-u>quit<CR>
+nnoremap [cmdleader]co     :<C-u>close<CR>
 " }}}
 " edit .vimrc quickly {{{
-nnoremap <silent> [cmdleader]ee     :<C-u>edit<CR>
-nnoremap <silent> [cmdleader]ev     :<C-u>edit $MYVIMRC<CR>
-nnoremap <silent> [cmdleader]e.     :<C-u>edit .<CR>
+nnoremap [cmdleader]ee     :<C-u>edit<CR>
+nnoremap [cmdleader]ev     :<C-u>edit $MYVIMRC<CR>
+nnoremap [cmdleader]e.     :<C-u>edit .<CR>
 
-nnoremap <silent> [cmdleader]tt     :<C-u>tabedit<CR>
-nnoremap <silent> [cmdleader]tv     :<C-u>tabedit $MYVIMRC<CR>
-nnoremap <silent> [cmdleader]t.     :<C-u>tabedit .<CR>
+nnoremap [cmdleader]tt     :<C-u>tabedit<CR>
+nnoremap [cmdleader]tv     :<C-u>tabedit $MYVIMRC<CR>
+nnoremap [cmdleader]t.     :<C-u>tabedit .<CR>
 
-nnoremap <silent> [cmdleader]sv     :<C-u>source $MYVIMRC<CR>
+nnoremap [cmdleader]sv     :<C-u>source $MYVIMRC<CR>
 " }}}
 " cmdwin {{{
 set cedit=<C-z>
@@ -724,27 +720,27 @@ nnoremap g/ q/
 nnoremap g? q?
 " }}}
 " walking between tabs {{{
-nnoremap <silent> <C-n>         gt
-nnoremap <silent> <C-p>         gT
-nnoremap <silent> <C-g><C-n>    :<C-u>tablast<CR>
-nnoremap <silent> <C-g><C-p>    :<C-u>tabfirst<CR>
+nnoremap <C-n>         gt
+nnoremap <C-p>         gT
+nnoremap <C-g><C-n>    :<C-u>tablast<CR>
+nnoremap <C-g><C-p>    :<C-u>tabfirst<CR>
 " }}}
 " moving tabs {{{
-nnoremap <silent> <Left>    :<C-u>execute 'tabmove' tabpagenr() - 2<CR>
-nnoremap <silent> <Right>   :<C-u>execute 'tabmove' tabpagenr()<CR>
+nnoremap <Left>    :<C-u>execute 'tabmove' tabpagenr() - 2<CR>
+nnoremap <Right>   :<C-u>execute 'tabmove' tabpagenr()<CR>
 " NOTE: gVim only
-nnoremap <silent> <S-Left>  :<C-u>execute 'tabmove' 0<CR>
-nnoremap <silent> <S-Right> :<C-u>execute 'tabmove' tabpagenr('$')<CR>
+nnoremap <S-Left>  :<C-u>execute 'tabmove' 0<CR>
+nnoremap <S-Right> :<C-u>execute 'tabmove' tabpagenr('$')<CR>
 " }}}
 " walk between windows {{{
 " NOTE: gVim only
-nnoremap <silent> <M-j>     <C-w>j
-nnoremap <silent> <M-k>     <C-w>k
-nnoremap <silent> <M-h>     <C-w>h
-nnoremap <silent> <M-l>     <C-w>l
+nnoremap <M-j>     <C-w>j
+nnoremap <M-k>     <C-w>k
+nnoremap <M-h>     <C-w>h
+nnoremap <M-l>     <C-w>l
 " }}}
 " open <cfile> {{{
-nnoremap <silent> gf :<C-u>call <SID>open_cfile()<CR>
+nnoremap gf :<C-u>call <SID>open_cfile()<CR>
 
 function! s:open_cfile() "{{{
     let option = {
@@ -770,13 +766,13 @@ function! s:toggle_option(option_name) "{{{
     endif
 endfunction "}}}
 
-nnoremap <silent> [cmdleader]oh :<C-u>call <SID>toggle_option('hlsearch')<CR>
-nnoremap <silent> [cmdleader]oi :<C-u>call <SID>toggle_option('ignorecase')<CR>
-nnoremap <silent> [cmdleader]op :<C-u>call <SID>toggle_option('paste')<CR>
-nnoremap <silent> [cmdleader]ow :<C-u>call <SID>toggle_option('wrap')<CR>
-nnoremap <silent> [cmdleader]oe :<C-u>call <SID>toggle_option('expandtab')<CR>
-nnoremap <silent> [cmdleader]ol :<C-u>call <SID>toggle_option('list')<CR>
-nnoremap <silent> [cmdleader]om :<C-u>call <SID>toggle_option('modeline')<CR>
+nnoremap [cmdleader]oh :<C-u>call <SID>toggle_option('hlsearch')<CR>
+nnoremap [cmdleader]oi :<C-u>call <SID>toggle_option('ignorecase')<CR>
+nnoremap [cmdleader]op :<C-u>call <SID>toggle_option('paste')<CR>
+nnoremap [cmdleader]ow :<C-u>call <SID>toggle_option('wrap')<CR>
+nnoremap [cmdleader]oe :<C-u>call <SID>toggle_option('expandtab')<CR>
+nnoremap [cmdleader]ol :<C-u>call <SID>toggle_option('list')<CR>
+nnoremap [cmdleader]om :<C-u>call <SID>toggle_option('modeline')<CR>
 
 " Select coding style. {{{
 "
@@ -804,7 +800,7 @@ function! s:coding_style_complete(...) "{{{
 endfunction "}}}
 
 
-nnoremap <silent> [cmdleader]ot :<C-u>call <SID>toggle_tab_options()<CR>
+nnoremap [cmdleader]ot :<C-u>call <SID>toggle_tab_options()<CR>
 
 function! s:toggle_tab_options() "{{{
     let choice = prompt#prompt('Which do you prefer?:', {
@@ -827,7 +823,7 @@ function! s:optinit() "{{{
     echo 'Initialized frequently toggled options.'
 endfunction "}}}
 
-nnoremap <silent> [cmdleader]OI :<C-u>OptInit<CR>
+nnoremap [cmdleader]OI :<C-u>OptInit<CR>
 
 
 silent OptInit
@@ -977,11 +973,11 @@ function! s:close_certain_window() "{{{
 endfunction "}}}
 
 
-nnoremap <silent> [cmdleader]ch :<C-u>call <SID>close_help_window()<CR>
-nnoremap <silent> [cmdleader]cQ :<C-u>call <SID>close_quickfix_window()<CR>
-nnoremap <silent> [cmdleader]cr :<C-u>call <SID>close_ref_window()<CR>
-nnoremap <silent> [cmdleader]cq :<C-u>call <SID>close_quickrun_window()<CR>
-nnoremap <silent> [cmdleader]cc :<C-u>call <SID>close_certain_window()<CR>
+nnoremap [cmdleader]ch :<C-u>call <SID>close_help_window()<CR>
+nnoremap [cmdleader]cQ :<C-u>call <SID>close_quickfix_window()<CR>
+nnoremap [cmdleader]cr :<C-u>call <SID>close_ref_window()<CR>
+nnoremap [cmdleader]cq :<C-u>call <SID>close_quickrun_window()<CR>
+nnoremap [cmdleader]cc :<C-u>call <SID>close_certain_window()<CR>
 " }}}
 " move window into tabpage {{{
 " http://vim-users.jp/2009/12/hack106/
@@ -1020,7 +1016,7 @@ function! s:move_window_into_tab_page(target_tabpagenr) "{{{
 endfunction "}}}
 
 " move current buffer into a new tab.
-nnoremap <silent> [cmdleader]mt :<C-u>call <SID>move_window_into_tab_page(0)<Cr>
+nnoremap [cmdleader]mt :<C-u>call <SID>move_window_into_tab_page(0)<Cr>
 " }}}
 " netrw - vimperator-like keymappings {{{
 function! s:filetype_netrw() "{{{
@@ -1196,8 +1192,8 @@ endfunction "}}}
 nnoremap <expr> / <SID>do_nmap_before('/', {'hlsearch': 1})
 nnoremap <expr> ? <SID>do_nmap_before('?', {'hlsearch': 1})
 
-nnoremap <silent><expr> * <SID>do_nmap_before('*', {'hlsearch': 1, 'ignorecase': 0})
-nnoremap <silent><expr> + <SID>do_nmap_before('#', {'hlsearch': 1, 'ignorecase': 0})
+nnoremap <expr> * <SID>do_nmap_before('*', {'hlsearch': 1, 'ignorecase': 0})
+nnoremap <expr> + <SID>do_nmap_before('#', {'hlsearch': 1, 'ignorecase': 0})
 
 nnoremap <expr> : <SID>do_nmap_before(':', {'ignorecase': 1})
 " TODO
@@ -1317,7 +1313,7 @@ endfunction
 " FastEdit {{{
 "   this is useful when Vim is very slow?
 "   currently just toggling syntax highlight.
-nnoremap <silent> <Leader>fe        :call <SID>FastEdit()<CR>
+nnoremap <Leader>fe        :call <SID>FastEdit()<CR>
 
 let s:fast_editing = 0
 function! s:FastEdit()
@@ -1660,7 +1656,7 @@ endfunction "}}}
 
 " TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
 AlterCommand cd  TabpageCD
-nnoremap <silent> [subleader]cd   :TabpageCD %:p:h<CR>
+nnoremap [subleader]cd   :TabpageCD %:p:h<CR>
 
 command! -complete=dir -nargs=? TabpageCD
 \   execute 'cd' fnameescape(expand(<q-args>))
@@ -1807,7 +1803,7 @@ let g:wm_move_right = '<C-M-l>'
 let g:SD_disable = 1
 
 " let g:SD_debug = 1
-" nnoremap <silent> <C-l>     :SDUpdate<CR><C-l>
+" nnoremap <C-l>     :SDUpdate<CR><C-l>
 " }}}
 " DumbBuf {{{
 let dumbbuf_hotkey = '<Leader>b'
@@ -1912,10 +1908,10 @@ let g:autodate_format = "%Y-%m-%d"
 nmap     s                 [anythingleader]
 nnoremap [anythingleader] <Nop>
 
-nnoremap <silent> [anythingleader]d        :<C-u>FufDir<CR>
-nnoremap <silent> [anythingleader]f        :<C-u>FufFile<CR>
-nnoremap <silent> [anythingleader]h        :<C-u>FufMruFile<CR>
-nnoremap <silent> [anythingleader]r        :<C-u>FufRenewCache<CR>
+nnoremap [anythingleader]d        :<C-u>FufDir<CR>
+nnoremap [anythingleader]f        :<C-u>FufFile<CR>
+nnoremap [anythingleader]h        :<C-u>FufMruFile<CR>
+nnoremap [anythingleader]r        :<C-u>FufRenewCache<CR>
 
 let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem', 'buffer', 'tag', 'taggedfile']
 
@@ -1962,7 +1958,7 @@ MyAutocmd VimEnter * call s:register_fuf_abbrev()
 " }}}
 " }}}
 " MRU {{{
-nnoremap <silent> <C-h>     :MRU<CR>
+nnoremap <C-h>     :MRU<CR>
 let MRU_Max_Entries   = 500
 let MRU_Add_Menu      = 0
 let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\c\'
@@ -1996,8 +1992,8 @@ function! s:JumpTags() "{{{
     endif
 endfunction "}}}
 
-nnoremap <silent> g<C-i>    :Gtags -f %<CR>
-nnoremap <silent> <C-]>     :call <SID>JumpTags()<CR>
+nnoremap g<C-i>    :Gtags -f %<CR>
+nnoremap <C-]>     :call <SID>JumpTags()<CR>
 " }}}
 " operator-replace {{{
 map <Leader>r  <Plug>(operator-replace)
@@ -2050,7 +2046,7 @@ AlterCommand pp     PrettyPrint
 " ref {{{
 " 'K' for ':Ref'.
 AlterCommand ref Ref
-nnoremap <silent> gK        K
+nnoremap gK        K
 let g:ref_use_vimproc = 0
 let g:ref_open = 'Split'
 if executable('perldocjp')
