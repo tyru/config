@@ -13,3 +13,6 @@
 [submodule "ext/eskk.vim"]
 	path = ext/eskk.vim
 	url = git://github.com/tyru/eskk.vim.git
+[submodule "ext/nextfile.vim"]
+	path = ext/nextfile.vim
+	url = git://github.com/tyru/nextfile.vim.git
