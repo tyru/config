@@ -1769,7 +1769,7 @@ let g:nf_loop_files = 1    " loop at the end of file
 let g:nf_ignore_ext = ['o', 'obj', 'exe', 'bin']
 " }}}
 " vimtemplate {{{
-let g:vt_mapping = '[subleader]vt'
+let g:vt_mapping = 'gt'
 let g:vt_command = ''
 let g:vt_template_dir_path = expand("~/.vim/template")
 let g:vt_author = "tyru"
@@ -1961,7 +1961,7 @@ MyAutocmd VimEnter * call s:register_fuf_abbrev()
 " }}}
 " }}}
 " MRU {{{
-nnoremap <C-h>     :MRU<CR>
+nnoremap gh :<C-u>MRU<CR>
 let MRU_Max_Entries   = 500
 let MRU_Add_Menu      = 0
 let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\c\'
