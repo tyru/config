@@ -939,6 +939,13 @@ function! s:is_cmdwin_window(winnr) "{{{
     return s:in_cmdwin
 endfunction "}}}
 
+function! s:close_quickrun_window() "{{{
+    return s:close_first_window_like('s:is_quickrun_window(winnr)')
+endfunction "}}}
+function! s:is_quickrun_window(winnr) "{{{
+    return getbufvar(winbufnr(a:winnr), '&filetype') ==# 'quickrun'
+endfunction "}}}
+
 
 function! s:close_certain_window() "{{{
     " Close current.
@@ -948,6 +955,7 @@ function! s:close_certain_window() "{{{
     \   's:is_help_window',
     \   's:is_quickfix_window',
     \   's:is_ref_window',
+    \   's:is_quickrun_window',
     \]
         if {pred_fn}(curwinnr)
             call s:close_window(curwinnr)
@@ -960,7 +968,8 @@ function! s:close_certain_window() "{{{
     \   's:close_cmdwin_window',
     \   's:close_help_window',
     \   's:close_quickfix_window',
-    \   's:close_ref_window'
+    \   's:close_ref_window',
+    \   's:close_quickrun_window',
     \]
         if {close_fn}()
             return 1
@@ -970,8 +979,9 @@ endfunction "}}}
 
 
 nnoremap <silent> [cmdleader]ch :<C-u>call <SID>close_help_window()<CR>
-nnoremap <silent> [cmdleader]ck :<C-u>call <SID>close_quickfix_window()<CR>
+nnoremap <silent> [cmdleader]cQ :<C-u>call <SID>close_quickfix_window()<CR>
 nnoremap <silent> [cmdleader]cr :<C-u>call <SID>close_ref_window()<CR>
+nnoremap <silent> [cmdleader]cq :<C-u>call <SID>close_quickrun_window()<CR>
 nnoremap <silent> [cmdleader]cc :<C-u>call <SID>close_certain_window()<CR>
 " }}}
 " move window into tabpage {{{
