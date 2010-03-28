@@ -43,3 +43,6 @@
 [submodule "ext/vimtemplate.vim"]
 	path = ext/vimtemplate.vim
 	url = git://github.com/tyru/vimtemplate.vim.git
+[submodule "ext/winmove.vim"]
+	path = ext/winmove.vim
+	url = git://github.com/tyru/winmove.vim.git
