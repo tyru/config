@@ -10,3 +10,6 @@
 [submodule "ext/DumbBuf.vim"]
 	path = ext/DumbBuf.vim
 	url = git://github.com/tyru/DumbBuf.vim.git
+[submodule "ext/eskk.vim"]
+	path = ext/eskk.vim
+	url = git://github.com/tyru/eskk.vim.git
