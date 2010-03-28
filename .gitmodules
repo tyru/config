@@ -16,3 +16,6 @@
 [submodule "ext/nextfile.vim"]
 	path = ext/nextfile.vim
 	url = git://github.com/tyru/nextfile.vim.git
+[submodule "ext/prompt.vim"]
+	path = ext/prompt.vim
+	url = git://github.com/tyru/prompt.vim.git
