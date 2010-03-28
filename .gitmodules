@@ -22,3 +22,6 @@
 [submodule "ext/pummode.vim"]
 	path = ext/pummode.vim
 	url = git://github.com/tyru/pummode.vim.git
+[submodule "ext/restart.vim"]
+	path = ext/restart.vim
+	url = git://github.com/tyru/restart.vim.git
