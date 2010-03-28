@@ -362,7 +362,9 @@ MyAutocmd FileType py
             \ setlocal ft=python
 MyAutocmd FileType pl
             \ setlocal ft=perl
-MyAutocmd FileType sch
+MyAutocmd FileType rb
+            \ setlocal ft=ruby
+MyAutocmd FileType scm
             \ setlocal ft=scheme
 
 " delete autocmd for ft=mkd.
