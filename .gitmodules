@@ -25,3 +25,6 @@
 [submodule "ext/restart.vim"]
 	path = ext/restart.vim
 	url = git://github.com/tyru/restart.vim.git
+[submodule "ext/sign-diff.vim"]
+	path = ext/sign-diff.vim
+	url = git://github.com/tyru/sign-diff.vim.git
