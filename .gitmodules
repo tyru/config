@@ -1,0 +1,3 @@
+[submodule "ext/caw.vim"]
+	path = ext/caw.vim
+	url = git://github.com/tyru/caw.vim.git
