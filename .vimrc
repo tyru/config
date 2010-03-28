@@ -2046,7 +2046,8 @@ AlterCommand pp     PrettyPrint
 " ref {{{
 " 'K' for ':Ref'.
 AlterCommand ref Ref
-nnoremap gK        K
+nnoremap [origleader]K K
+
 let g:ref_use_vimproc = 0
 let g:ref_open = 'Split'
 if executable('perldocjp')
