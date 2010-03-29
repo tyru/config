@@ -881,7 +881,26 @@ silent OptInit
 " close help/quickfix window {{{
 " via kana's vimrc.
 
-function! s:get_windows_nr_like(expr) "{{{
+" s:winutil {{{
+unlet! s:winutil
+let s:winutil = {}
+
+function! s:winutil.close(winnr) "{{{
+    if s:winutil.exists(a:winnr)
+        execute a:winnr . 'wincmd w'
+        execute 'wincmd c'
+        return 1
+    else
+        return 0
+    endif
+endfunction "}}}
+
+function! s:winutil.exists(winnr) "{{{
+    return winbufnr(a:winnr) !=# -1
+endfunction "}}}
+
+
+function! s:winutil.get_winnr_like(expr) "{{{
     let ret = []
     let winnr = 1
     while winnr <= winnr('$')
@@ -894,6 +913,31 @@ function! s:get_windows_nr_like(expr) "{{{
     return ret
 endfunction "}}}
 
+function! s:winutil.close_first_like(expr) "{{{
+    let winnr_list = s:winutil.get_winnr_like(a:expr)
+    " Close current window if current matches a:expr.
+    let winnr_list = s:move_current_winnr_to_head(winnr_list)
+    if empty(winnr_list)
+        return
+    endif
+
+    let prev_winnr = winnr()
+    try
+        for winnr in winnr_list
+            call s:winutil.close(winnr)
+            return 1    " closed.
+        endfor
+        return 0
+    finally
+        " Back to previous window.
+        let cur_winnr = winnr()
+        if cur_winnr !=# prev_winnr && winbufnr(prev_winnr) !=# -1
+            execute prev_winnr . 'wincmd w'
+        endif
+    endtry
+endfunction "}}}
+
+" TODO Simplify
 function! s:move_current_winnr_to_head(winnr_list) "{{{
     let winnr_list = a:winnr_list
     let curwinnr = winnr()
@@ -909,69 +953,30 @@ function! s:move_current_winnr_to_head(winnr_list) "{{{
     return winnr_list
 endfunction "}}}
 
-function! s:close_first_window_like(expr) "{{{
-    let winnr_list = s:get_windows_nr_like(a:expr)
-    " Close current window if current matches a:expr.
-    let winnr_list = s:move_current_winnr_to_head(winnr_list)
-    if empty(winnr_list)
-        return
-    endif
+lockvar 1 s:winutil
+" }}}
 
-    let prev_winnr = winnr()
-    try
-        for winnr in winnr_list
-            call s:close_window(winnr)
-            return 1    " closed.
-        endfor
-        return 0
-    finally
-        " Back to previous window.
-        let cur_winnr = winnr()
-        if cur_winnr !=# prev_winnr && winbufnr(prev_winnr) !=# -1
-            execute prev_winnr . 'wincmd w'
-        endif
-    endtry
+" s:window {{{
+unlet! s:window
+let s:window = {'_group_order': [], '_groups': {}}
+
+function! s:window.register(group_name, functions) "{{{
+    call add(s:window._group_order, a:group_name)
+    let s:window._groups[a:group_name] = a:functions
 endfunction "}}}
 
-function! s:winexists(winnr) "{{{
-    return winbufnr(a:winnr) !=# -1
+function! s:window.get_all_groups() "{{{
+    return map(copy(s:window._group_order), 'deepcopy(s:window._groups[v:val])')
 endfunction "}}}
 
-function! s:close_window(winnr) "{{{
-    if s:winexists(a:winnr)
-        execute a:winnr . 'wincmd w'
-        execute 'wincmd c'
-        return 1
-    else
-        return 0
-    endif
-endfunction "}}}
+lockvar 1 s:window
+" }}}
 
-
-function! s:close_help_window() "{{{
-    return s:close_first_window_like('s:is_help_window(winnr)')
-endfunction "}}}
-function! s:is_help_window(winnr) "{{{
-    return getbufvar(winbufnr(a:winnr), '&buftype') ==# 'help'
-endfunction "}}}
-
-function! s:close_quickfix_window() "{{{
-    return s:close_first_window_like('s:is_quickfix_window(winnr)')
-endfunction "}}}
-function! s:is_quickfix_window(winnr) "{{{
-    return getbufvar(winbufnr(a:winnr), '&buftype') ==# 'quickfix'
-endfunction "}}}
-
-function! s:close_ref_window() "{{{
-    return s:close_first_window_like('s:is_ref_window(winnr)')
-endfunction "}}}
-function! s:is_ref_window(winnr) "{{{
-    return getbufvar(winbufnr(a:winnr), '&filetype') ==# 'ref'
-endfunction "}}}
-
+" cmdwin {{{
 let s:in_cmdwin = 0
 MyAutocmd CmdwinEnter * let s:in_cmdwin = 1
 MyAutocmd CmdwinLeave * let s:in_cmdwin = 0
+
 function! s:close_cmdwin_window() "{{{
     if s:in_cmdwin
         quit
@@ -984,49 +989,82 @@ function! s:is_cmdwin_window(winnr) "{{{
     return s:in_cmdwin
 endfunction "}}}
 
+call s:window.register('cmdwin', {'close': function('s:close_cmdwin_window'), 'determine': function('s:is_cmdwin_window')})
+" }}}
+
+" help {{{
+function! s:close_help_window() "{{{
+    return s:winutil.close_first_like('s:is_help_window(winnr)')
+endfunction "}}}
+function! s:is_help_window(winnr) "{{{
+    return getbufvar(winbufnr(a:winnr), '&buftype') ==# 'help'
+endfunction "}}}
+
+call s:window.register('help', {'close': function('s:close_help_window'), 'determine': function('s:is_help_window')})
+" }}}
+
+" quickfix {{{
+function! s:close_quickfix_window() "{{{
+    " cclose
+    return s:winutil.close_first_like('s:is_quickfix_window(winnr)')
+endfunction "}}}
+function! s:is_quickfix_window(winnr) "{{{
+    return getbufvar(winbufnr(a:winnr), '&buftype') ==# 'quickfix'
+endfunction "}}}
+
+call s:window.register('quickfix', {'close': function('s:close_quickfix_window'), 'determine': function('s:is_quickfix_window')})
+" }}}
+
+" ref {{{
+function! s:close_ref_window() "{{{
+    return s:winutil.close_first_like('s:is_ref_window(winnr)')
+endfunction "}}}
+function! s:is_ref_window(winnr) "{{{
+    return getbufvar(winbufnr(a:winnr), '&filetype') ==# 'ref'
+endfunction "}}}
+
+call s:window.register('ref', {'close': function('s:close_ref_window'), 'determine': function('s:is_ref_window')})
+" }}}
+
+" quickrun {{{
 function! s:close_quickrun_window() "{{{
-    return s:close_first_window_like('s:is_quickrun_window(winnr)')
+    return s:winutil.close_first_like('s:is_quickrun_window(winnr)')
 endfunction "}}}
 function! s:is_quickrun_window(winnr) "{{{
     return getbufvar(winbufnr(a:winnr), '&filetype') ==# 'quickrun'
 endfunction "}}}
 
+call s:window.register('quickrun', {'close': function('s:close_quickrun_window'), 'determine': function('s:is_quickrun_window')})
+" }}}
+
 
 function! s:close_certain_window() "{{{
-    " Close current.
     let curwinnr = winnr()
-    for pred_fn in [
-    \   's:is_cmdwin_window',
-    \   's:is_help_window',
-    \   's:is_quickfix_window',
-    \   's:is_ref_window',
-    \   's:is_quickrun_window',
-    \]
-        if {pred_fn}(curwinnr)
-            call s:close_window(curwinnr)
+    let groups = s:window.get_all_groups()
+
+    " Close current.
+    for group in groups
+        if group.determine(curwinnr)
+            call group.close()
             return
         endif
     endfor
 
     " Or close outside buffer.
-    for close_fn in [
-    \   's:close_cmdwin_window',
-    \   's:close_help_window',
-    \   's:close_quickfix_window',
-    \   's:close_ref_window',
-    \   's:close_quickrun_window',
-    \]
-        if {close_fn}()
+    for group in groups
+        if group.close()
             return 1
         endif
     endfor
 endfunction "}}}
 
 
+nnoremap [cmdleader]c: :<C-u>call <SID>close_cmdwin_window()<CR>
 nnoremap [cmdleader]ch :<C-u>call <SID>close_help_window()<CR>
 nnoremap [cmdleader]cQ :<C-u>call <SID>close_quickfix_window()<CR>
 nnoremap [cmdleader]cr :<C-u>call <SID>close_ref_window()<CR>
 nnoremap [cmdleader]cq :<C-u>call <SID>close_quickrun_window()<CR>
+
 nnoremap [cmdleader]cc :<C-u>call <SID>close_certain_window()<CR>
 " }}}
 " move window into tabpage {{{
