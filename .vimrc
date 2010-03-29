@@ -784,7 +784,7 @@ nnoremap [cmdleader]tt     :<C-u>tabedit<CR>
 nnoremap [cmdleader]tv     :<C-u>tabedit $MYVIMRC<CR>
 nnoremap [cmdleader]t.     :<C-u>tabedit .<CR>
 
-nnoremap [cmdleader]sv     :<C-u>source $MYVIMRC<CR>
+nnoremap <expr> [cmdleader]sv <SID>execute_multiline_expr(['source $MYVIMRC', 'setfiletype vim'], ':source $MYVIMRC')
 " }}}
 " cmdwin {{{
 set cedit=<C-z>
