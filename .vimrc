@@ -1243,37 +1243,6 @@ function! s:complete(next) "{{{
     endif
 endfunction "}}}
 " }}}
-" go to head, or tail. {{{
-inoremap <expr> <C-a> <SID>goto_head()
-function! s:goto_head() "{{{
-    let col = col('.')
-    let lnum = line('.')
-    let tilda_col = match(getline(lnum), '\S') + 1
-
-    if col > tilda_col
-        " go to ^ pos.
-        return "\<C-o>^"
-    else
-        " go to head.
-        return "\<Home>"
-    endif
-endfunction "}}}
-
-inoremap <expr> <C-e> <SID>goto_tail()
-function! s:goto_tail() "{{{
-    let col = col('.')
-    let lnum = line('.')
-    let tilda_col = match(getline(lnum), '\S') + 1
-
-    if col < tilda_col
-        " go to ^ pos.
-        return "\<C-o>^"
-    else
-        " go to tail.
-        return "\<End>"
-    endif
-endfunction "}}}
-" }}}
 " }}}
 " cmap {{{
 if &wildmenu
@@ -1360,6 +1329,16 @@ onoremap <expr> N  <SID>search_forward_p() ? 'N' : 'n'
 function! s:search_forward_p()
   return exists('v:searchforward') ? v:searchforward : 1
 endfunction
+" }}}
+
+" Walk between columns at 0, ^, $. {{{
+" imap
+inoremap <expr> <C-a> <SID>at_right_of_tilde_col() ? "\<C-o>^" : "\<Home>"
+inoremap <expr> <C-e> <SID>at_left_of_tilde_col()  ? "\<C-o>^" : "\<End>"
+
+" motion
+noremap <expr> H <SID>at_right_of_tilde_col() ? "^" : "0"
+noremap <expr> L <SID>at_left_of_tilde_col()  ? "^" : "$"
 " }}}
 " }}}
 " Commands {{{
