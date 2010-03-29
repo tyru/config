@@ -98,7 +98,46 @@ augroup vimrc
     autocmd!
 augroup END
 
-command! -bang -nargs=* MyAutocmd autocmd<bang> vimrc <args>
+command!
+\   -bang -nargs=*
+\   MyAutocmd
+\   autocmd<bang> vimrc <args>
+
+
+" Debug macros {{{
+"
+" NOTE: Do not make this function.
+" Evaluate arguments at same scope.
+"
+" I was confused as if I wrote C macro
+
+command!
+\   -bang -nargs=+ -complete=expression
+\   VarDump
+\
+\   echohl Debug
+\   | echomsg join(map([<f-args>], 'printf("  %s = %s", v:val, s:string_pp(eval(v:val)))'), ', ')
+\   | if <bang>0
+\   |   try
+\   |     throw ''
+\   |   catch
+\   |     ShowStackTrace
+\   |   endtry
+\   | endif
+\   | echohl None
+
+
+command!
+\   -bar -bang
+\   ShowStackTrace
+\   echohl Debug
+\   | if <bang>0
+\   |   echom printf('[%s] at [%s]', v:exception, v:throwpoint)
+\   | else
+\   |   echom printf('[%s]', v:throwpoint)
+\   | endif
+\   | echohl None
+" }}}
 " }}}
 " }}}
 " Options {{{
