@@ -1,15 +1,14 @@
 " vim:set fen fdm=marker:
+" Basic {{{
 scriptencoding utf-8
 set cpo&vim
 
 syntax enable
 filetype plugin indent on
 
-
 language messages C
 language time C
-
-
+" }}}
 " Util Functions/Commands {{{
 " Function {{{
 function! s:warn(msg) "{{{
@@ -337,14 +336,8 @@ set viminfo='50,h,f1,n$HOME/.viminfo
 " }}}
 " Autocmd {{{
 
-function! s:vimenter_handler()
-    " Color
-    set bg=dark
-    colorscheme desert
-endfunction
-
 " colorscheme (on windows, setting colorscheme in .vimrc does not work)
-MyAutocmd VimEnter * call s:vimenter_handler()
+MyAutocmd VimEnter * set bg=dark | colorscheme desert
 
 " open on read-only if swap exists
 MyAutocmd SwapExists * let v:swapchoice = 'o'
@@ -432,7 +425,7 @@ endif
 
 " set enc=... {{{
 function! ChangeEncoding()
-    if expand( '%' ) == ''
+    if expand('%') == ''
         call s:warn("current file is empty.")
         return
     endif
@@ -586,30 +579,45 @@ MyAutocmd FileType *   call s:LoadWhenFileType()
 " " mapclear!!!!
 " lmapclear
 
+" TODO
+" Wrap all mappings with :Map
+" to make it repeatable when <repeat> is specified.
+" e.g.:
+"   Nnoremap <repeat> d<CR> :<C-u>call append(expand('.'), '')<CR>j
+
 " Set up prefix keys. {{{
+"
+" TODO Make command macro to set up these mappings.
+"
+" [origleader]
 nnoremap    [origleader]    <Nop>
 nmap        q               [origleader]
 nnoremap    [origleader]q   q
 
+" <Leader>
 let mapleader = ';'
 nnoremap <Leader>       <Nop>
 nnoremap [origleader]<Leader>   <Leader>
 
+" <LocalLeader>
 let maplocalleader = '\'
 nnoremap <LocalLeader>  <Nop>
 nnoremap [origleader]<LocalLeader>  <LocalLeader>
 
-nnoremap    [subleader]     <Nop>
-nmap        ,               [subleader]
-nnoremap    [origleader],   ,
+" [subleader]
+nnoremap    [subleader]         <Nop>
+nmap        ,                   [subleader]
+nnoremap    [origleader],       ,
 
-nnoremap    [cmdleader]     <Nop>
-nmap        <Space>         [cmdleader]
-nnoremap    [origleader]<Space>     <Space>
+" [cmdleader]
+nnoremap    [cmdleader]         <Nop>
+nmap        <Space>             [cmdleader]
+nnoremap    [origleader]<Space> <Space>
 
-let s:submode_leader = 'm'
-execute 'nnoremap' s:submode_leader '<Nop>'
-nnoremap    [origleader]m   m
+" [jumpleader]
+nnoremap    [jumpleader]        <Nop>
+nmap        <CR>                [jumpleader]
+nnoremap    [origleader]<CR>    <CR>
 " }}}
 
 let g:arpeggio_timeoutlen = 40
@@ -686,10 +694,13 @@ noremap gp %
 
 onoremap aa a>
 vnoremap aa a>
+
 onoremap ia i>
 vnoremap ia i>
+
 onoremap ar a]
 vnoremap ar a]
+
 onoremap ir i]
 vnoremap ir i]
 
@@ -1268,17 +1279,6 @@ endfunction
 " }}}
 " }}}
 " Commands {{{
-" commands related to specific environments {{{
-if has('gui_running')
-    if has( 'win32' )
-        command! GoDesktop   execute 'lcd C:' . $HOMEPATH . '\デスクトップ'
-        command! SH          !start cmd.exe
-    else
-        command! GoDesktop   lcd '~/Desktop'
-    endif
-endif
-" }}}
-
 " HelpTagAll {{{
 "   do :helptags to all doc/ in &runtimepath
 command!
@@ -1286,11 +1286,13 @@ command!
 \   call s:HelpTagAll()
 
 function! s:HelpTagAll()
-    for path in split( &runtimepath, ',' )
-        if isdirectory( path . '/doc' )
+    " FIXME Use pathogen.vim!!
+    for path in split(&runtimepath, ',')
+        let path .= '/doc'
+        if isdirectory(path)
             " add :silent! because Vim warns "No match ..."
             " if there are no files in path . '/doc/*',
-            silent! exe 'helptags ' . path . '/doc'
+            silent! execute 'helptags' path
         endif
     endfor
 endfunction
@@ -1318,21 +1320,23 @@ function! s:MTest( ... )
 endfunction
 " }}}
 " Open {{{
-command! -nargs=? -complete=dir Open
-            \ call s:Open( <f-args> )
+command!
+\   -nargs=? -complete=dir
+\   Open
+\   call s:Open(<f-args>)
 
-function! s:Open( ... )
+function! s:Open(...)
     let dir =   a:0 == 1 ? a:1 : '.'
 
-    if !isdirectory( dir )
+    if !isdirectory(dir)
         call s:warn(dir .': No such a directory')
         return
     endif
 
-    if has( 'win32' )
-        if dir =~ '[&()\[\]{}\^=;!+,`~ '. "']" && dir !~ '^".*"$'
-            let dir = '"'. dir .'"'
-        endif
+    if has('win32')
+        " if dir =~ '[&()\[\]{}\^=;!+,`~ '. "']" && dir !~ '^".*"$'
+        "     let dir = '"'. dir .'"'
+        " endif
         call s:system('explorer', dir)
     else
         call s:system('gnome-open', dir)
@@ -1340,8 +1344,12 @@ function! s:Open( ... )
 endfunction
 " }}}
 " ListChars {{{
-command! ListChars call s:ListChars()
-function! s:ListChars()
+command!
+\   -bar
+\   ListChars
+\   call s:set_listchars()
+
+function! s:set_listchars()
     let lcs = prompt#prompt('changing &listchars to...', {
     \       'menu': [
     \           'tab:>-,extends:>,precedes:<,eol:.',
@@ -1357,37 +1365,31 @@ function! s:ListChars()
     endif
 endfunction
 " }}}
-" FastEdit {{{
-"   this is useful when Vim is very slow?
-"   currently just toggling syntax highlight.
-nnoremap <Leader>fe        :call <SID>FastEdit()<CR>
+" GarbageCorrect {{{
+" Correct garbages right now.
+command!
+\   -bar -bang
+\   GarbageCorrect
+\   call s:garbagecollect(<bang>0)
 
-let s:fast_editing = 0
-function! s:FastEdit()
+function! s:garbagecollect(banged)
+    " garbagecollect()
     call garbagecollect()
 
-    if s:fast_editing
-
-        " filetype (color, indent, etc.)
-        syntax on
-        filetype plugin indent on
-
-        redraw
-        let s:fast_editing = 0
-        echo 'slow but high ability.'
-    else
-
-        " filetype (color, indent, etc.)
-        syntax off
-        filetype plugin indent off
-
-        redraw
-        let s:fast_editing = 1
-        echo 'fast browsing.'
+    " &undolevels
+    if a:banged
+        " Undo history will be lost!!
+        let save = &undolevels
+        set undolevels=0
+        let &undolevels = save
     endif
 endfunction
 " }}}
 " DelFile {{{
+"
+" TODO Delete recursively.
+
+
 command! -complete=file -nargs=+ DelFile
             \ call s:DelFile(<f-args>)
 
@@ -1732,18 +1734,18 @@ com! SelectColorScheme   :cal s:SelectColorScheme()
 " http://webtech-walker.com/archive/2010/03/17093357.html
 AlterCommand gr[ep] Grep
 
-command! -complete=file -nargs=+ Grep call s:grep([<f-args>])
+command!
+\   -bar -complete=file -nargs=+
+\   Grep
+\   call s:grep([<f-args>])
+
 function! s:grep(args)
     let target = len(a:args) > 1 ? join(a:args[1:]) : '**/*'
-    execute 'vimgrep' '/' . a:args[0] . '/j ' . target
-    if len(getqflist()) != 0 | copen | endif
+    execute 'vimgrep' '/' . a:args[0] . '/j' target
 endfunction
 " }}}
 " }}}
 " For Plugins {{{
-" shell-mode {{{
-let g:loaded_shell_mode = 1
-" }}}
 " CommentAnyWay {{{
 let ca_prefix  = '<Leader>c'
 let ca_verbose = 1    " debug
@@ -2139,6 +2141,11 @@ if has('multi_byte_ime') || has('xim')
 endif
 " }}}
 " }}}
+" End. {{{
+
 
 
 set secure
+
+let s:loaded_vimrc = 1
+" }}}
