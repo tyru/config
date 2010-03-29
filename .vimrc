@@ -574,6 +574,34 @@ MyAutocmd FileType *   call s:LoadWhenFileType()
 " }}}
 " Mappings and/or Abbreviations {{{
 
+" Util Functions {{{
+function! s:execute_multiline_expr(excmds, ...) "{{{
+    let expr = join(s:mapf(copy(a:excmds), ":\<C-u>%s\<CR>"), '')
+    if a:0 == 0
+        echo join(s:mapf(copy(a:excmds), ':<C-u>%s<CR>'), '')
+    else
+        echo a:1
+    endif
+    return expr
+endfunction "}}}
+function! s:execute_multiline(excmds, ...) "{{{
+    " XXX: This depends on :execute's behavior
+    " that it executes each line separated by "\<CR>".
+    " Is it specified?
+    execute call('s:execute_multiline_expr', [a:excmds] + a:000)
+endfunction "}}}
+
+function! s:get_tilde_col(lnum) "{{{
+    return match(getline(a:lnum), '\S') + 1
+endfunction "}}}
+function! s:at_right_of_tilde_col() "{{{
+    return col('.') > s:get_tilde_col('.')
+endfunction "}}}
+function! s:at_left_of_tilde_col() "{{{
+    return col('.') < s:get_tilde_col('.')
+endfunction "}}}
+" }}}
+
 " TODO Do not clear mappings set by plugins.
 " mapclear
 " mapclear!
