@@ -1266,8 +1266,12 @@ inoreab <expr> dt@        strftime("%Y-%m-%d %H:%M")
 call altercmd#load()
 AlterCommand th     tab<Space>help
 AlterCommand t      tabedit
-AlterCommand qw     wq
 AlterCommand sf     setf
+AlterCommand hg     helpgrep
+
+" For typo.
+AlterCommand qw     wq
+AlterCommand amp    map
 " }}}
 
 " indent/dedent {{{
