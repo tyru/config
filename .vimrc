@@ -343,7 +343,7 @@ MyAutocmd VimEnter * set bg=dark | colorscheme desert
 MyAutocmd SwapExists * let v:swapchoice = 'o'
 
 " autocmd CursorHold,CursorHoldI *   silent! update
-MyAutocmd QuickfixCmdPost make,grep,grepadd,vimgrep,helpgrep   copen
+MyAutocmd QuickfixCmdPost * QuickFix
 
 " MyAutocmd InsertLeave * setlocal nocursorline nocursorcolumn
 " MyAutocmd InsertEnter * setlocal cursorline cursorcolumn
@@ -1619,6 +1619,16 @@ command!
 \   echo globpath(&rtp, <q-args>)
 
 AlterCommand gp GlobPath
+" }}}
+" QuickFix {{{
+" Select prefered command from cwindow, copen, and so on.
+
+command!
+\   -bar -nargs=?
+\   QuickFix
+\   if !empty(getqflist()) | cwindow <args> | endif
+
+AlterCommand qf QuickFix
 " }}}
 
 " ...Mode {{{
