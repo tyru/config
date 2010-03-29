@@ -78,7 +78,6 @@ setopt no_promptcr
 # }}}
 ### alias ### {{{
 alias df='df -h'
-alias di='diff'
 alias diff='diff -u'
 alias du='du -h'
 alias free='free -m -l -t'
@@ -93,12 +92,11 @@ alias sc='screen'
 alias whi='which'
 alias whe='where'
 alias go='gopen'
-alias g='git'
 
 if [ -x "$(which vim)" ]; then
-    alias v='vim'
+    alias vi='vim'
 else
-    alias v='vi'
+    alias vi='vi'
 fi
 
 if [ -x "$(which perldocjp)" ]; then

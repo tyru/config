@@ -16,16 +16,11 @@ set bell-style visible
 # }}}
 
 ### alias ### {{{
-if [ -x "$(which vim)" ]; then
-    alias vi=vim
-fi
-
 alias df='df -h'
-alias di='diff'
 alias diff='diff -u'
 alias du='du -h'
 alias free='free -m -l -t'
-alias j=jobs
+alias j='jobs'
 alias jobs='jobs -l'
 alias l.='ls -d .*'
 alias l='ll'
@@ -36,6 +31,12 @@ alias sc='screen'
 alias whi='which'
 alias whe='where'
 alias go='gopen'
+
+if [ -x "$(which vim)" ]; then
+    alias vi='vim'
+else
+    alias vi='vi'
+fi
 
 if [ -x "$(which perldocjp)" ]; then
     alias perldoc='perldocjp'
