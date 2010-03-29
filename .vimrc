@@ -1956,15 +1956,6 @@ lmap <C-g><C-a> <Plug>(stickykey-alt-remap)
 " restart {{{
 AlterCommand res[tart] Restart
 " }}}
-" submode-scroll {{{
-runtime! plugin/submode/scroll.vim
-call submode#enter_with(g:submode_scroll_submode_name, 'n', 'rs', s:submode_leader . 's', '<Plug>(submode-scroll-enter)')
-call submode#leave_with(g:submode_scroll_submode_name, 'n', 'rs', '<Esc>')
-call submode#map(g:submode_scroll_submode_name, 'n', 'rs', 'j', '<Plug>(submode-scroll-scroll-down)')
-call submode#map(g:submode_scroll_submode_name, 'n', 'rs', 'k', '<Plug>(submode-scroll-scroll-up)')
-call submode#map(g:submode_scroll_submode_name, 'n', 'rs', 'a', '<Plug>(submode-scroll-pace-down)')
-call submode#map(g:submode_scroll_submode_name, 'n', 'rs', 's', '<Plug>(submode-scroll-pace-up)')
-" }}}
 " AutoDate {{{
 let g:autodate_format = "%Y-%m-%d"
 " }}}
@@ -2081,27 +2072,59 @@ endif
 " }}}
 " submode {{{
 
-" Moving window.
-call submode#enter_with('winmove', 'n', '', s:submode_leader . 'w')
-call submode#leave_with('winmove', 'n', '', '<Esc>')
-call submode#map('winmove', 'n', 'r', 'j', '<Plug>(winmove-down)')
-call submode#map('winmove', 'n', 'r', 'k', '<Plug>(winmove-up)')
-call submode#map('winmove', 'n', 'r', 'h', '<Plug>(winmove-left)')
-call submode#map('winmove', 'n', 'r', 'l', '<Plug>(winmove-right)')
+" Move GUI window.
+call submode#enter_with('guiwinmove', 'n', '', 'mgw')
+call submode#leave_with('guiwinmove', 'n', '', '<Esc>')
+call submode#map       ('guiwinmove', 'n', 'r', 'j', '<Plug>(winmove-down)')
+call submode#map       ('guiwinmove', 'n', 'r', 'k', '<Plug>(winmove-up)')
+call submode#map       ('guiwinmove', 'n', 'r', 'h', '<Plug>(winmove-left)')
+call submode#map       ('guiwinmove', 'n', 'r', 'l', '<Plug>(winmove-right)')
 
-" Change window size of gVim itself
-call submode#enter_with('guiwinsize', 'n', '', s:submode_leader . 'W', '<Nop>')
+" Change GUI window size.
+call submode#enter_with('guiwinsize', 'n', '', 'mgs', '<Nop>')
 call submode#leave_with('guiwinsize', 'n', '', '<Esc>')
-call submode#map('guiwinsize', 'n', '', 'j', ':<C-u>set lines-=1<CR>')
-call submode#map('guiwinsize', 'n', '', 'k', ':<C-u>set lines+=1<CR>')
-call submode#map('guiwinsize', 'n', '', 'h', ':<C-u>set columns-=5<CR>')
-call submode#map('guiwinsize', 'n', '', 'l', ':<C-u>set columns+=5<CR>')
+call submode#map       ('guiwinsize', 'n', '', 'j', ':set lines-=1<CR>')
+call submode#map       ('guiwinsize', 'n', '', 'k', ':set lines+=1<CR>')
+call submode#map       ('guiwinsize', 'n', '', 'h', ':set columns-=5<CR>')
+call submode#map       ('guiwinsize', 'n', '', 'l', ':set columns+=5<CR>')
 
+" Change current window size.
+call submode#enter_with('winsize', 'n', '', 'mws', '<Nop>')
+call submode#leave_with('winsize', 'n', '', '<Esc>')
+call submode#map       ('winsize', 'n', '', 'j', '<C-w>-:redraw<CR>')
+call submode#map       ('winsize', 'n', '', 'k', '<C-w>+:redraw<CR>')
+call submode#map       ('winsize', 'n', '', 'h', '<C-w><:redraw<CR>')
+call submode#map       ('winsize', 'n', '', 'l', '<C-w>>:redraw<CR>')
+
+" undo/redo
 call submode#enter_with('undo/redo', 'n', '', 'g-', 'g-')
 call submode#enter_with('undo/redo', 'n', '', 'g+', 'g+')
 call submode#leave_with('undo/redo', 'n', '', '<Esc>')
-call submode#map('undo/redo', 'n', '', '-', 'g-')
-call submode#map('undo/redo', 'n', '', '+', 'g+')
+call submode#map       ('undo/redo', 'n', '', '-', 'g-')
+call submode#map       ('undo/redo', 'n', '', '+', 'g+')
+
+" Tab walker.
+call submode#enter_with('tabwalker', 'n', '', 'mtw', '<Nop>')
+call submode#leave_with('tabwalker', 'n', '', '<Esc>')
+call submode#map       ('tabwalker', 'n', '', 'h', 'gT:redraw<CR>')
+call submode#map       ('tabwalker', 'n', '', 'l', 'gt:redraw<CR>')
+call submode#map       ('tabwalker', 'n', '', 'H', ':execute "tabmove" tabpagenr() - 2<CR>')
+call submode#map       ('tabwalker', 'n', '', 'L', ':execute "tabmove" tabpagenr()<CR>')
+
+" FIXME: Weird character is showed.
+" call submode#enter_with('indent/dedent', 'i', '', '<C-q>', '<C-d>')
+" call submode#enter_with('indent/dedent', 'i', '', '<C-t>', '<C-t>')
+" call submode#leave_with('indent/dedent', 'i', '', '<Esc>')
+" call submode#map       ('indent/dedent', 'i', '', 'h', '<C-d>')
+" call submode#map       ('indent/dedent', 'i', '', 'l', '<C-t>')
+
+" TODO Stash &scroll value.
+call submode#enter_with('scroll', 'n', '', 'mss', '<Nop>')
+call submode#leave_with('scroll', 'n', '', '<Esc>')
+call submode#map       ('scroll', 'n', '', 'j', ':normal! <C-d><CR>:redraw<CR>')
+call submode#map       ('scroll', 'n', '', 'k', ':normal! <C-u><CR>:redraw<CR>')
+call submode#map       ('scroll', 'n', '', 'a', ':let &l:scroll -= 3<CR>')
+call submode#map       ('scroll', 'n', '', 's', ':let &l:scroll += 3<CR>')
 " }}}
 " prettyprint {{{
 AlterCommand p      PP
