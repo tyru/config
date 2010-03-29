@@ -11,6 +11,13 @@ language time C
 " }}}
 " Util Functions/Commands {{{
 " Function {{{
+function! s:SID() "{{{
+    return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
+endfunction "}}}
+function! s:SNR(map) "{{{
+    return printf("\<SNR>%d_%s", s:SID(), a:map)
+endfunction "}}}
+
 function! s:warn(msg) "{{{
     echohl WarningMsg
     echomsg a:msg
@@ -21,6 +28,9 @@ function! s:system(command, ...) "{{{
 endfunction "}}}
 function! s:glob(expr) "{{{
     return split(glob(a:expr), "\n")
+endfunction "}}}
+function! s:globpath(paths, expr) "{{{
+    return split(globpath(a:paths, a:expr), "\n")
 endfunction "}}}
 function! s:getchar(...) "{{{
     let c = call('getchar', a:000)
