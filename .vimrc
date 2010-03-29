@@ -283,13 +283,13 @@ let &titlestring = '%{getcwd()} %{haslocaldir() ? "(local)" : ""}'
 
 " tab
 set showtabline=2
-let &tabline     = '%{tabpagenr()}:%{expand("%:t")}%( (%M%R%H%W)%)'
-let &guitablabel = '%{tabpagenr()}:%{expand("%:t")}%( (%M%R%H%W)%)'
+let &tabline     = '%{tabpagenr()}. [%{expand("%:t")}] - %{&fenc},%{&ff}'
+let &guitablabel = '%{tabpagenr()}. [%{expand("%:t")}] - %{&fenc},%{&ff}'
 
 " statusline
 set laststatus=2
-"let &statusline = '(%{&ft})(%{&fenc})(%{&ff})/(%p%%)(%l/%L)/(%{eskk#get_mode()})'
-let &statusline = '(%{&ft})(%{&fenc})(%{&ff})/(%p%%)(%l/%L)'
+let &statusline = '[%{&ft}] [%l/%L]%( [%M%R%H%W]%)'
+"let &statusline .= '/(%{eskk#get_mode()})'
 
 " gui
 set guioptions=aegitrhpF
@@ -318,7 +318,7 @@ set t_te=
 set notimeout
 
 " fillchars
-set fillchars=stl:\:,vert:\ ,fold:-,diff:-
+set fillchars=stl:\ ,stlnc::,vert:\ ,fold:-,diff:-
 
 " cursor behavior in insertmode
 set whichwrap=b,s
@@ -330,7 +330,6 @@ set foldenable
 " set foldmethod=marker
 
 " misc.
-set autoread
 set diffopt=filler,vertical
 set helplang=ja,en
 set history=50
