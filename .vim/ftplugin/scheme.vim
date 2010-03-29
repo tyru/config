@@ -73,9 +73,10 @@ endfunc
 let g:is_gauche = 1
 " }}}
 
-" setlocal {{{
+" Options {{{
 setlocal lisp
 setlocal nocindent
+setlocal complete=.,t,k,kspell
 
 " lispwords {{{
 setlocal lispwords+=and-let*,begin0,call-with-client-socket,call-with-input-conversion,call-with-input-file

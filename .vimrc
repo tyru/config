@@ -559,17 +559,9 @@ function! s:LoadWhenFileType()
     call s:SetDict()
     call s:SetTabWidth()
     call s:SetCompiler()
+endfunction "}}}
 
-    " Misc.
-    if s:one_of('perl', s:each_filetype())
-        setlocal complete=.,w,b,u,t,k,kspell
-    endif
-endfunction
-
-" do what ~/.vim/ftplugin/* does in .vimrc
-" because of my laziness :p
 MyAutocmd FileType *   call s:LoadWhenFileType()
-" }}}
 " }}}
 " Mappings and/or Abbreviations {{{
 
