@@ -2058,6 +2058,41 @@ AlterCommand vsh[ell] VimShell
 
 let g:VimShell_EnableInteractive = 2
 let g:VimShell_NoDefaultKeyMappings = 1
+
+MyAutocmd FileType vimshell call s:vimshell_settings()
+
+function! s:vimshell_settings() "{{{
+    " Define aliases.
+    call vimshell#altercmd#define('df', 'df -h')
+    call vimshell#altercmd#define('diff', 'diff --unified')
+    call vimshell#altercmd#define('du', 'du -h')
+    call vimshell#altercmd#define('free', 'free -m -l -t')
+    call vimshell#altercmd#define('j', 'jobs -l')
+    call vimshell#altercmd#define('jobs', 'jobs -l')
+    call vimshell#altercmd#define('l.', 'ls -d .*')
+    call vimshell#altercmd#define('l', 'll')
+    call vimshell#altercmd#define('la', 'ls -A')
+    call vimshell#altercmd#define('less', 'less -r')
+    call vimshell#altercmd#define('ll', 'ls -lh')
+    call vimshell#altercmd#define('sc', 'screen')
+    call vimshell#altercmd#define('whi', 'which')
+    call vimshell#altercmd#define('whe', 'where')
+    call vimshell#altercmd#define('go', 'gopen')
+
+    if executable('perldocjp')
+        call vimshell#altercmd#define('perldoc', 'perldocjp')
+    endif
+
+    let less_sh = s:globpath(&rtp, 'macros/less.sh')
+    if !empty(less_sh)
+        call vimshell#altercmd#define('vless', less_sh[0])
+    endif
+
+    " Add/Remove some mappings.
+    nunmap <buffer> <C-n>
+    nunmap <buffer> <C-p>
+    inoremap <buffer> <C-l> <Space><Bar><Space>
+endfunction "}}}
 " }}}
 " quickrun {{{
 let g:quickrun_no_default_key_mappings = 1
