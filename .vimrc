@@ -1508,11 +1508,6 @@ endfunction
 command! -nargs=* GccSyntaxCheck
             \ call s:GccSyntaxCheck(<f-args>)
 " }}}
-" LcdCurrent, CdCurrent {{{
-"   Change current directory to current file's one.
-command! -nargs=0 LcdCurrent lcd %:p:h
-command! -nargs=0 CdCurrent  cd %:p:h
-" }}}
 " Ack {{{
 function! s:ack(...)
     let save_grepprg = &l:grepprg
@@ -1720,7 +1715,9 @@ endfunction "}}}
 
 " TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
 AlterCommand cd  TabpageCD
-nnoremap [subleader]cd   :TabpageCD %:p:h<CR>
+
+nnoremap [subleader]cd  :<C-u>TabpageCD %:p:h<CR>
+nnoremap <Leader>cd     :<C-u>lcd %:p:h<CR>
 
 command! -complete=dir -nargs=? TabpageCD
 \   execute 'cd' fnameescape(expand(<q-args>))
