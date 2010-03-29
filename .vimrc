@@ -86,6 +86,9 @@ endfunction "}}}
 function! s:stringf(fmt, ...) "{{{
     return call('printf', [a:fmt] + map(copy(a:000), 'string(v:val)'))
 endfunction "}}}
+function! s:mapf(list, fmt) "{{{
+    return map(copy(a:list), "printf(a:fmt, v:val)")
+endfunction "}}}
 " }}}
 " Commands {{{
 augroup vimrc
