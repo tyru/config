@@ -1072,6 +1072,17 @@ endfunction "}}}
 call s:window.register('quickrun', {'close': function('s:close_quickrun_window'), 'determine': function('s:is_quickrun_window')})
 " }}}
 
+" unlisted {{{
+function! s:close_unlisted_window() "{{{
+    return s:winutil.close_first_like('s:is_unlisted_window(winnr)')
+endfunction "}}}
+function! s:is_unlisted_window(winnr) "{{{
+    return !getbufvar(winbufnr(a:winnr), '&buflisted')
+endfunction "}}}
+
+call s:window.register('unlisted', {'close': function('s:close_unlisted_window'), 'determine': function('s:is_unlisted_window')})
+" }}}
+
 
 function! s:close_certain_window() "{{{
     let curwinnr = winnr()
@@ -1099,6 +1110,7 @@ nnoremap [cmdleader]ch :<C-u>call <SID>close_help_window()<CR>
 nnoremap [cmdleader]cQ :<C-u>call <SID>close_quickfix_window()<CR>
 nnoremap [cmdleader]cr :<C-u>call <SID>close_ref_window()<CR>
 nnoremap [cmdleader]cq :<C-u>call <SID>close_quickrun_window()<CR>
+nnoremap [cmdleader]cb :<C-u>call <SID>close_unlisted_window()<CR>
 
 nnoremap [cmdleader]cc :<C-u>call <SID>close_certain_window()<CR>
 " }}}
