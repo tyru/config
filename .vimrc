@@ -1531,7 +1531,7 @@ command! -nargs=+ SetTitle
 " }}}
 " EchoPath {{{
 
-AlterCommand ept EchoPath
+AlterCommand epa EchoPath
 AlterCommand rtp EchoPath<Space>rtp
 
 command!
@@ -1860,14 +1860,12 @@ let g:wm_move_left  = '<C-M-h>'
 let g:wm_move_right = '<C-M-l>'
 " }}}
 " sign-diff {{{
-"
-" 現在未使用...
-" (作ってから自分はどっちかと言うと
-" ウィンドウにあまり情報を出したくない派なので要らないなと気付いた)
 let g:SD_disable = 1
 
 " let g:SD_debug = 1
-" nnoremap <C-l>     :SDUpdate<CR><C-l>
+if !g:SD_disable
+    nnoremap <silent> <C-l> :SDUpdate<CR><C-l>
+endif
 " }}}
 " DumbBuf {{{
 let dumbbuf_hotkey = '<Leader>b'
@@ -2013,7 +2011,7 @@ MyAutocmd VimEnter * call s:register_fuf_abbrev()
 " }}}
 " }}}
 " MRU {{{
-nnoremap gh :<C-u>MRU<CR>
+nnoremap <C-h> :<C-u>MRU<CR>
 let MRU_Max_Entries   = 500
 let MRU_Add_Menu      = 0
 let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\c\'
@@ -2095,12 +2093,12 @@ function! s:vimshell_settings() "{{{
 endfunction "}}}
 " }}}
 " quickrun {{{
+let g:loaded_quicklaunch = 1
+
 let g:quickrun_no_default_key_mappings = 1
 map <Space>r <Plug>(quickrun)
 
-let g:loaded_quicklaunch = 1
-
-if !exists('g:quickrun_config')
+if !exists('s:loaded_vimrc')
     let g:quickrun_config = {}
     let g:quickrun_config.markdown = {'command' : 'pandoc'}
 endif
@@ -2263,6 +2261,11 @@ endif
 " End. {{{
 
 
+if !exists('s:loaded_vimrc')
+    GarbageCorrect    " first time
+else
+    GarbageCorrect!
+endif
 
 set secure
 
