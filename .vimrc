@@ -18,8 +18,7 @@ function! s:warn(msg) "{{{
     echohl None
 endfunction "}}}
 function! s:system(command, ...) "{{{
-    let args = [a:command] + map(copy(a:000), 'shellescape(v:val)')
-    return system(join(args, ' '))
+    return system(join([a:command] + map(copy(a:000), 'shellescape(v:val)'), ' '))
 endfunction "}}}
 function! s:glob(expr) "{{{
     return split(glob(a:expr), "\n")
