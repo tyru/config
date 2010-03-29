@@ -89,6 +89,9 @@ endfunction "}}}
 function! s:mapf(list, fmt) "{{{
     return map(copy(a:list), "printf(a:fmt, v:val)")
 endfunction "}}}
+function! s:string_pp(val) "{{{
+    return string(a:val)    " TODO Pretty print
+endfunction "}}}
 " }}}
 " Commands {{{
 augroup vimrc
