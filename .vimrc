@@ -664,9 +664,11 @@ noremap [subleader]d    "*d
 noremap x           "_x
 noremap <Space>d    "_d
 
-" map default keys to <Leader> sequence keys.
-noremap <Leader>? g?
 noremap <Leader>e =
+
+" remap for visualstar.vim
+map +  #
+map g+ g#
 
 " operator-... for ex command {{{
 let s:op_command_command = ''
@@ -732,13 +734,6 @@ vnoremap ar a]
 
 onoremap ir i]
 vnoremap ir i]
-
-noremap g] }
-noremap g[ {
-
-" TODO More like i_CTRL-a, i_CTRL-e of my hack.
-noremap gw ^
-noremap ge $
 " }}}
 " misc. {{{
 noremap <Space>j           <C-f>
@@ -760,17 +755,20 @@ nnoremap d<Space>  0d$
 nnoremap y<Space>  0y$
 nnoremap c<Space>  0c$
 
-nnoremap [cmdleader]m :<C-u>messages<CR>
-nnoremap [cmdleader]d :<C-u>display<CR>
+" http://vim-users.jp/2009/08/hack57/
+nnoremap d<CR> :<C-u>call append(expand('.'), '')<CR>j
+nnoremap c<CR> :<C-u>call append(expand('.'), '')<CR>jI
 
-" remap far keys {{{
+nnoremap [cmdleader]me :<C-u>messages<CR>
+nnoremap [cmdleader]di :<C-u>display<CR>
+
+" http://vim-users.jp/2009/11/hack97/
+nnoremap c. q:k<Cr>
+
 nnoremap Y y$
 
-nnoremap +     #
-nnoremap g+    g#
-
 nnoremap g; ~
-" }}}
+
 " execute most used command quickly {{{
 nnoremap [cmdleader]w      :<C-u>write<CR>
 nnoremap [cmdleader]q      :<C-u>quit<CR>
@@ -827,7 +825,7 @@ nnoremap <M-h>     <C-w>h
 nnoremap <M-l>     <C-w>l
 " }}}
 " open <cfile> {{{
-nnoremap gf :<C-u>call <SID>open_cfile()<CR>
+nnoremap [jumpleader]f :<C-u>call <SID>open_cfile()<CR>
 
 function! s:open_cfile() "{{{
     let option = {
@@ -1104,6 +1102,12 @@ nnoremap [cmdleader]cq :<C-u>call <SID>close_quickrun_window()<CR>
 
 nnoremap [cmdleader]cc :<C-u>call <SID>close_certain_window()<CR>
 " }}}
+" close tab with also prefix [cmdleader]c. {{{
+" tab
+nnoremap [cmdleader]ct :<C-u>tabclose<CR>
+" uindou
+nnoremap [cmdleader]cu :<C-u>close<CR>
+" }}}
 " move window into tabpage {{{
 " http://vim-users.jp/2009/12/hack106/
 "
@@ -1190,6 +1194,7 @@ silent Arpeggio noremap! #{ 〔〕<Left>
 inoremap <C-r><C-u>  <C-r><C-p>+
 inoremap <C-r><C-i>  <C-r><C-p>*
 inoremap <C-r><C-o>  <C-r><C-p>"
+inoremap <C-r>       <C-r><C-r>
 
 " shift left (indent)
 inoremap <C-q>   <C-d>
