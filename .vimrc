@@ -1282,37 +1282,21 @@ vnoremap g. >
 " }}}
 
 " Mappings with option value. {{{
+nnoremap <expr> / <SID>with_options('/', {'&hlsearch': 1})
+nnoremap <expr> ? <SID>with_options('?', {'&hlsearch': 1})
 
-function! s:generate_assign_fn(dict) "{{{
-    let assign_fn = values(map(a:dict, "printf('let &l:%s = %s', v:key, string(v:val))"))
-    return empty(assign_fn) ? '' : ":\<C-u>" . join(assign_fn, '|') . "\<CR>"
+nnoremap <expr> * <SID>with_options('*', {'&hlsearch': 1, '&ignorecase': 0})
+nnoremap <expr> + <SID>with_options('#', {'&hlsearch': 1, '&ignorecase': 0})
+
+nnoremap <expr> : <SID>with_options(':', {'&ignorecase': 1})
+vnoremap <expr> : <SID>with_options(':', {'&ignorecase': 1})
+
+function! s:with_options(cmd, opt) "{{{
+    for [name, value] in items(a:opt)
+        call setbufvar('%', name, value)
+    endfor
+    return a:cmd
 endfunction "}}}
-
-function! s:do_nmap_with(cmd, beforeopt, afteropt) "{{{
-    return
-    \   printf('%s%s%s',
-    \       s:generate_assign_fn(a:beforeopt),
-    \       a:cmd,
-    \       s:generate_assign_fn(a:afteropt))
-endfunction "}}}
-
-function! s:do_nmap_before(cmd, beforeopt) "{{{
-    return s:do_nmap_with(a:cmd, a:beforeopt, {})
-endfunction "}}}
-
-function! s:do_nmap_after(cmd, afteropt) "{{{
-    return s:do_nmap_with(a:cmd, {}, a:afteropt)
-endfunction "}}}
-
-nnoremap <expr> / <SID>do_nmap_before('/', {'hlsearch': 1})
-nnoremap <expr> ? <SID>do_nmap_before('?', {'hlsearch': 1})
-
-nnoremap <expr> * <SID>do_nmap_before('*', {'hlsearch': 1, 'ignorecase': 0})
-nnoremap <expr> + <SID>do_nmap_before('#', {'hlsearch': 1, 'ignorecase': 0})
-
-nnoremap <expr> : <SID>do_nmap_before(':', {'ignorecase': 1})
-" TODO
-" vnoremap <expr> : <SID>do_vmap_before(':', {'ignorecase': 1})
 " }}}
 
 " Emacs like kill-line. {{{
