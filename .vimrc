@@ -241,10 +241,10 @@ set pumheight=20
 " tags
 if has('path_extra')
     " find 'tags' rewinding current directory
-    set tags&
     set tags+=.;
 endif
 set showfulltag
+set notagbsearch
 
 " virtualedit
 if has('virtualedit')
@@ -1330,20 +1330,21 @@ noremap <expr> L <SID>at_left_of_tilde_col()  ? "^" : "$"
 " }}}
 " }}}
 " Commands {{{
-" HelpTagAll {{{
+" HelpTagsAll {{{
 "   do :helptags to all doc/ in &runtimepath
 command!
-\   HelpTagAll
-\   call s:HelpTagAll()
+\   -bar -nargs=?
+\   HelpTagsAll
+\   call s:HelpTagsAll(<f-args>)
 
-function! s:HelpTagAll()
+function! s:HelpTagsAll(...)
     " FIXME Use pathogen.vim!!
     for path in split(&runtimepath, ',')
-        let path .= '/doc'
-        if isdirectory(path)
+        let doc = path . '/doc'
+        if isdirectory(doc)
             " add :silent! because Vim warns "No match ..."
-            " if there are no files in path . '/doc/*',
-            silent! execute 'helptags' path
+            " if there are no files in '{doc}/*',
+            silent! execute 'helptags' join(a:000) doc
         endif
     endfor
 endfunction
