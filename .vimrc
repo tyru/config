@@ -1263,6 +1263,9 @@ AlterCommand t      tabedit
 AlterCommand sf     setf
 AlterCommand hg     helpgrep
 
+AlterCommand alc    Ref<Space>alc
+AlterCommand man    Ref<Space>man
+
 " For typo.
 AlterCommand qw     wq
 AlterCommand amp    map
