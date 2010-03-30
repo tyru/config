@@ -354,8 +354,9 @@ MyAutocmd SwapExists * let v:swapchoice = 'o'
 " autocmd CursorHold,CursorHoldI *   silent! update
 MyAutocmd QuickfixCmdPost * QuickFix
 
-" MyAutocmd InsertLeave * setlocal nocursorline nocursorcolumn
-" MyAutocmd InsertEnter * setlocal cursorline cursorcolumn
+" InsertLeave, InsertEnter
+MyAutocmd InsertLeave * setlocal nocursorline
+MyAutocmd InsertEnter * setlocal cursorline ignorecase
 
 " filetype {{{
 MyAutocmd BufNewFile,BufReadPre *.as
