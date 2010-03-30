@@ -1324,6 +1324,35 @@ inoremap <expr> <C-e> <SID>at_left_of_tilde_col()  ? "\<C-o>^" : "\<End>"
 noremap <expr> H <SID>at_right_of_tilde_col() ? "^" : "0"
 noremap <expr> L <SID>at_left_of_tilde_col()  ? "^" : "$"
 " }}}
+
+" [jump] {{{
+call s:map_prefix_key('n', 'jump', 'go')
+
+
+" NOTE: Disabled.
+" open <cfile> {{{
+" nnoremap <SID>[jump]f :<C-u>call <SID>open_cfile()<CR>
+
+function! s:open_cfile() "{{{
+    let option = {
+    \   'buffer': 'edit <cfile>',
+    \   'window': 'Split <cfile>',
+    \   'tab'   : 'tabedit <cfile>',
+    \}
+    let choice = prompt#prompt("open with...", {
+    \   'menu': keys(option),
+    \   'one_char': 1,
+    \   'escape': 1,
+    \})
+    if has_key(option, choice)
+        execute option[choice]
+    endif
+endfunction "}}}
+" }}}
+
+
+" TODO Jump using tag files.
+" }}}
 " }}}
 " Commands {{{
 " HelpTagsAll {{{
@@ -1814,9 +1843,6 @@ let ca_filetype_table = {
         \ 'css' : [ "/* ", " */" ],
     \ },
 \ }
-
-nmap go      <Leader>co
-nmap gO      <Leader>cO
 " }}}
 " nextfile {{{
 let g:nf_map_next     = '<SID>[comma]n'
