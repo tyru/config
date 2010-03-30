@@ -1353,6 +1353,37 @@ endfunction "}}}
 
 " TODO Jump using tag files.
 " }}}
+" [compl] {{{
+call s:map_prefix_key('i', 'compl', '<Tab>')
+
+inoremap        <SID>[compl]j <C-n>
+inoremap        <SID>[compl]k <C-p>
+
+inoremap        <SID>[compl]n <C-x><C-n>
+inoremap        <SID>[compl]p <C-x><C-p>
+
+inoremap        <SID>[compl]l <C-x><C-l>
+inoremap        <SID>[compl]d <C-x><C-k>
+inoremap        <SID>[compl]t <C-x><C-]>
+
+inoremap <expr> <SID>[compl]o <SID>omni_or_user_func()
+
+function! s:omni_or_user_func() "{{{
+    if &omnifunc != ''
+        return "\<C-x>\<C-o>"
+    elseif &completefunc != ''
+        return "\<C-x>\<C-u>"
+    else
+        return "\<C-n>"
+    endif
+endfunction "}}}
+
+
+" TODO Smart tab
+" inoremap <SID>[compl]<Tab> dosmartthing
+
+
+" }}}
 " }}}
 " Commands {{{
 " HelpTagsAll {{{
