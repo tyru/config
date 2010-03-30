@@ -1161,6 +1161,9 @@ endfunction "}}}
 MyAutocmd FileType netrw call s:filetype_netrw()
 " }}}
 " }}}
+" vmap {{{
+vnoremap K <Nop>
+" }}}
 " map! {{{
 noremap! <C-f>   <Right>
 noremap! <C-b>   <Left>
