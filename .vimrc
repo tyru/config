@@ -9,7 +9,7 @@ filetype plugin indent on
 language messages C
 language time C
 " }}}
-" Util Functions/Commands {{{
+" Utilities {{{
 " Function {{{
 function! s:SID() "{{{
     return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
@@ -759,26 +759,10 @@ nnoremap c<CR> :<C-u>call append(expand('.'), '')<CR>jI
 nnoremap <SID>[excmd]me :<C-u>messages<CR>
 nnoremap <SID>[excmd]di :<C-u>display<CR>
 
-function! s:map_named_key(named_key, does) "{{{
-    " TODO
-endfunction "}}}
-
-call s:map_named_key('yank-$', 'y$')
-call s:map_named_key('register-+', '"+')
-call s:map_named_key('register-*', '"*')
-
-nnoremap <SID>[yank-$] y$
-nnoremap <SID>[register-+] :echo 'register-+'<CR>"+
-nnoremap <SID>[register-*] :echo 'register-*'<CR>"*
-nmap     Y             <SID>[yank-$]
-nmap     <Leader>Y     <SID>[register-+]<SID>[yank-$]
-nmap     <SID>[comma]Y <SID>[register-*]<SID>[yank-$]
-
 nnoremap g; ~
 
 nnoremap + <C-a>
 nnoremap - <C-x>
-
 " execute most used command quickly {{{
 nnoremap <SID>[excmd]w      :<C-u>write<CR>
 nnoremap <SID>[excmd]q      :<C-u>quit<CR>
@@ -1157,6 +1141,21 @@ endfunction "}}}
 
 MyAutocmd FileType netrw call s:filetype_netrw()
 " }}}
+" 'Y' to yank till the end of line. {{{
+
+function! s:map_named_key(modes, named_key, does) "{{{
+    for m in s:each_char(a:modes != '' ? a:modes : 'nvoicl')
+        execute printf('%snoremap <SID>[%s] %s', m, a:named_key, a:does)
+    endfor
+endfunction "}}}
+
+call s:map_named_key('', 'yank-$', 'y$')
+call s:map_named_key('', 'register-+', '"+')
+call s:map_named_key('', 'register-*', '"*')
+
+nmap     Y             <SID>[yank-$]
+nmap     <Leader>Y     <SID>[register-+]<SID>[yank-$]
+nmap     <SID>[comma]Y <SID>[register-*]<SID>[yank-$]
 " }}}
 " }}}
 " map! {{{
