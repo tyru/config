@@ -744,9 +744,6 @@ vnoremap ir i]
 " open only current line's fold.
 nnoremap z<Space> zMzvzz
 
-" annoying for me
-nnoremap ZZ <Nop>
-
 " folding mappings easy to remember.
 nnoremap zl    zo
 nnoremap zh    zc
@@ -1161,8 +1158,6 @@ endfunction "}}}
 MyAutocmd FileType netrw call s:filetype_netrw()
 " }}}
 " }}}
-" vmap {{{
-vnoremap K <Nop>
 " }}}
 " map! {{{
 noremap! <C-f>   <Right>
@@ -1323,6 +1318,12 @@ inoremap <expr> <C-e> <SID>at_left_of_tilde_col()  ? "\<C-o>^" : "\<End>"
 " motion
 noremap <expr> H <SID>at_right_of_tilde_col() ? "^" : "0"
 noremap <expr> L <SID>at_left_of_tilde_col()  ? "^" : "$"
+" }}}
+" disable unused keys. {{{
+nnoremap ZZ <Nop>
+nnoremap U  <Nop>
+
+vnoremap K  <Nop>
 " }}}
 
 " [jump] {{{
