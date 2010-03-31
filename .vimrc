@@ -2147,6 +2147,8 @@ function! s:vimshell_settings() "{{{
     nunmap <buffer> <C-n>
     nunmap <buffer> <C-p>
     inoremap <buffer> <C-l> <Space><Bar><Space>
+
+    setlocal backspace-=eol
 endfunction "}}}
 " }}}
 " quickrun {{{
