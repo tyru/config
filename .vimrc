@@ -150,7 +150,7 @@ function! s:map_prefix_key(modes, prefix_name, prefix_key) "{{{
         " remap for named map.
         execute printf('%smap     %s    %s', m, prefix, named_map)
         " pressing prefix key twice is same as pressing prefix key.
-        execute printf('%snoremap %s%s  %s', m, prefix, prefix, prefix)
+        " execute printf('%snoremap %s%s  %s', m, prefix, prefix, prefix)
     endfor
 endfunction "}}}
 function! s:map_orig_key(modes, key) "{{{
