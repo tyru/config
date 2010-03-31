@@ -1268,7 +1268,7 @@ AlterCommand qw     wq
 AlterCommand amp    map
 " }}}
 
-" indent/dedent {{{
+" Indent/Dedent {{{
 nnoremap g, <<
 nnoremap g. >>
 vnoremap g, <
@@ -1318,7 +1318,7 @@ inoremap <expr> <C-e> <SID>at_left_of_tilde_col()  ? "\<C-o>^" : "\<End>"
 noremap <expr> H <SID>at_right_of_tilde_col() ? "^" : "0"
 noremap <expr> L <SID>at_left_of_tilde_col()  ? "^" : "$"
 " }}}
-" disable unused keys. {{{
+" Disable unused keys. {{{
 nnoremap ZZ <Nop>
 nnoremap U  <Nop>
 
