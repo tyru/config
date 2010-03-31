@@ -1363,9 +1363,13 @@ inoremap        <SID>[compl]k <C-p>
 inoremap        <SID>[compl]n <C-x><C-n>
 inoremap        <SID>[compl]p <C-x><C-p>
 
+inoremap        <SID>[compl]] <C-x><C-]>
+inoremap        <SID>[compl]d <C-x><C-d>
+inoremap        <SID>[compl]i <C-x><C-i>
+inoremap        <SID>[compl]k <C-x><C-k>
 inoremap        <SID>[compl]l <C-x><C-l>
-inoremap        <SID>[compl]d <C-x><C-k>
-inoremap        <SID>[compl]t <C-x><C-]>
+inoremap        <SID>[compl]s <C-x><C-s>
+inoremap        <SID>[compl]t <C-x><C-t>
 
 inoremap <expr> <SID>[compl]o <SID>omni_or_user_func()
 
