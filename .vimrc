@@ -1324,6 +1324,16 @@ nnoremap U  <Nop>
 
 vnoremap K  <Nop>
 " }}}
+" Expand abbreviation {{{
+" http://gist.github.com/347852
+" http://gist.github.com/350207
+
+inoremap <expr> <SID>(bs-ctrl-])    getline('.')[col('.') - 2] ==# "\<C-]>" ? "\<BS>" : ''
+imap            <C-]>               <C-]><SID>(bs-ctrl-])
+
+cnoremap <expr> <SID>(bs-ctrl-])    getcmdline()[getcmdpos() - 2] ==# "\<C-]>" ? "\<BS>" : ''
+cmap            <C-]>               <C-]><SID>(bs-ctrl-])
+" }}}
 
 " [jump] {{{
 call s:map_prefix_key('n', 'jump', 'go')
