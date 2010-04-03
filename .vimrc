@@ -39,11 +39,12 @@ endfunction "}}}
 function! s:has_elem(list, elem) "{{{
     return !empty(filter(copy(a:list), 'v:val ==# a:elem'))
 endfunction "}}}
-" a:elem is List:
-"   a:list has a:elem[0] && a:list has a:elem[1] && ...
-" a:elem is not List:
-"   a:list has a:elem
 function! s:has_all_of(list, elem) "{{{
+    " a:elem is List:
+    "   a:list has a:elem[0] && a:list has a:elem[1] && ...
+    " a:elem is not List:
+    "   a:list has a:elem
+
     if type(a:elem) == type([])
         for i in a:elem
             if !s:has_elem(a:list, i)
@@ -55,11 +56,12 @@ function! s:has_all_of(list, elem) "{{{
         return s:has_elem(a:list, a:elem)
     endif
 endfunction "}}}
-" a:elem is List:
-"   a:list has a:elem[0] || a:list has a:elem[1] || ...
-" a:elem is not List:
-"   a:list has a:elem
 function! s:has_one_of(list, elem) "{{{
+    " a:elem is List:
+    "   a:list has a:elem[0] || a:list has a:elem[1] || ...
+    " a:elem is not List:
+    "   a:list has a:elem
+
     if type(a:elem) == type([])
         for i in a:elem
             if s:has_elem(a:list, i)
