@@ -524,7 +524,7 @@ call s:add_rtp_from_file('~/.vimruntimepath.lst')
 call emap#load()
 call emap#set_sid(s:SID())
 " call emap#set_sid_from_sfile(expand('<sfile>'))
-" call emap#set_pragmas('ignore-spaces')
+" SetPragmas ignore-spaces
 
 let g:arpeggio_timeoutlen = 40
 call arpeggio#load()
@@ -759,7 +759,7 @@ call s:map_prefix_key('n', 'excmd', '<Space>')
 " map {{{
 " operator {{{
 
-call emap#set_pragmas('ignore-spaces') "{{{
+SetPragmas ignore-spaces "{{{
 
 " paste to clipboard
 Map [nvo] -noremap <Leader>y     <clipboard> y
@@ -771,7 +771,7 @@ Map [nvo] -noremap <SID>[comma]d <primary>   d
 Map [nvo] x        <blackhole> <delete-char>
 Map [nvo] <Space>d <blackhole> <delete*>
 
-call emap#unset_pragmas('ignore-spaces')    " end.
+UnsetPragmas ignore-spaces    " end.
 " }}}
 
 Map [nvo] -noremap <Leader>e =
