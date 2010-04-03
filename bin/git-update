@@ -1,0 +1,4 @@
+#!/bin/sh
+
+[ $# = 0 ] && exit -1
+git rm --cached -r "$1" && git add "$1"
