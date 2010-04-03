@@ -105,7 +105,8 @@ function! s:each_char(str) "{{{
     return split(a:str, '\zs')
 endfunction "}}}
 
-" For mappings {{{
+
+" For mappings
 function! s:execute_multiline_expr(excmds, ...) "{{{
     let expr = join(s:mapf(copy(a:excmds), ":\<C-u>%s\<CR>"), '')
     if a:0 == 0
@@ -134,13 +135,11 @@ endfunction "}}}
 
 function! s:map_leader(key) "{{{
     let g:mapleader = a:key
-    nnoremap <Leader>         <Nop>
-    nnoremap <Leader><Leader> <Leader>
+    nnoremap <Leader> <Nop>
 endfunction "}}}
 function! s:map_localleader(key) "{{{
     let g:maplocalleader = a:key
-    nnoremap <LocalLeader>              <Nop>
-    nnoremap <LocalLeader><LocalLeader> <LocalLeader>
+    nnoremap <LocalLeader> <Nop>
 endfunction "}}}
 function! s:map_prefix_key(modes, prefix_name, prefix_key) "{{{
     let named_map = printf('<SID>[%s]', a:prefix_name)
@@ -158,7 +157,26 @@ function! s:map_orig_key(modes, key) "{{{
         execute printf('%snoremap <SID>[orig]%s %s', m, a:key, a:key)
     endfor
 endfunction "}}}
-" }}}
+
+function! s:with_options(cmd, opt) "{{{
+    for [name, value] in items(a:opt)
+        call setbufvar('%', name, value)
+    endfor
+    return a:cmd
+endfunction "}}}
+
+function! s:do_excmd(...) "{{{
+    for ex in a:000
+        execute ex
+    endfor
+    return ''
+endfunction "}}}
+
+
+" Error
+function! s:assertion_failure(msg) "{{{
+    return 'assertion failure: ' . a:msg
+endfunction "}}}
 " }}}
 " Commands {{{
 augroup vimrc
@@ -178,6 +196,7 @@ command!
 "
 " I was confused as if I wrote C macro
 
+" :VarDump
 command!
 \   -bang -nargs=+ -complete=expression
 \   VarDump
@@ -194,15 +213,37 @@ command!
 \   | echohl None
 
 
+" :ShowStackTrace
 command!
 \   -bar -bang
 \   ShowStackTrace
+\
 \   echohl Debug
 \   | if <bang>0
 \   |   echom printf('[%s] at [%s]', v:exception, v:throwpoint)
 \   | else
 \   |   echom printf('[%s]', v:throwpoint)
 \   | endif
+\   | echohl None
+
+
+" :Assert
+command!
+\   -nargs=+
+\   Assert
+\
+\   if !eval(<q-args>)
+\   |   throw s:assertion_failure(<q-args>)
+\   | endif
+
+
+" :Decho
+command!
+\   -nargs=+
+\   Decho
+\
+\   echohl Debug
+\   | echomsg <args>
 \   | echohl None
 " }}}
 " }}}
@@ -211,53 +252,6 @@ command!
 
 set all&
 
-
-" runtimepath {{{
-
-if has("win32")
-    set runtimepath+=$HOME/.vim
-endif
-
-
-function! s:is_action(name) "{{{
-    return s:get_action(a:name) !=# -1
-endfunction "}}}
-function! s:get_action(name) "{{{
-    let action = {
-    \   'shift'   : 'let &rtp = join(split(&rtp, ",")[1:], ",")',
-    \   'pop'     : 'let &rtp = join(split(&rtp, ",")[:-2], ",")',
-    \   'unshift' : 'let &rtp = join(s:glob(path) + split(&rtp, ","), ",")',
-    \   'push'    : 'let &rtp = join(split(&rtp, ",") + s:glob(path), ",")',
-    \   'clear'   : 'let &rtp = ""',
-    \   'finish'  : 'return',
-    \}
-    return get(action, a:name, -1)
-endfunction "}}}
-function! s:add_rtp_from_file(file) "{{{
-    let file = expand(a:file)
-    if !filereadable(file) | return | endif
-
-    for line in readfile(file)
-        let line = substitute(line, '^\s\+', '', '')
-        let line = substitute(line, '\s\+$', '', '')
-        if line =~# '^$\|^#' | continue | endif
-
-        let m = matchlist(line, '\(\w\+\)\s\+\(\S\+\)')
-        if empty(m)
-            if s:is_action(line)
-                let [action, path] = [line, '']
-            else
-                let [action, path] = ['push', line]
-            endif
-        else
-            let [action, path] = m[1:2]
-        endif
-
-        execute s:get_action(action)
-    endfor
-endfunction "}}}
-call s:add_rtp_from_file('~/.vimruntimepath.lst')
-" }}}
 
 " indent
 set autoindent
@@ -365,7 +359,7 @@ endif
 " visual bell
 set novisualbell
 MyAutocmd VimEnter * set t_vb=
-set debug=beep
+" set debug=beep
 
 " restore screen
 set norestorescreen
@@ -475,6 +469,67 @@ MyAutocmd FileType scm
 " delete autocmd for ft=mkd.
 MyAutocmd VimEnter * autocmd! filetypedetect BufNewFile,BufRead *.md
 " }}}
+" }}}
+" Initializing {{{
+
+" runtimepath {{{
+set runtimepath&
+
+if has("win32")
+    set runtimepath+=$HOME/.vim
+endif
+
+
+function! s:is_action(name) "{{{
+    return s:get_action(a:name) !=# -1
+endfunction "}}}
+function! s:get_action(name) "{{{
+    let action = {
+    \   'shift'   : 'let &rtp = join(split(&rtp, ",")[1:], ",")',
+    \   'pop'     : 'let &rtp = join(split(&rtp, ",")[:-2], ",")',
+    \   'unshift' : 'let &rtp = join(s:glob(path) + split(&rtp, ","), ",")',
+    \   'push'    : 'let &rtp = join(split(&rtp, ",") + s:glob(path), ",")',
+    \   'clear'   : 'let &rtp = ""',
+    \   'finish'  : 'return',
+    \}
+    return get(action, a:name, -1)
+endfunction "}}}
+function! s:add_rtp_from_file(file) "{{{
+    let file = expand(a:file)
+    if !filereadable(file) | return | endif
+
+    for line in readfile(file)
+        let line = substitute(line, '^\s\+', '', '')
+        let line = substitute(line, '\s\+$', '', '')
+        if line =~# '^$\|^#' | continue | endif
+
+        let m = matchlist(line, '\(\w\+\)\s\+\(\S\+\)')
+        if empty(m)
+            if s:is_action(line)
+                let [action, path] = [line, '']
+            else
+                let [action, path] = ['push', line]
+            endif
+        else
+            let [action, path] = m[1:2]
+        endif
+
+        execute s:get_action(action)
+    endfor
+endfunction "}}}
+call s:add_rtp_from_file('~/.vimruntimepath.lst')
+" }}}
+
+
+call emap#load()
+call emap#set_sid(s:SID())
+" call emap#set_sid_from_sfile(expand('<sfile>'))
+" call emap#set_pragmas('ignore-spaces')
+
+let g:arpeggio_timeoutlen = 40
+call arpeggio#load()
+
+call altercmd#load()
 " }}}
 " Encoding {{{
 set enc=utf-8
@@ -633,16 +688,60 @@ MyAutocmd FileType *   call s:LoadWhenFileType()
 " }}}
 " Mappings and/or Abbreviations {{{
 
+
+" TODO
+"
+" MapOriginal:
+"   MapOriginal j
+"   MapOriginal k
+"
+" MapPrefix:
+"   MapPrefix [n] prefix_name rhs
+"
+" MapLeader:
+"   MapLeader ;
+"
+" MapLocalLeader:
+"   MapLocalLeader ,
+"
+" MapOp:
+"   " Map [nvo] lhs rhs
+"   MapOp lhs rhs
+"
+" MapMotion:
+"   " Map [nvo] lhs rhs
+"   MapMotion lhs rhs
+"
+" MapObject:
+"   " Map [vo] lhs rhs
+"   MapObject lhs rhs
+"
+" DisableMap:
+"   " Map [n] $ <Nop>
+"   " Map [n] % <Nop>
+"   " .
+"   " .
+"   " .
+"   DisableMap [n] $ % & ' ( ) ^
+
+
+
 " TODO Do not clear mappings set by plugins.
 " mapclear
 " mapclear!
 " " mapclear!!!!
 " lmapclear
 
+
+
+" Define frequently used mapping sequences.
+DefMap [nvo] -noremap clipboard "+
+DefMap [nvo] -noremap primary   "*
+DefMap [nvo] -noremap blackhole "_
+DefMap [nvo] -noremap delete-char x
+DefMap [nvo] -noremap delete* d
+
 " Set up prefix keys. {{{
-"
-" TODO Make command macros to do these things.
-"
 
 " [orig]
 call s:map_prefix_key('n', 'orig', 'q')
@@ -657,24 +756,28 @@ call s:map_prefix_key('n', 'comma', ',')
 call s:map_prefix_key('n', 'excmd', '<Space>')
 " }}}
 
-let g:arpeggio_timeoutlen = 40
-call arpeggio#load()
-
 " map {{{
 " operator {{{
+
+call emap#set_pragmas('ignore-spaces') "{{{
+
 " paste to clipboard
-noremap <Leader>y       "+y
-noremap <SID>[comma]y   "*y
-noremap <Leader>d       "+d
-noremap <SID>[comma]d   "*d
+Map [nvo] -noremap <Leader>y     <clipboard> y
+Map [nvo] -noremap <SID>[comma]y <primary>   y
+Map [nvo] -noremap <Leader>d     <clipboard> d
+Map [nvo] -noremap <SID>[comma]d <primary>   d
 
 " do not destroy noname register.
-noremap x           "_x
-noremap <Space>d    "_d
+Map [nvo] x        <blackhole> <delete-char>
+Map [nvo] <Space>d <blackhole> <delete*>
 
-noremap <Leader>e =
+call emap#unset_pragmas('ignore-spaces')    " end.
+" }}}
+
+Map [nvo] -noremap <Leader>e =
 
 " operator-... for ex command {{{
+" from :help operator-user
 let s:op_command_command = ''
 
 function! Set_op_command(command)
@@ -686,137 +789,140 @@ function! Op_command(motion_wiseness)
 endfunction
 " }}}
 " operator-sort {{{
-map <Leader>s <Plug>(operator-sort)
+Map [nvo] <Leader>s <Plug>(operator-sort)
 
 call operator#user#define('sort', 'Op_command',
 \                         'call Set_op_command("sort")')
 " }}}
 " operator-retab {{{
-map <Leader>t <Plug>(operator-retab)
+Map [nvo] <Leader>t <Plug>(operator-retab)
 
 call operator#user#define('retab', 'Op_command',
 \                         'call Set_op_command("retab")')
 " }}}
 " operator-join {{{
-map <Leader>j <Plug>(operator-join)
+Map [nvo] <Leader>j <Plug>(operator-join)
 
 call operator#user#define('join', 'Op_command',
 \                         'call Set_op_command("join")')
 " }}}
 " operator-uniq {{{
-map <Leader>u <Plug>(operator-uniq)
+Map [nvo] <Leader>u <Plug>(operator-uniq)
 
 call operator#user#define('uniq', 'Op_command',
 \                         'call Set_op_command("sort u")')
 " }}}
+" operator-narrow {{{
+Map [nvo]          <Leader>na <Plug>(operator-narrow)
+Map [nvo] -noremap <Leader>nw :<C-u>Widen<CR>
+
+call operator#user#define('narrow', 'Op_command',
+\                         'call Set_op_command("Narrow")')
+
+let g:narrow_allow_overridingp = 1
+" }}}
+" operator-replace {{{
+Map [nvo] <Leader>r  <Plug>(operator-replace)
+" }}}
 " }}}
 " motion/textobj {{{
-noremap j gj
-noremap k gk
+Map [nvo] -noremap j gj
+Map [nvo] -noremap k gk
 call s:map_orig_key('nvo', 'j')
 call s:map_orig_key('nvo', 'k')
 
-noremap ]k :<C-u>call search('^\S', 'Ws')<CR>
-noremap [k :<C-u>call search('^\S', 'Wsb')<CR>
+Map [nvo] -noremap ]k :<C-u>call search('^\S', 'Ws')<CR>
+Map [nvo] -noremap [k :<C-u>call search('^\S', 'Wsb')<CR>
 
-omap iF <Plug>(textobj-fold-i)
-vmap iF <Plug>(textobj-fold-i)
-omap aF <Plug>(textobj-fold-a)
-vmap aF <Plug>(textobj-fold-a)
+Map [vo] iF <Plug>(textobj-fold-i)
+Map [vo] aF <Plug>(textobj-fold-a)
 
-noremap gp %
-noremap gp %
+Map [nvo] -noremap gp %
 
-onoremap aa a>
-vnoremap aa a>
-
-onoremap ia i>
-vnoremap ia i>
-
-onoremap ar a]
-vnoremap ar a]
-
-onoremap ir i]
-vnoremap ir i]
+Map [vo] -noremap aa a>
+Map [vo] -noremap ia i>
+Map [vo] -noremap ar a]
+Map [vo] -noremap ir i]
 " }}}
 " }}}
 " nmap {{{
 " open only current line's fold.
-nnoremap z<Space> zMzvzz
+Map [n] -noremap z<Space> zMzvzz
 
 " folding mappings easy to remember.
-nnoremap zl    zo
-nnoremap zh    zc
+Map [n] -noremap zl zo
+Map [n] -noremap zh zc
 
-nnoremap d<Space>  0d$
-nnoremap y<Space>  0y$
-nnoremap c<Space>  0c$
+Map [n] -noremap d<Space> 0d$
+Map [n] -noremap y<Space> 0y$
+Map [n] -noremap c<Space> 0c$
 
 " http://vim-users.jp/2009/08/hack57/
-nnoremap d<CR> :<C-u>call append(expand('.'), '')<CR>j
-nnoremap c<CR> :<C-u>call append(expand('.'), '')<CR>jI
+Map [n] -noremap d<CR> :<C-u>call append(expand('.'), '')<CR>j
+Map [n] -noremap c<CR> :<C-u>call append(expand('.'), '')<CR>jI
 
-nnoremap <SID>[excmd]me :<C-u>messages<CR>
-nnoremap <SID>[excmd]di :<C-u>display<CR>
+Map [n] -noremap <SID>[excmd]me :<C-u>messages<CR>
+Map [n] -noremap <SID>[excmd]di :<C-u>display<CR>
 
-nnoremap g; ~
+Map [n] -noremap g; ~
 
-nnoremap + <C-a>
-nnoremap - <C-x>
+Map [n] -noremap    + <C-a>
+Map [n] -noremap -- - <C-x>
+
 " execute most used command quickly {{{
-nnoremap <SID>[excmd]w      :<C-u>write<CR>
-nnoremap <SID>[excmd]q      :<C-u>quit<CR>
-nnoremap <SID>[excmd]co     :<C-u>close<CR>
-nnoremap <SID>[excmd]h      :<C-u>hide<CR>
+Map [n] -noremap <SID>[excmd]w      :<C-u>write<CR>
+Map [n] -noremap <SID>[excmd]q      :<C-u>quit<CR>
+Map [n] -noremap <SID>[excmd]co     :<C-u>close<CR>
+Map [n] -noremap <SID>[excmd]h      :<C-u>hide<CR>
 " }}}
 " edit .vimrc quickly {{{
-nnoremap <SID>[excmd]ee     :<C-u>edit<CR>
-nnoremap <SID>[excmd]ev     :<C-u>edit $MYVIMRC<CR>
-nnoremap <SID>[excmd]e.     :<C-u>edit .<CR>
+Map [n] -noremap <SID>[excmd]ee     :<C-u>edit<CR>
+Map [n] -noremap <SID>[excmd]ev     :<C-u>edit $MYVIMRC<CR>
+Map [n] -noremap <SID>[excmd]e.     :<C-u>edit .<CR>
 
-nnoremap <SID>[excmd]tt     :<C-u>tabedit<CR>
-nnoremap <SID>[excmd]tv     :<C-u>tabedit $MYVIMRC<CR>
-nnoremap <SID>[excmd]t.     :<C-u>tabedit .<CR>
+Map [n] -noremap <SID>[excmd]tt     :<C-u>tabedit<CR>
+Map [n] -noremap <SID>[excmd]tv     :<C-u>tabedit $MYVIMRC<CR>
+Map [n] -noremap <SID>[excmd]t.     :<C-u>tabedit .<CR>
 
-nnoremap <expr> <SID>[excmd]sv <SID>execute_multiline_expr(['source $MYVIMRC', 'setfiletype vim'], ':source $MYVIMRC')
+Map [n] -noremap -expr <SID>[excmd]sv <SID>execute_multiline_expr(['source $MYVIMRC', 'setfiletype vim'], ':source $MYVIMRC')
 " }}}
 " cmdwin {{{
 set cedit=<C-z>
 function! s:cmdwin_enter()
-    inoremap <buffer> <C-z>         <C-c>
-    nnoremap <buffer> <C-z>         <C-c>
-    nnoremap <buffer> <Esc>         :<C-u>quit<CR>
-    nnoremap <buffer> <C-w>k        :<C-u>quit<CR>
-    nnoremap <buffer> <C-w><C-k>    :<C-u>quit<CR>
+    Map [ni] -noremap -buffer <C-z>         <C-c>
+    Map [ni] -noremap -buffer <C-z>         <C-c>
+    Map [n]  -noremap -buffer <Esc>         :<C-u>quit<CR>
+    Map [n]  -noremap -buffer <C-w>k        :<C-u>quit<CR>
+    Map [n]  -noremap -buffer <C-w><C-k>    :<C-u>quit<CR>
 
     startinsert!
 endfunction
 MyAutocmd CmdwinEnter * call s:cmdwin_enter()
 
 let loaded_cmdbuf = 1
-nnoremap g: q:
-nnoremap g/ q/
-nnoremap g? q?
+Map [n] -noremap g: q:
+Map [n] -noremap g/ q/
+Map [n] -noremap g? q?
 " }}}
 " walking between tabs {{{
-nnoremap <C-n>         gt
-nnoremap <C-p>         gT
-nnoremap <C-g><C-n>    :<C-u>tablast<CR>
-nnoremap <C-g><C-p>    :<C-u>tabfirst<CR>
+Map [n] -noremap <C-n>         gt
+Map [n] -noremap <C-p>         gT
+Map [n] -noremap <C-g><C-n>    :<C-u>tablast<CR>
+Map [n] -noremap <C-g><C-p>    :<C-u>tabfirst<CR>
 " }}}
 " moving tabs {{{
-nnoremap <Left>    :<C-u>execute 'tabmove' tabpagenr() - 2<CR>
-nnoremap <Right>   :<C-u>execute 'tabmove' tabpagenr()<CR>
+Map [n] -noremap <Left>    :<C-u>execute 'tabmove' tabpagenr() - 2<CR>
+Map [n] -noremap <Right>   :<C-u>execute 'tabmove' tabpagenr()<CR>
 " NOTE: gVim only
-nnoremap <S-Left>  :<C-u>execute 'tabmove' 0<CR>
-nnoremap <S-Right> :<C-u>execute 'tabmove' tabpagenr('$')<CR>
+Map [n] -noremap <S-Left>  :<C-u>execute 'tabmove' 0<CR>
+Map [n] -noremap <S-Right> :<C-u>execute 'tabmove' tabpagenr('$')<CR>
 " }}}
 " walk between windows {{{
 " NOTE: gVim only
-nnoremap <M-j>     <C-w>j
-nnoremap <M-k>     <C-w>k
-nnoremap <M-h>     <C-w>h
-nnoremap <M-l>     <C-w>l
+Map [n] -noremap <M-j>     <C-w>j
+Map [n] -noremap <M-k>     <C-w>k
+Map [n] -noremap <M-h>     <C-w>h
+Map [n] -noremap <M-l>     <C-w>l
 " }}}
 " toggle options {{{
 function! s:toggle_option(option_name) "{{{
@@ -826,13 +932,13 @@ function! s:toggle_option(option_name) "{{{
     endif
 endfunction "}}}
 
-nnoremap <SID>[excmd]oh :<C-u>call <SID>toggle_option('hlsearch')<CR>
-nnoremap <SID>[excmd]oi :<C-u>call <SID>toggle_option('ignorecase')<CR>
-nnoremap <SID>[excmd]op :<C-u>call <SID>toggle_option('paste')<CR>
-nnoremap <SID>[excmd]ow :<C-u>call <SID>toggle_option('wrap')<CR>
-nnoremap <SID>[excmd]oe :<C-u>call <SID>toggle_option('expandtab')<CR>
-nnoremap <SID>[excmd]ol :<C-u>call <SID>toggle_option('list')<CR>
-nnoremap <SID>[excmd]om :<C-u>call <SID>toggle_option('modeline')<CR>
+Map [n] -noremap <SID>[excmd]oh :<C-u>call <SID>toggle_option('hlsearch')<CR>
+Map [n] -noremap <SID>[excmd]oi :<C-u>call <SID>toggle_option('ignorecase')<CR>
+Map [n] -noremap <SID>[excmd]op :<C-u>call <SID>toggle_option('paste')<CR>
+Map [n] -noremap <SID>[excmd]ow :<C-u>call <SID>toggle_option('wrap')<CR>
+Map [n] -noremap <SID>[excmd]oe :<C-u>call <SID>toggle_option('expandtab')<CR>
+Map [n] -noremap <SID>[excmd]ol :<C-u>call <SID>toggle_option('list')<CR>
+Map [n] -noremap <SID>[excmd]om :<C-u>call <SID>toggle_option('modeline')<CR>
 
 " Select coding style. {{{
 "
@@ -860,7 +966,7 @@ function! s:coding_style_complete(...) "{{{
 endfunction "}}}
 
 
-nnoremap <SID>[excmd]ot :<C-u>call <SID>toggle_tab_options()<CR>
+Map [n] -noremap <SID>[excmd]ot :<C-u>call <SID>toggle_tab_options()<CR>
 
 function! s:toggle_tab_options() "{{{
     let choice = prompt#prompt('Which do you prefer?:', {
@@ -883,7 +989,7 @@ function! s:optinit() "{{{
     echo 'Initialized frequently toggled options.'
 endfunction "}}}
 
-nnoremap <SID>[excmd]OI :<C-u>OptInit<CR>
+Map [n] -noremap <SID>[excmd]OI :<C-u>OptInit<CR>
 
 
 silent OptInit
@@ -1080,20 +1186,20 @@ function! s:close_certain_window() "{{{
 endfunction "}}}
 
 
-nnoremap <SID>[excmd]c: :<C-u>call <SID>close_cmdwin_window()<CR>
-nnoremap <SID>[excmd]ch :<C-u>call <SID>close_help_window()<CR>
-nnoremap <SID>[excmd]cQ :<C-u>call <SID>close_quickfix_window()<CR>
-nnoremap <SID>[excmd]cr :<C-u>call <SID>close_ref_window()<CR>
-nnoremap <SID>[excmd]cq :<C-u>call <SID>close_quickrun_window()<CR>
-nnoremap <SID>[excmd]cb :<C-u>call <SID>close_unlisted_window()<CR>
+Map [n] -noremap <SID>[excmd]c: :<C-u>call <SID>close_cmdwin_window()<CR>
+Map [n] -noremap <SID>[excmd]ch :<C-u>call <SID>close_help_window()<CR>
+Map [n] -noremap <SID>[excmd]cQ :<C-u>call <SID>close_quickfix_window()<CR>
+Map [n] -noremap <SID>[excmd]cr :<C-u>call <SID>close_ref_window()<CR>
+Map [n] -noremap <SID>[excmd]cq :<C-u>call <SID>close_quickrun_window()<CR>
+Map [n] -noremap <SID>[excmd]cb :<C-u>call <SID>close_unlisted_window()<CR>
 
-nnoremap <SID>[excmd]cc :<C-u>call <SID>close_certain_window()<CR>
+Map [n] -noremap <SID>[excmd]cc :<C-u>call <SID>close_certain_window()<CR>
 " }}}
 " close tab with also prefix <SID>[excmd]c. {{{
 " tab
-nnoremap <SID>[excmd]ct :<C-u>tabclose<CR>
+Map [n] -noremap <SID>[excmd]ct :<C-u>tabclose<CR>
 " uindou
-nnoremap <SID>[excmd]cu :<C-u>close<CR>
+Map [n] -noremap <SID>[excmd]cu :<C-u>close<CR>
 " }}}
 " move window into tabpage {{{
 " http://vim-users.jp/2009/12/hack106/
@@ -1132,39 +1238,41 @@ function! s:move_window_into_tab_page(target_tabpagenr) "{{{
 endfunction "}}}
 
 " move current buffer into a new tab.
-nnoremap <SID>[excmd]mt :<C-u>call <SID>move_window_into_tab_page(0)<Cr>
+Map [n] -noremap <SID>[excmd]mt :<C-u>call <SID>move_window_into_tab_page(0)<Cr>
 " }}}
 " netrw - vimperator-like keymappings {{{
 function! s:filetype_netrw() "{{{
-    nmap     <buffer> gu -
+    Map [n] <buffer> gu -
 endfunction "}}}
 
 MyAutocmd FileType netrw call s:filetype_netrw()
 " }}}
 " 'Y' to yank till the end of line. {{{
 
-function! s:map_named_key(modes, named_key, does) "{{{
-    for m in s:each_char(a:modes != '' ? a:modes : 'nvoicl')
-        execute printf('%snoremap <SID>[%s] %s', m, a:named_key, a:does)
-    endfor
-endfunction "}}}
+DefMap [n] -noremap yank-$ y$
 
-call s:map_named_key('', 'yank-$', 'y$')
-call s:map_named_key('', 'register-+', '"+')
-call s:map_named_key('', 'register-*', '"*')
+Map [n] Y             <yank-$>
+Map [n] <Leader>Y     <register-+><yank-$>
+Map [n] <SID>[comma]Y <register-*><yank-$>
 
-nmap     Y             <SID>[yank-$]
-nmap     <Leader>Y     <SID>[register-+]<SID>[yank-$]
-nmap     <SID>[comma]Y <SID>[register-*]<SID>[yank-$]
+" }}}
+" Back to col '$' when current col is right of col '$'. {{{
+if has('virtualedit') && s:one_of(split(&virtualedit, ','), ['all', 'onemore'])
+    DefMap [n] -expr -noremap $-if-right-of-$    col('.') >= col('$') ? '$' : ''
+    DefMap [n]       -noremap Paste              P
+    DefMap [n]       -noremap paste              p
+    Map [n] P <$-if-right-of-$><Paste>
+    Map [n] p <$-if-right-of-$><paste>
+endif
 " }}}
 " }}}
 " map! {{{
-noremap! <C-f>   <Right>
-noremap! <C-b>   <Left>
-noremap! <C-a>   <Home>
-noremap! <C-e>   <End>
-noremap! <C-d>   <Del>
-noremap! <C-l>   <Tab>
+Map [ic] -noremap <C-f> <Right>
+Map [ic] -noremap <C-b> <Left>
+Map [ic] -noremap <C-a> <Home>
+Map [ic] -noremap <C-e> <End>
+Map [ic] -noremap <C-d> <Del>
+Map [ic] -noremap <C-l> <Tab>
 
 silent Arpeggio noremap! $( ()<Left>
 silent Arpeggio noremap! 4[ []<Left>
@@ -1186,82 +1294,48 @@ silent Arpeggio noremap! #< 【】<Left>
 silent Arpeggio noremap! #{ 〔〕<Left>
 " }}}
 " imap {{{
-" delete characters in ...
-" inoremap <C-z>                <C-o>di
-
-" omni
-" inoremap <C-n>     <C-x><C-n>
-" inoremap <C-p>     <C-x><C-p>
 
 " paste register
-inoremap <C-r><C-u>  <C-r><C-p>+
-inoremap <C-r><C-i>  <C-r><C-p>*
-inoremap <C-r><C-o>  <C-r><C-p>"
-inoremap <C-r>       <C-r><C-r>
+Map [i] -noremap <C-r><C-u>  <C-r><C-p>+
+Map [i] -noremap <C-r><C-i>  <C-r><C-p>*
+Map [i] -noremap <C-r><C-o>  <C-r><C-p>"
+Map [i] -noremap <C-r>       <C-r><C-r>
 
 " shift left (indent)
-inoremap <C-q>   <C-d>
+Map [i] -noremap <C-q>   <C-d>
 
 " make <C-w> and <C-u> undoable.
-inoremap <C-w> <C-g>u<C-w>
-inoremap <C-u> <C-g>u<C-u>
+Map [i] -noremap <C-w> <C-g>u<C-w>
+Map [i] -noremap <C-u> <C-g>u<C-u>
 
-inoremap <C-@> <C-a>
+Map [i] -noremap <C-@> <C-a>
 
-inoremap <S-CR> <C-o>O
-inoremap <C-CR> <C-o>o
-
-" completion {{{
-
-" inoremap <expr> <CR>    pumvisible() ? "\<C-y>" : "\<CR>"
-
-inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : <SID>complete(1)
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : <SID>complete(0)
-
-" This was originally from kana's hack <SID>keys_to_complete().
-function! s:complete(next) "{{{
-    " TODO Get all items.
-    if &l:filetype ==# 'vim'
-        return "\<C-x>\<C-v>"
-    elseif strlen(&l:omnifunc)
-        return "\<C-x>\<C-o>"
-    elseif strlen(&l:completefunc)
-        return "\<C-x>\<C-u>"
-    " elseif strlen(&l:dictionary)
-    "     return "\<C-x>\<C-k>"
-    else
-        return a:next ? "\<C-n>" : "\<C-p>"
-    endif
-endfunction "}}}
-" }}}
+Map [i] -noremap <S-CR> <C-o>O
+Map [i] -noremap <C-CR> <C-o>o
 " }}}
 " cmap {{{
 if &wildmenu
-    cnoremap <C-f> <Space><BS><Right>
-    cnoremap <C-b> <Space><BS><Left>
+    Map [c] -noremap <C-f> <Space><BS><Right>
+    Map [c] -noremap <C-b> <Space><BS><Left>
 endif
 
 " paste register
-cnoremap <C-r><C-u>  <C-r>+
-cnoremap <C-r><C-i>  <C-r>*
-cnoremap <C-r><C-o>  <C-r>"
+Map [c] -noremap <C-r><C-u>  <C-r>+
+Map [c] -noremap <C-r><C-i>  <C-r>*
+Map [c] -noremap <C-r><C-o>  <C-r>"
 
-cnoremap <expr> /  getcmdtype() == '/' ? '\/' : '/'
-cnoremap <expr> ?  getcmdtype() == '?' ? '\?' : '?'
+Map [c] -noremap -expr /  getcmdtype() == '/' ? '\/' : '/'
+Map [c] -noremap -expr ?  getcmdtype() == '?' ? '\?' : '?'
 " }}}
 " abbr {{{
 inoreab <expr> date@      strftime("%Y-%m-%d")
 inoreab <expr> time@      strftime("%H:%M")
 inoreab <expr> dt@        strftime("%Y-%m-%d %H:%M")
 
-call altercmd#load()
 AlterCommand th     tab<Space>help
 AlterCommand t      tabedit
 AlterCommand sf     setf
 AlterCommand hg     helpgrep
-
-AlterCommand alc    Ref<Space>alc
-AlterCommand man    Ref<Space>man
 
 " For typo.
 AlterCommand qw     wq
@@ -1269,41 +1343,34 @@ AlterCommand amp    map
 " }}}
 
 " Indent/Dedent {{{
-nnoremap g, <<
-nnoremap g. >>
-vnoremap g, <
-vnoremap g. >
+Map [n] -noremap g, <<
+Map [n] -noremap g. >>
+Map [v] -noremap g, <
+Map [v] -noremap g. >
 " }}}
 " Mappings with option value. {{{
-nnoremap <expr> / <SID>with_options('/', {'&hlsearch': 1})
-nnoremap <expr> ? <SID>with_options('?', {'&hlsearch': 1})
+Map [n] -noremap -expr / <SID>with_options('/', {'&hlsearch': 1})
+Map [n] -noremap -expr ? <SID>with_options('?', {'&hlsearch': 1})
 
-nnoremap <expr> * <SID>with_options('*', {'&hlsearch': 1, '&ignorecase': 0})
-nnoremap <expr> # <SID>with_options('#', {'&hlsearch': 1, '&ignorecase': 0})
+Map [n] -noremap -expr * <SID>with_options('*', {'&hlsearch': 1, '&ignorecase': 0})
+Map [n] -noremap -expr # <SID>with_options('#', {'&hlsearch': 1, '&ignorecase': 0})
 
-nnoremap <expr> : <SID>with_options(':', {'&ignorecase': 1})
-vnoremap <expr> : <SID>with_options(':', {'&ignorecase': 1})
+Map [nv] -noremap -expr : <SID>with_options(':', {'&ignorecase': 1})
 
-function! s:with_options(cmd, opt) "{{{
-    for [name, value] in items(a:opt)
-        call setbufvar('%', name, value)
-    endfor
-    return a:cmd
-endfunction "}}}
+Map [n] -noremap -expr gd <SID>with_options('gd', {'&hlsearch': 1})
+Map [n] -noremap -expr gD <SID>with_options('gD', {'&hlsearch': 1})
 " }}}
 " Emacs like kill-line. {{{
-inoremap <expr> <C-k> "\<C-g>u".(col('.') == col('$') ? '<C-o>gJ' : '<C-o>D')
-cnoremap        <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
+Map [i] -noremap -expr <C-k> "\<C-g>u".(col('.') == col('$') ? '<C-o>gJ' : '<C-o>D')
+Map [c] -noremap       <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 " }}}
 " Make searching directions consistent {{{
   " 'zv' is harmful for Operator-pending mode and it should not be included.
   " For example, 'cn' is expanded into 'cnzv' so 'zv' will be inserted.
-nnoremap <expr> n  <SID>search_forward_p() ? 'nzv' : 'Nzv'
-nnoremap <expr> N  <SID>search_forward_p() ? 'Nzv' : 'nzv'
-vnoremap <expr> n  <SID>search_forward_p() ? 'nzv' : 'Nzv'
-vnoremap <expr> N  <SID>search_forward_p() ? 'Nzv' : 'nzv'
-onoremap <expr> n  <SID>search_forward_p() ? 'n' : 'N'
-onoremap <expr> N  <SID>search_forward_p() ? 'N' : 'n'
+Map [nv] -noremap -expr n <SID>search_forward_p() ? 'nzv' : 'Nzv'
+Map [nv] -noremap -expr N <SID>search_forward_p() ? 'Nzv' : 'nzv'
+Map [o]  -noremap -expr n <SID>search_forward_p() ? 'n' : 'N'
+Map [o]  -noremap -expr N <SID>search_forward_p() ? 'N' : 'n'
 
 function! s:search_forward_p()
   return exists('v:searchforward') ? v:searchforward : 1
@@ -1311,28 +1378,27 @@ endfunction
 " }}}
 " Walk between columns at 0, ^, $. {{{
 " imap
-inoremap <expr> <C-a> <SID>at_right_of_tilde_col() ? "\<C-o>^" : "\<Home>"
-inoremap <expr> <C-e> <SID>at_left_of_tilde_col()  ? "\<C-o>^" : "\<End>"
+Map [i] -noremap -expr <C-a> <SID>at_right_of_tilde_col() ? "\<C-o>^" : "\<Home>"
+Map [i] -noremap -expr <C-e> <SID>at_left_of_tilde_col()  ? "\<C-o>^" : "\<End>"
 
 " motion
-noremap <expr> H <SID>at_right_of_tilde_col() ? "^" : "0"
-noremap <expr> L <SID>at_left_of_tilde_col()  ? "^" : "$"
+Map [nvo] -noremap -expr H <SID>at_right_of_tilde_col() ? "^" : "0"
+Map [nvo] -noremap -expr L <SID>at_left_of_tilde_col()  ? "^" : "$"
 " }}}
 " Disable unused keys. {{{
-nnoremap ZZ <Nop>
-nnoremap U  <Nop>
-
-vnoremap K  <Nop>
+Map [n] -noremap ZZ <Nop>
+Map [n] -noremap U  <Nop>
+Map [v] -noremap K  <Nop>
 " }}}
 " Expand abbreviation {{{
 " http://gist.github.com/347852
 " http://gist.github.com/350207
 
-inoremap <expr> <SID>(bs-ctrl-])    getline('.')[col('.') - 2] ==# "\<C-]>" ? "\<BS>" : ''
-imap            <C-]>               <C-]><SID>(bs-ctrl-])
+Map [i] -noremap -expr <SID>(bs-ctrl-])    getline('.')[col('.') - 2] ==# "\<C-]>" ? "\<BS>" : ''
+Map [i]                <C-]>               <C-]><SID>(bs-ctrl-])
 
-cnoremap <expr> <SID>(bs-ctrl-])    getcmdline()[getcmdpos() - 2] ==# "\<C-]>" ? "\<BS>" : ''
-cmap            <C-]>               <C-]><SID>(bs-ctrl-])
+Map [c] -noremap -expr <SID>(bs-ctrl-])    getcmdline()[getcmdpos() - 2] ==# "\<C-]>" ? "\<BS>" : ''
+Map [c]                <C-]>               <C-]><SID>(bs-ctrl-])
 " }}}
 
 " [jump] {{{
@@ -1365,22 +1431,24 @@ endfunction "}}}
 " }}}
 " [compl] {{{
 call s:map_prefix_key('i', 'compl', '<Tab>')
+" Do <C-n> while pumvisible().
+execute 'imap <expr> <Tab> pumvisible() ? "\<C-n>" : ' . string(maparg('<Tab>', 'i'))
 
-inoremap        <SID>[compl]j <C-n>
-inoremap        <SID>[compl]k <C-p>
 
-inoremap        <SID>[compl]n <C-x><C-n>
-inoremap        <SID>[compl]p <C-x><C-p>
+Map [i] -noremap <SID>[compl]<Tab> <C-n>
 
-inoremap        <SID>[compl]] <C-x><C-]>
-inoremap        <SID>[compl]d <C-x><C-d>
-inoremap        <SID>[compl]i <C-x><C-i>
-inoremap        <SID>[compl]k <C-x><C-k>
-inoremap        <SID>[compl]l <C-x><C-l>
-inoremap        <SID>[compl]s <C-x><C-s>
-inoremap        <SID>[compl]t <C-x><C-t>
+Map [i] -noremap <SID>[compl]n <C-x><C-n>
+Map [i] -noremap <SID>[compl]p <C-x><C-p>
 
-inoremap <expr> <SID>[compl]o <SID>omni_or_user_func()
+Map [i] -noremap <SID>[compl]] <C-x><C-]>
+" Map [i] -noremap <SID>[compl]d <C-x><C-d>
+Map [i] -noremap <SID>[compl]i <C-x><C-i>
+Map [i] -noremap <SID>[compl]k <C-x><C-k>
+Map [i] -noremap <SID>[compl]l <C-x><C-l>
+" Map [i] -noremap <SID>[compl]s <C-x><C-s>
+" Map [i] -noremap <SID>[compl]t <C-x><C-t>
+
+Map [i] -noremap -expr <SID>[compl]o <SID>omni_or_user_func()
 
 function! s:omni_or_user_func() "{{{
     if &omnifunc != ''
@@ -1393,8 +1461,14 @@ function! s:omni_or_user_func() "{{{
 endfunction "}}}
 
 
-" TODO Smart tab
-" inoremap <SID>[compl]<Tab> dosmartthing
+" Map [i] -noremap <SID>[compl]j <C-n>
+" Map [i] -noremap <SID>[compl]k <C-p>
+" TODO
+" call submode#enter_with('c', 'i', '', '<SID>[compl]j', '<C-n>')
+" call submode#enter_with('c', 'i', '', '<SID>[compl]k', '<C-p>')
+" call submode#leave_with('c', 'i', '', '<CR>')
+" call submode#map       ('c', 'i', '', 'j', '<C-n>')
+" call submode#map       ('c', 'i', '', 'k', '<C-p>')
 
 
 " }}}
@@ -1761,8 +1835,8 @@ command!
 \   NoremapMode
 \   call s:mode_noremap()
 
-nmap <expr> <SID>(mode-noremap) <SID>mode_noremap()
-nmap <expr> <SID>(mode-noremap-feedkeys) <SID>mode_noremap_feedkeys()
+Map [n] -expr <SID>(mode-noremap) <SID>mode_noremap()
+Map [n] -expr <SID>(mode-noremap-feedkeys) <SID>mode_noremap_feedkeys()
 
 let s:mode_noremap_keys = ''
 
@@ -1787,8 +1861,8 @@ endfunction "}}}
 " TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
 AlterCommand cd  TabpageCD
 
-nnoremap <SID>[comma]cd  :<C-u>TabpageCD %:p:h<CR>
-nnoremap <Leader>cd     :<C-u>lcd %:p:h<CR>
+Map [n] -noremap <SID>[comma]cd  :<C-u>TabpageCD %:p:h<CR>
+Map [n] -noremap <Leader>cd      :<C-u>lcd %:p:h<CR>
 
 command! -complete=dir -nargs=? TabpageCD
 \   execute 'cd' fnameescape(expand(<q-args>))
@@ -1853,8 +1927,8 @@ fun! s:SelectColorScheme()
   setlocal nonu
   setlocal nomodifiable
   setlocal cursorline
-  nmap <buffer>  <Enter>  :<C-u>exec 'colors' getline('.')<CR>
-  nmap <buffer>  q        :<C-u>close<CR>
+  Map [n] -buffer <Enter>  :<C-u>exec 'colors' getline('.')<CR>
+  Map [n] -buffer q        :<C-u>close<CR>
 endf
 com! SelectColorScheme   :cal s:SelectColorScheme()
 " }}}
@@ -1890,8 +1964,10 @@ let ca_filetype_table = {
 \ }
 " }}}
 " nextfile {{{
-let g:nf_map_next     = '<SID>[comma]n'
-let g:nf_map_previous = '<SID>[comma]p'
+let g:nf_map_next     = ''
+let g:nf_map_previous = ''
+nmap <SID>[comma]n <Plug>(nextfile-next)
+nmap <SID>[comma]p <Plug>(nextfile-previous)
 
 let g:nf_include_dotfiles = 1    " don't skip dotfiles
 let g:nf_loop_files = 1    " loop at the end of file
@@ -1932,7 +2008,7 @@ let g:SD_disable = 1
 
 " let g:SD_debug = 1
 if !g:SD_disable
-    nnoremap <silent> <C-l> :SDUpdate<CR><C-l>
+    Map [n] -silent <C-l> :SDUpdate<CR><C-l>
 endif
 " }}}
 " DumbBuf {{{
@@ -1979,8 +2055,6 @@ let skk_egg_like_newline = 1
 let skk_auto_save_jisyo = 1
 let skk_imdisable_state = -1
 " let skk_keep_state = 1
-
-" applied krogue's patch ver.
 let skk_sticky_key = ';'
 " }}}
 " eskk {{{
@@ -1988,13 +2062,13 @@ let g:eskk_debug = 1
 let g:eskk_debug_wait_ms = 0
 
 let g:eskk_no_default_mappings = 1
-map! <C-g><C-j> <Plug>(eskk-toggle)
-lmap ;      <Plug>(eskk-sticky-key)
+Map [ic] <C-g><C-j> <Plug>(eskk-toggle)
+Map [l]  ;          <Plug>(eskk-sticky-key)
 
 " let g:eskk_no_default_mappings = 1
 " Arpeggio map! fj <Plug>(eskk-enable)
 " Arpeggio lmap fk <Plug>(eskk-disable)
-" lmap ;      <Plug>(eskk-sticky-key)
+" Map [l] ;      <Plug>(eskk-sticky-key)
 
 " }}}
 " stickykey {{{
@@ -2002,22 +2076,12 @@ lmap ;      <Plug>(eskk-sticky-key)
 " I use stickykey for emergency use.
 " So these mappings are little bit difficult to press, but I don't care.
 
-map  <C-g><C-s> <Plug>(stickykey-shift-remap)
-map! <C-g><C-s> <Plug>(stickykey-shift-remap)
-lmap <C-g><C-s> <Plug>(stickykey-shift-remap)
-
-map  <C-g><C-c> <Plug>(stickykey-ctrl-remap)
-map! <C-g><C-c> <Plug>(stickykey-ctrl-remap)
-lmap <C-g><C-c> <Plug>(stickykey-ctrl-remap)
-
-map  <C-g><C-a> <Plug>(stickykey-alt-remap)
-map! <C-g><C-a> <Plug>(stickykey-alt-remap)
-lmap <C-g><C-a> <Plug>(stickykey-alt-remap)
-
+Map [nvoicl] <C-g><C-s> <Plug>(stickykey-shift-remap)
+Map [nvoicl] <C-g><C-c> <Plug>(stickykey-ctrl-remap)
+Map [nvoicl] <C-g><C-a> <Plug>(stickykey-alt-remap)
 " I don't have Macintosh :(
-" map  <C-g><C-m> <Plug>(stickykey-command-remap)
-" map! <C-g><C-m> <Plug>(stickykey-command-remap)
-" lmap <C-g><C-m> <Plug>(stickykey-command-remap)
+" Map [nvoicl] <C-g><C-m> <Plug>(stickykey-command-remap)
+
 " }}}
 " restart {{{
 AlterCommand res[tart] Restart
@@ -2028,10 +2092,10 @@ let g:autodate_format = "%Y-%m-%d"
 " FuzzyFinder {{{
 call s:map_prefix_key('n', 'anything', 's')
 
-nnoremap <SID>[anything]d        :<C-u>FufDir<CR>
-nnoremap <SID>[anything]f        :<C-u>FufFile<CR>
-nnoremap <SID>[anything]h        :<C-u>FufMruFile<CR>
-nnoremap <SID>[anything]r        :<C-u>FufRenewCache<CR>
+Map [n] -noremap <SID>[anything]d        :<C-u>FufDir<CR>
+Map [n] -noremap <SID>[anything]f        :<C-u>FufFile<CR>
+Map [n] -noremap <SID>[anything]h        :<C-u>FufMruFile<CR>
+Map [n] -noremap <SID>[anything]r        :<C-u>FufRenewCache<CR>
 
 let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem', 'buffer', 'tag', 'taggedfile']
 
@@ -2050,7 +2114,6 @@ function! s:register_fuf_abbrev()
         \ '^p@': map(split(&runtimepath, ','), 'v:val . "/plugin/"'),
         \ '^h@': ['~/'],
         \ '^v@' : ['~/.vim/'],
-        \ '^d@' : ['~/q/diary/'],
         \ '^w@' : ['~/work/'],
         \ '^s@' : ['~/work/scratch/'],
         \ '^m@' : ['~/work/memo/'],
@@ -2078,7 +2141,7 @@ MyAutocmd VimEnter * call s:register_fuf_abbrev()
 " }}}
 " }}}
 " MRU {{{
-nnoremap <C-h> :<C-u>MRU<CR>
+Map [n] -noremap <C-h> :<C-u>MRU<CR>
 let MRU_Max_Entries   = 500
 let MRU_Add_Menu      = 0
 let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\c\'
@@ -2112,11 +2175,8 @@ function! s:JumpTags() "{{{
     endif
 endfunction "}}}
 
-nnoremap g<C-i>    :Gtags -f %<CR>
-nnoremap <C-]>     :call <SID>JumpTags()<CR>
-" }}}
-" operator-replace {{{
-map <Leader>r  <Plug>(operator-replace)
+Map [n] -noremap g<C-i>    :Gtags -f %<CR>
+Map [n] -noremap <C-]>     :call <SID>JumpTags()<CR>
 " }}}
 " vimshell {{{
 AlterCommand vsh[ell] VimShell
@@ -2156,16 +2216,16 @@ function! s:vimshell_settings() "{{{
     " Add/Remove some mappings.
     nunmap <buffer> <C-n>
     nunmap <buffer> <C-p>
-    inoremap <buffer> <C-l> <Space><Bar><Space>
+    Map [i] -noremap -buffer <C-l> <Space><Bar><Space>
 
-    setlocal backspace-=eol
+    " setlocal backspace-=eol
 endfunction "}}}
 " }}}
 " quickrun {{{
 let g:loaded_quicklaunch = 1
 
 let g:quickrun_no_default_key_mappings = 1
-map <Space>r <Plug>(quickrun)
+Map [nvo] <Space>r <Plug>(quickrun)
 
 if !exists('s:loaded_vimrc')
     let g:quickrun_config = {}
@@ -2221,21 +2281,21 @@ call submode#map       ('tabwalker', 'n', '', 'L', ':execute "tabmove" tabpagenr
 " call submode#map       ('indent/dedent', 'i', '', 'l', '<C-t>')
 
 " TODO Stash &scroll value.
-call submode#enter_with('s', 'n', '', '<SID>[excmd]j', '<C-d>:redraw<CR>')
-call submode#enter_with('s', 'n', '', '<SID>[excmd]k', '<C-u>:redraw<CR>')
+" TODO Use <SID>[excmd]j, <SID>[excmd]k
+call submode#enter_with('s', 'n', '', '<Space>j', '<C-d>:redraw<CR>')
+call submode#enter_with('s', 'n', '', '<Space>k', '<C-u>:redraw<CR>')
 call submode#leave_with('s', 'n', '', '<Esc>')
 call submode#map       ('s', 'n', '', 'j', '<C-d>:redraw<CR>')
 call submode#map       ('s', 'n', '', 'k', '<C-u>:redraw<CR>')
 call submode#map       ('s', 'n', '', 'a', ':let &l:scroll -= 3<CR>')
 call submode#map       ('s', 'n', '', 's', ':let &l:scroll += 3<CR>')
 " }}}
-" prettyprint {{{
-AlterCommand p      PP
-AlterCommand pp     PrettyPrint
-" }}}
 " ref {{{
 " 'K' for ':Ref'.
 AlterCommand ref Ref
+AlterCommand alc Ref<Space>alc
+AlterCommand man Ref<Space>man
+
 call s:map_orig_key('n', 'K')
 
 let g:ref_use_vimproc = 0
