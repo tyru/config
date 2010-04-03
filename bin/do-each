@@ -114,14 +114,14 @@ __END__
 
 =head1 NAME
 
-    do_each - NO DESCRIPTION YET.
+    do-each - NO DESCRIPTION YET.
 
 
 =head1 SYNOPSIS
 
-    do_each -s -b -- 10 ctags
+    do-each -s -b -- 10 ctags
     # '-p' option only prints out 'exec' code.
-    do_each -s -b -p -- 10 ctags
+    do-each -s -b -p -- 10 ctags
 
 =head1 OPTIONS
 
