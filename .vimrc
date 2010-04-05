@@ -212,6 +212,14 @@ command!
 \   autocmd<bang> vimrc <args>
 
 
+command!
+\   -bar
+\   VimError
+\   echohl ErrorMsg
+\   | echomsg substitute(v:exception, '^Vim(\w\+):', '', '')
+\   | echohl None
+
+
 " Debug macros {{{
 "
 " NOTE: Do not make this function.
