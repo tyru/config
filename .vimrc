@@ -771,6 +771,7 @@ DefMap [nvo] -noremap primary   "*
 DefMap [nvo] -noremap blackhole "_
 DefMap [nvo] -noremap delete-char x
 DefMap [nvo] -noremap delete* d
+DefMap [nvo] -noremap yank y
 
 " Set up prefix keys. {{{
 
@@ -793,10 +794,10 @@ call s:map_prefix_key('n', 'excmd', '<Space>')
 SetPragmas ignore-spaces "{{{
 
 " paste to clipboard
-Map [nvo] -noremap <Leader>y     <clipboard> y
-Map [nvo] -noremap <SID>[comma]y <primary>   y
-Map [nvo] -noremap <Leader>d     <clipboard> d
-Map [nvo] -noremap <SID>[comma]d <primary>   d
+Map [nvo] <Leader>y     <clipboard> <yank>
+Map [nvo] <SID>[comma]y <primary>   <yank>
+Map [nvo] <Leader>d     <clipboard> <delete*>
+Map [nvo] <SID>[comma]d <primary>   <delete*>
 
 " do not destroy noname register.
 Map [nvo] x        <blackhole> <delete-char>
