@@ -1912,32 +1912,38 @@ AlterCommand h[elp]     Help
 AlterCommand new        New
 
 command!
-\   -bar -nargs=* -complete=file
+\   -bar -bang -nargs=* -complete=file
 \   Split
-\   call s:split_nicely_with('split', <f-args>)
+\   call s:split_nicely_with(['split', <f-args>], <bang>0)
 
 command!
-\   -bar -nargs=* -complete=help
+\   -bar -bang -nargs=* -complete=help
 \   Help
-\   call s:split_nicely_with('help', <f-args>)
+\   call s:split_nicely_with(['help', <f-args>], <bang>0)
 
 command!
-\   -bar -nargs=* -complete=file
+\   -bar -bang -nargs=* -complete=file
 \   New
-\   call s:split_nicely_with('new', <f-args>)
-
+\   call s:split_nicely_with(['new', <f-args>], <bang>0)
 
 function! s:vertically()
     return 80*2 * 15/16 <= winwidth(0)  " FIXME: threshold customization
 endfunction
 
 " Originally from kana's s:split_nicely().
-function! s:split_nicely_with(...)
-    if s:vertically()
-        execute 'vertical' join(a:000, ' ')
-    else
-        execute join(a:000, ' ')
+function! s:split_nicely_with(args, banged)
+    if empty(a:args)
+        return
     endif
+
+    try
+        execute
+        \   s:vertically() ? 'vertical' : ''
+        \   a:args[0] . (a:banged ? '!' : '')
+        \   join(a:args[1:])
+    catch
+        VimError
+    endtry
 endfunction
 " }}}
 " SelectColorScheme {{{
