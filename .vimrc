@@ -807,49 +807,27 @@ UnsetPragmas ignore-spaces    " end.
 " }}}
 
 Map [nvo] -noremap <Leader>e =
-
-" operator-... for ex command {{{
-" from :help operator-user
-let s:op_command_command = ''
-
-function! Set_op_command(command)
-    let s:op_command_command = a:command
-endfunction
-
-function! Op_command(motion_wiseness)
-    execute "'[,']" s:op_command_command
-endfunction
-" }}}
 " operator-sort {{{
+call operator#user#define_ex_command('sort', 'sort')
 Map [nvo] <Leader>s <Plug>(operator-sort)
-
-call operator#user#define('sort', 'Op_command',
-\                         'call Set_op_command("sort")')
 " }}}
 " operator-retab {{{
+call operator#user#define_ex_command('retab', 'retab')
 Map [nvo] <Leader>t <Plug>(operator-retab)
-
-call operator#user#define('retab', 'Op_command',
-\                         'call Set_op_command("retab")')
 " }}}
 " operator-join {{{
+call operator#user#define_ex_command('join', 'join')
 Map [nvo] <Leader>j <Plug>(operator-join)
-
-call operator#user#define('join', 'Op_command',
-\                         'call Set_op_command("join")')
 " }}}
 " operator-uniq {{{
+call operator#user#define_ex_command('uniq', 'sort u')
 Map [nvo] <Leader>u <Plug>(operator-uniq)
-
-call operator#user#define('uniq', 'Op_command',
-\                         'call Set_op_command("sort u")')
 " }}}
 " operator-narrow {{{
+call operator#user#define_ex_command('narrow', 'Narrow')
+
 Map [nvo]          <Leader>na <Plug>(operator-narrow)
 Map [nvo] -noremap <Leader>nw :<C-u>Widen<CR>
-
-call operator#user#define('narrow', 'Op_command',
-\                         'call Set_op_command("Narrow")')
 
 let g:narrow_allow_overridingp = 1
 " }}}
