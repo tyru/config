@@ -8,12 +8,18 @@ use File::Path qw(rmtree mkpath);
 use IO::Handle;
 use File::Spec::Functions qw(catfile);
 use File::Basename qw(dirname);
+use Git;
+use File::Temp qw();
+use Perl6::Slurp qw(slurp);
 
 # gnu_compat: --opt="..." is allowed.
 # no_bundling: single character option is not bundled.
 # no_ignore_case: no ignore case on long option.
 use Getopt::Long qw(:config gnu_compat no_bundling no_ignore_case);
 
+my @VIM = qw(vim);
+my @VIM_INTERP = qw(vim -u NONE -U NONE --noplugin);
+my $VIM_RTP_SCRIPT = './write-runtimepath.vim';
 
 
 
@@ -114,6 +120,29 @@ sub ask {
     exit unless $ans =~ /^y(es)?$/i;
 }
 
+sub get_git_files_from_runtimepath {
+    my $tempname = do {
+        my $fh = File::Temp->new or die $!;
+        $fh->filename;
+    };
+    system(@VIM, '-S', $VIM_RTP_SCRIPT, $tempname);
+
+    my @ret;
+    for my $rtp (slurp {chomp => 1}, $tempname) {
+        $rtp = readlink $rtp while -l $rtp;
+
+        my $repo = eval { Git->repository($rtp) };
+        next if $@;
+
+        push @ret, map {
+            # [fullpath, relpath]
+            [catfile($repo->wc_path, $_), $_]
+        } $repo->command('ls-files')
+            or warn "Empty repository?: $!"
+    }
+    @ret;
+}
+
 
 
 ### main ###
@@ -127,6 +156,7 @@ my $auto_push;
 my $extract;
 my $auto_gc;
 my $upload_to_vimrcbox;
+my $get_git_files_from_runtimepath;
 my $github_user = qx(git config github.user);
 
 if (defined $ENV{USER}) {
@@ -137,13 +167,22 @@ if (defined $ENV{USER}) {
 
 my $help;
 GetOptions(
-    'h|help'       => \$help,
-    'u|username=s' => \$username,
-    'c|commit'     => \$auto_commit,
-    'p|push'       => \$auto_push,
-    'x|extract'    => \$extract,
-    'gc'           => \$auto_gc,
-    'v|vimrcbox'   => \$upload_to_vimrcbox,
+    'h|help'
+        => \$help,
+    'u|username=s'
+        => \$username,
+    'c|commit'
+        => \$auto_commit,
+    'p|push'
+        => \$auto_push,
+    'x|extract'
+        => \$extract,
+    'gc'
+        => \$auto_gc,
+    'v|vimrcbox'
+        => \$upload_to_vimrcbox,
+    'g|get-git-files'
+        => \$get_git_files_from_runtimepath,
 ) or usage;
 usage if $help;
 
@@ -221,6 +260,15 @@ if ($auto_gc) {
 if ($auto_push) {
     system(qw(git push origin master));
 }
+# -v, --vimrcbox: upload to vimrcbox.
 if ($upload_to_vimrcbox) {
-    system(qw(vim -u NONE -U NONE --noplugin -c), q(source vimrcbox.vim | RcbVimrc), qw(-c quit));
+    system(@VIM_INTERP, q(-c), q(source vimrcbox.vim | RcbVimrc), qw(-c quit));
+}
+# -g, --get-git-files: Get git cached files using by git-ls-files.
+if ($get_git_files_from_runtimepath) {
+    my @files = get_git_files_from_runtimepath();
+    for my $f (@files) {
+        my ($fullpath, $relpath) = @$f;
+        install($fullpath, $relpath, $username);
+    }
 }
