@@ -128,6 +128,41 @@ endfunction "}}}
 function! s:each_char(str) "{{{
     return split(a:str, '\zs')
 endfunction "}}}
+function! s:zip(list, list2) "{{{
+    let ret = []
+    let i = 0
+    while s:has_idx(a:list, i) || s:has_idx(a:list2, i)
+        call add(ret,
+        \   (s:has_idx(a:list, i) ? [a:list[i]] : [])
+        \   + (s:has_idx(a:list2, i) ? [a:list2[i]] : []))
+
+        let i += 1
+    endwhile
+    return ret
+endfunction "}}}
+function! s:get_selected_text(motion_wiseness, begin_pos, end_pos) "{{{
+    if a:motion_wiseness ==# 'char'
+        let [firstline, lastline] = [
+        \   getline(a:begin_pos[1])[a:begin_pos[2] - 1:],
+        \   getline(a:end_pos[1])[:a:end_pos[2] - 1],
+        \]
+    else
+        let [firstline, lastline] = [
+        \   getline(a:begin_pos[1]),
+        \   getline(a:end_pos[1]),
+        \]
+    endif
+
+    return
+    \   [firstline]
+    \   + getline(a:begin_pos[1] + 1, a:end_pos[1] - 1)
+    \   + [lastline]
+endfunction "}}}
+function! s:get_by_regex(str, regex) "{{{
+    let match = matchstr(a:str, '^' . a:regex)
+    let rest  = a:str[strlen(match):]
+    return [match, rest]
+endfunction "}}}
 
 " For mappings
 function! s:execute_multiline_expr(excmds, ...) "{{{
