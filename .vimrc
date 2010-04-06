@@ -1416,6 +1416,9 @@ function! s:search_forward_p()
 endfunction
 " }}}
 " Walk between columns at 0, ^, $. {{{
+" TODO
+" Go to window's max last col when virtualedit is enabled.
+
 " imap
 Map [i] -noremap -expr <C-a> <SID>at_right_of_tilde_col() ? "\<C-o>^" : "\<Home>"
 Map [i] -noremap -expr <C-e> <SID>at_left_of_tilde_col()  ? "\<C-o>^" : "\<End>"
