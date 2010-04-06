@@ -223,13 +223,6 @@ function! s:with_options(cmd, opt) "{{{
     return a:cmd
 endfunction "}}}
 
-function! s:do_excmd(...) "{{{
-    for ex in a:000
-        execute ex
-    endfor
-    return ''
-endfunction "}}}
-
 
 " Error
 function! s:assertion_failure(msg) "{{{
@@ -268,7 +261,7 @@ command!
 \   VarDump
 \
 \   echohl Debug
-\   | echomsg join(map([<f-args>], 'printf("  %s = %s", v:val, s:string_pp(eval(v:val)))'), ', ')
+\   | echomsg printf("  %s = %s", <q-args>, s:string_pp(eval(<q-args>)))
 \   | if <bang>0
 \   |   try
 \   |     throw ''
@@ -842,6 +835,7 @@ UnsetPragmas ignore-spaces    " end.
 " }}}
 
 Map [nvo] -noremap <Leader>e =
+
 " operator-sort {{{
 call operator#user#define_ex_command('sort', 'sort')
 Map [nvo] <Leader>s <Plug>(operator-sort)
@@ -2296,8 +2290,8 @@ call submode#map       ('guiwinmove', 'n', 'r', 'l', '<Plug>(winmove-right)')
 " Change GUI window size.
 call submode#enter_with('guiwinsize', 'n', '', 'mgs', '<Nop>')
 call submode#leave_with('guiwinsize', 'n', '', '<Esc>')
-call submode#map       ('guiwinsize', 'n', '', 'j', ':set lines-=1<CR>')
-call submode#map       ('guiwinsize', 'n', '', 'k', ':set lines+=1<CR>')
+call submode#map       ('guiwinsize', 'n', '', 'j', ':set lines+=1<CR>')
+call submode#map       ('guiwinsize', 'n', '', 'k', ':set lines-=1<CR>')
 call submode#map       ('guiwinsize', 'n', '', 'h', ':set columns-=5<CR>')
 call submode#map       ('guiwinsize', 'n', '', 'l', ':set columns+=5<CR>')
 
