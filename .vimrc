@@ -2257,26 +2257,36 @@ let g:VimShell_NoDefaultKeyMappings = 1
 
 MyAutocmd FileType vimshell call s:vimshell_settings()
 
+
 function! s:vimshell_settings() "{{{
-    " Define aliases.
-    call vimshell#altercmd#define('df', 'df -h')
-    call vimshell#altercmd#define('diff', 'diff --unified')
-    call vimshell#altercmd#define('du', 'du -h')
-    call vimshell#altercmd#define('free', 'free -m -l -t')
-    call vimshell#altercmd#define('j', 'jobs -l')
-    call vimshell#altercmd#define('jobs', 'jobs -l')
-    call vimshell#altercmd#define('l.', 'ls -d .*')
-    call vimshell#altercmd#define('l', 'll')
-    call vimshell#altercmd#define('la', 'ls -A')
-    call vimshell#altercmd#define('less', 'less -r')
-    call vimshell#altercmd#define('ll', 'ls -lh')
-    call vimshell#altercmd#define('sc', 'screen')
-    call vimshell#altercmd#define('whi', 'which')
-    call vimshell#altercmd#define('whe', 'where')
-    call vimshell#altercmd#define('go', 'gopen')
+    " No -bar
+    command!
+    \   -buffer -nargs=+
+    \   VimShellAlterCommand
+    \   call vimshell#altercmd#define(
+    \       s:parse_one_arg_from_q_args(<q-args>)[0],
+    \       s:eat_n_args_from_q_args(<q-args>, 1)
+    \   )
+
+    " Alias
+    VimShellAlterCommand df df -h
+    VimShellAlterCommand diff diff --unified
+    VimShellAlterCommand du du -h
+    VimShellAlterCommand free free -m -l -t
+    VimShellAlterCommand j jobs -l
+    VimShellAlterCommand jobs jobs -l
+    VimShellAlterCommand l. ls -d .*
+    VimShellAlterCommand l ls -lh
+    VimShellAlterCommand ll ls -lh
+    VimShellAlterCommand la ls -A
+    VimShellAlterCommand less less -r
+    VimShellAlterCommand sc screen
+    VimShellAlterCommand whi which
+    VimShellAlterCommand whe where
+    VimShellAlterCommand go gopen
 
     if executable('perldocjp')
-        call vimshell#altercmd#define('perldoc', 'perldocjp')
+        VimShellAlterCommand perldoc perldocjp
     endif
 
     let less_sh = s:globpath(&rtp, 'macros/less.sh')
@@ -2284,12 +2294,20 @@ function! s:vimshell_settings() "{{{
         call vimshell#altercmd#define('vless', less_sh[0])
     endif
 
+    " Hook
+    function! s:my_chpwd(context)
+        call vimshell#execute('ls', a:context)
+    endfunction
+
+    call vimshell#hook#add('chpwd', s:SNR('my_chpwd'))
+
     " Add/Remove some mappings.
     nunmap <buffer> <C-n>
     nunmap <buffer> <C-p>
     Map [i] -noremap -buffer <C-l> <Space><Bar><Space>
 
-    " setlocal backspace-=eol
+    " Misc.
+    setlocal backspace-=eol
 endfunction "}}}
 " }}}
 " quickrun {{{
