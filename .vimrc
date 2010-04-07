@@ -928,6 +928,9 @@ Map [n] -noremap g; ~
 Map [n] -noremap    + <C-a>
 Map [n] -noremap -- - <C-x>
 
+Map [nvo] <Leader>c <Plug>(operator-camelize)
+Map [nvo] <Leader>C <Plug>(operator-decamelize)
+
 " execute most used command quickly {{{
 Map [n] -noremap <SID>[excmd]w      :<C-u>write<CR>
 Map [n] -noremap <SID>[excmd]q      :<C-u>quit<CR>
@@ -2018,7 +2021,7 @@ endfunction
 " }}}
 " For Plugins {{{
 " CommentAnyWay {{{
-let ca_prefix  = '<Leader>c'
+" let ca_prefix  = '<Leader>c'
 let ca_verbose = 1    " debug
 
 let ca_filetype_table = {
