@@ -224,6 +224,26 @@ function! s:with_options(cmd, opt) "{{{
 endfunction "}}}
 
 
+" Parsing
+function! s:skip_spaces(q_args) "{{{
+    return substitute(a:q_args, '^\s*', '', '')
+endfunction "}}}
+function! s:parse_one_arg_from_q_args(q_args) "{{{
+    let arg = s:skip_spaces(a:q_args)
+    let head = matchstr(arg, '^.\{-}[^\\]\ze\([ \t]\|$\)')
+    let rest = strpart(arg, strlen(head))
+    return [head, rest]
+endfunction "}}}
+function! s:eat_n_args_from_q_args(q_args, n) "{{{
+    let rest = a:q_args
+    for _ in range(1, a:n)
+        let rest = s:parse_one_arg_from_q_args(rest)[1]
+    endfor
+    let rest = s:skip_spaces(rest)    " for next arguments.
+    return rest
+endfunction "}}}
+
+
 " Error
 function! s:assertion_failure(msg) "{{{
     return 'assertion failure: ' . a:msg
