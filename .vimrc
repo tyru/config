@@ -731,7 +731,7 @@ function! s:set_tab_width() "{{{
     else
         CodingStyle My style
     endif
-endfunction
+endfunction "}}}
 function! s:set_compiler() "{{{
     let filetype_vs_compiler = {
     \   'c': 'gcc',
@@ -745,7 +745,7 @@ function! s:set_compiler() "{{{
         endfor
     catch /E666:/    " compiler not supported: ...
     endtry
-endfunction
+endfunction "}}}
 function! s:load_filetype() "{{{
     if &omnifunc == ""
         setlocal omnifunc=syntaxcomplete#Complete
