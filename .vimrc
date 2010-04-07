@@ -2266,6 +2266,7 @@ function! s:vimshell_settings() "{{{
     \   )
 
     " Alias
+    VimShellAlterCommand vi vim
     VimShellAlterCommand df df -h
     VimShellAlterCommand diff diff --unified
     VimShellAlterCommand du du -h
@@ -2299,9 +2300,12 @@ function! s:vimshell_settings() "{{{
     call vimshell#hook#add('chpwd', s:SNR('my_chpwd'))
 
     " Add/Remove some mappings.
-    nunmap <buffer> <C-n>
-    nunmap <buffer> <C-p>
+    Unmap [n] -buffer <C-n>
+    Unmap [n] -buffer <C-p>
+    Unmap [i] -buffer <C-k>
     Map [i] -noremap -buffer <C-l> <Space><Bar><Space>
+    Unmap [i] -buffer <Tab>
+    Map [i] -buffer <Tab><Tab> <Plug>(vimshell_command_complete)
 
     " Misc.
     setlocal backspace-=eol
