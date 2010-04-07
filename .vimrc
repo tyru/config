@@ -702,9 +702,7 @@ function! s:each_filetype() "{{{
     return split(&l:filetype, '\.')
 endfunction "}}}
 
-" TODO: Write 'operator-camel' and camelize these functions.
-" s:SetDict {{{
-function! s:SetDict()
+function! s:set_dict() "{{{
     let filetype_vs_dictionary = {
     \   'c': ['c', 'cpp'],
     \   'cpp': ['c', 'cpp'],
@@ -726,19 +724,15 @@ function! s:SetDict()
     for d in dicts
         let &l:dictionary = join(s:uniq(dicts), ',')
     endfor
-endfunction
-" }}}
-" s:SetTabWidth {{{
-function! s:SetTabWidth()
+endfunction "}}}
+function! s:set_tab_width() "{{{
     if s:has_one_of(['css', 'xml', 'html', 'lisp', 'scheme', 'yaml'], s:each_filetype())
         CodingStyle Short indent
     else
         CodingStyle My style
     endif
 endfunction
-" }}}
-" s:SetCompiler {{{
-function! s:SetCompiler()
+function! s:set_compiler() "{{{
     let filetype_vs_compiler = {
     \   'c': 'gcc',
     \   'cpp': 'gcc',
@@ -752,19 +746,17 @@ function! s:SetCompiler()
     catch /E666:/    " compiler not supported: ...
     endtry
 endfunction
-" }}}
-" s:LoadWhenFileType() {{{
-function! s:LoadWhenFileType()
+function! s:load_filetype() "{{{
     if &omnifunc == ""
         setlocal omnifunc=syntaxcomplete#Complete
     endif
 
-    call s:SetDict()
-    call s:SetTabWidth()
-    call s:SetCompiler()
+    call s:set_dict()
+    call s:set_tab_width()
+    call s:set_compiler()
 endfunction "}}}
 
-MyAutocmd FileType *   call s:LoadWhenFileType()
+MyAutocmd FileType * call s:load_filetype()
 " }}}
 " Mappings and/or Abbreviations {{{
 
@@ -884,6 +876,10 @@ let g:narrow_allow_overridingp = 1
 " operator-replace {{{
 Map [nvo] <Leader>r  <Plug>(operator-replace)
 " }}}
+" operator-camelize {{{
+Map [nvo] <Leader>c <Plug>(operator-camelize)
+Map [nvo] <Leader>C <Plug>(operator-decamelize)
+" }}}
 " }}}
 " motion/textobj {{{
 Map [nvo] -noremap j gj
@@ -928,9 +924,6 @@ Map [n] -noremap g; ~
 
 Map [n] -noremap    + <C-a>
 Map [n] -noremap -- - <C-x>
-
-Map [nvo] <Leader>c <Plug>(operator-camelize)
-Map [nvo] <Leader>C <Plug>(operator-decamelize)
 
 " execute most used command quickly {{{
 Map [n] -noremap <SID>[excmd]w      :<C-u>write<CR>
@@ -2233,7 +2226,7 @@ function! s:JumpTags() "{{{
         sleep 2
         " unmap this function.
         " use plain <C-]> next time.
-        nunmap <C-]>
+        Unmap [n] <C-]>
         execute "normal! \<C-]>"
         return
     endif
