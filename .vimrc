@@ -15,7 +15,7 @@ function! s:SID() "{{{
     return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
 endfunction "}}}
 function! s:SNR(map) "{{{
-    return printf("\<SNR>%d_%s", s:SID(), a:map)
+    return printf("<SNR>%d_%s", s:SID(), a:map)
 endfunction "}}}
 
 function! s:warn(msg) "{{{
@@ -163,6 +163,7 @@ function! s:get_by_regex(str, regex) "{{{
     let rest  = a:str[strlen(match):]
     return [match, rest]
 endfunction "}}}
+
 
 " For mappings
 function! s:execute_multiline_expr(excmds, ...) "{{{
@@ -1325,6 +1326,9 @@ if has('virtualedit') && s:has_one_of(['all', 'onemore'], split(&virtualedit, ',
     DefMap [n]       -noremap paste              p
     Map [n] P <$-if-right-of-$><Paste>
     Map [n] p <$-if-right-of-$><paste>
+
+    " omake
+    Map [n] -noremap <SID>[excmd]p $p
 endif
 " }}}
 " }}}
