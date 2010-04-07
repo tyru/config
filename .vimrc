@@ -1324,6 +1324,31 @@ if has('virtualedit') && s:has_one_of(['all', 'onemore'], split(&virtualedit, ',
     Map [n] -noremap <SID>[excmd]p $p
 endif
 " }}}
+" snippet that allows you to move around windows beyond tabs {{{
+" http://gist.github.com/358813
+" http://gist.github.com/358862
+
+Map [n] -noremap -silent <Tab>     :<C-u>call <SID>NextWindowOrTab()<CR>
+Map [n] -noremap -silent <S-Tab>   :<C-u>call <SID>PreviousWindowOrTab()<CR>
+
+function! s:NextWindowOrTab() "{{{
+	if winnr() < winnr("$")
+		wincmd w
+	else
+		tabnext
+		1wincmd w
+	endif
+endfunction "}}}
+
+function! s:PreviousWindowOrTab() "{{{
+	if winnr() > 1
+		wincmd W
+	else
+		tabprevious
+		execute winnr("$") . "wincmd w"
+	endif
+endfunction "}}}
+" }}}
 " }}}
 " map! {{{
 Map [ic] -noremap <C-f> <Right>
