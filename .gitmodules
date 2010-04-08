@@ -58,3 +58,6 @@
 [submodule "ext/vim-arpeggio"]
 	path = ext/vim-arpeggio
 	url = git://github.com/tyru/vim-arpeggio.git
+[submodule "ext/vim-repeat"]
+	path = ext/vim-repeat
+	url = git://github.com/kana/vim-repeat.git
