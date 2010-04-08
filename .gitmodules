@@ -52,3 +52,6 @@
 [submodule "ext/operator-camelize.vim"]
 	path = ext/operator-camelize.vim
 	url = git://github.com/tyru/operator-camelize.vim.git
+[submodule "ext/vim-altercmd"]
+	path = ext/vim-altercmd
+	url = git://github.com/tyru/vim-altercmd.git
