@@ -46,3 +46,6 @@
 [submodule "ext/winmove.vim"]
 	path = ext/winmove.vim
 	url = git://github.com/tyru/winmove.vim.git
+[submodule "ext/emap.vim"]
+	path = ext/emap.vim
+	url = git://github.com/tyru/emap.vim.git
