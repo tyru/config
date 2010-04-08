@@ -67,3 +67,6 @@
 [submodule "ext/vim-narrow"]
 	path = ext/vim-narrow
 	url = git://github.com/kana/vim-narrow.git
+[submodule "ext/gist-vim"]
+	path = ext/gist-vim
+	url = git://github.com/mattn/gist-vim.git
