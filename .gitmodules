@@ -121,3 +121,6 @@
 [submodule "ext/vim-metarw-git"]
 	path = ext/vim-metarw-git
 	url = git://github.com/kana/vim-metarw-git.git
+[submodule "ext/vim-textobj-lastpat"]
+	path = ext/vim-textobj-lastpat
+	url = git://github.com/kana/vim-textobj-lastpat.git
