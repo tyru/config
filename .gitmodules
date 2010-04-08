@@ -49,3 +49,6 @@
 [submodule "ext/emap.vim"]
 	path = ext/emap.vim
 	url = git://github.com/tyru/emap.vim.git
+[submodule "ext/operator-camelize.vim"]
+	path = ext/operator-camelize.vim
+	url = git://github.com/tyru/operator-camelize.vim.git
