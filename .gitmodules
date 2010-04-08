@@ -64,3 +64,6 @@
 [submodule "ext/vim-visualstar"]
 	path = ext/vim-visualstar
 	url = git://github.com/thinca/vim-visualstar.git
+[submodule "ext/vim-narrow"]
+	path = ext/vim-narrow
+	url = git://github.com/kana/vim-narrow.git
