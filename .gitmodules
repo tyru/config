@@ -76,3 +76,6 @@
 [submodule "ext/vimshell"]
 	path = ext/vimshell
 	url = git://github.com/Shougo/vimshell.git
+[submodule "ext/vim-ref"]
+	path = ext/vim-ref
+	url = git://github.com/thinca/vim-ref.git
