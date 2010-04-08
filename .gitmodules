@@ -124,3 +124,6 @@
 [submodule "ext/vim-textobj-lastpat"]
 	path = ext/vim-textobj-lastpat
 	url = git://github.com/kana/vim-textobj-lastpat.git
+[submodule "ext/vim-textobj-fold"]
+	path = ext/vim-textobj-fold
+	url = git://github.com/kana/vim-textobj-fold.git
