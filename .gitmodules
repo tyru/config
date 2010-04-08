@@ -88,3 +88,6 @@
 [submodule "ext/vim-textobj-user"]
 	path = ext/vim-textobj-user
 	url = git://github.com/kana/vim-textobj-user.git
+[submodule "ext/vim-textobj-syntax"]
+	path = ext/vim-textobj-syntax
+	url = git://github.com/kana/vim-textobj-syntax.git
