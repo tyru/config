@@ -97,3 +97,6 @@
 [submodule "ext/vim-operator-user"]
 	path = ext/vim-operator-user
 	url = git://github.com/kana/vim-operator-user.git
+[submodule "ext/vim-operator-replace"]
+	path = ext/vim-operator-replace
+	url = git://github.com/kana/vim-operator-replace.git
