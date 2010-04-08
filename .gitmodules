@@ -103,3 +103,6 @@
 [submodule "ext/vim-textobj-jabraces"]
 	path = ext/vim-textobj-jabraces
 	url = git://github.com/kana/vim-textobj-jabraces.git
+[submodule "ext/vim-textobj-function"]
+	path = ext/vim-textobj-function
+	url = git://github.com/kana/vim-textobj-function.git
