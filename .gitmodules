@@ -100,3 +100,6 @@
 [submodule "ext/vim-operator-replace"]
 	path = ext/vim-operator-replace
 	url = git://github.com/kana/vim-operator-replace.git
+[submodule "ext/vim-textobj-jabraces"]
+	path = ext/vim-textobj-jabraces
+	url = git://github.com/kana/vim-textobj-jabraces.git
