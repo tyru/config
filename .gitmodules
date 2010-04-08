@@ -115,3 +115,6 @@
 [submodule "ext/vim-submode"]
 	path = ext/vim-submode
 	url = git://github.com/kana/vim-submode.git
+[submodule "ext/vim-metarw"]
+	path = ext/vim-metarw
+	url = git://github.com/kana/vim-metarw.git
