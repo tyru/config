@@ -85,3 +85,6 @@
 [submodule "ext/vim-markdown"]
 	path = ext/vim-markdown
 	url = git://github.com/hallison/vim-markdown.git
+[submodule "ext/vim-textobj-user"]
+	path = ext/vim-textobj-user
+	url = git://github.com/kana/vim-textobj-user.git
