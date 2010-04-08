@@ -106,3 +106,6 @@
 [submodule "ext/vim-textobj-function"]
 	path = ext/vim-textobj-function
 	url = git://github.com/kana/vim-textobj-function.git
+[submodule "ext/vim-textobj-entire"]
+	path = ext/vim-textobj-entire
+	url = git://github.com/kana/vim-textobj-entire.git
