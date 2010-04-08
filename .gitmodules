@@ -82,3 +82,6 @@
 [submodule "ext/vim-quickrun"]
 	path = ext/vim-quickrun
 	url = git://github.com/thinca/vim-quickrun.git
+[submodule "ext/vim-markdown"]
+	path = ext/vim-markdown
+	url = git://github.com/hallison/vim-markdown.git
