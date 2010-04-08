@@ -109,3 +109,6 @@
 [submodule "ext/vim-textobj-entire"]
 	path = ext/vim-textobj-entire
 	url = git://github.com/kana/vim-textobj-entire.git
+[submodule "ext/vim-surround"]
+	path = ext/vim-surround
+	url = git://github.com/kana/vim-surround.git
