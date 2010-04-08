@@ -94,3 +94,6 @@
 [submodule "ext/vim-textobj-indent"]
 	path = ext/vim-textobj-indent
 	url = git://github.com/kana/vim-textobj-indent.git
+[submodule "ext/vim-operator-user"]
+	path = ext/vim-operator-user
+	url = git://github.com/kana/vim-operator-user.git
