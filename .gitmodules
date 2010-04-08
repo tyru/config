@@ -55,3 +55,6 @@
 [submodule "ext/vim-altercmd"]
 	path = ext/vim-altercmd
 	url = git://github.com/tyru/vim-altercmd.git
+[submodule "ext/vim-arpeggio"]
+	path = ext/vim-arpeggio
+	url = git://github.com/tyru/vim-arpeggio.git
