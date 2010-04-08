@@ -118,3 +118,6 @@
 [submodule "ext/vim-metarw"]
 	path = ext/vim-metarw
 	url = git://github.com/kana/vim-metarw.git
+[submodule "ext/vim-metarw-git"]
+	path = ext/vim-metarw-git
+	url = git://github.com/kana/vim-metarw-git.git
