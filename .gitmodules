@@ -112,3 +112,6 @@
 [submodule "ext/vim-surround"]
 	path = ext/vim-surround
 	url = git://github.com/kana/vim-surround.git
+[submodule "ext/vim-submode"]
+	path = ext/vim-submode
+	url = git://github.com/kana/vim-submode.git
