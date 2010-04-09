@@ -1021,13 +1021,13 @@ Map [n] -noremap -- - <C-x>
 " TODO: Smart '{', '}': Treat folds as one non-empty line. {{{
 " }}}
 
-" execute most used command quickly {{{
+" Execute most used command quickly {{{
 Map [n] -noremap <SID>[excmd]w      :<C-u>write<CR>
 Map [n] -noremap <SID>[excmd]q      :<C-u>quit<CR>
 Map [n] -noremap <SID>[excmd]co     :<C-u>close<CR>
 Map [n] -noremap <SID>[excmd]h      :<C-u>hide<CR>
 " }}}
-" edit .vimrc quickly {{{
+" Edit .vimrc quickly {{{
 Map [n] -noremap <SID>[excmd]ee     :<C-u>edit<CR>
 Map [n] -noremap <SID>[excmd]ev     :<C-u>edit $MYVIMRC<CR>
 Map [n] -noremap <SID>[excmd]e.     :<C-u>edit .<CR>
@@ -1038,7 +1038,7 @@ Map [n] -noremap <SID>[excmd]t.     :<C-u>tabedit .<CR>
 
 Map [n] -noremap -expr <SID>[excmd]sv <SID>execute_multiline_expr(['source $MYVIMRC', 'setfiletype vim'], ':source $MYVIMRC')
 " }}}
-" cmdwin {{{
+" Cmdwin {{{
 set cedit=<C-z>
 function! s:cmdwin_enter()
     Map [ni] -noremap -buffer <C-z>         <C-c>
@@ -1056,27 +1056,27 @@ Map [n] -noremap g: q:
 Map [n] -noremap g/ q/
 Map [n] -noremap g? q?
 " }}}
-" walking between tabs {{{
+" Walking between tabs {{{
 Map [n] -noremap <C-n>         gt
 Map [n] -noremap <C-p>         gT
 Map [n] -noremap <C-g><C-n>    :<C-u>tablast<CR>
 Map [n] -noremap <C-g><C-p>    :<C-u>tabfirst<CR>
 " }}}
-" moving tabs {{{
+" Moving tabs {{{
 Map [n] -noremap <Left>    :<C-u>execute 'tabmove' tabpagenr() - 2<CR>
 Map [n] -noremap <Right>   :<C-u>execute 'tabmove' tabpagenr()<CR>
 " NOTE: gVim only
 Map [n] -noremap <S-Left>  :<C-u>execute 'tabmove' 0<CR>
 Map [n] -noremap <S-Right> :<C-u>execute 'tabmove' tabpagenr('$')<CR>
 " }}}
-" walk between windows {{{
+" Walk between windows {{{
 " NOTE: gVim only
 Map [n] -noremap <M-j>     <C-w>j
 Map [n] -noremap <M-k>     <C-w>k
 Map [n] -noremap <M-h>     <C-w>h
 Map [n] -noremap <M-l>     <C-w>l
 " }}}
-" toggle options {{{
+" Toggle options {{{
 function! s:toggle_option(option_name) "{{{
     if exists('&' . a:option_name)
         execute 'setlocal' a:option_name . '!'
@@ -1111,6 +1111,19 @@ Map [n] -noremap <SID>[excmd]ofc :<C-u>call <SID>advance_option_state(['', 'all'
 Map [n] -noremap <SID>[excmd]ofm :<C-u>call <SID>advance_option_state(['manual', 'marker', 'indent'], 'foldmethod')<CR>
 
 
+" FIXME: Bad name :(
+command!
+\   -bar
+\   OptInit
+\
+\   set hlsearch ignorecase nopaste wrap expandtab list modeline
+\   | echo 'Initialized frequently toggled options.'
+
+Map [n] -noremap <SID>[excmd]OI :<C-u>OptInit<CR>
+
+
+silent OptInit
+" }}}
 " Select coding style. {{{
 "
 " These settings is only about tab.
@@ -1121,11 +1134,16 @@ Map [n] -noremap <SID>[excmd]ofm :<C-u>call <SID>advance_option_state(['manual',
 " But wikipedia is dubious, I think :(
 
 let s:coding_styles = {}
-let s:coding_styles['My style']      = 'set expandtab   tabstop=4 shiftwidth=4 softtabstop&'
-let s:coding_styles['Short indent']  = 'set expandtab   tabstop=2 shiftwidth=2 softtabstop&'
-let s:coding_styles['GNU']           = 'set expandtab   tabstop=8 shiftwidth=2 softtabstop=2'
-let s:coding_styles['BSD']           = 'set noexpandtab tabstop=8 shiftwidth=4 softtabstop&'    " XXX
-let s:coding_styles['Linux']         = 'set noexpandtab tabstop=8 shiftwidth=8 softtabstop&'
+let s:coding_styles['My style'] =
+\   'set expandtab   tabstop=4 shiftwidth=4 softtabstop&'
+let s:coding_styles['Short indent'] =
+\   'set expandtab   tabstop=2 shiftwidth=2 softtabstop&'
+let s:coding_styles['GNU'] =
+\   'set expandtab   tabstop=8 shiftwidth=2 softtabstop=2'
+let s:coding_styles['BSD'] =
+\   'set noexpandtab tabstop=8 shiftwidth=4 softtabstop&'    " XXX
+let s:coding_styles['Linux'] =
+\   'set noexpandtab tabstop=8 shiftwidth=8 softtabstop&'
 
 command!
 \   -bar -nargs=1 -complete=customlist,s:coding_style_complete
@@ -1149,23 +1167,7 @@ function! s:toggle_tab_options() "{{{
 endfunction "}}}
 " }}}
 
-
-" FIXME: Bad name :(
-command!
-\   -bar
-\   OptInit
-\   call s:optinit()
-function! s:optinit() "{{{
-    set hlsearch ignorecase nopaste wrap expandtab list modeline
-    echo 'Initialized frequently toggled options.'
-endfunction "}}}
-
-Map [n] -noremap <SID>[excmd]OI :<C-u>OptInit<CR>
-
-
-silent OptInit
-" }}}
-" close help/quickfix window {{{
+" Close help/quickfix window {{{
 " via kana's vimrc.
 
 " s:winutil {{{
@@ -1366,13 +1368,13 @@ Map [n] -noremap <SID>[excmd]cb :<C-u>call <SID>close_unlisted_window()<CR>
 
 Map [n] -noremap <SID>[excmd]cc :<C-u>call <SID>close_certain_window()<CR>
 " }}}
-" close tab with also prefix <SID>[excmd]c. {{{
+" Close tab with also prefix <SID>[excmd]c. {{{
 " tab
 Map [n] -noremap <SID>[excmd]ct :<C-u>tabclose<CR>
 " uindou
 Map [n] -noremap <SID>[excmd]cu :<C-u>close<CR>
 " }}}
-" move window into tabpage {{{
+" Move window into tabpage {{{
 " http://vim-users.jp/2009/12/hack106/
 "
 function! s:move_window_into_tab_page(target_tabpagenr) "{{{
@@ -1411,7 +1413,7 @@ endfunction "}}}
 " move current buffer into a new tab.
 Map [n] -noremap <SID>[excmd]mt :<C-u>call <SID>move_window_into_tab_page(0)<Cr>
 " }}}
-" netrw - vimperator-like keymappings {{{
+" Netrw - vimperator-like keymappings {{{
 function! s:filetype_netrw() "{{{
     Map [n] <buffer> gu -
 endfunction "}}}
@@ -1439,7 +1441,7 @@ if has('virtualedit') && s:has_one_of(['all', 'onemore'], split(&virtualedit, ',
     Map [n] -noremap <SID>[excmd]p $p
 endif
 " }}}
-" snippet that allows you to move around windows beyond tabs {{{
+" Snippet that allows you to move around windows beyond tabs {{{
 " http://gist.github.com/358813
 " http://gist.github.com/358862
 
