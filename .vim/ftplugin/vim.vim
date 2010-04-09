@@ -22,18 +22,8 @@ let b:match_words += ',\<fu\%[nction]!\=\>:\<endf\%[unction]\>'
 let b:match_words += ',\<wh\%[ile]\>:\<endwh\%[ile]\>'
 let b:match_words += ',\<for\>:\<endfor\=\>'
 
-
-function! s:set_options()
-    " autoload function
-    setlocal iskeyword+=#
-    setlocal comments=:",:\
-endfunction
-
-
-augroup myftplugin-vim
-    autocmd!
-    autocmd BufEnter * call s:set_options()
-augroup END
+setlocal iskeyword+=#
+setlocal comments=:\",:\
 
 
 

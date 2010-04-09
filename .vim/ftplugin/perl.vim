@@ -17,7 +17,7 @@ endif
 
 setlocal suffixesadd=.pm
 setlocal makeprg=perl\ -Mstrict\ -Mwarnings\ -c\ %
-setlocal complete=.,w,b,u,t,k,kspell
+setlocal complete=.,w,b,t,k,kspell
 
 " jumping to sub definition.
 nnoremap <buffer> ]]    :call search('^\s*sub .* {$', 'sW')<CR>
