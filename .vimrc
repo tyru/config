@@ -1084,6 +1084,22 @@ function! s:toggle_option(option_name) "{{{
     endif
 endfunction "}}}
 
+function! s:advance_state(state, elem) "{{{
+    let curidx = s:get_idx(a:state, a:elem, 0)
+    return a:state[s:has_idx(a:state, curidx + 1) ? curidx + 1 : 0]
+endfunction "}}}
+
+function! s:advance_option_state(state, optname) "{{{
+    let varname = '&' . a:optname
+    call setbufvar(
+    \   '%',
+    \   varname,
+    \   s:advance_state(
+    \       a:state,
+    \       getbufvar('%', varname)))
+    execute 'setlocal' a:optname . '?'
+endfunction "}}}
+
 Map [n] -noremap <SID>[excmd]oh :<C-u>call <SID>toggle_option('hlsearch')<CR>
 Map [n] -noremap <SID>[excmd]oi :<C-u>call <SID>toggle_option('ignorecase')<CR>
 Map [n] -noremap <SID>[excmd]op :<C-u>call <SID>toggle_option('paste')<CR>
@@ -1091,9 +1107,9 @@ Map [n] -noremap <SID>[excmd]ow :<C-u>call <SID>toggle_option('wrap')<CR>
 Map [n] -noremap <SID>[excmd]oe :<C-u>call <SID>toggle_option('expandtab')<CR>
 Map [n] -noremap <SID>[excmd]ol :<C-u>call <SID>toggle_option('list')<CR>
 Map [n] -noremap <SID>[excmd]om :<C-u>call <SID>toggle_option('modeline')<CR>
+Map [n] -noremap <SID>[excmd]ofc :<C-u>call <SID>advance_option_state(['', 'all'], 'foldclose')<CR>
+Map [n] -noremap <SID>[excmd]ofm :<C-u>call <SID>advance_option_state(['manual', 'marker', 'indent'], 'foldmethod')<CR>
 
-" TODO: Toggle 'foldmethod'.
-" TODO: Toggle 'foldclose'.
 
 " Select coding style. {{{
 "
