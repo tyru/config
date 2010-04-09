@@ -553,51 +553,80 @@ MyAutocmd VimEnter * autocmd! filetypedetect BufNewFile,BufRead *.md
 " Initializing {{{
 
 " runtimepath {{{
-set runtimepath&
+" FIXME Make DSL to build runtimepath by using ex commands.
 
-if has("win32")
+if has('win32')
     set runtimepath+=$HOME/.vim
 endif
 
 
 function! s:is_action(name) "{{{
-    return s:get_action(a:name) !=# -1
+    return exists(printf('*s:rtp_%s', a:name))
 endfunction "}}}
-function! s:get_action(name) "{{{
-    let action = {
-    \   'shift'   : 'let &rtp = join(split(&rtp, ",")[1:], ",")',
-    \   'pop'     : 'let &rtp = join(split(&rtp, ",")[:-2], ",")',
-    \   'unshift' : 'let &rtp = join(s:glob(path) + split(&rtp, ","), ",")',
-    \   'push'    : 'let &rtp = join(split(&rtp, ",") + s:glob(path), ",")',
-    \   'clear'   : 'let &rtp = ""',
-    \   'finish'  : 'return',
-    \}
-    return get(action, a:name, -1)
+function! s:rtp_shift(path) "{{{
+    let &rtp = s:join_path(s:split_path(&rtp)[1:])
+endfunction "}}}
+function! s:rtp_pop(path) "{{{
+    let &rtp = s:join_path(s:split_path(&rtp)[:-2])
+endfunction "}}}
+function! s:rtp_unshift(path) "{{{
+    let &rtp = s:join_path(s:glob(path) + s:split_path(&rtp))
+endfunction "}}}
+function! s:rtp_push(path) "{{{
+    let &rtp = s:join_path(s:split_path(&rtp) + s:glob(a:path))
+endfunction "}}}
+function! s:rtp_clear(path) "{{{
+    let &rtp = ''
+endfunction "}}}
+function! s:rtp_finish(path) "{{{
+    throw 'finish'
+endfunction "}}}
+function! s:rtp_prune(path) "{{{
+    let path = expand(a:path)
+    " FIXME
+    " let path = s:follow_symlink(expand(a:path))
+    let filtered = filter(s:split_path(&rtp), 'expand(v:val) !=# path')
+    let &rtp = s:join_path(filtered)
+endfunction "}}}
+function! s:get_action_fn(name) "{{{
+    return s:is_action(a:name) ? printf('s:rtp_%s', a:name) : -1
+endfunction "}}}
+function! s:get_action_and_path(line) "{{{
+    let line = a:line
+    let seems_like_action = matchstr(line, '^\w\+')
+    let rest = strpart(line, strlen(seems_like_action))
+    let rest = s:skip_spaces(rest)
+
+    if seems_like_action != '' && s:is_action(seems_like_action)
+        return [seems_like_action, rest]
+    else
+        return ['push', rest]
+    endif
 endfunction "}}}
 function! s:add_rtp_from_file(file) "{{{
     let file = expand(a:file)
     if !filereadable(file) | return | endif
 
     for line in readfile(file)
+        " Remove head whitespaces.
         let line = substitute(line, '^\s\+', '', '')
+        " Remove tail whitespaces.
         let line = substitute(line, '\s\+$', '', '')
-        if line =~# '^$\|^#' | continue | endif
+        " Continue if line is commented out.
+        if line =~# '^#' | continue | endif
+        " Continue if line is blank line.
+        if line =~# '^$' | continue | endif
 
-        let m = matchlist(line, '\(\w\+\)\s\+\(\S\+\)')
-        if empty(m)
-            if s:is_action(line)
-                let [action, path] = [line, '']
-            else
-                let [action, path] = ['push', line]
-            endif
-        else
-            let [action, path] = m[1:2]
-        endif
-
-        execute s:get_action(action)
+        let [action, path] = s:get_action_and_path(line)
+        try
+            call call(s:get_action_fn(action), [path])
+        catch /^finish$/
+            return
+        endtry
     endfor
 endfunction "}}}
-call s:add_rtp_from_file('~/.vimruntimepath.lst')
+call s:add_rtp_from_file('~/.vim_rtp.lst')
+call s:add_rtp_from_file('~/.vim_rtp.lst.local')
 " }}}
 
 
