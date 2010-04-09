@@ -1116,7 +1116,7 @@ command!
 \   -bar
 \   OptInit
 \
-\   set hlsearch ignorecase nopaste wrap expandtab list modeline
+\   set hlsearch ignorecase nopaste wrap expandtab list modeline foldclose= foldmethod=manual
 \   | echo 'Initialized frequently toggled options.'
 
 Map [n] -noremap <SID>[excmd]OI :<C-u>OptInit<CR>
