@@ -2618,6 +2618,10 @@ endif
 " }}}
 " End. {{{
 
+if filereadable(expand('~/.vimrc.local'))
+    source `=expand('~/.vimrc.local')`
+endif
+
 
 if !exists('s:loaded_vimrc')
     GarbageCorrect    " first time
@@ -2625,7 +2629,9 @@ else
     GarbageCorrect!
 endif
 
+
 set secure
+
 
 let s:loaded_vimrc = 1
 " }}}
