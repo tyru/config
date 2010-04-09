@@ -17,6 +17,7 @@
 !.vim/syntax
 !.vim/tutor
 !.vim/tools
+.vim/*
 
 !.vim/dict
 !.vim/template
