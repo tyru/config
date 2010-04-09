@@ -615,16 +615,7 @@ MyAutocmd VimEnter * autocmd! filetypedetect BufNewFile,BufRead *.md
 " Initializing {{{
 
 " runtimepath {{{
-" FIXME Make DSL to build runtimepath by using ex commands.
 
-if has('win32')
-    set runtimepath+=$HOME/.vim
-endif
-
-
-function! s:is_action(name) "{{{
-    return exists(printf('*s:rtp_%s', a:name))
-endfunction "}}}
 function! s:rtp_shift(path) "{{{
     let &rtp = s:join_path(s:split_path(&rtp)[1:])
 endfunction "}}}
@@ -640,9 +631,6 @@ endfunction "}}}
 function! s:rtp_clear(path) "{{{
     let &rtp = ''
 endfunction "}}}
-function! s:rtp_finish(path) "{{{
-    throw 'finish'
-endfunction "}}}
 function! s:rtp_prune(path) "{{{
     let path = expand(a:path)
     " FIXME
@@ -650,45 +638,48 @@ function! s:rtp_prune(path) "{{{
     let filtered = filter(s:split_path(&rtp), 'expand(v:val) !=# path')
     let &rtp = s:join_path(filtered)
 endfunction "}}}
-function! s:get_action_fn(name) "{{{
-    return s:is_action(a:name) ? printf('s:rtp_%s', a:name) : -1
-endfunction "}}}
-function! s:get_action_and_path(line) "{{{
-    let line = a:line
-    let seems_like_action = matchstr(line, '^\w\+')
-    let rest = strpart(line, strlen(seems_like_action))
-    let rest = s:skip_spaces(rest)
 
-    if seems_like_action != '' && s:is_action(seems_like_action)
-        return [seems_like_action, rest]
-    else
-        return ['push', rest]
-    endif
-endfunction "}}}
-function! s:add_rtp_from_file(file) "{{{
-    let file = expand(a:file)
-    if !filereadable(file) | return | endif
+command!
+\   -bar -nargs=1
+\   RtpShift
+\   call s:rtp_shift(<f-args>)
+command!
+\   -bar -nargs=1
+\   RtpPop
+\   call s:rtp_pop(<f-args>)
+command!
+\   -bar -nargs=1
+\   RtpUnshift
+\   call s:rtp_unshift(<f-args>)
+command!
+\   -bar -nargs=1
+\   RtpPush
+\   call s:rtp_push(<f-args>)
+command!
+\   -bar -nargs=1
+\   RtpClear
+\   call s:rtp_clear(<f-args>)
+command!
+\   -bar -nargs=1
+\   RtpPrune
+\   call s:rtp_prune(<f-args>)
 
-    for line in readfile(file)
-        " Remove head whitespaces.
-        let line = substitute(line, '^\s\+', '', '')
-        " Remove tail whitespaces.
-        let line = substitute(line, '\s\+$', '', '')
-        " Continue if line is commented out.
-        if line =~# '^#' | continue | endif
-        " Continue if line is blank line.
-        if line =~# '^$' | continue | endif
 
-        let [action, path] = s:get_action_and_path(line)
-        try
-            call call(s:get_action_fn(action), [path])
-        catch /^finish$/
-            return
-        endtry
-    endfor
-endfunction "}}}
-call s:add_rtp_from_file('~/.vim_rtp.lst')
-call s:add_rtp_from_file('~/.vim_rtp.lst.local')
+
+if has('win32')
+    RtpPush $HOME/.vim
+endif
+
+if exists('$VIM_RTP_REPO_DIR')
+    RtpPush $VIM_RTP_REPO_DIR/*
+    RtpPrune $VIM_RTP_REPO_DIR/pummode.vim
+    RtpPrune $VIM_RTP_REPO_DIR/command-buffer.vim
+    RtpPrune $VIM_RTP_REPO_DIR/sign-diff.vim
+    RtpPrune $VIM_RTP_REPO_DIR/vimtlib
+else
+    call s:warn('Forgot to set $VIM_RTP_REPO_DIR ?')
+endif
+
 " }}}
 
 
