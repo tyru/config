@@ -1427,8 +1427,8 @@ endif
 " http://gist.github.com/358813
 " http://gist.github.com/358862
 
-Map [n] -noremap -silent <Tab>     :<C-u>call <SID>NextWindowOrTab()<CR>
-Map [n] -noremap -silent <S-Tab>   :<C-u>call <SID>PreviousWindowOrTab()<CR>
+Map [n] -noremap -silent <C-n> :<C-u>call <SID>NextWindowOrTab()<CR>
+Map [n] -noremap -silent <C-p> :<C-u>call <SID>PreviousWindowOrTab()<CR>
 
 function! s:NextWindowOrTab() "{{{
 	if winnr() < winnr("$")
