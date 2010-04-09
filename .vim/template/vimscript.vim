@@ -20,7 +20,7 @@ scriptencoding utf-8
 " Name: <% eval: expand('%:t:r') %>
 " Version: 0.0.0
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2010-03-14.
+" Last Change: 2010-04-09.
 "
 " Description:
 "   NO DESCRIPTION YET
@@ -88,20 +88,16 @@ endfunction
 " }}}
 
 " }}}
-" s:warn {{{
-function! s:warn(msg)
+function! s:warn(msg) "{{{
     echohl WarningMsg
     echomsg a:msg
     echohl None
 
     call add(s:debug_errmsg, a:msg)
-endfunction
-" }}}
-" s:warnf {{{
-function! s:warnf(fmt, ...)
-    call s:warn(call('printf', [a:fmt] + a:000))
-endfunction
-" }}}
+endfunction "}}}
+function! s:warnf(...) "{{{
+    call s:warn(call('printf', a:000))
+endfunction "}}}
 
 " }}}
 
