@@ -1,0 +1,9 @@
+# vim:set ft=conf fen fdm=marker:
+
+
+# Plugins
+$VIM_RTP_REPO_DIR/*
+prune $VIM_RTP_REPO_DIR/pummode.vim
+prune $VIM_RTP_REPO_DIR/command-buffer.vim
+prune $VIM_RTP_REPO_DIR/sign-diff.vim
+prune $VIM_RTP_REPO_DIR/vimtlib
