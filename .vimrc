@@ -23,6 +23,9 @@ function! s:warn(msg) "{{{
     echomsg a:msg
     echohl None
 endfunction "}}}
+function! s:warnf(...) "{{{
+    call s:warn(call('printf', a:000))
+endfunction "}}}
 function! s:system(command, ...) "{{{
     return system(join([a:command] + map(copy(a:000), 'shellescape(v:val)'), ' '))
 endfunction "}}}
@@ -163,6 +166,47 @@ function! s:get_by_regex(str, regex) "{{{
     let rest  = a:str[strlen(match):]
     return [match, rest]
 endfunction "}}}
+function! s:follow_symlink(path) "{{{
+    " FIXME
+    "
+    " TODO Reveive depth of following times.
+    "
+    " Complain: Why can't Vim deal with symbolic link?
+
+    perl <<EOF
+    my $dest = sub { ($_) = @_; $_ = readlink while -l; $_ }->(VIM::Eval('a:path'));
+    # TODO: More strict
+    VIM::DoCommand sprintf "let dest = '%s'", $dest;
+EOF
+
+    return dest
+endfunction "}}}
+function! s:split_path(path, ...) "{{{
+    " TODO: More strict
+    let sep = a:0 != 0 ? a:1 : ','
+    return split(a:path, sep)
+endfunction "}}}
+function! s:join_path(path_list, ...) "{{{
+    " TODO: More strict
+    let sep = a:0 != 0 ? a:1 : ','
+    return join(a:path_list, sep)
+endfunction "}}}
+function! s:get_idx(list, elem, ...) "{{{
+    let idx = 0
+
+    while s:has_idx(a:list, idx)
+        if a:list[idx] ==# a:elem
+            return idx
+        endif
+        let idx += 1
+    endwhile
+
+    if a:0 == 0
+        throw 'internal error'
+    else
+        return a:1
+    endif
+endfunction "}}}
 
 
 " For mappings
@@ -224,6 +268,24 @@ function! s:with_options(cmd, opt) "{{{
     return a:cmd
 endfunction "}}}
 
+function! s:split_to_keys(lhs)  "{{{
+    " From arpeggio.vim
+    "
+    " Assumption: Special keys such as <C-u> are escaped with < and >, i.e.,
+    "             a:lhs doesn't directly contain any escape sequences.
+    return split(a:lhs, '\(<[^<>]\+>\|.\)\zs')
+endfunction "}}}
+function! s:unescape_key(key) "{{{
+    if a:key =~# '^<[^<>]\+>$'
+        let evaled = eval(printf('"\%s"', a:key))
+        return evaled !=# a:key ? evaled : a:key
+    else
+        return a:key
+    endif
+endfunction "}}}
+function! s:unescape_each_key(lhs) "{{{
+    return map(s:split_to_keys(a:lhs), 's:unescape_key(v:val)')
+endfunction "}}}
 
 " Parsing
 function! s:skip_spaces(q_args) "{{{
