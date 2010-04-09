@@ -1016,6 +1016,11 @@ Map [n] -noremap g; ~
 Map [n] -noremap    + <C-a>
 Map [n] -noremap -- - <C-x>
 
+" TODO: Smart 'zd': Delete empty line {{{
+" }}}
+" TODO: Smart '{', '}': Treat folds as one non-empty line. {{{
+" }}}
+
 " execute most used command quickly {{{
 Map [n] -noremap <SID>[excmd]w      :<C-u>write<CR>
 Map [n] -noremap <SID>[excmd]q      :<C-u>quit<CR>
@@ -1086,6 +1091,9 @@ Map [n] -noremap <SID>[excmd]ow :<C-u>call <SID>toggle_option('wrap')<CR>
 Map [n] -noremap <SID>[excmd]oe :<C-u>call <SID>toggle_option('expandtab')<CR>
 Map [n] -noremap <SID>[excmd]ol :<C-u>call <SID>toggle_option('list')<CR>
 Map [n] -noremap <SID>[excmd]om :<C-u>call <SID>toggle_option('modeline')<CR>
+
+" TODO: Toggle 'foldmethod'.
+" TODO: Toggle 'foldclose'.
 
 " Select coding style. {{{
 "
@@ -1439,6 +1447,10 @@ function! s:PreviousWindowOrTab() "{{{
 		execute winnr("$") . "wincmd w"
 	endif
 endfunction "}}}
+" }}}
+" }}}
+" vmap {{{
+" TODO: '<C-g>' and 'g<C-g>' in visual mode: Show information about selected area. {{{
 " }}}
 " }}}
 " map! {{{
