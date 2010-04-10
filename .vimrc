@@ -11,11 +11,29 @@ language time C
 " }}}
 " Utilities {{{
 " Function {{{
-function! s:SID() "{{{
-    return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
+
+
+" Misc.
+function! s:each_char(str) "{{{
+    return split(a:str, '\zs')
 endfunction "}}}
-function! s:SNR(map) "{{{
-    return printf("<SNR>%d_%s", s:SID(), a:map)
+function! s:get_output(...) "{{{
+    " a:000 = [['echo', '"foo"'], 'messages', ...]
+    "
+    " TODO nested :redir ?
+
+    redir => output
+
+    for cmd_args in a:000
+        if type(cmd_args) == type([])
+            silent execute join(cmd_args)
+        else
+            silent execute cmd_args
+        endif
+    endfor
+
+    redir END
+    return substitute(output, '^\n\n', '', '')
 endfunction "}}}
 
 function! s:warn(msg) "{{{
@@ -26,19 +44,25 @@ endfunction "}}}
 function! s:warnf(...) "{{{
     call s:warn(call('printf', a:000))
 endfunction "}}}
+
+
+" Wrapper for built-in functions.
 function! s:system(command, ...) "{{{
     return system(join([a:command] + map(copy(a:000), 'shellescape(v:val)'), ' '))
 endfunction "}}}
 function! s:glob(expr) "{{{
     return split(glob(a:expr), "\n")
 endfunction "}}}
-function! s:globpath(paths, expr) "{{{
-    return split(globpath(a:paths, a:expr), "\n")
+function! s:globpath(path, expr) "{{{
+    return split(globpath(a:path, a:expr), "\n")
 endfunction "}}}
 function! s:getchar(...) "{{{
     let c = call('getchar', a:000)
     return type(c) == type("") ? c : nr2char(c)
 endfunction "}}}
+
+
+" List
 function! s:has_elem(list, elem) "{{{
     return !empty(filter(copy(a:list), 'v:val ==# a:elem'))
 endfunction "}}}
@@ -119,17 +143,8 @@ function! s:has_idx(list, idx) "{{{
     " let idx = a:idx >= 0 ? a:idx : len(a:list) + a:idx
     return 0 <= idx && idx < len(a:list)
 endfunction "}}}
-function! s:stringf(fmt, ...) "{{{
-    return call('printf', [a:fmt] + map(copy(a:000), 'string(v:val)'))
-endfunction "}}}
 function! s:mapf(list, fmt) "{{{
     return map(copy(a:list), "printf(a:fmt, v:val)")
-endfunction "}}}
-function! s:string_pp(val) "{{{
-    return string(a:val)    " TODO Pretty print
-endfunction "}}}
-function! s:each_char(str) "{{{
-    return split(a:str, '\zs')
 endfunction "}}}
 function! s:zip(list, list2) "{{{
     let ret = []
@@ -142,54 +157,6 @@ function! s:zip(list, list2) "{{{
         let i += 1
     endwhile
     return ret
-endfunction "}}}
-function! s:get_selected_text(motion_wiseness, begin_pos, end_pos) "{{{
-    if a:motion_wiseness ==# 'char'
-        let [firstline, lastline] = [
-        \   getline(a:begin_pos[1])[a:begin_pos[2] - 1:],
-        \   getline(a:end_pos[1])[:a:end_pos[2] - 1],
-        \]
-    else
-        let [firstline, lastline] = [
-        \   getline(a:begin_pos[1]),
-        \   getline(a:end_pos[1]),
-        \]
-    endif
-
-    return
-    \   [firstline]
-    \   + getline(a:begin_pos[1] + 1, a:end_pos[1] - 1)
-    \   + [lastline]
-endfunction "}}}
-function! s:get_by_regex(str, regex) "{{{
-    let match = matchstr(a:str, '^' . a:regex)
-    let rest  = a:str[strlen(match):]
-    return [match, rest]
-endfunction "}}}
-function! s:follow_symlink(path) "{{{
-    " FIXME
-    "
-    " TODO Reveive depth of following times.
-    "
-    " Complain: Why can't Vim deal with symbolic link?
-
-    perl <<EOF
-    my $dest = sub { ($_) = @_; $_ = readlink while -l; $_ }->(VIM::Eval('a:path'));
-    # TODO: More strict
-    VIM::DoCommand sprintf "let dest = '%s'", $dest;
-EOF
-
-    return dest
-endfunction "}}}
-function! s:split_path(path, ...) "{{{
-    " TODO: More strict
-    let sep = a:0 != 0 ? a:1 : ','
-    return split(a:path, sep)
-endfunction "}}}
-function! s:join_path(path_list, ...) "{{{
-    " TODO: More strict
-    let sep = a:0 != 0 ? a:1 : ','
-    return join(a:path_list, sep)
 endfunction "}}}
 function! s:get_idx(list, elem, ...) "{{{
     let idx = 0
@@ -207,27 +174,47 @@ function! s:get_idx(list, elem, ...) "{{{
         return a:1
     endif
 endfunction "}}}
-function! s:get_output(...) "{{{
-    " a:000 = [['echo', '"foo"'], 'messages', ...]
-    "
-    " TODO nested :redir ?
 
-    redir => output
 
-    for cmd_args in a:000
-        if type(cmd_args) == type([])
-            silent execute join(cmd_args)
-        else
-            silent execute cmd_args
-        endif
-    endfor
-
-    redir END
-    return substitute(output, '^\n\n', '', '')
+" Path
+function! s:split_path(path, ...) "{{{
+    " TODO: More strict
+    let sep = a:0 != 0 ? a:1 : ','
+    return split(a:path, sep)
+endfunction "}}}
+function! s:join_path(path_list, ...) "{{{
+    " TODO: More strict
+    let sep = a:0 != 0 ? a:1 : ','
+    return join(a:path_list, sep)
 endfunction "}}}
 
 
-" For mappings
+" System
+function! s:follow_symlink(path) "{{{
+    " FIXME
+    "
+    " TODO Reveive depth of following times.
+    "
+    " Complain: Why can't Vim deal with symbolic link?
+
+    perl <<EOF
+    my $dest = sub { ($_) = @_; $_ = readlink while -l; $_ }->(VIM::Eval('a:path'));
+    # TODO: More strict
+    VIM::DoCommand sprintf "let dest = '%s'", $dest;
+EOF
+
+    return dest
+endfunction "}}}
+
+
+" Mapping
+function! s:SID() "{{{
+    return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
+endfunction "}}}
+function! s:SNR(map) "{{{
+    return printf("<SNR>%d_%s", s:SID(), a:map)
+endfunction "}}}
+
 function! s:execute_multiline_expr(excmds, ...) "{{{
     let expr = join(s:mapf(copy(a:excmds), ":\<C-u>%s\<CR>"), '')
     if a:0 == 0
@@ -242,16 +229,6 @@ function! s:execute_multiline(excmds, ...) "{{{
     " that it executes each line separated by "\<CR>".
     " Is it specified?
     execute call('s:execute_multiline_expr', [a:excmds] + a:000)
-endfunction "}}}
-
-function! s:get_tilde_col(lnum) "{{{
-    return match(getline(a:lnum), '\S') + 1
-endfunction "}}}
-function! s:at_right_of_tilde_col() "{{{
-    return col('.') > s:get_tilde_col('.')
-endfunction "}}}
-function! s:at_left_of_tilde_col() "{{{
-    return col('.') < s:get_tilde_col('.')
 endfunction "}}}
 
 function! s:map_leader(key) "{{{
@@ -294,24 +271,6 @@ function! s:with_options(cmd, opt) "{{{
     return a:cmd
 endfunction "}}}
 
-function! s:split_to_keys(lhs)  "{{{
-    " From arpeggio.vim
-    "
-    " Assumption: Special keys such as <C-u> are escaped with < and >, i.e.,
-    "             a:lhs doesn't directly contain any escape sequences.
-    return split(a:lhs, '\(<[^<>]\+>\|.\)\zs')
-endfunction "}}}
-function! s:unescape_key(key) "{{{
-    if a:key =~# '^<[^<>]\+>$'
-        let evaled = eval(printf('"\%s"', a:key))
-        return evaled !=# a:key ? evaled : a:key
-    else
-        return a:key
-    endif
-endfunction "}}}
-function! s:unescape_each_key(lhs) "{{{
-    return map(s:split_to_keys(a:lhs), 's:unescape_key(v:val)')
-endfunction "}}}
 
 " Parsing
 function! s:skip_spaces(q_args) "{{{
@@ -370,7 +329,7 @@ command!
 \   VarDump
 \
 \   echohl Debug
-\   | echomsg printf("  %s = %s", <q-args>, s:string_pp(eval(<q-args>)))
+\   | echomsg printf("  %s = %s", <q-args>, string(eval(<q-args>)))
 \   | if <bang>0
 \   |   try
 \   |     throw ''
@@ -1598,17 +1557,47 @@ function! s:search_forward_p()
   return exists('v:searchforward') ? v:searchforward : 1
 endfunction
 " }}}
-" Walk between columns at 0, ^, $. {{{
-" TODO
-" Go to window's max last col when virtualedit is enabled.
+" Walk between columns at 0, ^, $, window's right edge(virtualedit). {{{
+
+function! s:get_tilde_col(lnum) "{{{
+endfunction "}}}
+
+function! s:back_between(zero, tilde, dollar) "{{{
+    let curcol = col('.')
+    let tilde_col = match(getline('.'), '\S') + 1
+
+    if curcol > col('$')
+        return a:dollar
+    elseif curcol > tilde_col
+        return a:tilde
+    else
+        return a:zero
+    endif
+endfunction "}}}
+function! s:advance_between(tilde, dollar) "{{{
+    let curcol = col('.')
+    let tilde_col = match(getline('.'), '\S') + 1
+
+    if curcol < tilde_col
+        return a:tilde
+    elseif curcol < col('$')
+        return a:dollar
+    else
+        return a:right_edge
+    endif
+endfunction "}}}
 
 " imap
-Map [i] -noremap -expr <C-a> <SID>at_right_of_tilde_col() ? "\<C-o>^" : "\<Home>"
-Map [i] -noremap -expr <C-e> <SID>at_left_of_tilde_col()  ? "\<C-o>^" : "\<End>"
+Map [i] -noremap -expr <C-a> <SID>back_between("\<Home>", "\<C-o>^", "\<End>")
+Map [i] -noremap -expr <C-e> <SID>advance_between("\<C-o>^", "\<End>")
 
 " motion
-Map [nvo] -noremap -expr H <SID>at_right_of_tilde_col() ? "^" : "0"
-Map [nvo] -noremap -expr L <SID>at_left_of_tilde_col()  ? "^" : "$"
+Map [nvo] -noremap -expr H <SID>back_between('0', '^', '$')
+Map [nvo] -noremap -expr L <SID>advance_between('^', '$')
+
+" TODO
+" Map [nvo] -noremap -expr L <SID>advance_between('^', '$', '')    " <comment Go right edge of window.>
+
 " }}}
 " Disable unused keys. {{{
 Map [n] -noremap ZZ <Nop>
@@ -2055,8 +2044,7 @@ command!
 function! s:cmd_capture(args, banged) "{{{
     let out = s:get_output(a:args)
 
-    execute 'New'
-
+    New
     put =out
     0delete _
 endfunction "}}}
