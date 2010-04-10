@@ -2046,6 +2046,21 @@ command!
 
 AlterCommand qf QuickFix
 " }}}
+" Capture {{{
+command!
+\   -nargs=+ -bang
+\   Capture
+\   call s:cmd_capture([<f-args>], <bang>0)
+
+function! s:cmd_capture(args, banged) "{{{
+    let out = s:get_output(a:args)
+
+    execute 'New'
+
+    put =out
+    0delete _
+endfunction "}}}
+" }}}
 
 " ...Mode {{{
 " NoremapMode {{{
