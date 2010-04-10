@@ -1689,8 +1689,8 @@ endfunction "}}}
 " Map [i] -noremap <compl>j <C-n>
 " Map [i] -noremap <compl>k <C-p>
 " TODO
-" call submode#enter_with('c', 'i', '', '<SID>[compl]j', '<C-n>')
-" call submode#enter_with('c', 'i', '', '<SID>[compl]k', '<C-p>')
+" call submode#enter_with('c', 'i', '', emap#compile_map('<compl>j', 'i'), '<C-n>')
+" call submode#enter_with('c', 'i', '', emap#compile_map('<compl>k', 'i'), '<C-p>')
 " call submode#leave_with('c', 'i', '', '<CR>')
 " call submode#map       ('c', 'i', '', 'j', '<C-n>')
 " call submode#map       ('c', 'i', '', 'k', '<C-p>')
