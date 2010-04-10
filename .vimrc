@@ -614,13 +614,13 @@ MyAutocmd BufNewFile,BufReadPre *.avs
 MyAutocmd BufNewFile,BufReadPre *.tmpl
             \ setlocal ft=html
 MyAutocmd BufNewFile,BufReadPre *.mkd
-            \ setlocal ft=markdown
+            \ setlocal ft=mkd
 MyAutocmd BufNewFile,BufReadPre *.md
             \ setlocal ft=markdown
 
 " aliases
-MyAutocmd FileType mkd
-            \ setlocal ft=markdown
+" MyAutocmd FileType mkd
+"             \ setlocal ft=markdown
 MyAutocmd FileType js
             \ setlocal ft=javascript
 MyAutocmd FileType c++
