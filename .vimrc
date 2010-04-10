@@ -207,6 +207,24 @@ function! s:get_idx(list, elem, ...) "{{{
         return a:1
     endif
 endfunction "}}}
+function! s:get_output(...) "{{{
+    " a:000 = [['echo', '"foo"'], 'messages', ...]
+    "
+    " TODO nested :redir ?
+
+    redir => output
+
+    for cmd_args in a:000
+        if type(cmd_args) == type([])
+            silent execute join(cmd_args)
+        else
+            silent execute cmd_args
+        endif
+    endfor
+
+    redir END
+    return substitute(output, '^\n\n', '', '')
+endfunction "}}}
 
 
 " For mappings
