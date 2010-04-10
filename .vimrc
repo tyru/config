@@ -266,6 +266,7 @@ function! s:map_prefix_key(modes, prefix_name, prefix_key) "{{{
     execute 'DefMap' printf('[%s]', a:modes) '-noremap' a:prefix_name '<Nop>'
     execute 'Map'    printf('[%s]', a:modes)            a:prefix_key  printf('<%s>', a:prefix_name)
 
+    " TODO
     " DefMap [<eval a:modes>] -noremap <eval a:prefix_name> <Nop>
     " Map    [<eval a:modes>]          <eval a:prefix_key>  <<eval a:prefix_name>>
 
@@ -282,6 +283,7 @@ endfunction "}}}
 function! s:map_orig_key(modes, key) "{{{
     execute printf('Map [%s] -noremap <orig>%s %s', a:modes, a:key, a:key)
 
+    " TODO
     " Map [<eval a:modes>] -noremap <orig><eval a:key> <eval a:key>
 endfunction "}}}
 
