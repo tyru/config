@@ -440,6 +440,7 @@ command! ShowTabNum echo config.browser.mTabs.length
 " }}}
 " ヒントモードでのショートカットーキー誤爆を阻止する {{{
 " http://vimperator.g.hatena.ne.jp/nokturnalmortum/20100410/1270905036
+js <<EOM
 window.addEventListener(
 'keypress',
 function (event) {
@@ -462,6 +463,7 @@ function (event) {
 },
 false
 );
+EOM
 " }}}
 " }}}
 
