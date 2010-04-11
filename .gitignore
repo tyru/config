@@ -1,6 +1,7 @@
 # Vim
 .vim/.vimbackup_deleted
 
+.vim/*/
 !.vim/after
 !.vim/autoload
 !.vim/colors
@@ -17,7 +18,6 @@
 !.vim/syntax
 !.vim/tutor
 !.vim/tools
-.vim/*
 
 !.vim/dict
 !.vim/template
@@ -27,4 +27,6 @@ tags-ja
 .vim/.VimballRecord
 
 # Vimperator
-.vimperator/info
+.vimperator/*/
+!.vimperator/plugin
+!.vimperator/colors
