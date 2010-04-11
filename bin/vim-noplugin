@@ -1,0 +1,10 @@
+#!/bin/sh
+
+vim_bare="vim --noplugin -u NONE -U NONE -N"
+
+if [ $# = 0 ]
+then
+    $vim_bare
+else
+    $vim_bare "$*"
+fi
