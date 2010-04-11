@@ -862,6 +862,10 @@ MyAutocmd FileType * call s:load_filetype()
 "   " .
 "   " .
 "   DisableMap [n] $ % & ' ( ) ^
+"
+" MapCount:
+"   " Map [n] -expr <C-n> v:count1 . 'gt'
+"   MapCount [n] <C-n> gt
 
 
 
