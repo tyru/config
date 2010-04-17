@@ -761,13 +761,12 @@ SetPragmas ignore-spaces "{{{
 
 " paste to clipboard
 Map [nvo] <Leader>y     <clipboard> <yank>
-Map [nvo] <comma>y <primary>   <yank>
+Map [nvo] <comma>y      <primary>   <yank>
 Map [nvo] <Leader>d     <clipboard> <delete*>
-Map [nvo] <comma>d <primary>   <delete*>
+Map [nvo] <comma>d      <primary>   <delete*>
 
 " do not destroy noname register.
 Map [nvo] x        <blackhole> <delete-char>
-Map [nvo] <Space>d <blackhole> <delete*>
 
 UnsetPragmas ignore-spaces    " end.
 " }}}
