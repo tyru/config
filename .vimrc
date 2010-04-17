@@ -885,9 +885,9 @@ endfunction
 MyAutocmd CmdwinEnter * call s:cmdwin_enter()
 
 let loaded_cmdbuf = 1
-Map [n] -noremap g: q:
-Map [n] -noremap g/ q/
-Map [n] -noremap g? q?
+Map [n] -noremap <excmd>: q:
+Map [n] -noremap <excmd>/ q/
+Map [n] -noremap <excmd>? q?
 " }}}
 " Walking between tabs {{{
 Map [n] -noremap <C-n>         gt
