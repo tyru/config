@@ -678,153 +678,6 @@ call arpeggio#load()
 
 call altercmd#load()
 " }}}
-" Encoding {{{
-set enc=utf-8
-set fenc=utf-8
-set termencoding=utf-8
-let &fileencodings = s:uniq_path(
-\   ['utf-8']
-\   + split(&fileencodings, ',')
-\   + ['iso-2022-jp', 'iso-2022-jp-3']
-\)
-
-set fileformats=unix,dos,mac
-if exists('&ambiwidth')
-    set ambiwidth=double
-endif
-
-" set enc=... {{{
-function! ChangeEncoding()
-    if expand('%') == ''
-        call s:warn("current file is empty.")
-        return
-    endif
-    let result =
-                \ prompt#prompt("re-open with...", {
-                \   'menu': [
-                \     'cp932',
-                \     'shift-jis',
-                \     'iso-2022-jp',
-                \     'euc-jp',
-                \     'utf-8',
-                \     'ucs-bom'
-                \   ],
-                \   'escape': 1,
-                \   'one_char': 1,
-                \   'execute_if': 'val != ""',
-                \   'executef': 'edit ++enc=%s'})
-    if result !=# "\e"
-        echomsg printf("re-open with '%s'.", result)
-    endif
-endfunction
-
-Map [n] -noremap <comma>ta     :call ChangeEncoding()<CR>
-" }}}
-" set fenc=... {{{
-function! ChangeFileEncoding()
-    let enc = prompt#prompt("changing file encoding to...", {
-                \ 'menu': [
-                \ 'cp932',
-                \ 'shift-jis',
-                \ 'iso-2022-jp',
-                \ 'euc-jp',
-                \ 'utf-8',
-                \ 'ucs-bom'
-                \ ],
-                \ 'escape': 1,
-                \ 'one_char': 1,
-                \ 'execute_if': 'val != ""',
-                \ 'executef': 'set fenc=%s'})
-    if enc ==# "\e"
-        return
-    endif
-    if enc == 'ucs-bom'
-        set bomb
-    else
-        set nobomb
-    endif
-    echomsg printf("changing file encoding to '%s'.", enc)
-endfunction
-
-Map [n] -noremap <comma>ts    :<C-u>call ChangeFileEncoding()<CR>
-" }}}
-" set ff=... {{{
-function! ChangeNL()
-    let result = prompt#prompt("changing newline format to...", {
-                \ 'menu': ['dos', 'unix', 'mac'],
-                \ 'one_char': 1,
-                \ 'escape': 1,
-                \ 'execute_if': 'val != ""',
-                \ 'executef': 'set ff=%s'})
-    if result !=# "\e"
-        echomsg printf("changing newline format to '%s'.", result)
-    endif
-endfunction
-
-Map [n] -noremap <comma>td    :<C-u>call ChangeNL()<CR>
-" }}}
-" }}}
-" FileType {{{
-function! s:each_filetype() "{{{
-    return split(&l:filetype, '\.')
-endfunction "}}}
-
-function! s:set_dict() "{{{
-    let filetype_vs_dictionary = {
-    \   'c': ['c', 'cpp'],
-    \   'cpp': ['c', 'cpp'],
-    \   'html': ['html', 'css', 'javascript'],
-    \   'scala': ['scala', 'java'],
-    \}
-
-    let dicts = []
-    for ft in s:each_filetype()
-        for ft in get(filetype_vs_dictionary, ft, [ft])
-            let dict_path = expand(printf('$HOME/.vim/dict/%s.dict', ft))
-            if filereadable(dict_path)
-                call add(dicts, dict_path)
-            endif
-        endfor
-    endfor
-
-    " FIXME Use pathogen.vim!!
-    for d in dicts
-        let &l:dictionary = join(s:uniq(dicts), ',')
-    endfor
-endfunction "}}}
-function! s:set_tab_width() "{{{
-    if s:has_one_of(['css', 'xml', 'html', 'lisp', 'scheme', 'yaml'], s:each_filetype())
-        CodingStyle Short indent
-    else
-        CodingStyle My style
-    endif
-endfunction "}}}
-function! s:set_compiler() "{{{
-    let filetype_vs_compiler = {
-    \   'c': 'gcc',
-    \   'cpp': 'gcc',
-    \   'html': 'tidy',
-    \   'java': 'javac',
-    \}
-    try
-        for ft in s:each_filetype()
-            execute 'compiler' get(filetype_vs_compiler, ft, ft)
-        endfor
-    catch /E666:/    " compiler not supported: ...
-    endtry
-endfunction "}}}
-function! s:load_filetype() "{{{
-    if &omnifunc == ""
-        setlocal omnifunc=syntaxcomplete#Complete
-    endif
-
-    call s:set_dict()
-    call s:set_tab_width()
-    call s:set_compiler()
-endfunction "}}}
-
-MyAutocmd FileType * call s:load_filetype()
-" }}}
 " Mappings and/or Abbreviations {{{
 
 
@@ -1690,6 +1543,156 @@ endfunction "}}}
 
 
 " }}}
+" }}}
+" Encoding {{{
+set enc=utf-8
+set fenc=utf-8
+set termencoding=utf-8
+let &fileencodings = s:uniq_path(
+\   ['utf-8']
+\   + split(&fileencodings, ',')
+\   + ['iso-2022-jp', 'iso-2022-jp-3']
+\)
+
+set fileformats=unix,dos,mac
+if exists('&ambiwidth')
+    set ambiwidth=double
+endif
+
+" set enc=... {{{
+function! ChangeEncoding()
+    if expand('%') == ''
+        call s:warn("current file is empty.")
+        return
+    endif
+    let result =
+                \ prompt#prompt("re-open with...", {
+                \   'menu': [
+                \     'cp932',
+                \     'shift-jis',
+                \     'iso-2022-jp',
+                \     'euc-jp',
+                \     'utf-8',
+                \     'ucs-bom'
+                \   ],
+                \   'escape': 1,
+                \   'one_char': 1,
+                \   'execute_if': 'val != ""',
+                \   'executef': 'edit ++enc=%s'})
+    if result !=# "\e"
+        echomsg printf("re-open with '%s'.", result)
+    endif
+endfunction
+
+" FIXME More rememberable keymapping. And <comma>t for vimtemplate.
+Map [n] -noremap <comma>ta     :call ChangeEncoding()<CR>
+" }}}
+" set fenc=... {{{
+function! ChangeFileEncoding()
+    let enc = prompt#prompt("changing file encoding to...", {
+                \ 'menu': [
+                \ 'cp932',
+                \ 'shift-jis',
+                \ 'iso-2022-jp',
+                \ 'euc-jp',
+                \ 'utf-8',
+                \ 'ucs-bom'
+                \ ],
+                \ 'escape': 1,
+                \ 'one_char': 1,
+                \ 'execute_if': 'val != ""',
+                \ 'executef': 'set fenc=%s'})
+    if enc ==# "\e"
+        return
+    endif
+    if enc == 'ucs-bom'
+        set bomb
+    else
+        set nobomb
+    endif
+    echomsg printf("changing file encoding to '%s'.", enc)
+endfunction
+
+" FIXME More rememberable keymapping. And <comma>t for vimtemplate.
+Map [n] -noremap <comma>ts    :<C-u>call ChangeFileEncoding()<CR>
+" }}}
+" set ff=... {{{
+function! ChangeNL()
+    let result = prompt#prompt("changing newline format to...", {
+                \ 'menu': ['dos', 'unix', 'mac'],
+                \ 'one_char': 1,
+                \ 'escape': 1,
+                \ 'execute_if': 'val != ""',
+                \ 'executef': 'set ff=%s'})
+    if result !=# "\e"
+        echomsg printf("changing newline format to '%s'.", result)
+    endif
+endfunction
+
+" FIXME More rememberable keymapping. And <comma>t for vimtemplate.
+Map [n] -noremap <comma>td    :<C-u>call ChangeNL()<CR>
+" }}}
+" }}}
+" FileType {{{
+function! s:each_filetype() "{{{
+    return split(&l:filetype, '\.')
+endfunction "}}}
+
+function! s:set_dict() "{{{
+    let filetype_vs_dictionary = {
+    \   'c': ['c', 'cpp'],
+    \   'cpp': ['c', 'cpp'],
+    \   'html': ['html', 'css', 'javascript'],
+    \   'scala': ['scala', 'java'],
+    \}
+
+    let dicts = []
+    for ft in s:each_filetype()
+        for ft in get(filetype_vs_dictionary, ft, [ft])
+            let dict_path = expand(printf('$HOME/.vim/dict/%s.dict', ft))
+            if filereadable(dict_path)
+                call add(dicts, dict_path)
+            endif
+        endfor
+    endfor
+
+    " FIXME Use pathogen.vim!!
+    for d in dicts
+        let &l:dictionary = join(s:uniq(dicts), ',')
+    endfor
+endfunction "}}}
+function! s:set_tab_width() "{{{
+    if s:has_one_of(['css', 'xml', 'html', 'lisp', 'scheme', 'yaml'], s:each_filetype())
+        CodingStyle Short indent
+    else
+        CodingStyle My style
+    endif
+endfunction "}}}
+function! s:set_compiler() "{{{
+    let filetype_vs_compiler = {
+    \   'c': 'gcc',
+    \   'cpp': 'gcc',
+    \   'html': 'tidy',
+    \   'java': 'javac',
+    \}
+    try
+        for ft in s:each_filetype()
+            execute 'compiler' get(filetype_vs_compiler, ft, ft)
+        endfor
+    catch /E666:/    " compiler not supported: ...
+    endtry
+endfunction "}}}
+function! s:load_filetype() "{{{
+    if &omnifunc == ""
+        setlocal omnifunc=syntaxcomplete#Complete
+    endif
+
+    call s:set_dict()
+    call s:set_tab_width()
+    call s:set_compiler()
+endfunction "}}}
+
+MyAutocmd FileType * call s:load_filetype()
 " }}}
 " Commands {{{
 " HelpTagsAll {{{
