@@ -240,16 +240,17 @@ function! s:map_localleader(key) "{{{
     Map [n] <LocalLeader> <Nop>
 endfunction "}}}
 function! s:map_prefix_key(modes, prefix_name, prefix_key) "{{{
-    execute 'DefMap' printf('[%s]', a:modes) '-noremap' a:prefix_name '<Nop>'
-    execute 'Map'    printf('[%s]', a:modes)            a:prefix_key  printf('<%s>', a:prefix_name)
+    let modes = a:modes != '' ? a:modes : 'nvoiclxs'
+    execute 'DefMap' printf('[%s]', modes) '-noremap' a:prefix_name '<Nop>'
+    execute 'Map'    printf('[%s]', modes)            a:prefix_key  printf('<%s>', a:prefix_name)
 
     " TODO
-    " DefMap [<eval a:modes>] -noremap <eval a:prefix_name> <Nop>
-    " Map    [<eval a:modes>]          <eval a:prefix_key>  <<eval a:prefix_name>>
+    " DefMap [<eval modes>] -noremap <eval a:prefix_name> <Nop>
+    " Map    [<eval modes>]          <eval a:prefix_key>  <<eval a:prefix_name>>
 
     " let named_map = printf('<SID>[%s]', a:prefix_name)
     " let prefix    = a:prefix_key
-    " for m in s:each_char(a:modes)
+    " for m in s:each_char(modes)
     "     execute printf('%snoremap %s    <Nop>', m, named_map)
     "     " remap for named map.
     "     execute printf('%smap     %s    %s', m, prefix, named_map)
