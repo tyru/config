@@ -742,16 +742,16 @@ DefMap [nvo] -noremap yank y
 " Set up prefix keys. {{{
 
 " [orig]
-call s:map_prefix_key('n', 'orig', 'q')
+call s:map_prefix_key('nvo', 'orig', 'q')
 call s:map_orig_key('n', 'q')
 " <Leader>
 call s:map_leader(';')
 " <LocalLeader>
 call s:map_localleader('\')
 " [comma]
-call s:map_prefix_key('n', 'comma', ',')
+call s:map_prefix_key('nvo', 'comma', ',')
 " [excmd]
-call s:map_prefix_key('n', 'excmd', '<Space>')
+call s:map_prefix_key('nvo', 'excmd', '<Space>')
 " }}}
 
 " map {{{
@@ -1474,7 +1474,7 @@ Map [c]                <C-]>               <C-]><SID>(bs-ctrl-])
 " }}}
 
 " [jump] {{{
-call s:map_prefix_key('n', 'jump', 'go')
+call s:map_prefix_key('nvo', 'jump', 'go')
 
 
 " NOTE: Disabled.
