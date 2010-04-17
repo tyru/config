@@ -2285,7 +2285,8 @@ let dumbbuf_remove_marked_when_close = 1
 let skk_jisyo = '~/.skk-jisyo'
 let skk_large_jisyo = '/usr/share/skk/SKK-JISYO'
 
-let skk_control_j_key = '<C-j>'
+" let skk_control_j_key = '<C-j>'
+
 " let skk_control_j_key = ''
 " Arpeggio map! fj    <Plug>(skk-enable-im)
 
@@ -2296,6 +2297,18 @@ let skk_auto_save_jisyo = 1
 let skk_imdisable_state = -1
 " let skk_keep_state = 1
 let skk_sticky_key = ';'
+
+" Do not map `<Plug>(skk-toggle-im)`.
+let skk_control_j_key = ''
+
+" `<C-j><C-e>` to enable, `<C-j><C-d>` to disable.
+Map [ic] <C-j><C-e> <Plug>(skk-enable-im)
+Map [ic] <C-j><C-d> <Nop>
+function! MySkkMap()
+    Unmap [l] -buffer <C-j>
+    Map   [l] -buffer <C-j><C-d> <Plug>(skk-disable-im)
+endfunction
+let skk_enable_hook = 'MySkkMap'
 " }}}
 " eskk {{{
 let g:eskk_debug = 1
