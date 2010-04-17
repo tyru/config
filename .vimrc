@@ -2555,8 +2555,10 @@ call submode#map       ('tabwalker', 'n', '', 'L', ':execute "tabmove" tabpagenr
 " call submode#map       ('indent/dedent', 'i', '', 'h', '<C-d>')
 " call submode#map       ('indent/dedent', 'i', '', 'l', '<C-t>')
 
+" Scroll by j and k.
 " TODO Stash &scroll value.
 " TODO Use <excmd>j, <excmd>k
+" TODO Make utility function to generate current shortest <SID> map.
 call submode#enter_with('s', 'n', '', '<Space>j', '<C-d>:redraw<CR>')
 call submode#enter_with('s', 'n', '', '<Space>k', '<C-u>:redraw<CR>')
 call submode#leave_with('s', 'n', '', '<Esc>')
