@@ -2025,7 +2025,7 @@ AlterCommand exi    ExModeInteractive
 " }}}
 " GlobPath {{{
 command!
-\   -bar -nargs=1
+\   -bar -nargs=1 -complete=file
 \   GlobPath
 \   echo globpath(&rtp, <q-args>)
 
