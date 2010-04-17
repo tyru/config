@@ -1466,11 +1466,9 @@ Map [v] -noremap K  <Nop>
 " http://gist.github.com/347852
 " http://gist.github.com/350207
 
-Map [i] -noremap -expr <SID>(bs-ctrl-])    getline('.')[col('.') - 2] ==# "\<C-]>" ? "\<BS>" : ''
-Map [i]                <C-]>               <C-]><SID>(bs-ctrl-])
-
-Map [c] -noremap -expr <SID>(bs-ctrl-])    getcmdline()[getcmdpos() - 2] ==# "\<C-]>" ? "\<BS>" : ''
-Map [c]                <C-]>               <C-]><SID>(bs-ctrl-])
+DefMap [i] -noremap -expr bs-ctrl-] getline('.')[col('.') - 2]    ==# "\<C-]>" ? "\<BS>" : ''
+DefMap [c] -noremap -expr bs-ctrl-] getcmdline()[getcmdpos() - 2] ==# "\<C-]>" ? "\<BS>" : ''
+Map   [ic]                <C-]>     <C-]><bs-ctrl-]>
 " }}}
 
 " [jump] {{{
