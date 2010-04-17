@@ -1440,7 +1440,8 @@ function! s:advance_between(tilde, dollar) "{{{
     elseif curcol < col('$')
         return a:dollar
     else
-        return a:right_edge
+        return ''
+        " return a:right_edge
     endif
 endfunction "}}}
 
