@@ -4,7 +4,6 @@ use warnings;
 use utf8;
 
 use Getopt::Long;
-use Perl6::Say;
 use Pod::Usage;
 
 ### sub ###
@@ -16,9 +15,9 @@ sub usage () {
 ### main ###
 my ($needhelp);
 GetOptions(
-    'help' => \$needhelp,
+    'h|help' => \$needhelp,
 ) or usage;
-usage   if $needhelp;
+usage if $needhelp;
 
 
 

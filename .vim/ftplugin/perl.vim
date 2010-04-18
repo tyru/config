@@ -6,8 +6,8 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-" add perl's path.
-" executing 'gf' command on module name opens its module.
+" Add perl's path.
+" Executing 'gf' command on module name opens its module.
 if exists('$PERL5LIB') && !exists('b:perl_already_added_path')
     for i in split(expand('$PERL5LIB'), ':')
         execute 'setlocal path+=' . i
@@ -19,11 +19,18 @@ setlocal suffixesadd=.pm
 setlocal makeprg=perl\ -Mstrict\ -Mwarnings\ -c\ %
 setlocal complete=.,w,b,t,k,kspell
 
+let g:perl_include_pod = 1
+unlet! g:perl_extended_vars
+let g:perl_want_scope_in_variables = 1
+let g:perl_fold = 1
+unlet! g:perl_fold_blocks
+let g:perl_nofold_packages = 1
+
 " jumping to sub definition.
-nnoremap <buffer> ]]    :call search('^\s*sub .* {$', 'sW')<CR>
-nnoremap <buffer> [[    :call search('^\s*sub .* {$', 'bsW')<CR>
-nnoremap <buffer> ][    :call search('^}$', 'sW')<CR>
-nnoremap <buffer> []    :call search('^}$', 'bsW')<CR>
+nnoremap <buffer> ]]    :<C-u>call search('^\s*sub .* {$', 'sW')<CR>
+nnoremap <buffer> [[    :<C-u>call search('^\s*sub .* {$', 'bsW')<CR>
+nnoremap <buffer> ][    :<C-u>call search('^}$', 'sW')<CR>
+nnoremap <buffer> []    :<C-u>call search('^}$', 'bsW')<CR>
 
 
 let &cpo = s:save_cpo
