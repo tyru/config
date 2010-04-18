@@ -1,5 +1,5 @@
 /* NEW BSD LICENSE {{{
-Copyright (c) 2008, anekos.
+Copyright (c) 2008-2010, anekos.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -38,13 +38,13 @@ let PLUGIN_INFO =
   <name>bit.ly</name>
   <description>Get short alias by bit.ly</description>
   <description lang="ja">Bit.ly で短縮URLを得る</description>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
   <author mail="anekos@snca.net" homepage="http://d.hatena.ne.jp/nokturnalmortum/">anekos</author>
   <license>new BSD License (Please read the source code comments of this plugin)</license>
   <license lang="ja">修正BSDライセンス (ソースコードのコメントを参照してください)</license>
   <updateURL>http://svn.coderepos.org/share/lang/javascript/vimperator-plugins/trunk/bitly.js</updateURL>
   <minVersion>2.0pre</minVersion>
-  <maxVersion>2.0pre</maxVersion>
+  <maxVersion>2.3</maxVersion>
   <detail><![CDATA[
     == Commands ==
       :bitly [<URL>]
@@ -66,7 +66,7 @@ let PLUGIN_INFO =
       else
         throw new Error(req.statusText);
     };
-    req.open('GET', 'http://bit.ly/api?url=' + uri, callback);
+    req.open('GET', 'http://bit.ly/api?url=' + encodeURIComponent(uri), callback);
     req.send(null);
     return !callback && req.responseText;
   }
@@ -81,7 +81,12 @@ let PLUGIN_INFO =
       });
     },
     {
-      literal: 0
+      literal: 0,
+      completer: function (context) {
+        context.completions = [
+          [buffer.URL, 'Current URL']
+        ];
+      }
     },
     true
   );

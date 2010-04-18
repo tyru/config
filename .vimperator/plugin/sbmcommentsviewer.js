@@ -3,7 +3,7 @@ var PLUGIN_INFO =
     <name>SBM Comments Viewer</name>
     <description>List show Social Bookmark Comments</description>
     <description lang="ja">ソーシャル・ブックマーク・コメントを表示します</description>
-    <version>0.1.2</version>
+    <version>0.1.1</version>
     <minVersion>2.0pre</minVersion>
     <maxVersion>2.3</maxVersion>
     <updateURL>http://svn.coderepos.org/share/lang/javascript/vimperator-plugins/trunk/sbmcommentsviewer.js</updateURL>
@@ -25,7 +25,7 @@ viewSBMComments [url] [options]
 ||<
 
 == 指定可能フォーマット ==
-  id, timpstamp, tags, comment
+  id, timpstamp, tags, comment, tagsAndComment
 
 == SBMタイプ ==
 - h : hatena bookmark
@@ -77,22 +77,24 @@ SBMContainer.prototype = { //{{{
         var label = <>
             {this.faviconURL ? <img src={this.faviconURL} width="16" height="16"/> : <></>}
             {manager.type[this.type] + ' ' + this.count + '(' + this.entries.length + ')'}
-            {this.pageURL ? <a href="#" highlight="URL">{this.pageURL}</a> : <></>}
+            {this.pageURL ? <a href="#">{this.pageURL}</a> : <></>}
         </>;
         if (countOnly){
             return label;
         } else {
-            let xml = <dl class="liberator-sbmcommentsviewer" style="width: 99%; margin: 0; padding: .5em 0; line-height: 1.6;">
-                <dt highlight="CompTitle">{label}</dt>
-            </dl>;
+            let xml = <table id="liberator-sbmcommentsviewer">
+                <caption style="text-align:left" class="hl-Title">{label}</caption>
+            </table>;
             let self = this;
             xml.* += (function(){
-                var dd = <></>;
+                var thead = <tr/>;
+                format.forEach(function(colum){ thead.* += <th>{manager.format[colum] || '-'}</th>; });
+                var tbody = <></>;
                 self.entries.forEach(function(e){
                     if (isFilterNoComments && !e.comment) return;
-                    dd += e.toHTML(format);
+                    tbody += e.toHTML(format);
                 });
-                return dd;
+                return thead + tbody;
             })();
             return xml;
         }
@@ -123,21 +125,27 @@ function SBMEntry(id, timestamp, comment, tags, extra){ //{{{
 } //}}}
 SBMEntry.prototype = { //{{{
     toHTML: function(format){
-        var xml = <dd highlight="Completions" style="margin: 0; padding: 3px 5px; border-bottom: 1px solid #333;"/>;
+        var xml = <tr/>;
         var self = this;
         format.forEach(function(colum){
             switch(colum){
                 case 'id':
-                    xml.* += <span class="liberator-sbmcommentsviewer-id" style="margin-right: 10px;">{self.userIcon ? <><img src={self.userIcon} width="16" height="16" style="margin-right: 5px; vertical-align: middle;"/>{self.id}</> : <>{self.id}</>}</span>;
+                    xml.* += <td class="liberator-sbmcommentsviewer-id">
+                                {self.userIcon ? <><img src={self.userIcon} width="16" height="16"/> {self.id}</> : <span>{self.id}</span>}
+                             </td>;
                     break;
                 case 'timestamp':
-                    xml.* += <span class="liberator-sbmcommentsviewer-timestamp" style="margin-right: 10px;">{self.formatDate()}</span>; break;
+                    xml.* += <td class="liberator-sbmcommentsviewer-timestamp">{self.formatDate()}</td>; break;
                 case 'tags':
-                    xml.* += <span class="liberator-sbmcommentsviewer-tags" highlight="Tag" style="margin-right: 10px;">{self.tags.join(',')}</span>; break;
+                    xml.* += <td class="liberator-sbmcommentsviewer-tags">{self.tags.join(',')}</td>; break;
                 case 'comment':
-                    xml.* += <span class="liberator-sbmcommentsviewer-comment" style="margin-right: 10px; white-space: normal;">{self.comment}</span>; break;
+                    xml.* += <td class="liberator-sbmcommentsviewer-comment" style="white-space:normal;">{self.comment}</td>; break;
+                case 'tagsAndComment':
+                    var tagString = self.tags.length ? '[' + self.tags.join('][') + ']':'';
+                    xml.* += <td class="liberator-sbmcommentsviewer-tagsAndComment" style="white-space:normal;">{tagString + ' '+self.comment}</td>;
+                    break;
                 default:
-                    xml.* += <span>-</span>;
+                    xml.* += <td>-</td>;
             }
         });
         return xml;
@@ -253,7 +261,7 @@ var SBM = { //{{{
                             case 'creator': id = node.textContent; break;
                             case 'link': link = node.textContent; break;
                             case 'date':
-                                date = window.eval('new Date(' + node.textContent.split(/[-T:Z]/,6).join(',') + ')');
+                                date = stringToDate(node.textContent);
                                 break;
                             case 'description': comment = node.textContent; break;
                             case 'subject': tags = node.textContent.split(/\s+/); break;
@@ -314,7 +322,7 @@ var SBM = { //{{{
                     pageURL:    'http://buzzurl.jp/entry/' + json[0].url
                 });
                 json[0].posts.forEach(function(entry){
-                    c.add( entry.user_name, window.eval('new Date(' + entry.date.split(/[-\s:]/,6).join(',') + ')'),
+                    c.add( entry.user_name, stringToDate(entry.date),
                            entry.comment ? entry.comment : '', entry.keywords.split(','),
                            {
                             userIcon: url + entry.user_name + '/photo',
@@ -365,6 +373,16 @@ function getMD5Hash(str){
     return s;
 } //}}}
 /**
+ * stringToDate {{{
+ * @param {String} Date String
+ * @return {Date}
+ */
+function stringToDate(str){
+    let args = str.split(/[-T:Z]/,6).map(function (v) parseInt(v, 10));
+    args[1]--;
+    return new Date(args[0], args[1], args[2], args[3], args[4], args[5]);
+} //}}}
+/**
  * evaluateXPath {{{
  * @param {Element} aNode
  * @param {String} aExpr XPath Expression
@@ -408,7 +426,8 @@ var manager = {
         id: 'ID',
         comment: 'Comment',
         timestamp: 'TimeStamp',
-        tags: 'Tags'
+        tags: 'Tags',
+        tagsAndComment: 'Tags&Comment'
     },
     // for debug
     convertMD5: function(str){
@@ -540,4 +559,3 @@ var cacheManager = (function(){
 return manager;
 })();
 // vim: sw=4 ts=4 sts=0 et fdm=marker:
-

@@ -12,9 +12,9 @@ var PLUGIN_INFO =
     <description lang="ja">適当なライブラリっぽいものたち。</description>
     <author mail="suvene@zeromemory.info" homepage="http://zeromemory.sblo.jp/">suVene</author>
     <license>MIT</license>
-    <version>0.1.25</version>
+    <version>0.1.33</version>
     <minVersion>2.3pre</minVersion>
-    <maxVersion>2.3pre</maxVersion>
+    <maxVersion>2.3</maxVersion>
     <updateURL>http://svn.coderepos.org/share/lang/javascript/vimperator-plugins/trunk/_libly.js</updateURL>
     <detail><![CDATA[
 == Objects ==
@@ -34,14 +34,25 @@ extend(dst, src):
     オブジェクトを拡張します。
 A(iterable):
     オブジェクトを配列にします。
-around(obj, name, func):
+around(obj, name, func, autoRestore):
   obj がもつ name 関数を、func に置き換えます。
   func は
     function (next, args) {...}
   という形で呼ばれます。
   next はオリジナルの関数を呼び出すための関数、
   args はオリジナルの引数列です。
-  next には引数を渡す必要はありません。
+  通常、next には引数を渡す必要はありません。
+  (任意の引数を渡したい場合は配列で渡します。)
+  また、autoRestore が真であれば、プラグインの再ロードなどで around が再実行されたときに、関数の置き換え前にオリジナル状態に書き戻します。
+  (多重に置き換えられなくなるので、auto_source.js などを使ったプラグイン開発で便利です)
+  返値は以下のオブジェクトです
+  >||
+  {
+    original: オリジナルの関数
+    current: 現在の関数
+    restore: 元に戻すための関数
+  }
+  ||<
 bind(obj, func):
     func に obj を bind します。
     func内からは this で obj が参照できるようになります。
@@ -112,7 +123,7 @@ Request(url, headers, options):
         以下のようにHTTPヘッダの値を指定できる（省略可）
         >||
         {
-            'Referrer' : 'http://example.com/'
+            'Referer' : 'http://example.com/'
         }
         ||<
         以下の値はデフォルトで設定される（'Content-type'はPOST時のみ）
@@ -223,14 +234,55 @@ libly.$U = {//{{{
         }
         return ret;
     },
-    around: function around (obj, name, func) {
-        let next = obj[name];
-        let current = obj[name] = function () {
-            let self = this, args = arguments;
-            return func.call(self, function () next.apply(self, args), args);
+    around: (function () {
+        function getPluginPath () {
+          let pluginPath;
+          Error('hoge').stack.split(/\n/).some(
+            function (s)
+              let (m = s.match(/^\(\)@chrome:\/\/liberator\/content\/liberator\.js -> (.+):\d+$/))
+                (m && (pluginPath = m[1]))
+          );
+          return pluginPath;
+        }
+
+        let restores = {};
+
+        return function (obj, name, func, autoRestore) {
+            let original;
+            let restore = function () obj[name] = original;
+            if (autoRestore) {
+                let pluginPath = getPluginPath();
+                if (pluginPath) {
+                    restores[pluginPath] =
+                        (restores[pluginPath] || []).filter(
+                            function (res) (
+                                res.object != obj ||
+                                res.name != name ||
+                                (res.restore() && false)
+                            )
+                        );
+                    restores[pluginPath].push({
+                        object: obj,
+                        name: name,
+                        restore: restore
+                    });
+                } else {
+                    liberator.echoerr('getPluginPath failed');
+                }
+            }
+            original = obj[name];
+            let current = obj[name] = function () {
+                let self = this, args = arguments;
+                return func.call(self, function (_args) original.apply(self, _args || args), args);
+            };
+            libly.$U.extend(current, {original: original.original || original, restore: restore});
+            return libly.$U.extend({
+                original: original,
+                current: current,
+                restore: restore
+            }, [original, current]);
         };
-        return [next, current];
-    },
+    })(),
     bind: function(obj, func) {
         return function() {
             return func.apply(obj, arguments);
@@ -366,7 +418,8 @@ libly.$U = {//{{{
         let uhService = Cc["@mozilla.org/feed-unescapehtml;1"].getService(Ci.nsIScriptableUnescapeHTML);
         let text = str.replace(/^[\s\S]*?<body([ \t\n\r][^>]*)?>[\s]*|<\/body[ \t\r\n]*>[\S\s]*$/ig, '');
         let fragment = uhService.parseFragment(text, false, null, root);
-        let htmlFragment = document.implementation.createDocument(null, 'html', null);
+        let doctype = document.implementation.createDocumentType('html', '-//W3C//DTD HTML 4.01//EN', 'http://www.w3.org/TR/html4/strict.dtd');
+        let htmlFragment = document.implementation.createDocument(null, 'html', doctype);
         htmlFragment.documentElement.appendChild(htmlFragment.importNode(fragment,true));
         return htmlFragment;
         /* うまく動いていない場合はこちらに戻してください
@@ -650,7 +703,7 @@ libly.Wedata.prototype = {
         req.addEventListener('onSuccess', libly.$U.bind(this, function(res) {
             var text = res.responseText;
             if (!text) {
-                errDispatcher('respons is null.', cache);
+                errDispatcher('response is null.', cache);
                 return;
             }
             var json = libly.$U.evalJson(text);
