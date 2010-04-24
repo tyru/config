@@ -742,6 +742,7 @@ DefMap [nvo] -noremap yank y
 
 " [orig]
 call s:map_prefix_key('nvo', 'orig', 'q')
+call s:map_prefix_key('ic' , 'orig', '<C-g><C-o>')
 call s:map_orig_key('n', 'q')
 " <Leader>
 call s:map_leader(';')
