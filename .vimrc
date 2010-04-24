@@ -869,7 +869,7 @@ Map [n] -noremap <excmd>tt     :<C-u>tabedit<CR>
 Map [n] -noremap <excmd>tv     :<C-u>tabedit $MYVIMRC<CR>
 Map [n] -noremap <excmd>t.     :<C-u>tabedit .<CR>
 
-Map [n] -noremap -expr <excmd>sv <SID>execute_multiline_expr(['source $MYVIMRC', 'setfiletype vim'], ':source $MYVIMRC')
+Map [n] -noremap -expr <excmd>sv :<C-u>source $MYVIMRC<CR>
 " }}}
 " Cmdwin {{{
 set cedit=<C-z>
