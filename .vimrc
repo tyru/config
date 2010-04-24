@@ -1869,18 +1869,18 @@ command! -nargs=+ SetTitle
 " EchoPath {{{
 
 AlterCommand epa EchoPath
-AlterCommand rtp EchoPath<Space>rtp
+AlterCommand rtp EchoPath<Space>&rtp
+
 
 command!
-\   -nargs=+ -complete=option
+\   -nargs=+ -complete=expression
 \   EchoPath
-\   call s:show_path(<f-args>)
+\   call s:cmd_echo_path(<f-args>)
 
-function! s:show_path(...) "{{{
-    let optname = a:1
-    let delim = a:0 >= 2 ? a:2 : ','
-    let optval = getbufvar('%', '&' . optname)
-    for i in split(optval, delim)
+function! s:cmd_echo_path(optname, ...) "{{{
+    let delim = a:0 != 0 ? a:1 : ','
+    let val = eval(a:optname)
+    for i in split(val, delim)
         echo i
     endfor
 endfunction "}}}
