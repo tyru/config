@@ -2271,16 +2271,17 @@ let skk_imdisable_state = -1
 let skk_sticky_key = ';'
 
 " Do not map `<Plug>(skk-toggle-im)`.
-let skk_control_j_key = ''
+let skk_control_j_key = '<C-j>'
 
-" `<C-j><C-e>` to enable, `<C-j><C-d>` to disable.
-Map [ic] <C-j><C-e> <Plug>(skk-enable-im)
-Map [ic] <C-j><C-d> <Nop>
-function! MySkkMap()
-    Unmap [l] -buffer <C-j>
-    Map   [l] -buffer <C-j><C-d> <Plug>(skk-disable-im)
-endfunction
-let skk_enable_hook = 'MySkkMap'
+" " `<C-j><C-e>` to enable, `<C-j><C-d>` to disable.
+" Map [ic] <C-j><C-e> <Plug>(skk-enable-im)
+" Map [ic] <C-j><C-d> <Nop>
+" function! MySkkMap()
+"     Unmap [l] -buffer <C-j>
+"     Map   [l] -buffer <C-j><C-d> <Plug>(skk-disable-im)
+" endfunction
+" let skk_enable_hook = 'MySkkMap'
+
 " }}}
 " eskk {{{
 let g:eskk_debug = 1
