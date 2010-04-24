@@ -15,18 +15,26 @@ if exists('$PERL5LIB') && !exists('b:perl_already_added_path')
     let b:perl_already_added_path = 1
 endif
 
+" TODO Go to module file by `gf` or `<C-w>f`.
 setlocal suffixesadd=.pm
 setlocal makeprg=perl\ -Mstrict\ -Mwarnings\ -c\ %
 setlocal complete=.,w,b,t,k,kspell
 
+
+" POD highlighting
 let g:perl_include_pod = 1
-unlet! g:perl_extended_vars
+
+" Something good
+let g:perl_extended_vars = 1
 let g:perl_want_scope_in_variables = 1
+
+" Fold only sub, __END__, <<HEREDOC
 let g:perl_fold = 1
 unlet! g:perl_fold_blocks
 let g:perl_nofold_packages = 1
 
-" jumping to sub definition.
+
+" Jumping to sub definition.
 nnoremap <buffer> ]]    :<C-u>call search('^\s*sub .* {$', 'sW')<CR>
 nnoremap <buffer> [[    :<C-u>call search('^\s*sub .* {$', 'bsW')<CR>
 nnoremap <buffer> ][    :<C-u>call search('^}$', 'sW')<CR>
