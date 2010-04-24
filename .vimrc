@@ -1471,34 +1471,6 @@ DefMap [c] -noremap -expr bs-ctrl-] getcmdline()[getcmdpos() - 2] ==# "\<C-]>" ?
 Map   [ic]                <C-]>     <C-]><bs-ctrl-]>
 " }}}
 
-" [jump] {{{
-call s:map_prefix_key('nvo', 'jump', 'go')
-
-
-" NOTE: Disabled.
-" open <cfile> {{{
-" Map [n] -noremap <jump>f :<C-u>call <SID>open_cfile()<CR>
-
-function! s:open_cfile() "{{{
-    let option = {
-    \   'buffer': 'edit <cfile>',
-    \   'window': 'Split <cfile>',
-    \   'tab'   : 'tabedit <cfile>',
-    \}
-    let choice = prompt#prompt("open with...", {
-    \   'menu': keys(option),
-    \   'one_char': 1,
-    \   'escape': 1,
-    \})
-    if has_key(option, choice)
-        execute option[choice]
-    endif
-endfunction "}}}
-" }}}
-
-
-" TODO Jump using tag files.
-" }}}
 " [compl] {{{
 call s:map_prefix_key('i', 'compl', '<Tab>')
 " Do <C-n> while pumvisible().
