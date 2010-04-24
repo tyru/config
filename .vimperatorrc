@@ -139,9 +139,6 @@ nnoremap y :javascript util.copyToClipboard(buffer.URL);<CR>
 
 nnoremap <Leader>a :buffer!<Space>
 
-nnoremap <Leader>f :anc<CR>f
-nnoremap <Leader>F :anc<CR>F
-
 nnoremap <Leader>td :tabduplicate<CR>
 
 nnoremap <Leader>n  n
@@ -193,7 +190,7 @@ cabbrev h@       tab help
 " }}}
 "-----------------------------------------------------------------
 " autocmd {{{
-autocmd VimperatorEnter .* pluginmanager update
+lazy pluginmanager update
 " }}}
 "-----------------------------------------------------------------
 " plugin {{{
