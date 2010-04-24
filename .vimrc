@@ -409,7 +409,6 @@ set shiftwidth=4
 " window
 set splitbelow
 set nosplitright
-set noequalalways
 
 " completion
 set complete=.,w,b,u,t,i,d,k,kspell
