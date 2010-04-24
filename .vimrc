@@ -2545,7 +2545,7 @@ call submode#map       ('s', 'n', '', 's', ':let &l:scroll += 3<CR>')
 AlterCommand ref Ref
 AlterCommand alc Ref<Space>alc
 AlterCommand man Ref<Space>man
-AlterCommand perldoc Ref<Space>perldoc
+AlterCommand pdoc Ref<Space>perldoc
 
 call s:map_orig_key('n', 'K')
 
