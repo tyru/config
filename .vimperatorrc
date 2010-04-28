@@ -454,6 +454,9 @@ nnoremap <Leader>s :subscldr<CR>
 let g:hints_for_embedded_mode = "e"
 let g:hints_for_embedded_open_parent_link = 1
 " }}}
+" pluginManager.js {{{
+lazy pluginmanager update
+" }}}
 " }}}
 "-----------------------------------------------------------------
 " misc. {{{
