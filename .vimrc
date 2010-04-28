@@ -395,7 +395,7 @@ set smartcase
 
 " listchars
 set list
-set listchars=tab:>-,extends:>,precedes:<,eol:.
+set listchars=tab:>_,extends:>,precedes:<,eol:_
 
 " scroll
 set scroll=5
