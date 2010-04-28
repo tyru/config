@@ -2461,11 +2461,11 @@ function! s:vimshell_settings() "{{{
     endif
 
     " Hook
-    function! s:my_chpwd(context)
-        call vimshell#execute('ls', a:context)
+    function! s:chpwd_ls()
+        call vimshell#execute('ls')
     endfunction
 
-    call vimshell#hook#add('chpwd', s:SNR('my_chpwd'))
+    call vimshell#hook#add('chpwd', s:SNR('chpwd_ls'))
 
     " Add/Remove some mappings.
     Unmap [n] -buffer <C-n>
