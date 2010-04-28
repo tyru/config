@@ -2437,6 +2437,19 @@ function! s:vimshell_settings() "{{{
     VimShellAlterCommand whe where
     VimShellAlterCommand go gopen
 
+    " Abbrev
+    inoreabbrev <buffer> l@ <Bar> less
+    inoreabbrev <buffer> g@ <Bar> grep
+    inoreabbrev <buffer> p@ <Bar> perl
+    inoreabbrev <buffer> s@ <Bar> sort
+    inoreabbrev <buffer> u@ <Bar> sort -u
+    inoreabbrev <buffer> c@ <Bar> xsel --input --clipboard
+    inoreabbrev <buffer> x@ <Bar> xargs --no-run-if-empty
+    inoreabbrev <buffer> n@ >/dev/null 2>/dev/null
+    inoreabbrev <buffer> e@ 2>&1
+    inoreabbrev <buffer> h@ --help 2>&1 <Bar> less
+    inoreabbrev <buffer> H@ --help 2>&1
+
     if executable('perldocjp')
         VimShellAlterCommand perldoc perldocjp
     endif
