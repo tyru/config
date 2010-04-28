@@ -1,10 +1,65 @@
 " vim:set ft=vimperator fdm=marker:
+
+" initialize {{{
+
 " FIXME: ' 'にしたいけどスペースキー押すとページがスクロールされてしまう
 let mapleader = ','
 
 command! -nargs=+ lazy autocmd VimperatorEnter .* <args>
 
+javascript <<EOS
+liberator.modules.commands.addUserCommand(
+    ['altercommand'],
+    'this is vimperator plugin version of vim plugin altercmd.vim',
+    function (arg) {
+        /*
+         * tw[itter]
+         *    =>
+         * var pairs = {
+         *  'tw': 'twitter',
+         *  'twi': 'twitter',
+         *  'twit': 'twitter',
+         *  'twitt': 'twitter',
+         *  'twitte': 'twitter',
+         *  'twitter': 'twitter',
+         * }
+         */
+        var pairs = (function () {
+            var original_arg = arg[0];
+            var r = {};
+            if (original_arg.match(/^([^\[\]]+)\[([^\[\]]+)\]$/)) {
+                // assert(arg[0] === RegExp.$1 + "[" + RegExp.$2 + "]");
+                var head = RegExp.$1, complete_str = head + RegExp.$2;
+                for (; head !== complete_str; head += complete_str[head.length]) {
+                    r[head] = arg.literalArg;
+                }
+                r[head] = arg.literalArg;
+            }
+            else {
+                r[original_arg] = arg.literalArg;
+            }
+            return r;
+        })();
 
+        for (var original in pairs) {
+            var alternate = pairs[original];
+            abbreviations.add(
+                [modes.COMMAND_LINE],
+                original,
+                function ()
+                    commandline.command == original ? alternate : original
+            );
+        }
+    },
+    {argCount: 2, literal: true, completer: completion.command},
+    true
+);
+EOS
+
+altercommand tw[itter] twitter
+altercommand th tab help
+" }}}
+"-----------------------------------------------------------------
 " set! {{{
 " via http://retlet.net/log/2008/06/awesomebar-bookmarklet.html
 set! browser.urlbar.filter.javascript=false
