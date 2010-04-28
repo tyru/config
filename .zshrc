@@ -89,7 +89,6 @@ alias l.='ls -d .*'
 alias l='ll'
 alias la='ls -A'
 alias ll='ls -lh'
-alias sc='screen'
 alias whi='which'
 alias whe='where'
 alias go='gopen'
@@ -98,6 +97,12 @@ if [ -x "$(which vim)" ]; then
     alias vi='vim'
 else
     alias vi='vi'
+fi
+
+if [ -x "$(which tscreen)" ]; then
+    alias sc='tscreen'
+else
+    alias sc='screen'
 fi
 
 if [ -x "$(which perldocjp)" ]; then
