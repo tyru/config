@@ -20,8 +20,9 @@ eval `dircolors`
 
 
 # for cygwin
-OS=$(uname -o)
-if [ "$OS" = "Cygwin" ]; then
+export MY_PERL_DOLLAR_O="$(perl -e 'print $^O')"
+
+if [ "$MY_PERL_DOLLAR_O" = "cygwin" ]; then
     export LESS="MrXEd --dumb"
     export TERM=cygwin
     export CFLAGS="-I/usr/local/include -I/usr/include"
