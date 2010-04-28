@@ -1865,7 +1865,7 @@ function! s:ack(...)
     endtry
 endfunction
 
-AlterCommand ack Ack
+AlterCommand ac[k] Ack
 command!
 \   -bar -nargs=+
 \   Ack
