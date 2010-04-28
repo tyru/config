@@ -138,7 +138,8 @@ myabbrev=(
     "x@" "| xargs"
     "n@" ">/dev/null 2>/dev/null"
     "e@" "2>&1"
-    "h@" "--help 2>&1"
+    "h@" "--help 2>&1 | less"
+    "H@" "--help 2>&1"
 )
 my-expand-abbrev() {
     local left prefix
