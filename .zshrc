@@ -42,6 +42,7 @@ bindkey "^N" history-beginning-search-forward-end
 # http://www.crimson-snow.net/tips/unix/zsh.html
 
 setopt always_last_prompt
+setopt append_history
 setopt auto_cd
 setopt auto_menu
 setopt auto_name_dirs
@@ -56,6 +57,7 @@ setopt extended_glob
 setopt extended_history
 setopt hist_ignore_dups
 setopt hist_ignore_space
+setopt hist_verify
 setopt interactive_comments
 setopt list_packed
 setopt list_types
@@ -65,6 +67,7 @@ setopt no_beep
 setopt no_clobber
 setopt no_hup
 setopt no_listbeep
+setopt no_promptcr
 setopt notify
 setopt print_eight_bit
 setopt prompt_subst
@@ -73,7 +76,6 @@ setopt rm_star_silent
 setopt rm_star_wait
 setopt sh_word_split
 setopt share_history
-setopt no_promptcr
 # setopt print_exit_value
 # }}}
 ### alias ### {{{
