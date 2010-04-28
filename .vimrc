@@ -425,6 +425,10 @@ endif
 set showfulltag
 set notagbsearch
 
+" cscope
+set cscopetag
+set cscopeverbose
+
 " virtualedit
 if has('virtualedit')
     set virtualedit=all
