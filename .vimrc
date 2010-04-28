@@ -515,7 +515,7 @@ set history=50
 set keywordprg=
 set lazyredraw
 set nojoinspaces
-set noshowcmd
+set showcmd
 set nrformats=hex
 set shortmess=aI
 set switchbuf=useopen,usetab
