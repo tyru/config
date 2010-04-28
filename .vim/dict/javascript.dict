@@ -18,10 +18,12 @@ try
 while
 
 alert
+arguments
 document
+item
 length
 location
-item
+prototype
 value
 window
 
