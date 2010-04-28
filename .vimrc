@@ -773,6 +773,15 @@ UnsetPragmas ignore-spaces    " end.
 
 Map [nvo] -noremap <Leader>e =
 
+" operator-adjust {{{
+call operator#user#define('adjust', 'Op_adjust_window_height')
+function! Op_adjust_window_height(motion_wiseness)
+  execute (line("']") - line("'[") + 1) 'wincmd' '_'
+  normal! `[zt
+endfunction
+
+Map [nvo] <Leader>adj <Plug>(operator-adjust)
+" }}}
 " operator-sort {{{
 call operator#user#define_ex_command('sort', 'sort')
 Map [nvo] <Leader>s <Plug>(operator-sort)
