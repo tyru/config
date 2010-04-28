@@ -2436,6 +2436,7 @@ function! s:vimshell_settings() "{{{
     VimShellAlterCommand whi which
     VimShellAlterCommand whe where
     VimShellAlterCommand go gopen
+    VimShellAlterCommand termtter iexe termtter
 
     " Abbrev
     inoreabbrev <buffer> l@ <Bar> less
