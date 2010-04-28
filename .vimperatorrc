@@ -121,8 +121,7 @@ set wildoptions=auto
 " }}}
 "-----------------------------------------------------------------
 " map {{{
-
-js <<EOM
+javascript <<EOS
     mappings.addUserMap(
       [modes.COMMAND_LINE],
       ['<C-i>'],
@@ -138,7 +137,7 @@ js <<EOM
         );
       }
     );
-EOM
+EOS
 
 " ~ n ~ {{{
 nnoremap ZZ <Nop>
@@ -240,14 +239,6 @@ qmark t b@tumblr
 qmark z b@nico-mp3
 " }}}
 "-----------------------------------------------------------------
-" abbr {{{
-cabbrev h@       tab help
-" }}}
-"-----------------------------------------------------------------
-" autocmd {{{
-lazy pluginmanager update
-" }}}
-"-----------------------------------------------------------------
 " plugin {{{
 " direct_bookmark.js {{{
 let g:direct_sbm_use_services_by_tag  = "d"
@@ -281,7 +272,7 @@ let g:nextlink_nositeinfo_act = "f"
 let g:nextlink_followlink = "true"
 " }}}
 " toggler.js {{{
-js <<EOM
+javascript <<EOS
 liberator.globalVariables.toggler = {
   go: ["set go=br","set go=brmBT"],
   sb: ["sbclose","sbar Add-ons","sbar Console","sbar Downloads","sbar Preferences"],
@@ -290,7 +281,7 @@ liberator.globalVariables.toggler = {
     ["set go=mTb","sbar Console"]
   ],
 };
-EOM
+EOS
 
 noremap <Leader>tg      :toggle go<CR>
 noremap <Leader>ts      :toggle sb<CR>
@@ -311,7 +302,7 @@ lazy fmaps -u='reader\.livedoor\.com/reader/' j k s a p o v c <Space> <S-Space> 
 " }}}
 " }}}
 " copy.js {{{
-js<<EOM
+javascript <<EOS
 liberator.globalVariables.copy_templates = [
   { label: 'titleAndURL',    value: '%TITLE%\n%URL%' },
   { label: 'title',          value: '%TITLE%', map: ',y' },
@@ -333,14 +324,14 @@ liberator.globalVariables.copy_templates = [
     }
   },
 ];
-EOM
+EOS
 " }}}
 " sbmincsearch {{{
 let g:sbmincsearch_service_name = "delicious"
 let g:sbmincsearch_max = 50
 " }}}
 " proxy.js {{{
-javascript <<EOM
+javascript <<EOS
 liberator.globalVariables.proxy_settings = [
    {
       conf_name: 'disable',
@@ -389,11 +380,11 @@ liberator.globalVariables.proxy_settings = [
       ]
    },
 ];
-EOM
+EOS
 
 " }}}
 " uaSwitchLite.js {{{
-javascript <<EOM
+javascript <<EOS
 liberator.globalVariables.useragent_list = [
 {
   description: 'Internet Explorer 7 (Windows Vista)',
@@ -414,10 +405,10 @@ liberator.globalVariables.useragent_list = [
   description: 'SH901iC',
   useragent: 'DoCoMo/2.0 SH901iC(c100;TB;W24H12)',
 }];
-EOM
+EOS
 " }}}
 " migratestatusbar.js {{{
-javascript <<EOF
+javascript <<EOS
 liberator.globalVariables.migrate_elements = [
     {
         // star button of awesome bar
@@ -448,7 +439,7 @@ liberator.globalVariables.migrate_elements = [
         after: true,
     },
 ];
-EOF
+EOS
 " }}}
 " opener.js {{{
 nnoremap <Leader>o :opener<Space>
@@ -468,31 +459,31 @@ let g:hints_for_embedded_open_parent_link = 1
 " misc. {{{
 " 閉じたタブ一覧を出すワンライナー {{{
 " (via http://vimperator.g.hatena.ne.jp/teramako/20091105/1257429235)
-command! ClosedTabs echo [<><img src={tab.image}/>{tab.title}</> for each(tab in tabs.closedTabs)]
+command! closedtabs echo [<><img src={tab.image}/>{tab.title}</> for each(tab in tabs.closedTabs)]
 " }}}
 " vimperatorのコマンドラインを簡易Javascriptシェルにするワンライナー {{{
 " (via http://vimperator.g.hatena.ne.jp/snaka72/20090217/1234831065)
-command! JSShell js (function a(){commandline.input("js> ", function(inp){if(inp=="quit"){liberator.echo("bye!");return;}liberator.echo(liberator.eval(inp)); a();})})()
+command! jsshell js (function a(){commandline.input("js> ", function(inp){if(inp=="quit"){liberator.echo("bye!");return;}liberator.echo(liberator.eval(inp)); a();})})()
 " }}}
 " :LoadConfig {{{
-command! LoadConfig source $HOME/.vimperatorrc
+command! load_config source $HOME/.vimperatorrc
 " }}}
 " LDRでピンをバックグラウンドのタブで開くためのVimperatorスクリプト {{{
 " via http://d.hatena.ne.jp/mountain_dew/20091209/1260371082
-js <<EOM
+javascript <<EOS
 var dummy_open = function(url, name){
     liberator.open(url, liberator.NEW_BACKGROUND_TAB);
     return true;
 }
-EOM
+EOS
 autocmd LocationChange 'reader\.livedoor\.com' :js content.window.open = dummy_open;
 " }}}
-" :ShowTabNum {{{
-command! ShowTabNum echo config.browser.mTabs.length
+" :showtabnum {{{
+command! showtabnum echo config.browser.mTabs.length
 " }}}
 " ヒントモードでのショートカットーキー誤爆を阻止する {{{
 " http://vimperator.g.hatena.ne.jp/nokturnalmortum/20100410/1270905036
-js <<EOM
+javascript <<EOS
 window.addEventListener(
 'keypress',
 function (event) {
@@ -515,13 +506,14 @@ function (event) {
 },
 false
 );
-EOM
+EOS
 " }}}
 " :cal {{{
 " http://vimperator.g.hatena.ne.jp/teramako/20100416/1271432039
-command cal js liberator.echo(<datepicker type="grid" xmlns={XUL}/>)
+command! cal js liberator.echo(<datepicker type="grid" xmlns={XUL}/>)
 " }}}
 " }}}
-
+" }}}
+"-----------------------------------------------------------------
 
 source! $HOME/.vimperatorrc.local
