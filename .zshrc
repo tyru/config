@@ -104,12 +104,14 @@ if [ -x "$(which perldocjp)" ]; then
     alias perldoc='perldocjp'
 fi
 
-OS="$(uname -o)"
-if [ "$OS" = "Cygwin" ]; then
-    alias less='less -r'
+if [ "$MY_PERL_DOLLAR_O" = "cygwin" ]; then
     alias ls='ls --color=tty --show-control-chars'
-else
+elif [ "$MY_PERL_DOLLAR_O" = "linux" ]; then
+    # Linux
     alias ls='ls --color=tty'
+else
+    # BSD
+    alias ls='ls -G'
 fi
 
 if [ -x "/usr/local/share/vim/vim72/macros/less.sh" ]; then
@@ -234,7 +236,7 @@ function viwi() {
 # }}}
 # }}}
 ### cygwin ### {{{
-if [ "$OS" = 'Cygwin' ]; then
+if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then
 
     function wwhich() {
         if [ $# != 0 ]; then
