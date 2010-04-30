@@ -2088,7 +2088,10 @@ command! -complete=dir -nargs=? TabpageCD
 \ | let t:cwd = getcwd()
 
 MyAutocmd TabEnter *
-\   if !exists('t:cwd')
+    if exists('t:cwd') && !isdirectory(t:cwd)
+\ |     unlet t:cwd
+\ | endif
+\ | if !exists('t:cwd')
 \ |   let t:cwd = getcwd()
 \ | endif
 \ | execute 'cd' fnameescape(expand(t:cwd))
