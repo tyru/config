@@ -51,7 +51,7 @@ liberator.modules.commands.addUserCommand(
             );
         }
     },
-    {argCount: 2, literal: true, completer: completion.command},
+    {argCount: 2, literal: 1, completer: completion.command},
     true
 );
 EOS
