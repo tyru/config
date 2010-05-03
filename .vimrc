@@ -663,6 +663,7 @@ if exists('$VIM_RTP_REPO_DIR')
     RtpPush $VIM_RTP_REPO_DIR/*
     RtpPrune $VIM_RTP_REPO_DIR/pummode.vim
     RtpPrune $VIM_RTP_REPO_DIR/command-buffer.vim
+    RtpPrune $VIM_RTP_REPO_DIR/cmdwincomplete.vim
 else
     call s:warn('Forgot to set $VIM_RTP_REPO_DIR ?')
 endif
