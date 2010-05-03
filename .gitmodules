@@ -124,3 +124,6 @@
 [submodule "ext/textobj-pattern.vim"]
 	path = ext/textobj-pattern.vim
 	url = git://github.com/tyru/textobj-pattern.vim.git
+[submodule "ext/vim-prettyprint"]
+	path = ext/vim-prettyprint
+	url = http://github.com/thinca/vim-prettyprint.git
