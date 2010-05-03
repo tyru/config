@@ -2231,10 +2231,10 @@ let g:wm_move_left  = '<C-M-h>'
 let g:wm_move_right = '<C-M-l>'
 " }}}
 " sign-diff {{{
-let g:SD_disable = 1
-
 " let g:SD_debug = 1
-if !g:SD_disable
+
+silent! runtime! plugin/sign-diff.vim
+if g:loaded_sign_diff
     Map [n] -silent <C-l> :SDUpdate<CR><C-l>
 endif
 " }}}
