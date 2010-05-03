@@ -472,7 +472,7 @@ let &guitablabel = '%{tabpagenr()}. [%{expand("%:t")}] - %{&fenc},%{&ff}'
 " statusline
 set laststatus=2
 let &statusline = '[%{&ft}] [%l/%L]%( [%M%R%H%W]%)'
-"let &statusline .= '/(%{eskk#get_mode()})'
+let &statusline .= '/(%{eskk#get_mode()})'
 
 " gui
 set guioptions=aegitrhpF
@@ -2273,7 +2273,7 @@ let dumbbuf_remove_marked_when_close = 1
 let skk_jisyo = '~/.skk-jisyo'
 let skk_large_jisyo = '/usr/share/skk/SKK-JISYO'
 
-" let skk_control_j_key = '<C-j>'
+let skk_control_j_key = '<C-g><C-j>'
 
 " let skk_control_j_key = ''
 " Arpeggio map! fj    <Plug>(skk-enable-im)
@@ -2285,14 +2285,16 @@ let skk_auto_save_jisyo = 1
 let skk_imdisable_state = -1
 " let skk_keep_state = 1
 let skk_sticky_key = ';'
+
+let skk_show_candidates_count = 2
 " }}}
 " eskk {{{
+let eskk_dictionary = '~/.skk-jisyo'
+let eskk_large_dictionary = '/usr/share/skk/SKK-JISYO'
+
 let g:eskk_debug = 1
 let g:eskk_debug_wait_ms = 0
-
-let g:eskk_no_default_mappings = 1
-Map [ic] <C-g><C-j> <Plug>(eskk-toggle)
-Map [l]  ;          <Plug>(eskk-sticky-key)
+let g:eskk_debug_file = '~/eskk-debug.log'
 
 " let g:eskk_no_default_mappings = 1
 " Arpeggio map! fj <Plug>(eskk-enable)
