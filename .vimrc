@@ -2412,8 +2412,8 @@ Map [n] -noremap <C-]>     :call <SID>JumpTags()<CR>
 " vimshell {{{
 AlterCommand vsh[ell] VimShell
 
-let g:VimShell_EnableInteractive = 2
-let g:VimShell_NoDefaultKeyMappings = 1
+let g:VimShell_EnableInteractive = 1
+" let g:VimShell_NoDefaultKeyMappings = 1
 
 MyAutocmd FileType vimshell call s:vimshell_settings()
 
@@ -2436,8 +2436,8 @@ function! s:vimshell_settings() "{{{
     VimShellAlterCommand free free -m -l -t
     VimShellAlterCommand j jobs -l
     VimShellAlterCommand jobs jobs -l
-    VimShellAlterCommand l. ls -d .*
-    VimShellAlterCommand l ls -lh
+    " VimShellAlterCommand l. ls -d .*
+    " VimShellAlterCommand l ls -lh
     VimShellAlterCommand ll ls -lh
     VimShellAlterCommand la ls -A
     VimShellAlterCommand less less -r
@@ -2446,6 +2446,8 @@ function! s:vimshell_settings() "{{{
     VimShellAlterCommand whe where
     VimShellAlterCommand go gopen
     VimShellAlterCommand termtter iexe termtter
+
+    call vimshell#set_alias('l.', 'ls -d .*')
 
     " Abbrev
     inoreabbrev <buffer> l@ <Bar> less
