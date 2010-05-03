@@ -2025,17 +2025,18 @@ command!
 AlterCommand qf QuickFix
 " }}}
 " Capture {{{
+AlterCommand cap[ture] Capture
+
 command!
-\   -nargs=+ -bang
+\   -nargs=+ -complete=command
 \   Capture
-\   call s:cmd_capture([<f-args>], <bang>0)
+\   call s:cmd_capture([<f-args>])
 
-function! s:cmd_capture(args, banged) "{{{
-    let out = s:get_output(a:args)
-
-    New
-    put =out
-    0delete _
+function! s:cmd_capture(args) "{{{
+    New    " Change as you like. for e.g., :new instead.
+    silent file `=printf('[Capture: %s]', join(a:args))`
+    setlocal buftype=nofile bufhidden=unload noswapfile nobuflisted
+    call setline(1, split(s:get_output(a:args), '\n'))
 endfunction "}}}
 " }}}
 
