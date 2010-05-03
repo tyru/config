@@ -2031,13 +2031,13 @@ AlterCommand cap[ture] Capture
 command!
 \   -nargs=+ -complete=command
 \   Capture
-\   call s:cmd_capture([<f-args>])
+\   call s:cmd_capture(<q-args>)
 
-function! s:cmd_capture(args) "{{{
+function! s:cmd_capture(q_args) "{{{
     New    " Change as you like. for e.g., :new instead.
-    silent file `=printf('[Capture: %s]', join(a:args))`
+    silent file `=printf('[Capture: %s]', a:q_args)`
     setlocal buftype=nofile bufhidden=unload noswapfile nobuflisted
-    call setline(1, split(s:get_output(a:args), '\n'))
+    call setline(1, split(s:get_output(a:q_args), '\n'))
 endfunction "}}}
 " }}}
 
