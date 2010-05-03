@@ -103,10 +103,9 @@ set! network.dns.disableIPv6=true
 " }}}
 "-----------------------------------------------------------------
 " set {{{
-" set focuscontent
-" set guioptions=nbr
-" set noinsertmode
 set complete=stl
+set focuscontent
+set guioptions=br
 set hlsearch
 set ignorecase
 set incsearch
