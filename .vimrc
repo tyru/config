@@ -1690,9 +1690,14 @@ function! s:HelpTagsAll(...)
     for path in split(&runtimepath, ',')
         let doc = path . '/doc'
         if isdirectory(doc)
-            " add :silent! because Vim warns "No match ..."
-            " if there are no files in '{doc}/*',
-            silent! execute 'helptags' join(a:000) doc
+            try
+                silent execute 'helptags' join(a:000) doc
+            catch
+                echohl WarningMsg
+                echom v:exception
+                echom v:throwpoint
+                echohl None
+            endtry
         endif
     endfor
 endfunction
