@@ -324,10 +324,10 @@ command!
 "
 " I was confused as if I wrote C macro
 
-" :VarDump
+" :Dump
 command!
 \   -bang -nargs=+ -complete=expression
-\   VarDump
+\   Dump
 \
 \   echohl Debug
 \   | echomsg printf("  %s = %s", <q-args>, string(eval(<q-args>)))
