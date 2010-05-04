@@ -453,6 +453,9 @@ nnoremap <Leader>s :subscldr<CR>
 let g:hints_for_embedded_mode = "e"
 let g:hints_for_embedded_open_parent_link = 1
 " }}}
+" zip-de-download.js {{{
+command! -bang -nargs=+ downthemall zipdownload<bang> -xpath='//a|//img' <args>
+" }}}
 " pluginManager.js {{{
 lazy pluginmanager update
 " }}}
@@ -513,7 +516,6 @@ EOS
 " :cal {{{
 " http://vimperator.g.hatena.ne.jp/teramako/20100416/1271432039
 command! cal js liberator.echo(<datepicker type="grid" xmlns={XUL}/>)
-" }}}
 " }}}
 " }}}
 "-----------------------------------------------------------------
