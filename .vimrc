@@ -2450,6 +2450,7 @@ function! s:vimshell_settings() "{{{
     VimShellAlterCommand whe where
     VimShellAlterCommand go gopen
     VimShellAlterCommand termtter iexe termtter
+    VimShellAlterCommand sudo iexe sudo
 
     call vimshell#set_alias('l.', 'ls -d .*')
 
