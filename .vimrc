@@ -1311,6 +1311,10 @@ function! s:PreviousWindowOrTab() "{{{
 	endif
 endfunction "}}}
 " }}}
+" Open new window and Search current <cword>. {{{
+nnoremap <Space>* :<C-u>Split<CR>*
+nnoremap <Space># :<C-u>Split<CR>#
+" }}}
 " }}}
 " vmap {{{
 " TODO: '<C-g>' and 'g<C-g>' in visual mode: Show information about selected area. {{{
