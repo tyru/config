@@ -127,3 +127,6 @@
 [submodule "ext/vim-prettyprint"]
 	path = ext/vim-prettyprint
 	url = http://github.com/thinca/vim-prettyprint.git
+[submodule "ext/vimfiler"]
+	path = ext/vimfiler
+	url = git://github.com/Shougo/vimfiler.git
