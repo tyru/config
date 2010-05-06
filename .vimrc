@@ -2298,18 +2298,12 @@ let skk_sticky_key = ';'
 let skk_show_candidates_count = 2
 " }}}
 " eskk {{{
-let eskk_dictionary = '~/.skk-jisyo'
-let eskk_large_dictionary = '/usr/share/skk/SKK-JISYO'
+let g:eskk_dictionary = '~/.skk-jisyo'
+let g:eskk_large_dictionary = '/usr/share/skk/SKK-JISYO'
 
 let g:eskk_debug = 1
 let g:eskk_debug_wait_ms = 0
 let g:eskk_debug_file = '~/eskk-debug.log'
-
-" let g:eskk_no_default_mappings = 1
-" Arpeggio map! fj <Plug>(eskk-enable)
-" Arpeggio lmap fk <Plug>(eskk-disable)
-" Map [l] ;      <Plug>(eskk-sticky-key)
-
 " }}}
 " stickykey {{{
 
