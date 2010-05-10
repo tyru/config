@@ -130,3 +130,6 @@
 [submodule "ext/vimfiler"]
 	path = ext/vimfiler
 	url = git://github.com/Shougo/vimfiler.git
+[submodule "ext/syslib.vim"]
+	path = ext/syslib.vim
+	url = git://github.com/tyru/syslib.vim.git
