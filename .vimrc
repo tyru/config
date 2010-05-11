@@ -2420,11 +2420,7 @@ Map [n] -noremap <C-]>     :call <SID>JumpTags()<CR>
 " vimshell {{{
 AlterCommand vsh[ell] VimShell
 
-let g:VimShell_EnableInteractive = 1
-" let g:VimShell_NoDefaultKeyMappings = 1
-
 MyAutocmd FileType vimshell call s:vimshell_settings()
-
 
 function! s:vimshell_settings() "{{{
     " No -bar
