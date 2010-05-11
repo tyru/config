@@ -2673,6 +2673,18 @@ if has('multi_byte_ime') || has('xim')
   endif
 endif
 " }}}
+" Do `<C-g>u` when inserted a character. {{{
+function! s:is_changed() "{{{
+    try
+        " When no `b:vimrc_changedtick` variable (first time), not changed.
+        return exists('b:vimrc_changedtick') && b:vimrc_changedtick < b:changedtick
+    finally
+        let b:vimrc_changedtick = b:changedtick
+    endtry
+endfunction "}}}
+
+MyAutocmd CursorMovedI * if s:is_changed() | call feedkeys("\<C-g>u", 'n') | endif
+" }}}
 " }}}
 " End. {{{
 
