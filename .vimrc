@@ -541,6 +541,10 @@ MyAutocmd QuickfixCmdPost * QuickFix
 MyAutocmd InsertLeave * setlocal nocursorline
 MyAutocmd InsertEnter * setlocal cursorline ignorecase
 
+" Disable &modeline when opened template file.
+MyAutocmd BufReadPre ~/.vim/template/* setlocal nomodeline
+
+
 " filetype {{{
 MyAutocmd BufNewFile,BufReadPre *.as
             \ setlocal ft=actionscript syntax=actionscript
