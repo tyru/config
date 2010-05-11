@@ -2298,8 +2298,12 @@ let skk_sticky_key = ';'
 let skk_show_candidates_count = 2
 " }}}
 " eskk {{{
-let g:eskk_dictionary = '~/.skk-jisyo'
-let g:eskk_large_dictionary = '/usr/share/skk/SKK-JISYO'
+if !exists('g:loaded_vimrc')
+    let g:eskk_dictionary = '~/.skk-jisyo'
+    let g:eskk_large_dictionary = '/usr/share/skk/SKK-JISYO'
+endif
+
+let g:eskk_egg_like_newline = 1
 
 let g:eskk_debug = 1
 let g:eskk_debug_wait_ms = 0
