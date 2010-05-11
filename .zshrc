@@ -262,3 +262,13 @@ if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then
     }
 fi
 # }}}
+
+# start screen {{{
+
+# `-z "$WINDOW"` means if screen has already started.
+# `! -z "$PS1"` means if zsh has started interactively.
+if [ -x $(which screen) -a -z "$WINDOW" -a ! -z "$PS1" ]; then
+    screen
+fi
+
+# }}}
