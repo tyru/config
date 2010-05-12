@@ -2683,7 +2683,8 @@ function! s:is_changed() "{{{
     endtry
 endfunction "}}}
 
-MyAutocmd CursorMovedI * if s:is_changed() | call feedkeys("\<C-g>u", 'n') | endif
+MyAutocmd CursorMovedI * if s:is_changed() | doautocmd User changed-text | endif
+MyAutocmd User changed-text call feedkeys("\<C-g>u", 'n')
 " }}}
 " }}}
 " End. {{{
