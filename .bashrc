@@ -101,7 +101,7 @@ stty stop undef
 
 # `-z "$WINDOW"` means if screen has already started.
 # `! -z "$PS1"` means if zsh has started interactively.
-if [ -x $(which screen) -a -z "$WINDOW" -a ! -z "$PS1" ]; then
+if [ -x "$(which screen)" -a -z "$WINDOW" -a ! -z "$PS1" ]; then
     screen
 fi
 
