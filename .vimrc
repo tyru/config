@@ -1319,6 +1319,29 @@ endfunction "}}}
 nnoremap <Space>* :<C-u>Split<CR>*
 nnoremap <Space># :<C-u>Split<CR>#
 " }}}
+" <Space><C-n>, <Space><C-p>: Move window position {{{
+Map [n] -noremap <Space><C-n> :<C-u> call <SID>swap_current_window_to_next()<CR>
+Map [n] -noremap <Space><C-p> :<C-u> call <SID>swap_current_window_to_previous()<CR>
+
+function! s:swap_current_window_to_next() "{{{
+    let curbuf = bufnr('%')
+    let curwinnr = winnr()
+    if curwinnr !=# winnr('$')
+        execute winbufnr(curwinnr + 1) . 'buffer'
+        execute (curwinnr + 1) . 'wincmd w'
+        execute curbuf . 'buffer'
+    endif
+endfunction "}}}
+function! s:swap_current_window_to_previous() "{{{
+    let curbuf = bufnr('%')
+    let curwinnr = winnr()
+    if curwinnr !=# 1
+        execute winbufnr(curwinnr - 1) . 'buffer'
+        execute (curwinnr - 1) . 'wincmd w'
+        execute curbuf . 'buffer'
+    endif
+endfunction "}}}
+" }}}
 " }}}
 " vmap {{{
 " TODO: '<C-g>' and 'g<C-g>' in visual mode: Show information about selected area. {{{
