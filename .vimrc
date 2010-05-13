@@ -2351,6 +2351,7 @@ Map [nvoicl] <C-g><C-a> <Plug>(stickykey-alt-remap)
 " restart {{{
 AlterCommand res[tart] Restart
 AlterCommand ers[tart] Restart
+AlterCommand rse[tart] Restart
 " }}}
 " AutoDate {{{
 let g:autodate_format = "%Y-%m-%d"
