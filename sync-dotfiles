@@ -237,7 +237,10 @@ for my $file (@files) {
     }
 }
 
-unless ($extract) {
+if ($extract) {
+    mkdir "$ENV{HOME}/.vim/backup" or warn $!
+}
+else {
     for my $f (@removed_files) {
         if (-e $f) {
             rmtree($f) or warn "cannot remove $_: $!";
