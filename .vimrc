@@ -1320,26 +1320,26 @@ nnoremap <Space>* :<C-u>Split<CR>*
 nnoremap <Space># :<C-u>Split<CR>#
 " }}}
 " <Space><C-n>, <Space><C-p>: Move window position {{{
-Map [n] -noremap <Space><C-n> :<C-u> call <SID>swap_current_window_to_next()<CR>
-Map [n] -noremap <Space><C-p> :<C-u> call <SID>swap_current_window_to_previous()<CR>
+Map [n] -silent -noremap <Space><C-n> :<C-u> call <SID>swap_current_window_to_next()<CR>
+Map [n] -silent -noremap <Space><C-p> :<C-u> call <SID>swap_current_window_to_previous()<CR>
 
 function! s:swap_current_window_to_next() "{{{
     let curbuf = bufnr('%')
     let curwinnr = winnr()
-    if curwinnr !=# winnr('$')
-        execute winbufnr(curwinnr + 1) . 'buffer'
-        execute (curwinnr + 1) . 'wincmd w'
-        execute curbuf . 'buffer'
-    endif
+    let nextwinnr = (curwinnr ==# winnr('$') ? 1 : curwinnr + 1)
+
+    execute winbufnr(nextwinnr) . 'buffer'
+    execute (nextwinnr) . 'wincmd w'
+    execute curbuf . 'buffer'
 endfunction "}}}
 function! s:swap_current_window_to_previous() "{{{
     let curbuf = bufnr('%')
     let curwinnr = winnr()
-    if curwinnr !=# 1
-        execute winbufnr(curwinnr - 1) . 'buffer'
-        execute (curwinnr - 1) . 'wincmd w'
-        execute curbuf . 'buffer'
-    endif
+    let prevwinnr = (curwinnr ==# 1 ? winnr('$') : curwinnr - 1)
+
+    execute winbufnr(prevwinnr) . 'buffer'
+    execute (prevwinnr) . 'wincmd w'
+    execute curbuf . 'buffer'
 endfunction "}}}
 " }}}
 " }}}
