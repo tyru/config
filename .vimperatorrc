@@ -457,7 +457,7 @@ let g:hints_for_embedded_open_parent_link = 1
 command! -bang -nargs=+ downthemall zipdownload<bang> -xpath='//a|//img' <args>
 " }}}
 " pluginManager.js {{{
-lazy pluginmanager update
+" lazy pluginmanager update
 " }}}
 " }}}
 "-----------------------------------------------------------------
