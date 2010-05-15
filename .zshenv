@@ -20,9 +20,8 @@ export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46
 
 
 # for cygwin
-export MY_PERL_DOLLAR_O="$(perl -e 'print $^O')"
-
-if [ "$MY_PERL_DOLLAR_O" = "cygwin" ]; then
+CURRENT_ENV="$(perl -e 'print $^O')"
+if [ "$CURRENT_ENV" = "cygwin" ]; then
     export LESS="MrXEd --dumb"
     export TERM=cygwin
     export CFLAGS="-I/usr/local/include -I/usr/include"
