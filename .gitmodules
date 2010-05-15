@@ -70,9 +70,6 @@
 [submodule "ext/vimproc"]
 	path = ext/vimproc
 	url = git://github.com/Shougo/vimproc.git
-[submodule "ext/vimshell"]
-	path = ext/vimshell
-	url = git://github.com/Shougo/vimshell.git
 [submodule "ext/vim-ref"]
 	path = ext/vim-ref
 	url = git://github.com/thinca/vim-ref.git
@@ -133,3 +130,6 @@
 [submodule "ext/syslib.vim"]
 	path = ext/syslib.vim
 	url = git://github.com/tyru/syslib.vim.git
+[submodule "ext/vimshell"]
+	path = ext/vimshell
+	url = git://github.com/tyru/vimshell.git
