@@ -33,22 +33,19 @@ alias go='gopen'
 
 if [ -x "$(which vim)" ]; then
     alias vi='vim'
-else
-    alias vi='vi'
 fi
 
 if [ -x "$(which tscreen)" ]; then
-    alias sc='tscreen'
-else
-    alias sc='screen'
+    alias screen='tscreen'
 fi
+alias sc=screen
 
 if [ -x "$(which perldocjp)" ]; then
     alias perldoc='perldocjp'
 fi
 
-OS="$(uname -o)"
-if [ "$OS" = "Cygwin" ]; then
+CURRENT_ENV="$(perl -e 'print $^O')"
+if [ "$CURRENT_ENV" = "cygwin" ]; then
     alias less='less -r'
     alias ls='ls --color=tty --show-control-chars'
 else
@@ -70,7 +67,7 @@ cd () {
 # }}}
 
 ### cygwin ### {{{
-if [ "$OS" = 'Cygwin' ]; then
+if [ "$CURRENT_ENV" = 'cygwin' ]; then
     function wwhich() {
         if [ $# != 0 ]; then
             cygpath -w -a $(which $1)
@@ -101,7 +98,7 @@ stty stop undef
 
 # `-z "$WINDOW"` means if screen has already started.
 # `! -z "$PS1"` means if zsh has started interactively.
-if [ -x "$(which screen)" -a -z "$WINDOW" -a ! -z "$PS1" ]; then
+if [ "$CURRENT_ENV" != "MSWin32" -a -x "$(which screen)" -a -z "$WINDOW" -a ! -z "$PS1" ]; then
     screen
 fi
 
