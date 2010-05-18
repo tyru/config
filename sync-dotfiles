@@ -153,6 +153,31 @@ sub get_git_files_from_runtimepath {
     @ret;
 }
 
+sub get_home {
+    my ($username) = @_;
+
+    if ($^O eq 'MSWin32') {
+        if (defined $ENV{HOME}) {
+            $home = $ENV{HOME};
+        } elsif (defined $ENV{MSYSCON}) { # TODO Detect cygwin
+            $home = "/home/$username";
+        } else {
+            die "where is my home?";
+        }
+    }
+    else {
+        if ($username eq 'root') {
+            $home = "/root";
+        } else {
+            $home = "/home/$username";
+        }
+    }
+
+    unless (-d $home) {
+        die "$home:$!"
+    }
+}
+
 
 
 ### main ###
@@ -160,6 +185,7 @@ sub get_git_files_from_runtimepath {
 # chdir parent directory of this script
 chdir $Bin or die "$Bin:$!";
 
+my $home;
 my $username;
 my $auto_commit;
 my $auto_push;
@@ -177,8 +203,10 @@ if (defined $ENV{USER} || defined $ENV{USERNAME}) {
 
 my $help;
 GetOptions(
-    'h|help'
+    'help'
         => \$help,
+    'h|home'
+        => $home,
     'u|username=s'
         => \$username,
     'c|commit'
@@ -201,15 +229,7 @@ if (! $extract && ! defined $github_user) {
     warn "Can't determine GITHUB_USER('git config github.user' is empty).\n";
 }
 
-my $home;
-if ($username eq 'root') {
-    $home = "/root";
-} else {
-    $home = "/home/$username";
-}
-if ($^O ne 'MSWin32' && ! -d $home) {
-    die "$home:$!"
-}
+$home ||= get_home $username;
 
 # -x: Extract to current environment
 if ($extract) {
