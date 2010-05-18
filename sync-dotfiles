@@ -8,9 +8,7 @@ use File::Path qw(rmtree mkpath);
 use IO::Handle;
 use File::Spec::Functions qw(catfile);
 use File::Basename qw(dirname);
-use Git;
 use File::Temp qw();
-use Perl6::Slurp qw(slurp);
 
 # gnu_compat: --opt="..." is allowed.
 # no_bundling: single character option is not bundled.
@@ -106,7 +104,9 @@ sub install {
     }
     system('cp', '-RL', $src, $dest);
 
-    if ($^O eq 'cygwin') {
+    if ($^O eq 'MSWin32') {
+        # nop
+    } elsif ($^O eq 'cygwin') {
         system('chown', '-R', $user, $dest);
     } else {
         system('chown', '-R', "$user:$user", $dest);
@@ -120,6 +120,16 @@ sub ask {
     exit unless $ans =~ /^y(es)?$/i;
 }
 
+sub slurp_chomp {
+    my ($path) = @_;
+
+    open my $FH, '<', $path or die $!;
+    my @lines = <$FH>;
+    close $FH;
+
+    map { chomp; $_ } @lines;
+}
+
 sub get_git_files_from_runtimepath {
     my $tempname = do {
         my $fh = File::Temp->new or die $!;
@@ -128,7 +138,7 @@ sub get_git_files_from_runtimepath {
     system(@VIM, '-S', $VIM_RTP_SCRIPT, $tempname);
 
     my @ret;
-    for my $rtp (slurp {chomp => 1}, $tempname) {
+    for my $rtp (slurp_chomp $tempname) {
         $rtp = readlink $rtp while -l $rtp;
 
         my $repo = eval { Git->repository($rtp) };
@@ -159,8 +169,8 @@ my $upload_to_vimrcbox;
 my $get_git_files_from_runtimepath;
 my $github_user = qx(git config github.user);
 
-if (defined $ENV{USER}) {
-    $username = $ENV{USER};
+if (defined $ENV{USER} || defined $ENV{USERNAME}) {
+    $username = $ENV{USER} || $ENV{USERNAME};
 } else {
     die "env 'USER' is not set.\n";
 }
@@ -197,7 +207,7 @@ if ($username eq 'root') {
 } else {
     $home = "/home/$username";
 }
-unless (-d $home) {
+if ($^O ne 'MSWin32' && ! -d $home) {
     die "$home:$!"
 }
 
@@ -269,6 +279,7 @@ if ($upload_to_vimrcbox) {
 }
 # -g, --get-git-files: Get git cached files using by git-ls-files.
 if ($get_git_files_from_runtimepath) {
+    require Git;
     my @files = get_git_files_from_runtimepath();
     for my $f (@files) {
         my ($fullpath, $relpath) = @$f;
