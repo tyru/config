@@ -157,10 +157,11 @@ sub get_home {
     my ($username) = @_;
     my $home;
 
-    if ($^O eq 'MSWin32') {
-        if (defined $ENV{HOME}) {
-            $home = $ENV{HOME};
-        } elsif (defined $ENV{MSYSCON}) { # TODO Detect cygwin
+    if (defined $ENV{HOME}) {
+        $home = $ENV{HOME};
+    }
+    elsif ($^O eq 'MSWin32') {
+        if (defined $ENV{MSYSCON}) { # TODO Detect cygwin
             $home = "/home/$username";
         } else {
             die "where is my home?";
