@@ -2650,6 +2650,13 @@ let g:vim_indent_cont = 0
 let g:vimfiler_split_command = 'Split'
 let g:vimfiler_edit_command = 'edit'
 " }}}
+" prettyprint {{{
+AlterCommand pp PP
+
+let g:prettyprint_echo_type = 'buffer'
+let g:prettyprint_echomsg_highlight = 'Debug'
+let g:prettyprint_echo_buffer_new = 'New'
+" }}}
 " }}}
 " Backup {{{
 " TODO Rotate backup files like writebackupversioncontrol.vim
