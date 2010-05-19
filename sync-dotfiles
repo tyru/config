@@ -155,6 +155,7 @@ sub get_git_files_from_runtimepath {
 
 sub get_home {
     my ($username) = @_;
+    my $home;
 
     if ($^O eq 'MSWin32') {
         if (defined $ENV{HOME}) {
@@ -176,6 +177,8 @@ sub get_home {
     unless (-d $home) {
         die "$home:$!"
     }
+
+    $home;
 }
 
 
@@ -206,7 +209,7 @@ GetOptions(
     'help'
         => \$help,
     'h|home'
-        => $home,
+        => \$home,
     'u|username=s'
         => \$username,
     'c|commit'
