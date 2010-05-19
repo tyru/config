@@ -668,6 +668,9 @@ if exists('$VIM_RTP_REPO_DIR')
     RtpPrune $VIM_RTP_REPO_DIR/pummode.vim
     RtpPrune $VIM_RTP_REPO_DIR/command-buffer.vim
     RtpPrune $VIM_RTP_REPO_DIR/cmdwincomplete.vim
+    if !executable('git')
+        RtpPrune $VIM_RTP_REPO_DIR/gist-vim
+    endif
 else
     call s:warn('Forgot to set $VIM_RTP_REPO_DIR ?')
 endif
