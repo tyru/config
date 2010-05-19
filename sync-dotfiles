@@ -104,7 +104,7 @@ sub install {
     }
     system('cp', '-RL', $src, $dest);
 
-    if ($^O eq 'MSWin32') {
+    if ($^O eq 'MSWin32' || $^O eq 'msys') {
         # nop
     } elsif ($^O eq 'cygwin') {
         system('chown', '-R', $user, $dest);
@@ -208,7 +208,7 @@ my $help;
 GetOptions(
     'help'
         => \$help,
-    'h|home'
+    'h|home=s'
         => \$home,
     'u|username=s'
         => \$username,
