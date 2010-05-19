@@ -1262,9 +1262,13 @@ endfunction "}}}
 " move current buffer into a new tab.
 Map [n] -noremap <excmd>mt :<C-u>call <SID>move_window_into_tab_page(0)<Cr>
 " }}}
+" TODO: Merge tabpage into window {{{
+" }}}
 " Netrw - vimperator-like keymappings {{{
 function! s:filetype_netrw() "{{{
-    Map [n] <buffer> gu -
+    Map [n] <buffer> h -
+    Map [n] <buffer> l <CR>
+    Map [n] <buffer> e <CR>
 endfunction "}}}
 
 MyAutocmd FileType netrw call s:filetype_netrw()
@@ -1320,26 +1324,46 @@ nnoremap <Space>* :<C-u>Split<CR>*
 nnoremap <Space># :<C-u>Split<CR>#
 " }}}
 " <Space><C-n>, <Space><C-p>: Move window position {{{
-Map [n] -silent -noremap <Space><C-n> :<C-u> call <SID>swap_current_window_to_next()<CR>
-Map [n] -silent -noremap <Space><C-p> :<C-u> call <SID>swap_current_window_to_previous()<CR>
+Map [n] <Space><C-n> <Plug>swap_window_next
+Map [n] <Space><C-p> <Plug>swap_window_prev
+Map [n] <Space><C-j> <Plug>swap_window_j
+Map [n] <Space><C-k> <Plug>swap_window_k
+Map [n] <Space><C-h> <Plug>swap_window_h
+Map [n] <Space><C-l> <Plug>swap_window_l
 
-function! s:swap_current_window_to_next() "{{{
-    let curbuf = bufnr('%')
-    let curwinnr = winnr()
-    let nextwinnr = (curwinnr ==# winnr('$') ? 1 : curwinnr + 1)
+nnoremap <silent> <Plug>swap_window_next :<C-u>call <SID>swap_window(v:count1)<CR>
+nnoremap <silent> <Plug>swap_window_prev :<C-u>call <SID>swap_window(-v:count1)<CR>
+nnoremap <silent> <Plug>swap_window_j :<C-u>call <SID>swap_window_dir(v:count1, 'j')<CR>
+nnoremap <silent> <Plug>swap_window_k :<C-u>call <SID>swap_window_dir(v:count1, 'k')<CR>
+nnoremap <silent> <Plug>swap_window_h :<C-u>call <SID>swap_window_dir(v:count1, 'h')<CR>
+nnoremap <silent> <Plug>swap_window_l :<C-u>call <SID>swap_window_dir(v:count1, 'l')<CR>
+nnoremap <silent> <Plug>swap_window_t :<C-u>call <SID>swap_window_dir(v:count1, 't')<CR>
+nnoremap <silent> <Plug>swap_window_b :<C-u>call <SID>swap_window_dir(v:count1, 'b')<CR>
 
-    execute winbufnr(nextwinnr) . 'buffer'
-    execute (nextwinnr) . 'wincmd w'
-    execute curbuf . 'buffer'
+function! s:modulo(n, m) "{{{
+  let d = a:n * a:m < 0 ? 1 : 0
+  return a:n + (-(a:n + (0 < a:m ? d : -d)) / a:m + d) * a:m
 endfunction "}}}
-function! s:swap_current_window_to_previous() "{{{
-    let curbuf = bufnr('%')
-    let curwinnr = winnr()
-    let prevwinnr = (curwinnr ==# 1 ? winnr('$') : curwinnr - 1)
 
-    execute winbufnr(prevwinnr) . 'buffer'
-    execute (prevwinnr) . 'wincmd w'
-    execute curbuf . 'buffer'
+function! s:swap_window(n) "{{{
+  let curbuf = bufnr('%')
+  let target = s:modulo(winnr() + a:n - 1, winnr('$')) + 1
+  execute 'hide' winbufnr(target) . 'buffer'
+  execute target 'wincmd w'
+  execute curbuf 'buffer'
+endfunction "}}}
+
+function! s:swap_window_dir(n, dir) "{{{
+  let curbuf = bufnr('%')
+  execute a:n 'wincmd ' . a:dir
+  let target = winnr()
+  let targetbuf = bufnr('%')
+  if curbuf != targetbuf
+    wincmd p
+    execute 'hide' targetbuf . 'buffer'
+    execute target 'wincmd w'
+    execute curbuf 'buffer'
+  endif
 endfunction "}}}
 " }}}
 " }}}
@@ -2335,6 +2359,12 @@ let g:eskk_egg_like_newline = 1
 let g:eskk_debug = 1
 let g:eskk_debug_wait_ms = 0
 let g:eskk_debug_file = '~/eskk-debug.log'
+let g:eskk_debug_profile = 1
+
+" let t = eskk#table#get_definition('rom_to_hira')
+" let t['a'].map_to = '亞'
+" unlet t
+
 " }}}
 " stickykey {{{
 
@@ -2616,7 +2646,7 @@ let chalice_bookmark = expand('$HOME/.vim/chalice.bmk')
 let g:vim_indent_cont = 0
 " }}}
 " vimfiler {{{
-let g:vimfiler_as_default_explorer = 1
+" let g:vimfiler_as_default_explorer = 1
 let g:vimfiler_split_command = 'Split'
 let g:vimfiler_edit_command = 'edit'
 " }}}

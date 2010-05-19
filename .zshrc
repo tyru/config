@@ -88,35 +88,32 @@ alias jobs='jobs -l'
 alias l.='ls -d .*'
 alias l='ll'
 alias la='ls -A'
+alias less='less -r'
 alias ll='ls -lh'
 alias whi='which'
 alias whe='where'
 alias go='gopen'
+alias vprove='vim -c SimpleTapRun'
 
 if [ -x "$(which vim)" ]; then
     alias vi='vim'
-else
-    alias vi='vi'
 fi
 
 if [ -x "$(which tscreen)" ]; then
-    alias sc='tscreen'
-else
-    alias sc='screen'
+    alias screen='tscreen'
 fi
+alias sc=screen
 
 if [ -x "$(which perldocjp)" ]; then
     alias perldoc='perldocjp'
 fi
 
-if [ "$MY_PERL_DOLLAR_O" = "cygwin" ]; then
+CURRENT_ENV="$(perl -e 'print $^O')"
+if [ "$CURRENT_ENV" = "cygwin" ]; then
+    alias less='less -r'
     alias ls='ls --color=tty --show-control-chars'
-elif [ "$MY_PERL_DOLLAR_O" = "linux" ]; then
-    # Linux
-    alias ls='ls --color=tty'
 else
-    # BSD
-    alias ls='ls -G'
+    alias ls='ls --color=tty'
 fi
 
 if [ -x "/usr/local/share/vim/vim72/macros/less.sh" ]; then
@@ -267,7 +264,7 @@ fi
 
 # `-z "$WINDOW"` means if screen has already started.
 # `! -z "$PS1"` means if zsh has started interactively.
-if [ "$CURRENT_ENV" != "MSWin32" -a -x "$(which screen)" -a -z "$WINDOW" -a ! -z "$PS1" ]; then
+if [ "$(which screen >/dev/null; echo $?)" = "0" -a "$CURRENT_ENV" != "MSWin32" -a -z "$WINDOW" -a ! -z "$PS1" ]; then
     screen
 fi
 
