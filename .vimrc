@@ -1262,6 +1262,8 @@ endfunction "}}}
 " move current buffer into a new tab.
 Map [n] -noremap <excmd>mt :<C-u>call <SID>move_window_into_tab_page(0)<Cr>
 " }}}
+" TODO: Merge tabpage into window {{{
+" }}}
 " Netrw - vimperator-like keymappings {{{
 function! s:filetype_netrw() "{{{
     Map [n] <buffer> gu -
