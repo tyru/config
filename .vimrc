@@ -2359,6 +2359,12 @@ let g:eskk_egg_like_newline = 1
 let g:eskk_debug = 1
 let g:eskk_debug_wait_ms = 0
 let g:eskk_debug_file = '~/eskk-debug.log'
+let g:eskk_debug_profile = 1
+
+" let t = eskk#table#get_definition('rom_to_hira')
+" let t['a'].map_to = '亞'
+" unlet t
+
 " }}}
 " stickykey {{{
 
