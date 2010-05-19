@@ -92,6 +92,7 @@ alias ll='ls -lh'
 alias whi='which'
 alias whe='where'
 alias go='gopen'
+alias vprove='vim -c SimpleTapRun'
 
 if [ -x "$(which vim)" ]; then
     alias vi='vim'
