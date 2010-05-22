@@ -531,7 +531,16 @@ set viminfo='50,h,f1,n$HOME/.viminfo
 " Autocmd {{{
 
 " colorscheme (on windows, setting colorscheme in .vimrc does not work)
-MyAutocmd VimEnter * set bg=dark | colorscheme desert
+function! s:define_colorscheme() "{{{
+    if has('gui_running')
+        set background=dark
+        colorscheme desert
+    else
+        set background=dark
+        colorscheme koehler
+    endif
+endfunction "}}}
+MyAutocmd VimEnter * call s:define_colorscheme()
 
 " open on read-only if swap exists
 MyAutocmd SwapExists * let v:swapchoice = 'o'
