@@ -133,3 +133,6 @@
 [submodule "ext/vimshell"]
 	path = ext/vimshell
 	url = git://github.com/tyru/vimshell.git
+[submodule "ext/lingr-vim"]
+	path = ext/lingr-vim
+	url = git://github.com/tsukkee/lingr-vim.git
