@@ -466,13 +466,14 @@ let &titlestring = '%{getcwd()} %{haslocaldir() ? "(local)" : ""}'
 
 " tab
 set showtabline=2
-let &tabline     = '%{tabpagenr()}. [%{expand("%:t")}] - %{&fenc},%{&ff}'
-let &guitablabel = '%{tabpagenr()}. [%{expand("%:t")}] - %{&fenc},%{&ff}'
+" TODO Show project name.
+let &tabline     = '%{tabpagenr()}. [%t]'
+let &guitablabel = &tabline
 
 " statusline
 set laststatus=2
-let &statusline = '[%{&ft}] [%l/%L]%( [%M%R%H%W]%)'
-let &statusline .= '/(%{eskk#get_mode()})'
+let &statusline = '[%t] [%{&ft}] [%{&fenc},%{&ff}] %( [%M%R%H%W]%)'
+" let &statusline .= '%( [%{eskk#get_mode()}])'
 
 " gui
 set guioptions=aegitrhpF
