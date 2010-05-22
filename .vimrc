@@ -502,6 +502,7 @@ set t_te=
 set notimeout
 
 " fillchars
+" TODO Change the color of inactive statusline.
 set fillchars=stl:\ ,stlnc::,vert:\ ,fold:-,diff:-
 
 " cursor behavior in insertmode
