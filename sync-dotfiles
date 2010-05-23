@@ -39,6 +39,7 @@ my @files = qw(
     .skel
     .module-starter
     .w3m/keymap
+    .Xmodmap
 );
 my %cygwin_files = (
     '.vimperator/plugin' => 'vimperator/plugin',
