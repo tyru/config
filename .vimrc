@@ -2773,8 +2773,6 @@ endif
 
 if !exists('s:loaded_vimrc')
     GarbageCorrect    " first time
-else
-    GarbageCorrect!
 endif
 
 
