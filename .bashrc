@@ -31,6 +31,7 @@ alias whi='which'
 alias whe='where'
 alias go='gopen'
 alias vprove='vim -c SimpleTapRun'
+alias lingr='vim -c LingrLaunch'
 
 if [ -x "$(which vim)" ]; then
     alias vi='vim'
