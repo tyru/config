@@ -241,9 +241,11 @@ function viwi() {
 # vimperator-like completion <<<<
 # via http://gist.github.com/414589
 
-
 unsetopt sh_word_split
+zstyle ':completion:*' completer _oldlist _complete
 
+
+# Original from gist <<<<
 # zsh automatic complete-word and list-choices
 
 # Originally incr-0.2.zsh
@@ -485,6 +487,7 @@ afu+complete-word () {
 zle -N afu+complete-word
 
 unset afu_zles
+# >>>>
 
 
 # enable.
