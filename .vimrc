@@ -2364,6 +2364,8 @@ let skk_sticky_key = ';'
 let skk_show_candidates_count = 2
 " }}}
 " eskk {{{
+" let g:eskk_disable = 1
+
 if !exists('s:loaded_vimrc')
     let g:eskk_dictionary = '~/.skk-jisyo'
     let g:eskk_large_dictionary = '/usr/share/skk/SKK-JISYO'
