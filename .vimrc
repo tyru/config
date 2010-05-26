@@ -1345,8 +1345,8 @@ Map [n] <Space><C-k> <Plug>swap_window_k
 Map [n] <Space><C-h> <Plug>swap_window_h
 Map [n] <Space><C-l> <Plug>swap_window_l
 
-nnoremap <silent> <Plug>swap_window_next :<C-u>call <SID>swap_window(v:count1)<CR>
-nnoremap <silent> <Plug>swap_window_prev :<C-u>call <SID>swap_window(-v:count1)<CR>
+nnoremap <silent> <Plug>swap_window_next :<C-u>call <SID>swap_window_count(v:count1)<CR>
+nnoremap <silent> <Plug>swap_window_prev :<C-u>call <SID>swap_window_count(-v:count1)<CR>
 nnoremap <silent> <Plug>swap_window_j :<C-u>call <SID>swap_window_dir(v:count1, 'j')<CR>
 nnoremap <silent> <Plug>swap_window_k :<C-u>call <SID>swap_window_dir(v:count1, 'k')<CR>
 nnoremap <silent> <Plug>swap_window_h :<C-u>call <SID>swap_window_dir(v:count1, 'h')<CR>
@@ -1359,23 +1359,29 @@ function! s:modulo(n, m) "{{{
   return a:n + (-(a:n + (0 < a:m ? d : -d)) / a:m + d) * a:m
 endfunction "}}}
 
-function! s:swap_window(n) "{{{
-  let curbuf = bufnr('%')
-  let target = s:modulo(winnr() + a:n - 1, winnr('$')) + 1
-  execute 'hide' winbufnr(target) . 'buffer'
-  execute target 'wincmd w'
-  execute curbuf 'buffer'
+function! s:swap_window_count(n) "{{{
+  let curwin = winnr()
+  let target = s:modulo(curwin + a:n - 1, winnr('$')) + 1
+  call s:swap_window(curwin, target)
 endfunction "}}}
 
 function! s:swap_window_dir(n, dir) "{{{
-  let curbuf = bufnr('%')
-  execute a:n 'wincmd ' . a:dir
-  let target = winnr()
-  let targetbuf = bufnr('%')
-  if curbuf != targetbuf
-    wincmd p
+  let curwin = winnr()
+  execute a:n 'wincmd' a:dir
+  let targetwin = winnr()
+  wincmd p
+  call s:swap_window(curwin, targetwin)
+endfunction "}}}
+
+function! s:swap_window(curwin, targetwin) "{{{
+  let curbuf = winbufnr(a:curwin)
+  let targetbuf = winbufnr(a:targetwin)
+
+  if curbuf == targetbuf
+    " TODO: Swap also same buffer!
+  else
     execute 'hide' targetbuf . 'buffer'
-    execute target 'wincmd w'
+    execute a:targetwin 'wincmd w'
     execute curbuf 'buffer'
   endif
 endfunction "}}}
