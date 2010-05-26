@@ -2108,10 +2108,11 @@ command!
 \   call s:cmd_capture(<q-args>)
 
 function! s:cmd_capture(q_args) "{{{
+    let out = s:get_output(a:q_args)    " NOTE: Execute ex command in current buffer.
     New    " Change as you like. for e.g., :new instead.
     silent file `=printf('[Capture: %s]', a:q_args)`
     setlocal buftype=nofile bufhidden=unload noswapfile nobuflisted
-    call setline(1, split(s:get_output(a:q_args), '\n'))
+    call setline(1, split(out, '\n'))
 endfunction "}}}
 " }}}
 
