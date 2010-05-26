@@ -1,33 +1,33 @@
-# vim:set fdm=marker:
+# vim:set fdm=marker fmr=<<<<,>>>>:
 
 bindkey -e
 
-### fpath ### {{{
+### fpath ### <<<<
 fpath=(~/.zsh/functions $fpath)
 autoload -U ~/.zsh/functions/*(:t)
-# }}}
-### compinit ### {{{
+# >>>>
+### compinit ### <<<<
 autoload -U compinit
 compinit -u
-# }}}
-### promptinit ### {{{
+# >>>>
+### promptinit ### <<<<
 if [ $UID != 0 ]; then
     autoload promptinit
     promptinit
     prompt adam2
     # prompt elite2
 fi
-# }}}
-### color ### {{{
+# >>>>
+### color ### <<<<
 # ${fg[...]} や $reset_color をロード
 autoload -U colors; colors
-# }}}
-### completion ### {{{
+# >>>>
+### completion ### <<<<
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # ignore alphabet case when completion,
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-# }}}
-### search history ### {{{
+# >>>>
+### search history ### <<<<
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
@@ -35,8 +35,8 @@ bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
 
 # bindkey "^I" menu-complete
-# }}}
-### setopt ### {{{
+# >>>>
+### setopt ### <<<<
 
 # http://journal.mycom.co.jp/column/zsh/index.html
 # http://www.crimson-snow.net/tips/unix/zsh.html
@@ -77,8 +77,8 @@ setopt rm_star_wait
 setopt sh_word_split
 setopt share_history
 # setopt print_exit_value
-# }}}
-### alias ### {{{
+# >>>>
+### alias ### <<<<
 alias df='df -h'
 alias diff='diff -u'
 alias du='du -h'
@@ -122,13 +122,13 @@ if [ -x "/usr/local/share/vim/vim72/macros/less.sh" ]; then
 elif [ -x "/usr/share/vim/vim72/macros/less.sh" ]; then
     alias vless="/usr/share/vim/vim72/macros/less.sh"
 fi
-# }}}
-### misc ### {{{
-# カレントディレクトリが変わると実行される {{{
+# >>>>
+### misc ### <<<<
+# カレントディレクトリが変わると実行される <<<<
 # via http://d.hatena.ne.jp/hiboma/20061005/1160026514
 chpwd () { ll }
-# }}}
-# abbrev {{{
+# >>>>
+# abbrev <<<<
 # via http://homepage1.nifty.com/blankspace/zsh/zsh.html
 typeset -A myabbrev
 myabbrev=(
@@ -152,8 +152,8 @@ my-expand-abbrev() {
 }
 zle -N my-expand-abbrev
 bindkey     " "         my-expand-abbrev
-# }}}
-# gitのブランチ名を右プロンプトに表示 {{{
+# >>>>
+# gitのブランチ名を右プロンプトに表示 <<<<
 # http://d.hatena.ne.jp/mollifier/20090814/p1
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' formats '(%s)-[%b]'
@@ -164,8 +164,8 @@ precmd () {
     [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
 }
 RPROMPT="%1(v|%F{green}%1v%f|)"
-# }}}
-# 補完時に色んな情報を出す {{{
+# >>>>
+# 補完時に色んな情報を出す <<<<
 # via http://d.hatena.ne.jp/voidy21/20090902/1251918174
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
@@ -177,26 +177,26 @@ zstyle ':completion:*:options' description 'yes'
 # グループ名に空文字列を指定すると，マッチ対象のタグ名がグループ名に使われる。
 # したがって，すべての マッチ種別を別々に表示させたいなら以下のようにする
 zstyle ':completion:*' group-name ''
-# }}}
-# 補完のセパレータを設定する {{{
+# >>>>
+# 補完のセパレータを設定する <<<<
 # via http://d.hatena.ne.jp/voidy21/20090902/1251918174
 zstyle ':completion:*' list-separator '-->'
-# }}}
-# manの補完をセクション番号別に表示させる {{{
+# >>>>
+# manの補完をセクション番号別に表示させる <<<<
 # via http://d.hatena.ne.jp/voidy21/20090902/1251918174
 zstyle ':completion:*:manuals' separate-sections true
-# }}}
-# 起動済みバックグランドプロセスの標準出力を見るワンライナー {{{
+# >>>>
+# 起動済みバックグランドプロセスの標準出力を見るワンライナー <<<<
 # via http://subtech.g.hatena.ne.jp/cho45/20091118/1258554176
 function snatch () {
     gdb -p $1 -batch -n -x =( echo -e "p (int)open(\"/proc/$$/fd/1\", 1)\np (int)dup2(\$1, 1)\np (int)dup2(\$1, 2)" )
 }
-# }}}
-# C-sによる画面の停止を無効 {{{
+# >>>>
+# C-sによる画面の停止を無効 <<<<
 # http://d.hatena.ne.jp/hogem/20090411/1239451878
 stty stop undef
-# }}}
-# surround.vimみたいにクォートで囲む {{{
+# >>>>
+# surround.vimみたいにクォートで囲む <<<<
 # http://d.hatena.ne.jp/mollifier/20091220/p1
 
 autoload -U modify-current-argument
@@ -216,8 +216,8 @@ _quote-previous-word-in-double() {
 }
 zle -N _quote-previous-word-in-double
 bindkey '^[G' _quote-previous-word-in-double
-# }}}
-# Gitのリポジトリのトップレベルにcdするコマンド {{{
+# >>>>
+# Gitのリポジトリのトップレベルにcdするコマンド <<<<
 # http://d.hatena.ne.jp/hitode909/20100211/1265879271
 function u()
 {
@@ -226,20 +226,20 @@ function u()
         cd $1
     fi
 }
-# }}}
-# mkcd {{{
+# >>>>
+# mkcd <<<<
 function mkcd() {
     [ $# = 1 ] && mkdir "$1" && cd "$1"
 }
-# }}}
-# viwi {{{
+# >>>>
+# viwi <<<<
 function viwi() {
     local p
     [ $# != 0 ] && p=`which $1` && vi "$p"
 }
-# }}}
-# }}}
-### cygwin ### {{{
+# >>>>
+# >>>>
+### cygwin ### <<<<
 if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then
 
     function wwhich() {
@@ -259,9 +259,9 @@ if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then
         fi
     }
 fi
-# }}}
+# >>>>
 
-# start screen {{{
+# start screen <<<<
 
 # `-z "$WINDOW"` means if screen has already started.
 # `! -z "$PS1"` means if zsh has started interactively.
@@ -269,4 +269,4 @@ if [ "$(which screen >/dev/null; echo $?)" = "0" -a "$CURRENT_ENV" != "MSWin32" 
     screen
 fi
 
-# }}}
+# >>>>
