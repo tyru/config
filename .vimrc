@@ -241,8 +241,11 @@ function! s:map_localleader(key) "{{{
 endfunction "}}}
 function! s:map_prefix_key(modes, prefix_name, prefix_key) "{{{
     let modes = a:modes != '' ? a:modes : 'nvoiclxs'
-    execute 'DefMap' printf('[%s]', modes) '-noremap' a:prefix_name '<Nop>'
-    execute 'Map'    printf('[%s]', modes)            a:prefix_key  printf('<%s>', a:prefix_name)
+
+    " execute 'DefMap' printf('[%s]', modes) '-noremap' a:prefix_name '<Nop>'
+    " execute 'Map'         printf('[%s]', modes)            a:prefix_key  printf('<%s>', a:prefix_name)
+
+    execute 'DefMacroMap' printf('[%s]', modes) '-noremap' a:prefix_name a:prefix_key
 
     " TODO
     " DefMap [<eval modes>] -noremap <eval a:prefix_name> <Nop>
