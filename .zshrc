@@ -242,7 +242,7 @@ function viwi() {
 # via http://gist.github.com/414589
 
 unsetopt sh_word_split
-zstyle ':completion:*' completer _oldlist _complete
+zstyle ':completion:*' completer _oldlist _complete _expand _match _prefix _approximate _list _history
 
 
 # Original from gist <<<<
