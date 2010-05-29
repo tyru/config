@@ -2061,8 +2061,9 @@ endfunction "}}}
 " }}}
 " AllBufMaps {{{
 command!
+\   -nargs=*
 \   AllBufMaps
-\   map <buffer> | map! <buffer> | lmap <buffer>
+\   map <buffer> <args> | map! <buffer> <args> | lmap <buffer> <args>
 " }}}
 " Expand {{{
 command!
