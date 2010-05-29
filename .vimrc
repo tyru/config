@@ -2359,8 +2359,6 @@ let dumbbuf_remove_marked_when_close = 1
 let skk_jisyo = '~/.skk-jisyo'
 let skk_large_jisyo = '/usr/share/skk/SKK-JISYO'
 
-let skk_control_j_key = '<C-g><C-j>'
-
 " let skk_control_j_key = ''
 " Arpeggio map! fj    <Plug>(skk-enable-im)
 
@@ -2396,6 +2394,19 @@ let g:eskk_keep_state = 1
 " let t = eskk#table#get_definition('rom_to_hira')
 " let t['a'].map_to = '亞'
 " unlet t
+
+" }}}
+" skk.vim && eskk.vim {{{
+
+if 1
+" Map <C-j> to eskk, Map <C-g><C-j> to skk.vim {{{
+let skk_control_j_key = '<C-g><C-j>'
+" }}}
+else
+" Map <C-j> to skk.vim, Map <C-g><C-j> to eskk {{{
+map! <C-g><C-j> <Plug>(eskk:toggle)
+" }}}
+endif
 
 " }}}
 " stickykey {{{
