@@ -844,6 +844,7 @@ Map [nvo] -noremap k gk
 call s:map_orig_key('nvo', 'j')
 call s:map_orig_key('nvo', 'k')
 
+" FIXME: Does not work in visual mode.
 Map [nvo] -noremap ]k :<C-u>call search('^\S', 'Ws')<CR>
 Map [nvo] -noremap [k :<C-u>call search('^\S', 'Wsb')<CR>
 
