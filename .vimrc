@@ -2391,6 +2391,8 @@ if has('profile')
     let g:eskk_debug_profile = 1
 endif
 
+let g:eskk_keep_state = 1
+
 " let t = eskk#table#get_definition('rom_to_hira')
 " let t['a'].map_to = '亞'
 " unlet t
