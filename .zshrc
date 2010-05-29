@@ -359,11 +359,11 @@ auto-fu-init () {
   {
     local -a region_highlight
     local afu_in_p=0
-    POSTDISPLAY=$'\n-azfu-'
+    # POSTDISPLAY=$'\n-azfu-'
     afu-recursive-edit-and-accept
     zle -I
   } always {
-    POSTDISPLAY=''
+    # POSTDISPLAY=''
   }
 }
 zle -N afu
