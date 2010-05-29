@@ -2673,6 +2673,8 @@ AlterCommand ref Ref
 AlterCommand alc Ref<Space>alc
 AlterCommand man Ref<Space>man
 AlterCommand pdoc Ref<Space>perldoc
+AlterCommand cppref Ref<Space>cppref
+AlterCommand cpp    Ref<Space>cppref
 
 call s:map_orig_key('n', 'K')
 
