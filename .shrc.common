@@ -1,0 +1,48 @@
+
+### vim:set ft=sh: ###
+
+
+
+# alias
+alias df='df -h'
+alias diff='diff -u'
+alias du='du -h'
+alias free='free -m -l -t'
+alias j='jobs'
+alias jobs='jobs -l'
+alias l.='ls -d .*'
+alias l='ll'
+alias la='ls -A'
+alias less='less -r'
+alias ll='ls -lh'
+alias whi='which'
+alias whe='where'
+alias go='gopen'
+alias vprove='vim -c SimpleTapRun'
+alias lingr='vim -c LingrLaunch'
+
+if [ -x "$(which vim)" ]; then
+    alias vi='vim'
+fi
+
+if [ -x "$(which tscreen)" ]; then
+    alias screen='tscreen'
+fi
+alias sc=screen
+
+if [ -x "$(which perldocjp)" ]; then
+    alias perldoc='perldocjp'
+fi
+
+if [ "$MY_CURRENT_ENV" = "cygwin" ]; then
+    alias less='less -r'
+    alias ls='ls --color=tty --show-control-chars'
+else
+    alias ls='ls --color=tty'
+fi
+
+if [ -x "/usr/local/share/vim/vim72/macros/less.sh" ]; then
+    alias vless="/usr/local/share/vim/vim72/macros/less.sh"
+elif [ -x "/usr/share/vim/vim72/macros/less.sh" ]; then
+    alias vless="/usr/share/vim/vim72/macros/less.sh"
+fi

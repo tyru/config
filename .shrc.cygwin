@@ -1,0 +1,22 @@
+
+### vim:set ft=sh: ###
+
+
+function wwhich() {
+    if [ $# != 0 ]; then
+        cygpath -w -a $(which $1)
+    fi
+}
+
+function wpwd() {
+    /usr/bin/cygpath -w -a .
+}
+
+# function screen() {
+#     local conf="$HOME/.screenrc.cygwin"
+#     if [ -f "$conf" ]; then
+#         command screen -c "$conf" "$@"
+#     else
+#         command screen "$@"
+#     fi
+# }

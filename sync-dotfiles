@@ -40,6 +40,9 @@ my @files = qw(
     .module-starter
     .w3m/keymap
     .Xmodmap
+    .shrc.common
+    .shrc.cygwin
+    .env.common
 );
 my %cygwin_files = (
     '.vimperator/plugin' => 'vimperator/plugin',

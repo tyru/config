@@ -1,5 +1,8 @@
 # vim:set fdm=marker:
 
+MY_CURRENT_ENV="$(perl -e 'print $^O')"
+source ~/.shrc.common
+
 # exec zsh? {{{
 # NOTE: "$PS1" to confirm user to login in interactively.
 # (scp, sftp will freeze when login)
@@ -15,52 +18,6 @@ shopt -s cdspell
 set bell-style visible
 # }}}
 
-### alias ### {{{
-alias df='df -h'
-alias diff='diff -u'
-alias du='du -h'
-alias free='free -m -l -t'
-alias j='jobs'
-alias jobs='jobs -l'
-alias l.='ls -d .*'
-alias l='ll'
-alias la='ls -A'
-alias less='less -r'
-alias ll='ls -lh'
-alias whi='which'
-alias whe='where'
-alias go='gopen'
-alias vprove='vim -c SimpleTapRun'
-alias lingr='vim -c LingrLaunch'
-
-if [ -x "$(which vim)" ]; then
-    alias vi='vim'
-fi
-
-if [ -x "$(which tscreen)" ]; then
-    alias screen='tscreen'
-fi
-alias sc=screen
-
-if [ -x "$(which perldocjp)" ]; then
-    alias perldoc='perldocjp'
-fi
-
-CURRENT_ENV="$(perl -e 'print $^O')"
-if [ "$CURRENT_ENV" = "cygwin" ]; then
-    alias less='less -r'
-    alias ls='ls --color=tty --show-control-chars'
-else
-    alias ls='ls --color=tty'
-fi
-
-if [ -x "/usr/local/share/vim/vim72/macros/less.sh" ]; then
-    alias vless="/usr/local/share/vim/vim72/macros/less.sh"
-elif [ -x "/usr/share/vim/vim72/macros/less.sh" ]; then
-    alias vless="/usr/share/vim/vim72/macros/less.sh"
-fi
-# }}}
-
 ### function ### {{{
 cd () {
     command cd $1
@@ -69,23 +26,8 @@ cd () {
 # }}}
 
 ### cygwin ### {{{
-if [ "$CURRENT_ENV" = 'cygwin' ]; then
-    function wwhich() {
-        if [ $# != 0 ]; then
-            cygpath -w -a $(which $1)
-        fi
-    }
-    function wpwd() {
-        /usr/bin/cygpath -w -a .
-    }
-    function screen() {
-        local conf="$HOME/.screenrc.cygwin"
-        if [ -f "$conf" ]; then
-            command screen -c "$conf" "$@"
-        else
-            command screen "$@"
-        fi
-    }
+if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then
+    source ~/.shrc.cygwin
 fi
 # }}}
 
@@ -100,7 +42,7 @@ stty stop undef
 
 # `-z "$WINDOW"` means if screen has already started.
 # `! -z "$PS1"` means if zsh has started interactively.
-if [ "$CURRENT_ENV" != "MSWin32" -a -x "$(which screen)" -a -z "$WINDOW" -a ! -z "$PS1" ]; then
+if [ "$MY_CURRENT_ENV" != "MSWin32" -a -x "$(which screen)" -a -z "$WINDOW" -a ! -z "$PS1" ]; then
     screen
 fi
 
