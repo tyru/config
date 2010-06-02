@@ -685,6 +685,9 @@ if exists('$VIM_RTP_REPO_DIR')
     if !executable('git')
         RtpPrune $VIM_RTP_REPO_DIR/gist-vim
     endif
+    if !has('python')
+        RtpPrune $VIM_RTP_REPO_DIR/lingr-vim
+    endif
 else
     call s:warn('Forgot to set $VIM_RTP_REPO_DIR ?')
 endif
