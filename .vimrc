@@ -2374,6 +2374,30 @@ let skk_imdisable_state = -1
 let skk_sticky_key = ';'
 
 let skk_show_candidates_count = 2
+
+
+if 0
+" g:skk_enable_hook test {{{
+" Do not map `<Plug>(skk-toggle-im)`.
+let skk_control_j_key = ''
+
+" `<C-j><C-e>` to enable, `<C-j><C-d>` to disable.
+map! <C-j><C-e> <Plug>(skk-enable-im)
+map! <C-j><C-d> <Nop>
+function! MySkkMap()
+    lunmap <buffer> <C-j>
+    lmap <buffer> <C-j><C-d> <Plug>(skk-disable-im)
+endfunction
+function! HelloWorld()
+    echomsg 'Hello.'
+endfunction
+function! Hogera()
+    echomsg 'hogera'
+endfunction
+let skk_enable_hook = 'MySkkMap,HelloWorld,Hogera'
+" }}}
+endif
+
 " }}}
 " eskk {{{
 " let g:eskk_disable = 1
