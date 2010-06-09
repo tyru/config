@@ -30,3 +30,5 @@ tags-ja
 .vimperator/*/
 !.vimperator/plugin
 !.vimperator/colors
+
+bin/csizeof-bin
