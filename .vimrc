@@ -1581,7 +1581,8 @@ Map [i] -noremap <compl>n <C-x><C-n>
 Map [i] -noremap <compl>p <C-x><C-p>
 
 Map [i] -noremap <compl>] <C-x><C-]>
-" Map [i] -noremap <compl>d <C-x><C-d>
+Map [i] -noremap <compl>d <C-x><C-d>
+Map [i] -noremap <compl>f <C-x><C-f>
 Map [i] -noremap <compl>i <C-x><C-i>
 Map [i] -noremap <compl>k <C-x><C-k>
 Map [i] -noremap <compl>l <C-x><C-l>
