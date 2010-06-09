@@ -21,7 +21,7 @@
 	df = diff
 	dish = diff --cached
 	ds = diff --cached
-	l = log
+	los = log --stat
 	lg = log --graph
 	lp = log -p
 	ls = ls-files
