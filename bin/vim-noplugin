@@ -6,5 +6,5 @@ if [ $# = 0 ]
 then
     $vim_bare
 else
-    $vim_bare "$*"
+    $vim_bare "$@"
 fi
