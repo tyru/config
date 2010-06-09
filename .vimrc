@@ -422,15 +422,17 @@ set pumheight=20
 
 " tags
 if has('path_extra')
-    " find 'tags' rewinding current directory
     set tags+=.;
+    set tags+=tags;
 endif
 set showfulltag
 set notagbsearch
 
 " cscope
-set cscopetag
-set cscopeverbose
+if 0
+    set cscopetag
+    set cscopeverbose
+endif
 
 " virtualedit
 if has('virtualedit')
