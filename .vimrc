@@ -2522,6 +2522,8 @@ let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\c\'
 let changelog_username = "tyru"
 " }}}
 " Gtags {{{
+if 0
+" <C-]> for gtags. {{{
 function! s:JumpTags() "{{{
     if expand('%') == '' | return | endif
 
@@ -2546,9 +2548,9 @@ function! s:JumpTags() "{{{
         execute "normal! \<C-]>"
     endif
 endfunction "}}}
-
-Map [n] -noremap g<C-i>    :Gtags -f %<CR>
-Map [n] -noremap <C-]>     :call <SID>JumpTags()<CR>
+Map [n] -noremap <C-]>     :<C-u>call <SID>JumpTags()<CR>
+" }}}
+endif
 " }}}
 " vimshell {{{
 AlterCommand vsh[ell] VimShell
