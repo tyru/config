@@ -888,6 +888,8 @@ Map [n] -noremap g; ~
 Map [n] -noremap    + <C-a>
 Map [n] -noremap -- - <C-x>
 
+Map [n] -noremap <excmd>sp :<C-u>Split<CR>
+
 " TODO: Smart 'zd': Delete empty line {{{
 " }}}
 " TODO: Smart '{', '}': Treat folds as one non-empty line. {{{
