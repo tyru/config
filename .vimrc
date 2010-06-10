@@ -545,7 +545,8 @@ function! s:define_colorscheme() "{{{
         colorscheme koehler
     endif
 endfunction "}}}
-MyAutocmd VimEnter * call s:define_colorscheme()
+command! MyColorScheme call s:define_colorscheme()
+MyAutocmd VimEnter * MyColorScheme
 
 " open on read-only if swap exists
 MyAutocmd SwapExists * let v:swapchoice = 'o'
