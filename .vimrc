@@ -2269,6 +2269,26 @@ function! s:grep(args)
     execute 'vimgrep' '/' . a:args[0] . '/j' target
 endfunction
 " }}}
+" :WhichEdit {{{
+AlterCommand we WhichEdit
+command!
+\   -nargs=1 -complete=customlist,s:complete_bin_programs
+\   WhichEdit
+\   call s:cmd_which_edit(<f-args>)
+
+function! s:complete_bin_programs(arg_lead, cmd_line, cursor_pos) "{{{
+    return []    " TODO
+endfunction "}}}
+
+function! s:cmd_which_edit(arg) "{{{
+    if !exists('*Which')
+        echoerr "You have not installed which.vim yet. (script_id is 139)"
+        return
+    endif
+    execute 'edit' Which(a:arg)
+endfunction "}}}
+
+" }}}
 " }}}
 " For Plugins {{{
 " CommentAnyWay {{{
