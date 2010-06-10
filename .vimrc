@@ -2269,7 +2269,7 @@ com! SelectColorScheme   :cal s:SelectColorScheme()
 AlterCommand gr[ep] Grep
 
 command!
-\   -bar -complete=file -nargs=+
+\   -nargs=+
 \   Grep
 \   call s:grep([<f-args>])
 
