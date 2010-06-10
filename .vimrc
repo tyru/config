@@ -2076,11 +2076,11 @@ function! s:tr_replace(lnum_from, lnum_to, pat1, str1, pat2, str2) "{{{
     " TODO
 endfunction "}}}
 " }}}
-" AllBufMaps {{{
+" AllMaps {{{
 command!
 \   -nargs=*
-\   AllBufMaps
-\   map <buffer> <args> | map! <buffer> <args> | lmap <buffer> <args>
+\   AllMaps
+\   map <args> | map! <args> | lmap <args>
 " }}}
 " Expand {{{
 command!
