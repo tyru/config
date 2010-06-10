@@ -2756,6 +2756,10 @@ let g:prettyprint_echo_type = 'buffer'
 let g:prettyprint_echomsg_highlight = 'Debug'
 let g:prettyprint_echo_buffer_new = 'New'
 " }}}
+" fencview {{{
+let g:fencview_auto_patterns = '*'
+let g:fencview_show_progressbar = 0
+" }}}
 " }}}
 " Backup {{{
 " TODO Rotate backup files like writebackupversioncontrol.vim
