@@ -136,3 +136,6 @@
 [submodule "ext/lingr-vim"]
 	path = ext/lingr-vim
 	url = git://github.com/tsukkee/lingr-vim.git
+[submodule "ext/neocomplcache"]
+	path = ext/neocomplcache
+	url = git://github.com/Shougo/neocomplcache.git
