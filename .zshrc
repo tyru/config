@@ -211,6 +211,16 @@ if [ -f "$HOME/.zsh/auto-fu.zsh" ]; then
     zle -N zle-line-init
 fi
 # >>>>
+# local::lib <<<<
+function locallib () {
+    local INSTALL_BASE
+    INSTALL_BASE=$1
+    if [ -d $INSTALL_BASE ]; then
+        eval $(use-locallib $INSTALL_BASE)
+    fi
+}
+
+# >>>>
 # >>>>
 ### cygwin ### <<<<
 if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then

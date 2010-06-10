@@ -4,20 +4,17 @@
 use strict;
 use warnings;
 use Pod::Usage;
+
 use Config;
 use File::Spec;
 
-my $ENV_LOCAL = File::Spec->catfile($ENV{HOME}, '.env.local');
-
-
-
-my $install_base = $ARGV[0] or pod2usage(-1);
-die "$install_base: $!" unless -d $install_base;
+my $install_base = $ARGV[0]
+    or pod2usage(-1);
 
 $install_base = File::Spec->rel2abs($install_base);
 
-# my $path     = $ENV{PATH};
-# my $perl5lib = $ENV{PERL5LIB};
+my $path     = $ENV{PATH};
+my $perl5lib = $ENV{PERL5LIB};
 
 push @INC, File::Spec->catdir($install_base, 'lib', 'perl5');
 
@@ -69,7 +66,6 @@ if (my $old_base = $ENV{PERL_MM_OPT}) {
 while (my ($k, $v) = each %env) {
     print qq[export $k="$v"\n];
 }
-# print qq[source "$ENV_LOCAL"] if -f $ENV_LOCAL;
 
 =head1 NAME
 

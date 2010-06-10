@@ -36,6 +36,16 @@ fi
 # http://d.hatena.ne.jp/hogem/20090411/1239451878
 stty stop undef
 # }}}
+# local::lib {{{
+function locallib () {
+    local INSTALL_BASE
+    INSTALL_BASE=$1
+    if [ -d $INSTALL_BASE ]; then
+        eval $(use-locallib $INSTALL_BASE)
+    fi
+}
+
+# }}}
 # }}}
 
 # start screen {{{
