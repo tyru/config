@@ -2668,7 +2668,10 @@ Map [nvo] <Space>r <Plug>(quickrun)
 
 if !exists('s:loaded_vimrc')
     let g:quickrun_config = {}
-    let g:quickrun_config.markdown = {'command' : 'pandoc'}
+    let g:quickrun_config['*'] = {'split': printf('{%s() ? "vertical" : ""}', s:SNR('vertically'))}
+    if executable('pandoc')
+        let g:quickrun_config['markdown'] = {'command' : 'pandoc'}
+    endif
 endif
 " }}}
 " submode {{{
