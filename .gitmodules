@@ -139,3 +139,6 @@
 [submodule "ext/neocomplcache"]
 	path = ext/neocomplcache
 	url = git://github.com/Shougo/neocomplcache.git
+[submodule "ext/fencview.vim"]
+	path = ext/fencview.vim
+	url = git://github.com/tyru/fencview.vim.git
