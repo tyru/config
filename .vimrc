@@ -2247,11 +2247,11 @@ fun! s:SelectColorScheme()
   30vnew
 
   let files = split(globpath(&rtp, 'colors/*.vim'), "\n")
-  for idx in range(0, len(files) - 1)
-    let file = files[idx]
-    let name = matchstr(file , '\w\+\(\.vim\)\@=')
-    call setline(idx + 1, name)
-  endfor
+  let regex = '\w\+\(\.vim\)\@='
+  let files = map(files, 'matchstr(v:val, regex)')
+  let files = sort(files)
+  let files = s:uniq(files)
+  call setline(1, files)
 
   file ColorSchemeSelector
   setlocal bufhidden=wipe
