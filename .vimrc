@@ -1568,6 +1568,15 @@ DefMap [i] -noremap -expr bs-ctrl-] getline('.')[col('.') - 2]    ==# "\<C-]>" ?
 DefMap [c] -noremap -expr bs-ctrl-] getcmdline()[getcmdpos() - 2] ==# "\<C-]>" ? "\<BS>" : ''
 Map   [ic]                <C-]>     <C-]><bs-ctrl-]>
 " }}}
+" <Esc> to execute current pending mapping {{{
+" Because I don't use `set timeout`,
+" I need the key to execute pending mapping.
+
+Map [o] -noremap <Esc> <Nop>
+
+" TODO I need the key to execute pending mapping in mapmode-ic...
+
+" }}}
 
 " [compl] {{{
 call s:map_prefix_key('i', 'compl', '<Tab>')
