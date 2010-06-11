@@ -880,16 +880,21 @@ Map [vo] -noremap ir i]
 " }}}
 " }}}
 " nmap {{{
-" open only current line's fold.
-Map [n] -noremap z<Space> zMzvzz
 
-" folding mappings easy to remember.
-Map [n] -noremap zl zo
-Map [n] -noremap zh zc
+call s:map_prefix_key('nvo', 'fold', 'z')
 
-Map [n] -noremap d<Space> 0d$
-Map [n] -noremap y<Space> 0y$
-Map [n] -noremap c<Space> 0c$
+" Open only current line's fold.
+Map [n] -noremap <fold><Space> zMzvzz
+
+" Folding mappings easy to remember.
+Map [n] -noremap <fold>l zo
+Map [n] -noremap <fold>h zc
+
+" Operate on line without newline.
+DefMacroMap [n] line-w/o-newline <Space>
+Map [n] -noremap d<line-w/o-newline> 0d$
+Map [n] -noremap y<line-w/o-newline> 0y$
+Map [n] -noremap c<line-w/o-newline> 0c$
 
 " http://vim-users.jp/2009/08/hack57/
 Map [n] -noremap d<CR> :<C-u>call append(expand('.'), '')<CR>j
@@ -1337,13 +1342,9 @@ endfunction "}}}
 MyAutocmd FileType netrw call s:filetype_netrw()
 " }}}
 " 'Y' to yank till the end of line. {{{
-
-DefMap [n] -noremap yank-$ y$
-
-Map [n] Y             <yank-$>
-Map [n] <Leader>Y     <register-+><yank-$>
-Map [n] <comma>Y <register-*><yank-$>
-
+Map [n] Y             y$
+Map [n] ;Y   "+y$
+Map [n] ,Y      "*y$
 " }}}
 " Back to col '$' when current col is right of col '$'. {{{
 if has('virtualedit') && s:has_one_of(['all', 'onemore'], split(&virtualedit, ','))
