@@ -142,3 +142,6 @@
 [submodule "ext/fencview.vim"]
 	path = ext/fencview.vim
 	url = git://github.com/tyru/fencview.vim.git
+[submodule "ext/vim-fakeclip"]
+	path = ext/vim-fakeclip
+	url = git://github.com/tyru/vim-fakeclip.git
