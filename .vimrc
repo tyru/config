@@ -2322,6 +2322,13 @@ function! s:cmd_which_edit(arg) "{{{
 endfunction "}}}
 
 " }}}
+" :BacktickEdit {{{
+AlterCommand be BacktickEdit
+command!
+\   -nargs=+
+\   BacktickEdit
+\   edit `<args>`
+" }}}
 " }}}
 " For Plugins {{{
 " CommentAnyWay {{{
