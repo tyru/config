@@ -1286,9 +1286,32 @@ function! s:move_window_into_tab_page(target_tabpagenr) "{{{
 endfunction "}}}
 
 " move current buffer into a new tab.
-Map [n] -noremap <excmd>mt :<C-u>call <SID>move_window_into_tab_page(0)<Cr>
+Map [n] -noremap <excmd>st :<C-u>call <SID>move_window_into_tab_page(0)<Cr>
 " }}}
-" TODO: Merge tabpage into window {{{
+" Merge tabpage into a tab {{{
+function! s:exists_tab(tabpagenr) "{{{
+    return 1 <= a:tabpagenr && a:tabpagenr <= tabpagenr('$')
+endfunction "}}}
+
+function! s:merge_tab_into_tab(from_tabpagenr, to_tabpagenr) "{{{
+    if !s:exists_tab(a:from_tabpagenr)
+    \   || !s:exists_tab(a:to_tabpagenr)
+    \   || a:from_tabpagenr == a:to_tabpagenr
+        return
+    endif
+
+    execute 'tabnext' a:to_tabpagenr
+    for bufnr in tabpagebuflist(a:from_tabpagenr)
+        split
+        execute bufnr 'buffer'
+    endfor
+
+    execute 'tabclose' a:from_tabpagenr
+endfunction "}}}
+
+nnoremap <Space>mh :<C-u>call <SID>merge_tab_into_tab(tabpagenr(), tabpagenr() - 1)<CR>
+nnoremap <Space>ml :<C-u>call <SID>merge_tab_into_tab(tabpagenr(), tabpagenr() + 1)<CR>
+nnoremap <Space>m  :<C-u>call <SID>merge_tab_into_tab(tabpagenr(), input('tab number:'))<CR>
 " }}}
 " Netrw - vimperator-like keymappings {{{
 function! s:filetype_netrw() "{{{
