@@ -774,17 +774,9 @@ call altercmd#load()
 
 
 
-" Define frequently used mapping sequences.
-DefMap [nvo] -noremap clipboard "+
-DefMap [nvo] -noremap primary   "*
-DefMap [nvo] -noremap blackhole "_
-DefMap [nvo] -noremap delete-char x
-DefMap [nvo] -noremap delete* d
-DefMap [nvo] -noremap yank y
+" Set up general prefix keys. {{{
 
-" Set up prefix keys. {{{
-
-" [orig]
+" <orig>
 call s:map_prefix_key('nvo', 'orig', 'q')
 call s:map_prefix_key('ic' , 'orig', '<C-g><C-o>')
 call s:map_orig_key('n', 'q')
@@ -792,30 +784,28 @@ call s:map_orig_key('n', 'q')
 call s:map_leader(';')
 " <LocalLeader>
 call s:map_localleader('\')
-" [comma]
-call s:map_prefix_key('nvo', 'comma', ',')
-" [excmd]
+" <excmd>
 call s:map_prefix_key('nvo', 'excmd', '<Space>')
+" <operator>
+call s:map_prefix_key('nvo', 'operator', ';')
 " }}}
 
 " map {{{
 " operator {{{
 
-SetPragmas ignore-spaces "{{{
+" Copy to clipboard, primary.
+Map [nvo] <operator>y     "+y
+Map [nvo] <operator>gy    "*y
+Map [nvo] <operator>d     "+d
+Map [nvo] <operator>gd    "*d
 
-" paste to clipboard
-Map [nvo] <Leader>y     <clipboard> <yank>
-Map [nvo] <comma>y      <primary>   <yank>
-Map [nvo] <Leader>d     <clipboard> <delete*>
-Map [nvo] <comma>d      <primary>   <delete*>
 
-" do not destroy noname register.
-Map [nvo] x        <blackhole> <delete-char>
+" Do not destroy noname register.
+Map [nvo] -noremap x "_x
 
-UnsetPragmas ignore-spaces    " end.
-" }}}
 
-Map [nvo] -noremap <Leader>e =
+Map [nvo] -noremap <operator>e =
+
 
 " operator-adjust {{{
 call operator#user#define('adjust', 'Op_adjust_window_height')
@@ -824,38 +814,38 @@ function! Op_adjust_window_height(motion_wiseness)
   normal! `[zt
 endfunction
 
-Map [nvo] <Leader>adj <Plug>(operator-adjust)
+Map [nvo] <operator>adj <Plug>(operator-adjust)
 " }}}
 " operator-sort {{{
 call operator#user#define_ex_command('sort', 'sort')
-Map [nvo] <Leader>s <Plug>(operator-sort)
+Map [nvo] <operator>s <Plug>(operator-sort)
 " }}}
 " operator-retab {{{
 call operator#user#define_ex_command('retab', 'retab')
-Map [nvo] <Leader>t <Plug>(operator-retab)
+Map [nvo] <operator>t <Plug>(operator-retab)
 " }}}
 " operator-join {{{
 call operator#user#define_ex_command('join', 'join')
-Map [nvo] <Leader>j <Plug>(operator-join)
+Map [nvo] <operator>j <Plug>(operator-join)
 " }}}
 " operator-uniq {{{
 call operator#user#define_ex_command('uniq', 'sort u')
-Map [nvo] <Leader>u <Plug>(operator-uniq)
+Map [nvo] <operator>u <Plug>(operator-uniq)
 " }}}
 " operator-narrow {{{
 call operator#user#define_ex_command('narrow', 'Narrow')
 
-Map [nvo]          <Leader>na <Plug>(operator-narrow)
-Map [nvo] -noremap <Leader>nw :<C-u>Widen<CR>
+Map [nvo]          <operator>na <Plug>(operator-narrow)
+Map [nvo] -noremap <operator>nw :<C-u>Widen<CR>
 
 let g:narrow_allow_overridingp = 1
 " }}}
 " operator-replace {{{
-Map [nvo] <Leader>r  <Plug>(operator-replace)
+Map [nvo] <operator>r  <Plug>(operator-replace)
 " }}}
 " operator-camelize {{{
-Map [nvo] <Leader>c <Plug>(operator-camelize)
-Map [nvo] <Leader>C <Plug>(operator-decamelize)
+Map [nvo] <operator>c <Plug>(operator-camelize)
+Map [nvo] <operator>C <Plug>(operator-decamelize)
 " }}}
 " }}}
 " motion/textobj {{{
