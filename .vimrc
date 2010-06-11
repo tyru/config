@@ -274,6 +274,20 @@ function! s:expr_with_options(cmd, opt) "{{{
     endfor
     return a:cmd
 endfunction "}}}
+function! s:excmd_with_options_restore(excmd, opt) "{{{
+    let save = {}
+    for [name, value] in items(a:opt)
+        let save[name] = getbufvar('%', name)
+        call setbufvar('%', name, value)
+    endfor
+    try
+        execute a:excmd
+    finally
+        for [name, value] in items(save)
+            call setbufvar('%', name, value)
+        endfor
+    endtry
+endfunction "}}}
 
 
 " Parsing
@@ -2236,7 +2250,10 @@ command!
 command!
 \   -bar -bang -nargs=* -complete=help
 \   Help
-\   call s:split_nicely_with(['help', <f-args>], <bang>0)
+\   call s:excmd_with_options_restore(
+\       'call s:split_nicely_with(["help", <f-args>], <bang>0)',
+\       {'&splitright': 1, '&splitbelow': 0}
+\   )
 
 command!
 \   -bar -bang -nargs=* -complete=file
