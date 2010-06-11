@@ -268,7 +268,7 @@ function! s:map_orig_key(modes, key) "{{{
     " Map [<eval a:modes>] -noremap <orig><eval a:key> <eval a:key>
 endfunction "}}}
 
-function! s:with_options(cmd, opt) "{{{
+function! s:expr_with_options(cmd, opt) "{{{
     for [name, value] in items(a:opt)
         call setbufvar('%', name, value)
     endfor
@@ -1509,16 +1509,16 @@ Map [v] -noremap g, <
 Map [v] -noremap g. >
 " }}}
 " Mappings with option value. {{{
-Map [n] -noremap -expr / <SID>with_options('/', {'&hlsearch': 1})
-Map [n] -noremap -expr ? <SID>with_options('?', {'&hlsearch': 1})
+Map [n] -noremap -expr / <SID>expr_with_options('/', {'&hlsearch': 1})
+Map [n] -noremap -expr ? <SID>expr_with_options('?', {'&hlsearch': 1})
 
-Map [n] -noremap -expr * <SID>with_options('*', {'&hlsearch': 1, '&ignorecase': 0})
-Map [n] -noremap -expr # <SID>with_options('#', {'&hlsearch': 1, '&ignorecase': 0})
+Map [n] -noremap -expr * <SID>expr_with_options('*', {'&hlsearch': 1, '&ignorecase': 0})
+Map [n] -noremap -expr # <SID>expr_with_options('#', {'&hlsearch': 1, '&ignorecase': 0})
 
-Map [nv] -noremap -expr : <SID>with_options(':', {'&ignorecase': 1})
+Map [nv] -noremap -expr : <SID>expr_with_options(':', {'&ignorecase': 1})
 
-Map [n] -noremap -expr gd <SID>with_options('gd', {'&hlsearch': 1})
-Map [n] -noremap -expr gD <SID>with_options('gD', {'&hlsearch': 1})
+Map [n] -noremap -expr gd <SID>expr_with_options('gd', {'&hlsearch': 1})
+Map [n] -noremap -expr gD <SID>expr_with_options('gD', {'&hlsearch': 1})
 " }}}
 " Emacs like kill-line. {{{
 Map [i] -noremap -expr <C-k> "\<C-g>u".(col('.') == col('$') ? '<C-o>gJ' : '<C-o>D')
