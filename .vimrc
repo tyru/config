@@ -1676,6 +1676,8 @@ if exists('&ambiwidth')
     set ambiwidth=double
 endif
 
+call s:map_prefix_key('nvo', 'encoding', ',')
+
 " set enc=... {{{
 function! ChangeEncoding()
     if expand('%') == ''
@@ -1701,8 +1703,7 @@ function! ChangeEncoding()
     endif
 endfunction
 
-" FIXME More rememberable keymapping. And <comma>t for vimtemplate.
-Map [n] -noremap <comma>ta     :call ChangeEncoding()<CR>
+Map [n] -noremap <encoding>ta     :call ChangeEncoding()<CR>
 " }}}
 " set fenc=... {{{
 function! ChangeFileEncoding()
@@ -1730,8 +1731,7 @@ function! ChangeFileEncoding()
     echomsg printf("changing file encoding to '%s'.", enc)
 endfunction
 
-" FIXME More rememberable keymapping. And <comma>t for vimtemplate.
-Map [n] -noremap <comma>ts    :<C-u>call ChangeFileEncoding()<CR>
+Map [n] -noremap <encoding>ts    :<C-u>call ChangeFileEncoding()<CR>
 " }}}
 " set ff=... {{{
 function! ChangeNL()
@@ -1746,8 +1746,7 @@ function! ChangeNL()
     endif
 endfunction
 
-" FIXME More rememberable keymapping. And <comma>t for vimtemplate.
-Map [n] -noremap <comma>td    :<C-u>call ChangeNL()<CR>
+Map [n] -noremap <encoding>td    :<C-u>call ChangeNL()<CR>
 " }}}
 " }}}
 " FileType {{{
@@ -2221,8 +2220,8 @@ endfunction "}}}
 " TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
 AlterCommand cd  TabpageCD
 
-Map [n] -noremap <comma>cd  :<C-u>TabpageCD %:p:h<CR>
-Map [n] -noremap <Leader>cd      :<C-u>lcd %:p:h<CR>
+Map [n] -noremap ,cd       :<C-u>TabpageCD %:p:h<CR>
+Map [n] -noremap <Space>cd :<C-u>lcd %:p:h<CR>
 
 command! -complete=dir -nargs=? TabpageCD
 \   execute 'cd' fnameescape(expand(<q-args>))
@@ -2349,7 +2348,6 @@ command!
 " }}}
 " For Plugins {{{
 " CommentAnyWay {{{
-" let ca_prefix  = '<Leader>c'
 let ca_verbose = 1    " debug
 
 let ca_filetype_table = {
@@ -2365,8 +2363,8 @@ let ca_filetype_table = {
 " nextfile {{{
 let g:nf_map_next     = ''
 let g:nf_map_previous = ''
-Map [n] <comma>n <Plug>(nextfile-next)
-Map [n] <comma>p <Plug>(nextfile-previous)
+Map [n] ,n <Plug>(nextfile-next)
+Map [n] ,p <Plug>(nextfile-previous)
 
 let g:nf_include_dotfiles = 1    " don't skip dotfiles
 let g:nf_loop_files = 1    " loop at the end of file
@@ -2411,7 +2409,7 @@ if !g:SD_disable
 endif
 " }}}
 " DumbBuf {{{
-let dumbbuf_hotkey = '<Leader>b'
+let dumbbuf_hotkey = 'gb'
 " たまにQuickBuf.vimの名残で<Esc>を押してしまう
 let dumbbuf_mappings = {
     \'n': {
