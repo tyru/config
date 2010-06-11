@@ -1318,9 +1318,9 @@ function! s:merge_tab_into_tab(from_tabpagenr, to_tabpagenr) "{{{
     execute 'tabclose' a:from_tabpagenr
 endfunction "}}}
 
-nnoremap <Space>mh :<C-u>call <SID>merge_tab_into_tab(tabpagenr(), tabpagenr() - 1)<CR>
-nnoremap <Space>ml :<C-u>call <SID>merge_tab_into_tab(tabpagenr(), tabpagenr() + 1)<CR>
-nnoremap <Space>m  :<C-u>call <SID>merge_tab_into_tab(tabpagenr(), input('tab number:'))<CR>
+Map [n] -noremap <Space>mh :<C-u>call <SID>merge_tab_into_tab(tabpagenr(), tabpagenr() - 1)<CR>
+Map [n] -noremap <Space>ml :<C-u>call <SID>merge_tab_into_tab(tabpagenr(), tabpagenr() + 1)<CR>
+Map [n] -noremap <Space>m  :<C-u>call <SID>merge_tab_into_tab(tabpagenr(), input('tab number:'))<CR>
 " }}}
 " Netrw - vimperator-like keymappings {{{
 function! s:filetype_netrw() "{{{
