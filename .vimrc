@@ -1507,12 +1507,6 @@ AlterCommand qw     wq
 AlterCommand amp    map
 " }}}
 
-" Indent/Dedent {{{
-Map [n] -noremap g, <<
-Map [n] -noremap g. >>
-Map [v] -noremap g, <
-Map [v] -noremap g. >
-" }}}
 " Mappings with option value. {{{
 Map [n] -noremap -expr / <SID>expr_with_options('/', {'&hlsearch': 1})
 Map [n] -noremap -expr ? <SID>expr_with_options('?', {'&hlsearch': 1})
