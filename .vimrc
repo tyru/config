@@ -274,20 +274,6 @@ function! s:expr_with_options(cmd, opt) "{{{
     endfor
     return a:cmd
 endfunction "}}}
-function! s:excmd_with_options_restore(excmd, opt) "{{{
-    let save = {}
-    for [name, value] in items(a:opt)
-        let save[name] = getbufvar('%', name)
-        call setbufvar('%', name, value)
-    endfor
-    try
-        execute a:excmd
-    finally
-        for [name, value] in items(save)
-            call setbufvar('%', name, value)
-        endfor
-    endtry
-endfunction "}}}
 
 
 " Parsing
@@ -2232,17 +2218,24 @@ command!
 \   call s:split_nicely_with(['split', <f-args>], <bang>0)
 
 command!
-\   -bar -bang -nargs=* -complete=help
-\   Help
-\   call s:excmd_with_options_restore(
-\       'call s:split_nicely_with(["help", <f-args>], <bang>0)',
-\       {'&splitright': 1, '&splitbelow': 0}
-\   )
-
-command!
 \   -bar -bang -nargs=* -complete=file
 \   New
 \   call s:split_nicely_with(['new', <f-args>], <bang>0)
+
+command!
+\   -bar -bang -nargs=* -complete=help
+\   Help
+\   call s:cmd_Help(<f-args>, <bang>0)
+
+function! s:cmd_Help(f_args, banged) "{{{
+    let save = {'splitright': &splitright, 'splitbelow': &splitbelow}
+    let [&splitright, &splitbelow] = [1, 0]
+    try
+        call s:split_nicely_with(["help", a:f_args], a:banged)
+    finally
+        let [&splitright, &splitbelow] = [save.splitright, save.splitbelow]
+    endtry
+endfunction "}}}
 
 function! s:vertically()
     return 80*2 * 15/16 <= winwidth(0)  " FIXME: threshold customization
