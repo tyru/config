@@ -1318,9 +1318,9 @@ endfunction "}}}
 MyAutocmd FileType netrw call s:filetype_netrw()
 " }}}
 " 'Y' to yank till the end of line. {{{
-Map [n] Y             y$
+Map [n] Y    y$
 Map [n] ;Y   "+y$
-Map [n] ,Y      "*y$
+Map [n] ,Y   "*y$
 " }}}
 " Back to col '$' when current col is right of col '$'. {{{
 if has('virtualedit') && s:has_one_of(['all', 'onemore'], split(&virtualedit, ','))
