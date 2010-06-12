@@ -2428,7 +2428,7 @@ let skk_manual_save_jisyo_keys = ''
 let skk_egg_like_newline = 1
 let skk_auto_save_jisyo = 1
 let skk_imdisable_state = -1
-" let skk_keep_state = 1
+let skk_keep_state = 1
 let skk_sticky_key = ';'
 
 let skk_show_candidates_count = 2
@@ -2467,7 +2467,7 @@ endif
 
 let g:eskk_egg_like_newline = 1
 
-let g:eskk_debug = 1
+let g:eskk_debug = 0
 let g:eskk_debug_wait_ms = 0
 let g:eskk_debug_file = '~/eskk-debug.log'
 if has('profile')
@@ -2476,9 +2476,21 @@ endif
 
 let g:eskk_keep_state = 1
 
-" let t = eskk#table#get_definition('rom_to_hira')
-" let t['a'].map_to = '亞'
-" unlet t
+if 0
+    let t = eskk#table#get_definition('rom_to_hira')
+    let t['a'].map_to = '亞'
+    unlet t
+endif
+if 1
+    command! EskkDumpBuftable call eskk#get_buftable().dump_print()
+endif
+if 0
+    EskkMap lhs rhs
+    EskkMap <silent> lhs2 rhs
+    EskkMap <unique> lhs2 foo
+    EskkMap <expr> lhs3 {'foo': 'hoge'}.foo
+    EskkMap <noremap> lhs4 rhs
+endif
 
 " }}}
 " skk.vim && eskk.vim {{{
