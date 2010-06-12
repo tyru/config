@@ -2693,6 +2693,10 @@ function! s:vimshell_settings() "{{{
 
     " Misc.
     setlocal backspace-=eol
+
+    NeoComplCacheEnable
+    autocmd BufEnter <buffer> NeoComplCacheEnable
+    autocmd BufLeave <buffer> NeoComplCacheDisable
 endfunction "}}}
 " }}}
 " quickrun {{{
