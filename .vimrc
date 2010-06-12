@@ -277,11 +277,11 @@ endfunction "}}}
 
 
 " Parsing
-function! s:skip_spaces(q_args) "{{{
+function! s:skip_white(q_args) "{{{
     return substitute(a:q_args, '^\s*', '', '')
 endfunction "}}}
 function! s:parse_one_arg_from_q_args(q_args) "{{{
-    let arg = s:skip_spaces(a:q_args)
+    let arg = s:skip_white(a:q_args)
     let head = matchstr(arg, '^.\{-}[^\\]\ze\([ \t]\|$\)')
     let rest = strpart(arg, strlen(head))
     return [head, rest]
@@ -291,7 +291,7 @@ function! s:eat_n_args_from_q_args(q_args, n) "{{{
     for _ in range(1, a:n)
         let rest = s:parse_one_arg_from_q_args(rest)[1]
     endfor
-    let rest = s:skip_spaces(rest)    " for next arguments.
+    let rest = s:skip_white(rest)    " for next arguments.
     return rest
 endfunction "}}}
 
