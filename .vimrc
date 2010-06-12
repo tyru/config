@@ -478,7 +478,7 @@ let &guitablabel = &tabline
 " statusline
 set laststatus=2
 let &statusline = '[%t] [%{&ft}] [%{&fenc},%{&ff}] %( [%M%R%H%W]%)'
-" let &statusline .= '%( [%{eskk#get_mode()}])'
+let &statusline .= '%( %{eskk#is_enabled()?eskk#get_stl():SkkGetModeStr()}%)'
 
 " gui
 set guioptions=aegitrhpF
