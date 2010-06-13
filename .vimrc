@@ -2225,13 +2225,13 @@ command!
 command!
 \   -bar -bang -nargs=* -complete=help
 \   Help
-\   call s:cmd_Help(<f-args>, <bang>0)
+\   call s:cmd_Help(['help', <f-args>], <bang>0)
 
 function! s:cmd_Help(f_args, banged) "{{{
     let save = {'splitright': &splitright, 'splitbelow': &splitbelow}
     let [&splitright, &splitbelow] = [1, 0]
     try
-        call s:split_nicely_with(["help", a:f_args], a:banged)
+        call s:split_nicely_with(a:f_args, a:banged)
     finally
         let [&splitright, &splitbelow] = [save.splitright, save.splitbelow]
     endtry
