@@ -2458,7 +2458,6 @@ endif
 
 " }}}
 " eskk {{{
-" let g:eskk_disable = 1
 
 if !exists('s:loaded_vimrc')
     let g:eskk_dictionary = '~/.skk-jisyo'
@@ -2466,15 +2465,17 @@ if !exists('s:loaded_vimrc')
 endif
 
 let g:eskk_egg_like_newline = 1
+let g:eskk_keep_state = 1
 
-let g:eskk_debug = 0
+
+
+" let g:eskk_disable = 1
+let g:eskk_debug = 1
 let g:eskk_debug_wait_ms = 0
 let g:eskk_debug_file = '~/eskk-debug.log'
 if has('profile')
     let g:eskk_debug_profile = 1
 endif
-
-let g:eskk_keep_state = 1
 
 if 0
     let t = eskk#table#get_definition('rom_to_hira')
@@ -2486,10 +2487,10 @@ if 1
 endif
 if 0
     EskkMap lhs rhs
-    EskkMap <silent> lhs2 rhs
-    EskkMap <unique> lhs2 foo
-    EskkMap <expr> lhs3 {'foo': 'hoge'}.foo
-    EskkMap <noremap> lhs4 rhs
+    EskkMap -silent lhs2 rhs
+    EskkMap -unique lhs2 foo
+    EskkMap -expr lhs3 {'foo': 'hoge'}.foo
+    EskkMap -noremap lhs4 rhs
 endif
 
 " }}}
