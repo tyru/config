@@ -2237,12 +2237,12 @@ function! s:cmd_Help(f_args, banged) "{{{
     endtry
 endfunction "}}}
 
-function! s:vertically()
+function! s:vertically() "{{{
     return 80*2 * 15/16 <= winwidth(0)  " FIXME: threshold customization
-endfunction
+endfunction "}}}
 
 " Originally from kana's s:split_nicely().
-function! s:split_nicely_with(args, banged)
+function! s:split_nicely_with(args, banged) "{{{
     if empty(a:args)
         return
     endif
@@ -2255,7 +2255,7 @@ function! s:split_nicely_with(args, banged)
     catch
         VimError
     endtry
-endfunction
+endfunction "}}}
 " }}}
 " SelectColorScheme {{{
 " via http://gist.github.com/314439
