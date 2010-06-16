@@ -383,6 +383,9 @@ command!
 
 set all&
 
+if 0    " for debug
+    set msghistlen=9999
+endif
 
 " indent
 set autoindent
