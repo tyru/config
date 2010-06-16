@@ -132,7 +132,7 @@
 	url = git://github.com/tyru/syslib.vim.git
 [submodule "ext/vimshell"]
 	path = ext/vimshell
-	url = git://github.com/tyru/vimshell.git
+	url = git://github.com/Shougo/vimshell.git
 [submodule "ext/lingr-vim"]
 	path = ext/lingr-vim
 	url = git://github.com/tsukkee/lingr-vim.git
@@ -145,3 +145,6 @@
 [submodule "ext/vim-fakeclip"]
 	path = ext/vim-fakeclip
 	url = git://github.com/tyru/vim-fakeclip.git
+[submodule "ext/auto-fu.zsh"]
+	path = ext/auto-fu.zsh
+	url = git://github.com/hchbaw/auto-fu.zsh.git
