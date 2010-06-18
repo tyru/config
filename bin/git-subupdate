@@ -1,0 +1,11 @@
+#!/bin/sh
+
+
+remote='origin'
+
+if [ $# != 0 ]; then
+    remote="$1"
+fi
+
+code="git branch | perl -ne 'print \$1 if /^\* (.*)/'"
+git submodule foreach 'git pull $remote `$code`; git fetch --tags $remote; true'
