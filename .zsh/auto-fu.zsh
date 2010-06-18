@@ -41,11 +41,24 @@
 # :auto-fu:var
 #   postdisplay
 #     An initial indication string for POSTDISPLAY in auto-fu-init.
+#   enable
+#     A list of zle widget names the automatic complete-word and
+#     list-choices to be triggered after its invocation.
+#     Only with ALL in 'enable', the 'disable' style has any effect.
+#     ALL by default.
+#   disable
+#     A list of zle widget names you do *NOT* want the complete-word to be
+#     triggered. Only used if 'enable' contains ALL. For example,
+#       zstyle ':auto-fu:var' enable all
+#       zstyle ':auto-fu:var' disable magic-space
+#     yields; complete-word will not be triggered after pressing the
+#     space-bar, otherwise automatic thing will be taken into account.
 # Configuration example
 # -- >8 --
 # zstyle ':auto-fu:highlight' input bold
 # zstyle ':auto-fu:highlight' completion fg=black,bold
 # zstyle ':auto-fu:var' postdisplay $'\n-azfu-'
+# #zstyle ':auto-fu:var' disable magic-space
 # -- 8< --
 
 # XXX: use with the error correction or _match completer.
@@ -56,15 +69,34 @@
 # I'm very sorry for this annonying behaviour.
 # (For example, 'ls --bbb' and 'ls --*~^*al*' etc.)
 
+# XXX: ignoreeof semantics changes for overriding ^D.
+# You cannot change the ignoreeof option interactively. I'm verry sorry.
+
+# TODO: refine afu-able-space-p or better.
 # TODO: http://d.hatena.ne.jp/tarao/20100531/1275322620
 # TODO: handle RBUFFER.
 # TODO: signal handling during the recursive edit.
 # TODO: add afu-viins/afu-vicmd keymaps.
 # TODO: handle empty or space characters.
-# TODO: cp x /usr/
+# TODO: cp x /usr/loc
 # TODO: region_highlight vs afu-able-p → nil
+# TODO: region_highlight vs paste
+# TODO: ^C-n could be used as the menu-select-key outside of the menuselect.
+# TODO: indicate exact match if possible.
+# TODO: for the screen estate, postdisplay could be cleared if it could be,
+# after accepted etc.
+# TODO: *-directories may not be enough.
 
 # History
+
+# v0.0.1.5
+# afu+complete-word bug (direvtory vs others) fix.
+
+# v0.0.1.4
+# afu+complete-word bug fixes.
+
+# v0.0.1.3
+# Teach ^D and magic-space.
 
 # v0.0.1.2
 # Add configuration option and auto-fu-zcompile for a little faster loading.
@@ -79,7 +111,7 @@ afu_zles=( \
   # Zle widgets should be rebinded in the afu keymap. `auto-fu-maybe' to be
   # called after it's invocation, see `afu-initialize-zle-afu'.
   self-insert backward-delete-char backward-kill-word kill-line \
-  kill-whole-line \
+  kill-whole-line magic-space \
 )
 
 autoload +X keymap+widget
@@ -96,6 +128,8 @@ autoload +X keymap+widget
 afu-install () {
   bindkey -M isearch "^M" afu+accept-line
 
+  afu-install-eof
+
   bindkey -N afu emacs
   { "$@" }
   bindkey -M afu "^I" afu+complete-word
@@ -108,6 +142,39 @@ afu-install () {
   bindkey -N afu-vicmd vicmd
   bindkey -M afu-vicmd  "i" afu+vi-ins-mode
 }
+
+afu-install-eof () {
+  zstyle -t ':auto-fu:var' eof-installed-p || {
+    # fiddle the main(emacs) keymap. The assumption is it propagates down to
+    # the afu keymap afterwards.
+    zmodload zsh/parameter
+    if [[ "$options[ignoreeof]" == "on" ]]; then
+      bindkey "^D" afu+orf-ignoreeof-deletechar-list
+    else
+      setopt ignoreeof
+      bindkey "^D" afu+orf-exit-deletechar-list
+    fi
+  } always {
+    zstyle ':auto-fu:var' eof-installed-p yes
+  }
+}
+
+afu-eof-maybe () {
+  local eof="$1"; shift
+  [[ "$BUFFER" != '' ]] || { $eof; return }
+  "$@"
+}
+
+afu-ignore-eof () { zle -M "zsh: use 'exit' to exit." }
+
+afu-register-zle-eof () {
+  local fun="$1"
+  local then="$2"
+  local else="${3:-delete-char-or-list}"
+  eval "$fun () { afu-eof-maybe $then zle $else }; zle -N $fun"
+}
+afu-register-zle-eof afu+orf-ignoreeof-deletechar-list afu-ignore-eof
+afu-register-zle-eof      afu+orf-exit-deletechar-list exit
 
 afu+vi-ins-mode () { zle -K afu      ; }; zle -N afu+vi-ins-mode
 afu+vi-cmd-mode () { zle -K afu-vicmd; }; zle -N afu+vi-cmd-mode
@@ -126,11 +193,8 @@ declare -a afu_accept_lines
 afu-recursive-edit-and-accept () {
   local -a __accepted
   zle recursive-edit -K afu || { zle send-break; return }
-  #if [[ ${__accepted[0]} != afu+accept* ]]
-  if (( ${#${(M)afu_accept_lines:#${__accepted[0]}}} ))
-  then zle "${__accepted[@]}"; return
-  else return 0
-  fi
+  (( ${#${(M)afu_accept_lines:#${__accepted[0]}}} > 1 )) &&
+  { zle "${__accepted[@]}"} || { zle accept-line }
 }
 
 afu-register-zle-accept-line () {
@@ -196,16 +260,26 @@ afu-clearing-maybe () {
 }
 
 with-afu () {
-  local zlefun="$1"
+  local zlefun="$1"; shift
+  local -a zs
+  : ${(A)zs::=$@}
   afu-clearing-maybe
   ((afu_in_p == 1)) && { afu_in_p=0; BUFFER="$buffer_cur" }
-  zle $zlefun && auto-fu-maybe
+  zle $zlefun && {
+    local es ds
+    zstyle -a ':auto-fu:var' enable es; (( ${#es} == 0 )) && es=(all)
+    if [[ -n ${(M)es:#(#i)all} ]]; then
+      zstyle -a ':auto-fu:var' disable ds
+      : ${(A)es::=${zs:#(${~${(j.|.)ds}})}}
+    fi
+    [[ -n ${(M)es:#${zlefun#.}} ]]
+  } && { auto-fu-maybe }
 }
 
 afu-register-zle-afu () {
   local afufun="$1"
   local rawzle=".${afufun#*+}"
-  eval "function $afufun () { with-afu $rawzle; }; zle -N $afufun"
+  eval "function $afufun () { with-afu $rawzle $afu_zles; }; zle -N $afufun"
 }
 
 afu-initialize-zle-afu () {
@@ -216,26 +290,27 @@ afu-initialize-zle-afu () {
 }
 afu-initialize-zle-afu
 
-afu+magic-space () {
-  afu-clearing-maybe
-  if [[ "$LASTWIDGET" == magic-space ]]; then
-    LBUFFER+=' '
-  else zle .magic-space && {
-    # zle list-choices
-  }
-  fi
-}
-zle -N afu+magic-space
-
 afu-able-p () {
   local c=$LBUFFER[-1]
   [[ $c == ''  ]] && return 1;
-  [[ $c == ' ' ]] && return 1;
+  [[ $c == ' ' ]] && { afu-able-space-p || return 1 && return 0 }
   [[ $c == '.' ]] && return 1;
   [[ $c == '^' ]] && return 1;
   [[ $c == '~' ]] && return 1;
   [[ $c == ')' ]] && return 1;
   return 0
+}
+
+afu-able-space-p () {
+  [[ -z $AUTO_FU_NOCP ]] &&
+    # For backward compatibility.
+    { [[ "$WIDGET" == "magic-space" ]] || return 1 }
+
+  # TODO: This is quite iffy guesswork, broken.
+  local -a x
+  : ${(A)x::=${(z)LBUFFER}}
+  #[[ $x[1] != (man|perldoc|ri) ]]
+  [[ $x[1] != man ]]
 }
 
 auto-fu-maybe () {
@@ -295,14 +370,25 @@ afu+complete-word () {
     case $LBUFFER[-1] in
       (=) # --prefix= ⇒ complete-word again for `magic-space'ing the suffix
         zle complete-word ;;
-      (/) # path-ish  ⇒ propagate auto-fu
-        zle complete-word; zle -U "$LBUFFER[-1]" ;;
+      (/) # path-ish  ⇒ propagate auto-fu if *-directories
+        { # TODO: *-directories is enough?
+          local x="${(M)${(@z)"${_lastcomp[tags]}"}:#*-directories}"
+          zle complete-word
+          [[ -n $x ]] && zle -U "$LBUFFER[-1]"
+        };;
       (,) # glob-ish  ⇒ activate the `complete-word''s suffix
         BUFFER="$buffer_cur"; zle complete-word ;;
-      (*) ;;
+      (*)
+        (( $_lastcomp[nmatches]  > 1 )) &&
+          # many matches ⇒ complete-word again to enter the menuselect
+          zle complete-word
+        (( $_lastcomp[nmatches] == 1 )) &&
+          # exact match  ⇒ flag not using _oldlist for the next complete-word
+          _lastcomp[nmatches]=0
+        ;;
     esac
   else
-    [[ $LASTWIDGET == afu+* ]] && {
+    [[ $LASTWIDGET == afu+*~afu+complete-word ]] && {
       afu_in_p=0; BUFFER="$buffer_cur"
     }
     zle complete-word
@@ -338,8 +424,8 @@ EOT
         ${(j.|.)afu_zles/(#b)(*)/afu+$match})}/(#b)(*)/zle -N $match} \
       "# keymap+widget machinaries" \
       ${afu_zles/(#b)(*)/zle -N $match ${match}-by-keymap} \
-      ${afu_zles/(#b)(*)/zle -N afu+$match})}/
-      \$afu_accept_lines/$afu_accept_lines}
+      ${afu_zles/(#b)(*)/zle -N afu+$match})
+    }/\$afu_accept_lines/$afu_accept_lines}
 }
 
 auto-fu-zcompile () {
