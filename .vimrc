@@ -2420,6 +2420,8 @@ let dumbbuf_remove_marked_when_close = 1
 " let prompt_debug = 1
 " }}}
 " skk {{{
+let g:skk_disable = 0
+
 let skk_jisyo = '~/.skk-jisyo'
 let skk_large_jisyo = '/usr/share/skk/SKK-JISYO'
 
@@ -2433,8 +2435,9 @@ let skk_auto_save_jisyo = 1
 let skk_imdisable_state = -1
 let skk_keep_state = 1
 let skk_sticky_key = ';'
-
 let skk_show_candidates_count = 2
+let skk_remap_lang_mode = 0
+let skk_show_annotation = 0
 
 
 if 0
@@ -2461,6 +2464,7 @@ endif
 
 " }}}
 " eskk {{{
+let g:eskk_disable = 0
 
 if !exists('s:loaded_vimrc')
     let g:eskk_dictionary = '~/.skk-jisyo'
@@ -2469,32 +2473,34 @@ endif
 
 let g:eskk_egg_like_newline = 1
 let g:eskk_keep_state = 1
+let g:eskk_show_candidates_count = 2
+let g:eskk_show_annotation = 0
+let g:eskk_hira_input_style = 'msime'
 
 
 
 " let g:eskk_disable = 1
-let g:eskk_debug = 1
-let g:eskk_debug_wait_ms = 0
+let g:eskk_debug = 0
 let g:eskk_debug_file = '~/eskk-debug.log'
 if has('profile')
     let g:eskk_debug_profile = 1
 endif
 
-if 0
-    let t = eskk#table#get_definition('rom_to_hira')
-    let t['a'].map_to = '亞'
-    unlet t
-endif
-if 1
-    command! EskkDumpBuftable call eskk#get_buftable().dump_print()
-endif
-if 0
-    EskkMap lhs rhs
-    EskkMap -silent lhs2 rhs
-    EskkMap -unique lhs2 foo
-    EskkMap -expr lhs3 {'foo': 'hoge'}.foo
-    EskkMap -noremap lhs4 rhs
-endif
+
+" call eskk#load()
+
+let t = eskk#table#get_definition('rom_to_hira')
+let t['~'] = {'map_to': '〜'}
+" let t['a'].map_to = '亞'
+unlet t
+
+" command! EskkDumpBuftable call eskk#get_buftable().dump_print()
+
+" EskkMap lhs rhs
+" EskkMap -silent lhs2 rhs
+" EskkMap -unique lhs2 foo
+" EskkMap -expr lhs3 {'foo': 'hoge'}.foo
+" EskkMap -noremap lhs4 rhs
 
 " }}}
 " skk.vim && eskk.vim {{{
