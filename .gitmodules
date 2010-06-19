@@ -148,3 +148,9 @@
 [submodule "ext/auto-fu.zsh"]
 	path = ext/auto-fu.zsh
 	url = git://github.com/hchbaw/auto-fu.zsh.git
+[submodule "ext/open-browser.vim"]
+	path = ext/open-browser.vim
+	url = git://github.com/tyru/open-browser.vim.git
+[submodule "ext/urilib.vim"]
+	path = ext/urilib.vim
+	url = git://github.com/tyru/urilib.vim.git
