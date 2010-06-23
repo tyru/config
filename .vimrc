@@ -2869,37 +2869,14 @@ call s:delete_backup()
 " }}}
 " }}}
 " Misc. (bundled with kaoriya vim's .vimrc & etc.) {{{
-" support of colors in terminal (unix only) {{{
-if has('unix') && !has('gui_running')
-    let uname = system('uname')
-    if uname =~? "linux"
-        set term=builtin_linux
-    elseif uname =~? "freebsd"
-        set term=builtin_cons25
-    elseif uname =~? "Darwin"
-        set term=beos-ansi
-    else
-        set term=builtin_xterm
-    endif
-endif
-" }}}
-" when $DISPLAY is set and vim runs under terminal, vim's start-up will be very slow {{{
-if !has('gui_running') && has('xterm_clipboard')
-    set clipboard=exclude:cons\\\|linux\\\|cygwin\\\|rxvt\\\|screen
-endif
+" Do not load menu {{{
 let did_install_default_menus = 1
 " }}}
-" about japanese input method {{{
+" About japanese input method {{{
 if has('multi_byte_ime') || has('xim')
   " Cursor color when IME is on.
   highlight CursorIM guibg=Purple guifg=NONE
   set iminsert=0 imsearch=0
-
-  if has('xim') && has('GUI_GTK')
-    " XIMの入力開始キーを設定:
-    " 下記の s-space はShift+Spaceの意味でkinput2+canna用設定
-    set imactivatekey=Henkan
-  endif
 endif
 " }}}
 " Do `<C-g>u` when inserted a character. {{{
