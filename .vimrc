@@ -2467,7 +2467,7 @@ endif
 " eskk {{{
 let g:eskk_disable = 0
 
-if !exists('s:loaded_vimrc')
+if has('vim_starting')
     let g:eskk_dictionary = '~/.skk-jisyo'
     let g:eskk_large_dictionary = '/usr/share/skk/SKK-JISYO'
 endif
@@ -2718,7 +2718,7 @@ let g:loaded_quicklaunch = 1
 let g:quickrun_no_default_key_mappings = 1
 Map [nvo] <Space>r <Plug>(quickrun)
 
-if !exists('s:loaded_vimrc')
+if has('vim_starting')
     let g:quickrun_config = {}
     let g:quickrun_config['*'] = {'split': printf('{%s() ? "vertical" : ""}', s:SNR('vertically'))}
     if executable('pandoc')
@@ -2923,13 +2923,10 @@ if filereadable(expand('~/.vimrc.local'))
 endif
 
 
-if !exists('s:loaded_vimrc')
+if has('vim_starting')
     GarbageCorrect    " first time
 endif
 
 
 set secure
-
-
-let s:loaded_vimrc = 1
 " }}}
