@@ -2534,6 +2534,9 @@ AlterCommand res[tart] Restart
 AlterCommand ers[tart] Restart
 AlterCommand rse[tart] Restart
 " }}}
+" openbrowser {{{
+MyAutocmd VimEnter * Map [nv] gx <Plug>(openbrowser-open)
+" }}}
 " AutoDate {{{
 let g:autodate_format = "%Y-%m-%d"
 " }}}
