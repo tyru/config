@@ -588,7 +588,7 @@ MyAutocmd BufNewFile,BufReadPre *.py,*.pyc
             \ setlocal ft=python
 MyAutocmd BufNewFile,BufReadPre *.rb
             \ setlocal ft=ruby
-MyAutocmd BufNewFile,BufReadPre *.scm
+MyAutocmd BufNewFile,BufReadPre *.scm,.uim
             \ setlocal ft=scheme
 MyAutocmd BufNewFile,BufReadPre _vimperatorrc,.vimperatorrc
             \ setlocal ft=vimperator syntax=vimperator
