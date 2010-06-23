@@ -2595,7 +2595,7 @@ MyAutocmd VimEnter * call s:register_fuf_abbrev()
 Map [n] -noremap <C-h> :<C-u>MRU<CR>
 let MRU_Max_Entries   = 500
 let MRU_Add_Menu      = 0
-let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\c\'
+let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\|COMMIT_EDITMSG'
 " }}}
 " changelog {{{
 let changelog_username = "tyru"
