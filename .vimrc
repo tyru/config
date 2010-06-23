@@ -2296,7 +2296,8 @@ command!
 
 function! s:grep(args)
     let target = len(a:args) > 1 ? join(a:args[1:]) : '**/*'
-    execute 'vimgrep' '/' . a:args[0] . '/j' target
+    noautocmd execute 'vimgrep' '/' . a:args[0] . '/j' target
+    QuickFix
 endfunction
 " }}}
 " :WhichEdit {{{
