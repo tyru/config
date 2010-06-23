@@ -1,4 +1,4 @@
-escape ^Jj
+escape ^Qq
 
 autodetach on
 # bell_msg "^G"
