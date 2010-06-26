@@ -2425,6 +2425,19 @@ let dumbbuf_remove_marked_when_close = 1
 " prompt {{{
 " let prompt_debug = 1
 " }}}
+" skk.vim && eskk.vim {{{
+
+if 1
+" Map <C-j> to eskk, Map <C-g><C-j> to skk.vim {{{
+let skk_control_j_key = '<C-g><C-j>'
+" }}}
+else
+" Map <C-j> to skk.vim, Map <C-g><C-j> to eskk {{{
+map! <C-g><C-j> <Plug>(eskk:toggle)
+" }}}
+endif
+
+" }}}
 " skk {{{
 let g:skk_disable = 0
 
@@ -2471,56 +2484,51 @@ endif
 " }}}
 " eskk {{{
 let g:eskk_disable = 0
+let g:eskk_debug = 0
+let g:eskk_debug_file = '~/eskk-debug.log'
+
+call eskk#load()
 
 if has('vim_starting')
-    let g:eskk_dictionary = '~/.skk-jisyo'
-    let g:eskk_large_dictionary = '/usr/share/skk/SKK-JISYO'
+    let g:eskk_dictionary.path = '~/.skk-jisyo'
+    let g:eskk_large_dictionary.path = '/usr/share/skk/SKK-JISYO'
 endif
 
 let g:eskk_egg_like_newline = 1
 let g:eskk_keep_state = 1
 let g:eskk_show_candidates_count = 2
 let g:eskk_show_annotation = 0
-let g:eskk_hira_input_style = 'msime'
+let g:eskk_rom_input_style = 'msime'
 
 
+" Disable "qkatakana". not ";katakanaq".
+EskkMap -type=mode:hira:toggle-kata <Nop>
 
-" let g:eskk_disable = 1
-let g:eskk_debug = 0
-let g:eskk_debug_file = '~/eskk-debug.log'
-if has('profile')
-    let g:eskk_debug_profile = 1
-endif
-
-
-" call eskk#load()
+" NOTE:
+" eskk#table#get_definition() calls eskk#util#log(),
+" and it will :redraw statusline.
+runtime! plugin/skk.vim
 
 let t = eskk#table#get_definition('rom_to_hira')
-let t['~'] = {'map_to': '〜'}
-" let t['a'].map_to = '亞'
+let t['~'] = ['〜', '']
+let t['zc'] = ['©', '']
+let t['zr'] = ['®', '']
 unlet t
 
+
+" NOTE: Experimental
+
 " command! EskkDumpBuftable call eskk#get_buftable().dump_print()
+
+" inoremap <C-l> <C-o><C-l>
+
+" EskkMap U <Plug>(eskk:undo-kakutei)
 
 " EskkMap lhs rhs
 " EskkMap -silent lhs2 rhs
 " EskkMap -unique lhs2 foo
 " EskkMap -expr lhs3 {'foo': 'hoge'}.foo
 " EskkMap -noremap lhs4 rhs
-
-" }}}
-" skk.vim && eskk.vim {{{
-
-if 1
-" Map <C-j> to eskk, Map <C-g><C-j> to skk.vim {{{
-let skk_control_j_key = '<C-g><C-j>'
-" }}}
-else
-" Map <C-j> to skk.vim, Map <C-g><C-j> to eskk {{{
-map! <C-g><C-j> <Plug>(eskk:toggle)
-" }}}
-endif
-
 " }}}
 " stickykey {{{
 
