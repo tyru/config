@@ -33,33 +33,35 @@
 
 # Configuration
 # The auto-fu features can be configured via zstyle.
-# :auto-fu:highlight
-#   input
-#     A highlight specification used for user input string.
-#   completion
-#     A highlight specification used for completion string.
-# :auto-fu:var
-#   postdisplay
-#     An initial indication string for POSTDISPLAY in auto-fu-init.
-#   enable
-#     A list of zle widget names the automatic complete-word and
-#     list-choices to be triggered after its invocation.
-#     Only with ALL in 'enable', the 'disable' style has any effect.
-#     ALL by default.
-#   disable
-#     A list of zle widget names you do *NOT* want the complete-word to be
-#     triggered. Only used if 'enable' contains ALL. For example,
-#       zstyle ':auto-fu:var' enable all
-#       zstyle ':auto-fu:var' disable magic-space
-#     yields; complete-word will not be triggered after pressing the
-#     space-bar, otherwise automatic thing will be taken into account.
+
+#     :auto-fu:highlight
+#       input
+#         A highlight specification used for user input string.
+#       completion
+#         A highlight specification used for completion string.
+#     :auto-fu:var
+#       postdisplay
+#         An initial indication string for POSTDISPLAY in auto-fu-init.
+#       enable
+#         A list of zle widget names the automatic complete-word and
+#         list-choices to be triggered after its invocation.
+#         Only with ALL in 'enable', the 'disable' style has any effect.
+#         ALL by default.
+#       disable
+#         A list of zle widget names you do *NOT* want the complete-word to be
+#         triggered. Only used if 'enable' contains ALL. For example,
+#           zstyle ':auto-fu:var' enable all
+#           zstyle ':auto-fu:var' disable magic-space
+#         yields; complete-word will not be triggered after pressing the
+#         space-bar, otherwise automatic thing will be taken into account.
+
 # Configuration example
-# -- >8 --
-# zstyle ':auto-fu:highlight' input bold
-# zstyle ':auto-fu:highlight' completion fg=black,bold
-# zstyle ':auto-fu:var' postdisplay $'\n-azfu-'
-# #zstyle ':auto-fu:var' disable magic-space
-# -- 8< --
+
+#     zstyle ':auto-fu:highlight' input bold
+#     zstyle ':auto-fu:highlight' completion fg=black,bold
+#     zstyle ':auto-fu:var' postdisplay $'\n-azfu-'
+#     #zstyle ':auto-fu:var' disable magic-space
+
 
 # XXX: use with the error correction or _match completer.
 # If you got the correction errors during auto completing the word, then
@@ -72,8 +74,10 @@
 # XXX: ignoreeof semantics changes for overriding ^D.
 # You cannot change the ignoreeof option interactively. I'm verry sorry.
 
+# TODO: README
 # TODO: refine afu-able-space-p or better.
 # TODO: http://d.hatena.ne.jp/tarao/20100531/1275322620
+# TODO: pause auto stuff until something happens. ("next magic-space" etc)
 # TODO: handle RBUFFER.
 # TODO: signal handling during the recursive edit.
 # TODO: add afu-viins/afu-vicmd keymaps.
@@ -85,12 +89,23 @@
 # TODO: indicate exact match if possible.
 # TODO: for the screen estate, postdisplay could be cleared if it could be,
 # after accepted etc.
-# TODO: *-directories may not be enough.
+# TODO: *-directories|all-files may not be enough.
+# TODO: postdisplay should be cleared properly after the `send-break`ing.
+# TODO: kill-word and yank should be added to the afu_zles.
+# TODO: recommend zcompiling.
 
 # History
 
+# v0.0.1.7
+# Fix "no such keymap `isearch'" error.
+# Thank you very much for the report, mooz and Shougo!
+
+# v0.0.1.6
+# Fix `parameter not set`. Thank you very much for the report, Shougo!
+# Bug fix.
+
 # v0.0.1.5
-# afu+complete-word bug (direvtory vs others) fix.
+# afu+complete-word bug (directory vs others) fix.
 
 # v0.0.1.4
 # afu+complete-word bug fixes.
@@ -106,6 +121,8 @@
 
 # v0.0.1
 # Initial version.
+
+# Code
 
 afu_zles=( \
   # Zle widgets should be rebinded in the afu keymap. `auto-fu-maybe' to be
@@ -126,9 +143,15 @@ autoload +X keymap+widget
 }
 
 afu-install () {
-  bindkey -M isearch "^M" afu+accept-line
-
-  afu-install-eof
+  zstyle -t ':auto-fu:var' misc-installed-p || {
+    zmodload zsh/parameter 2>/dev/null || {
+      echo 'auto-fu:zmodload error. exiting.' >&2; exit -1
+    }
+    afu-install-isearchmap
+    afu-install-eof
+  } always {
+    zstyle ':auto-fu:var' misc-installed-p yes
+  }
 
   bindkey -N afu emacs
   { "$@" }
@@ -143,11 +166,18 @@ afu-install () {
   bindkey -M afu-vicmd  "i" afu+vi-ins-mode
 }
 
+afu-install-isearchmap () {
+  zstyle -t ':auto-fu:var' isearchmap-installed-p || {
+    [[ -n ${(M)keymaps:#isearch} ]] && bindkey -M isearch "^M" afu+accept-line
+  } always {
+    zstyle ':auto-fu:var' isearchmap-installed-p yes
+  }
+}
+
 afu-install-eof () {
   zstyle -t ':auto-fu:var' eof-installed-p || {
     # fiddle the main(emacs) keymap. The assumption is it propagates down to
     # the afu keymap afterwards.
-    zmodload zsh/parameter
     if [[ "$options[ignoreeof]" == "on" ]]; then
       bindkey "^D" afu+orf-ignoreeof-deletechar-list
     else
@@ -181,7 +211,7 @@ afu+vi-cmd-mode () { zle -K afu-vicmd; }; zle -N afu+vi-cmd-mode
 
 afu-install afu-keymap+widget
 function () {
-  [[ -z $AUTO_FU_NOCP ]] || return
+  [[ -z ${AUTO_FU_NOCP-} ]] || return
   # For backward compatibility
   zstyle ':auto-fu:highlight' input bold
   zstyle ':auto-fu:highlight' completion fg=black,bold
@@ -193,7 +223,7 @@ declare -a afu_accept_lines
 afu-recursive-edit-and-accept () {
   local -a __accepted
   zle recursive-edit -K afu || { zle send-break; return }
-  (( ${#${(M)afu_accept_lines:#${__accepted[0]}}} > 1 )) &&
+  (( ${#${(M)afu_accept_lines:#${__accepted[1]}}} > 1 )) &&
   { zle "${__accepted[@]}"} || { zle accept-line }
 }
 
@@ -302,7 +332,7 @@ afu-able-p () {
 }
 
 afu-able-space-p () {
-  [[ -z $AUTO_FU_NOCP ]] &&
+  [[ -z ${AUTO_FU_NOCP-} ]] &&
     # For backward compatibility.
     { [[ "$WIDGET" == "magic-space" ]] || return 1 }
 
@@ -370,9 +400,9 @@ afu+complete-word () {
     case $LBUFFER[-1] in
       (=) # --prefix= ⇒ complete-word again for `magic-space'ing the suffix
         zle complete-word ;;
-      (/) # path-ish  ⇒ propagate auto-fu if *-directories
-        { # TODO: *-directories is enough?
-          local x="${(M)${(@z)"${_lastcomp[tags]}"}:#*-directories}"
+      (/) # path-ish  ⇒ propagate auto-fu if it could be
+        { # TODO: this may not be enough.
+          local x="${(M)${(@z)"${_lastcomp[tags]}"}:#(*-directories|all-files)}"
           zle complete-word
           [[ -n $x ]] && zle -U "$LBUFFER[-1]"
         };;
@@ -396,7 +426,7 @@ afu+complete-word () {
 }
 zle -N afu+complete-word
 
-[[ -z $afu_zcompiling_p ]] && unset afu_zles
+[[ -z ${afu_zcompiling_p-} ]] && unset afu_zles
 
 # NOTE: This is iffy. It dumps the necessary functions into ~/.zsh/auto-fu,
 # then zrecompiles it into ~/.zsh/auto-fu.zwc.
@@ -455,7 +485,7 @@ auto-fu-zcompile () {
   echo -n '* '; autoload -U zrecompile && zrecompile -p -R ${g} && {
     zmodload zsh/datetime
     touch --date="$(strftime "%F %T" $((EPOCHSECONDS - 120)))" ${g}
-    [[ -z $AUTO_FU_ZCOMPILE_NOKEEP ]] || { echo "rm -f ${g}" | sh -x }
+    [[ -z ${AUTO_FU_ZCOMPILE_NOKEEP-} ]] || { echo "rm -f ${g}" | sh -x }
     echo "** All done."
     echo "** Please update your .zshrc to load the zcompiled file like this,"
     cat <<EOT
