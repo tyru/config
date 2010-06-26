@@ -1397,6 +1397,23 @@ function! s:swap_window(curwin, targetwin) "{{{
   endif
 endfunction "}}}
 " }}}
+" Count the number of <cword> in this file {{{
+" http://d.hatena.ne.jp/miho36/20100621/1277092415
+
+function! s:count_word(word) "{{{
+    if a:word == ''
+        return
+    endif
+
+    redir => output
+    silent execute "%s/" . a:word . "/&/gn"
+    redir END
+    let output = substitute(output, '^\n\+', '', '')
+
+    echomsg printf('"%s" => %s', a:word, output)
+endfunction "}}}
+Map [n] -noremap <Space>n :<C-u>call <SID>count_word(expand('<cword>'))<CR>
+" }}}
 " }}}
 " vmap {{{
 " TODO: '<C-g>' and 'g<C-g>' in visual mode: Show information about selected area. {{{
