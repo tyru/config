@@ -17,24 +17,6 @@ language time C
 function! s:each_char(str) "{{{
     return split(a:str, '\zs')
 endfunction "}}}
-function! s:get_output(...) "{{{
-    " a:000 = [['echo', '"foo"'], 'messages', ...]
-    "
-    " TODO nested :redir ?
-
-    redir => output
-
-    for cmd_args in a:000
-        if type(cmd_args) == type([])
-            silent execute join(cmd_args)
-        else
-            silent execute cmd_args
-        endif
-    endfor
-
-    redir END
-    return substitute(output, '^\n\n', '', '')
-endfunction "}}}
 
 function! s:warn(msg) "{{{
     echohl WarningMsg
@@ -2147,11 +2129,17 @@ command!
 \   call s:cmd_capture(<q-args>)
 
 function! s:cmd_capture(q_args) "{{{
-    let out = s:get_output(a:q_args)    " NOTE: Execute ex command in current buffer.
-    New    " Change as you like. for e.g., :new instead.
+    redir => output
+    silent execute a:q_args
+    redir END
+    let output = substitute(output, '^\n\+', '', '')
+
+    " Change as you like. for e.g., :new instead.
+    New
+
     silent file `=printf('[Capture: %s]', a:q_args)`
     setlocal buftype=nofile bufhidden=unload noswapfile nobuflisted
-    call setline(1, split(out, '\n'))
+    call setline(1, split(output, '\n'))
 endfunction "}}}
 " }}}
 
