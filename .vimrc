@@ -3021,7 +3021,7 @@ function! s:cmd_hyde(hyde_num_str) "{{{
     if v:lang ==# 'C'
         echo s:hyde2inch(hyde_num) 'inch'
     elseif v:lang =~# '^ja_JP'
-        echo a:hyde2cm(hyde_num) 'cm'
+        echo s:hyde2cm(hyde_num) 'cm'
     else
         echo hyde_num 'hyde'
     endif
