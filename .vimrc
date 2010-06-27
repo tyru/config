@@ -918,8 +918,8 @@ Map [n] -noremap <C-g><C-n>    :<C-u>tablast<CR>
 Map [n] -noremap <C-g><C-p>    :<C-u>tabfirst<CR>
 " }}}
 " Moving tabs {{{
-Map [n] -noremap <Left>    :<C-u>execute 'tabmove' tabpagenr() - 2<CR>
-Map [n] -noremap <Right>   :<C-u>execute 'tabmove' tabpagenr()<CR>
+Map [n] -noremap <Left>    :<C-u>execute 'tabmove' (tabpagenr() == 1 ? tabpagenr('$') : tabpagenr() - 2)<CR>
+Map [n] -noremap <Right>   :<C-u>execute 'tabmove' (tabpagenr() == tabpagenr('$') ? 0 : tabpagenr())<CR>
 " NOTE: gVim only
 Map [n] -noremap <S-Left>  :<C-u>execute 'tabmove' 0<CR>
 Map [n] -noremap <S-Right> :<C-u>execute 'tabmove' tabpagenr('$')<CR>
