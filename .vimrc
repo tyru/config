@@ -662,6 +662,7 @@ if exists('$VIM_RTP_REPO_DIR')
     RtpPrune $VIM_RTP_REPO_DIR/pummode.vim
     RtpPrune $VIM_RTP_REPO_DIR/command-buffer.vim
     RtpPrune $VIM_RTP_REPO_DIR/cmdwincomplete.vim
+    RtpPrune $VIM_RTP_REPO_DIR/fencview.vim
     if !executable('git')
         RtpPrune $VIM_RTP_REPO_DIR/gist-vim
     endif
