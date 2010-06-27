@@ -198,7 +198,7 @@ function viwi() {
 # >>>>
 # vimperator-like completion <<<<
 # via http://gist.github.com/414589
-if [ -f "$HOME/.zsh/auto-fu.zsh" ]; then
+if [ -f "$HOME/.zsh/auto-fu.zsh" -a "$MY_CURRENT_ENV" != "cygwin" ]; then
     unsetopt sh_word_split
     zstyle ':completion:*' completer _oldlist _complete _expand _match _prefix _approximate _list _history
 
