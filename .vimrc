@@ -3002,18 +3002,28 @@ endfunction "}}}
 AlterCommand hyd[e] Hyde
 
 command!
-\   -bar
+\   -bar -nargs=1 -complete=expression
 \   Hyde
-\   call s:cmd_hyde()
+\   call s:cmd_hyde(<q-args>)
 
-function! s:cmd_hyde() "{{{
+function! s:hyde2inch(hyde_num) "{{{
+    return s:hyde2cm(a:hyde_num) / 2.54
+endfunction "}}}
+function! s:hyde2cm(hyde_num) "{{{
+    return a:hyde_num * 156
+endfunction "}}}
+
+function! s:cmd_hyde(hyde_num_str) "{{{
+    " Hyde it more accurately
+    let hyde_num = str2float(a:hyde_num_str)
+
     " http://dic.nicovideo.jp/a/156cm
     if v:lang ==# 'C'
-        echo '61.4173228 inch'
+        echo s:hyde2inch(hyde_num) 'inch'
     elseif v:lang =~# '^ja_JP'
-        echo '156 cm'
+        echo a:hyde2cm(hyde_num) 'cm'
     else
-        echo '1 hyde'
+        echo hyde_num 'hyde'
     endif
 endfunction "}}}
 
