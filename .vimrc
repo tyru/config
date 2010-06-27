@@ -2972,6 +2972,27 @@ endfunction "}}}
 " MyAutocmd CursorMovedI * if s:is_changed() | doautocmd User changed-text | endif
 " MyAutocmd User changed-text call feedkeys("\<C-g>u", 'n')
 " }}}
+" :hyde {{{
+
+AlterCommand hyd[e] Hyde
+
+command!
+\   -bar
+\   Hyde
+\   call s:cmd_hyde()
+
+function! s:cmd_hyde() "{{{
+    " http://dic.nicovideo.jp/a/156cm
+    if v:lang ==# 'C'
+        echo '61.4173228 inch'
+    elseif v:lang =~# '^ja_JP'
+        echo '156 cm'
+    else
+        echo '1 hyde'
+    endif
+endfunction "}}}
+
+" }}}
 " }}}
 " End. {{{
 
