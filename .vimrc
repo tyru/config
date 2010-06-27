@@ -2905,6 +2905,31 @@ let g:prettyprint_echo_buffer_new = 'New'
 let g:fencview_auto_patterns = '*'
 let g:fencview_show_progressbar = 0
 " }}}
+" lingr.vim {{{
+" if !exists('g:lingr')
+"     " Only when started by the 'lingr' command(alias), lingr.vim is used.
+"     "     alias lingr="vim --cmd 'let g:lingr = 1' -c LingrLaunch"
+"     let g:loaded_lingr_vim = 1
+" endif
+" let g:lingr_vim_user = 'tyru'
+" augroup vimrc-plugin-lingr
+"     autocmd!
+"     autocmd User plugin-lingr-* call s:lingr_event(
+"     \            matchstr(expand('<amatch>'), 'plugin-lingr-\zs\w*'))
+"     autocmd FileType lingr-* call s:init_lingr(expand('<amatch>'))
+" augroup END
+" function! s:init_lingr(ft) "{{{
+"     if exists('s:window')
+"         nnoremap <buffer> <silent> <C-l> :<C-u>call <SID>auto_window_name()<CR><C-l>
+"         let b:window_name = 'lingr-vim'
+"     endif
+" endfunction "}}}
+" function! s:lingr_event(event) "{{{
+"   if a:event ==# 'message' && exists(':WindowName')
+"     execute printf('WindowName %s(%d)', 'lingr-vim', lingr#unread_count())
+"   endif
+" endfunction "}}}
+" }}}
 " }}}
 " Backup {{{
 " TODO Rotate backup files like writebackupversioncontrol.vim
@@ -2992,6 +3017,27 @@ function! s:cmd_hyde() "{{{
     endif
 endfunction "}}}
 
+" }}}
+" GNU Screen, Tmux {{{
+" function! s:set_window_name(name) "{{{
+"       let esc = "\<ESC>"
+"       silent! execute '!echo -n "' . esc . 'k' . escape(a:name, '%#!')
+"         \ . esc . '\\"'
+"       redraw!
+" endfunction "}}}
+" command! -nargs=? WindowName call s:set_window_name(<q-args>)
+" function! s:auto_window_name() "{{{
+"   let varname = 'window_name'
+"   for scope in ['w:', 'b:', 't:', 'g:']
+"     if exists(scope .varname)
+"       call s:set_window_name(eval(scope . varname))
+"       return
+"     endif
+"   endfor
+"   if bufname('%') !~ '^\[A-Za-z0-9\]*:/'
+"     call s:set_window_name('v:' . expand('%:t'))
+"   endif
+" endfunction "}}}
 " }}}
 " }}}
 " End. {{{
