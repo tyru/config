@@ -1406,7 +1406,71 @@ function! s:count_word(word) "{{{
 
     echomsg printf('"%s" => %s', a:word, output)
 endfunction "}}}
-Map [n] -noremap <Space>n :<C-u>call <SID>count_word(expand('<cword>'))<CR>
+nnoremap <Space>n :<C-u>call <SID>count_word(expand('<cword>'))<CR>
+" }}}
+" Minor mappings to change window layout. {{{
+
+Map [n] <window>J <SID>(merge-curwin-into-j)
+Map [n] <window>K <SID>(merge-curwin-into-k)
+Map [n] <window>H <SID>(merge-curwin-into-h)
+Map [n] <window>L <SID>(merge-curwin-into-l)
+
+Map [n] -noremap <SID>(merge-curwin-into-j) :<C-u>call <SID>window_merge('j', 'J', 1)<CR>
+Map [n] -noremap <SID>(merge-curwin-into-k) :<C-u>call <SID>window_merge('k', 'K', 1)<CR>
+Map [n] -noremap <SID>(merge-curwin-into-h) :<C-u>call <SID>window_merge('h', 'H', 0)<CR>
+Map [n] -noremap <SID>(merge-curwin-into-l) :<C-u>call <SID>window_merge('l', 'L', 0)<CR>
+
+function! s:window_merge(jump_cmd, layout_cmd, vertical) "{{{
+    let save_ei = &eventignore
+    let &l:eventignore = 'all'
+    try
+        let curwin = winnr()
+        let curbuf = bufnr('%')
+        execute 'wincmd' a:jump_cmd
+        let nextgroupwin = winnr()
+
+        if curwin ==# nextgroupwin
+            " No more next group. Create new group.
+            execute 'wincmd' a:layout_cmd
+        else
+            wincmd p
+            wincmd q    " Close `curwin` window.
+            wincmd p    " Back to `nextgroupwin` window.
+            execute (a:vertical ? 'vsplit' : 'split')
+            let &l:eventignore = save_ei    " to detect `curbuf` buffer filetype.
+            silent execute curbuf 'buffer'
+        endif
+    finally
+        let &l:eventignore = save_ei
+    endtry
+endfunction "}}}
+
+" }}}
+" <C-w>s, <C-w>v: I don't want to use them because they depend on 'splitright', 'splitbelow' ! {{{
+
+Map [n] <excmd>sj <SID>(split-to-j)
+Map [n] <excmd>sk <SID>(split-to-k)
+Map [n] <excmd>sh <SID>(split-to-h)
+Map [n] <excmd>sl <SID>(split-to-l)
+
+Map [n] -noremap <SID>(split-to-j) :<C-u>call <SID>split_with('split', 0, 1)<CR>
+Map [n] -noremap <SID>(split-to-k) :<C-u>call <SID>split_with('split', 0, 0)<CR>
+Map [n] -noremap <SID>(split-to-h) :<C-u>call <SID>split_with('vsplit', 0, 0)<CR>
+Map [n] -noremap <SID>(split-to-l) :<C-u>call <SID>split_with('vsplit', 1, 0)<CR>
+
+function! s:split_with(excmd, splitright, splitbelow) "{{{
+    let save_splitright = &splitright
+    let save_splitbelow = &splitbelow
+    let &l:splitright = a:splitright
+    let &l:splitbelow = a:splitbelow
+    try
+        execute a:excmd
+    finally
+        let &l:splitright = save_splitright
+        let &l:splitbelow = save_splitbelow
+    endtry
+endfunction "}}}
+
 " }}}
 " }}}
 " vmap {{{
