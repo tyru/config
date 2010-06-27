@@ -55,4 +55,4 @@ Changelog						*<%filename_noext%>-changelog* {{{
 
 }}}
 ==============================================================================
-vim:tw=78:fo=tcq2mM:ts=8:ft=help:norl:noet:fdm=marker:fen
+vim:tw=78:fo=tcq2mM:ts=4:ft=help:norl:noet:fdm=marker:fen
