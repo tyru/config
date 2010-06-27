@@ -751,6 +751,8 @@ call s:map_localleader('\')
 call s:map_prefix_key('nvo', 'excmd', '<Space>')
 " <operator>
 call s:map_prefix_key('nvo', 'operator', ';')
+" <window>
+call s:map_prefix_key('n', 'window', '<C-w>')
 " }}}
 
 " map {{{
@@ -891,8 +893,8 @@ function! s:cmdwin_enter()
     Map [ni] -noremap -buffer <C-z>         <C-c>
     Map [ni] -noremap -buffer <C-z>         <C-c>
     Map [n]  -noremap -buffer <Esc>         :<C-u>quit<CR>
-    Map [n]  -noremap -buffer <C-w>k        :<C-u>quit<CR>
-    Map [n]  -noremap -buffer <C-w><C-k>    :<C-u>quit<CR>
+    Map [n]  -noremap -buffer <window>k        :<C-u>quit<CR>
+    Map [n]  -noremap -buffer <window><C-k>    :<C-u>quit<CR>
 
     startinsert!
 endfunction
