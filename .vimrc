@@ -1435,8 +1435,11 @@ function! s:window_merge(jump_cmd, layout_cmd, vertical) "{{{
             execute 'wincmd' a:layout_cmd
         else
             wincmd p
-            wincmd q    " Close `curwin` window.
-            wincmd p    " Back to `nextgroupwin` window.
+            " Close `curwin` window.
+            hide
+            " Back to `nextgroupwin` window.
+            wincmd p
+
             execute (a:vertical ? 'vsplit' : 'split')
             let &l:eventignore = save_ei    " to detect `curbuf` buffer filetype.
             silent execute curbuf 'buffer'
