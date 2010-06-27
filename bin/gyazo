@@ -20,7 +20,7 @@ tmpfile = "/tmp/image_upload#{$$}.png"
 imagefile = ARGV[0]
 
 if imagefile && File.exist?(imagefile) then
-  system "convert #{imagefile} #{tmpfile}"
+  system "convert '#{imagefile}' #{tmpfile}"
 else
   system "import #{tmpfile}"
 end
