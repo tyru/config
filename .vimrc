@@ -294,14 +294,6 @@ command!
 \   autocmd<bang> vimrc <args>
 
 
-command!
-\   -bar
-\   VimError
-\   echohl ErrorMsg
-\   | echomsg substitute(v:exception, '^Vim(\w\+):', '', '')
-\   | echohl None
-
-
 " Debug macros {{{
 "
 " NOTE: Do not make this function.
@@ -2261,7 +2253,9 @@ function! s:split_nicely_with(args, banged) "{{{
         \   a:args[0] . (a:banged ? '!' : '')
         \   join(a:args[1:])
     catch
-        VimError
+        echohl ErrorMsg
+        echomsg substitute(v:exception, '^Vim(\w\+):', '', '')
+        echohl None
     endtry
 endfunction "}}}
 " }}}
