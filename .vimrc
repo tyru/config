@@ -2717,8 +2717,6 @@ function! s:vimshell_settings() "{{{
 
     " Hook
     function! s:chpwd_ls(args, context)
-        Dump a:args
-        Dump a:context
         call vimshell#execute('ls')
     endfunction
 
@@ -2734,6 +2732,7 @@ function! s:vimshell_settings() "{{{
 
     " Misc.
     setlocal backspace-=eol
+    setlocal updatetime=0
 
     NeoComplCacheEnable
     autocmd BufEnter <buffer> NeoComplCacheEnable
