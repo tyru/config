@@ -1207,8 +1207,6 @@ Map [n] <excmd>cc :<C-u>call <SID>close_certain_window()<CR>
 " Close tab with also prefix <excmd>c. {{{
 " tab
 Map [n] <excmd>ct :<C-u>tabclose<CR>
-" uindou
-Map [n] <excmd>cu :<C-u>close<CR>
 " }}}
 " Move window into tabpage {{{
 " http://vim-users.jp/2009/12/hack106/
