@@ -1298,7 +1298,7 @@ if has('virtualedit') && s:has_one_of(['all', 'onemore'], split(&virtualedit, ',
     Map [n] <excmd>p $p
 endif
 " }}}
-" Snippet that allows you to move around windows beyond tabs {{{
+" Move around windows beyond tabs {{{
 " http://gist.github.com/358813
 " http://gist.github.com/358862
 
@@ -1327,22 +1327,22 @@ endfunction "}}}
 Map [n] <Space>* :<C-u>Split<CR>*
 Map [n] <Space># :<C-u>Split<CR>#
 " }}}
-" <Space><C-n>, <Space><C-p>: Move window position {{{
-Map [n] -remap <Space><C-n> <Plug>swap_window_next
-Map [n] -remap <Space><C-p> <Plug>swap_window_prev
-Map [n] -remap <Space><C-j> <Plug>swap_window_j
-Map [n] -remap <Space><C-k> <Plug>swap_window_k
-Map [n] -remap <Space><C-h> <Plug>swap_window_h
-Map [n] -remap <Space><C-l> <Plug>swap_window_l
+" Move window position: <C-w>r, <C-w>R, <C-w>x suck! {{{
+Map [n] -remap <Space><C-n> <SID>swap_window_next
+Map [n] -remap <Space><C-p> <SID>swap_window_prev
+Map [n] -remap <Space><C-j> <SID>swap_window_j
+Map [n] -remap <Space><C-k> <SID>swap_window_k
+Map [n] -remap <Space><C-h> <SID>swap_window_h
+Map [n] -remap <Space><C-l> <SID>swap_window_l
 
-Map [n] -silent <Plug>swap_window_next :<C-u>call <SID>swap_window_count(v:count1)<CR>
-Map [n] -silent <Plug>swap_window_prev :<C-u>call <SID>swap_window_count(-v:count1)<CR>
-Map [n] -silent <Plug>swap_window_j :<C-u>call <SID>swap_window_dir(v:count1, 'j')<CR>
-Map [n] -silent <Plug>swap_window_k :<C-u>call <SID>swap_window_dir(v:count1, 'k')<CR>
-Map [n] -silent <Plug>swap_window_h :<C-u>call <SID>swap_window_dir(v:count1, 'h')<CR>
-Map [n] -silent <Plug>swap_window_l :<C-u>call <SID>swap_window_dir(v:count1, 'l')<CR>
-Map [n] -silent <Plug>swap_window_t :<C-u>call <SID>swap_window_dir(v:count1, 't')<CR>
-Map [n] -silent <Plug>swap_window_b :<C-u>call <SID>swap_window_dir(v:count1, 'b')<CR>
+Map [n] -silent <SID>swap_window_next :<C-u>call <SID>swap_window_count(v:count1)<CR>
+Map [n] -silent <SID>swap_window_prev :<C-u>call <SID>swap_window_count(-v:count1)<CR>
+Map [n] -silent <SID>swap_window_j :<C-u>call <SID>swap_window_dir(v:count1, 'j')<CR>
+Map [n] -silent <SID>swap_window_k :<C-u>call <SID>swap_window_dir(v:count1, 'k')<CR>
+Map [n] -silent <SID>swap_window_h :<C-u>call <SID>swap_window_dir(v:count1, 'h')<CR>
+Map [n] -silent <SID>swap_window_l :<C-u>call <SID>swap_window_dir(v:count1, 'l')<CR>
+Map [n] -silent <SID>swap_window_t :<C-u>call <SID>swap_window_dir(v:count1, 't')<CR>
+Map [n] -silent <SID>swap_window_b :<C-u>call <SID>swap_window_dir(v:count1, 'b')<CR>
 
 function! s:modulo(n, m) "{{{
   let d = a:n * a:m < 0 ? 1 : 0
