@@ -1293,8 +1293,8 @@ if has('virtualedit') && s:has_one_of(['all', 'onemore'], split(&virtualedit, ',
     DefMap [n] -expr $-if-right-of-$    col('.') >= col('$') ? '$' : ''
     DefMap [n]       Paste              P
     DefMap [n]       paste              p
-    Map [n] P <$-if-right-of-$><Paste>
-    Map [n] p <$-if-right-of-$><paste>
+    Map [n] -remap P <$-if-right-of-$><Paste>
+    Map [n] -remap p <$-if-right-of-$><paste>
 
     " omake
     Map [n] <excmd>p $p
