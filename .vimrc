@@ -229,6 +229,11 @@ function! s:map_prefix_key(modes, prefix_name, prefix_key) "{{{
 
     execute 'DefMacroMap' printf('[%s]', modes) a:prefix_name a:prefix_key
 
+    " NOTE: Uncomment this due to Vim's mapping specification.
+    " See this: http://d.hatena.ne.jp/thinca/20100525/1274799274
+    "
+    " execute 'Map'         printf('[%s]', modes) a:prefix_key '<Nop>'
+
     " TODO
     " DefMap [<eval modes>] <eval a:prefix_name> <Nop>
     " Map    [<eval modes>] <eval a:prefix_key>  <<eval a:prefix_name>>
