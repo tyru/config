@@ -1538,6 +1538,7 @@ AlterCommand th     tab<Space>help
 AlterCommand t      tabedit
 AlterCommand sf     setf
 AlterCommand hg     helpgrep
+AlterCommand ds     diffsplit
 
 " For typo.
 AlterCommand qw     wq
