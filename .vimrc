@@ -1414,25 +1414,30 @@ function! s:window_merge(jump_cmd, layout_cmd, vertical) "{{{
     let save_ei = &eventignore
     let &l:eventignore = 'all'
     try
-        let curwin = winnr()
         let curbuf = bufnr('%')
-        execute 'wincmd' a:jump_cmd
-        let nextgroupwin = winnr()
+        let i = 0
+        while i < v:count1
+            let curwin = winnr()
+            execute 'wincmd' a:jump_cmd
+            let nextgroupwin = winnr()
 
-        if curwin ==# nextgroupwin
-            " No more next group. Create new group.
-            execute 'wincmd' a:layout_cmd
-        else
-            wincmd p
-            " Close `curwin` window.
-            hide
-            " Back to `nextgroupwin` window.
-            wincmd p
+            if curwin ==# nextgroupwin
+                " No more next group. Create new group.
+                execute 'wincmd' a:layout_cmd
+            else
+                wincmd p
+                " Close `curwin` window.
+                hide
+                " Back to `nextgroupwin` window.
+                wincmd p
 
-            execute (a:vertical ? 'vsplit' : 'split')
-            let &l:eventignore = save_ei    " to detect `curbuf` buffer filetype.
-            silent execute curbuf 'buffer'
-        endif
+                execute (a:vertical ? 'vsplit' : 'split')
+            endif
+
+            let i += 1
+        endwhile
+        let &l:eventignore = save_ei    " to detect `curbuf` buffer filetype.
+        silent execute curbuf 'buffer'
     finally
         let &l:eventignore = save_ei
     endtry
