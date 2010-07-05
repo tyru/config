@@ -1457,23 +1457,10 @@ Map [n] -remap <excmd>sk <SID>(split-to-k)
 Map [n] -remap <excmd>sh <SID>(split-to-h)
 Map [n] -remap <excmd>sl <SID>(split-to-l)
 
-Map [n] <SID>(split-to-j) :<C-u>call <SID>split_with('split', 0, 1)<CR>
-Map [n] <SID>(split-to-k) :<C-u>call <SID>split_with('split', 0, 0)<CR>
-Map [n] <SID>(split-to-h) :<C-u>call <SID>split_with('vsplit', 0, 0)<CR>
-Map [n] <SID>(split-to-l) :<C-u>call <SID>split_with('vsplit', 1, 0)<CR>
-
-function! s:split_with(excmd, splitright, splitbelow) "{{{
-    let save_splitright = &splitright
-    let save_splitbelow = &splitbelow
-    let &l:splitright = a:splitright
-    let &l:splitbelow = a:splitbelow
-    try
-        execute a:excmd
-    finally
-        let &l:splitright = save_splitright
-        let &l:splitbelow = save_splitbelow
-    endtry
-endfunction "}}}
+Map [n] <SID>(split-to-j) :<C-u>execute 'belowright' (v:count == 0 ? '' : v:count) 'split'<CR>
+Map [n] <SID>(split-to-k) :<C-u>execute 'aboveleft'  (v:count == 0 ? '' : v:count) 'split'<CR>
+Map [n] <SID>(split-to-h) :<C-u>execute 'topleft'    (v:count == 0 ? '' : v:count) 'vsplit'<CR>
+Map [n] <SID>(split-to-l) :<C-u>execute 'botright'   (v:count == 0 ? '' : v:count) 'vsplit'<CR>
 
 " }}}
 " }}}
