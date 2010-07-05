@@ -1684,14 +1684,16 @@ endfunction "}}}
 " }}}
 " }}}
 " Encoding {{{
-set enc=utf-8
-set fenc=utf-8
-set termencoding=utf-8
+let s:enc = 'utf-8'
+let &enc = s:enc
+let &fenc = s:enc
+let &termencoding = s:enc
 let &fileencodings = s:uniq_path(
-\   ['utf-8']
+\   [s:enc]
 \   + split(&fileencodings, ',')
 \   + ['iso-2022-jp', 'iso-2022-jp-3']
 \)
+unlet s:enc
 
 set fileformats=unix,dos,mac
 if exists('&ambiwidth')
