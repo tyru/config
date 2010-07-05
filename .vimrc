@@ -863,6 +863,8 @@ Map [n] <excmd>sp :<C-u>Split<CR>
 Map [n] <C-g><C-n>    :<C-u>tablast<CR>
 Map [n] <C-g><C-p>    :<C-u>tabfirst<CR>
 
+Map [n] R gR
+
 " TODO: Smart 'zd': Delete empty line {{{
 " }}}
 " TODO: Smart '{', '}': Treat folds as one non-empty line. {{{
@@ -871,8 +873,6 @@ Map [n] <C-g><C-p>    :<C-u>tabfirst<CR>
 " Execute most used command quickly {{{
 Map [n] <excmd>w      :<C-u>write<CR>
 Map [n] <excmd>q      :<C-u>quit<CR>
-Map [n] <excmd>co     :<C-u>close<CR>
-Map [n] <excmd>h      :<C-u>hide<CR>
 " }}}
 " Edit .vimrc quickly {{{
 Map [n] <excmd>ee     :<C-u>edit<CR>
@@ -1438,6 +1438,12 @@ function! s:window_merge(jump_cmd, layout_cmd, vertical) "{{{
     endtry
 endfunction "}}}
 
+" }}}
+" Hide default <C-w>[hjkl] mappings for previous mappings. {{{
+Map [n] <Space>j <C-w>j
+Map [n] <Space>k <C-w>k
+Map [n] <Space>h <C-w>h
+Map [n] <Space>l <C-w>l
 " }}}
 " <C-w>s, <C-w>v: I don't want to use them because they depend on 'splitright', 'splitbelow' ! {{{
 
