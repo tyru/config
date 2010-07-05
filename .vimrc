@@ -1400,10 +1400,10 @@ Map [n] <Space>n :<C-u>call <SID>count_word(expand('<cword>'))<CR>
 " }}}
 " Minor mappings to change window layout. {{{
 
-Map [n] -remap <window>J <SID>(merge-curwin-into-j)
-Map [n] -remap <window>K <SID>(merge-curwin-into-k)
-Map [n] -remap <window>H <SID>(merge-curwin-into-h)
-Map [n] -remap <window>L <SID>(merge-curwin-into-l)
+Map [n] -remap <window>j <SID>(merge-curwin-into-j)
+Map [n] -remap <window>k <SID>(merge-curwin-into-k)
+Map [n] -remap <window>h <SID>(merge-curwin-into-h)
+Map [n] -remap <window>l <SID>(merge-curwin-into-l)
 
 Map [n] -silent <SID>(merge-curwin-into-j) :<C-u>call <SID>window_merge('j', 'J', 1)<CR>
 Map [n] -silent <SID>(merge-curwin-into-k) :<C-u>call <SID>window_merge('k', 'K', 1)<CR>
