@@ -345,6 +345,15 @@ command!
 \   echohl Debug
 \   | echomsg <args>
 \   | echohl None
+
+" :Eecho
+command!
+\   -nargs=+
+\   Eecho
+\
+\   echohl ErrorMsg
+\   | echomsg <args>
+\   | echohl None
 " }}}
 " }}}
 " }}}
