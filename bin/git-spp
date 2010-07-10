@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# git-spp
+#
+# Do `git stash pop` even if working tree is dirty.
+
+success=0
+failure=1
+
+is_dirty() {
+    if [ -z `git diff` ]; then
+        return $failure
+    else
+        return $success
+    fi
+}
+
+if is_dirty; then
+    git commit --all -m '*temp* (git-spp)'
+fi
+git stash pop
+if is_dirty; then
+    git commit --amend --all -m '*temp* (git-spp)'
+    git reset HEAD~
+fi

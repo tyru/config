@@ -1,8 +1,0 @@
-#!/bin/sh
-
-
-if which sl >/dev/null 2>/dev/null; then
-    sl
-else
-    git ls "$*"
-fi

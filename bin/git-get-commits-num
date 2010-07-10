@@ -1,0 +1,160 @@
+#!/bin/sh
+
+
+true=":"
+false="/bin/false"
+success=0
+failure=1
+
+
+usage() {
+    progname=`basename $0`
+    cat <<EOM
+    Usage
+        1. $progname [{options}] [--]
+        2. $progname [{options}] [--] {branch}
+        3. $progname [{options}] [--] {dir1} {dir2} [{dir3} ...]
+
+    Options
+        -h
+            Show help.
+        -r
+            Reverse case 3. results.
+        -t [branch|dir|""]
+            branch:         Assume arg 1 is {branch}.
+            dir:            Assume arg 1 is {dir}.
+            "" (default):   In case of 2., assume {branch}.
+                            In case of 3., assume {dir}.
+        -d
+            Same as "-t dir".
+        -b
+            Same as "-t branch".
+EOM
+    exit 1
+}
+
+die() {
+    [ $# != 0 ] && echo "$@"
+    exit 1
+}
+
+wtf() {
+    [ $# != 0 ] && echo "wtf: $@"
+    exit 1
+}
+
+decho() {
+    echo "$@" >&2
+}
+
+warn() {
+    echo "$@" >&2
+}
+
+should_be() {
+    # This function's arguments check.
+    [ $# = 2 ] || die "fuck you very much"
+    # Callee function's arguments check.
+    [ "$1" = "$2" ] || die "fuck you"
+}
+
+check_arg_type() {
+    should_be $# 1
+    case "$1" in
+        "branch"|"dir"|"")
+            return $success ;;
+        *)
+            return $failure ;;
+    esac
+}
+
+show_log_branch() {
+    if [ $# = 0 ]; then
+        git log --oneline | wc -l
+    else
+        git log --oneline "$1" | wc -l
+    fi
+}
+
+is_git_repo() {
+    should_be $# 1
+
+    dir="$1"
+    [ \
+        -d "$dir" \
+        -a `cd "$dir" >/dev/null 2>&1 \
+            && git rev-parse >/dev/null 2>&1` \
+    ] && return $success
+    return $failure
+}
+
+show_log_num_dir() {
+    for dir in "$@"; do
+        if [ ! -e "$dir" ]; then
+            warn "$dir: No such a file"
+            continue
+        fi
+        if ! is_git_repo "$dir"; then
+            warn "'$dir' does not seem git repository."
+            continue
+        fi
+
+        num=`cd "$dir" && git log --oneline | wc -l`
+        if $reverse; then
+            echo "$dir $num"
+        else
+            echo "$num $dir"
+        fi
+    done
+}
+
+main() {
+    case $# in
+        0)
+            show_log_branch
+            ;;
+        *)
+            case "$arg_type" in
+                "")
+                    # Ambiguos default arguments deduction
+                    if [ $# = 1 ]; then
+                        show_log_branch "$1"
+                    else
+                        show_log_num_dir "$@"
+                    fi
+                    ;;
+                "branch")
+                    show_log_branch "$@"
+                    ;;
+                "dir")
+                    show_log_num_dir "$@"
+                    ;;
+                *)
+                    wtf
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+
+reverse="$false"
+arg_type=""
+
+
+while getopts hrt:db opt; do
+    case $opt in
+        h) usage ;;
+        ?) usage ;;
+        r) reverse="$true" ;;
+        t) arg_type="$OPTARG" ;;
+        d) arg_type="dir" ;;
+        b) arg_type="branch" ;;
+    esac
+done
+shift `expr $OPTIND - 1`
+
+check_arg_type "$arg_type" || die "$arg_type: -t option allows only 'branch', 'dir', empty string."
+
+
+main "$@"
