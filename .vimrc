@@ -453,7 +453,7 @@ let &titlestring = '%{getcwd()} %{haslocaldir() ? "(local)" : ""}'
 " tab
 set showtabline=2
 " TODO Show project name.
-let &tabline     = '%{tabpagenr()}. [%t]'
+let &tabline     = '%N. [%t]'
 let &guitablabel = &tabline
 
 " statusline
