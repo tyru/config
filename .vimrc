@@ -801,6 +801,10 @@ Map [nvo] -remap <operator>j <Plug>(operator-join)
 call operator#user#define_ex_command('uniq', 'sort u')
 Map [nvo] -remap <operator>u <Plug>(operator-uniq)
 " }}}
+" operator-reverse {{{
+call operator#user#define_ex_command('reverse', 'Reverse')
+Map [nvo] -remap <operator>rev <Plug>(operator-reverse)
+" }}}
 " operator-narrow {{{
 call operator#user#define_ex_command('narrow', 'Narrow')
 
@@ -2381,6 +2385,18 @@ command!
 \   -nargs=+
 \   BacktickEdit
 \   edit `<args>`
+" }}}
+" :Reverse {{{
+command!
+\   -bar -range=%
+\   Reverse
+\   <line1>,<line2>call s:cmd_reverse()
+
+function! s:cmd_reverse() range "{{{
+    for i in range(a:firstline, a:lastline)
+        execute i 'move' a:firstline - 1
+    endfor
+endfunction "}}}
 " }}}
 " }}}
 " For Plugins {{{
