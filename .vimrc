@@ -2317,6 +2317,7 @@ endf
 com! SelectColorScheme   :cal s:SelectColorScheme()
 " }}}
 " Grep {{{
+" http://vim-users.jp/2010/03/hack129/
 " http://vim-users.jp/2010/03/hack130/
 " http://webtech-walker.com/archive/2010/03/17093357.html
 AlterCommand gr[ep] Grep
@@ -2324,13 +2325,35 @@ AlterCommand gr[ep] Grep
 command!
 \   -nargs=+
 \   Grep
-\   call s:grep([<f-args>])
+\   call s:grep(<q-args>)
 
-function! s:grep(args)
-    let target = len(a:args) > 1 ? join(a:args[1:]) : '**/*'
-    noautocmd execute 'vimgrep' '/' . a:args[0] . '/j' target
+function! s:parse_grep_word(args) "{{{
+    let a = s:skip_white(a:args)
+    if a =~# '^/'
+        let m = matchlist(a, '^/\(.\{-}[^\\]\)/')
+        if empty(m)
+            throw 'parse error'
+        endif
+        let [all, word] = m[0:1]
+        let rest = strpart(a, strlen(all))
+        return [word, rest]
+    else
+        return s:parse_one_arg_from_q_args(a)
+    endif
+endfunction "}}}
+function! s:grep(args) "{{{
+    try
+        let [word, rest] = s:parse_grep_word(a:args)
+    catch /^parse error$/
+        Eecho v:exception
+        return
+    endtry
+    let rest = s:skip_white(rest)
+    let target = rest != '' ? rest : '**/*'
+    noautocmd execute 'vimgrep' '/' . word . '/j' target
     QuickFix
-endfunction
+endfunction "}}}
+
 " }}}
 " :WhichEdit {{{
 AlterCommand we WhichEdit
