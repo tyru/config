@@ -2368,7 +2368,7 @@ endfunction "}}}
 
 function! s:cmd_which_edit(arg) "{{{
     if !exists('*Which')
-        echoerr "You have not installed which.vim yet. (script_id is 139)"
+        Eecho "You have not installed which.vim yet. (script_id is 139)"
         return
     endif
     execute 'edit' Which(a:arg)
