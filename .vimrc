@@ -1551,6 +1551,7 @@ AlterCommand t      tabedit
 AlterCommand sf     setf
 AlterCommand hg     helpgrep
 AlterCommand ds     diffsplit
+AlterCommand se[t]  setlocal
 
 " For typo.
 AlterCommand qw     wq
