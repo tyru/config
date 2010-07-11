@@ -2950,6 +2950,9 @@ let g:fencview_show_progressbar = 0
 " github.vim {{{
 AlterCommand gh Github
 " }}}
+" surround.vim {{{
+Map [n] -remap s cs
+" }}}
 " }}}
 " Backup {{{
 " TODO Rotate backup files like writebackupversioncontrol.vim
