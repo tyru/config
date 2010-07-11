@@ -2359,7 +2359,7 @@ function! s:grep(args) "{{{
 endfunction "}}}
 
 " }}}
-" :WhichEdit {{{
+" WhichEdit {{{
 AlterCommand we WhichEdit
 command!
 \   -nargs=1 -complete=customlist,s:complete_bin_programs
@@ -2379,14 +2379,14 @@ function! s:cmd_which_edit(arg) "{{{
 endfunction "}}}
 
 " }}}
-" :BacktickEdit {{{
+" BacktickEdit {{{
 AlterCommand be BacktickEdit
 command!
 \   -nargs=+
 \   BacktickEdit
 \   edit `<args>`
 " }}}
-" :Reverse {{{
+" Reverse {{{
 command!
 \   -bar -range=%
 \   Reverse
@@ -2519,10 +2519,15 @@ let skk_egg_like_newline = 1
 let skk_auto_save_jisyo = 1
 let skk_imdisable_state = -1
 let skk_keep_state = 1
-let skk_sticky_key = ';'
 let skk_show_candidates_count = 2
-let skk_remap_lang_mode = 0
 let skk_show_annotation = 0
+
+" krogue++'s patch
+let skk_sticky_key = ';'
+let skk_use_color_cursor = 1
+
+" My hacks
+let skk_remap_lang_mode = 0
 
 
 if 0
@@ -2566,20 +2571,32 @@ let g:eskk_show_candidates_count = 2
 let g:eskk_show_annotation = 0
 let g:eskk_rom_input_style = 'msime'
 
+let g:eskk_compl_enter_send_keys = []
+
+let g:eskk_enable_completion = 1
+
 
 " Disable "qkatakana". not ";katakanaq".
-EskkMap -type=mode:hira:toggle-kata <Nop>
+" EskkMap -type=mode:hira:toggle-kata <Nop>
 
 " NOTE:
 " eskk#table#get_definition() calls eskk#util#log(),
 " and it will :redraw statusline.
 runtime! plugin/skk.vim
 
-let t = eskk#table#get_definition('rom_to_hira')
-let t['~'] = ['〜', '']
-let t['zc'] = ['©', '']
-let t['zr'] = ['®', '']
-unlet t
+let g:eskk_context_control = [{
+\   'rule': 'eskk#is_enabled() && !eskk#util#has_elem(eskk#util#get_syn_names(), "Comment")',
+\   'fn': 'eskk#disable',
+\}]
+" MyAutocmd InsertEnter * call eskk#handle_context()
+
+
+" call eskk#table#register_derived_table_dict('my_table', [{'method': 'add', 'data': {'~': ['〜', ''], 'zc': ['©', ''], 'zr': ['®', '']}}], 'rom_to_hira')
+" let g:eskk_mode_use_tables =  {'hira': 'my_table', 'kata': 'rom_to_kata', 'zenei': 'rom_to_zenei', 'hankata': 'rom_to_hankata'}
+
+
+
+inoremap <C-g> hoge
 
 
 " NOTE: Experimental
