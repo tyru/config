@@ -1407,6 +1407,9 @@ function! s:count_word(word) "{{{
 endfunction "}}}
 Map [n] <Space>n :<C-u>call <SID>count_word(expand('<cword>'))<CR>
 " }}}
+" Move all windows of current group beyond next group. {{{
+" TODO
+" }}}
 " Minor mappings to change window layout. {{{
 
 Map [n] -remap <window>j <SID>(merge-curwin-into-j)
