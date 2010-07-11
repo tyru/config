@@ -2637,7 +2637,7 @@ MyAutocmd VimEnter * Map [nv] -remap -force gx <Plug>(openbrowser-open)
 let g:autodate_format = "%Y-%m-%d"
 " }}}
 " FuzzyFinder {{{
-call s:map_prefix_key('n', 'anything', 's')
+call s:map_prefix_key('n', 'anything', '<Space>f')
 
 Map [n] <anything>d        :<C-u>FufDir<CR>
 Map [n] <anything>f        :<C-u>FufFile<CR>
