@@ -136,7 +136,7 @@ sub slurp_chomp {
 
 sub get_git_files_from_runtimepath {
     my $tempname = do {
-        my $fh = File::Temp->new or die $!;
+        my $fh = File::Temp->new(UNLINK => 0) or die $!;
         $fh->filename;
     };
     system(@VIM, '-S', $VIM_RTP_SCRIPT, $tempname);
