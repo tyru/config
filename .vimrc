@@ -2930,6 +2930,9 @@ let g:fencview_show_progressbar = 0
 "   endif
 " endfunction "}}}
 " }}}
+" github.vim {{{
+AlterCommand gh Github
+" }}}
 " }}}
 " Backup {{{
 " TODO Rotate backup files like writebackupversioncontrol.vim
