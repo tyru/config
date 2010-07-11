@@ -1341,10 +1341,6 @@ function! s:PreviousWindowOrTab() "{{{
 	endif
 endfunction "}}}
 " }}}
-" Open new window and Search current <cword>. {{{
-Map [n] <Space>* :<C-u>Split<CR>*
-Map [n] <Space># :<C-u>Split<CR>#
-" }}}
 " Move window position: <C-w>r, <C-w>R, <C-w>x suck! {{{
 Map [n] -remap <Space><C-n> <SID>swap_window_next
 Map [n] -remap <Space><C-p> <SID>swap_window_prev
