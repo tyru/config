@@ -544,43 +544,43 @@ MyAutocmd BufReadPre ~/.vim/template/* setlocal nomodeline
 
 
 " filetype {{{
-MyAutocmd BufNewFile,BufReadPre *.as
+MyAutocmd BufNewFile,BufRead *.as
             \ setlocal ft=actionscript syntax=actionscript
-MyAutocmd BufNewFile,BufReadPre *.c
+MyAutocmd BufNewFile,BufRead *.c
             \ setlocal ft=c
-MyAutocmd BufNewFile,BufReadPre *.cpp
+MyAutocmd BufNewFile,BufRead *.cpp
             \ setlocal ft=cpp
-MyAutocmd BufNewFile,BufReadPre *.h
+MyAutocmd BufNewFile,BufRead *.h
             \ setlocal ft=c.cpp
-MyAutocmd BufNewFile,BufReadPre *.cs
+MyAutocmd BufNewFile,BufRead *.cs
             \ setlocal ft=cs
-MyAutocmd BufNewFile,BufReadPre *.java
+MyAutocmd BufNewFile,BufRead *.java
             \ setlocal ft=java
-MyAutocmd BufNewFile,BufReadPre *.js
+MyAutocmd BufNewFile,BufRead *.js
             \ setlocal ft=javascript
-MyAutocmd BufNewFile,BufReadPre *.pl,*.pm
+MyAutocmd BufNewFile,BufRead *.pl,*.pm
             \ setlocal ft=perl
-MyAutocmd BufNewFile,BufReadPre *.ps1
+MyAutocmd BufNewFile,BufRead *.ps1
             \ setlocal ft=powershell
-MyAutocmd BufNewFile,BufReadPre *.py,*.pyc
+MyAutocmd BufNewFile,BufRead *.py,*.pyc
             \ setlocal ft=python
-MyAutocmd BufNewFile,BufReadPre *.rb
+MyAutocmd BufNewFile,BufRead *.rb
             \ setlocal ft=ruby
-MyAutocmd BufNewFile,BufReadPre *.scm,.uim
+MyAutocmd BufNewFile,BufRead *.scm,.uim
             \ setlocal ft=scheme
-MyAutocmd BufNewFile,BufReadPre _vimperatorrc,.vimperatorrc
+MyAutocmd BufNewFile,BufRead _vimperatorrc,.vimperatorrc
             \ setlocal ft=vimperator syntax=vimperator
-MyAutocmd BufNewFile,BufReadPre *.scala
+MyAutocmd BufNewFile,BufRead *.scala
             \ setlocal ft=scala
-MyAutocmd BufNewFile,BufReadPre *.lua
+MyAutocmd BufNewFile,BufRead *.lua
             \ setlocal ft=lua
-MyAutocmd BufNewFile,BufReadPre *.avs
+MyAutocmd BufNewFile,BufRead *.avs
             \ setlocal syntax=avs
-MyAutocmd BufNewFile,BufReadPre *.tmpl
+MyAutocmd BufNewFile,BufRead *.tmpl
             \ setlocal ft=html
-MyAutocmd BufNewFile,BufReadPre *.mkd
+MyAutocmd BufNewFile,BufRead *.mkd
             \ setlocal ft=mkd
-MyAutocmd BufNewFile,BufReadPre *.md
+MyAutocmd BufNewFile,BufRead *.md
             \ setlocal ft=markdown
 
 " aliases
