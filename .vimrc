@@ -2956,6 +2956,8 @@ AlterCommand gh Github
 " }}}
 " surround.vim {{{
 Map [n] -remap s cs
+Map [n] -remap swj sw'
+Map [n] -remap swk sw"
 " }}}
 " }}}
 " Backup {{{
