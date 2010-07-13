@@ -582,6 +582,10 @@ MyAutocmd BufNewFile,BufRead *.mkd
             \ setlocal ft=mkd
 MyAutocmd BufNewFile,BufRead *.md
             \ setlocal ft=markdown
+MyAutocmd BufNewFile,BufRead SKK-JISYO*
+            \ setlocal ft=skk
+MyAutocmd BufNewFile,BufRead *.grass
+            \ setlocal ft=grass
 
 " aliases
 " MyAutocmd FileType mkd
