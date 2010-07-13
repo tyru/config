@@ -2333,8 +2333,20 @@ AlterCommand gr[ep] Grep
 command!
 \   -nargs=+
 \   Grep
-\   call s:grep(<q-args>)
+\   call s:cmd_grep(<q-args>)
 
+function! s:cmd_grep(args) "{{{
+    try
+        let [word, rest] = s:parse_grep_word(a:args)
+    catch /^parse error$/
+        Eecho v:exception
+        return
+    endtry
+    let rest = s:skip_white(rest)
+    let target = rest != '' ? rest : '**/*'
+    noautocmd execute 'vimgrep' '/' . word . '/j' target
+    QuickFix
+endfunction "}}}
 function! s:parse_grep_word(args) "{{{
     let a = s:skip_white(a:args)
     if a =~# '^/'
@@ -2348,18 +2360,6 @@ function! s:parse_grep_word(args) "{{{
     else
         return s:parse_one_arg_from_q_args(a)
     endif
-endfunction "}}}
-function! s:grep(args) "{{{
-    try
-        let [word, rest] = s:parse_grep_word(a:args)
-    catch /^parse error$/
-        Eecho v:exception
-        return
-    endtry
-    let rest = s:skip_white(rest)
-    let target = rest != '' ? rest : '**/*'
-    noautocmd execute 'vimgrep' '/' . word . '/j' target
-    QuickFix
 endfunction "}}}
 
 " }}}
