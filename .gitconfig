@@ -15,21 +15,20 @@
 	cia = commit -v --all
 	ciam = commit -v --amend
 	co = checkout
-	zip = archive --format=zip
 	cont = rebase --continue
 	cp = cherry-pick
-	df = diff
 	dish = diff --cached
-	ds = diff --cached
-	los = log --stat
+	gcn = get-commits-num
 	lg = log --graph
+	los = log --stat
 	lp = log -p
 	ls = ls-files
-	pull-all = pull --rebase --tags
-	push-all = push --tags
+	my-commit = commit -v
+	my-diff = diff --color-words
+	my-pull = pull --tags
+	my-push = push --tags
 	re = reset
 	reha = reset --hard
-	rl = reflog
 	rmsh = rm --cached
 	s = show
 	sa = stash apply
@@ -41,6 +40,7 @@
 	sub = submodule
 	view = log --pretty=oneline --abbrev-commit --graph --source --tags --branches
 	wh = whatchanged
+	zip = archive --format=zip
 [color]
 	branch = auto
 	diff = auto
