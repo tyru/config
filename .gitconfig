@@ -19,6 +19,7 @@
 	cp = cherry-pick
 	dish = diff --cached
 	gcn = get-commits-num
+	gene = log --graph --pretty='%C(yellow)%h%Creset %ai %an: %s%C(yellow)%d%Creset' --all
 	lg = log --graph
 	los = log --stat
 	lp = log -p
