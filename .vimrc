@@ -1374,6 +1374,10 @@ function! s:PreviousWindowOrTab() "{{{
 	endif
 endfunction "}}}
 " }}}
+" Tab mappings (using with previous hack) {{{
+Map [n] -silent <C-g><C-n> gt
+Map [n] -silent <C-g><C-p> gT
+" }}}
 " Move window position: <C-w>r, <C-w>R, <C-w>x suck! {{{
 Map [n] -remap <Space><C-n> <SID>swap_window_next
 Map [n] -remap <Space><C-p> <SID>swap_window_prev
