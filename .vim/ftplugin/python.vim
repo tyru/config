@@ -7,12 +7,13 @@ set cpo&vim
 " }}}
 
 
-setlocal noexpandtab
-inoremap <buffer> <CR> X<BS><CR>
-inoremap <buffer> <Esc> X<BS><Esc>
-
 " TODO: Do not re-indent when comment inserted.
 
+setlocal noexpandtab
+setlocal comments+=b:#
+
+inoremap <buffer> <CR> X<BS><CR>
+inoremap <buffer> <Esc> X<BS><Esc>
 
 " Restore 'cpoptions' {{{
 let &cpo = s:save_cpo
