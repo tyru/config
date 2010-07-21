@@ -355,6 +355,26 @@ command!
 \   echohl ErrorMsg
 \   | echomsg <args>
 \   | echohl None
+
+
+
+" :Memo
+command!
+\   -nargs=+ -complete=command
+\   Memo
+\   call s:cmd_memo(<q-args>)
+
+function! s:cmd_memo(args) "{{{
+    redir => output
+    silent execute a:args
+    redir END
+
+    echohl Debug
+    for line in split(output, '\n')
+        echomsg line
+    endfor
+    echohl None
+endfunction "}}}
 " }}}
 " }}}
 " }}}
