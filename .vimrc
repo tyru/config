@@ -936,9 +936,9 @@ set cedit=<C-z>
 function! s:cmdwin_enter()
     Map [ni] -force -buffer <C-z>         <C-c>
     Map [n]  -buffer <Esc>         :<C-u>quit<CR>
-    Map [n]  -force -buffer :             :<C-u>quit<CR>:
     Map [n]  -force -buffer <window>k        :<C-u>quit<CR>
     Map [n]  -force -buffer <window><C-k>    :<C-u>quit<CR>
+    Map [i]  -force -buffer -expr <BS>       col('.') == 1 ? "\<Esc>:quit\<CR>" : "\<BS>"
 
     startinsert!
 endfunction
