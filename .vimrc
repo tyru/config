@@ -713,6 +713,10 @@ let g:arpeggio_timeoutlen = 40
 call arpeggio#load()
 
 call altercmd#load()
+command!
+\   -bar -nargs=+
+\   MyAlterCommand
+\   CAlterCommand <args> | AlterCommand <cmdwin> <args>
 " }}}
 " Mappings and/or Abbreviations {{{
 
@@ -1575,16 +1579,16 @@ inoreab <expr> date@      strftime("%Y-%m-%d")
 inoreab <expr> time@      strftime("%H:%M")
 inoreab <expr> dt@        strftime("%Y-%m-%d %H:%M")
 
-AlterCommand th     tab<Space>help
-AlterCommand t      tabedit
-AlterCommand sf     setf
-AlterCommand hg     helpgrep
-AlterCommand ds     diffsplit
-AlterCommand se[t]  setlocal
+MyAlterCommand th     tab<Space>help
+MyAlterCommand t      tabedit
+MyAlterCommand sf     setf
+MyAlterCommand hg     helpgrep
+MyAlterCommand ds     diffsplit
+MyAlterCommand se[t]  setlocal
 
 " For typo.
-AlterCommand qw     wq
-AlterCommand amp    map
+MyAlterCommand qw     wq
+MyAlterCommand amp    map
 " }}}
 
 " Mappings with option value. {{{
@@ -2073,7 +2077,7 @@ function! s:ack(...)
     endtry
 endfunction
 
-AlterCommand ac[k] Ack
+MyAlterCommand ac[k] Ack
 command!
 \   -bar -nargs=+
 \   Ack
@@ -2085,8 +2089,8 @@ command! -nargs=+ SetTitle
 " }}}
 " EchoPath {{{
 
-AlterCommand epa EchoPath
-AlterCommand rtp EchoPath<Space>&rtp
+MyAlterCommand epa EchoPath
+MyAlterCommand rtp EchoPath<Space>&rtp
 
 
 command!
@@ -2106,8 +2110,8 @@ endfunction "}}}
 "
 " TODO
 
-AlterCommand tr  TR
-AlterCommand trr TRR
+MyAlterCommand tr  TR
+MyAlterCommand trr TRR
 
 command!
 \   -nargs=+ -range
@@ -2192,10 +2196,10 @@ command!
 \   Expand
 \   echo expand(<q-args> != '' ? <q-args> : '%:p')
 
-AlterCommand ep Expand
+MyAlterCommand ep Expand
 " }}}
 " Has {{{
-AlterCommand has Has
+MyAlterCommand has Has
 
 command!
 \   -bar -nargs=1
@@ -2210,8 +2214,8 @@ command!
 \   ExModeInteractive
 \   call feedkeys('gQ', 'n')
 
-AlterCommand ex     ExMode
-AlterCommand exi    ExModeInteractive
+MyAlterCommand ex     ExMode
+MyAlterCommand exi    ExModeInteractive
 " }}}
 " GlobPath {{{
 command!
@@ -2219,7 +2223,7 @@ command!
 \   GlobPath
 \   echo globpath(&rtp, <q-args>)
 
-AlterCommand gp GlobPath
+MyAlterCommand gp GlobPath
 " }}}
 " QuickFix {{{
 " Select prefered command from cwindow, copen, and so on.
@@ -2229,10 +2233,10 @@ command!
 \   QuickFix
 \   if !empty(getqflist()) | cwindow <args> | endif
 
-AlterCommand qf QuickFix
+MyAlterCommand qf QuickFix
 " }}}
 " Capture {{{
-AlterCommand cap[ture] Capture
+MyAlterCommand cap[ture] Capture
 
 command!
 \   -nargs=+ -complete=command
@@ -2255,7 +2259,7 @@ endfunction "}}}
 " }}}
 
 " TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
-AlterCommand cd  TabpageCD
+MyAlterCommand cd  TabpageCD
 
 Map [n] ,cd       :<C-u>TabpageCD %:p:h<CR>
 Map [n] <Space>cd :<C-u>lcd %:p:h<CR>
@@ -2274,9 +2278,9 @@ MyAutocmd TabEnter *
 \ | execute 'cd' fnameescape(expand(t:cwd))
 " }}}
 " s:split_nicely_with() {{{
-AlterCommand sp[lit]    Split
-AlterCommand h[elp]     Help
-AlterCommand new        New
+MyAlterCommand sp[lit]    Split
+MyAlterCommand h[elp]     Help
+MyAlterCommand new        New
 
 command!
 \   -bar -bang -nargs=* -complete=file
@@ -2389,7 +2393,7 @@ endfunction "}}}
 
 " }}}
 " WhichEdit {{{
-AlterCommand we WhichEdit
+MyAlterCommand we WhichEdit
 command!
 \   -nargs=1 -complete=customlist,s:complete_bin_programs
 \   WhichEdit
@@ -2409,7 +2413,7 @@ endfunction "}}}
 
 " }}}
 " BacktickEdit {{{
-AlterCommand be BacktickEdit
+MyAlterCommand be BacktickEdit
 command!
 \   -nargs=+
 \   BacktickEdit
@@ -2655,9 +2659,9 @@ Map [nvoicl] -remap <C-g><C-a> <Plug>(stickykey-alt-remap)
 
 " }}}
 " restart {{{
-AlterCommand res[tart] Restart
-AlterCommand ers[tart] Restart
-AlterCommand rse[tart] Restart
+MyAlterCommand res[tart] Restart
+MyAlterCommand ers[tart] Restart
+MyAlterCommand rse[tart] Restart
 " }}}
 " openbrowser {{{
 MyAutocmd VimEnter * Map [nv] -remap -force gx <Plug>(openbrowser-open)
@@ -2757,7 +2761,7 @@ Map [n] <C-]>     :<C-u>call <SID>JumpTags()<CR>
 endif
 " }}}
 " vimshell {{{
-AlterCommand vsh[ell] VimShell
+MyAlterCommand vsh[ell] VimShell
 
 MyAutocmd FileType vimshell call s:vimshell_settings()
 
@@ -2914,12 +2918,12 @@ call submode#map       ('s', 'n', '', 's', ':let &l:scroll += 3<CR>')
 " }}}
 " ref {{{
 " 'K' for ':Ref'.
-AlterCommand ref Ref
-AlterCommand alc Ref<Space>alc
-AlterCommand man Ref<Space>man
-AlterCommand pdoc Ref<Space>perldoc
-AlterCommand cppref Ref<Space>cppref
-AlterCommand cpp    Ref<Space>cppref
+MyAlterCommand ref Ref
+MyAlterCommand alc Ref alc
+MyAlterCommand man Ref man
+MyAlterCommand pdoc Ref perldoc
+MyAlterCommand cppref Ref cppref
+MyAlterCommand cpp    Ref cppref
 
 call s:map_orig_key('n', 'K')
 
@@ -2941,7 +2945,7 @@ let g:vimfiler_split_command = 'Split'
 let g:vimfiler_edit_command = 'edit'
 " }}}
 " prettyprint {{{
-AlterCommand pp PP
+MyAlterCommand pp PP
 
 let g:prettyprint_echo_type = 'buffer'
 let g:prettyprint_echomsg_highlight = 'Debug'
@@ -2977,7 +2981,7 @@ let g:fencview_show_progressbar = 0
 " endfunction "}}}
 " }}}
 " github.vim {{{
-AlterCommand gh Github
+MyAlterCommand gh Github
 " }}}
 " surround.vim {{{
 Map [n] -remap s cs
@@ -3053,7 +3057,7 @@ endfunction "}}}
 " }}}
 " :hyde {{{
 
-AlterCommand hyd[e] Hyde
+MyAlterCommand hyd[e] Hyde
 
 command!
 \   -bar -nargs=1 -complete=expression
