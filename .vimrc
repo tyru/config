@@ -2532,7 +2532,7 @@ let dumbbuf_remove_marked_when_close = 1
 " let dumbbuf_verbose = 1
 " }}}
 " prompt {{{
-" let prompt_debug = 1
+let prompt_debug = 1
 " }}}
 " skk.vim && eskk.vim {{{
 
