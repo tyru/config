@@ -3018,6 +3018,25 @@ let g:fencview_show_progressbar = 0
 "     execute printf('WindowName %s(%d)', 'lingr-vim', lingr#unread_count())
 "   endif
 " endfunction "}}}
+
+let g:lingr_vim_additional_rooms = [
+\   'vim',
+\   'emacs',
+\   'editor',
+\   'vim_users_en',
+\   'vimperator',
+\   'filer',
+\   'completion',
+\   'shell',
+\   'git',
+\   'termtter',
+\   'lingr',
+\   'ruby',
+\   'few',
+\   'gc',
+\   'scala',
+\   'lowlevel'
+\]
 " }}}
 " github.vim {{{
 MyAlterCommand gh Github
