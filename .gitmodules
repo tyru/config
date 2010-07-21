@@ -157,3 +157,6 @@
 [submodule "ext/vim-github"]
 	path = ext/vim-github
 	url = git://github.com/thinca/vim-github.git
+[submodule "ext/vim-qfreplace"]
+	path = ext/vim-qfreplace
+	url = git://github.com/thinca/vim-qfreplace.git
