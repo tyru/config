@@ -845,6 +845,10 @@ Map [nvo] -remap <operator>r  <Plug>(operator-replace)
 Map [nvo] -remap <operator>c <Plug>(operator-camelize)
 Map [nvo] -remap <operator>C <Plug>(operator-decamelize)
 " }}}
+" operator-blank-killer {{{
+call operator#user#define_ex_command('blank-killer', 's/\s\+$//')
+Map [nvo] -remap <operator><Space>d <Plug>(operator-blank-killer)
+" }}}
 " }}}
 " motion/textobj {{{
 Map [nvo] j gj
