@@ -2022,6 +2022,10 @@ function! s:DelFile(...)
             if filereadable(j)
                 call s:warn(printf("Can't delete '%s'", j))
             elseif j ==# expand('%')
+                if winnr('$') == 1
+                    new
+                    wincmd p
+                endif
                 bwipeout
             endif
         endfor
