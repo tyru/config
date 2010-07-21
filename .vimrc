@@ -909,7 +909,8 @@ Map [n] <excmd>sp :<C-u>Split<CR>
 Map [n] <C-g><C-n>    :<C-u>tablast<CR>
 Map [n] <C-g><C-p>    :<C-u>tabfirst<CR>
 
-Map [n] R gR
+Map [n] gl :<C-u>cnext<CR>
+Map [n] gh :<C-u>cNext<CR>
 
 " TODO: Smart 'zd': Delete empty line {{{
 " }}}
