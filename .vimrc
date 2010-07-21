@@ -603,7 +603,7 @@ MyAutocmd BufNewFile,BufRead *.mkd
             \ setlocal ft=mkd
 MyAutocmd BufNewFile,BufRead *.md
             \ setlocal ft=markdown
-MyAutocmd BufNewFile,BufRead SKK-JISYO*
+MyAutocmd BufNewFile,BufRead SKK-JISYO*,~/.skk-jisyo*
             \ setlocal ft=skk
 MyAutocmd BufNewFile,BufRead *.grass
             \ setlocal ft=grass
