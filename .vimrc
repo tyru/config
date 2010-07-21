@@ -526,7 +526,7 @@ set diffopt=filler,vertical
 set helplang=ja,en
 set history=50
 set keywordprg=
-set lazyredraw
+" set lazyredraw
 set nojoinspaces
 set showcmd
 set nrformats=hex
