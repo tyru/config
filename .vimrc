@@ -1509,8 +1509,8 @@ Map [n] -remap <excmd>sl <SID>(split-to-l)
 
 Map [n] -silent <SID>(split-to-j) :<C-u>execute 'belowright' (v:count == 0 ? '' : v:count) 'split'<CR>
 Map [n] -silent <SID>(split-to-k) :<C-u>execute 'aboveleft'  (v:count == 0 ? '' : v:count) 'split'<CR>
-Map [n] -silent <SID>(split-to-h) :<C-u>execute 'topleft'    (v:count == 0 ? '' : v:count) 'vsplit'<CR>
-Map [n] -silent <SID>(split-to-l) :<C-u>execute 'botright'   (v:count == 0 ? '' : v:count) 'vsplit'<CR>
+Map [n] -silent <SID>(split-to-h) :<C-u>execute 'aboveleft'    (v:count == 0 ? '' : v:count) 'vsplit'<CR>
+Map [n] -silent <SID>(split-to-l) :<C-u>execute 'belowright'   (v:count == 0 ? '' : v:count) 'vsplit'<CR>
 
 " }}}
 " }}}
