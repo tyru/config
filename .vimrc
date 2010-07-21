@@ -906,8 +906,7 @@ Map [n] -- - <C-x>
 
 Map [n] <excmd>sp :<C-u>Split<CR>
 
-Map [n] <C-g><C-n>    :<C-u>tablast<CR>
-Map [n] <C-g><C-p>    :<C-u>tabfirst<CR>
+Map [n] r gR
 
 Map [n] gl :<C-u>cnext<CR>
 Map [n] gh :<C-u>cNext<CR>
