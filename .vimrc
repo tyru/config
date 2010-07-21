@@ -302,7 +302,8 @@ command!
 \   Dump
 \
 \   echohl Debug
-\   | echomsg printf("  %s = %s", <q-args>, string(eval(<q-args>)))
+\   | redraw
+\   | echomsg printf("  %s = %s", <q-args>, string(<args>))
 \   | if <bang>0
 \   |   try
 \   |     throw ''
