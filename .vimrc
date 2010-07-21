@@ -2708,6 +2708,8 @@ function! s:register_fuf_abbrev()
         \ '^s@' : ['~/work/scratch/'],
         \ '^m@' : ['~/work/memo/'],
         \ '^g@' : ['~/work/git/'],
+        \ '^d@' : ['~/work/git/+mine/dotfiles/'],
+        \ '^e@' : ['~/work/git/+mine/dotfiles/ext/'],
     \}
 
     if has('win32')
