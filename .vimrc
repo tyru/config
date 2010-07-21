@@ -1772,8 +1772,8 @@ function! ChangeEncoding()
                 \   ],
                 \   'escape': 1,
                 \   'one_char': 1,
-                \   'execute_if': 'val != ""',
-                \   'executef': 'edit ++enc=%s'})
+                \   'execute_if': '<f-value> != ""',
+                \   'execute': 'edit ++enc=<value>'})
     if result !=# "\e"
         echomsg printf("re-open with '%s'.", result)
     endif
@@ -1794,8 +1794,8 @@ function! ChangeFileEncoding()
                 \ ],
                 \ 'escape': 1,
                 \ 'one_char': 1,
-                \ 'execute_if': 'val != ""',
-                \ 'executef': 'set fenc=%s'})
+                \ 'execute_if': '<f-value> != ""',
+                \ 'execute': 'set fenc=<value>'})
     if enc ==# "\e"
         return
     endif
@@ -1815,8 +1815,8 @@ function! ChangeNL()
                 \ 'menu': ['dos', 'unix', 'mac'],
                 \ 'one_char': 1,
                 \ 'escape': 1,
-                \ 'execute_if': 'val != ""',
-                \ 'executef': 'set ff=%s'})
+                \ 'execute_if': '<f-value> != ""',
+                \ 'execute': 'set ff=<value>'})
     if result !=# "\e"
         echomsg printf("changing newline format to '%s'.", result)
     endif
@@ -1972,8 +1972,8 @@ function! s:set_listchars()
     \       ],
     \       'one_char': 1,
     \       'escape': 1,
-    \       'execute_if': 'val != ""',
-    \       'executef': 'set listchars=%s'})
+    \       'execute_if': '<f-value> != ""',
+    \       'execute': 'set listchars=<value>'})
     if lcs !=# "\e"
         echomsg printf("changing &listchars to '%s'.", lcs)
     endif
