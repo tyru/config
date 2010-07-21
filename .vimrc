@@ -2888,12 +2888,28 @@ call submode#map       ('guiwinsize', 'n', '', 'h', ':set columns-=5<CR>')
 call submode#map       ('guiwinsize', 'n', '', 'l', ':set columns+=5<CR>')
 
 " Change current window size.
-call submode#enter_with('winsize', 'n', '', 'mws', '<Nop>')
+call submode#enter_with('winsize', 'n', '', 'mws', ':<C-u>call VimrcSubmodeResizeWindow()<CR>')
 call submode#leave_with('winsize', 'n', '', '<Esc>')
-call submode#map       ('winsize', 'n', '', 'j', '<C-w>-:redraw<CR>')
-call submode#map       ('winsize', 'n', '', 'k', '<C-w>+:redraw<CR>')
-call submode#map       ('winsize', 'n', '', 'h', '<C-w><:redraw<CR>')
-call submode#map       ('winsize', 'n', '', 'l', '<C-w>>:redraw<CR>')
+
+" TODO or FIXME: submode#leave_with() can't do that.
+" call submode#leave_with('winsize', 'n', '', '<Esc>', ':<C-u>call VimrcSubmodeResizeWindowRestore()<CR>')
+
+function! VimrcSubmodeResizeWindow()
+    let curwin = winnr()
+    wincmd j | let target1 = winnr() | exe curwin "wincmd w"
+    wincmd l | let target2 = winnr() | exe curwin "wincmd w"
+
+    execute printf("call submode#map ('winsize', 'n', 'r', 'j', '<C-w>%s')", curwin == target1 ? "-" : "+")
+    execute printf("call submode#map ('winsize', 'n', 'r', 'k', '<C-w>%s')", curwin == target1 ? "+" : "-")
+    execute printf("call submode#map ('winsize', 'n', 'r', 'h', '<C-w>%s')", curwin == target2 ? ">" : "<")
+    execute printf("call submode#map ('winsize', 'n', 'r', 'l', '<C-w>%s')", curwin == target2 ? "<" : ">")
+endfunction
+" function! VimrcSubmodeResizeWindowRestore()
+"     if exists('s:submode_save_lazyredraw')
+"         let &l:lazyredraw = s:submode_save_lazyredraw
+"         unlet s:submode_save_lazyredraw
+"     endif
+" endfunction
 
 " undo/redo
 call submode#enter_with('undo/redo', 'n', '', 'g-', 'g-')
@@ -2903,10 +2919,10 @@ call submode#map       ('undo/redo', 'n', '', '-', 'g-')
 call submode#map       ('undo/redo', 'n', '', '+', 'g+')
 
 " Tab walker.
-call submode#enter_with('tabwalker', 'n', '', 'mtw', '<Nop>')
+call submode#enter_with('tabwalker', 'n', '', '<Space>t', '<Nop>')
 call submode#leave_with('tabwalker', 'n', '', '<Esc>')
-call submode#map       ('tabwalker', 'n', '', 'h', 'gT:redraw<CR>')
-call submode#map       ('tabwalker', 'n', '', 'l', 'gt:redraw<CR>')
+call submode#map       ('tabwalker', 'n', '', 'h', 'gT')
+call submode#map       ('tabwalker', 'n', '', 'l', 'gt')
 call submode#map       ('tabwalker', 'n', '', 'H', ':execute "tabmove" tabpagenr() - 2<CR>')
 call submode#map       ('tabwalker', 'n', '', 'L', ':execute "tabmove" tabpagenr()<CR>')
 
@@ -2920,13 +2936,13 @@ call submode#map       ('tabwalker', 'n', '', 'L', ':execute "tabmove" tabpagenr
 " Scroll by j and k.
 " TODO Stash &scroll value.
 " TODO Make utility function to generate current shortest <SID> map.
-call submode#enter_with('s', 'n', '', 'gj', '<C-d>:redraw<CR>')
-call submode#enter_with('s', 'n', '', 'gk', '<C-u>:redraw<CR>')
-call submode#leave_with('s', 'n', '', '<Esc>')
-call submode#map       ('s', 'n', '', 'j', '<C-d>:redraw<CR>')
-call submode#map       ('s', 'n', '', 'k', '<C-u>:redraw<CR>')
-call submode#map       ('s', 'n', '', 'a', ':let &l:scroll -= 3<CR>')
-call submode#map       ('s', 'n', '', 's', ':let &l:scroll += 3<CR>')
+call submode#enter_with('scroll', 'n', '', 'gj', '<C-d>')
+call submode#enter_with('scroll', 'n', '', 'gk', '<C-u>')
+call submode#leave_with('scroll', 'n', '', '<Esc>')
+call submode#map       ('scroll', 'n', '', 'j', '<C-d>')
+call submode#map       ('scroll', 'n', '', 'k', '<C-u>')
+call submode#map       ('scroll', 'n', '', 'a', ':let &l:scroll -= 3<CR>')
+call submode#map       ('scroll', 'n', '', 's', ':let &l:scroll += 3<CR>')
 " }}}
 " ref {{{
 " 'K' for ':Ref'.
