@@ -1424,6 +1424,7 @@ function! s:swap_window(curwin, targetwin) "{{{
     execute 'hide' targetbuf . 'buffer'
     execute a:targetwin 'wincmd w'
     execute curbuf 'buffer'
+    " wincmd p    " Behave like <C-w>x ?
   endif
 endfunction "}}}
 " }}}
