@@ -2598,7 +2598,7 @@ endif
 " }}}
 " eskk {{{
 let g:eskk_disable = 0
-let g:eskk_debug = 1
+let g:eskk_debug = 0
 let g:eskk_debug_file = '~/eskk-debug.log'
 
 call eskk#load()
@@ -2611,12 +2611,13 @@ endif
 let g:eskk_egg_like_newline = 1
 let g:eskk_keep_state = 1
 let g:eskk_show_candidates_count = 2
-let g:eskk_show_annotation = 0
+let g:eskk_show_annotation = 1
 let g:eskk_rom_input_style = 'msime'
 
-let g:eskk_compl_enter_send_keys = []
-
-let g:eskk_enable_completion = 1
+let g:eskk_marker_henkan = '$'
+let g:eskk_marker_okuri = '*'
+let g:eskk_marker_henkan_select = '@'
+let g:eskk_marker_jisyo_touroku = '?'
 
 
 " Disable "qkatakana". not ";katakanaq".
@@ -2634,12 +2635,22 @@ let g:eskk_context_control = [{
 " MyAutocmd InsertEnter * call eskk#handle_context()
 
 
-" call eskk#table#register_derived_table_dict('my_table', [{'method': 'add', 'data': {'~': ['〜', ''], 'zc': ['©', ''], 'zr': ['®', '']}}], 'rom_to_hira')
-" let g:eskk_mode_use_tables =  {'hira': 'my_table', 'kata': 'rom_to_kata', 'zenei': 'rom_to_zenei', 'hankata': 'rom_to_hankata'}
+let t = eskk#table#create('my_table', 'rom_to_hira')
+call t.add('~', '〜')
+call t.add('zc', '©')
+call t.add('zr', '®')
+call t.register()
+unlet t
+
+let g:eskk_mode_use_tables.hira = 'my_table'
 
 
 
 inoremap <C-g> hoge
+
+
+" map! <C-j> <Plug>(eskk:enable)
+" EskkMap <C-j> <Nop>
 
 
 " NOTE: Experimental
