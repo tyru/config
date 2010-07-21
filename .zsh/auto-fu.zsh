@@ -34,34 +34,40 @@
 # Configuration
 # The auto-fu features can be configured via zstyle.
 
-#     :auto-fu:highlight
-#       input
-#         A highlight specification used for user input string.
-#       completion
-#         A highlight specification used for completion string.
-#     :auto-fu:var
-#       postdisplay
-#         An initial indication string for POSTDISPLAY in auto-fu-init.
-#       enable
-#         A list of zle widget names the automatic complete-word and
-#         list-choices to be triggered after its invocation.
-#         Only with ALL in 'enable', the 'disable' style has any effect.
-#         ALL by default.
-#       disable
-#         A list of zle widget names you do *NOT* want the complete-word to be
-#         triggered. Only used if 'enable' contains ALL. For example,
-#           zstyle ':auto-fu:var' enable all
-#           zstyle ':auto-fu:var' disable magic-space
-#         yields; complete-word will not be triggered after pressing the
-#         space-bar, otherwise automatic thing will be taken into account.
+# :auto-fu:highlight
+#   input
+#     A highlight specification used for user input string.
+#   completion
+#     A highlight specification used for completion string.
+#   completion/one
+#     A highlight specification used for completion string if it is the
+#     only one candidate.
+# :auto-fu:var
+#   postdisplay
+#     An initial indication string for POSTDISPLAY in auto-fu-init.
+#   postdisplay/clearp
+#     If set, POSTDISPLAY will be cleared after the accept-lines.
+#     'yes' by default.
+#   enable
+#     A list of zle widget names the automatic complete-word and
+#     list-choices to be triggered after its invocation.
+#     Only with ALL in 'enable', the 'disable' style has any effect.
+#     ALL by default.
+#   disable
+#     A list of zle widget names you do *NOT* want the complete-word to be
+#     triggered. Only used if 'enable' contains ALL. For example,
+#       zstyle ':auto-fu:var' enable all
+#       zstyle ':auto-fu:var' disable magic-space
+#     yields; complete-word will not be triggered after pressing the
+#     space-bar, otherwise automatic thing will be taken into account.
 
 # Configuration example
 
-#     zstyle ':auto-fu:highlight' input bold
-#     zstyle ':auto-fu:highlight' completion fg=black,bold
-#     zstyle ':auto-fu:var' postdisplay $'\n-azfu-'
-#     #zstyle ':auto-fu:var' disable magic-space
-
+# zstyle ':auto-fu:highlight' input bold
+# zstyle ':auto-fu:highlight' completion fg=black,bold
+# zstyle ':auto-fu:highlight' completion/one fg=white,bold,underline
+# zstyle ':auto-fu:var' postdisplay $'\n-azfu-'
+# #zstyle ':auto-fu:var' disable magic-space
 
 # XXX: use with the error correction or _match completer.
 # If you got the correction errors during auto completing the word, then
@@ -74,7 +80,6 @@
 # XXX: ignoreeof semantics changes for overriding ^D.
 # You cannot change the ignoreeof option interactively. I'm verry sorry.
 
-# TODO: README
 # TODO: refine afu-able-space-p or better.
 # TODO: http://d.hatena.ne.jp/tarao/20100531/1275322620
 # TODO: pause auto stuff until something happens. ("next magic-space" etc)
@@ -84,17 +89,32 @@
 # TODO: handle empty or space characters.
 # TODO: cp x /usr/loc
 # TODO: region_highlight vs afu-able-p → nil
-# TODO: region_highlight vs paste
 # TODO: ^C-n could be used as the menu-select-key outside of the menuselect.
-# TODO: indicate exact match if possible.
-# TODO: for the screen estate, postdisplay could be cleared if it could be,
-# after accepted etc.
 # TODO: *-directories|all-files may not be enough.
-# TODO: postdisplay should be cleared properly after the `send-break`ing.
-# TODO: kill-word and yank should be added to the afu_zles.
 # TODO: recommend zcompiling.
+# TODO: undo should be reset the auto stuff's state.
+# TODO: when `_match`ing,
+# sometimes extra <TAB> key is needed to enter the menu select,
+# sometimes is *not* needed. (already be entered menu select state.)
 
 # History
+
+# v0.0.1.9
+# add auto-fu-actitivate, auto-fu-deactivate and auto-fu-toggle.
+
+# v0.0.1.8.3
+# in afu+complete-word PAGER=<TAB> ⇒ PAGER=PAGER= bug fix.
+# Thank you very much for the report, tyru!
+
+# v0.0.1.8.2
+# afu+complete-word bug fixes.
+
+# v0.0.1.8.1
+# README.md
+
+# v0.0.1.8
+# add completion/one and postdisplay/clearp configurations.
+# add kill-word and yank to afu_zles.
 
 # v0.0.1.7
 # Fix "no such keymap `isearch'" error.
@@ -128,7 +148,7 @@ afu_zles=( \
   # Zle widgets should be rebinded in the afu keymap. `auto-fu-maybe' to be
   # called after it's invocation, see `afu-initialize-zle-afu'.
   self-insert backward-delete-char backward-kill-word kill-line \
-  kill-whole-line magic-space \
+  kill-whole-line kill-word magic-space yank \
 )
 
 autoload +X keymap+widget
@@ -215,6 +235,7 @@ function () {
   # For backward compatibility
   zstyle ':auto-fu:highlight' input bold
   zstyle ':auto-fu:highlight' completion fg=black,bold
+  zstyle ':auto-fu:highlight' completion/one fg=whilte,bold,underline
   zstyle ':auto-fu:var' postdisplay $'\n-azfu-'
 }
 
@@ -222,7 +243,7 @@ declare -a afu_accept_lines
 
 afu-recursive-edit-and-accept () {
   local -a __accepted
-  zle recursive-edit -K afu || { zle send-break; return }
+  zle recursive-edit -K afu || { afu-reset; zle -R ''; zle send-break; return }
   (( ${#${(M)afu_accept_lines:#${__accepted[1]}}} > 1 )) &&
   { zle "${__accepted[@]}"} || { zle accept-line }
 }
@@ -238,6 +259,7 @@ afu-register-zle-accept-line () {
       zstyle -s ':auto-fu:highlight' input hi
       [[ -z ${hi} ]] || region_highlight=("0 ${#BUFFER} ${hi}")
     }
+    zstyle -T ':auto-fu:var' postdisplay/clearp && POSTDISPLAY=''
     return 0
   }
   zle -N $afufun
@@ -257,6 +279,7 @@ auto-fu-init () {
   {
     local -a region_highlight
     local afu_in_p=0
+    local afu_paused_p=0
 
     zstyle -s ':auto-fu:var' postdisplay ps
     [[ -z ${ps} ]] || POSTDISPLAY="$ps"
@@ -277,9 +300,29 @@ with-afu-gvars () {
     zle -M "Sorry, can't turn on or off if auto-fu-init is in effect."; return
   }
   typeset -g afu_in_p=0
+  typeset -g afu_paused_p=0
   region_highlight=()
   "$@"
 }
+
+afu-register-zle-toggle () {
+  local var="$1"
+  local toggle="$2"
+  local activate="$3"
+  local deactivate="$4"
+  eval "$(cat <<EOT
+    $toggle () {
+      (( $var == 1 )) && { $var=0; return }
+      (( $var != 1 )) && { $var=1; return }
+    }
+    $activate () { $var=0 }
+    $deactivate () { $var=1 }
+    zle -N $toggle; zle -N $activate; zle -N $deactivate
+EOT
+  )"
+}
+afu-register-zle-toggle afu_paused_p \
+  auto-fu-toggle auto-fu-activate auto-fu-deactivate
 
 afu-clearing-maybe () {
   region_highlight=()
@@ -287,6 +330,13 @@ afu-clearing-maybe () {
     [[ "$BUFFER" != "$buffer_new" ]] || ((CURSOR != cursor_cur)) &&
     { afu_in_p=0 }
   fi
+}
+
+afu-reset () {
+  region_highlight=()
+  afu_in_p=0
+  local ps; zstyle -s ':auto-fu:var' postdisplay ps
+  [[ -z ${ps} ]] || POSTDISPLAY=''
 }
 
 with-afu () {
@@ -321,6 +371,8 @@ afu-initialize-zle-afu () {
 afu-initialize-zle-afu
 
 afu-able-p () {
+  (( afu_paused_p == 1 )) && return 1;
+
   local c=$LBUFFER[-1]
   [[ $c == ''  ]] && return 1;
   [[ $c == ' ' ]] && { afu-able-space-p || return 1 && return 0 }
@@ -348,6 +400,12 @@ auto-fu-maybe () {
   { auto-fu }
 }
 
+with-afu-compfuncs () {
+  compprefuncs=(afu-comppre)
+  comppostfuncs=(afu-comppost)
+  "$@"
+}
+
 auto-fu () {
   emulate -L zsh
   unsetopt rec_exact
@@ -355,24 +413,29 @@ auto-fu () {
 
   cursor_cur="$CURSOR"
   buffer_cur="$BUFFER"
-  comppostfuncs=(afu-k)
-  zle complete-word
+  with-afu-compfuncs zle complete-word
   cursor_new="$CURSOR"
   buffer_new="$BUFFER"
+
   if [[ "$buffer_cur[1,cursor_cur]" == "$buffer_new[1,cursor_cur]" ]];
   then
     CURSOR="$cursor_cur"
     {
-      local hi
-      zstyle -s ':auto-fu:highlight' completion hi
-      [[ -z ${hi} ]] || region_highlight=("$CURSOR $cursor_new ${hi}")
+      local hi hiv
+      [[ $afu_one_match_p == t ]] && hi=completion/one || hi=completion
+      zstyle -s ':auto-fu:highlight' "$hi" hiv
+      [[ -z ${hiv} ]] || {
+        local -i end=$cursor_new
+        [[ $BUFFER[$cursor_new] == ' ' ]] && (( end-- ))
+        region_highlight=("$CURSOR $end ${hiv}")
+      }
     }
 
     if [[ "$buffer_cur" != "$buffer_new" ]] || ((cursor_cur != cursor_new))
     then afu_in_p=1; {
       local BUFFER="$buffer_cur"
       local CURSOR="$cursor_cur"
-      zle list-choices
+      with-afu-compfuncs zle list-choices
     }
     fi
   else
@@ -383,40 +446,51 @@ auto-fu () {
 }
 zle -N auto-fu
 
-function afu-k () {
+afu-comppre () {}
+
+afu-comppost () {
   ((compstate[list_lines] + BUFFERLINES + 2 > LINES)) && { 
     compstate[list]=''
     zle -M "$compstate[list_lines]($compstate[nmatches]) too many matches..."
   }
+
+  typeset -g afu_one_match_p=
+  (( $compstate[nmatches] == 1 )) && afu_one_match_p=t
 }
 
 afu+complete-word () {
   afu-clearing-maybe
   { afu-able-p } || { zle complete-word; return; }
 
-  comppostfuncs=(afu-k)
+  with-afu-compfuncs;
   if ((afu_in_p == 1)); then
     afu_in_p=0; CURSOR="$cursor_new"
     case $LBUFFER[-1] in
       (=) # --prefix= ⇒ complete-word again for `magic-space'ing the suffix
-        zle complete-word ;;
+        { # TODO: this may not be accurate.
+          local x="${${(@z)LBUFFER}[-1]}"
+          [[ "$x" == -* ]] && zle complete-word && return
+        };;
       (/) # path-ish  ⇒ propagate auto-fu if it could be
         { # TODO: this may not be enough.
-          local x="${(M)${(@z)"${_lastcomp[tags]}"}:#(*-directories|all-files)}"
+          local y="((*-)#directories|all-files|(command|executable)s)"
+          y=${AUTO_FU_PATHITH:-${y}}
+          local -a x; x=${(M)${(@z)"${_lastcomp[tags]}"}:#${~y}}
           zle complete-word
           [[ -n $x ]] && zle -U "$LBUFFER[-1]"
+          return
         };;
       (,) # glob-ish  ⇒ activate the `complete-word''s suffix
-        BUFFER="$buffer_cur"; zle complete-word ;;
-      (*)
-        (( $_lastcomp[nmatches]  > 1 )) &&
-          # many matches ⇒ complete-word again to enter the menuselect
-          zle complete-word
-        (( $_lastcomp[nmatches] == 1 )) &&
-          # exact match  ⇒ flag not using _oldlist for the next complete-word
-          _lastcomp[nmatches]=0
+        BUFFER="$buffer_cur"; zle complete-word;
+        return
         ;;
     esac
+    (( $_lastcomp[nmatches]  > 1 )) &&
+      # many matches ⇒ complete-word again to enter the menuselect
+      zle complete-word
+    (( $_lastcomp[nmatches] == 1 )) &&
+      # exact match  ⇒ flag not using _oldlist for the next complete-word
+      _lastcomp[nmatches]=0
   else
     [[ $LASTWIDGET == afu+*~afu+complete-word ]] && {
       afu_in_p=0; BUFFER="$buffer_cur"
@@ -495,6 +569,7 @@ auto-fu-zcompile () {
 { . ${g/$HOME/~}; auto-fu-install; }
 zstyle ':auto-fu:highlight' input bold
 zstyle ':auto-fu:highlight' completion fg=black,bold
+zstyle ':auto-fu:highlight' completion/one fg=white,bold,underline
 zstyle ':auto-fu:var' postdisplay $'\n-azfu-'
 zle-line-init () {auto-fu-init;}; zle -N zle-line-init
 -- 8< --

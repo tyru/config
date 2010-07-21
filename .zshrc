@@ -221,6 +221,13 @@ function locallib () {
 }
 
 # >>>>
+# コマンドラインの単語区切りを設定する <<<<
+# http://d.hatena.ne.jp/sugyan/20100712/1278869962
+autoload -Uz select-word-style
+select-word-style default
+zstyle ':zle:*' word-chars " _-./;@"
+zstyle ':zle:*' word-style unspecified
+# >>>>
 # >>>>
 ### cygwin ### <<<<
 if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then
