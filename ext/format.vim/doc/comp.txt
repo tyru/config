@@ -1,0 +1,107 @@
+*comp.txt*  Creates custom completion functions
+==============================================================================
+CONTENTS                                                     *comp-contents*
+
+    1. Intro                                      |comp-intro|
+    2. Functionality provided                     |comp-functionality|
+        2.1. Functions                            |comp-functions|
+    3. Models                                     |comp-models|
+    4. Argument descriptions                      |comp-listdescription|
+
+==============================================================================
+1. Intro                                                        *comp-intro*
+
+This plugin makes creating custom completion functions much easier.
+
+Features:
+  ∙ Ability to get variants from list and from dictionary keys
+  ∙ Ability to get variants from custom function
+  ∙ Allows modifing the completion description
+
+Plugin requires chk, stuf and load plugins.
+
+==============================================================================
+2. Functionality provided                               *comp-functionality*
+
+This plugin provides only two functions: one that creates completion function 
+and one that removes it. Both functions are available from dictionary returned 
+by |load-func-getfunctions| function.
+
+------------------------------------------------------------------------------
+2.1. Functions                                              *comp-functions*
+
+All following functions are accessed via dictionary returned by 
+|load-func-getfunctions| function.
+
+ccomp({funcname}, {model})                                 *comp-func-ccomp*
+        Create a new completion function. {funcname} must be unique, but its 
+        only purpose is to provide a way to delete last reference to {model} 
+        when plugin is un- or reloaded. See |comp-models| for description of 
+        {model} argument.
+delcomp({funcname})                                      *comp-func-delcomp*
+        Delete reference to {model} that was created by |comp-func-ccomp| 
+        function.
+
+==============================================================================
+3. Models                                                      *comp-models*
+
+Completion model is a dictionary that contains required `model' key and some 
+additional keys depending on the value of the `model' key. Possible models 
+(`model' key values):
+
+actions                                                 *comp-model-actions*
+        Optional keys: actions :: { {action}: {model} }
+        Defines a completion for command that looks like this: >
+            Command action1 some_argument
+            Command action2 some_argument some_other argument
+            Command action3
+            ...
+<
+        Each value defines a model for the corresponding key which represents 
+        the action name.
+simple                                                   *comp-model-simple*
+        Optional keys: arguments :: [{ListDescription}]
+        Defines a completion for command that takes a list of arguments, for 
+        each possible arguments a {ListDescription} must be defined. See 
+        |comp-listdescription| for details.
+pref                                                       *comp-model-pref*
+        Optional keys: arguments :: [{ListDescription}]
+                       prefix :: { {prefix}: {ListDescription} }
+        Defines a completion for command that takes a list of arguments, 
+        followed by prefixed arguments. Example: >
+            Command print columns 3
+            Command print buffer %
+            " The following commands are assumed to be equal
+            Command print buffer % columns 3
+            Command print columns 3 buffer %
+<
+        Key `argument' is handled just like in |comp-model-simple|. Key 
+        `prefix' describes prefixes and corresponding arguments.
+
+==============================================================================
+4. Argument descriptions                              *comp-listdescription*
+
+Argument description is a list that contains two item: first is the type of 
+description and second is description argument:
+
+Type    Argument and description ~
+list    List                                               *comp-descr-list*
+        Take possible variants from the specified list.
+keyof   Dictionary                                        *comp-descr-keyof*
+        Take possible variants from the list of keys of the specified 
+        dictionary.
+file    String                                             *comp-descr-file*
+        Take possible variants from the list of files that match either 
+        {ArgLead}*{Argument} or {ArgLead}*, where {ArgLead} is the string that 
+        user has already typed and {Argument} is the description argument.
+func    Function reference                                 *comp-descr-func*
+        Take possible variants from the returned value of a function provided 
+        as {Argument} called with an only argument: {ArgLead}. This function 
+        must return a list of Strings, all values that are not Strings are 
+        ignored.
+merge   [{ListDescription}]                               *comp-descr-merge*
+        Merge lists of possible values obtained after processing all 
+        {ListDescription}s.
+
+vim: ft=help:tw=78
+
