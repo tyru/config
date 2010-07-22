@@ -1465,8 +1465,18 @@ Map [n] -silent <SID>(merge-curwin-into-h) :<C-u>call <SID>window_merge('h', 'H'
 Map [n] -silent <SID>(merge-curwin-into-l) :<C-u>call <SID>window_merge('l', 'L', 0)<CR>
 
 function! s:window_merge(jump_cmd, layout_cmd, vertical) "{{{
+    " Save global options.
+    "
+    " NOTE: These are global options but
+    " I think "l:" should be attached
+    " when I assign value to option value.
+    " because newer Vim may support them
+    " as local options.
     let save_ei = &eventignore
+    let save_hidden = &hidden
     let &l:eventignore = 'all'
+    let &l:hidden = 0
+
     try
         let curbuf = bufnr('%')
         let i = 0
@@ -1481,6 +1491,8 @@ function! s:window_merge(jump_cmd, layout_cmd, vertical) "{{{
             else
                 wincmd p
                 " Close `curwin` window.
+                let save_buftype = &l:buftype
+                setlocal bufhidden=
                 hide
                 " Back to `nextgroupwin` window.
                 wincmd p
@@ -1494,6 +1506,7 @@ function! s:window_merge(jump_cmd, layout_cmd, vertical) "{{{
         silent execute curbuf 'buffer'
     finally
         let &l:eventignore = save_ei
+        let &l:hidden = save_hidden
     endtry
 endfunction "}}}
 
