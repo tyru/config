@@ -963,13 +963,6 @@ Map [n] <Right>   :<C-u>execute 'tabmove' (tabpagenr() == tabpagenr('$') ? 0 : t
 Map [n] <S-Left>  :<C-u>execute 'tabmove' 0<CR>
 Map [n] <S-Right> :<C-u>execute 'tabmove' tabpagenr('$')<CR>
 " }}}
-" Walk between windows {{{
-" NOTE: gVim only
-Map [n] <M-j>     <C-w>j
-Map [n] <M-k>     <C-w>k
-Map [n] <M-h>     <C-w>h
-Map [n] <M-l>     <C-w>l
-" }}}
 " Toggle options {{{
 function! s:toggle_option(option_name) "{{{
     if exists('&' . a:option_name)
