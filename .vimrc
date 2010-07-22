@@ -1443,7 +1443,11 @@ function! s:count_word(word) "{{{
 
     echomsg printf('"%s" => %s', a:word, output)
 endfunction "}}}
-Map [n] <Space>n :<C-u>call <SID>count_word(expand('<cword>'))<CR>
+
+command!
+\   -bar -nargs=?
+\   CountWord
+\   call s:count_word(expand(empty([<f-args>]) ? '<cword>' : <q-args>))
 " }}}
 " Move all windows of current group beyond next group. {{{
 " TODO
