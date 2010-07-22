@@ -2277,16 +2277,31 @@ function! s:cmd_capture(q_args) "{{{
     call setline(1, split(output, '\n'))
 endfunction "}}}
 " }}}
-
+" SynNames {{{
+command!
+\   -bar
+\   SynNames
+\
+\     for id in synstack(line("."), col("."))
+\   |     echo synIDattr(id, "name")
+\   | endfor
+\   | unlet! id
+" }}}
 " TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
 MyAlterCommand cd  TabpageCD
 
 Map [n] ,cd       :<C-u>TabpageCD %:p:h<CR>
 Map [n] <Space>cd :<C-u>lcd %:p:h<CR>
 
-command! -complete=dir -nargs=? TabpageCD
+command!
+\   -bar -complete=dir -nargs=?
+\   CD
+\   TabpageCD <args>
+command!
+\   -bar -complete=dir -nargs=?
+\   TabpageCD
 \   execute 'cd' fnameescape(expand(<q-args>))
-\ | let t:cwd = getcwd()
+\   | let t:cwd = getcwd()
 
 MyAutocmd TabEnter *
 \   if exists('t:cwd') && !isdirectory(t:cwd)
