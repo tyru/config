@@ -521,6 +521,13 @@ set formatoptions=mMcroqnl2
 set foldenable
 " set foldmethod=marker
 
+" :help undo-persistence
+if has('persistent_undo')
+    set undofile
+    set undodir=~/.vim/info/undo
+    silent! call mkdir(expand('~/.vim/info/undo'), 'p')
+endif
+
 " misc.
 set diffopt=filler,vertical
 set helplang=ja,en
