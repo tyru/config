@@ -2037,13 +2037,20 @@ function! s:DelFile(...)
 endfunction
 " }}}
 " Mkdir {{{
-function! s:Mkdir(...)
+function! s:mkdir_p(...)
     for i in a:000
         call mkdir(expand(i), 'p')
     endfor
 endfunction
-command! -nargs=+ -complete=dir Mkdir
-            \ call s:Mkdir(<f-args>)
+command! -bar -nargs=+ -complete=dir
+\   Mkdir
+\   call s:mkdir_p(<f-args>)
+" }}}
+" Mkcd {{{
+command!
+\   -bar -nargs=1 -complete=dir
+\   Mkcd
+\   Mkdir <args> | CD <args>
 " }}}
 " GccSyntaxCheck {{{
 function! s:GccSyntaxCheck(...)
