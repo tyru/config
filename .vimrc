@@ -3062,6 +3062,8 @@ let g:lingr_vim_additional_rooms = [
 \   'scala',
 \   'lowlevel'
 \]
+
+let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
 " }}}
 " github.vim {{{
 MyAlterCommand gh Github
