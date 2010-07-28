@@ -2448,32 +2448,59 @@ com! SelectColorScheme   :cal s:SelectColorScheme()
 AlterCommand gr[ep] Grep
 
 command!
-\   -nargs=+
+\   -bang -nargs=*
 \   Grep
-\   call s:cmd_grep(<q-args>)
+\   call s:cmd_grep(<q-args>, <bang>0)
 
-function! s:cmd_grep(args) "{{{
-    try
-        let [word, rest] = s:parse_grep_word(a:args)
-    catch /^parse error$/
-        Eecho v:exception
-        return
-    endtry
+Map [n] <SID>(grep-search-cword) :<C-u>call <SID>do_grep(expand('<cword>'), '**/*')<CR>
+Map [n] <SID>(grep-search-cWORD) :<C-u>call <SID>do_grep(expand('<cWORD>'), '**/*')<CR>
+
+function! s:cmd_grep(args, bang) "{{{
+    let default_flags = 'j'
+
+    let args = s:skip_white(a:args)
+    if args == ''
+        let [word, rest] = [@/, '']
+        let word = '/' . word . '/' . default_flags
+    else
+        try
+            let [word, rest] = s:parse_grep_word(args, default_flags)
+        catch /^parse error$/
+            Eecho v:exception
+            return
+        endtry
+    endif
+
     let rest = s:skip_white(rest)
-    let target = rest != '' ? rest : '**/*'
-    noautocmd execute 'vimgrep' '/' . word . '/j' target
+    if rest == ''
+        let target = '**/*'
+    else
+        let target = rest
+    endif
+
+    call s:do_grep(word, target, a:bang)
+endfunction "}}}
+function! s:do_grep(word, target, ...) "{{{
+    let bang = a:0 ? a:1 : 0
+
+    execute
+    \   'vimgrep' . (bang ? '!' : '')
+    \   a:word
+    \   a:target
+
     QuickFix
 endfunction "}}}
-function! s:parse_grep_word(args) "{{{
+function! s:parse_grep_word(args, flags) "{{{
     let a = s:skip_white(a:args)
     if a =~# '^/'
-        let m = matchlist(a, '^/\(.\{-}[^\\]\)/')
+        let m = matchlist(a, '^/\(.\{-}[^\\]\)/\([gj]*\)')
         if empty(m)
             throw 'parse error'
         endif
-        let [all, word] = m[0:1]
+        let [all, word, flags] = m[0:2]
+        let pat = '/' . word . '/' . (flags != '' ? flags : a:flags)
         let rest = strpart(a, strlen(all))
-        return [word, rest]
+        return [pat, rest]
     else
         return s:parse_one_arg_from_q_args(a)
     endif
