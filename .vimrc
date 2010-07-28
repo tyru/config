@@ -646,28 +646,31 @@ function! s:rtp_pop(path) "{{{
     let &rtp = s:join_path(s:split_path(&rtp)[:-2])
 endfunction "}}}
 function! s:rtp_unshift(path) "{{{
-    let &rtp = s:join_path(s:glob(path) + s:split_path(&rtp))
+    " NOTE: Remember after-directory
+    let &rtp = s:join_path(s:glob(a:path) + s:glob(a:path . '/after') + s:split_path(&rtp))
 endfunction "}}}
 function! s:rtp_push(path) "{{{
-    let &rtp = s:join_path(s:split_path(&rtp) + s:glob(a:path))
+    " NOTE: Remember after-directory
+    let &rtp = s:join_path(s:split_path(&rtp) + s:glob(a:path) + s:glob(a:path . '/after'))
 endfunction "}}}
 function! s:rtp_clear(path) "{{{
     let &rtp = ''
 endfunction "}}}
 function! s:rtp_prune(path) "{{{
     let path = expand(a:path)
-    " FIXME
-    " let path = s:follow_symlink(expand(a:path))
-    let filtered = filter(s:split_path(&rtp), 'expand(v:val) !=# path')
+    let filtered = filter(
+    \   s:split_path(&rtp),
+    \   'expand(v:val) !=# path && expand(v:val) !=# path . "/after"'
+    \)
     let &rtp = s:join_path(filtered)
 endfunction "}}}
 
 command!
-\   -bar -nargs=1
+\   -bar
 \   RtpShift
 \   call s:rtp_shift(<f-args>)
 command!
-\   -bar -nargs=1
+\   -bar
 \   RtpPop
 \   call s:rtp_pop(<f-args>)
 command!
