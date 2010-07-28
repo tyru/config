@@ -3200,6 +3200,10 @@ function! s:toggle_neocomplcache() "{{{
     endif
 endfunction "}}}
 " }}}
+" EasyGrep {{{
+let g:EasyGrepCommand = 2
+let g:EasyGrepInvertWholeWord = 1
+" }}}
 " }}}
 " Backup {{{
 " TODO Rotate backup files like writebackupversioncontrol.vim
