@@ -169,3 +169,6 @@
 [submodule "ext/undoclosewin.vim"]
 	path = ext/undoclosewin.vim
 	url = git://github.com/tyru/undoclosewin.vim
+[submodule "ext/neoui"]
+	path = ext/neoui
+	url = git://github.com/Shougo/neoui.git
