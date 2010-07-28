@@ -2744,6 +2744,12 @@ let t = eskk#table#create('my_table', 'rom_to_hira')
 call t.add('~', '〜')
 call t.add('zc', '©')
 call t.add('zr', '®')
+call t.add('zp', '☝')
+call t.add('va', 'ゔぁ')
+call t.add('vi', 'ゔぃ')
+call t.add('vu', 'ゔ')
+call t.add('ve', 'ゔぇ')
+call t.add('vo', 'ゔぉ')
 call t.register()
 unlet t
 
