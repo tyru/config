@@ -2871,6 +2871,11 @@ Map [n] <C-h> :<C-u>MRU<CR>
 let MRU_Max_Entries   = 500
 let MRU_Add_Menu      = 0
 let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\|COMMIT_EDITMSG'
+
+MyAutocmd FileType mru call s:mru_settings()
+function! s:mru_settings() "{{{
+    Map [n] -remap <Esc> <Plug>(mru-close)
+endfunction "}}}
 " }}}
 " changelog {{{
 let changelog_username = "tyru"
