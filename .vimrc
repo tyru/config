@@ -2379,8 +2379,9 @@ command!
 \   New
 \   call s:split_nicely_with(['new', <f-args>], <bang>0)
 
+" No -bar
 command!
-\   -bar -bang -nargs=* -complete=help
+\   -bang -nargs=* -complete=help
 \   Help
 \   call s:cmd_Help(['help', <f-args>], <bang>0)
 
