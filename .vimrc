@@ -3184,6 +3184,22 @@ Map [n] -remap s cs
 Map [n] -remap swj sw'
 Map [n] -remap swk sw"
 " }}}
+" neocomplcache {{{
+let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_ignore_case = 1
+let g:neocomplcache_enable_quick_match = 1
+
+Map [n] <Leader>neo :<C-u>call <SID>toggle_neocomplcache()<CR>
+function! s:toggle_neocomplcache() "{{{
+    if !exists(':NeoComplCacheDisable')
+        NeoComplCacheEnable
+        echo 'neocomplcache enabled.'
+    else
+        NeoComplCacheDisable
+        echo 'neocomplcache disabled.'
+    endif
+endfunction "}}}
+" }}}
 " }}}
 " Backup {{{
 " TODO Rotate backup files like writebackupversioncontrol.vim
