@@ -2914,8 +2914,13 @@ endif
 " vimshell {{{
 MyAlterCommand vsh[ell] VimShell
 
-MyAutocmd FileType vimshell call s:vimshell_settings()
+let g:vimshell_user_prompt = '"(" . getcwd() . ") --- (" . $USER . "@" . hostname() . ")"'
+let g:vimshell_prompt = '$ '
+let g:vimshell_right_prompt = 'vimshell#vcs#info("(%s)-[%b]", "(%s)-[%b|%a]")'
+let g:vimshell_ignore_case = 1
+let g:vimshell_smart_case = 1
 
+MyAutocmd FileType vimshell call s:vimshell_settings()
 function! s:vimshell_settings() "{{{
     " No -bar
     command!
@@ -2974,7 +2979,6 @@ function! s:vimshell_settings() "{{{
     function! s:chpwd_ls(args, context)
         call vimshell#execute('ls')
     endfunction
-
     call vimshell#hook#set('chpwd', [s:SNR('chpwd_ls')])
 
     " Add/Remove some mappings.
@@ -2987,11 +2991,9 @@ function! s:vimshell_settings() "{{{
 
     " Misc.
     setlocal backspace-=eol
-    setlocal updatetime=0
+    setlocal updatetime=1000
 
     NeoComplCacheEnable
-    autocmd BufEnter <buffer> NeoComplCacheEnable
-    autocmd BufLeave <buffer> NeoComplCacheDisable
 endfunction "}}}
 " }}}
 " quickrun {{{
