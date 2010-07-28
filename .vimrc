@@ -1738,8 +1738,10 @@ execute 'imap <expr> <Tab> pumvisible() ? "\<C-n>" : ' . string(maparg('<Tab>', 
 
 Map [i] <compl><Tab> <C-n>
 
-Map [i] <compl>n <C-x><C-n>
-Map [i] <compl>p <C-x><C-p>
+" Map [i] <compl>n <C-x><C-n>
+" Map [i] <compl>p <C-x><C-p>
+Map [i] <compl>n <C-n>
+Map [i] <compl>p <C-p>
 
 Map [i] <compl>] <C-x><C-]>
 Map [i] <compl>d <C-x><C-d>
