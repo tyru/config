@@ -2797,6 +2797,7 @@ MyAlterCommand rse[tart] Restart
 " }}}
 " openbrowser {{{
 MyAutocmd VimEnter * Map [nv] -remap -force gx <Plug>(openbrowser-open)
+MyAlterCommand o[pen] OpenBrowser
 " }}}
 " AutoDate {{{
 let g:autodate_format = "%Y-%m-%d"
