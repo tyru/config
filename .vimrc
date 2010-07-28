@@ -698,10 +698,16 @@ endif
 
 if exists('$VIM_RTP_REPO_DIR')
     RtpPush $VIM_RTP_REPO_DIR/*
+
     RtpPrune $VIM_RTP_REPO_DIR/pummode.vim
     RtpPrune $VIM_RTP_REPO_DIR/command-buffer.vim
     RtpPrune $VIM_RTP_REPO_DIR/cmdwincomplete.vim
     RtpPrune $VIM_RTP_REPO_DIR/fencview.vim
+    RtpPrune $VIM_RTP_REPO_DIR/EasyGrep.vim
+    RtpPrune $VIM_RTP_REPO_DIR/thinca-vim-ku_source
+    RtpPrune $VIM_RTP_REPO_DIR/vim-ku*
+    RtpPrune $VIM_RTP_REPO_DIR/neoui
+    RtpPrune $VIM_RTP_REPO_DIR/ref-goo.vim
     if !executable('git')
         RtpPrune $VIM_RTP_REPO_DIR/gist-vim
     endif
