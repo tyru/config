@@ -166,3 +166,6 @@
 [submodule "ext/regbuf.vim"]
 	path = ext/regbuf.vim
 	url = http://github.com/tyru/regbuf.vim.git
+[submodule "ext/undoclosewin.vim"]
+	path = ext/undoclosewin.vim
+	url = git://github.com/tyru/undoclosewin.vim
