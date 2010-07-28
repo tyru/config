@@ -1348,9 +1348,9 @@ Map [n] <Space>m  :<C-u>call <SID>merge_tab_into_tab(tabpagenr(), input('tab num
 " }}}
 " Netrw - vimperator-like keymappings {{{
 function! s:filetype_netrw() "{{{
-    Map [n] -buffer h -
-    Map [n] -buffer l <CR>
-    Map [n] -buffer e <CR>
+    Map [n] -buffer -remap h -
+    Map [n] -buffer -remap l <CR>
+    Map [n] -buffer -remap e <CR>
 endfunction "}}}
 
 MyAutocmd FileType netrw call s:filetype_netrw()
