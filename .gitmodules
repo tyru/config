@@ -163,3 +163,6 @@
 [submodule "ext/thinca-vim-ku_source"]
 	path = ext/thinca-vim-ku_source
 	url = http://github.com/thinca/vim-ku_source.git
+[submodule "ext/regbuf.vim"]
+	path = ext/regbuf.vim
+	url = http://github.com/tyru/regbuf.vim.git
