@@ -2164,6 +2164,7 @@ MyAlterCommand epa EchoPath
 MyAlterCommand rtp EchoPath<Space>&rtp
 
 
+" TODO Add -complete=option
 command!
 \   -nargs=+ -complete=expression
 \   EchoPath
@@ -2257,7 +2258,7 @@ endfunction "}}}
 " }}}
 " AllMaps {{{
 command!
-\   -nargs=*
+\   -nargs=* -complete=mapping
 \   AllMaps
 \   map <args> | map! <args> | lmap <args>
 " }}}
