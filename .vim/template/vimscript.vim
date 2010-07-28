@@ -20,7 +20,7 @@ scriptencoding utf-8
 " Name: <% eval: expand('%:t:r') %>
 " Version: 0.0.0
 " Author:  tyru <tyru.exe@gmail.com>
-" Last Change: 2010-04-09.
+" Last Change: 2010-07-23.
 "
 " Description:
 "   NO DESCRIPTION YET
@@ -46,9 +46,6 @@ let s:save_cpo = &cpo
 set cpo&vim
 " }}}
 
-" Scope Variables {{{
-let s:debug_errmsg = []
-" }}}
 " Global Variables {{{
 if !exists('g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug')
     let g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug = 0
@@ -56,56 +53,10 @@ endif
 " }}}
 
 " Functions {{{
-
-" utility functions
-" Debug {{{
-if g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug
-    function! s:debug(cmd, ...)
-        if a:cmd ==# 'on'
-            let g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug = 1
-        elseif a:cmd ==# 'off'
-            let g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug = 0
-        elseif a:cmd ==# 'list'
-            for i in s:debug_errmsg
-                echo i
-            endfor
-        elseif a:cmd ==# 'eval'
-            redraw
-            execute join(a:000, ' ')
-        endif
-    endfunction
-
-    com! -nargs=+ <%filename_camel%>Debug
-        \ call s:debug(<f-args>)
-endif
-
-" s:debugmsg {{{
-function! s:debugmsg(msg)
-    if g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug
-        call s:warn(a:msg)
-    endif
-endfunction
 " }}}
-
-" }}}
-function! s:warn(msg) "{{{
-    echohl WarningMsg
-    echomsg a:msg
-    echohl None
-
-    call add(s:debug_errmsg, a:msg)
-endfunction "}}}
-function! s:warnf(...) "{{{
-    call s:warn(call('printf', a:000))
-endfunction "}}}
-
-" }}}
-
 " Commands {{{
 " }}}
 " Mappings {{{
-" }}}
-" Autocmd {{{
 " }}}
 
 " Restore 'cpoptions' {{{
