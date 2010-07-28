@@ -1,7 +1,6 @@
-if exists("b:did_ftplugin") | finish | endif
-if exists("loaded_perl_ftplugin") | finish | endif
+" vim:foldmethod=marker:fen:
+scriptencoding utf-8
 
-let b:did_ftplugin = 1
 let s:save_cpo = &cpo
 set cpo&vim
 
@@ -15,10 +14,8 @@ if exists('$PERL5LIB') && !exists('b:perl_already_added_path')
     let b:perl_already_added_path = 1
 endif
 
-" TODO Go to module file by `gf` or `<C-w>f`.
-setlocal suffixesadd=.pm
-setlocal makeprg=perl\ -Mstrict\ -Mwarnings\ -c\ %
 setlocal complete=.,w,b,t,k,kspell
+let &l:makeprg = 'perl -Mstrict -Mwarnings -c %'
 
 
 " POD highlighting
@@ -39,6 +36,16 @@ nnoremap <buffer> ]]    :<C-u>call search('^\s*sub .* {$', 'sW')<CR>
 nnoremap <buffer> [[    :<C-u>call search('^\s*sub .* {$', 'bsW')<CR>
 nnoremap <buffer> ][    :<C-u>call search('^}$', 'sW')<CR>
 nnoremap <buffer> []    :<C-u>call search('^}$', 'bsW')<CR>
+
+
+
+call SurroundRegister('b', 'qs', "q(\r)")
+call SurroundRegister('b', 'qq', "qq(\r)")
+call SurroundRegister('b', 'qw', "qw(\r)")
+
+call SurroundRegister('b', 'qs', "q/\r/")
+call SurroundRegister('b', 'qq', "qq/\r/")
+call SurroundRegister('b', 'qw', "qw/\r/")
 
 
 let &cpo = s:save_cpo

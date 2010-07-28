@@ -1,3 +1,10 @@
+" vim:foldmethod=marker:fen:
+scriptencoding utf-8
+
+let s:save_cpo = &cpo
+set cpo&vim
+
+
 setlocal foldmethod=expr
 setlocal foldexpr=MarkdownFold()
 
@@ -15,3 +22,5 @@ function! s:head(lnum)
   return strlen(matchstr(getline(a:lnum), '^#*'))
 endfunction
 
+
+let &cpo = s:save_cpo

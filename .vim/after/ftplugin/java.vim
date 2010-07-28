@@ -1,7 +1,6 @@
-if exists("b:did_ftplugin") | finish | endif
-if exists("loaded_java_ftplugin") | finish | endif
+" vim:foldmethod=marker:fen:
+scriptencoding utf-8
 
-let b:did_ftplugin = 1
 let s:save_cpo = &cpo
 set cpo&vim
 

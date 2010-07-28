@@ -1,13 +1,12 @@
-if exists("b:did_ftplugin") | finish | endif
-if exists("loaded_scala_ftplugin") | finish | endif
+" vim:foldmethod=marker:fen:
+scriptencoding utf-8
 
-let b:did_ftplugin = 1
 let s:save_cpo = &cpo
 set cpo&vim
 
 
-runtime ftplugin/java.vim
-runtime compiler/java.vim
+runtime! ftplugin/java.vim
+runtime! compiler/java.vim
 
 setlocal includeexpr=substitute(v:fname,'\\.','/','g')
 setlocal suffixesadd=.scala
