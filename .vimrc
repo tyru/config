@@ -2802,14 +2802,24 @@ MyAlterCommand o[pen] OpenBrowser
 " AutoDate {{{
 let g:autodate_format = "%Y-%m-%d"
 " }}}
-" FuzzyFinder {{{
-call s:map_prefix_key('n', 'anything', '<Space>f')
+" anything (ku,fuf,etc.) {{{
+call s:map_prefix_key('n', 'anything', '<Space>a')
 
 Map [n] <anything>d        :<C-u>FufDir<CR>
 Map [n] <anything>f        :<C-u>FufFile<CR>
 Map [n] <anything>h        :<C-u>FufMruFile<CR>
 Map [n] <anything>r        :<C-u>FufRenewCache<CR>
 
+" Map [n] <anything>f        :<C-u>Ku file<CR>
+" Map [n] <anything>h        :<C-u>Ku file/mru<CR>
+" Map [n] <anything>H        :<C-u>Ku history<CR>
+" Map [n] <anything>:        :<C-u>Ku cmd_mru/cmd<CR>
+" Map [n] <anything>/        :<C-u>Ku cmd_mru/search<CR>
+
+" ku {{{
+MyAlterCommand ku Ku
+" }}}
+" FuzzyFinder {{{
 let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem', 'buffer', 'tag', 'taggedfile']
 
 let fuf_keyOpenTabpage = '<C-t>'
@@ -2823,7 +2833,7 @@ let fuf_previewHeight = 0
 " abbrev {{{
 function! s:register_fuf_abbrev()
     let g:fuf_abbrevMap = {
-        \ '^r@': map(split(&runtimepath, ','), 'v:val . "/"'),
+        \ '^r@': [$VIMRUNTIME . '/'],
         \ '^p@': map(split(&runtimepath, ','), 'v:val . "/plugin/"'),
         \ '^h@': ['~/'],
         \ '^v@' : ['~/.vim/'],
@@ -2853,6 +2863,7 @@ function! s:register_fuf_abbrev()
 endfunction
 
 MyAutocmd VimEnter * call s:register_fuf_abbrev()
+" }}}
 " }}}
 " }}}
 " MRU {{{
