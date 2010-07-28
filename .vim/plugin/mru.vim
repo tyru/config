@@ -526,16 +526,23 @@ function! s:MRU_Open_Window(...)
     set cpoptions&vim
 
     " Create a mapping to jump to the file
-    nnoremap <buffer> <silent> <CR>
+    nnoremap <buffer> <silent> <Plug>(mru-open)
                 \ :call <SID>MRU_Window_Edit_File('useopen')<CR>
-    nnoremap <buffer> <silent> o
+    nnoremap <buffer> <silent> <Plug>(mru-open-window)
                 \ :call <SID>MRU_Window_Edit_File('newwin')<CR>
-    nnoremap <buffer> <silent> t
+    nnoremap <buffer> <silent> <Plug>(mru-open-tab)
                 \ :call <SID>MRU_Window_Edit_File('newtab')<CR>
-    nnoremap <buffer> <silent> u :MRU<CR>
-    nnoremap <buffer> <silent> <2-LeftMouse>
-                \ :call <SID>MRU_Window_Edit_File('useopen')<CR>
-    nnoremap <buffer> <silent> q :close<CR>
+    nnoremap <buffer> <silent> <Plug>(mru-update)
+                \ :MRU<CR>
+    nnoremap <buffer> <silent> <Plug>(mru-close)
+                \ :close<CR>
+
+    nmap <buffer> <CR> <Plug>(mru-open)
+    nmap <buffer> <2-LeftMouse> <Plug>(mru-open)
+    nmap <buffer> o    <Plug>(mru-open-window)
+    nmap <buffer> t    <Plug>(mru-open-tab)
+    nmap <buffer> u    <Plug>(mru-update)
+    nmap <buffer> q    <Plug>(mru-close)
 
     " Restore the previous cpoptions settings
     let &cpoptions = old_cpoptions
@@ -553,6 +560,8 @@ function! s:MRU_Open_Window(...)
     exe 1
 
     setlocal nomodifiable
+
+    setfiletype mru
 endfunction
 
 " MRU_Complete
