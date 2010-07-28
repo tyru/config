@@ -160,3 +160,6 @@
 [submodule "ext/vim-qfreplace"]
 	path = ext/vim-qfreplace
 	url = git://github.com/thinca/vim-qfreplace.git
+[submodule "ext/thinca-vim-ku_source"]
+	path = ext/thinca-vim-ku_source
+	url = http://github.com/thinca/vim-ku_source.git
