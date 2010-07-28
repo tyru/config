@@ -3204,6 +3204,9 @@ endfunction "}}}
 let g:EasyGrepCommand = 2
 let g:EasyGrepInvertWholeWord = 1
 " }}}
+" undoclosewin {{{
+Map [n] -remap gu <Plug>(ucw-restore-window)
+" }}}
 " }}}
 " Backup {{{
 " TODO Rotate backup files like writebackupversioncontrol.vim
