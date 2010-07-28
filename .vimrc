@@ -2546,18 +2546,6 @@ function! s:cmd_reverse() range "{{{
     endfor
 endfunction "}}}
 " }}}
-" BufferNew {{{
-command!
-\   -bar -nargs=*
-\   BufferNew
-\
-\   execute bufnr((empty([<f-args>]) ? '[No Name]' : <q-args>), 1) 'buffer'
-\   | setlocal buflisted
-
-AlterCommand bnew BufferNew
-
-Map [n] <Space>n :<C-u>BufferNew<CR>
-" }}}
 " }}}
 " For Plugins {{{
 " CommentAnyWay {{{
