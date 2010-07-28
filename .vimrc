@@ -2072,6 +2072,21 @@ function! s:cmd_del_file(...)
     endfor
 endfunction
 " }}}
+" Rename {{{
+command!
+\   -nargs=+ -complete=file
+\   Rename
+\   call s:cmd_rename(<f-args>)
+
+function! s:cmd_rename(...) "{{{
+    if a:0 == 1
+        call rename(expand('%'), expand(a:1))
+    elseif a:0 == 2
+        call rename(expand(a:1), expand(a:2))
+    endif
+endfunction "}}}
+
+" }}}
 " Mkdir {{{
 function! s:mkdir_p(...)
     for i in a:000
