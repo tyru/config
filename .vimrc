@@ -2042,14 +2042,14 @@ function! s:garbagecollect(banged)
 endfunction
 " }}}
 " DelFile {{{
-"
-" TODO Delete recursively.
 
 
-command! -complete=file -nargs=+ DelFile
-            \ call s:DelFile(<f-args>)
+command!
+\   -bar -complete=file -nargs=+
+\   DelFile
+\   call s:cmd_del_file(<f-args>)
 
-function! s:DelFile(...)
+function! s:cmd_del_file(...)
     if a:0 == 0 | return | endif
 
     for i in map(copy(a:000), 'expand(v:val)')
@@ -2064,11 +2064,9 @@ function! s:DelFile(...)
             if filereadable(j)
                 call s:warn(printf("Can't delete '%s'", j))
             elseif j ==# expand('%')
-                if winnr('$') == 1
-                    new
-                    wincmd p
-                endif
-                bwipeout
+                let nr = bufnr('%')
+                enew
+                execute nr 'bwipeout'
             endif
         endfor
     endfor
