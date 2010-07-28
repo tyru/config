@@ -579,7 +579,7 @@ MyAutocmd BufNewFile,BufRead *.c
 MyAutocmd BufNewFile,BufRead *.cpp
             \ setlocal ft=cpp
 MyAutocmd BufNewFile,BufRead *.h
-            \ setlocal ft=c.cpp
+            \ setlocal ft=cpp
 MyAutocmd BufNewFile,BufRead *.cs
             \ setlocal ft=cs
 MyAutocmd BufNewFile,BufRead *.java
