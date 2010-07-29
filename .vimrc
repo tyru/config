@@ -12,184 +12,6 @@ language time C
 " Utilities {{{
 " Function {{{
 
-
-" Misc.
-function! s:each_char(str) "{{{
-    return split(a:str, '\zs')
-endfunction "}}}
-
-function! s:warn(msg) "{{{
-    echohl WarningMsg
-    echomsg a:msg
-    echohl None
-endfunction "}}}
-function! s:warnf(...) "{{{
-    call s:warn(call('printf', a:000))
-endfunction "}}}
-
-
-" Wrapper for built-in functions.
-function! s:system(command, ...) "{{{
-    return system(join([a:command] + map(copy(a:000), 'shellescape(v:val)'), ' '))
-endfunction "}}}
-function! s:glob(expr) "{{{
-    return split(glob(a:expr), "\n")
-endfunction "}}}
-function! s:globpath(path, expr) "{{{
-    return split(globpath(a:path, a:expr), "\n")
-endfunction "}}}
-function! s:getchar(...) "{{{
-    let c = call('getchar', a:000)
-    return type(c) == type("") ? c : nr2char(c)
-endfunction "}}}
-
-
-" List
-function! s:has_elem(list, elem) "{{{
-    return !empty(filter(copy(a:list), 'v:val ==# a:elem'))
-endfunction "}}}
-function! s:has_all_of(list, elem) "{{{
-    " a:elem is List:
-    "   a:list has a:elem[0] && a:list has a:elem[1] && ...
-    " a:elem is not List:
-    "   a:list has a:elem
-
-    if type(a:elem) == type([])
-        for i in a:elem
-            if !s:has_elem(a:list, i)
-                return 0
-            endif
-        endfor
-        return 1
-    else
-        return s:has_elem(a:list, a:elem)
-    endif
-endfunction "}}}
-function! s:has_one_of(list, elem) "{{{
-    " a:elem is List:
-    "   a:list has a:elem[0] || a:list has a:elem[1] || ...
-    " a:elem is not List:
-    "   a:list has a:elem
-
-    if type(a:elem) == type([])
-        for i in a:elem
-            if s:has_elem(a:list, i)
-                return 1
-            endif
-        endfor
-        return 0
-    else
-        return s:has_elem(a:list, a:elem)
-    endif
-endfunction "}}}
-function! s:uniq(list) "{{{
-    let s:dict = {}
-    let counter = 1
-    for i in a:list
-        if !has_key(s:dict, i)
-            let s:dict[i] = counter
-            let counter += 1
-        endif
-    endfor
-
-    function! s:cmp(a, b)
-        return a:a == a:b ? 0 : a:a > a:b ? 1 : -1
-    endfunction
-
-    function! s:c(a, b)
-        let [a, b] = [a:a, a:b]
-        return eval(s:expr)
-    endfunction
-
-    try
-        let s:expr = 's:cmp(s:dict[a], s:dict[b])'
-        return sort(keys(s:dict), 's:c')
-    finally
-        delfunc s:cmp
-        delfunc s:c
-        unlet s:expr
-        unlet s:dict
-    endtry
-endfunction "}}}
-function! s:uniq_path(path, ...) "{{{
-    let sep = a:0 != 0 ? a:1 : ','
-    if type(a:path) == type([])
-        return join(s:uniq(a:path), sep)
-    else
-        return join(s:uniq(split(a:path, sep)), sep)
-    endif
-endfunction "}}}
-function! s:has_idx(list, idx) "{{{
-    let idx = a:idx
-    " Support negative index?
-    " let idx = a:idx >= 0 ? a:idx : len(a:list) + a:idx
-    return 0 <= idx && idx < len(a:list)
-endfunction "}}}
-function! s:mapf(list, fmt) "{{{
-    return map(copy(a:list), "printf(a:fmt, v:val)")
-endfunction "}}}
-function! s:zip(list, list2) "{{{
-    let ret = []
-    let i = 0
-    while s:has_idx(a:list, i) || s:has_idx(a:list2, i)
-        call add(ret,
-        \   (s:has_idx(a:list, i) ? [a:list[i]] : [])
-        \   + (s:has_idx(a:list2, i) ? [a:list2[i]] : []))
-
-        let i += 1
-    endwhile
-    return ret
-endfunction "}}}
-function! s:get_idx(list, elem, ...) "{{{
-    let idx = 0
-
-    while s:has_idx(a:list, idx)
-        if a:list[idx] ==# a:elem
-            return idx
-        endif
-        let idx += 1
-    endwhile
-
-    if a:0 == 0
-        throw 'internal error'
-    else
-        return a:1
-    endif
-endfunction "}}}
-
-
-" Path
-function! s:split_path(path, ...) "{{{
-    " TODO: More strict
-    let sep = a:0 != 0 ? a:1 : ','
-    return split(a:path, sep)
-endfunction "}}}
-function! s:join_path(path_list, ...) "{{{
-    " TODO: More strict
-    let sep = a:0 != 0 ? a:1 : ','
-    return join(a:path_list, sep)
-endfunction "}}}
-
-
-" System
-function! s:follow_symlink(path) "{{{
-    " FIXME
-    "
-    " TODO Reveive depth of following times.
-    "
-    " Complain: Why can't Vim deal with symbolic link?
-
-    perl <<EOF
-    my $dest = sub { ($_) = @_; $_ = readlink while -l; $_ }->(VIM::Eval('a:path'));
-    # TODO: More strict
-    VIM::DoCommand sprintf "let dest = '%s'", $dest;
-EOF
-
-    return dest
-endfunction "}}}
-
-
-" Mapping
 function! s:SID() "{{{
     return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
 endfunction "}}}
@@ -197,21 +19,6 @@ function! s:SNR(map) "{{{
     return printf("<SNR>%d_%s", s:SID(), a:map)
 endfunction "}}}
 
-function! s:execute_multiline_expr(excmds, ...) "{{{
-    let expr = join(s:mapf(copy(a:excmds), ":\<C-u>%s\<CR>"), '')
-    if a:0 == 0
-        echo join(s:mapf(copy(a:excmds), ':<C-u>%s<CR>'), '')
-    else
-        echo a:1
-    endif
-    return expr
-endfunction "}}}
-function! s:execute_multiline(excmds, ...) "{{{
-    " XXX: This depends on :execute's behavior
-    " that it executes each line separated by "\<CR>".
-    " Is it specified?
-    execute call('s:execute_multiline_expr', [a:excmds] + a:000)
-endfunction "}}}
 
 function! s:map_leader(key) "{{{
     let g:mapleader = a:key
@@ -245,38 +52,6 @@ function! s:map_orig_key(modes, key) "{{{
     " Map [<eval a:modes>] <orig><eval a:key> <eval a:key>
 endfunction "}}}
 
-function! s:expr_with_options(cmd, opt) "{{{
-    for [name, value] in items(a:opt)
-        call setbufvar('%', name, value)
-    endfor
-    return a:cmd
-endfunction "}}}
-
-
-" Parsing
-function! s:skip_white(q_args) "{{{
-    return substitute(a:q_args, '^\s*', '', '')
-endfunction "}}}
-function! s:parse_one_arg_from_q_args(q_args) "{{{
-    let arg = s:skip_white(a:q_args)
-    let head = matchstr(arg, '^.\{-}[^\\]\ze\([ \t]\|$\)')
-    let rest = strpart(arg, strlen(head))
-    return [head, rest]
-endfunction "}}}
-function! s:eat_n_args_from_q_args(q_args, n) "{{{
-    let rest = a:q_args
-    for _ in range(1, a:n)
-        let rest = s:parse_one_arg_from_q_args(rest)[1]
-    endfor
-    let rest = s:skip_white(rest)    " for next arguments.
-    return rest
-endfunction "}}}
-
-
-" Error
-function! s:assertion_failure(msg) "{{{
-    return 'assertion failure: ' . a:msg
-endfunction "}}}
 " }}}
 " Commands {{{
 augroup vimrc
@@ -289,93 +64,9 @@ command!
 \   autocmd<bang> vimrc <args>
 
 
-" Debug macros {{{
-"
-" NOTE: Do not make this function.
-" Evaluate arguments at same scope.
-"
-" I was confused as if I wrote C macro
 
-" :Dump
-command!
-\   -bang -nargs=+ -complete=expression
-\   Dump
-\
-\   echohl Debug
-\   | redraw
-\   | echomsg printf("  %s = %s", <q-args>, string(<args>))
-\   | if <bang>0
-\   |   try
-\   |     throw ''
-\   |   catch
-\   |     ShowStackTrace
-\   |   endtry
-\   | endif
-\   | echohl None
+call dutil#load()
 
-
-" :ShowStackTrace
-command!
-\   -bar -bang
-\   ShowStackTrace
-\
-\   echohl Debug
-\   | if <bang>0
-\   |   echom printf('[%s] at [%s]', v:exception, v:throwpoint)
-\   | else
-\   |   echom printf('[%s]', v:throwpoint)
-\   | endif
-\   | echohl None
-
-
-" :Assert
-command!
-\   -nargs=+
-\   Assert
-\
-\   if !eval(<q-args>)
-\   |   throw s:assertion_failure(<q-args>)
-\   | endif
-
-
-" :Decho
-command!
-\   -nargs=+
-\   Decho
-\
-\   echohl Debug
-\   | echomsg <args>
-\   | echohl None
-
-" :Eecho
-command!
-\   -nargs=+
-\   Eecho
-\
-\   echohl ErrorMsg
-\   | echomsg <args>
-\   | echohl None
-
-
-
-" :Memo
-command!
-\   -nargs=+ -complete=command
-\   Memo
-\   call s:cmd_memo(<q-args>)
-
-function! s:cmd_memo(args) "{{{
-    redir => output
-    silent execute a:args
-    redir END
-
-    echohl Debug
-    for line in split(output, '\n')
-        echomsg line
-    endfor
-    echohl None
-endfunction "}}}
-" }}}
 " }}}
 " }}}
 " Options {{{
@@ -544,18 +235,9 @@ set viminfo='50,h,f1,n$HOME/.viminfo
 " }}}
 " Autocmd {{{
 
-" colorscheme (on windows, setting colorscheme in .vimrc does not work)
-function! s:define_colorscheme() "{{{
-    if has('gui_running')
-        set background=dark
-        colorscheme desert
-    else
-        set background=dark
-        colorscheme koehler
-    endif
-endfunction "}}}
-command! MyColorScheme call s:define_colorscheme()
-MyAutocmd VimEnter * MyColorScheme
+" colorscheme
+" NOTE: On MS Windows, setting colorscheme in .vimrc does not work
+MyAutocmd VimEnter * colorscheme tyru
 
 " open on read-only if swap exists
 MyAutocmd SwapExists * let v:swapchoice = 'o'
@@ -640,18 +322,18 @@ MyAutocmd VimEnter * autocmd! filetypedetect BufNewFile,BufRead *.md
 " runtimepath {{{
 
 function! s:rtp_shift(path) "{{{
-    let &rtp = s:join_path(s:split_path(&rtp)[1:])
+    let &rtp = tyru#util#join_path(tyru#util#split_path(&rtp)[1:])
 endfunction "}}}
 function! s:rtp_pop(path) "{{{
-    let &rtp = s:join_path(s:split_path(&rtp)[:-2])
+    let &rtp = tyru#util#join_path(tyru#util#split_path(&rtp)[:-2])
 endfunction "}}}
 function! s:rtp_unshift(path) "{{{
     " NOTE: Remember after-directory
-    let &rtp = s:join_path(s:glob(a:path) + s:glob(a:path . '/after') + s:split_path(&rtp))
+    let &rtp = tyru#util#join_path(tyru#util#glob(a:path) + tyru#util#glob(a:path . '/after') + tyru#util#split_path(&rtp))
 endfunction "}}}
 function! s:rtp_push(path) "{{{
     " NOTE: Remember after-directory
-    let &rtp = s:join_path(s:split_path(&rtp) + s:glob(a:path) + s:glob(a:path . '/after'))
+    let &rtp = tyru#util#join_path(tyru#util#split_path(&rtp) + tyru#util#glob(a:path) + tyru#util#glob(a:path . '/after'))
 endfunction "}}}
 function! s:rtp_clear(path) "{{{
     let &rtp = ''
@@ -659,10 +341,10 @@ endfunction "}}}
 function! s:rtp_prune(path) "{{{
     let path = expand(a:path)
     let filtered = filter(
-    \   s:split_path(&rtp),
+    \   tyru#util#split_path(&rtp),
     \   'expand(v:val) !=# path && expand(v:val) !=# path . "/after"'
     \)
-    let &rtp = s:join_path(filtered)
+    let &rtp = tyru#util#join_path(filtered)
 endfunction "}}}
 
 command!
@@ -692,6 +374,12 @@ command!
 
 
 
+if has('vim_starting')
+    let s:initial_rtp = &runtimepath
+else
+    let &runtimepath = s:initial_rtp
+endif
+
 if has('win32')
     RtpPush $HOME/.vim
 endif
@@ -715,7 +403,7 @@ if exists('$VIM_RTP_REPO_DIR')
         RtpPrune $VIM_RTP_REPO_DIR/lingr-vim
     endif
 else
-    call s:warn('Forgot to set $VIM_RTP_REPO_DIR ?')
+    call tyru#util#warn('Forgot to set $VIM_RTP_REPO_DIR ?')
 endif
 
 " }}}
@@ -802,6 +490,8 @@ call s:map_prefix_key('nvo', 'excmd', '<Space>')
 call s:map_prefix_key('nvo', 'operator', ';')
 " <window>
 call s:map_prefix_key('n', 'window', '<C-w>')
+" <prompt>
+call s:map_prefix_key('nvo', 'prompt', ',t')
 " }}}
 
 " map {{{
@@ -981,8 +671,8 @@ function! s:toggle_option(option_name) "{{{
 endfunction "}}}
 
 function! s:advance_state(state, elem) "{{{
-    let curidx = s:get_idx(a:state, a:elem, 0)
-    return a:state[s:has_idx(a:state, curidx + 1) ? curidx + 1 : 0]
+    let curidx = tyru#util#get_idx(a:state, a:elem, 0)
+    return a:state[tyru#util#has_idx(a:state, curidx + 1) ? curidx + 1 : 0]
 endfunction "}}}
 
 function! s:advance_option_state(state, optname) "{{{
@@ -1141,7 +831,7 @@ function! s:move_current_winnr_to_head(winnr_list) "{{{
     let winnr_list = a:winnr_list
     let curwinnr = winnr()
     let counter = 0
-    while s:has_idx(winnr_list, counter)
+    while tyru#util#has_idx(winnr_list, counter)
         let nr = winnr_list[counter]
         if curwinnr ==# nr
             call remove(winnr_list, counter)
@@ -1361,7 +1051,7 @@ Map [n] ;Y   "+y$
 Map [n] ,Y   "*y$
 " }}}
 " Back to col '$' when current col is right of col '$'. {{{
-if has('virtualedit') && s:has_one_of(['all', 'onemore'], split(&virtualedit, ','))
+if has('virtualedit') && tyru#util#has_one_of(['all', 'onemore'], split(&virtualedit, ','))
     DefMap [n] -expr $-if-right-of-$    col('.') >= col('$') ? '$' : ''
     DefMap [n]       Paste              P
     DefMap [n]       paste              p
@@ -1637,6 +1327,13 @@ MyAlterCommand amp    map
 " }}}
 
 " Mappings with option value. {{{
+function! s:expr_with_options(cmd, opt) "{{{
+    for [name, value] in items(a:opt)
+        call setbufvar('%', name, value)
+    endfor
+    return a:cmd
+endfunction "}}}
+
 Map [n] -expr / <SID>expr_with_options('/', {'&hlsearch': 1})
 Map [n] -expr ? <SID>expr_with_options('?', {'&hlsearch': 1})
 
@@ -1782,7 +1479,7 @@ let s:enc = 'utf-8'
 let &enc = s:enc
 let &fenc = s:enc
 let &termencoding = s:enc
-let &fileencodings = s:uniq_path(
+let &fileencodings = tyru#util#uniq_path(
 \   [s:enc]
 \   + split(&fileencodings, ',')
 \   + ['iso-2022-jp', 'iso-2022-jp-3']
@@ -1794,12 +1491,10 @@ if exists('&ambiwidth')
     set ambiwidth=double
 endif
 
-call s:map_prefix_key('nvo', 'encoding', ',')
-
 " set enc=... {{{
 function! ChangeEncoding()
     if expand('%') == ''
-        call s:warn("current file is empty.")
+        call tyru#util#warn("current file is empty.")
         return
     endif
     let result =
@@ -1821,7 +1516,7 @@ function! ChangeEncoding()
     endif
 endfunction
 
-Map [n] <encoding>ta     :call ChangeEncoding()<CR>
+Map [n] <prompt>a     :call ChangeEncoding()<CR>
 " }}}
 " set fenc=... {{{
 function! ChangeFileEncoding()
@@ -1849,7 +1544,7 @@ function! ChangeFileEncoding()
     echomsg printf("changing file encoding to '%s'.", enc)
 endfunction
 
-Map [n] <encoding>ts    :<C-u>call ChangeFileEncoding()<CR>
+Map [n] <prompt>s    :<C-u>call ChangeFileEncoding()<CR>
 " }}}
 " set ff=... {{{
 function! ChangeNL()
@@ -1864,7 +1559,7 @@ function! ChangeNL()
     endif
 endfunction
 
-Map [n] <encoding>td    :<C-u>call ChangeNL()<CR>
+Map [n] <prompt>d    :<C-u>call ChangeNL()<CR>
 " }}}
 " }}}
 " FileType {{{
@@ -1892,11 +1587,11 @@ function! s:set_dict() "{{{
 
     " FIXME Use pathogen.vim!!
     for d in dicts
-        let &l:dictionary = join(s:uniq(dicts), ',')
+        let &l:dictionary = join(tyru#util#uniq(dicts), ',')
     endfor
 endfunction "}}}
 function! s:set_tab_width() "{{{
-    if s:has_one_of(['css', 'xml', 'html', 'lisp', 'scheme', 'yaml'], s:each_filetype())
+    if tyru#util#has_one_of(['css', 'xml', 'html', 'lisp', 'scheme', 'yaml'], s:each_filetype())
         CodingStyle Short indent
     else
         CodingStyle My style
@@ -1929,36 +1624,34 @@ endfunction "}}}
 MyAutocmd FileType * call s:load_filetype()
 " }}}
 " Commands {{{
-" HelpTagsAll {{{
+" :HelpTagsAll {{{
 "   do :helptags to all doc/ in &runtimepath
 command!
 \   -bar -nargs=?
 \   HelpTagsAll
-\   call s:HelpTagsAll(<f-args>)
+\   call s:cmd_help_tags_all(<f-args>)
 
-function! s:HelpTagsAll(...)
-    " FIXME Use pathogen.vim!!
-    for path in split(&runtimepath, ',')
+function! s:cmd_help_tags_all(...) "{{{
+    for path in tyru#util#split_path(&runtimepath)
         let doc = path . '/doc'
         if isdirectory(doc)
             try
                 silent execute 'helptags' join(a:000) doc
             catch
-                echohl WarningMsg
-                echom v:exception
-                echom v:throwpoint
-                echohl None
+                ShowStackTrace!
             endtry
         endif
     endfor
-endfunction
+endfunction "}}}
 " }}}
-" MTest {{{
+" :MTest {{{
 "   convert Perl's regex to Vim's regex
-command! -nargs=? MTest
-            \ call s:MTest( <q-args> )
+command!
+\   -nargs=?
+\   MTest
+\   call s:MTest(<q-args>)
 
-function! s:MTest( ... )
+function! s:MTest(...)
 
     let regex = a:1
     " backup
@@ -1975,31 +1668,7 @@ function! s:MTest( ... )
     echo @"
 endfunction
 " }}}
-" Open {{{
-command!
-\   -nargs=? -complete=dir
-\   Open
-\   call s:Open(<f-args>)
-
-function! s:Open(...)
-    let dir =   a:0 == 1 ? a:1 : '.'
-
-    if !isdirectory(dir)
-        call s:warn(dir .': No such a directory')
-        return
-    endif
-
-    if has('win32')
-        " if dir =~ '[&()\[\]{}\^=;!+,`~ '. "']" && dir !~ '^".*"$'
-        "     let dir = '"'. dir .'"'
-        " endif
-        call s:system('explorer', dir)
-    else
-        call s:system('gnome-open', dir)
-    endif
-endfunction
-" }}}
-" ListChars {{{
+" :ListChars {{{
 command!
 \   -bar
 \   ListChars
@@ -2021,27 +1690,31 @@ function! s:set_listchars()
     endif
 endfunction
 " }}}
-" GarbageCorrect {{{
-" Correct garbages right now.
+" :Open {{{
 command!
-\   -bar -bang
-\   GarbageCorrect
-\   call s:garbagecollect(<bang>0)
+\   -nargs=? -complete=dir
+\   Open
+\   call s:Open(<f-args>)
 
-function! s:garbagecollect(banged)
-    " garbagecollect()
-    call garbagecollect()
+function! s:Open(...)
+    let dir =   a:0 == 1 ? a:1 : '.'
 
-    " &undolevels
-    if a:banged
-        " Undo history will be lost!!
-        let save = &undolevels
-        set undolevels=0
-        let &undolevels = save
+    if !isdirectory(dir)
+        call tyru#util#warn(dir .': No such a directory')
+        return
+    endif
+
+    if has('win32')
+        " if dir =~ '[&()\[\]{}\^=;!+,`~ '. "']" && dir !~ '^".*"$'
+        "     let dir = '"'. dir .'"'
+        " endif
+        call tyru#util#system('explorer', dir)
+    else
+        call tyru#util#system('gnome-open', dir)
     endif
 endfunction
 " }}}
-" DelFile {{{
+" :DelFile {{{
 
 
 command!
@@ -2058,11 +1731,11 @@ function! s:cmd_del_file(...)
             if filereadable(j)
                 call delete(j)
             else
-                call s:warn(j . ": No such a file")
+                call tyru#util#warn(j . ": No such a file")
             endif
             " delete also that buffer
             if filereadable(j)
-                call s:warn(printf("Can't delete '%s'", j))
+                call tyru#util#warn(printf("Can't delete '%s'", j))
             elseif j ==# expand('%')
                 let nr = bufnr('%')
                 enew
@@ -2072,7 +1745,7 @@ function! s:cmd_del_file(...)
     endfor
 endfunction
 " }}}
-" Rename {{{
+" :Rename {{{
 command!
 \   -nargs=+ -complete=file
 \   Rename
@@ -2086,28 +1759,35 @@ function! s:cmd_rename(...) "{{{
     endif
 endfunction "}}}
 
+MyAlterCommand mv Rename
+MyAlterCommand ren[ame] Rename
 " }}}
-" Mkdir {{{
+" :Mkdir {{{
 function! s:mkdir_p(...)
     for i in a:000
         call mkdir(expand(i), 'p')
     endfor
 endfunction
+
 command! -bar -nargs=+ -complete=dir
 \   Mkdir
 \   call s:mkdir_p(<f-args>)
+
+MyAlterCommand mkd[ir] Mkdir
 " }}}
-" Mkcd {{{
+" :Mkcd {{{
 command!
 \   -bar -nargs=1 -complete=dir
 \   Mkcd
 \   Mkdir <args> | CD <args>
+
+MyAlterCommand mkc[d] Mkcd
 " }}}
-" GccSyntaxCheck {{{
-function! s:GccSyntaxCheck(...)
+" :GccSyntaxCheck {{{
+
+function! s:cmd_gcc_syntax_check(...) "{{{
     if expand('%') ==# '' | return | endif
 
-    " compiler
     if &filetype ==# 'c'
         let gcc = 'gcc'
     elseif &filetype ==# 'cpp'
@@ -2116,49 +1796,29 @@ function! s:GccSyntaxCheck(...)
         return
     endif
 
-    " options
     let opt = {}
     for i in a:000
         let opt[i] = 1
     endfor
 
-    let makeprg = &l:makeprg
+    let save_makeprg = &l:makeprg
     let &l:makeprg = gcc . ' -Wall -W -pedantic -fsyntax-only %'
 
-    if has_key(opt, '-q') && opt['-q']
+    if get(opt, '-q', 0)
         silent make
     else
         make
     endif
 
-    let &l:makeprg = makeprg
-endfunction
+    let &l:makeprg = save_makeprg
+endfunction "}}}
 
-command! -nargs=* GccSyntaxCheck
-            \ call s:GccSyntaxCheck(<f-args>)
-" }}}
-" Ack {{{
-function! s:ack(...)
-    let save_grepprg = &l:grepprg
-    try
-        let &l:grepprg = 'ack'
-        execute 'grep' join(a:000, ' ')
-    finally
-        let &l:grepprg = save_grepprg
-    endtry
-endfunction
-
-MyAlterCommand ac[k] Ack
 command!
-\   -bar -nargs=+
-\   Ack
-\   call s:ack(<f-args>)
+\   -bar -nargs=*
+\   GccSyntaxCheck
+\   call s:cmd_gcc_syntax_check(<f-args>)
 " }}}
-" SetTitle {{{
-command! -nargs=+ SetTitle
-\   let &titlestring = <q-args>
-" }}}
-" EchoPath {{{
+" :EchoPath - Show path-like option in a readable way {{{
 
 MyAlterCommand epa EchoPath
 MyAlterCommand rtp EchoPath<Space>&rtp
@@ -2178,91 +1838,13 @@ function! s:cmd_echo_path(optname, ...) "{{{
     endfor
 endfunction "}}}
 " }}}
-" TR, TRR {{{
-"
-" TODO
-
-MyAlterCommand tr  TR
-MyAlterCommand trr TRR
-
-command!
-\   -nargs=+ -range
-\   TR
-\   <C-u>call s:tr(<f-line1>, <f-line2>, <q-args>)
-
-command!
-\   -nargs=+ -range
-\   TRR
-\   <C-u>call s:trr(<f-line1>, <f-line2>, <q-args>)
-
-function! s:tr_split_arg(arg) "{{{
-    let arg = a:arg
-    let arg = substitute(arg, '^\s*', '', '')
-    if arg == ''
-        throw 'argument_error'
-    endif
-
-    let sep = arg[0]
-    return split(arg, '\%(\\\)\@<!' . sep)
-endfunction "}}}
-
-function! s:tr(lnum_from, lnum_to, arg) "{{{
-    " TODO :lockmarks
-    let reg_str = getreg('z', 1)
-    let reg_type = getregtype('z')
-    mark z
-    call cursor(a:lnum_from, 1)
-    try
-        let [pat1, pat2] = s:tr_split_arg(a:arg)
-        call call(
-        \   's:tr_replace',
-        \   [a:lnum_from, a:lnum_to, pat1, pat2, pat2, pat1]
-        \)
-    catch /^argument_error$/
-        return
-    catch
-        call s:warn(v:exception)
-    finally
-        normal! 'z
-        call setreg('z', reg_str, reg_type)
-    endtry
-endfunction "}}}
-
-function! s:trr(lnum_from, lnum_to, arg) "{{{
-    " TODO :lockmarks
-    let reg_str = getreg('z', 1)
-    let reg_type = getregtype('z')
-    mark z
-    call cursor(a:lnum_from, 1)
-    try
-        call call(
-        \   's:tr_replace',
-        \   [a:lnum_from, a:lnum_to]
-        \       + s:tr_split_arg(a:arg)
-        \)
-    catch /^argument_error$/
-        return
-    catch
-        call s:warn(v:exception)
-    finally
-        normal! 'z
-        call setreg('z', reg_str, reg_type)
-    endtry
-endfunction "}}}
-
-" Replace pat1 to str1, pat2 to str2,
-" from current position to the end of the file.
-function! s:tr_replace(lnum_from, lnum_to, pat1, str1, pat2, str2) "{{{
-    " TODO
-endfunction "}}}
-" }}}
-" AllMaps {{{
+" :AllMaps - Do show/map in all modes. {{{
 command!
 \   -nargs=* -complete=mapping
 \   AllMaps
 \   map <args> | map! <args> | lmap <args>
 " }}}
-" Expand {{{
+" :Expand {{{
 command!
 \   -nargs=?
 \   Expand
@@ -2270,7 +1852,7 @@ command!
 
 MyAlterCommand ep Expand
 " }}}
-" Has {{{
+" :Has {{{
 MyAlterCommand has Has
 
 command!
@@ -2278,18 +1860,7 @@ command!
 \   Has
 \   echo has(<q-args>)
 " }}}
-" ExMode, ExModeInteractive {{{
-command!
-\   ExMode
-\   call feedkeys('Q', 'n')
-command!
-\   ExModeInteractive
-\   call feedkeys('gQ', 'n')
-
-MyAlterCommand ex     ExMode
-MyAlterCommand exi    ExModeInteractive
-" }}}
-" GlobPath {{{
+" :GlobPath {{{
 command!
 \   -bar -nargs=1 -complete=file
 \   GlobPath
@@ -2297,7 +1868,11 @@ command!
 
 MyAlterCommand gp GlobPath
 " }}}
-" QuickFix {{{
+" :SetTitle - Modify &titlestring {{{
+command! -nargs=+ SetTitle
+\   let &titlestring = <q-args>
+" }}}
+" :QuickFix - Wrapper for favorite quickfix opening command {{{
 " Select prefered command from cwindow, copen, and so on.
 
 command!
@@ -2307,39 +1882,7 @@ command!
 
 MyAlterCommand qf QuickFix
 " }}}
-" Capture {{{
-MyAlterCommand cap[ture] Capture
-
-command!
-\   -nargs=+ -complete=command
-\   Capture
-\   call s:cmd_capture(<q-args>)
-
-function! s:cmd_capture(q_args) "{{{
-    redir => output
-    silent execute a:q_args
-    redir END
-    let output = substitute(output, '^\n\+', '', '')
-
-    " Change as you like. for e.g., :new instead.
-    New
-
-    silent file `=printf('[Capture: %s]', a:q_args)`
-    setlocal buftype=nofile bufhidden=unload noswapfile nobuflisted
-    call setline(1, split(output, '\n'))
-endfunction "}}}
-" }}}
-" SynNames {{{
-command!
-\   -bar
-\   SynNames
-\
-\     for id in synstack(line("."), col("."))
-\   |     echo synIDattr(id, "name")
-\   | endfor
-\   | unlet! id
-" }}}
-" TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
+" :TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
 MyAlterCommand cd  TabpageCD
 
 Map [n] ,cd       :<C-u>TabpageCD %:p:h<CR>
@@ -2364,7 +1907,41 @@ MyAutocmd TabEnter *
 \ | endif
 \ | execute 'cd' fnameescape(expand(t:cwd))
 " }}}
-" s:split_nicely_with() {{{
+" :Capture {{{
+MyAlterCommand cap[ture] Capture
+
+command!
+\   -nargs=+ -complete=command
+\   Capture
+\   call s:cmd_capture(<q-args>)
+
+function! s:cmd_capture(q_args) "{{{
+    redir => output
+    silent execute a:q_args
+    redir END
+    let output = substitute(output, '^\n\+', '', '')
+
+    " Change as you like. for e.g., :new instead.
+    New
+
+    silent file `=printf('[Capture: %s]', a:q_args)`
+    setlocal buftype=nofile bufhidden=unload noswapfile nobuflisted
+    call setline(1, split(output, '\n'))
+endfunction "}}}
+" }}}
+" :SynNames {{{
+" :help synstack()
+
+command!
+\   -bar
+\   SynNames
+\
+\     for id in synstack(line("."), col("."))
+\   |     echo synIDattr(id, "name")
+\   | endfor
+\   | unlet! id
+" }}}
+" :Split, :Help, :New - Open window vertically/horizontally {{{
 MyAlterCommand sp[lit]    Split
 MyAlterCommand h[elp]     Help
 MyAlterCommand new        New
@@ -2417,31 +1994,53 @@ function! s:split_nicely_with(args, banged) "{{{
     endtry
 endfunction "}}}
 " }}}
-" SelectColorScheme {{{
+" :SelectColorScheme {{{
 " via http://gist.github.com/314439
 " via http://gist.github.com/314597
-fun! s:SelectColorScheme()
+
+command!
+\   -bar
+\   SelectColorScheme
+\   call s:cmd_select_color_scheme()
+function! s:cmd_select_color_scheme() "{{{
   30vnew
 
   let files = split(globpath(&rtp, 'colors/*.vim'), "\n")
   let regex = '\w\+\(\.vim\)\@='
   let files = map(files, 'matchstr(v:val, regex)')
   let files = sort(files)
-  let files = s:uniq(files)
+  let files = tyru#util#uniq(files)
   call setline(1, files)
 
-  file ColorSchemeSelector
+  file `='[ColorSchemeSelector]'`
   setlocal bufhidden=wipe
   setlocal buftype=nofile
   setlocal nonu
   setlocal nomodifiable
   setlocal cursorline
-  Map [n] -buffer <Enter>  :<C-u>exec 'colors' getline('.')<CR>
+  Map [n] -buffer <Enter>  :<C-u>execute 'colorscheme' getline('.')<CR>
   Map [n] -buffer q        :<C-u>close<CR>
-endf
-com! SelectColorScheme   :cal s:SelectColorScheme()
+endfunction "}}}
+
 " }}}
-" Grep {{{
+" :Ack {{{
+function! s:ack(...)
+    let save_grepprg = &l:grepprg
+    try
+        let &l:grepprg = 'ack'
+        execute 'grep' join(a:000, ' ')
+    finally
+        let &l:grepprg = save_grepprg
+    endtry
+endfunction
+
+MyAlterCommand ac[k] Ack
+command!
+\   -bar -nargs=+
+\   Ack
+\   call s:ack(<f-args>)
+" }}}
+" :Grep {{{
 " http://vim-users.jp/2010/03/hack129/
 " http://vim-users.jp/2010/03/hack130/
 " http://webtech-walker.com/archive/2010/03/17093357.html
@@ -2458,7 +2057,7 @@ Map [n] <SID>(grep-search-cWORD) :<C-u>call <SID>do_grep(expand('<cWORD>'), '**/
 function! s:cmd_grep(args, bang) "{{{
     let default_flags = 'j'
 
-    let args = s:skip_white(a:args)
+    let args = tyru#util#skip_white(a:args)
     if args == ''
         let [word, rest] = [@/, '']
         let word = '/' . word . '/' . default_flags
@@ -2471,7 +2070,7 @@ function! s:cmd_grep(args, bang) "{{{
         endtry
     endif
 
-    let rest = s:skip_white(rest)
+    let rest = tyru#util#skip_white(rest)
     if rest == ''
         let target = '**/*'
     else
@@ -2491,7 +2090,7 @@ function! s:do_grep(word, target, ...) "{{{
     QuickFix
 endfunction "}}}
 function! s:parse_grep_word(args, flags) "{{{
-    let a = s:skip_white(a:args)
+    let a = tyru#util#skip_white(a:args)
     if a =~# '^/'
         let m = matchlist(a, '^/\(.\{-}[^\\]\)/\([gj]*\)')
         if empty(m)
@@ -2502,12 +2101,12 @@ function! s:parse_grep_word(args, flags) "{{{
         let rest = strpart(a, strlen(all))
         return [pat, rest]
     else
-        return s:parse_one_arg_from_q_args(a)
+        return tyru#util#parse_one_arg_from_q_args(a)
     endif
 endfunction "}}}
 
 " }}}
-" WhichEdit {{{
+" :WhichEdit {{{
 MyAlterCommand we WhichEdit
 command!
 \   -nargs=1 -complete=customlist,s:complete_bin_programs
@@ -2527,14 +2126,16 @@ function! s:cmd_which_edit(arg) "{{{
 endfunction "}}}
 
 " }}}
-" BacktickEdit {{{
+" :BacktickEdit {{{
 MyAlterCommand be BacktickEdit
 command!
 \   -nargs=+
 \   BacktickEdit
 \   edit `<args>`
 " }}}
-" Reverse {{{
+" TODO: :GlobEdit {{{
+" }}}
+" :Reverse {{{
 command!
 \   -bar -range=%
 \   Reverse
@@ -2545,6 +2146,37 @@ function! s:cmd_reverse() range "{{{
         execute i 'move' a:firstline - 1
     endfor
 endfunction "}}}
+" }}}
+" :Hyde {{{
+
+MyAlterCommand hyd[e] Hyde
+
+command!
+\   -bar -nargs=1 -complete=expression
+\   Hyde
+\   call s:cmd_hyde(<q-args>)
+
+function! s:hyde2inch(hyde_num) "{{{
+    return s:hyde2cm(a:hyde_num) / 2.54
+endfunction "}}}
+function! s:hyde2cm(hyde_num) "{{{
+    return a:hyde_num * 156
+endfunction "}}}
+
+function! s:cmd_hyde(hyde_num_str) "{{{
+    " Hyde it more accurately
+    let hyde_num = str2float(a:hyde_num_str)
+
+    " http://dic.nicovideo.jp/a/156cm
+    if v:lang ==# 'C'
+        echo s:hyde2inch(hyde_num) 'inch'
+    elseif v:lang =~# '^ja_JP'
+        echo s:hyde2cm(hyde_num) 'cm'
+    else
+        echo hyde_num 'hyde'
+    endif
+endfunction "}}}
+
 " }}}
 " }}}
 " For Plugins {{{
@@ -2803,7 +2435,7 @@ MyAlterCommand o[pen] OpenBrowser
 let g:autodate_format = "%Y-%m-%d"
 " }}}
 " anything (ku,fuf,etc.) {{{
-call s:map_prefix_key('n', 'anything', '<Space>a')
+call s:map_prefix_key('n', 'anything', 's')
 
 Map [n] <anything>d        :<C-u>FufDir<CR>
 Map [n] <anything>f        :<C-u>FufFile<CR>
@@ -2927,8 +2559,8 @@ function! s:vimshell_settings() "{{{
     \   -buffer -nargs=+
     \   VimShellAlterCommand
     \   call vimshell#altercmd#define(
-    \       s:parse_one_arg_from_q_args(<q-args>)[0],
-    \       s:eat_n_args_from_q_args(<q-args>, 1)
+    \       tyru#util#parse_one_arg_from_q_args(<q-args>)[0],
+    \       tyru#util#eat_n_args_from_q_args(<q-args>, 1)
     \   )
 
     " Alias
@@ -2970,7 +2602,7 @@ function! s:vimshell_settings() "{{{
         VimShellAlterCommand perldoc perldocjp
     endif
 
-    let less_sh = s:globpath(&rtp, 'macros/less.sh')
+    let less_sh = tyru#util#globpath(&rtp, 'macros/less.sh')
     if !empty(less_sh)
         call vimshell#altercmd#define('vless', less_sh[0])
     endif
@@ -2988,6 +2620,7 @@ function! s:vimshell_settings() "{{{
     Map [i] -buffer -force <C-l> <Space><Bar><Space>
     Unmap [i] -buffer <Tab>
     Map [i] -remap -buffer -force <Tab><Tab> <Plug>(vimshell_command_complete)
+    Map [n] -remap <C-z> <Plug>(vimshell_switch)
 
     " Misc.
     setlocal backspace-=eol
@@ -3179,11 +2812,6 @@ let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
 " github.vim {{{
 MyAlterCommand gh Github
 " }}}
-" surround.vim {{{
-Map [n] -remap s cs
-Map [n] -remap swj sw'
-Map [n] -remap swk sw"
-" }}}
 " neocomplcache {{{
 let g:neocomplcache_enable_at_startup = 1
 let g:neocomplcache_enable_ignore_case = 1
@@ -3240,7 +2868,7 @@ function! s:delete_backup()
         call filter(backup_files, 'localtime() - getftime(v:val) > thirty_days_sec')
         for i in backup_files
             if delete(i) != 0
-                call s:warn("can't delete " . i)
+                call tyru#util#warn("can't delete " . i)
             endif
         endfor
         call writefile([localtime()], stamp_file)
@@ -3274,37 +2902,6 @@ endfunction "}}}
 " MyAutocmd CursorMovedI * if s:is_changed() | doautocmd User changed-text | endif
 " MyAutocmd User changed-text call feedkeys("\<C-g>u", 'n')
 " }}}
-" :hyde {{{
-
-MyAlterCommand hyd[e] Hyde
-
-command!
-\   -bar -nargs=1 -complete=expression
-\   Hyde
-\   call s:cmd_hyde(<q-args>)
-
-function! s:hyde2inch(hyde_num) "{{{
-    return s:hyde2cm(a:hyde_num) / 2.54
-endfunction "}}}
-function! s:hyde2cm(hyde_num) "{{{
-    return a:hyde_num * 156
-endfunction "}}}
-
-function! s:cmd_hyde(hyde_num_str) "{{{
-    " Hyde it more accurately
-    let hyde_num = str2float(a:hyde_num_str)
-
-    " http://dic.nicovideo.jp/a/156cm
-    if v:lang ==# 'C'
-        echo s:hyde2inch(hyde_num) 'inch'
-    elseif v:lang =~# '^ja_JP'
-        echo s:hyde2cm(hyde_num) 'cm'
-    else
-        echo hyde_num 'hyde'
-    endif
-endfunction "}}}
-
-" }}}
 " GNU Screen, Tmux {{{
 " function! s:set_window_name(name) "{{{
 "       let esc = "\<ESC>"
@@ -3331,11 +2928,6 @@ endfunction "}}}
 
 if filereadable(expand('~/.vimrc.local'))
     source `=expand('~/.vimrc.local')`
-endif
-
-
-if has('vim_starting')
-    GarbageCorrect    " first time
 endif
 
 
