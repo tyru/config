@@ -657,15 +657,8 @@ Map [n] gh :<C-u>cNext<CR>
 Map [n] <excmd>w      :<C-u>write<CR>
 Map [n] <excmd>q      :<C-u>quit<CR>
 " }}}
-" Edit .vimrc quickly {{{
-Map [n] <excmd>ee     :<C-u>edit<CR>
+" Edit/Apply .vimrc quickly {{{
 Map [n] <excmd>ev     :<C-u>edit $MYVIMRC<CR>
-Map [n] <excmd>e.     :<C-u>edit .<CR>
-
-Map [n] <excmd>tt     :<C-u>tabedit<CR>
-Map [n] <excmd>tv     :<C-u>tabedit $MYVIMRC<CR>
-Map [n] <excmd>t.     :<C-u>tabedit .<CR>
-
 Map [n] <excmd>sv     :<C-u>source $MYVIMRC<CR>
 " }}}
 " Cmdwin {{{
