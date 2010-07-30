@@ -8,6 +8,8 @@ filetype plugin indent on
 
 language messages C
 language time C
+
+let g:vimrc = {}    " namespace
 " }}}
 " Utilities {{{
 " Function {{{
@@ -165,16 +167,45 @@ let &titlestring = '%{getcwd()} %{haslocaldir() ? "(local)" : ""}'
 " tab
 set showtabline=2
 " TODO Show project name.
-let &tabline     = '%N. [%t]'
-let &guitablabel = &tabline
+function! MyTabLabel()
+    let s = '%{tabpagenr()}/%{tabpagenr("$")} [%t]'
+    if exists('t:cwd')
+        let s .= ' @ [tab: %{t:cwd}]'
+    elseif haslocaldir()
+        let s .= ' @ [local cwd: %{getcwd()}]'
+    else
+        let s .= ' @ [cwd: %{getcwd()}]'
+    endif
+    return s
+endfunction
+function! MyGuiTabLabel()
+    let s = '%{tabpagenr()}. [%t]'
+    return s
+endfunction
+set tabline=%!MyTabLabel()
+set guitablabel=%!MyGuiTabLabel()
 
 " statusline
 set laststatus=2
-let &statusline = '[%t] [%{&ft}] [%{&fenc},%{&ff}] %( [%M%R%H%W]%)'
-let &statusline .= '%( %{eskk#is_enabled()?eskk#get_stl():SkkGetModeStr()}%)'
+function! MyStatusLine()
+    let s = '[%t] [%{&ft}] [%{&fenc},%{&ff}] %( [%M%R%H%W]%)'
+
+    let exists_eskk = exists('g:loaded_eskk')
+    let exists_skk  = exists('g:skk_loaded')
+    if exists_eskk && exists_skk
+        let s .= '%( %{eskk#is_enabled()?eskk#get_stl():SkkGetModeStr()}%)'
+    elseif exists_eskk
+        let s .= '%( %{eskk#get_stl()}%)'
+    elseif exists_skk
+        let s .= '%( %{SkkGetModeStr()}%)'
+    endif
+
+    return s
+endfunction
+set statusline=%!MyStatusLine()
 
 " gui
-set guioptions=aegitrhpF
+set guioptions=agitrhpF
 
 " &migemo
 if has("migemo")
