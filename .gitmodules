@@ -172,3 +172,6 @@
 [submodule "ext/neoui"]
 	path = ext/neoui
 	url = git://github.com/Shougo/neoui.git
+[submodule "ext/excomplete.vim"]
+	path = ext/excomplete.vim
+	url = git://github.com/tyru/excomplete.vim.git
