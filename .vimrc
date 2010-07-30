@@ -2092,19 +2092,30 @@ function! s:cmd_grep(args, bang) "{{{
         try
             let [word, rest] = s:parse_grep_word(args, default_flags)
         catch /^parse error$/
-            Eecho v:exception
+            ShowStackTrace!
             return
         endtry
-    endif
 
-    let rest = tyru#util#skip_white(rest)
-    if rest == ''
-        let target = '**/*'
-    else
-        let target = rest
+        let rest = tyru#util#skip_white(rest)
+        let target = rest != '' ? rest : '**/*'
     endif
 
     call s:do_grep(word, target, a:bang)
+endfunction "}}}
+function! s:parse_grep_word(args, default_flags) "{{{
+    let a = tyru#util#skip_white(a:args)
+    if a =~# '^/'
+        let m = matchlist(a, '^/\(.\{-}[^\\]\)/\([gj]*\)')
+        if empty(m)
+            throw 'parse error'
+        endif
+        let [all, word, flags] = m[0:2]
+        let pat = '/' . word . '/' . (flags != '' ? flags : a:default_flags)
+        let rest = strpart(a, strlen(all))
+        return [pat, rest]
+    else
+        return tyru#util#parse_one_arg_from_q_args(a)
+    endif
 endfunction "}}}
 function! s:do_grep(word, target, ...) "{{{
     let bang = a:0 ? a:1 : 0
@@ -2115,21 +2126,6 @@ function! s:do_grep(word, target, ...) "{{{
     \   a:target
 
     QuickFix
-endfunction "}}}
-function! s:parse_grep_word(args, flags) "{{{
-    let a = tyru#util#skip_white(a:args)
-    if a =~# '^/'
-        let m = matchlist(a, '^/\(.\{-}[^\\]\)/\([gj]*\)')
-        if empty(m)
-            throw 'parse error'
-        endif
-        let [all, word, flags] = m[0:2]
-        let pat = '/' . word . '/' . (flags != '' ? flags : a:flags)
-        let rest = strpart(a, strlen(all))
-        return [pat, rest]
-    else
-        return tyru#util#parse_one_arg_from_q_args(a)
-    endif
 endfunction "}}}
 
 " }}}
