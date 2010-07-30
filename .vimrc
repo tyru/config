@@ -2068,12 +2068,15 @@ command!
 " http://vim-users.jp/2010/03/hack129/
 " http://vim-users.jp/2010/03/hack130/
 " http://webtech-walker.com/archive/2010/03/17093357.html
-AlterCommand gr[ep] Grep
+MyAlterCommand gr[ep] Grep
 
 command!
 \   -bang -nargs=*
 \   Grep
 \   call s:cmd_grep(<q-args>, <bang>0)
+
+Map [n] -remap <Space>gw <SID>(grep-search-cword)
+Map [n] -remap <Space>gW <SID>(grep-search-cWORD)
 
 Map [n] <SID>(grep-search-cword) :<C-u>call <SID>do_grep(expand('<cword>'), '**/*')<CR>
 Map [n] <SID>(grep-search-cWORD) :<C-u>call <SID>do_grep(expand('<cWORD>'), '**/*')<CR>
