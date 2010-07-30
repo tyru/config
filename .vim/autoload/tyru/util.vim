@@ -12,6 +12,9 @@ set cpo&vim
 function! tyru#util#each_char(str) "{{{
     return split(a:str, '\zs')
 endfunction "}}}
+function! tyru#util#has_char(str, char) "{{{
+    return stridx(a:str, a:char) != -1
+endfunction "}}}
 
 function! tyru#util#warn(msg) "{{{
     call tyru#util#echomsg('WarningMsg', a:msg)
