@@ -69,6 +69,16 @@ command!
 
 call dutil#load()
 
+
+command!
+\   -nargs=+
+\   Echomsg
+\
+\   let [hl, msg] = tyru#util#parse_one_arg_from_q_args(<q-args>)
+\   | execute 'echohl' hl
+\   | echomsg eval(msg)
+\   | echohl None
+
 " }}}
 " }}}
 " Options {{{
