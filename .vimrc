@@ -2383,6 +2383,7 @@ call t.add('vi', 'ゔぃ')
 call t.add('vu', 'ゔ')
 call t.add('ve', 'ゔぇ')
 call t.add('vo', 'ゔぉ')
+call t.add('z ', '　')
 call t.register()
 unlet t
 
