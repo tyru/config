@@ -1824,41 +1824,6 @@ command!
 
 MyAlterCommand mkc[d] Mkcd
 " }}}
-" :GccSyntaxCheck {{{
-
-function! s:cmd_gcc_syntax_check(...) "{{{
-    if expand('%') ==# '' | return | endif
-
-    if &filetype ==# 'c'
-        let gcc = 'gcc'
-    elseif &filetype ==# 'cpp'
-        let gcc = 'g++'
-    else
-        return
-    endif
-
-    let opt = {}
-    for i in a:000
-        let opt[i] = 1
-    endfor
-
-    let save_makeprg = &l:makeprg
-    let &l:makeprg = gcc . ' -Wall -W -pedantic -fsyntax-only %'
-
-    if get(opt, '-q', 0)
-        silent make
-    else
-        make
-    endif
-
-    let &l:makeprg = save_makeprg
-endfunction "}}}
-
-command!
-\   -bar -nargs=*
-\   GccSyntaxCheck
-\   call s:cmd_gcc_syntax_check(<f-args>)
-" }}}
 " :EchoPath - Show path-like option in a readable way {{{
 
 MyAlterCommand epa EchoPath
