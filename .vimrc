@@ -2710,7 +2710,7 @@ call submode#map       ('undo/redo', 'n', '', '-', 'g-')
 call submode#map       ('undo/redo', 'n', '', '+', 'g+')
 
 " Tab walker.
-call submode#enter_with('tabwalker', 'n', '', '<Space>t', '<Nop>')
+call submode#enter_with('tabwalker', 'n', '', 'mt', '<Nop>')
 call submode#leave_with('tabwalker', 'n', '', '<Esc>')
 call submode#map       ('tabwalker', 'n', '', 'h', 'gT')
 call submode#map       ('tabwalker', 'n', '', 'l', 'gt')
