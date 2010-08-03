@@ -1789,9 +1789,14 @@ command!
 
 function! s:cmd_rename(...) "{{{
     if a:0 == 1
-        call rename(expand('%'), expand(a:1))
+        let [from, to] = [expand('%'), expand(a:1)]
     elseif a:0 == 2
-        call rename(expand(a:1), expand(a:2))
+        let [from, to] = [expand(a:1), expand(a:2)]
+    endif
+
+    if rename(from, to)
+    else
+        Echomsg WarningMsg "Can't rename():" from "=>" to
     endif
 endfunction "}}}
 
