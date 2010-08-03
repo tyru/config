@@ -2643,6 +2643,21 @@ if has('vim_starting')
     if executable('pandoc')
         let g:quickrun_config['markdown'] = {'command' : 'pandoc'}
     endif
+    if executable('perl6')
+        let g:quickrun_config['perl6'] = {
+        \   'eval_template': join(['{%s}().perl.print'], ';')
+        \}
+    endif
+    if executable('g++')
+        let g:quickrun_config['cpp'] = {
+        \   'command': 'g++ -W -Wall',
+        \}
+    endif
+    if executable('gcc')
+        let g:quickrun_config['c'] = {
+        \   'command': 'gcc -W -Wall',
+        \}
+    endif
 endif
 " }}}
 " submode {{{
