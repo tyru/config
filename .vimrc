@@ -533,6 +533,8 @@ call s:map_prefix_key('nvo', 'operator', ';')
 call s:map_prefix_key('n', 'window', '<C-w>')
 " <prompt>
 call s:map_prefix_key('nvo', 'prompt', ',t')
+" <compl>
+call s:map_prefix_key('i', 'compl', '<Tab>')
 " }}}
 
 " map {{{
@@ -1461,8 +1463,8 @@ Map [o] <Esc> <Nop>
 
 " }}}
 
-" [compl] {{{
-call s:map_prefix_key('i', 'compl', '<Tab>')
+" completion {{{
+
 " Do <C-n> while pumvisible().
 execute 'imap <expr> <Tab> pumvisible() ? "\<C-n>" : ' . string(maparg('<Tab>', 'i'))
 
