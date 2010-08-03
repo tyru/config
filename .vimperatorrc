@@ -243,6 +243,7 @@ qmark z b@nico-mp3
 let g:direct_sbm_use_services_by_tag  = "d"
 let g:direct_sbm_use_services_by_post = "dh"
 let g:direct_sbm_is_use_migemo = 1
+let g:direct_sbm_is_normalize = 0
 noremap a   :sbm<Space>
 noremap B   :tab bentry h<CR>
 noremap <Leader>b  :tab bentry<Space>
