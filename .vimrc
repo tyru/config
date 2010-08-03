@@ -2852,6 +2852,9 @@ let g:EasyGrepInvertWholeWord = 1
 " undoclosewin {{{
 Map [n] -remap gu <Plug>(ucw-restore-window)
 " }}}
+" gist {{{
+let g:gist_detect_filetype = 1
+" }}}
 " }}}
 " Backup {{{
 " TODO Rotate backup files like writebackupversioncontrol.vim
