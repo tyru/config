@@ -2575,8 +2575,6 @@ function! s:vimshell_settings() "{{{
     VimShellAlterCommand free free -m -l -t
     VimShellAlterCommand j jobs -l
     VimShellAlterCommand jobs jobs -l
-    " VimShellAlterCommand l. ls -d .*
-    " VimShellAlterCommand l ls -lh
     VimShellAlterCommand ll ls -lh
     VimShellAlterCommand la ls -A
     VimShellAlterCommand less less -r
@@ -2587,7 +2585,10 @@ function! s:vimshell_settings() "{{{
     VimShellAlterCommand termtter iexe termtter
     VimShellAlterCommand sudo iexe sudo
 
+    " VimShellAlterCommand l. ls -d .*
+    " VimShellAlterCommand l ls -lh
     call vimshell#set_alias('l.', 'ls -d .*')
+    call vimshell#set_alias('l', 'ls -lh')
 
     " Abbrev
     inoreabbrev <buffer> l@ <Bar> less
@@ -2620,17 +2621,29 @@ function! s:vimshell_settings() "{{{
     " Add/Remove some mappings.
     Unmap [n] -buffer <C-n>
     Unmap [n] -buffer <C-p>
-    Unmap [i] -buffer <C-k>
-    Map [i] -buffer -force <C-l> <Space><Bar><Space>
+    Map [i] -buffer -force <C-p> <Space><Bar><Space>
     Unmap [i] -buffer <Tab>
     Map [i] -remap -buffer -force <Tab><Tab> <Plug>(vimshell_command_complete)
-    Map [n] -remap <C-z> <Plug>(vimshell_switch)
+    Map [n] -remap -buffer <C-z> <Plug>(vimshell_switch)
+    Map [i] -remap -buffer <compl>r <Plug>(vimshell_history_complete_whole)
 
     " Misc.
     setlocal backspace-=eol
     setlocal updatetime=1000
+    setlocal nowrap
 
-    NeoComplCacheEnable
+    if 0
+        if !exists(':NeoComplCacheDisable')
+            NeoComplCacheEnable
+        endif
+        NeoComplCacheAutoCompletionLength 1
+        NeoComplCacheUnlock
+        augroup vimrc-vimshell-settings
+            autocmd!
+            autocmd TabEnter <buffer> NeoComplCacheUnlock
+            autocmd TabLeave <buffer> NeoComplCacheLock
+        augroup END
+    endif
 endfunction "}}}
 " }}}
 " quickrun {{{
