@@ -2845,20 +2845,14 @@ let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
 MyAlterCommand gh Github
 " }}}
 " neocomplcache {{{
-let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_at_startup = 0
+let g:neocomplcache_disable_caching_buffer_name_pattern = '.*'
 let g:neocomplcache_enable_ignore_case = 1
 let g:neocomplcache_enable_quick_match = 1
+let g:neocomplcache_enable_underbar_completion = 1
+let g:neocomplcache_enable_camel_case_completion = 1
 
-Map [n] <Leader>neo :<C-u>call <SID>toggle_neocomplcache()<CR>
-function! s:toggle_neocomplcache() "{{{
-    if !exists(':NeoComplCacheDisable')
-        NeoComplCacheEnable
-        echo 'neocomplcache enabled.'
-    else
-        NeoComplCacheDisable
-        echo 'neocomplcache disabled.'
-    endif
-endfunction "}}}
+Map [n] <Leader>neo :<C-u>NeoComplCacheToggle<CR>
 " }}}
 " EasyGrep {{{
 let g:EasyGrepCommand = 2
