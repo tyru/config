@@ -2065,11 +2065,13 @@ Map [n] <SID>(grep-search-cWORD) :<C-u>call <SID>do_grep(expand('<cWORD>'), '**/
 
 function! s:cmd_grep(args, bang) "{{{
     let default_flags = 'j'
+    let default_target = '**/*'
 
     let args = tyru#util#skip_white(a:args)
     if args == ''
         let [word, rest] = [@/, '']
         let word = '/' . word . '/' . default_flags
+        let target = default_target
     else
         try
             let [word, rest] = s:parse_grep_word(args, default_flags)
@@ -2079,7 +2081,7 @@ function! s:cmd_grep(args, bang) "{{{
         endtry
 
         let rest = tyru#util#skip_white(rest)
-        let target = rest != '' ? rest : '**/*'
+        let target = rest != '' ? rest : default_target
     endif
 
     call s:do_grep(word, target, a:bang)
