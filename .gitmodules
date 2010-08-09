@@ -175,3 +175,9 @@
 [submodule "ext/excomplete.vim"]
 	path = ext/excomplete.vim
 	url = git://github.com/tyru/excomplete.vim.git
+[submodule "ext/vim-poslist"]
+	path = ext/vim-poslist
+	url = http://github.com/thinca/vim-poslist.git
+[submodule "ext/quickey.vim"]
+	path = ext/quickey.vim
+	url = git://github.com/tyru/quickey.vim.git
