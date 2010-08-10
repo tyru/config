@@ -200,6 +200,7 @@ set laststatus=2
 function! MyStatusLine()
     let s = '[%t] [%{&ft}] [%{&fenc},%{&ff}] %( [%M%R%H%W]%)'
 
+    " eskk, skk.vim
     let exists_eskk = exists('g:loaded_eskk')
     let exists_skk  = exists('g:skk_loaded')
     if exists_eskk && exists_skk
@@ -209,6 +210,9 @@ function! MyStatusLine()
     elseif exists_skk
         let s .= '%( %{SkkGetModeStr()}%)'
     endif
+
+    " current-func-info
+    let s .= ' [cfi:%{cfi#get_func_name()}]'
 
     return s
 endfunction
