@@ -217,6 +217,9 @@ function! tyru#util#parse_one_arg_from_q_args(q_args) "{{{
     let rest = strpart(arg, strlen(head))
     return [head, rest]
 endfunction "}}}
+function! tyru#util#parse_one_string_from_q_args(q_args) "{{{
+    " TODO
+endfunction "}}}
 function! tyru#util#eat_n_args_from_q_args(q_args, n) "{{{
     let rest = a:q_args
     for _ in range(1, a:n)
