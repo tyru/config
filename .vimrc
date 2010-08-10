@@ -2024,6 +2024,20 @@ function! s:cmd_hyde(hyde_num_str) "{{{
 endfunction "}}}
 
 " }}}
+" :Unretab {{{
+command!
+\   -bar -range=%
+\   Unretab
+\   call s:cmd_unretab(<line1>, <line2>)
+
+function! s:cmd_unretab(begin, end) "{{{
+    let pattern = '^\(\%( \{' . &l:tabstop . '}\)\+\)\( *\)'
+    let replacement = '\=repeat("\t", strlen(submatch(1)) / ' . &l:tabstop . ') . submatch(2)'
+    execute
+    \   a:begin . ',' . a:end
+    \   's:' . pattern . ':' . replacement . ':'
+endfunction "}}}
+" }}}
 " }}}
 " For Plugins {{{
 " CommentAnyWay {{{
