@@ -664,6 +664,8 @@ Map [n] r gR
 Map [n] gl :<C-u>cnext<CR>
 Map [n] gh :<C-u>cNext<CR>
 
+Map [n] <excmd>ct :<C-u>tabclose<CR>
+
 " TODO: Smart 'zd': Delete empty line {{{
 " }}}
 " TODO: Smart '{', '}': Treat folds as one non-empty line. {{{
@@ -808,7 +810,7 @@ endfunction "}}}
 " }}}
 
 " Close help/quickfix window {{{
-" via kana's vimrc.
+" via kana's vimrc. (this is so different from original one, though)
 
 " s:winutil {{{
 unlet! s:winutil
@@ -1008,10 +1010,6 @@ Map [n] <excmd>cb :<C-u>call <SID>close_unlisted_window()<CR>
 
 Map [n] <excmd>cc :<C-u>call <SID>close_certain_window()<CR>
 " }}}
-" Close tab with also prefix <excmd>c. {{{
-" tab
-Map [n] <excmd>ct :<C-u>tabclose<CR>
-" }}}
 " Move window into tabpage {{{
 " http://vim-users.jp/2009/12/hack106/
 "
@@ -1050,40 +1048,6 @@ endfunction "}}}
 
 " move current buffer into a new tab.
 Map [n] <excmd>st :<C-u>call <SID>move_window_into_tab_page(0)<Cr>
-" }}}
-" Merge tabpage into a tab {{{
-function! s:exists_tab(tabpagenr) "{{{
-    return 1 <= a:tabpagenr && a:tabpagenr <= tabpagenr('$')
-endfunction "}}}
-
-function! s:merge_tab_into_tab(from_tabpagenr, to_tabpagenr) "{{{
-    if !s:exists_tab(a:from_tabpagenr)
-    \   || !s:exists_tab(a:to_tabpagenr)
-    \   || a:from_tabpagenr == a:to_tabpagenr
-        return
-    endif
-
-    execute 'tabnext' a:to_tabpagenr
-    for bufnr in tabpagebuflist(a:from_tabpagenr)
-        split
-        execute bufnr 'buffer'
-    endfor
-
-    execute 'tabclose' a:from_tabpagenr
-endfunction "}}}
-
-Map [n] <Space>mh :<C-u>call <SID>merge_tab_into_tab(tabpagenr(), tabpagenr() - 1)<CR>
-Map [n] <Space>ml :<C-u>call <SID>merge_tab_into_tab(tabpagenr(), tabpagenr() + 1)<CR>
-Map [n] <Space>m  :<C-u>call <SID>merge_tab_into_tab(tabpagenr(), input('tab number:'))<CR>
-" }}}
-" Netrw - vimperator-like keymappings {{{
-function! s:filetype_netrw() "{{{
-    Map [n] -buffer -remap h -
-    Map [n] -buffer -remap l <CR>
-    Map [n] -buffer -remap e <CR>
-endfunction "}}}
-
-MyAutocmd FileType netrw call s:filetype_netrw()
 " }}}
 " 'Y' to yank till the end of line. {{{
 Map [n] Y    y$
@@ -1131,56 +1095,6 @@ endfunction "}}}
 Map [n] -silent <C-g><C-n> gt
 Map [n] -silent <C-g><C-p> gT
 " }}}
-" Move window position: <C-w>r, <C-w>R, <C-w>x suck! {{{
-Map [n] -remap <Space><C-n> <SID>swap_window_next
-Map [n] -remap <Space><C-p> <SID>swap_window_prev
-Map [n] -remap <Space><C-j> <SID>swap_window_j
-Map [n] -remap <Space><C-k> <SID>swap_window_k
-Map [n] -remap <Space><C-h> <SID>swap_window_h
-Map [n] -remap <Space><C-l> <SID>swap_window_l
-
-Map [n] -silent <SID>swap_window_next :<C-u>call <SID>swap_window_count(v:count1)<CR>
-Map [n] -silent <SID>swap_window_prev :<C-u>call <SID>swap_window_count(-v:count1)<CR>
-Map [n] -silent <SID>swap_window_j :<C-u>call <SID>swap_window_dir(v:count1, 'j')<CR>
-Map [n] -silent <SID>swap_window_k :<C-u>call <SID>swap_window_dir(v:count1, 'k')<CR>
-Map [n] -silent <SID>swap_window_h :<C-u>call <SID>swap_window_dir(v:count1, 'h')<CR>
-Map [n] -silent <SID>swap_window_l :<C-u>call <SID>swap_window_dir(v:count1, 'l')<CR>
-Map [n] -silent <SID>swap_window_t :<C-u>call <SID>swap_window_dir(v:count1, 't')<CR>
-Map [n] -silent <SID>swap_window_b :<C-u>call <SID>swap_window_dir(v:count1, 'b')<CR>
-
-function! s:modulo(n, m) "{{{
-  let d = a:n * a:m < 0 ? 1 : 0
-  return a:n + (-(a:n + (0 < a:m ? d : -d)) / a:m + d) * a:m
-endfunction "}}}
-
-function! s:swap_window_count(n) "{{{
-  let curwin = winnr()
-  let target = s:modulo(curwin + a:n - 1, winnr('$')) + 1
-  call s:swap_window(curwin, target)
-endfunction "}}}
-
-function! s:swap_window_dir(n, dir) "{{{
-  let curwin = winnr()
-  execute a:n 'wincmd' a:dir
-  let targetwin = winnr()
-  wincmd p
-  call s:swap_window(curwin, targetwin)
-endfunction "}}}
-
-function! s:swap_window(curwin, targetwin) "{{{
-  let curbuf = winbufnr(a:curwin)
-  let targetbuf = winbufnr(a:targetwin)
-
-  if curbuf == targetbuf
-    " TODO: Swap also same buffer!
-  else
-    execute 'hide' targetbuf . 'buffer'
-    execute a:targetwin 'wincmd w'
-    execute curbuf 'buffer'
-    " wincmd p    " Behave like <C-w>x ?
-  endif
-endfunction "}}}
-" }}}
 " Count the number of <cword> in this file {{{
 " http://d.hatena.ne.jp/miho36/20100621/1277092415
 
@@ -1204,84 +1118,6 @@ command!
 " }}}
 " Move all windows of current group beyond next group. {{{
 " TODO
-" }}}
-" Minor mappings to change window layout. {{{
-
-Map [n] -remap <window>j <SID>(merge-curwin-into-j)
-Map [n] -remap <window>k <SID>(merge-curwin-into-k)
-Map [n] -remap <window>h <SID>(merge-curwin-into-h)
-Map [n] -remap <window>l <SID>(merge-curwin-into-l)
-
-Map [n] -silent <SID>(merge-curwin-into-j) :<C-u>call <SID>window_merge('j', 'J', 1)<CR>
-Map [n] -silent <SID>(merge-curwin-into-k) :<C-u>call <SID>window_merge('k', 'K', 1)<CR>
-Map [n] -silent <SID>(merge-curwin-into-h) :<C-u>call <SID>window_merge('h', 'H', 0)<CR>
-Map [n] -silent <SID>(merge-curwin-into-l) :<C-u>call <SID>window_merge('l', 'L', 0)<CR>
-
-function! s:window_merge(jump_cmd, layout_cmd, vertical) "{{{
-    " Save global options.
-    "
-    " NOTE: These are global options but
-    " I think "l:" should be attached
-    " when I assign value to option value.
-    " because newer Vim may support them
-    " as local options.
-    let save_ei = &eventignore
-    let save_hidden = &hidden
-    let &l:eventignore = 'all'
-    let &l:hidden = 0
-
-    try
-        let curbuf = bufnr('%')
-        let i = 0
-        while i < v:count1
-            let curwin = winnr()
-            execute 'wincmd' a:jump_cmd
-            let nextgroupwin = winnr()
-
-            if curwin ==# nextgroupwin
-                " No more next group. Create new group.
-                execute 'wincmd' a:layout_cmd
-            else
-                wincmd p
-                " Close `curwin` window.
-                let save_buftype = &l:buftype
-                setlocal bufhidden=
-                hide
-                " Back to `nextgroupwin` window.
-                wincmd p
-
-                execute (a:vertical ? 'vsplit' : 'split')
-            endif
-
-            let i += 1
-        endwhile
-        let &l:eventignore = save_ei    " to detect `curbuf` buffer filetype.
-        silent execute curbuf 'buffer'
-    finally
-        let &l:eventignore = save_ei
-        let &l:hidden = save_hidden
-    endtry
-endfunction "}}}
-
-" }}}
-" Hide default <C-w>[hjkl] mappings for previous mappings. {{{
-Map [n] <Space>j <C-w>j
-Map [n] <Space>k <C-w>k
-Map [n] <Space>h <C-w>h
-Map [n] <Space>l <C-w>l
-" }}}
-" <C-w>s, <C-w>v: I don't want to use them because they depend on 'splitright', 'splitbelow' ! {{{
-
-Map [n] -remap <excmd>sj <SID>(split-to-j)
-Map [n] -remap <excmd>sk <SID>(split-to-k)
-Map [n] -remap <excmd>sh <SID>(split-to-h)
-Map [n] -remap <excmd>sl <SID>(split-to-l)
-
-Map [n] -silent <SID>(split-to-j) :<C-u>execute 'belowright' (v:count == 0 ? '' : v:count) 'split'<CR>
-Map [n] -silent <SID>(split-to-k) :<C-u>execute 'aboveleft'  (v:count == 0 ? '' : v:count) 'split'<CR>
-Map [n] -silent <SID>(split-to-h) :<C-u>execute 'aboveleft'    (v:count == 0 ? '' : v:count) 'vsplit'<CR>
-Map [n] -silent <SID>(split-to-l) :<C-u>execute 'belowright'   (v:count == 0 ? '' : v:count) 'vsplit'<CR>
-
 " }}}
 " }}}
 " vmap {{{
@@ -1334,6 +1170,53 @@ Map [i] <C-@> <C-a>
 
 Map [i] <S-CR> <C-o>O
 Map [i] <C-CR> <C-o>o
+
+" completion {{{
+
+" Do <C-n> while pumvisible().
+execute 'imap <expr> <Tab> pumvisible() ? "\<C-n>" : ' . string(maparg('<Tab>', 'i'))
+
+
+Map [i] <compl><Tab> <C-n>
+
+" Map [i] <compl>n <C-x><C-n>
+" Map [i] <compl>p <C-x><C-p>
+Map [i] <compl>n <C-n>
+Map [i] <compl>p <C-p>
+
+Map [i] <compl>] <C-x><C-]>
+Map [i] <compl>d <C-x><C-d>
+Map [i] <compl>f <C-x><C-f>
+Map [i] <compl>i <C-x><C-i>
+Map [i] <compl>k <C-x><C-k>
+Map [i] <compl>l <C-x><C-l>
+" Map [i] <compl>s <C-x><C-s>
+" Map [i] <compl>t <C-x><C-t>
+
+Map [i] -expr <compl>o <SID>omni_or_user_func()
+
+function! s:omni_or_user_func() "{{{
+    if &omnifunc != ''
+        return "\<C-x>\<C-o>"
+    elseif &completefunc != ''
+        return "\<C-x>\<C-u>"
+    else
+        return "\<C-n>"
+    endif
+endfunction "}}}
+
+
+" Map [i] <compl>j <C-n>
+" Map [i] <compl>k <C-p>
+" TODO
+" call submode#enter_with('c', 'i', '', emap#compile_map('<compl>j', 'i'), '<C-n>')
+" call submode#enter_with('c', 'i', '', emap#compile_map('<compl>k', 'i'), '<C-p>')
+" call submode#leave_with('c', 'i', '', '<CR>')
+" call submode#map       ('c', 'i', '', 'j', '<C-n>')
+" call submode#map       ('c', 'i', '', 'k', '<C-p>')
+
+
+" }}}
 " }}}
 " cmap {{{
 if &wildmenu
@@ -1346,8 +1229,14 @@ Map [c] <C-r><C-u>  <C-r>+
 Map [c] <C-r><C-i>  <C-r>*
 Map [c] <C-r><C-o>  <C-r>"
 
+" Make / command comfortable {{{
 Map [c] -expr /  getcmdtype() == '/' ? '\/' : '/'
 Map [c] -expr ?  getcmdtype() == '?' ? '\?' : '?'
+Map [c] -expr .  getcmdtype() =~# '[/?]' ? '\.' : '.'
+" }}}
+
+Map [c] <C-n> <Down>
+Map [c] <C-p> <Up>
 " }}}
 " abbr {{{
 inoreab <expr> date@      strftime("%Y-%m-%d")
@@ -1402,9 +1291,6 @@ function! s:search_forward_p()
 endfunction
 " }}}
 " Walk between columns at 0, ^, $, window's right edge(virtualedit). {{{
-
-function! s:get_tilde_col(lnum) "{{{
-endfunction "}}}
 
 function! s:back_between(zero, tilde, dollar) "{{{
     let curcol = col('.')
@@ -1464,53 +1350,6 @@ Map   [ic] -remap <C-]>     <C-]><bs-ctrl-]>
 Map [o] <Esc> <Nop>
 
 " TODO I need the key to execute pending mapping in mapmode-ic...
-
-" }}}
-
-" completion {{{
-
-" Do <C-n> while pumvisible().
-execute 'imap <expr> <Tab> pumvisible() ? "\<C-n>" : ' . string(maparg('<Tab>', 'i'))
-
-
-Map [i] <compl><Tab> <C-n>
-
-" Map [i] <compl>n <C-x><C-n>
-" Map [i] <compl>p <C-x><C-p>
-Map [i] <compl>n <C-n>
-Map [i] <compl>p <C-p>
-
-Map [i] <compl>] <C-x><C-]>
-Map [i] <compl>d <C-x><C-d>
-Map [i] <compl>f <C-x><C-f>
-Map [i] <compl>i <C-x><C-i>
-Map [i] <compl>k <C-x><C-k>
-Map [i] <compl>l <C-x><C-l>
-" Map [i] <compl>s <C-x><C-s>
-" Map [i] <compl>t <C-x><C-t>
-
-Map [i] -expr <compl>o <SID>omni_or_user_func()
-
-function! s:omni_or_user_func() "{{{
-    if &omnifunc != ''
-        return "\<C-x>\<C-o>"
-    elseif &completefunc != ''
-        return "\<C-x>\<C-u>"
-    else
-        return "\<C-n>"
-    endif
-endfunction "}}}
-
-
-" Map [i] <compl>j <C-n>
-" Map [i] <compl>k <C-p>
-" TODO
-" call submode#enter_with('c', 'i', '', emap#compile_map('<compl>j', 'i'), '<C-n>')
-" call submode#enter_with('c', 'i', '', emap#compile_map('<compl>k', 'i'), '<C-p>')
-" call submode#leave_with('c', 'i', '', '<CR>')
-" call submode#map       ('c', 'i', '', 'j', '<C-n>')
-" call submode#map       ('c', 'i', '', 'k', '<C-p>')
-
 
 " }}}
 " }}}

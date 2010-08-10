@@ -1,4 +1,3 @@
-
 if has('gui_running')
     set background=dark
     runtime! colors/desert.vim
