@@ -2041,7 +2041,7 @@ endfunction "}}}
 " }}}
 " For Plugins {{{
 " CommentAnyWay {{{
-let ca_verbose = 1    " debug
+let ca_verbose = 0    " debug
 
 let ca_filetype_table = {
     \ 'oneline' : {
@@ -2131,7 +2131,7 @@ let dumbbuf_remove_marked_when_close = 1
 " prompt {{{
 let prompt_debug = 0
 " }}}
-" skk.vim && eskk.vim {{{
+" skk && eskk {{{
 
 if 1
 " Map <C-j> to eskk, Map <C-g><C-j> to skk.vim {{{
@@ -2195,7 +2195,7 @@ endif
 " }}}
 " eskk {{{
 let g:eskk_disable = 0
-let g:eskk_debug = 0
+let g:eskk_debug = 1
 let g:eskk_debug_file = '~/eskk-debug.log'
 
 call eskk#load()
@@ -2215,6 +2215,10 @@ let g:eskk_marker_henkan = '$'
 let g:eskk_marker_okuri = '*'
 let g:eskk_marker_henkan_select = '@'
 let g:eskk_marker_jisyo_touroku = '?'
+let g:eskk_marker_popup = '#'
+
+
+let g:eskk_convert_at_exact_match = 0
 
 
 " Disable "qkatakana". not ";katakanaq".
@@ -2634,6 +2638,7 @@ let g:vim_indent_cont = 0
 let g:vimfiler_as_default_explorer = 1
 let g:vimfiler_split_command = 'Split'
 let g:vimfiler_edit_command = 'edit'
+let g:vimfiler_change_vim_cwd = 0
 
 MyAutocmd FileType vimfiler call s:vimfiler_settings()
 function! s:vimfiler_settings() "{{{
@@ -2652,12 +2657,17 @@ let g:prettyprint_echo_buffer_new = 'New'
 let g:fencview_auto_patterns = '*'
 let g:fencview_show_progressbar = 0
 " }}}
-" lingr.vim {{{
+" lingr {{{
+"
+" from thinca's .vimrc
+" http://soralabo.net/s/vrcb/s/thinca
+
 " if !exists('g:lingr')
 "     " Only when started by the 'lingr' command(alias), lingr.vim is used.
 "     "     alias lingr="vim --cmd 'let g:lingr = 1' -c LingrLaunch"
 "     let g:loaded_lingr_vim = 1
 " endif
+" 
 " let g:lingr_vim_user = 'tyru'
 " augroup vimrc-plugin-lingr
 "     autocmd!
@@ -2698,7 +2708,7 @@ let g:lingr_vim_additional_rooms = [
 
 let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
 " }}}
-" github.vim {{{
+" github {{{
 MyAlterCommand gh Github
 " }}}
 " neocomplcache {{{
@@ -2720,6 +2730,24 @@ Map [n] -remap gu <Plug>(ucw-restore-window)
 " }}}
 " gist {{{
 let g:gist_detect_filetype = 1
+" }}}
+" netrw {{{
+function! s:filetype_netrw() "{{{
+    Map [n] -buffer -remap h -
+    Map [n] -buffer -remap l <CR>
+    Map [n] -buffer -remap e <CR>
+endfunction "}}}
+
+MyAutocmd FileType netrw call s:filetype_netrw()
+" }}}
+" quickey {{{
+let g:quickey_merge_window_hide_vim_window_move_cursor = 1
+
+" Hide default <C-w>[hjkl] mappings for previous mappings.
+Map [n] <Space>j <C-w>j
+Map [n] <Space>k <C-w>k
+Map [n] <Space>h <C-w>h
+Map [n] <Space>l <C-w>l
 " }}}
 " }}}
 " Backup {{{
@@ -2789,6 +2817,10 @@ endfunction "}}}
 " MyAutocmd User changed-text call feedkeys("\<C-g>u", 'n')
 " }}}
 " GNU Screen, Tmux {{{
+"
+" from thinca's .vimrc
+" http://soralabo.net/s/vrcb/s/thinca
+
 " function! s:set_window_name(name) "{{{
 "       let esc = "\<ESC>"
 "       silent! execute '!echo -n "' . esc . 'k' . escape(a:name, '%#!')
