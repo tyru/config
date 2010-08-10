@@ -5,6 +5,10 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
+" Do not search from header
+setlocal complete-=i
+setlocal complete-=d
+
 
 nnoremap <buffer> [[ [m
 nnoremap <buffer> [] [M
