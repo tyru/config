@@ -181,3 +181,6 @@
 [submodule "ext/quickey.vim"]
 	path = ext/quickey.vim
 	url = git://github.com/tyru/quickey.vim.git
+[submodule "ext/current-func-info.vim"]
+	path = ext/current-func-info.vim
+	url = git://github.com/tyru/current-func-info.vim.git
