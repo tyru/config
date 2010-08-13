@@ -2573,6 +2573,7 @@ MyAlterCommand man Ref man
 MyAlterCommand pdoc Ref perldoc
 MyAlterCommand cppref Ref cppref
 MyAlterCommand cpp    Ref cppref
+MyAlterCommand py[doc] Ref pydoc
 
 call s:map_orig_key('n', 'K')
 
