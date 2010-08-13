@@ -2680,6 +2680,15 @@ Map [n] -remap gu <Plug>(ucw-restore-window)
 " gist {{{
 let g:gist_detect_filetype = 1
 " }}}
+" quickey {{{
+let g:quickey_merge_window_hide_vim_window_move_cursor = 1
+
+" Hide default <C-w>[hjkl] mappings for previous mappings.
+Map [n] <Space>j <C-w>j
+Map [n] <Space>k <C-w>k
+Map [n] <Space>h <C-w>h
+Map [n] <Space>l <C-w>l
+" }}}
 
 " runtime
 " netrw {{{
