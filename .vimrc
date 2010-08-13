@@ -2021,6 +2021,7 @@ let g:vt_author = "tyru"
 let g:vt_email = "tyru.exe@gmail.com"
 
 let s:files_tmp = {
+    \'cppsrc-scratch.cpp'    : "cpp",
     \'cppsrc.cpp'    : "cpp",
     \'csharp.cs'     : "cs",
     \'csrc.c'        : "c",
@@ -2036,6 +2037,9 @@ let s:files_tmp = {
 \}
 let g:vt_filetype_files = join(map(keys(s:files_tmp), 'v:val . "=" . s:files_tmp[v:val]'), ',')
 unlet s:files_tmp
+
+" Disable &modeline when opened template file.
+MyAutocmd BufReadPre ~/.vim/template/* setlocal nomodeline
 " }}}
 " winmove {{{
 let g:wm_move_down  = '<C-M-j>'
