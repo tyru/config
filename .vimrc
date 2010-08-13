@@ -219,7 +219,7 @@ endfunction
 set statusline=%!MyStatusLine()
 
 " gui
-set guioptions=agitrhpF
+set guioptions=agitrhpFe
 
 " &migemo
 if has("migemo")
