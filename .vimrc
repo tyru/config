@@ -2328,9 +2328,6 @@ function! s:mru_settings() "{{{
     Map [n] -remap <Esc> <Plug>(mru-close)
 endfunction "}}}
 " }}}
-" changelog {{{
-let changelog_username = "tyru"
-" }}}
 " Gtags {{{
 if 0
 " <C-]> for gtags. {{{
@@ -2586,9 +2583,6 @@ endif
 " chalice {{{
 let chalice_bookmark = expand('$HOME/.vim/chalice.bmk')
 " }}}
-" indent/vim.vim {{{
-let g:vim_indent_cont = 0
-" }}}
 " vimfiler {{{
 let g:vimfiler_as_default_explorer = 1
 let g:vimfiler_split_command = 'Split'
@@ -2686,6 +2680,8 @@ Map [n] -remap gu <Plug>(ucw-restore-window)
 " gist {{{
 let g:gist_detect_filetype = 1
 " }}}
+
+" runtime
 " netrw {{{
 function! s:filetype_netrw() "{{{
     Map [n] -buffer -remap h -
@@ -2695,15 +2691,13 @@ endfunction "}}}
 
 MyAutocmd FileType netrw call s:filetype_netrw()
 " }}}
-" quickey {{{
-let g:quickey_merge_window_hide_vim_window_move_cursor = 1
-
-" Hide default <C-w>[hjkl] mappings for previous mappings.
-Map [n] <Space>j <C-w>j
-Map [n] <Space>k <C-w>k
-Map [n] <Space>h <C-w>h
-Map [n] <Space>l <C-w>l
+" indent/vim.vim {{{
+let g:vim_indent_cont = 0
 " }}}
+" changelog {{{
+let changelog_username = "tyru"
+" }}}
+
 " }}}
 " Backup {{{
 " TODO Rotate backup files like writebackupversioncontrol.vim
