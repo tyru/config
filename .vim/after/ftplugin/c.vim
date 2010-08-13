@@ -5,8 +5,8 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-" TODO: Do not re-indent when comment inserted.
-setlocal comments+=b:#
+setlocal foldmethod=syntax
+
 
 
 let &cpo = s:save_cpo

@@ -30,6 +30,8 @@ let g:perl_fold = 1
 unlet! g:perl_fold_blocks
 let g:perl_nofold_packages = 1
 
+" For avoiding flickering
+setlocal matchpairs-=<:>
 
 " Jumping to sub definition.
 nnoremap <buffer> ]]    :<C-u>call search('^\s*sub .* {$', 'sW')<CR>

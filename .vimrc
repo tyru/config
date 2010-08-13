@@ -284,83 +284,32 @@ set viminfo='50,h,f1,n$HOME/.viminfo
 " NOTE: On MS Windows, setting colorscheme in .vimrc does not work
 MyAutocmd VimEnter * colorscheme tyru
 
-" open on read-only if swap exists
+" Open on read-only if swap exists
 MyAutocmd SwapExists * let v:swapchoice = 'o'
 
-" autocmd CursorHold,CursorHoldI *   silent! update
 MyAutocmd QuickfixCmdPost * QuickFix
 
 " InsertLeave, InsertEnter
 MyAutocmd InsertLeave * setlocal nocursorline
 MyAutocmd InsertEnter * setlocal cursorline ignorecase
 
-" Disable &modeline when opened template file.
-MyAutocmd BufReadPre ~/.vim/template/* setlocal nomodeline
-
-
-" filetype {{{
-MyAutocmd BufNewFile,BufRead *.as
-            \ setlocal ft=actionscript syntax=actionscript
-MyAutocmd BufNewFile,BufRead *.c
-            \ setlocal ft=c
-MyAutocmd BufNewFile,BufRead *.cpp
-            \ setlocal ft=cpp
-MyAutocmd BufNewFile,BufRead *.h
-            \ setlocal ft=cpp
-MyAutocmd BufNewFile,BufRead *.cs
-            \ setlocal ft=cs
-MyAutocmd BufNewFile,BufRead *.java
-            \ setlocal ft=java
-MyAutocmd BufNewFile,BufRead *.js
-            \ setlocal ft=javascript
-MyAutocmd BufNewFile,BufRead *.pl,*.pm
-            \ setlocal ft=perl
-MyAutocmd BufNewFile,BufRead *.ps1
-            \ setlocal ft=powershell
-MyAutocmd BufNewFile,BufRead *.py,*.pyc
-            \ setlocal ft=python
-MyAutocmd BufNewFile,BufRead *.rb
-            \ setlocal ft=ruby
-MyAutocmd BufNewFile,BufRead *.scm,.uim
-            \ setlocal ft=scheme
-MyAutocmd BufNewFile,BufRead _vimperatorrc,.vimperatorrc
-            \ setlocal ft=vimperator syntax=vimperator
-MyAutocmd BufNewFile,BufRead *.scala
-            \ setlocal ft=scala
-MyAutocmd BufNewFile,BufRead *.lua
-            \ setlocal ft=lua
-MyAutocmd BufNewFile,BufRead *.avs
-            \ setlocal syntax=avs
-MyAutocmd BufNewFile,BufRead *.tmpl
-            \ setlocal ft=html
-MyAutocmd BufNewFile,BufRead *.mkd
-            \ setlocal ft=mkd
-MyAutocmd BufNewFile,BufRead *.md
-            \ setlocal ft=markdown
-MyAutocmd BufNewFile,BufRead SKK-JISYO*,~/.skk-jisyo*
-            \ setlocal ft=skk
-MyAutocmd BufNewFile,BufRead *.grass
-            \ setlocal ft=grass
-
-" aliases
-" MyAutocmd FileType mkd
-"             \ setlocal ft=markdown
-MyAutocmd FileType js
-            \ setlocal ft=javascript
-MyAutocmd FileType c++
-            \ setlocal ft=cpp
-MyAutocmd FileType py
-            \ setlocal ft=python
-MyAutocmd FileType pl
-            \ setlocal ft=perl
-MyAutocmd FileType rb
-            \ setlocal ft=ruby
-MyAutocmd FileType scm
-            \ setlocal ft=scheme
-
-" delete autocmd for ft=mkd.
+" Delete autocmd for ft=mkd.
 MyAutocmd VimEnter * autocmd! filetypedetect BufNewFile,BufRead *.md
-" }}}
+
+" Set syntaxes
+MyAutocmd BufNewFile,BufRead *.as setlocal syntax=actionscript
+MyAutocmd BufNewFile,BufRead _vimperatorrc,.vimperatorrc setlocal syntax=vimperator
+MyAutocmd BufNewFile,BufRead *.avs setlocal syntax=avs
+
+" Aliases
+MyAutocmd FileType mkd setlocal filetype=markdown
+MyAutocmd FileType js setlocal filetype=javascript
+MyAutocmd FileType c++ setlocal filetype=cpp
+MyAutocmd FileType py setlocal filetype=python
+MyAutocmd FileType pl setlocal filetype=perl
+MyAutocmd FileType rb setlocal filetype=ruby
+MyAutocmd FileType scm setlocal filetype=scheme
+
 " }}}
 " Initializing {{{
 
