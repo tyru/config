@@ -1315,7 +1315,7 @@ let &termencoding = s:enc
 let &fileencodings = tyru#util#uniq_path(
 \   [s:enc]
 \   + split(&fileencodings, ',')
-\   + ['iso-2022-jp', 'iso-2022-jp-3']
+\   + ['iso-2022-jp', 'iso-2022-jp-3', 'cp932']
 \)
 unlet s:enc
 
