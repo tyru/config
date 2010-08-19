@@ -51,7 +51,7 @@ TODO						*<%filename_noext%>-todo* {{{
 Changelog						*<%filename_noext%>-changelog* {{{
 
 0.0.0:
-- 
+- Initial upload
 
 }}}
 ==============================================================================
