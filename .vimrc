@@ -67,9 +67,6 @@ command!
 
 
 
-call dutil#load()
-
-
 command!
 \   -nargs=+
 \   Echomsg
@@ -376,7 +373,8 @@ else
 endif
 
 if has('win32')
-    RtpPush $HOME/.vim
+    setlocal rtp+=$HOME/.vim
+    setlocal rtp+=$HOME/.vim/after
 endif
 
 if exists('$VIM_RTP_REPO_DIR')
@@ -408,14 +406,19 @@ call emap#load()
 call emap#set_sid(s:SID())
 " call emap#set_sid_from_sfile(expand('<sfile>'))
 
+
 let g:arpeggio_timeoutlen = 40
 call arpeggio#load()
+
 
 call altercmd#load()
 command!
 \   -bar -nargs=+
 \   MyAlterCommand
 \   CAlterCommand <args> | AlterCommand <cmdwin> <args>
+
+
+call dutil#load()
 " }}}
 " Mappings and/or Abbreviations {{{
 
