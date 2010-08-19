@@ -760,7 +760,6 @@ endfunction "}}}
 " }}}
 
 " Close help/quickfix window {{{
-" via kana's vimrc. (this is so different from original one, though)
 
 " s:winutil {{{
 unlet! s:winutil
