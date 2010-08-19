@@ -1,5 +1,0 @@
-#!/bin/sh
-
-
-[ $# = 0 ] && exit
-git rebase -i $*~
