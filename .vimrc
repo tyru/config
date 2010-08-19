@@ -1325,7 +1325,7 @@ if exists('&ambiwidth')
 endif
 
 " set enc=... {{{
-function! ChangeEncoding()
+function! s:change_encoding()
     if expand('%') == ''
         call tyru#util#warn("current file is empty.")
         return
@@ -1349,10 +1349,10 @@ function! ChangeEncoding()
     endif
 endfunction
 
-Map [n] <prompt>a     :call ChangeEncoding()<CR>
+Map [n] <prompt>a     :call s:change_encoding()<CR>
 " }}}
 " set fenc=... {{{
-function! ChangeFileEncoding()
+function! s:change_fileencoding()
     let enc = prompt#prompt("changing file encoding to...", {
                 \ 'menu': [
                 \ 'cp932',
@@ -1377,10 +1377,10 @@ function! ChangeFileEncoding()
     echomsg printf("changing file encoding to '%s'.", enc)
 endfunction
 
-Map [n] <prompt>s    :<C-u>call ChangeFileEncoding()<CR>
+Map [n] <prompt>s    :<C-u>call s:change_fileencoding()<CR>
 " }}}
 " set ff=... {{{
-function! ChangeNL()
+function! s:change_newline_format()
     let result = prompt#prompt("changing newline format to...", {
                 \ 'menu': ['dos', 'unix', 'mac'],
                 \ 'one_char': 1,
@@ -1392,7 +1392,7 @@ function! ChangeNL()
     endif
 endfunction
 
-Map [n] <prompt>d    :<C-u>call ChangeNL()<CR>
+Map [n] <prompt>d    :<C-u>call s:change_newline_format()<CR>
 " }}}
 " }}}
 " FileType {{{
