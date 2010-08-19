@@ -1,0 +1,5 @@
+#!/bin/sh
+
+commit="HEAD"
+[ $# != 0 ] && commit="$1"
+git rev-list --reverse $commit | head -1
