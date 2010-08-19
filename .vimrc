@@ -2474,16 +2474,11 @@ if has('vim_starting')
         \   'eval_template': join(['{%s}().perl.print'], ';')
         \}
     endif
-    if executable('g++')
-        let g:quickrun_config['cpp'] = {
-        \   'command': 'g++ -W -Wall',
-        \}
-    endif
-    if executable('gcc')
-        let g:quickrun_config['c'] = {
-        \   'command': 'gcc -W -Wall',
-        \}
-    endif
+    let g:quickrun_config['lisp'] = {
+    \   'command': 'clisp',
+    \   'eval': 1,
+    \   'eval_template': '(print %s)',
+    \}
 endif
 " }}}
 " submode {{{
