@@ -18,8 +18,10 @@
 	cont = rebase --continue
 	cp = cherry-pick
 	dish = diff --cached
+	fixup = commit --amend -C HEAD
 	gcn = get-commits-num
 	gene = log --graph --pretty='%C(yellow)%h%Creset %ai %an: %s%C(yellow)%d%Creset' --all
+	last = log -p --reverse HEAD@{1}..
 	lg = log --graph
 	los = log --stat
 	lp = log -p
@@ -28,6 +30,7 @@
 	my-diff = diff --color-words
 	my-pull = pull --tags
 	my-push = push --tags
+	rb = rebase
 	re = reset
 	reha = reset --hard
 	rmsh = rm --cached
@@ -42,7 +45,6 @@
 	view = log --pretty=oneline --abbrev-commit --graph --source --tags --branches
 	wh = whatchanged
 	zip = archive --format=zip
-	fixup = commit --amend -C HEAD
 [color]
 	branch = auto
 	diff = auto
