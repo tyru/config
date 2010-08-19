@@ -536,9 +536,11 @@ Map [nvo] -remap <operator>j <Plug>(operator-join)
 call operator#user#define_ex_command('uniq', 'sort u')
 Map [nvo] -remap <operator>u <Plug>(operator-uniq)
 " }}}
-" operator-reverse {{{
-call operator#user#define_ex_command('reverse', 'Reverse')
-Map [nvo] -remap <operator>rev <Plug>(operator-reverse)
+" operator-reverse-lines {{{
+Map [nvo] -remap <operator>rl <Plug>(operator-reverse-lines)
+" }}}
+" operator-reverse-text {{{
+Map [nvo] -remap <operator>rw <Plug>(operator-reverse-text)
 " }}}
 " operator-narrow {{{
 call operator#user#define_ex_command('narrow', 'Narrow')
@@ -549,7 +551,7 @@ Map [nvo]        <operator>nw :<C-u>Widen<CR>
 let g:narrow_allow_overridingp = 1
 " }}}
 " operator-replace {{{
-Map [nvo] -remap <operator>r  <Plug>(operator-replace)
+Map [nvo] -remap <operator>p  <Plug>(operator-replace)
 " }}}
 " operator-camelize {{{
 Map [nvo] -remap <operator>c <Plug>(operator-camelize)
@@ -1932,18 +1934,6 @@ command!
 \   edit `<args>`
 " }}}
 " TODO: :GlobEdit {{{
-" }}}
-" :Reverse {{{
-command!
-\   -bar -range=%
-\   Reverse
-\   <line1>,<line2>call s:cmd_reverse()
-
-function! s:cmd_reverse() range "{{{
-    for i in range(a:firstline, a:lastline)
-        execute i 'move' a:firstline - 1
-    endfor
-endfunction "}}}
 " }}}
 " :Hyde {{{
 
