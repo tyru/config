@@ -184,3 +184,6 @@
 [submodule "ext/current-func-info.vim"]
 	path = ext/current-func-info.vim
 	url = git://github.com/tyru/current-func-info.vim.git
+[submodule "ext/operator-reverse.vim"]
+	path = ext/operator-reverse.vim
+	url = git://github.com/tyru/operator-reverse.vim.git
