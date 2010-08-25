@@ -174,7 +174,7 @@ let &titlestring = '%{getcwd()} %{haslocaldir() ? "(local)" : ""}'
 " tab
 set showtabline=2
 " TODO Show project name.
-function! MyTabLabel()
+function! MyTabLabel() "{{{
     let s = '%{tabpagenr()}/%{tabpagenr("$")} [%t]'
     if exists('t:cwd')
         let s .= ' @ [tab: %{t:cwd}]'
@@ -184,35 +184,33 @@ function! MyTabLabel()
         let s .= ' @ [cwd: %{getcwd()}]'
     endif
     return s
-endfunction
-function! MyGuiTabLabel()
+endfunction "}}}
+set tabline=%!MyTabLabel()
+function! MyGuiTabLabel() "{{{
     let s = '%{tabpagenr()}. [%t]'
     return s
-endfunction
-set tabline=%!MyTabLabel()
+endfunction "}}}
 set guitablabel=%!MyGuiTabLabel()
 
 " statusline
 set laststatus=2
-function! MyStatusLine()
-    let s = '[%t] [%{&ft}] [%{&fenc},%{&ff}] %( [%M%R%H%W]%)'
+function! MyStatusLine() "{{{
+    let s = '%t %{&ft} %{&fenc}/%{&ff} %M%R%H%W +:%{b:changedtick}, u:%{changenr()}'
 
     " eskk, skk.vim
     let exists_eskk = exists('g:loaded_eskk')
     let exists_skk  = exists('g:skk_loaded')
-    if exists_eskk && exists_skk
-        let s .= '%( %{eskk#is_enabled()?eskk#get_stl():SkkGetModeStr()}%)'
-    elseif exists_eskk
-        let s .= '%( %{eskk#get_stl()}%)'
+    if exists_eskk
+        let s .= ' %{eskk#format_stl("IM:%s", "IM:off")}'
     elseif exists_skk
-        let s .= '%( %{SkkGetModeStr()}%)'
+        let s .= ' %{SkkGetModeStr()}'
     endif
 
     " current-func-info
-    let s .= ' [cfi:%{cfi#get_func_name()}]'
+    let s .= ' %{cfi#format("[%s()]", "")}'
 
     return s
-endfunction
+endfunction "}}}
 set statusline=%!MyStatusLine()
 
 " gui
