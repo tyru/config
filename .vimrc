@@ -560,7 +560,7 @@ call operator#user#define_ex_command('blank-killer', 's/\s\+$//')
 Map [nvo] -remap <operator><Space>d <Plug>(operator-blank-killer)
 " }}}
 " }}}
-" motion/textobj {{{
+" motion {{{
 Map [nvo] j gj
 Map [nvo] k gk
 call s:map_orig_key('nvo', 'j')
@@ -570,15 +570,18 @@ call s:map_orig_key('nvo', 'k')
 Map [nvo] ]k :<C-u>call search('^\S', 'Ws')<CR>
 Map [nvo] [k :<C-u>call search('^\S', 'Wsb')<CR>
 
+Map [nvo] gp %
+" }}}
+" textobj {{{
 Map [vo] -remap iF <Plug>(textobj-fold-i)
 Map [vo] -remap aF <Plug>(textobj-fold-a)
-
-Map [nvo] gp %
 
 Map [vo] aa a>
 Map [vo] ia i>
 Map [vo] ar a]
 Map [vo] ir i]
+
+Map [vo] -remap il <Plug>(textobj-lastpat-n)
 " }}}
 " }}}
 " nmap {{{
