@@ -82,7 +82,7 @@ command!
 
 set all&
 
-if 0    " for debug
+if exists('&msghistlen')
     set msghistlen=9999
 endif
 
