@@ -582,7 +582,7 @@ Map [nvo] -remap <operator>C <Plug>(operator-decamelize)
 " }}}
 " operator-blank-killer {{{
 call operator#user#define_ex_command('blank-killer', 's/\s\+$//')
-Map [nvo] -remap <operator><Space>d <Plug>(operator-blank-killer)
+Map [nvo] -remap <operator>bk <Plug>(operator-blank-killer)
 " }}}
 " }}}
 " motion {{{
