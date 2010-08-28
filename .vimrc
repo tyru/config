@@ -1823,9 +1823,7 @@ function! s:split_nicely_with(args, banged) "{{{
         \   a:args[0] . (a:banged ? '!' : '')
         \   join(a:args[1:])
     catch
-        echohl ErrorMsg
-        echomsg substitute(v:exception, '^Vim(\w\+):', '', '')
-        echohl None
+        Echomsg ErrorMsg substitute(v:exception, '^Vim(\w\+):', '', '')
     endtry
 endfunction "}}}
 " }}}
