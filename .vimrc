@@ -9,7 +9,6 @@ filetype plugin indent on
 language messages C
 language time C
 
-let g:vimrc = {}    " namespace
 " }}}
 " Utilities {{{
 " Function {{{
