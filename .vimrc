@@ -2639,6 +2639,12 @@ Map [n] <Space>k <C-w>k
 Map [n] <Space>h <C-w>h
 Map [n] <Space>l <C-w>l
 " }}}
+" ohmygrep {{{
+MyAlterCommand gr[ep] OMGrep
+
+Map [n] -remap <Space>gw <Plug>(omg-grep-cword)
+Map [n] -remap <Space>gW <Plug>(omg-grep-cWORD)
+" }}}
 
 " runtime
 " netrw {{{
