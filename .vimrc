@@ -251,7 +251,8 @@ endif
 
 " visual bell
 set novisualbell
-MyAutocmd VimEnter * set t_vb=
+Lazy set t_vb=
+
 " set debug=beep
 
 " restore screen
@@ -301,7 +302,7 @@ set matchpairs+=<:>
 
 " colorscheme
 " NOTE: On MS Windows, setting colorscheme in .vimrc does not work
-MyAutocmd VimEnter * colorscheme tyru
+Lazy colorscheme tyru
 
 " Open on read-only if swap exists
 MyAutocmd SwapExists * let v:swapchoice = 'o'
@@ -313,7 +314,7 @@ MyAutocmd InsertLeave * setlocal nocursorline
 MyAutocmd InsertEnter * setlocal cursorline ignorecase
 
 " Delete autocmd for ft=mkd.
-MyAutocmd VimEnter * autocmd! filetypedetect BufNewFile,BufRead *.md
+Lazy autocmd! filetypedetect BufNewFile,BufRead *.md
 
 " Set syntaxes
 MyAutocmd BufNewFile,BufRead *.as setlocal syntax=actionscript
