@@ -1365,7 +1365,7 @@ function! s:change_encoding()
     endif
 endfunction
 
-Map [n] <prompt>a     :call s:change_encoding()<CR>
+Map [n] <prompt>a     :<C-u>call <SID>change_encoding()<CR>
 " }}}
 " set fenc=... {{{
 function! s:change_fileencoding()
@@ -1393,7 +1393,7 @@ function! s:change_fileencoding()
     echomsg printf("changing file encoding to '%s'.", enc)
 endfunction
 
-Map [n] <prompt>s    :<C-u>call s:change_fileencoding()<CR>
+Map [n] <prompt>s    :<C-u>call <SID>change_fileencoding()<CR>
 " }}}
 " set ff=... {{{
 function! s:change_newline_format()
@@ -1408,7 +1408,7 @@ function! s:change_newline_format()
     endif
 endfunction
 
-Map [n] <prompt>d    :<C-u>call s:change_newline_format()<CR>
+Map [n] <prompt>d    :<C-u>call <SID>change_newline_format()<CR>
 " }}}
 " }}}
 " FileType {{{
