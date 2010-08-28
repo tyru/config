@@ -2127,11 +2127,6 @@ let g:eskk_convert_at_exact_match = 0
 " Disable "qkatakana". not ";katakanaq".
 " EskkMap -type=mode:hira:toggle-kata <Nop>
 
-" NOTE:
-" eskk#table#get_definition() calls eskk#util#log(),
-" and it will :redraw statusline.
-runtime! plugin/skk.vim
-
 let g:eskk_context_control = [{
 \   'rule': 'eskk#is_enabled() && !eskk#util#has_elem(eskk#util#get_syn_names(), "Comment")',
 \   'fn': 'eskk#disable',
@@ -2139,25 +2134,26 @@ let g:eskk_context_control = [{
 " MyAutocmd InsertEnter * call eskk#handle_context()
 
 
-let t = eskk#table#create('my_table', 'rom_to_hira')
+let t = eskk#table#create('rom_to_hira*', 'rom_to_hira')
 call t.add('~', '〜')
 call t.add('zc', '©')
 call t.add('zr', '®')
 call t.add('zp', '☝')
-call t.add('va', 'ゔぁ')
-call t.add('vi', 'ゔぃ')
-call t.add('vu', 'ゔ')
-call t.add('ve', 'ゔぇ')
-call t.add('vo', 'ゔぉ')
+call t.add('jva', 'ゔぁ')
+call t.add('jvi', 'ゔぃ')
+call t.add('jvu', 'ゔ')
+call t.add('jve', 'ゔぇ')
+call t.add('jvo', 'ゔぉ')
 call t.add('z ', '　')
 call t.register()
 unlet t
 
-let g:eskk_mode_use_tables.hira = 'my_table'
+let g:eskk_mode_use_tables.hira = 'rom_to_hira*'
 
 
 
 inoremap <C-g> hoge
+EskkMap -remap jj <Plug>(eskk:disable)<Esc>
 
 
 " map! <C-j> <Plug>(eskk:enable)
