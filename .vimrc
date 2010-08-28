@@ -1521,9 +1521,9 @@ endfunction "}}}
 command!
 \   -bar
 \   ListChars
-\   call s:set_listchars()
+\   call s:cmd_list_chars()
 
-function! s:set_listchars()
+function! s:cmd_list_chars() "{{{
     let lcs = prompt#prompt('changing &listchars to...', {
     \       'menu': [
     \           'tab:>-,extends:>,precedes:<,eol:.',
@@ -1537,7 +1537,7 @@ function! s:set_listchars()
     if lcs !=# "\e"
         echomsg printf("changing &listchars to '%s'.", lcs)
     endif
-endfunction
+endfunction "}}}
 " }}}
 " :Open {{{
 command!
@@ -1545,7 +1545,7 @@ command!
 \   Open
 \   call s:Open(<f-args>)
 
-function! s:Open(...)
+function! s:Open(...) "{{{
     let dir =   a:0 == 1 ? a:1 : '.'
 
     if !isdirectory(dir)
@@ -1561,7 +1561,7 @@ function! s:Open(...)
     else
         call tyru#util#system('gnome-open', dir)
     endif
-endfunction
+endfunction "}}}
 " }}}
 " :DelFile {{{
 
