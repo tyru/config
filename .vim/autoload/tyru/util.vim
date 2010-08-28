@@ -211,11 +211,16 @@ endfunction "}}}
 function! tyru#util#skip_white(q_args) "{{{
     return substitute(a:q_args, '^\s*', '', '')
 endfunction "}}}
-function! tyru#util#parse_one_arg_from_q_args(q_args) "{{{
-    let arg = tyru#util#skip_white(a:q_args)
-    let head = matchstr(arg, '^.\{-}[^\\]\ze\([ \t]\|$\)')
-    let rest = strpart(arg, strlen(head))
+function! tyru#util#parse_pattern(str, pat) "{{{
+    let str = tyru#util#skip_white(a:str)
+    " TODO: Use matchlist() for capturing group \1, \2, ...
+    " and specify which group to use with arguments.
+    let head = matchstr(str, a:pat)
+    let rest = strpart(str, strlen(head))
     return [head, rest]
+endfunction "}}}
+function! tyru#util#parse_one_arg_from_q_args(q_args) "{{{
+    return tyru#util#parse_pattern(a:q_args, '^.\{-}[^\\]\ze\([ \t]\|$\)')
 endfunction "}}}
 function! tyru#util#parse_one_string_from_q_args(q_args) "{{{
     " TODO
