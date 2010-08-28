@@ -1616,10 +1616,15 @@ function! s:cmd_rename(...) "{{{
         let [from, to] = [expand('%'), expand(a:1)]
     elseif a:0 == 2
         let [from, to] = [expand(a:1), expand(a:2)]
+    else
+        return
+    endif
+    if isdirectory(to)
+        let to = to . '/' . fnamemodify(from, ':t')
     endif
 
-    if rename(from, to)
-    else
+    let success = 0
+    if rename(from, to) !=# success
         Echomsg WarningMsg "Can't rename():" from "=>" to
     endif
 endfunction "}}}
