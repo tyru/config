@@ -1838,7 +1838,7 @@ command!
 function! s:cmd_select_color_scheme() "{{{
   30vnew
 
-  let files = split(globpath(&rtp, 'colors/*.vim'), "\n")
+  let files = tyru#util#globpath(&rtp, 'colors/*.vim'), "\n"
   let regex = '\w\+\(\.vim\)\@='
   let files = map(files, 'matchstr(v:val, regex)')
   let files = sort(files)
@@ -2618,6 +2618,11 @@ let g:neocomplcache_enable_ignore_case = 1
 let g:neocomplcache_enable_quick_match = 1
 let g:neocomplcache_enable_underbar_completion = 1
 let g:neocomplcache_enable_camel_case_completion = 1
+let g:neocomplcache_plugin_disable = {}
+for s:source in map(tyru#util#globpath(&rtp, 'autoload/neocomplcache/sources/*'), 'fnamemodify(v:val, ":t:r")')
+    let g:neocomplcache_plugin_disable[s:source] = 1
+endfor
+unlet s:source
 
 Map [n] <Leader>neo :<C-u>NeoComplCacheToggle<CR>
 " }}}
