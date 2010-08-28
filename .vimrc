@@ -2258,7 +2258,7 @@ function! s:register_fuf_abbrev()
     endif
 endfunction
 
-MyAutocmd VimEnter * call s:register_fuf_abbrev()
+Lazy call s:register_fuf_abbrev()
 " }}}
 " }}}
 " }}}
