@@ -59,10 +59,30 @@ augroup vimrc
     autocmd!
 augroup END
 
+
+
 command!
 \   -bang -nargs=*
 \   MyAutocmd
 \   autocmd<bang> vimrc <args>
+
+
+
+command!
+\   -nargs=+
+\   Lazy
+\   call s:cmd_lazy(<q-args>)
+
+function! s:cmd_lazy(q_args) "{{{
+    if a:q_args == ''
+        return
+    endif
+    if has('vim_starting')
+        execute 'MyAutocmd VimEnter *' a:q_args
+    else
+        execute a:q_args
+    endif
+endfunction "}}}
 
 
 
