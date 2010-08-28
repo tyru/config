@@ -184,3 +184,6 @@
 [submodule "ext/operator-reverse.vim"]
 	path = ext/operator-reverse.vim
 	url = git://github.com/tyru/operator-reverse.vim.git
+[submodule "ext/parse_args.vim"]
+	path = ext/parse_args.vim
+	url = git://github.com/tyru/parse_args.vim.git
