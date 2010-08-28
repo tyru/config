@@ -297,6 +297,7 @@ set switchbuf=useopen,usetab
 set textwidth=0
 set viminfo='50,h,f1,n$HOME/.viminfo
 set matchpairs+=<:>
+set showbreak=↪
 " }}}
 " Autocmd {{{
 
