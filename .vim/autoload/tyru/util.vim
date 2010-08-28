@@ -84,33 +84,12 @@ function! tyru#util#has_one_of(list, elem) "{{{
     endif
 endfunction "}}}
 function! tyru#util#uniq(list) "{{{
-    let s:dict = {}
-    let counter = 1
-    for i in a:list
-        if !has_key(s:dict, i)
-            let s:dict[i] = counter
-            let counter += 1
-        endif
+    let dict = {}
+    for V in a:list
+        let key = string(V)
+        let dict[key] = get(dict, key, V)
     endfor
-
-    function! s:cmp(a, b)
-        return a:a == a:b ? 0 : a:a > a:b ? 1 : -1
-    endfunction
-
-    function! s:c(a, b)
-        let [a, b] = [a:a, a:b]
-        return eval(s:expr)
-    endfunction
-
-    try
-        let s:expr = 's:cmp(s:dict[a], s:dict[b])'
-        return sort(keys(s:dict), 's:c')
-    finally
-        delfunc s:cmp
-        delfunc s:c
-        unlet s:expr
-        unlet s:dict
-    endtry
+    return tyru#util#sort_by(keys(dict), 'tyru#util#cmp(dict[a], dict[b])', {'dict': dict})
 endfunction "}}}
 function! tyru#util#uniq_path(path, ...) "{{{
     let sep = a:0 != 0 ? a:1 : ','
@@ -156,6 +135,42 @@ function! tyru#util#get_idx(list, elem, ...) "{{{
     else
         return a:1
     endif
+endfunction "}}}
+function! tyru#util#reduce(list, expr) "{{{
+    " TODO
+endfunction "}}}
+function! tyru#util#list2dict(list) "{{{
+    if empty(a:list) || len(a:list) % 2
+        return {}
+    endif
+    let dict = {}
+    for i in range(0, a:list, 2)[: 1]
+        let dict[a:list[i]] = a:list[i + 1]
+    endfor
+    return dict
+endfunction "}}}
+function! tyru#util#sort_by(list, expr, ...) "{{{
+    let s:expr = a:expr
+    let s:vars = a:0 ? a:1 : {}
+    function! s:sort_func(a, b)
+        let [a, b] = [a:a, a:b]
+        for [name, val] in items(s:vars)
+            execute 'let' name '=' string(val)
+        endfor
+        return eval(s:expr)
+    endfunction
+
+    try
+        return sort(a:list, 's:sort_func')
+    finally
+        delfunc s:sort_func
+        unlet! s:expr
+        unlet! s:vars
+    endtry
+endfunction "}}}
+function! tyru#util#cmp(a, b) "{{{
+    let [a, b] = [a:a, a:b]
+    return a ==# b ? 0 : a ># b ? 1 : -1
 endfunction "}}}
 
 
@@ -207,60 +222,8 @@ function! tyru#util#execute_multiline(excmds, ...) "{{{
 endfunction "}}}
 
 
-" Parsing
-function! tyru#util#skip_white(q_args) "{{{
-    return substitute(a:q_args, '^\s*', '', '')
-endfunction "}}}
-function! tyru#util#parse_pattern(str, pat) "{{{
-    let str = tyru#util#skip_white(a:str)
-    " TODO: Use matchlist() for capturing group \1, \2, ...
-    " and specify which group to use with arguments.
-    let head = matchstr(str, a:pat)
-    let rest = strpart(str, strlen(head))
-    return [head, rest]
-endfunction "}}}
-function! tyru#util#parse_one_arg_from_q_args(q_args) "{{{
-    return tyru#util#parse_pattern(a:q_args, '^.\{-}[^\\]\ze\([ \t]\|$\)')
-endfunction "}}}
-function! tyru#util#parse_one_string_from_q_args(q_args) "{{{
-    " TODO
-endfunction "}}}
-function! tyru#util#eat_n_args_from_q_args(q_args, n) "{{{
-    let rest = a:q_args
-    for _ in range(1, a:n)
-        let rest = tyru#util#parse_one_arg_from_q_args(rest)[1]
-    endfor
-    let rest = tyru#util#skip_white(rest)    " for next arguments.
-    return rest
-endfunction "}}}
-
-
 
 
 " Restore 'cpoptions' {{{
 let &cpo = s:save_cpo
 " }}}
-finish
-
-" Trying to reproduce ex_call bug...
-
-function! tyru#util#get_bar()
-    let obj = {}
-
-    function! obj.Set()
-        " ...
-    endfunction
-
-    function! obj.Get()
-        " ...
-    endfunction
-
-    return obj
-endfunction
-
-function! tyru#util#foo()
-    let self = {'cond': 0}
-    if !self.cond
-        call tyru#util#get_bar().Set(tyru#util#get_bar().Get())
-    endif
-endfunction
