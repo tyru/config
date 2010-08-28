@@ -2609,6 +2609,7 @@ let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
 " }}}
 " github {{{
 MyAlterCommand gh Github
+let g:github#use_vimproc = 0
 " }}}
 " neocomplcache {{{
 let g:neocomplcache_enable_at_startup = 0
