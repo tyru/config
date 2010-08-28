@@ -584,6 +584,9 @@ Map [nvo] -remap <operator>C <Plug>(operator-decamelize)
 call operator#user#define_ex_command('blank-killer', 's/\s\+$//')
 Map [nvo] -remap <operator>bk <Plug>(operator-blank-killer)
 " }}}
+" operator-grep {{{
+Map [n] -remap <operator>gw <Plug>(operator-grep)
+" }}}
 " }}}
 " motion {{{
 Map [nvo] j gj
