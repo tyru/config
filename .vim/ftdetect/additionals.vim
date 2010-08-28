@@ -39,3 +39,5 @@ autocmd BufNewFile,BufRead SKK-JISYO*,~/.skk-jisyo*
             \ setfiletype skk
 autocmd BufNewFile,BufRead *.grass
             \ setfiletype grass
+autocmd BufNewFile,BufRead .tmux.conf
+            \ setfiletype tmux
