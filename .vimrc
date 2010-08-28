@@ -1156,10 +1156,6 @@ Map [i] <C-CR> <C-o>o
 
 " completion {{{
 
-" Do <C-n> while pumvisible().
-execute 'imap <expr> <Tab> pumvisible() ? "\<C-n>" : ' . string(maparg('<Tab>', 'i'))
-
-
 Map [i] <compl><Tab> <C-n>
 
 " Map [i] <compl>n <C-x><C-n>
