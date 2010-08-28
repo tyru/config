@@ -187,3 +187,6 @@
 [submodule "ext/parse_args.vim"]
 	path = ext/parse_args.vim
 	url = git://github.com/tyru/parse_args.vim.git
+[submodule "ext/thinca-vim-textobj-plugins"]
+	path = ext/thinca-vim-textobj-plugins
+	url = git://github.com/thinca/vim-textobj-plugins.git
