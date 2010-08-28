@@ -1563,36 +1563,47 @@ function! s:Open(...) "{{{
     endif
 endfunction "}}}
 " }}}
-" :DelFile {{{
-
+" :Delete {{{
 
 command!
 \   -bar -complete=file -nargs=+
-\   DelFile
+\   Delete
 \   call s:cmd_del_file(<f-args>)
 
-function! s:cmd_del_file(...)
-    if a:0 == 0 | return | endif
+function! s:cmd_del_file(...) "{{{
+    if !a:0
+        return
+    endif
 
-    for i in map(copy(a:000), 'expand(v:val)')
-        for j in split(i, "\n")
-            " delete the file
-            if filereadable(j)
-                call delete(j)
-            else
-                call tyru#util#warn(j . ": No such a file")
+    for file in a:000
+        let org_file = file
+        let file = expand(file)
+        let file = resolve(file)
+
+        " Delete the file.
+        let type = getftype(file)
+        if type ==# 'file'
+            let success = 0
+            if delete(file) !=# success
+                call tyru#util#warn("Can't delete '" . file . "'")
+                continue
             endif
-            " delete also that buffer
-            if filereadable(j)
-                call tyru#util#warn(printf("Can't delete '%s'", j))
-            elseif j ==# expand('%')
-                let nr = bufnr('%')
+        elseif type ==# 'dir'
+            " TODO
+        else
+            call tyru#util#warn(file . ": Unknown file type '" . type . "'.")
+        endif
+
+        " Delete the buffer.
+        let nr = bufnr(org_file)
+        if nr != -1
+            if nr == bufnr('%')
                 enew
-                execute nr 'bwipeout'
             endif
-        endfor
+            execute nr 'bwipeout'
+        endif
     endfor
-endfunction
+endfunction "}}}
 " }}}
 " :Rename {{{
 command!
