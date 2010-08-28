@@ -90,7 +90,7 @@ command!
 \   -nargs=+
 \   Echomsg
 \
-\   let [hl, msg] = tyru#util#parse_one_arg_from_q_args(<q-args>)
+\   let [hl, msg] = parse_args#parse_one_arg_from_q_args(<q-args>)
 \   | execute 'echohl' hl
 \   | echomsg eval(msg)
 \   | echohl None
@@ -2321,8 +2321,8 @@ function! s:vimshell_settings() "{{{
     \   -buffer -nargs=+
     \   VimShellAlterCommand
     \   call vimshell#altercmd#define(
-    \       tyru#util#parse_one_arg_from_q_args(<q-args>)[0],
-    \       tyru#util#eat_n_args_from_q_args(<q-args>, 1)
+    \       parse_args#parse_one_arg_from_q_args(<q-args>)[0],
+    \       parse_args#eat_n_args_from_q_args(<q-args>, 1)
     \   )
 
     " Alias
