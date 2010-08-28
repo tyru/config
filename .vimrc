@@ -2192,7 +2192,8 @@ MyAlterCommand ers[tart] Restart
 MyAlterCommand rse[tart] Restart
 " }}}
 " openbrowser {{{
-MyAutocmd VimEnter * Map [nv] -remap -force gx <Plug>(openbrowser-open)
+let g:netrw_nogx = 1
+Map [nv] -remap gx <Plug>(openbrowser-open)
 MyAlterCommand o[pen] OpenBrowser
 " }}}
 " AutoDate {{{
