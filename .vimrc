@@ -1496,26 +1496,26 @@ endfunction "}}}
 " :MTest {{{
 "   convert Perl's regex to Vim's regex
 command!
-\   -nargs=?
+\   -nargs=+
 \   MTest
 \   call s:MTest(<q-args>)
 
-function! s:MTest(...)
+function! s:MTest(args) "{{{
+    let org_search = @/
+    let org_hlsearch = &hlsearch
 
-    let regex = a:1
-    " backup
-    let searched = @/
-    let hilight = &hlsearch
-
-    " convert
-    silent exe "M" . regex
-    let @" = @/
-
-    let @/ = searched
-    let &hlsearch = hilight
+    try
+        silent execute "M" . a:args
+        let @" = @/
+    catch
+        return
+    finally
+        let @/ = org_search
+        let &hlsearch = org_hlsearch
+    endtry
 
     echo @"
-endfunction
+endfunction "}}}
 " }}}
 " :ListChars {{{
 command!
