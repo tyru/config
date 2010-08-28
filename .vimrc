@@ -1969,29 +1969,23 @@ let g:nf_loop_files = 1    " loop at the end of file
 let g:nf_ignore_ext = ['o', 'obj', 'exe', 'bin']
 " }}}
 " vimtemplate {{{
-let g:vt_mapping = 'gt'
-let g:vt_command = ''
-let g:vt_template_dir_path = expand("~/.vim/template")
 let g:vt_author = "tyru"
 let g:vt_email = "tyru.exe@gmail.com"
-
-let s:files_tmp = {
-    \'cppsrc-scratch.cpp'    : "cpp",
-    \'cppsrc.cpp'    : "cpp",
-    \'csharp.cs'     : "cs",
-    \'csrc.c'        : "c",
-    \'header.h'      : "c",
-    \'hina.html'     : "html",
-    \'javasrc.java'  : "java",
-    \'perl.pl'       : "perl",
-    \'perlmodule.pm' : "perl",
-    \'python.py'     : "python",
-    \'scala.scala'   : "scala",
-    \'scheme.scm'    : "scheme",
-    \'vimscript.vim' : "vim"
+let g:vt_files_metainfo = {
+\   'cppsrc-scratch.cpp': {'filetype': "cpp"},
+\   'cppsrc.cpp'    : {'filetype': "cpp"},
+\   'csharp.cs'     : {'filetype': "cs"},
+\   'csrc.c'        : {'filetype': "c"},
+\   'header.h'      : {'filetype': "c"},
+\   'hina.html'     : {'filetype': "html"},
+\   'javasrc.java'  : {'filetype': "java"},
+\   'perl.pl'       : {'filetype': "perl"},
+\   'perlmodule.pm' : {'filetype': "perl"},
+\   'python.py'     : {'filetype': "python"},
+\   'scala.scala'   : {'filetype': "scala"},
+\   'scheme.scm'    : {'filetype': "scheme"},
+\   'vimscript.vim' : {'filetype': "vim"}
 \}
-let g:vt_filetype_files = join(map(keys(s:files_tmp), 'v:val . "=" . s:files_tmp[v:val]'), ',')
-unlet s:files_tmp
 
 " Disable &modeline when opened template file.
 MyAutocmd BufReadPre ~/.vim/template/* setlocal nomodeline
