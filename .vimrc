@@ -1322,15 +1322,6 @@ DefMap [i] -expr bs-ctrl-] getline('.')[col('.') - 2]    ==# "\<C-]>" ? "\<BS>" 
 DefMap [c] -expr bs-ctrl-] getcmdline()[getcmdpos() - 2] ==# "\<C-]>" ? "\<BS>" : ''
 Map   [ic] -remap <C-]>     <C-]><bs-ctrl-]>
 " }}}
-" <Esc> to execute current pending mapping {{{
-" Because I don't use `set timeout`,
-" I need the key to execute pending mapping.
-
-Map [o] <Esc> <Nop>
-
-" TODO I need the key to execute pending mapping in mapmode-ic...
-
-" }}}
 " }}}
 " Encoding {{{
 let s:enc = 'utf-8'
