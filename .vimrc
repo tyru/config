@@ -2426,6 +2426,15 @@ if has('vim_starting')
     \   'eval': 1,
     \   'eval_template': '(print %s)',
     \}
+
+    function! s:build_quickrun_config_cpp0x()
+        if !executable('g++')
+            return
+        endif
+        let g:quickrun_config['cpp0x'] = deepcopy(g:quickrun_default_config['cpp'])
+        let g:quickrun_config['cpp0x'].command = 'g++ --std=c++0x'
+    endfunction
+    Lazy call s:build_quickrun_config_cpp0x()
 endif
 " }}}
 " submode {{{
