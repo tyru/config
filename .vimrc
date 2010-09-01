@@ -2548,6 +2548,7 @@ MyAutocmd FileType vimfiler call s:vimfiler_settings()
 function! s:vimfiler_settings() "{{{
     Map [n] -remap -buffer L <Plug>(vimfiler_move_to_history_forward)
     Map [n] -remap -buffer H <Plug>(vimfiler_move_to_history_back)
+    Unmap [n] -buffer N
 endfunction "}}}
 " }}}
 " prettyprint {{{
