@@ -48,12 +48,4 @@ function locallib () {
 # }}}
 # }}}
 
-# start screen {{{
-
-# `-z "$WINDOW"` means if screen has already started.
-# `! -z "$PS1"` means if zsh has started interactively.
-if [ "$MY_CURRENT_ENV" != "MSWin32" -a -x "$(which screen)" -a -z "$WINDOW" -a ! -z "$PS1" ]; then
-    screen
-fi
-
-# }}}
+source ~/.shrc.start-screen

@@ -235,30 +235,4 @@ if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then
 fi
 # >>>>
 
-# start screen <<<<
-
-is_screen_running() {
-    # tscreen also uses this varariable.
-    [ ! -z "$WINDOW" ]
-}
-is_tmux_runnning() {
-    [ ! -z "$TMUX" ]
-}
-is_screen_or_tmux_running() {
-    is_screen_running || is_tmux_runnning
-}
-shell_has_started_interactively() {
-    [ ! -z "$PS1" ]
-}
-
-
-if ! is_screen_or_tmux_running && shell_has_started_interactively; then
-    for cmd in tmux tscreen screen; do
-        if which $cmd >/dev/null 2>/dev/null; then
-            $cmd
-            break
-        fi
-    done
-fi
-
-# >>>>
+source ~/.shrc.start-screen

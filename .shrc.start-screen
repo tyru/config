@@ -1,0 +1,34 @@
+
+# vim:set ft=sh:
+
+is_screen_running() {
+    # tscreen also uses this varariable.
+    [ ! -z "$WINDOW" ]
+}
+is_tmux_runnning() {
+    [ ! -z "$TMUX" ]
+}
+is_screen_or_tmux_running() {
+    is_screen_running || is_tmux_runnning
+}
+shell_has_started_interactively() {
+    [ ! -z "$PS1" ]
+}
+
+
+if ! is_screen_or_tmux_running && shell_has_started_interactively; then
+    # I like screen behavior.
+    # and now screen project is more active than tscreen.
+    # I tested tmux a bit, however,
+    # I prefer screen's copy-mode(it is tmux term, though) behavior.
+    for cmd in screen tscreen tmux; do
+        if which $cmd >/dev/null 2>/dev/null; then
+            if whence $cmd >/dev/null 2>/dev/null; then
+                $(whence $cmd)
+            else
+                $cmd
+            fi
+            break
+        fi
+    done
+fi
