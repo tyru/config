@@ -138,7 +138,6 @@ set nosplitright
 set complete=.,w,b,u,t,i,d,k,kspell
 set wildmenu
 set wildchar=<Tab>
-set wildignore=*.o,*.obj,*.la,*.a,*.exe,*.com,*.tds
 set pumheight=20
 
 " tags
