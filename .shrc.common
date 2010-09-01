@@ -19,14 +19,12 @@ alias whi='which'
 alias whe='where'
 alias go='gopen'
 alias lingr="vim --cmd 'let g:lingr = 1' -c LingrLaunch"
+alias tmux='tmux -u -2'
 
 if [ -x "$(which vim)" ]; then
     alias vi='vim'
 fi
 
-if [ -x "$(which tscreen)" ]; then
-    alias screen='tscreen'
-fi
 alias sc=screen
 
 if [ -x "$(which perldocjp)" ]; then
