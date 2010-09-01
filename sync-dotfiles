@@ -42,7 +42,10 @@ my @files = qw(
     .Xmodmap
     .shrc.common
     .shrc.cygwin
+    .shrc.start-screen
     .env.common
+    .tmux.conf
+    .tmux
 );
 my %cygwin_files = (
     '.vimperator/plugin' => 'vimperator/plugin',
