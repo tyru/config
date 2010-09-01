@@ -1,10 +1,15 @@
 #!/bin/sh
 
-vim_bare="vim --noplugin -u NONE -U NONE -N"
+vim_bare="vim --noplugin -u NONE -i NONE -N"
+
+if ! which vim >/dev/null 2>/dev/null; then
+    echo "vim is not installed." >&2
+    exit
+fi
 
 if [ $# = 0 ]
 then
-    $vim_bare
+    exec $vim_bare
 else
-    $vim_bare "$@"
+    exec $vim_bare "$@"
 fi
