@@ -603,6 +603,12 @@ Map [nvo] gp %
 Map [vo] -remap iF <Plug>(textobj-fold-i)
 Map [vo] -remap aF <Plug>(textobj-fold-a)
 
+Map [vo] -remap iF <Plug>(textobj-between-i)
+Map [vo] -remap aF <Plug>(textobj-between-a)
+
+Map [vo] -remap if <Plug>(textobj-function-i)
+Map [vo] -remap af <Plug>(textobj-function-a)
+
 Map [vo] aa a>
 Map [vo] ia i>
 Map [vo] ar a]
