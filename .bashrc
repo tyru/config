@@ -5,7 +5,7 @@ source ~/.shrc.common
 
 # exec zsh? {{{
 # NOTE: "$PS1" to confirm user to login in interactively.
-# (scp, sftp will freeze when login)
+# XXX: scp, sftp will freeze when login. Temporarily disabled.
 #if [ -x "$(which zsh)" && -z "$PS1" ]; then
 #    exec zsh
 #fi
