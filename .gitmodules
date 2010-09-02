@@ -190,3 +190,6 @@
 [submodule "ext/thinca-vim-textobj-plugins"]
 	path = ext/thinca-vim-textobj-plugins
 	url = git://github.com/thinca/vim-textobj-plugins.git
+[submodule "ext/ohmygrep.vim"]
+	path = ext/ohmygrep.vim
+	url = git://github.com/tyru/ohmygrep.vim.git
