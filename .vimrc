@@ -1142,9 +1142,9 @@ silent Arpeggio noremap! #{ 〔〕<Left>
 " imap {{{
 
 " paste register
-Map [i] <C-r><C-u>  <C-r><C-p>+
-Map [i] <C-r><C-i>  <C-r><C-p>*
-Map [i] <C-r><C-o>  <C-r><C-p>"
+Map [i] <C-r><C-u>  <C-r><C-o>+
+Map [i] <C-r><C-i>  <C-r><C-o>*
+Map [i] <C-r><C-o>  <C-r><C-o>"
 Map [i] <C-r>       <C-r><C-r>
 
 " shift left (indent)
