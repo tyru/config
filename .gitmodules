@@ -193,3 +193,6 @@
 [submodule "ext/ohmygrep.vim"]
 	path = ext/ohmygrep.vim
 	url = git://github.com/tyru/ohmygrep.vim.git
+[submodule "ext/dutil.vim"]
+	path = ext/dutil.vim
+	url = git://github.com/tyru/dutil.vim.git
