@@ -2441,7 +2441,7 @@ if has('vim_starting')
         if !executable('g++')
             return
         endif
-        let g:quickrun_config['cpp0x'] = deepcopy(g:quickrun_default_config['cpp'])
+        let g:quickrun_config['cpp0x'] = deepcopy(g:quickrun#default_config['cpp'])
         let g:quickrun_config['cpp0x'].command = 'g++ --std=c++0x'
     endfunction
     Lazy call s:build_quickrun_config_cpp0x()
