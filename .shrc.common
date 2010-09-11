@@ -19,6 +19,7 @@ alias whi='which'
 alias whe='where'
 alias go='gopen'
 alias lingr="vim --cmd 'let g:lingr = 1' -c LingrLaunch"
+alias chalice="vim --cmd 'let g:chalice = 1' -c Chalice"
 alias tmux='tmux -u -2'
 
 if [ -x "$(which vim)" ]; then
