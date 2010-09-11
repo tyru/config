@@ -398,9 +398,12 @@ else
 endif
 
 if has('win32')
+    " Because of "tyru#util#...()" cannot use :RtpPush
     setlocal rtp+=$HOME/.vim
     setlocal rtp+=$HOME/.vim/after
 endif
+
+RtpPush ~/.vim/bundle/*
 
 if exists('$VIM_RTP_REPO_DIR')
     RtpPush $VIM_RTP_REPO_DIR/*
@@ -422,6 +425,7 @@ if exists('$VIM_RTP_REPO_DIR')
     endif
 else
     call tyru#util#warn('Forgot to set $VIM_RTP_REPO_DIR ?')
+    finish
 endif
 
 " }}}
