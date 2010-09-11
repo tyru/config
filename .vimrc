@@ -585,6 +585,8 @@ Map [nvo] -remap <operator>p  <Plug>(operator-replace)
 " operator-camelize {{{
 Map [nvo] -remap <operator>c <Plug>(operator-camelize)
 Map [nvo] -remap <operator>C <Plug>(operator-decamelize)
+let g:operator_camelize_all_uppercase_action = 'camelize'
+let g:operator_decamelize_all_uppercase_action = 'lowercase'
 " }}}
 " operator-blank-killer {{{
 call operator#user#define_ex_command('blank-killer', 's/\s\+$//')
