@@ -2174,8 +2174,6 @@ EskkMap -remap jj <Plug>(eskk:disable)<Esc>
 
 " NOTE: Experimental
 
-" command! EskkDumpBuftable call eskk#get_buftable().dump_print()
-
 " inoremap <C-l> <C-o><C-l>
 
 " EskkMap U <Plug>(eskk:undo-kakutei)
