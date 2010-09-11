@@ -9,6 +9,9 @@ filetype plugin indent on
 language messages C
 language time C
 
+if filereadable(expand('~/.vimrc.local'))
+    source `=expand('~/.vimrc.local')`
+endif
 " }}}
 " Utilities {{{
 " Function {{{
@@ -2769,10 +2772,6 @@ endfunction "}}}
 " }}}
 " }}}
 " End. {{{
-
-if filereadable(expand('~/.vimrc.local'))
-    source `=expand('~/.vimrc.local')`
-endif
 
 
 set secure
