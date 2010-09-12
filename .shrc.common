@@ -38,6 +38,8 @@ fi
 if [ "$MY_CURRENT_ENV" = "cygwin" ]; then
     alias less='less -r'
     alias ls='ls --color=tty --show-control-chars'
+elif [  "$MY_CURRENT_ENV" = 'freebsd' ]; then
+    # BSD ls cannot handle "--long-option".
 else
     alias ls='ls --color=tty'
 fi
