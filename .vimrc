@@ -403,28 +403,22 @@ if has('win32')
     setlocal rtp+=$HOME/.vim/after
 endif
 
-RtpPush ~/.vim/bundle/*
-
-if exists('$VIM_RTP_REPO_DIR')
-    RtpPush $VIM_RTP_REPO_DIR/*
-
-    RtpPrune $VIM_RTP_REPO_DIR/pummode.vim
-    RtpPrune $VIM_RTP_REPO_DIR/command-buffer.vim
-    RtpPrune $VIM_RTP_REPO_DIR/cmdwincomplete.vim
-    RtpPrune $VIM_RTP_REPO_DIR/fencview.vim
-    RtpPrune $VIM_RTP_REPO_DIR/EasyGrep.vim
-    RtpPrune $VIM_RTP_REPO_DIR/thinca-vim-ku_source
-    RtpPrune $VIM_RTP_REPO_DIR/vim-ku*
-    RtpPrune $VIM_RTP_REPO_DIR/neoui
-    RtpPrune $VIM_RTP_REPO_DIR/ref-goo.vim
-    if !executable('git')
-        RtpPrune $VIM_RTP_REPO_DIR/gist-vim
-    endif
-    if !has('python')
-        RtpPrune $VIM_RTP_REPO_DIR/lingr-vim
-    endif
+if exists('$VIM_RTP_PATH')
+    for path in map(split($VIM_RTP_PATH, ':'), 'expand(v:val)')
+        call s:rtp_push(path . '/*')
+        call s:rtp_prune(path . '/pummode.vim')
+        call s:rtp_prune(path . '/command-buffer.vim')
+        call s:rtp_prune(path . '/cmdwincomplete.vim')
+        if !executable('git')
+            call s:rtp_prune(path . '/gist-vim')
+        endif
+        if !has('python')
+            call s:rtp_prune(path . '/lingr-vim')
+        endif
+    endfor
+    unlet! path
 else
-    call tyru#util#warn('Forgot to set $VIM_RTP_REPO_DIR ?')
+    call tyru#util#warn('Forgot to set $VIM_RTP_PATH ?')
     finish
 endif
 
