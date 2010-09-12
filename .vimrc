@@ -2593,6 +2593,11 @@ let g:fencview_show_progressbar = 0
 "   endif
 " endfunction "}}}
 
+
+MyAutocmd FileType lingr-messages
+\   Map [n] -buffer -remap o <Plug>(lingr-messages-show-say-buffer)
+
+
 let g:lingr_vim_additional_rooms = [
 \   'vim',
 \   'emacs',
