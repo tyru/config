@@ -26,7 +26,10 @@ if [ -x "$(which vim)" ]; then
     alias vi='vim'
 fi
 
-alias sc=screen
+if [ -x "$(which screen)" ]; then
+    alias sc="screen"
+    alias screen="screen -R"
+fi
 
 if [ -x "$(which perldocjp)" ]; then
     alias perldoc='perldocjp'
