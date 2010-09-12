@@ -14,20 +14,29 @@ is_screen_or_tmux_running() {
 shell_has_started_interactively() {
     [ ! -z "$PS1" ]
 }
+resolve_alias() {
+    cmd="$1"
+    while \
+        whence "$cmd" >/dev/null 2>/dev/null \
+        && [ "$(whence "$cmd")" != "$cmd" ]
+    do
+        cmd=$(whence "$cmd")
+    done
+    echo "$cmd"
+}
 
 
-if ! is_screen_or_tmux_running && shell_has_started_interactively; then
+if ! is_screen_or_tmux_running \
+    && shell_has_started_interactively \
+    && [ -z "$MAN_IN_THE_SSH" ]
+then
     # I like screen behavior.
     # and now screen project is more active than tscreen.
     # I tested tmux a bit, however,
     # I prefer screen's copy-mode(it is tmux term, though) behavior.
     for cmd in screen tscreen tmux; do
-        if which $cmd >/dev/null 2>/dev/null; then
-            if whence $cmd >/dev/null 2>/dev/null; then
-                $(whence $cmd)
-            else
-                $cmd
-            fi
+        if whence $cmd >/dev/null 2>/dev/null; then
+            $(resolve_alias "$cmd")
             break
         fi
     done
