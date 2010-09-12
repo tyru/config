@@ -1230,7 +1230,7 @@ inoreab <expr> date@      strftime("%Y-%m-%d")
 inoreab <expr> time@      strftime("%H:%M")
 inoreab <expr> dt@        strftime("%Y-%m-%d %H:%M")
 
-MyAlterCommand th     tab<Space>help
+MyAlterCommand th     tab help
 MyAlterCommand t      tabedit
 MyAlterCommand sf     setf
 MyAlterCommand hg     helpgrep
