@@ -651,8 +651,8 @@ Map [n] y<line-w/o-newline> 0y$
 Map [n] c<line-w/o-newline> 0c$
 
 " http://vim-users.jp/2009/08/hack57/
-Map [n] d<CR> :<C-u>call append(expand('.'), '')<CR>j
-Map [n] c<CR> :<C-u>call append(expand('.'), '')<CR>jI
+Map [n] d<CR> :<C-u>call append(line('.'), '')<CR>j
+Map [n] c<CR> :<C-u>call append(line('.'), '')<CR>jI
 
 Map [n] <excmd>me :<C-u>messages<CR>
 Map [n] <excmd>di :<C-u>display<CR>
