@@ -194,9 +194,27 @@ let &titlestring = '%{getcwd()} %{haslocaldir() ? "(local)" : ""}'
 
 " tab
 set showtabline=2
-" TODO Show project name.
-function! MyTabLabel() "{{{
-    let s = '%{tabpagenr()}/%{tabpagenr("$")} [%t]'
+
+" TODO Show project name to tab.
+
+function! MyTabLine() "{{{
+    " Same as default.
+    let s = ''
+    for tabpagenr in range(1, tabpagenr('$'))
+        let winnr = tabpagewinnr(tabpagenr)
+        for bufnr in tabpagebuflist(tabpagenr)
+            if winnr ==# bufwinnr(bufnr) && bufexists(bufnr)
+                let s .= (bufname(bufnr) == '' ? '[Empty]' : bufname(bufnr))
+                break
+            endif
+        endfor
+    endfor
+    return s
+endfunction "}}}
+" set tabline=%!MyTabLine()
+
+function! MyGuiTabLabel() "{{{
+    let s = '%{tabpagenr()}. [%t]'
     if exists('t:cwd')
         let s .= ' @ [tab: %{t:cwd}]'
     elseif haslocaldir()
@@ -204,11 +222,6 @@ function! MyTabLabel() "{{{
     else
         let s .= ' @ [cwd: %{getcwd()}]'
     endif
-    return s
-endfunction "}}}
-set tabline=%!MyTabLabel()
-function! MyGuiTabLabel() "{{{
-    let s = '%{tabpagenr()}. [%t]'
     return s
 endfunction "}}}
 set guitablabel=%!MyGuiTabLabel()
@@ -239,7 +252,7 @@ endfunction "}}}
 set statusline=%!MyStatusLine()
 
 " gui
-set guioptions=agitrhpFe
+set guioptions=agitrhpF
 
 " &migemo
 if has("migemo")
