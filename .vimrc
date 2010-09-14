@@ -2246,40 +2246,6 @@ let fuf_keyOpenVsplit  = '<C-v>'
 let fuf_enumeratingLimit = 20
 let fuf_previewHeight = 0
 
-" abbrev {{{
-function! s:register_fuf_abbrev()
-    let g:fuf_abbrevMap = {
-        \ '^r@': [$VIMRUNTIME . '/'],
-        \ '^p@': map(split(&runtimepath, ','), 'v:val . "/plugin/"'),
-        \ '^h@': ['~/'],
-        \ '^v@' : ['~/.vim/'],
-        \ '^w@' : ['~/work/'],
-        \ '^s@' : ['~/work/scratch/'],
-        \ '^m@' : ['~/work/memo/'],
-        \ '^g@' : ['~/work/git/'],
-        \ '^d@' : ['~/work/git/+mine/dotfiles/'],
-        \ '^e@' : ['~/work/git/+mine/dotfiles/ext/'],
-    \}
-
-    if has('win32')
-        let g:fuf_abbrevMap['^de@'] = [
-        \   'C:' . substitute( $HOMEPATH, '\', '/', 'g' ) . '/デスクトップ/'
-        \]
-        let g:fuf_abbrevMap['^cy@'] = [
-        \   exists('$CYGHOME') ? $CYGHOME : 'C:/cygwin/home/'. $USERNAME .'/'
-        \]
-        let g:fuf_abbrevMap['^ms@'] = [
-        \   exists('$MSYSHOME') ? $MSYSHOME : 'C:/msys/home/'. $USERNAME .'/'
-        \]
-    else
-        let g:fuf_abbrevMap['^de@'] = [
-        \   '~/Desktop/'
-        \]
-    endif
-endfunction
-
-Lazy call s:register_fuf_abbrev()
-" }}}
 " }}}
 " }}}
 " MRU {{{
