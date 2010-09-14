@@ -28,7 +28,7 @@ resolve_alias() {
 
 if ! is_screen_or_tmux_running \
     && shell_has_started_interactively \
-    && [ -z "$MAN_IN_THE_SSH" ]
+    && [ -z "$SSH_CLIENT" ]
 then
     # I like screen behavior.
     # and now screen project is more active than tscreen.
