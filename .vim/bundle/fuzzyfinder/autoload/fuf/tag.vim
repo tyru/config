@@ -1,13 +1,12 @@
 "=============================================================================
-" Copyright (c) 2007-2009 Takeshi NISHIDA
+" Copyright (c) 2007-2010 Takeshi NISHIDA
 "
 "=============================================================================
 " LOAD GUARD {{{1
 
-if exists('g:loaded_autoload_fuf_tag') || v:version < 702
+if !l9#guardScriptLoading(expand('<sfile>:p'), 702, 100)
   finish
 endif
-let g:loaded_autoload_fuf_tag = 1
 
 " }}}1
 "=============================================================================
@@ -58,12 +57,12 @@ function s:parseTagFiles(tagFiles, key)
       call mkdir(expand(g:fuf_tag_cache_dir), 'p')
     endif
     " NOTE: fnamemodify('a/b', ':p') returns 'a/b/' if the directory exists.
-    let cacheFile = fnamemodify(g:fuf_tag_cache_dir, ':p') . fuf#hash224(a:key)
+    let cacheFile = fnamemodify(g:fuf_tag_cache_dir, ':p') . l9#hash224(a:key)
     if filereadable(cacheFile) && fuf#countModifiedFiles(a:tagFiles, getftime(cacheFile)) == 0
       return map(readfile(cacheFile), 'eval(v:val)')
     endif
   endif
-  let items = fuf#unique(fuf#concat(map(copy(a:tagFiles), 's:getTagNames(v:val)')))
+  let items = l9#unique(l9#concat(map(copy(a:tagFiles), 's:getTagNames(v:val)')))
   let items = map(items, 'fuf#makeNonPathItem(v:val, "")')
   call fuf#mapToSetSerialIndex(items, 1)
   let items = map(items, 'fuf#setAbbrWithFormattedWord(v:val, 1)')

@@ -1,13 +1,12 @@
 "=============================================================================
-" Copyright (c) 2007-2009 Takeshi NISHIDA
+" Copyright (c) 2007-2010 Takeshi NISHIDA
 "
 "=============================================================================
 " LOAD GUARD {{{1
 
-if exists('g:loaded_autoload_fuf_mrufile') || v:version < 702
+if !l9#guardScriptLoading(expand('<sfile>:p'), 702, 100)
   finish
 endif
-let g:loaded_autoload_fuf_mrufile = 1
 
 " }}}1
 "=============================================================================
@@ -79,7 +78,7 @@ function s:formatItemUsingCache(item)
   if !exists('s:cache[a:item.word]')
     if filereadable(a:item.word)
       let s:cache[a:item.word] = fuf#makePathItem(
-            \ fnamemodify(a:item.word, ':~'), strftime(g:fuf_timeFormat, a:item.time), 0)
+            \ fnamemodify(a:item.word, ':p:~'), strftime(g:fuf_timeFormat, a:item.time), 0)
     else
       let s:cache[a:item.word] = {}
     endif
@@ -140,8 +139,8 @@ endfunction
 
 "
 function s:handler.onModeEnterPost()
-  " NOTE: Comparing filenames is faster than bufnr()
-  let bufNamePrev = fnamemodify(bufname(self.bufNrPrev), ':~')
+  " NOTE: Comparing filenames is faster than bufnr('^' . fname . '$')
+  let bufNamePrev = fnamemodify(bufname(self.bufNrPrev), ':p:~')
   let self.items = copy(self.info.data)
   call map(self.items, 's:formatItemUsingCache(v:val)')
   call filter(self.items, '!empty(v:val) && v:val.word !=# bufNamePrev')

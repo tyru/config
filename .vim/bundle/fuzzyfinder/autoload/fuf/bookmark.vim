@@ -1,13 +1,12 @@
 "=============================================================================
-" Copyright (c) 2007-2009 Takeshi NISHIDA
+" Copyright (c) 2007-2010 Takeshi NISHIDA
 "
 "=============================================================================
 " LOAD GUARD {{{1
 
-if exists('g:loaded_autoload_fuf_bookmark') || v:version < 702
+if !l9#guardScriptLoading(expand('<sfile>:p'), 702, 100)
   finish
 endif
-let g:loaded_autoload_fuf_bookmark = 1
 
 " }}}1
 "=============================================================================
@@ -36,7 +35,7 @@ endfunction
 function fuf#bookmark#onInit()
   call fuf#defineLaunchCommand('FufBookmark', s:MODE_NAME, '""')
   command! -bang -narg=?        FufAddBookmark               call s:bookmarkHere(<q-args>)
-  command! -bang -narg=0 -range FufAddBookmarkAsSelectedText call s:bookmarkHere(s:getSelectedText())
+  command! -bang -narg=0 -range FufAddBookmarkAsSelectedText call s:bookmarkHere(l9#getSelectedText())
 endfunction
 
 " }}}1
@@ -45,23 +44,6 @@ endfunction
 
 let s:MODE_NAME = expand('<sfile>:t:r')
 let s:OPEN_TYPE_DELETE = -1
-
-"
-function s:getSelectedText()
-  let reg_ = [@", getregtype('"')]
-  let regA = [@a, getregtype('a')]
-  if mode() =~# "[vV\<C-v>]"
-    silent normal! "aygv
-  else
-    let pos = getpos('.')
-    silent normal! gv"ay
-    call setpos('.', pos)
-  endif
-  let text = @a
-  call setreg('"', reg_[0], reg_[1])
-  call setreg('a', regA[0], regA[1])
-  return text
-endfunction
 
 " opens a:path and jumps to the line matching to a:pattern from a:lnum within
 " a:range. if not found, jumps to a:lnum.
@@ -93,7 +75,7 @@ endfunction
 "
 function s:bookmarkHere(word)
   if !empty(&buftype) || expand('%') !~ '\S'
-    call fuf#echoWithHl('Can''t bookmark this buffer.', 'WarningMsg')
+    call fuf#echoWarning('Can''t bookmark this buffer.')
     return
   endif
   let item = {
@@ -104,9 +86,9 @@ function s:bookmarkHere(word)
         \   'pattern' : s:getLinePattern(line('.')),
         \   'time' : localtime(),
         \ }
-  let item.word = fuf#inputHl('Bookmark as:', item.word, 'Question')
+  let item.word = l9#inputHl('Question', '[FuzzyFinder] Bookmark as:', item.word)
   if item.word !~ '\S'
-    call fuf#echoWithHl('Canceled', 'WarningMsg')
+    call fuf#echoWarning('Canceled')
     return
   endif
   let info = fuf#loadInfoFile(s:MODE_NAME)
