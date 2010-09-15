@@ -46,6 +46,7 @@ my @files = qw(
     .env.common
     .tmux.conf
     .tmux
+    .uim
 );
 my %cygwin_files = (
     '.vimperator/plugin' => 'vimperator/plugin',
