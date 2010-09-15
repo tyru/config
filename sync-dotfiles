@@ -48,10 +48,10 @@ my @files = qw(
     .tmux
     .uim
 );
-my %cygwin_files = (
-    '.vimperator/plugin' => 'vimperator/plugin',
-    '.vimperator/colors' => 'vimperator/colors',
-    '.vimperatorrc' => '_vimperatorrc',
+my %cygwin_files = qw(
+    .vimperator/plugin  vimperator/plugin
+    .vimperator/colors  vimperator/colors
+    .vimperatorrc       _vimperatorrc
 );
 my @removed_files = qw(
     .vim/backup
