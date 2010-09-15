@@ -156,7 +156,7 @@
 	url = http://github.com/tyru/regbuf.vim.git
 [submodule "ext/undoclosewin.vim"]
 	path = ext/undoclosewin.vim
-	url = http://github.com/tyru/undoclosewin.vim
+	url = http://github.com/tyru/undoclosewin.vim.git
 [submodule "ext/neoui"]
 	path = ext/neoui
 	url = http://github.com/Shougo/neoui.git
