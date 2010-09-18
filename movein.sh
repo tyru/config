@@ -5,6 +5,7 @@
 # - install as given user
 
 
+server=''
 movein_dir="send_config"
 
 die () {
@@ -12,10 +13,24 @@ die () {
     exit 1
 }
 
-if [ -z "$1" ]; then
+usage () {
     echo "Usage: `basename $0` hostname"
     exit 1
-fi
+}
 
-cd "`dirname $0`/$movein_dir" || die "failed to chdir: $!"
-tar zhcf - . | ssh $1 "tar zpvxf -"
+
+case $# in
+    1)
+        server="$1"
+        ;;
+    2)
+        server="$1"
+        movein_dir="$2"
+        ;;
+    *) usage
+        ;;
+esac
+
+cd "`dirname $0`" || die "failed to chdir: $!"
+cd "$movein_dir" || die "failed to chdir: $!"
+tar zhcf - . | ssh "$server" "tar zpvxf -"
