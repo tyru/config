@@ -116,6 +116,8 @@ sub install {
         # nop
     } elsif ($^O eq 'cygwin') {
         system('chown', '-R', $user, $dest);
+    } elsif ($^O eq 'freebsd') {
+        system('chown', '-R', $user, $dest);
     } else {
         system('chown', '-R', "$user:$user", $dest);
     }
