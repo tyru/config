@@ -58,6 +58,10 @@ replaceChild
 setAttribute
 setAttributeNode
 setNamedItem
+encodeURI
+encodeURIComponent
+decodeURI
+decodeURIComponent
 
 background
 backgroundAttachment
