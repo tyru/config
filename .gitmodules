@@ -1,186 +1,186 @@
 [submodule "ext/caw.vim"]
 	path = ext/caw.vim
-	url = http://github.com/tyru/caw.vim.git
+	url = git://github.com/tyru/caw.vim.git
 [submodule "ext/cmdwincomplete.vim"]
 	path = ext/cmdwincomplete.vim
-	url = http://github.com/tyru/cmdwincomplete.vim.git
+	url = git://github.com/tyru/cmdwincomplete.vim.git
 [submodule "ext/command-buffer.vim"]
 	path = ext/command-buffer.vim
-	url = http://github.com/tyru/command-buffer.vim.git
+	url = git://github.com/tyru/command-buffer.vim.git
 [submodule "ext/DumbBuf.vim"]
 	path = ext/DumbBuf.vim
-	url = http://github.com/tyru/DumbBuf.vim.git
+	url = git://github.com/tyru/DumbBuf.vim.git
 [submodule "ext/eskk.vim"]
 	path = ext/eskk.vim
-	url = http://github.com/tyru/eskk.vim.git
+	url = git://github.com/tyru/eskk.vim.git
 [submodule "ext/nextfile.vim"]
 	path = ext/nextfile.vim
-	url = http://github.com/tyru/nextfile.vim.git
+	url = git://github.com/tyru/nextfile.vim.git
 [submodule "ext/prompt.vim"]
 	path = ext/prompt.vim
-	url = http://github.com/tyru/prompt.vim.git
+	url = git://github.com/tyru/prompt.vim.git
 [submodule "ext/pummode.vim"]
 	path = ext/pummode.vim
-	url = http://github.com/tyru/pummode.vim.git
+	url = git://github.com/tyru/pummode.vim.git
 [submodule "ext/restart.vim"]
 	path = ext/restart.vim
-	url = http://github.com/tyru/restart.vim.git
+	url = git://github.com/tyru/restart.vim.git
 [submodule "ext/sign-diff.vim"]
 	path = ext/sign-diff.vim
-	url = http://github.com/tyru/sign-diff.vim.git
+	url = git://github.com/tyru/sign-diff.vim.git
 [submodule "ext/simpletap.vim"]
 	path = ext/simpletap.vim
-	url = http://github.com/tyru/simpletap.vim.git
+	url = git://github.com/tyru/simpletap.vim.git
 [submodule "ext/skk.vim"]
 	path = ext/skk.vim
-	url = http://github.com/tyru/skk.vim.git
+	url = git://github.com/tyru/skk.vim.git
 [submodule "ext/stickykey.vim"]
 	path = ext/stickykey.vim
-	url = http://github.com/tyru/stickykey.vim.git
+	url = git://github.com/tyru/stickykey.vim.git
 [submodule "ext/vimtemplate.vim"]
 	path = ext/vimtemplate.vim
-	url = http://github.com/tyru/vimtemplate.vim.git
+	url = git://github.com/tyru/vimtemplate.vim.git
 [submodule "ext/winmove.vim"]
 	path = ext/winmove.vim
-	url = http://github.com/tyru/winmove.vim.git
+	url = git://github.com/tyru/winmove.vim.git
 [submodule "ext/emap.vim"]
 	path = ext/emap.vim
-	url = http://github.com/tyru/emap.vim.git
+	url = git://github.com/tyru/emap.vim.git
 [submodule "ext/operator-camelize.vim"]
 	path = ext/operator-camelize.vim
-	url = http://github.com/tyru/operator-camelize.vim.git
+	url = git://github.com/tyru/operator-camelize.vim.git
 [submodule "ext/vim-altercmd"]
 	path = ext/vim-altercmd
-	url = http://github.com/tyru/vim-altercmd.git
+	url = git://github.com/tyru/vim-altercmd.git
 [submodule "ext/vim-arpeggio"]
 	path = ext/vim-arpeggio
-	url = http://github.com/tyru/vim-arpeggio.git
+	url = git://github.com/tyru/vim-arpeggio.git
 [submodule "ext/vim-repeat"]
 	path = ext/vim-repeat
-	url = http://github.com/kana/vim-repeat.git
+	url = git://github.com/kana/vim-repeat.git
 [submodule "ext/vim-visualstar"]
 	path = ext/vim-visualstar
-	url = http://github.com/thinca/vim-visualstar.git
+	url = git://github.com/thinca/vim-visualstar.git
 [submodule "ext/vim-narrow"]
 	path = ext/vim-narrow
-	url = http://github.com/kana/vim-narrow.git
+	url = git://github.com/kana/vim-narrow.git
 [submodule "ext/gist-vim"]
 	path = ext/gist-vim
-	url = http://github.com/mattn/gist-vim.git
+	url = git://github.com/mattn/gist-vim.git
 [submodule "ext/vimproc"]
 	path = ext/vimproc
-	url = http://github.com/Shougo/vimproc.git
+	url = git://github.com/Shougo/vimproc.git
 [submodule "ext/vim-ref"]
 	path = ext/vim-ref
-	url = http://github.com/thinca/vim-ref.git
+	url = git://github.com/thinca/vim-ref.git
 [submodule "ext/vim-quickrun"]
 	path = ext/vim-quickrun
-	url = http://github.com/thinca/vim-quickrun.git
+	url = git://github.com/thinca/vim-quickrun.git
 [submodule "ext/vim-textobj-user"]
 	path = ext/vim-textobj-user
-	url = http://github.com/kana/vim-textobj-user.git
+	url = git://github.com/kana/vim-textobj-user.git
 [submodule "ext/vim-textobj-syntax"]
 	path = ext/vim-textobj-syntax
-	url = http://github.com/kana/vim-textobj-syntax.git
+	url = git://github.com/kana/vim-textobj-syntax.git
 [submodule "ext/vim-textobj-indent"]
 	path = ext/vim-textobj-indent
-	url = http://github.com/kana/vim-textobj-indent.git
+	url = git://github.com/kana/vim-textobj-indent.git
 [submodule "ext/vim-operator-user"]
 	path = ext/vim-operator-user
-	url = http://github.com/kana/vim-operator-user.git
+	url = git://github.com/kana/vim-operator-user.git
 [submodule "ext/vim-operator-replace"]
 	path = ext/vim-operator-replace
-	url = http://github.com/kana/vim-operator-replace.git
+	url = git://github.com/kana/vim-operator-replace.git
 [submodule "ext/vim-textobj-jabraces"]
 	path = ext/vim-textobj-jabraces
-	url = http://github.com/kana/vim-textobj-jabraces.git
+	url = git://github.com/kana/vim-textobj-jabraces.git
 [submodule "ext/vim-textobj-function"]
 	path = ext/vim-textobj-function
-	url = http://github.com/kana/vim-textobj-function.git
+	url = git://github.com/kana/vim-textobj-function.git
 [submodule "ext/vim-textobj-entire"]
 	path = ext/vim-textobj-entire
-	url = http://github.com/kana/vim-textobj-entire.git
+	url = git://github.com/kana/vim-textobj-entire.git
 [submodule "ext/vim-surround"]
 	path = ext/vim-surround
-	url = http://github.com/kana/vim-surround.git
+	url = git://github.com/kana/vim-surround.git
 [submodule "ext/vim-submode"]
 	path = ext/vim-submode
-	url = http://github.com/kana/vim-submode.git
+	url = git://github.com/kana/vim-submode.git
 [submodule "ext/vim-metarw"]
 	path = ext/vim-metarw
-	url = http://github.com/kana/vim-metarw.git
+	url = git://github.com/kana/vim-metarw.git
 [submodule "ext/vim-metarw-git"]
 	path = ext/vim-metarw-git
-	url = http://github.com/kana/vim-metarw-git.git
+	url = git://github.com/kana/vim-metarw-git.git
 [submodule "ext/vim-textobj-lastpat"]
 	path = ext/vim-textobj-lastpat
-	url = http://github.com/kana/vim-textobj-lastpat.git
+	url = git://github.com/kana/vim-textobj-lastpat.git
 [submodule "ext/vim-textobj-fold"]
 	path = ext/vim-textobj-fold
-	url = http://github.com/kana/vim-textobj-fold.git
+	url = git://github.com/kana/vim-textobj-fold.git
 [submodule "ext/textobj-pattern.vim"]
 	path = ext/textobj-pattern.vim
-	url = http://github.com/tyru/textobj-pattern.vim.git
+	url = git://github.com/tyru/textobj-pattern.vim.git
 [submodule "ext/vim-prettyprint"]
 	path = ext/vim-prettyprint
-	url = http://github.com/thinca/vim-prettyprint.git
+	url = git://github.com/thinca/vim-prettyprint.git
 [submodule "ext/vimfiler"]
 	path = ext/vimfiler
-	url = http://github.com/Shougo/vimfiler.git
+	url = git://github.com/Shougo/vimfiler.git
 [submodule "ext/syslib.vim"]
 	path = ext/syslib.vim
-	url = http://github.com/tyru/syslib.vim.git
+	url = git://github.com/tyru/syslib.vim.git
 [submodule "ext/vimshell"]
 	path = ext/vimshell
-	url = http://github.com/Shougo/vimshell.git
+	url = git://github.com/Shougo/vimshell.git
 [submodule "ext/lingr-vim"]
 	path = ext/lingr-vim
-	url = http://github.com/tsukkee/lingr-vim.git
+	url = git://github.com/tsukkee/lingr-vim.git
 [submodule "ext/neocomplcache"]
 	path = ext/neocomplcache
-	url = http://github.com/Shougo/neocomplcache.git
+	url = git://github.com/Shougo/neocomplcache.git
 [submodule "ext/vim-fakeclip"]
 	path = ext/vim-fakeclip
-	url = http://github.com/tyru/vim-fakeclip.git
+	url = git://github.com/tyru/vim-fakeclip.git
 [submodule "ext/open-browser.vim"]
 	path = ext/open-browser.vim
-	url = http://github.com/tyru/open-browser.vim.git
+	url = git://github.com/tyru/open-browser.vim.git
 [submodule "ext/urilib.vim"]
 	path = ext/urilib.vim
-	url = http://github.com/tyru/urilib.vim.git
+	url = git://github.com/tyru/urilib.vim.git
 [submodule "ext/vim-github"]
 	path = ext/vim-github
-	url = http://github.com/thinca/vim-github.git
+	url = git://github.com/thinca/vim-github.git
 [submodule "ext/regbuf.vim"]
 	path = ext/regbuf.vim
-	url = http://github.com/tyru/regbuf.vim.git
+	url = git://github.com/tyru/regbuf.vim.git
 [submodule "ext/undoclosewin.vim"]
 	path = ext/undoclosewin.vim
-	url = http://github.com/tyru/undoclosewin.vim.git
+	url = git://github.com/tyru/undoclosewin.vim.git
 [submodule "ext/neoui"]
 	path = ext/neoui
-	url = http://github.com/Shougo/neoui.git
+	url = git://github.com/Shougo/neoui.git
 [submodule "ext/excomplete.vim"]
 	path = ext/excomplete.vim
-	url = http://github.com/tyru/excomplete.vim.git
+	url = git://github.com/tyru/excomplete.vim.git
 [submodule "ext/quickey.vim"]
 	path = ext/quickey.vim
-	url = http://github.com/tyru/quickey.vim.git
+	url = git://github.com/tyru/quickey.vim.git
 [submodule "ext/current-func-info.vim"]
 	path = ext/current-func-info.vim
-	url = http://github.com/tyru/current-func-info.vim.git
+	url = git://github.com/tyru/current-func-info.vim.git
 [submodule "ext/operator-reverse.vim"]
 	path = ext/operator-reverse.vim
-	url = http://github.com/tyru/operator-reverse.vim.git
+	url = git://github.com/tyru/operator-reverse.vim.git
 [submodule "ext/parse_args.vim"]
 	path = ext/parse_args.vim
-	url = http://github.com/tyru/parse_args.vim.git
+	url = git://github.com/tyru/parse_args.vim.git
 [submodule "ext/thinca-vim-textobj-plugins"]
 	path = ext/thinca-vim-textobj-plugins
-	url = http://github.com/thinca/vim-textobj-plugins.git
+	url = git://github.com/thinca/vim-textobj-plugins.git
 [submodule "ext/ohmygrep.vim"]
 	path = ext/ohmygrep.vim
-	url = http://github.com/tyru/ohmygrep.vim.git
+	url = git://github.com/tyru/ohmygrep.vim.git
 [submodule "ext/dutil.vim"]
 	path = ext/dutil.vim
-	url = http://github.com/tyru/dutil.vim.git
+	url = git://github.com/tyru/dutil.vim.git
