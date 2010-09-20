@@ -194,9 +194,27 @@ let &titlestring = '%{getcwd()} %{haslocaldir() ? "(local)" : ""}'
 
 " tab
 set showtabline=2
-" TODO Show project name.
-function! MyTabLabel() "{{{
-    let s = '%{tabpagenr()}/%{tabpagenr("$")} [%t]'
+
+" TODO Show project name to tab.
+
+function! MyTabLine() "{{{
+    " Same as default.
+    let s = ''
+    for tabpagenr in range(1, tabpagenr('$'))
+        let winnr = tabpagewinnr(tabpagenr)
+        for bufnr in tabpagebuflist(tabpagenr)
+            if winnr ==# bufwinnr(bufnr) && bufexists(bufnr)
+                let s .= (bufname(bufnr) == '' ? '[Empty]' : bufname(bufnr))
+                break
+            endif
+        endfor
+    endfor
+    return s
+endfunction "}}}
+" set tabline=%!MyTabLine()
+
+function! MyGuiTabLabel() "{{{
+    let s = '%{tabpagenr()}. [%t]'
     if exists('t:cwd')
         let s .= ' @ [tab: %{t:cwd}]'
     elseif haslocaldir()
@@ -204,11 +222,6 @@ function! MyTabLabel() "{{{
     else
         let s .= ' @ [cwd: %{getcwd()}]'
     endif
-    return s
-endfunction "}}}
-set tabline=%!MyTabLabel()
-function! MyGuiTabLabel() "{{{
-    let s = '%{tabpagenr()}. [%t]'
     return s
 endfunction "}}}
 set guitablabel=%!MyGuiTabLabel()
@@ -239,7 +252,7 @@ endfunction "}}}
 set statusline=%!MyStatusLine()
 
 " gui
-set guioptions=agitrhpFe
+set guioptions=agitrhpF
 
 " &migemo
 if has("migemo")
@@ -638,8 +651,8 @@ Map [n] y<line-w/o-newline> 0y$
 Map [n] c<line-w/o-newline> 0c$
 
 " http://vim-users.jp/2009/08/hack57/
-Map [n] d<CR> :<C-u>call append(expand('.'), '')<CR>j
-Map [n] c<CR> :<C-u>call append(expand('.'), '')<CR>jI
+Map [n] d<CR> :<C-u>call append(line('.'), '')<CR>j
+Map [n] c<CR> :<C-u>call append(line('.'), '')<CR>jI
 
 Map [n] <excmd>me :<C-u>messages<CR>
 Map [n] <excmd>di :<C-u>display<CR>
@@ -2233,40 +2246,6 @@ let fuf_keyOpenVsplit  = '<C-v>'
 let fuf_enumeratingLimit = 20
 let fuf_previewHeight = 0
 
-" abbrev {{{
-function! s:register_fuf_abbrev()
-    let g:fuf_abbrevMap = {
-        \ '^r@': [$VIMRUNTIME . '/'],
-        \ '^p@': map(split(&runtimepath, ','), 'v:val . "/plugin/"'),
-        \ '^h@': ['~/'],
-        \ '^v@' : ['~/.vim/'],
-        \ '^w@' : ['~/work/'],
-        \ '^s@' : ['~/work/scratch/'],
-        \ '^m@' : ['~/work/memo/'],
-        \ '^g@' : ['~/work/git/'],
-        \ '^d@' : ['~/work/git/+mine/dotfiles/'],
-        \ '^e@' : ['~/work/git/+mine/dotfiles/ext/'],
-    \}
-
-    if has('win32')
-        let g:fuf_abbrevMap['^de@'] = [
-        \   'C:' . substitute( $HOMEPATH, '\', '/', 'g' ) . '/デスクトップ/'
-        \]
-        let g:fuf_abbrevMap['^cy@'] = [
-        \   exists('$CYGHOME') ? $CYGHOME : 'C:/cygwin/home/'. $USERNAME .'/'
-        \]
-        let g:fuf_abbrevMap['^ms@'] = [
-        \   exists('$MSYSHOME') ? $MSYSHOME : 'C:/msys/home/'. $USERNAME .'/'
-        \]
-    else
-        let g:fuf_abbrevMap['^de@'] = [
-        \   '~/Desktop/'
-        \]
-    endif
-endfunction
-
-Lazy call s:register_fuf_abbrev()
-" }}}
 " }}}
 " }}}
 " MRU {{{

@@ -46,11 +46,12 @@ my @files = qw(
     .env.common
     .tmux.conf
     .tmux
+    .uim
 );
-my %cygwin_files = (
-    '.vimperator/plugin' => 'vimperator/plugin',
-    '.vimperator/colors' => 'vimperator/colors',
-    '.vimperatorrc' => '_vimperatorrc',
+my %cygwin_files = qw(
+    .vimperator/plugin  vimperator/plugin
+    .vimperator/colors  vimperator/colors
+    .vimperatorrc       _vimperatorrc
 );
 my @removed_files = qw(
     .vim/backup
@@ -114,6 +115,8 @@ sub install {
     if ($^O eq 'MSWin32' || $^O eq 'msys') {
         # nop
     } elsif ($^O eq 'cygwin') {
+        system('chown', '-R', $user, $dest);
+    } elsif ($^O eq 'freebsd') {
         system('chown', '-R', $user, $dest);
     } else {
         system('chown', '-R', "$user:$user", $dest);

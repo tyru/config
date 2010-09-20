@@ -1,68 +1,17 @@
 "=============================================================================
-" Copyright (c) 2007-2009 Takeshi NISHIDA
+" Copyright (c) 2007-2010 Takeshi NISHIDA
 "
 "=============================================================================
 " LOAD GUARD {{{1
 
-if exists('g:loaded_autoload_fuf') || v:version < 702
+if !l9#guardScriptLoading(expand('<sfile>:p'), 702, 100)
   finish
 endif
-let g:loaded_autoload_fuf = 1
 
 " }}}1
 "=============================================================================
 " GLOBAL FUNCTIONS {{{1
 
-
-
-function fuf#getPathSeparator()
-  return (!&shellslash && (has('win32') || has('win64')) ? '\' : '/')
-endfunction
-
-" Removes duplicates
-" this function doesn't change list of argument.
-function fuf#unique(items)
-  let sorted = sort(a:items)
-  if len(sorted) < 2
-    return sorted
-  endif
-  let last = remove(sorted, 0)
-  let result = [last]
-  for item in sorted
-    if item != last
-      call add(result, item)
-      let last = item
-    endif
-  endfor
-  return result
-endfunction
-
-" [ [0], [1,2], [3] ] -> [ 0, 1, 2, 3 ]
-" this function doesn't change list of argument.
-function fuf#concat(items)
-  let result = []
-  for l in a:items
-    let result += l
-  endfor
-  return result
-endfunction
-
-" filter() with the maximum number of items
-" this function doesn't change list of argument.
-function fuf#filterWithLimit(items, expr, limit)
-  if a:limit <= 0
-    return filter(copy(a:items), a:expr)
-  endif
-  let result = []
-  let stride = a:limit * 3 / 2 " x1.5
-  for i in range(0, len(a:items) - 1, stride)
-    let result += filter(a:items[i : i + stride - 1], a:expr)
-    if len(result) >= a:limit
-      return remove(result, 0, a:limit - 1)
-    endif
-  endfor
-  return result
-endfunction
 
 "
 function fuf#countModifiedFiles(files, time)
@@ -109,21 +58,7 @@ endfunction
 " "foo/.../bar/...hoge" -> "foo/.../bar/../../hoge"
 function fuf#expandTailDotSequenceToParentDir(pattern)
   return substitute(a:pattern, '^\(.*[/\\]\)\?\zs\.\(\.\+\)\ze[^/\\]*$',
-        \           '\=repeat(".." . fuf#getPathSeparator(), len(submatch(2)))', '')
-endfunction
-
-"
-function fuf#hash224(str)
-  let a = 0x00000800 " shift 11 bit 
-  let b = 0x001fffff " extract 11 bit
-  let nHash = 7
-  let hashes = repeat([0], nHash)
-  for i in range(len(a:str))
-    let iHash = i % nHash
-    let hashes[iHash] = hashes[iHash] * a + hashes[iHash] / b
-    let hashes[iHash] += char2nr(a:str[i])
-  endfor
-  return join(map(hashes, 'printf("%08x", v:val)'), '')
+        \           '\=repeat(".." . l9#getPathSeparator(), len(submatch(2)))', '')
 endfunction
 
 "
@@ -181,28 +116,18 @@ function fuf#makePreviewLinesForFile(file, count, maxHeight)
 endfunction
 
 "
-function fuf#echoWithHl(msg, hl)
-  execute "echohl " . a:hl
-  echo a:msg
-  echohl None
-endfunction
-
-"
-function fuf#inputHl(prompt, text, hl)
-  execute "echohl " . a:hl
-  let s = input(a:prompt, a:text)
-  echohl None
-  return s
+function fuf#echoWarning(msg)
+  call l9#echoHl('WarningMsg', a:msg, '[FuzzyFinder] ', 1)
 endfunction
 
 "
 function fuf#openBuffer(bufNr, mode, reuse)
   if a:reuse && ((a:mode ==# s:OPEN_TYPE_SPLIT &&
-        \         s:moveToWindowOfBufferInCurrentTabPage(a:bufNr)) ||
+        \         l9#moveToBufferWindowInCurrentTabpage(a:bufNr)) ||
         \        (a:mode ==# s:OPEN_TYPE_VSPLIT &&
-        \         s:moveToWindowOfBufferInCurrentTabPage(a:bufNr)) ||
+        \         l9#moveToBufferWindowInCurrentTabpage(a:bufNr)) ||
         \        (a:mode ==# s:OPEN_TYPE_TAB &&
-        \         s:moveToWindowOfBufferInOtherTabPage(a:bufNr)))
+        \         l9#moveToBufferWindowInOtherTabpage(a:bufNr)))
     return
   endif
   execute printf({
@@ -276,7 +201,7 @@ endfunction
 function fuf#makePathItem(fname, menu, appendsDirSuffix)
   let pathPair = fuf#splitPath(a:fname)
   let dirSuffix = (a:appendsDirSuffix && isdirectory(a:fname)
-        \          ? fuf#getPathSeparator()
+        \          ? l9#getPathSeparator()
         \          : '')
   return {
         \   'word'              : a:fname . dirSuffix,
@@ -351,7 +276,7 @@ function fuf#setAbbrWithFormattedWord(item, abbrIndex)
   if a:abbrIndex
     let a:item.abbr = printf('%4d: ', a:item.index) . a:item.abbr
   endif
-  let a:item.abbr = s:snipTail(a:item.abbr, g:fuf_maxMenuWidth - lenMenu, s:ABBR_SNIP_MASK)
+  let a:item.abbr = l9#snipTail(a:item.abbr, g:fuf_maxMenuWidth - lenMenu, s:ABBR_SNIP_MASK)
   return a:item
 endfunction
 
@@ -369,20 +294,18 @@ function fuf#defineKeyMappingInHandler(key, func)
           \ a:key, a:func)
 endfunction
 
+"
+let s:oneTimeVariables = []
+
 " 
 function fuf#setOneTimeVariables(...)
-  for [name, value] in a:000
-    if !exists('s:originalVariables[name]')
-      let s:originalVariables[name] = eval(name)
-    endif
-    let s:oneTimeVariables[name] = value
-  endfor
+  let s:oneTimeVariables += a:000
 endfunction
 
 "
 function fuf#launch(modeName, initialPattern, partialMatching)
   if exists('s:runningHandler')
-    call fuf#echoWithHl('FuzzyFinder is running.', 'WarningMsg')
+    call fuf#echoWarning('FuzzyFinder is running.')
   endif
   if count(g:fuf_modes, a:modeName) == 0
     echoerr 'This mode is not available: ' . a:modeName
@@ -401,7 +324,8 @@ function fuf#launch(modeName, initialPattern, partialMatching)
     call fuf#setOneTimeVariables(
           \ ['&cmdheight', s:runningHandler.getPreviewHeight() + 1])
   endif
-  call s:swapOneTimeVariables()
+  call l9#tempvariables#setList(s:TEMP_VARIABLES_GROUP, s:oneTimeVariables)
+  let s:oneTimeVariables = []
   call s:activateFufBuffer()
   augroup FufLocal
     autocmd!
@@ -468,19 +392,9 @@ endfunction
 
 "
 function fuf#editInfoFile()
-  new
-  silent file `='[fuf-info]'`
-  let s:bufNrInfo = bufnr('%')
-  setlocal filetype=vim
-  setlocal bufhidden=delete
-  setlocal buftype=acwrite
-  setlocal noswapfile
-  augroup FufInfo
-    autocmd!
-    autocmd BufWriteCmd <buffer> call s:onBufWriteCmdInfoFile()
-  augroup END
-  execute '0read ' . expand(g:fuf_infoFile)
-  setlocal nomodified
+  let lines = readfile(expand(g:fuf_infoFile))
+  call l9#tempbuffer#open('[fuf-info]', 'vim', lines, 0, 0, 0, 1,
+        \                 s:infoBufferListener)
 endfunction
 
 " 
@@ -498,20 +412,12 @@ endfunction
 " LOCAL FUNCTIONS/VARIABLES {{{1
 
 let s:INFO_FILE_VERSION_LINE = "VERSION\t300"
+let s:TEMP_VARIABLES_GROUP = "FuzzyFinder"
 let s:ABBR_SNIP_MASK = '...'
 let s:OPEN_TYPE_CURRENT = 1
 let s:OPEN_TYPE_SPLIT   = 2
 let s:OPEN_TYPE_VSPLIT  = 3
 let s:OPEN_TYPE_TAB     = 4
-
-" wildcard -> regexp
-function s:convertWildcardToRegexp(expr)
-  let re = escape(a:expr, '\')
-  for [pat, sub] in [ [ '*', '\\.\\*' ], [ '?', '\\.' ], [ '[', '\\[' ], ]
-    let re = substitute(re, pat, sub, 'g')
-  endfor
-  return '\V' . re
-endfunction
 
 " a:pattern: 'str' -> '\V\.\*s\.\*t\.\*r\.\*'
 function s:makeFuzzyMatchingExpr(target, pattern)
@@ -534,7 +440,7 @@ function s:makePartialMatchingExpr(target, pattern)
     return 'stridx(' . a:target . ', ' . string(a:pattern) . ') >= 0'
   endif
   return a:target . ' =~# ' .
-        \ string(s:convertWildcardToRegexp(a:pattern)) . patternMigemo
+        \ string(l9#convertWildcardToRegexp(a:pattern)) . patternMigemo
 endfunction
 
 " 
@@ -596,39 +502,6 @@ function s:interpretPrimaryPatternForNonPath(pattern)
         \   'primaryForRank': patternL,
         \   'matchingPairs' : [['v:val.wordForPrimary', patternL],],
         \ }
-endfunction
-
-" Snips a:str and add a:mask if the length of a:str is more than a:len
-function s:snipHead(str, len, mask)
-  if a:len >= len(a:str)
-    return a:str
-  elseif a:len <= len(a:mask)
-    return a:mask
-  endif
-  return a:mask . a:str[-a:len + len(a:mask):]
-endfunction
-
-" Snips a:str and add a:mask if the length of a:str is more than a:len
-function s:snipTail(str, len, mask)
-  if a:len >= len(a:str)
-    return a:str
-  elseif a:len <= len(a:mask)
-    return a:mask
-  endif
-  return a:str[:a:len - 1 - len(a:mask)] . a:mask
-endfunction
-
-" Snips a:str and add a:mask if the length of a:str is more than a:len
-function s:snipMid(str, len, mask)
-  if a:len >= len(a:str)
-    return a:str
-  elseif a:len <= len(a:mask)
-    return a:mask
-  endif
-  let len_head = (a:len - len(a:mask)) / 2
-  let len_tail = a:len - len(a:mask) - len_head
-  return  (len_head > 0 ? a:str[: len_head - 1] : '') . a:mask .
-        \ (len_tail > 0 ? a:str[-len_tail :] : '')
 endfunction
 
 "
@@ -700,34 +573,6 @@ function s:highlightError()
   syntax match Error  /^.*$/
 endfunction
 
-" returns 0 if the buffer is not found.
-function s:moveToWindowOfBufferInCurrentTabPage(bufNr)
-  if count(tabpagebuflist(), a:bufNr) == 0
-    return 0
-  endif
-  execute bufwinnr(a:bufNr) . 'wincmd w'
-  return 1
-endfunction
-
-" returns 0 if the buffer is not found.
-function s:moveToOtherTabPageOpeningBuffer(bufNr)
-  for tabNr in range(1, tabpagenr('$'))
-    if tabNr != tabpagenr() && count(tabpagebuflist(tabNr), a:bufNr) > 0
-      execute 'tabnext ' . tabNr
-      return 1
-    endif
-  endfor
-  return 0
-endfunction
-
-" returns 0 if the buffer is not found.
-function s:moveToWindowOfBufferInOtherTabPage(bufNr)
-  if !s:moveToOtherTabPageOpeningBuffer(a:bufNr)
-    return 0
-  endif
-  return s:moveToWindowOfBufferInCurrentTabPage(a:bufNr)
-endfunction
-
 "
 function s:expandAbbrevMap(pattern, abbrevMap)
   let result = [a:pattern]
@@ -738,7 +583,7 @@ function s:expandAbbrevMap(pattern, abbrevMap)
       let result += map(copy(subs), 'substitute(expr, pattern, escape(v:val, ''\''), "g")')
     endfor
   endfor
-  return fuf#unique(result)
+  return l9#unique(result)
 endfunction
 
 "
@@ -761,45 +606,19 @@ endfunction
 
 "
 function s:getSnippedHead(head, baseLen)
-  return s:snipMid(a:head, len(a:head) + g:fuf_maxMenuWidth - a:baseLen, s:ABBR_SNIP_MASK)
+  return l9#snipMid(a:head, len(a:head) + g:fuf_maxMenuWidth - a:baseLen, s:ABBR_SNIP_MASK)
 endfunction
 
 "
 function s:setAbbrWithFileAbbrData(item, snippedHeads)
   let lenMenu = (exists('a:item.menu') ? len(a:item.menu) + 2 : 0)
   let abbr = a:item.abbr.prefix . a:snippedHeads[a:item.abbr.key] . a:item.abbr.tail
-  let a:item.abbr = s:snipTail(abbr, g:fuf_maxMenuWidth - lenMenu, s:ABBR_SNIP_MASK)
+  let a:item.abbr = l9#snipTail(abbr, g:fuf_maxMenuWidth - lenMenu, s:ABBR_SNIP_MASK)
   return a:item
 endfunction
 
-let s:bufNrFuf = -1
-
 "
-function s:openFufBuffer()
-  if !bufexists(s:bufNrFuf)
-    topleft 1new
-    silent file `='[fuf]'`
-    let s:bufNrFuf = bufnr('%')
-  elseif bufwinnr(s:bufNrFuf) == -1
-    topleft 1split
-    execute 'silent ' . s:bufNrFuf . 'buffer'
-    delete _
-  elseif bufwinnr(s:bufNrFuf) != bufwinnr('%')
-    execute bufwinnr(s:bufNrFuf) . 'wincmd w'
-  endif
-endfunction
-
-function s:setLocalOptionsForFufBuffer()
-  setlocal filetype=fuf
-  setlocal bufhidden=delete
-  setlocal buftype=nofile
-  setlocal noswapfile
-  setlocal nobuflisted
-  setlocal modifiable
-  setlocal nocursorline   " for highlighting
-  setlocal nocursorcolumn " for highlighting
-  setlocal omnifunc=fuf#onComplete
-endfunction
+let s:FUF_BUF_NAME = '[fuf]'
 
 "
 function s:activateFufBuffer()
@@ -807,10 +626,13 @@ function s:activateFufBuffer()
   "         if 'autochdir' was set on.
   lcd .
   let cwd = getcwd()
-  call s:openFufBuffer()
+  call l9#tempbuffer#open(s:FUF_BUF_NAME, 'fuf', [], 1, 0, 1, 1, {})
   " lcd ... : countermeasure against auto-cd script
   lcd `=cwd`
-  call s:setLocalOptionsForFufBuffer()
+  setlocal buftype=nofile
+  setlocal nocursorline   " for highlighting
+  setlocal nocursorcolumn " for highlighting
+  setlocal omnifunc=fuf#onComplete
   redraw " for 'lazyredraw'
   if exists(':AcpLock')
     AcpLock
@@ -826,48 +648,19 @@ function s:deactivateFufBuffer()
   elseif exists(':AutoComplPopUnlock')
     AutoComplPopUnlock
   endif
-  " must close after returning to previous window
-  wincmd p
-  execute s:bufNrFuf . 'bdelete'
-endfunction
-
-"
-let s:originalVariables = {}
-let s:oneTimeVariables = {}
-let s:oneTimeVariablesSet = 0
-
-" 
-function s:swapOneTimeVariables()
-  let variables = (s:oneTimeVariablesSet
-        \          ? s:originalVariables : s:oneTimeVariables)
-  for [name, value] in items(variables)
-    execute 'let ' . name . ' = value'
-  endfor
-  let s:oneTimeVariablesSet = !s:oneTimeVariablesSet
-endfunction
-
-" 
-function s:endOneTimeVariables()
-  if s:oneTimeVariablesSet
-    call s:swapOneTimeVariables()
-  endif
-  let s:oneTimeVariablesSet = 0
-  let s:originalVariables = {}
-  let s:oneTimeVariables = {}
+  call l9#tempbuffer#close(s:FUF_BUF_NAME)
 endfunction
 
 "
 function s:warnOldInfoFile()
-  call fuf#echoWithHl(printf("=================================================================\n" .
-        \                    "  Sorry, but your information file for FuzzyFinder is no longer  \n" .
-        \                    "  compatible with this version of FuzzyFinder. Please remove     \n" .
-        \                    "  %-63s\n" .
-        \                    "=================================================================\n" ,
-        \                    '"' . expand(g:fuf_infoFile) . '".'),
-        \           'WarningMsg')
-  echohl Question
-  call input('Press Enter')
-  echohl None
+  call fuf#echoWarning(printf(
+        \ "=================================================================\n" .
+        \ "  Sorry, but your information file for FuzzyFinder is no longer  \n" .
+        \ "  compatible with this version of FuzzyFinder. Please remove     \n" .
+        \ "  %-63s\n" .
+        \ "=================================================================\n" ,
+        \ '"' . expand(g:fuf_infoFile) . '".'))
+  call l9#inputHl('Question', 'Press Enter')
 endfunction
 
 "
@@ -894,14 +687,6 @@ function s:deserializeInfoMap(lines)
     call add(infoMap[e[1]][e[2]], eval(e[3]))
   endfor
   return infoMap
-endfunction
-
-"
-function s:onBufWriteCmdInfoFile()
-  call fuf#saveInfoFile('', s:deserializeInfoMap(getline(1, '$')))
-  setlocal nomodified
-  execute printf('%dbdelete! ', s:bufNrInfo)
-  echo "Information file updated"
 endfunction
 
 " }}}1
@@ -965,7 +750,7 @@ function s:handlerBase.getMatchingCompleteItems(patternBase)
         \ copy(self.info.stats), 'v:val.pattern ==# patternSet.primaryForRank')
   let items = self.getCompleteItems(patternSet.primary)
   " NOTE: In order to know an excess, plus 1 to limit number
-  let items = fuf#filterWithLimit(
+  let items = l9#filterWithLimit(
         \ items, patternSet.filteringExpr, g:fuf_enumeratingLimit + 1)
   return map(items,
         \ 's:setRanks(v:val, patternSet.primaryForRank, exprBoundary, stats)')
@@ -1042,7 +827,7 @@ endfunction
 "
 function s:handlerBase.onInsertLeave()
   unlet s:runningHandler
-  call s:swapOneTimeVariables()
+  call l9#tempvariables#swap(s:TEMP_VARIABLES_GROUP)
   call s:deactivateFufBuffer()
   call fuf#saveInfoFile(self.getModeName(), self.info)
   let fOpen = exists('s:reservedCommand')
@@ -1052,10 +837,10 @@ function s:handlerBase.onInsertLeave()
   endif
   call self.onModeLeavePost(fOpen)
   if exists('self.reservedMode')
-    call s:swapOneTimeVariables()
+    call l9#tempvariables#swap(s:TEMP_VARIABLES_GROUP)
     call fuf#launch(self.reservedMode, self.lastPattern, self.partialMatching)
   else
-    call s:endOneTimeVariables()
+    call l9#tempvariables#end(s:TEMP_VARIABLES_GROUP)
   endif
 endfunction
 
@@ -1119,7 +904,7 @@ function s:handlerBase.onPreviewBase(repeatable)
   let lines = lines[: self.getPreviewHeight() - 1]
   call map(lines, 'substitute(v:val, "\t", repeat(" ", &tabstop), "g")')
   call map(lines, 'strtrans(v:val)')
-  call map(lines, 's:snipTail(v:val, &columns - 1, s:ABBR_SNIP_MASK)')
+  call map(lines, 'l9#snipTail(v:val, &columns - 1, s:ABBR_SNIP_MASK)')
   echo join(lines, "\n")
 endfunction
 
@@ -1164,6 +949,21 @@ function s:handlerBase.onRecallPattern(shift)
     call feedkeys("\<End>", 'n')
   endif
 endfunction
+
+" }}}1
+"=============================================================================
+" s:infoBufferListener {{{1
+
+"
+let s:infoBufferListener = {}
+
+"
+function s:infoBufferListener.onWrite(lines)
+  call fuf#saveInfoFile('', s:deserializeInfoMap(a:lines))
+  echo "Information file updated"
+  return 1
+endfunction
+
 
 " }}}1
 "=============================================================================

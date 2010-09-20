@@ -1,6 +1,6 @@
 *fuf.txt*       buffer/file/command/tag/etc explorer with fuzzy matching.
 
-        Copyright (c) 2007-2009 Takeshi NISHIDA
+        Copyright (c) 2007-2010 Takeshi NISHIDA
 
 FuzzyFinder                                                *fuzzyfinder* *fuf*
 
@@ -71,16 +71,20 @@ it to your runtime directory.
 You should place the files as follows:
 >
         <your runtime directory>/plugin/fuf.vim
-        <your runtime directory>/autoload/fuf.vim
-        <your runtime directory>/autoload/fuf/buffer.vim
+        <your runtime directory>/doc/fuf.txt
         ...
 <
-If you disgust to jumble up this plugin and other plugins in your runtime
-directory, put the files into new directory and just add the directory path to
-'runtimepath'. It's easy to uninstall the plugin.
+If you are disgusted to make your runtime directory confused with a lot of
+plugins, put each of the plugins into a directory individually and just add
+the directory path to 'runtimepath'. It's easy to uninstall the plugin.
 
-And then update your help tags files to enable fuzzyfinder help. See
+Then update your help tags files to enable the help for this plugin. See
 |add-local-help| for details.
+
+Requirements: ~
+
+- L9 library ( http://bitbucket.org/ns9tks/vim-l9/ )
+
 
 ==============================================================================
 USAGE                                                              *fuf-usage*
@@ -149,6 +153,9 @@ Buffer mode ~
 
 This mode provides an interface to select a buffer from a list of existing
 buffers and open it.
+
+Press <C-]> (|g:fuf_buffer_keyDelete|) in Buffer mode and selected
+buffer will be deleted.
 
                                                                *fuf-file-mode*
 File mode ~
@@ -919,6 +926,11 @@ For Buffer Mode ~
 <
         If non-zero, completion items is sorted in order of recently used.
 
+                                                   *g:fuf_buffer_keyDelete*  >
+  let g:fuf_buffer_keyDelete = '<C-]>'
+<
+        Key mapped to delete selected buffer.
+
                                                    *fuf-options-for-file-mode*
 For File Mode ~
 
@@ -1201,7 +1213,9 @@ SPECIAL THANKS                                                    *fuf-thanks*
 ==============================================================================
 CHANGELOG                                                      *fuf-changelog*
 
-3.6: [TODO]
+4.0: [TODO]
+  - Added new feature which deletes selected buffer with FuzzyFinder and
+    g:fuf_buffer_keyDelete option.
   - Added new feature which allows to set one-time options/variables with
     fuf#setOneTimeVariables() function.
 

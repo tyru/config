@@ -22,18 +22,13 @@ alias lingr="vim --cmd 'let g:lingr = 1' -c LingrLaunch"
 alias chalice="vim --cmd 'let g:chalice = 1' -c Chalice"
 alias tmux='tmux -u -2'
 
-if [ -x "$(which vim)" ]; then
-    alias vi='vim'
-fi
-
-if [ -x "$(which screen)" ]; then
+which trash >/dev/null 2>/dev/null && alias rm='trash'
+which vim >/dev/null 2>/dev/null && alias vi='vim'
+which screen >/dev/null 2>/dev/null && {
     alias sc="screen"
     alias screen="screen -R"
-fi
-
-if [ -x "$(which perldocjp)" ]; then
-    alias perldoc='perldocjp'
-fi
+}
+which perldocjp >/dev/null 2>/dev/null && alias perldoc='perldocjp'
 
 if [ "$MY_CURRENT_ENV" = "cygwin" ]; then
     alias less='less -r'
