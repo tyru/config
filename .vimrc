@@ -772,11 +772,11 @@ let s:coding_style.styles['My style'] =
 let s:coding_style.styles['Short indent'] =
 \   'set expandtab   tabstop=2 shiftwidth=2 softtabstop&'
 let s:coding_style.styles['GNU'] =
-\   'set expandtab   tabstop=8 shiftwidth=2 softtabstop=2'
+\   'set expandtab   tabstop=8 shiftwidth=2 softtabstop=2 preserveindent'
 let s:coding_style.styles['BSD'] =
-\   'set noexpandtab tabstop=8 shiftwidth=4 softtabstop&'    " XXX
+\   'set noexpandtab tabstop=8 shiftwidth=4 softtabstop& preserveindent'    " XXX
 let s:coding_style.styles['Linux'] =
-\   'set noexpandtab tabstop=8 shiftwidth=8 softtabstop&'
+\   'set noexpandtab tabstop=8 shiftwidth=8 softtabstop& preserveindent'
 
 command!
 \   -bar -bang -nargs=1 -complete=customlist,s:coding_style_complete
