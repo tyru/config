@@ -2622,9 +2622,6 @@ Map [n] <Leader>neo :<C-u>NeoComplCacheToggle<CR>
 let g:EasyGrepCommand = 2
 let g:EasyGrepInvertWholeWord = 1
 " }}}
-" undoclosewin {{{
-Map [n] -remap gu <Plug>(ucw-restore-window)
-" }}}
 " gist {{{
 let g:gist_detect_filetype = 1
 " }}}
