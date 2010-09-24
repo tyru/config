@@ -1598,6 +1598,7 @@ function! s:cmd_del_file(...) "{{{
 
     for file in a:000
         let org_file = file
+        " TODO glob
         let file = expand(file)
         let file = resolve(file)
 
