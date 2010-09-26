@@ -5,6 +5,11 @@ source ~/.shrc.common
 
 bindkey -e
 
+
+if [ -f "$HOME/.zshrc.local" ]; then
+    source "$HOME/.zshrc.local"
+fi
+
 ### fpath ### <<<<
 fpath=(~/.zsh/functions $fpath)
 autoload -U ~/.zsh/functions/*(:t)
