@@ -163,33 +163,30 @@ sub get_git_files_from_runtimepath {
     @ret;
 }
 
-sub get_home {
+sub determine_user_and_home {
     my ($username) = @_;
-    my $home;
+    my ($user, $home);
 
-    if (defined $ENV{HOME}) {
-        $home = $ENV{HOME};
+    if (defined $username) {
+        $user = $username;
     }
-    elsif ($^O eq 'MSWin32') {
-        if (defined $ENV{MSYSCON}) { # TODO Detect cygwin
-            $home = "/home/$username";
-        } else {
-            die "where is my home?";
-        }
+    elsif (exists $ENV{USER}) {
+        $user = $ENV{USER};
+    }
+
+    # Use '/' as separator due to cygwin/msys platform.
+    if ($user eq 'root') {
+        $home = "/root";
     }
     else {
-        if ($username eq 'root') {
-            $home = "/root";
-        } else {
-            $home = "/home/$username";
-        }
+        $home = "/home/$user";
     }
 
     unless (-d $home) {
         die "$home:$!"
     }
 
-    $home;
+    ($user, $home);
 }
 
 
@@ -209,18 +206,10 @@ my $upload_to_vimrcbox;
 my $get_git_files_from_runtimepath;
 my $github_user = qx(git config github.user);
 
-if (defined $ENV{USER} || defined $ENV{USERNAME}) {
-    $username = $ENV{USER} || $ENV{USERNAME};
-} else {
-    die "env 'USER' is not set.\n";
-}
-
 my $help;
 GetOptions(
-    'help'
+    'h|help'
         => \$help,
-    'h|home=s'
-        => \$home,
     'u|username=s'
         => \$username,
     'c|commit'
@@ -243,7 +232,7 @@ if (! $extract && ! defined $github_user) {
     warn "Can't determine GITHUB_USER('git config github.user' is empty).\n";
 }
 
-$home ||= get_home $username;
+($username, $home) = determine_user_and_home $username;
 
 # -x: Extract to current environment
 if ($extract) {
