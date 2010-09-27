@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use utf8;
 
+# TODO: DELETE ALL
+
 use FindBin qw($Bin);
 use File::Path qw(rmtree mkpath);
 use IO::Handle;
@@ -110,7 +112,7 @@ sub install {
     unless (-d (my $dir = dirname($dest))) {
         mkpath $dir or die "$dir: $!";
     }
-    system('cp', '-RL', $src, $dest);
+    system('cp', '-R' . ($^O eq 'MSWin32' ? '' : 'L'), $src, $dest);
 
     if ($^O eq 'MSWin32' || $^O eq 'msys') {
         # nop
@@ -163,30 +165,61 @@ sub get_git_files_from_runtimepath {
     @ret;
 }
 
-sub determine_user_and_home {
-    my ($username) = @_;
-    my ($user, $home);
+BEGIN {
+    if ($^O eq 'MSWin32') {
+        *determine_user_and_home = sub {
+            my ($user, $home);
 
-    if (defined $username) {
-        $user = $username;
-    }
-    elsif (exists $ENV{USER}) {
-        $user = $ENV{USER};
-    }
+            unless (exists $ENV{HOME}) {
+                die "Please set environment variable 'HOME'.";
+            }
+            unless (-d $ENV{HOME}) {
+                die "%HOME% ($ENV{HOME}) is not accessible.";
+            }
+            $home = $ENV{HOME};
+            $user = $ENV{USERNAME};
 
-    # Use '/' as separator due to cygwin/msys platform.
-    if ($user eq 'root') {
-        $home = "/root";
+            unless (-d $home) {
+                die "$home:$!"
+            }
+
+            ($user, $home);
+        };
+        *get_home_from_user = sub {
+            unless (exists $ENV{HOME}) {
+                die "Please set environment variable 'HOME'.";
+            }
+            return $ENV{HOME};
+        };
     }
     else {
-        $home = "/home/$user";
-    }
+        *determine_user_and_home = sub {
+            my ($user, $home);
 
-    unless (-d $home) {
-        die "$home:$!"
-    }
+            if ($user eq 'root') {
+                $home = "/root";
+            }
+            else {
+                $home = "/home/$user";
+            }
 
-    ($user, $home);
+            unless (-d $home) {
+                die "$home:$!"
+            }
+
+            ($user, $home);
+        };
+        *get_home_from_user = sub {
+            my ($username) = @_;
+
+            if ($username eq 'root') {
+                return "/root";
+            }
+            else {
+                return "/home/$username";
+            }
+        };
+    }
 }
 
 
@@ -232,7 +265,12 @@ if (! $extract && ! defined $github_user) {
     warn "Can't determine GITHUB_USER('git config github.user' is empty).\n";
 }
 
-($username, $home) = determine_user_and_home $username;
+if (defined $username) {
+    $home = get_home_from_user $username;
+}
+else {
+    ($username, $home) = determine_user_and_home;
+}
 
 # -x: Extract to current environment
 if ($extract) {
