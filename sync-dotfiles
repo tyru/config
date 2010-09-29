@@ -50,7 +50,7 @@ my @files = qw(
     .tmux
     .uim
 );
-my %cygwin_files = qw(
+my %mswin_files = qw(
     .vimperator/plugin  vimperator/plugin
     .vimperator/colors  vimperator/colors
     .vimperatorrc       _vimperatorrc
@@ -163,6 +163,10 @@ sub get_git_files_from_runtimepath {
             or warn "Empty repository?: $!"
     }
     @ret;
+}
+
+sub is_mswin {
+    $^O =~ /\A(MSWin32|cygwin)\Z/;
 }
 
 BEGIN {
@@ -281,9 +285,9 @@ for my $file (@files) {
     my ($src, $dest);
 
     if ($extract) {
-        if ($^O eq 'cygwin' && exists $cygwin_files{$file}) {
+        if (is_mswin() && exists $mswin_files{$file}) {
             $src  = $file;
-            $dest = catfile($home, $cygwin_files{$file});
+            $dest = catfile($home, $mswin_files{$file});
         } else {
             $src  = $file;
             $dest = catfile($home, $file);
@@ -296,8 +300,8 @@ for my $file (@files) {
         install($src, $dest, $username);
 
     } else {
-        if ($^O eq 'cygwin' && exists $cygwin_files{$file}) {
-            $src  = catfile($home, $cygwin_files{$file});
+        if (is_mswin() && exists $mswin_files{$file}) {
+            $src  = catfile($home, $mswin_files{$file});
             $dest = $file;
         } else {
             $src  = catfile($home, $file);
