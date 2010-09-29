@@ -10,7 +10,7 @@ language messages C
 language time C
 
 if filereadable(expand('~/.vimrc.local'))
-    source `=expand('~/.vimrc.local')`
+    execute 'source' expand('~/.vimrc.local')
 endif
 " }}}
 " Utilities {{{
