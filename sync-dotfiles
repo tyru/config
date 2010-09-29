@@ -200,6 +200,11 @@ BEGIN {
         *determine_user_and_home = sub {
             my ($user, $home);
 
+            unless (exists $ENV{USER}) {
+                die "Please set environment variable 'USER'.";
+            }
+            $user = $ENV{USER};
+
             if ($user eq 'root') {
                 $home = "/root";
             }
