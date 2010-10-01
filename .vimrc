@@ -419,9 +419,6 @@ endif
 if exists('$VIM_RTP_PATH')
     for path in map(split($VIM_RTP_PATH, ':'), 'expand(v:val)')
         call s:rtp_push(path . '/*')
-        call s:rtp_prune(path . '/pummode.vim')
-        call s:rtp_prune(path . '/command-buffer.vim')
-        call s:rtp_prune(path . '/cmdwincomplete.vim')
         if !executable('git')
             call s:rtp_prune(path . '/gist-vim')
         endif
