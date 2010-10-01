@@ -20,6 +20,7 @@ elseif has('mac')    " Mac
 else    " *nix OS
     set guifont=Monospace\ 12
     set printfont=Monospace\ 12
+    set linespace=4
 endif
 " }}}
 
