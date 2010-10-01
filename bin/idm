@@ -1,6 +1,0 @@
-#!/bin/sh
-
-idm_dir="$HOME/wineapp/idm"
-wine="wine"
-
-$wine $idm_dir/IDM.exe #1>/dev/null 2>/dev/null &
