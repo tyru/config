@@ -1962,6 +1962,12 @@ function! s:cmd_unretab(begin, end) "{{{
     \   's:' . pattern . ':' . replacement . ':'
 endfunction "}}}
 " }}}
+" :WriteRoot {{{
+command!
+\   WriteRoot
+\   -nargs=0
+\   write !sudo tee %
+" }}}
 " }}}
 " For Plugins {{{
 " CommentAnyWay {{{
