@@ -1075,21 +1075,21 @@ Map [n] -silent <C-n> :<C-u>call <SID>NextWindowOrTab()<CR>
 Map [n] -silent <C-p> :<C-u>call <SID>PreviousWindowOrTab()<CR>
 
 function! s:NextWindowOrTab() "{{{
-	if winnr() < winnr("$")
-		wincmd w
-	else
-		tabnext
-		1wincmd w
-	endif
+    if winnr() < winnr("$")
+        wincmd w
+    else
+        tabnext
+        1wincmd w
+    endif
 endfunction "}}}
 
 function! s:PreviousWindowOrTab() "{{{
-	if winnr() > 1
-		wincmd W
-	else
-		tabprevious
-		execute winnr("$") . "wincmd w"
-	endif
+    if winnr() > 1
+        wincmd W
+    else
+        tabprevious
+        execute winnr("$") . "wincmd w"
+    endif
 endfunction "}}}
 " }}}
 " Tab mappings (using with previous hack) {{{
