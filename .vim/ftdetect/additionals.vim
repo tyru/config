@@ -33,7 +33,7 @@ autocmd BufNewFile,BufRead *.lua
             \ setfiletype lua
 autocmd BufNewFile,BufRead *.tmpl
             \ setfiletype html
-autocmd BufNewFile,BufRead *.mkd,*.md
+autocmd BufNewFile,BufRead *.mkd
             \ setfiletype markdown
 autocmd BufNewFile,BufRead SKK-JISYO*,~/.skk-jisyo*
             \ setfiletype skk
@@ -41,3 +41,5 @@ autocmd BufNewFile,BufRead *.grass
             \ setfiletype grass
 autocmd BufNewFile,BufRead .tmux.conf
             \ setfiletype tmux
+autocmd BufNewFile,BufRead *.tjs
+            \ setfiletype tjs
