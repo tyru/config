@@ -329,8 +329,13 @@ MyAutocmd QuickfixCmdPost * QuickFix
 MyAutocmd InsertLeave * setlocal nocursorline
 MyAutocmd InsertEnter * setlocal cursorline ignorecase
 
-" Delete autocmd for ft=mkd.
+" Delete filetypedetect.
+" mkd
 Lazy autocmd! filetypedetect BufNewFile,BufRead *.md
+Lazy autocmd filetypedetect BufNewFile,BufRead *.md setf markdown
+" kscript
+Lazy autocmd! filetypedetect BufNewFile,BufRead *.ks
+Lazy autocmd filetypedetect BufNewFile,BufRead *.ks setf kirikiriscenario
 
 " Set syntaxes
 MyAutocmd BufNewFile,BufRead *.as setlocal syntax=actionscript
