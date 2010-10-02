@@ -175,3 +175,6 @@
 [submodule "ext/dutil.vim"]
 	path = ext/dutil.vim
 	url = git://github.com/tyru/dutil.vim.git
+[submodule "ext/kirikiri.vim"]
+	path = ext/kirikiri.vim
+	url = git://github.com/tyru/kirikiri.vim.git
