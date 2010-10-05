@@ -1,0 +1,4 @@
+#!/bin/sh
+
+VIM='vim -u NONE -U NONE --noplugin'
+$VIM -c 'source vimrcbox.vim' -c 'RcbVimrc'

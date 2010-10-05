@@ -3,46 +3,33 @@ use strict;
 use warnings;
 use utf8;
 
-use FindBin ();
-use File::Path qw(rmtree);
-use IO::Handle;
-use File::Spec::Functions qw(catfile);
-use File::Temp ();
-
-use lib "$FindBin::Bin/lib";
-use Dotfiles::Util;
-
 # gnu_compat: --opt="..." is allowed.
 # no_bundling: single character option is not bundled.
 # no_ignore_case: no ignore case on long option.
 use Getopt::Long qw(:config gnu_compat no_bundling no_ignore_case);
+use FindBin ();
+use Pod::Usage;
+use File::Spec::Functions qw(catfile);
+use File::Basename qw(dirname);
 
+use lib "$FindBin::Bin/lib";
+use Dotfiles::Util;
 
 
 ### sub ###
-
 sub usage () {
-    die <<EOF;
-    Usage: $0 [OPTIONS]
-
-OPTIONS:
-    -h, --help                  show this help.
-    -u, --username <user>       specify username.
-EOF
+    pod2usage(-verbose => 2);
 }
 
 
-
 ### main ###
-
-# chdir parent directory of this script
 chdir $FindBin::Bin or die "$FindBin::Bin:$!";
 
 my $home;
 my $username;
 my $config_file = 'files.yaml';
 
-my $needhelp;
+my ($needhelp);
 GetOptions(
     'h|help'
         => \$needhelp,
@@ -67,18 +54,33 @@ for my $file (@{$c->{files}}) {
     my ($src, $dest);
 
     if (is_mswin() && exists $c->{mswin_files}{$file}) {
-        $src  = catfile($home, $c->{mswin_files}{$file});
-        $dest = $file;
-    } else {
-        $src  = catfile($home, $file);
-        $dest = $file;
+        $src  = $file;
+        $dest = catfile($home, $c->{mswin_files}{$file});
+    }
+    else {
+        $src  = $file;
+        $dest = catfile($home, $file);
     }
 
     install($src, $dest, $username);
 }
 
-for my $f (@{$c->{removed_files}}) {
-    if (-e $f) {
-        rmtree($f) or warn "cannot remove $_: $!";
-    }
-}
+
+
+
+__END__
+
+=head1 NAME
+
+    extract-dotfiles - NO DESCRIPTION YET.
+
+
+=head1 SYNOPSIS
+
+
+=head1 OPTIONS
+
+
+=head1 AUTHOR
+
+tyru <tyru.exe@gmail.com>
