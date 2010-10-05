@@ -178,3 +178,9 @@
 [submodule "ext/kirikiri.vim"]
 	path = ext/kirikiri.vim
 	url = git://github.com/tyru/kirikiri.vim.git
+[submodule "ext/vim-ft-diff_fold"]
+	path = ext/vim-ft-diff_fold
+	url = git://github.com/thinca/vim-ft-diff_fold.git
+[submodule "ext/vim-ft-markdown_fold"]
+	path = ext/vim-ft-markdown_fold
+	url = git://github.com/thinca/vim-ft-markdown_fold.git
