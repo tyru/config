@@ -17,9 +17,6 @@ use Dotfiles::Util;
 # no_ignore_case: no ignore case on long option.
 use Getopt::Long qw(:config gnu_compat no_bundling no_ignore_case);
 
-my @VIM = qw(vim);
-my $VIM_RTP_SCRIPT = './write-runtimepath.vim';
-
 
 
 ### sub ###
@@ -34,40 +31,6 @@ OPTIONS:
 EOF
 }
 
-sub slurp_chomp {
-    my ($path) = @_;
-
-    open my $FH, '<', $path or die $!;
-    my @lines = <$FH>;
-    close $FH;
-
-    map { chomp; $_ } @lines;
-}
-
-# TODO: Make another shellscript for this feature. (gather-rtp-files ?)
-sub get_git_files_from_runtimepath {
-    my $tempname = do {
-        my $fh = File::Temp->new(UNLINK => 0) or die $!;
-        $fh->filename;
-    };
-    system(@VIM, '-S', $VIM_RTP_SCRIPT, $tempname);
-
-    my @ret;
-    for my $rtp (slurp_chomp $tempname) {
-        $rtp = readlink $rtp while -l $rtp;
-
-        my $repo = eval { Git->repository($rtp) };
-        next if $@;
-
-        push @ret, map {
-            # [fullpath, relpath]
-            [catfile($repo->wc_path, $_), $_]
-        } $repo->command('ls-files')
-            or warn "Empty repository?: $!"
-    }
-    @ret;
-}
-
 
 
 ### main ###
@@ -77,7 +40,6 @@ chdir $FindBin::Bin or die "$FindBin::Bin:$!";
 
 my $home;
 my $username;
-my $get_git_files_from_runtimepath;
 my $config_file = 'files.yaml';
 
 my $needhelp;
@@ -86,8 +48,6 @@ GetOptions(
         => \$needhelp,
     'u|username=s'
         => \$username,
-    'g|get-git-files'
-        => \$get_git_files_from_runtimepath,
     'c|config-file=s'
         => \$config_file,
 ) or usage;
@@ -120,16 +80,5 @@ for my $file (@{$c->{files}}) {
 for my $f (@{$c->{removed_files}}) {
     if (-e $f) {
         rmtree($f) or warn "cannot remove $_: $!";
-    }
-}
-
-
-# -g, --get-git-files: Get git cached files using by git-ls-files.
-if ($get_git_files_from_runtimepath) {
-    require Git;
-    my @files = get_git_files_from_runtimepath();
-    for my $f (@files) {
-        my ($fullpath, $relpath) = @$f;
-        install($fullpath, $relpath, $username);
     }
 }
