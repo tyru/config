@@ -3,14 +3,13 @@ use strict;
 use warnings;
 use utf8;
 
-use FindBin qw($Bin);
-use File::Path qw(rmtree mkpath);
+use FindBin ();
+use File::Path qw(rmtree);
 use IO::Handle;
 use File::Spec::Functions qw(catfile);
-use File::Basename qw(dirname);
-use File::Temp qw();
+use File::Temp ();
 
-use lib "$Bin/lib";
+use lib "$FindBin::Bin/lib";
 use Dotfiles::Util;
 
 # gnu_compat: --opt="..." is allowed.
@@ -74,7 +73,7 @@ sub get_git_files_from_runtimepath {
 ### main ###
 
 # chdir parent directory of this script
-chdir $Bin or die "$Bin:$!";
+chdir $FindBin::Bin or die "$FindBin::Bin:$!";
 
 my $home;
 my $username;

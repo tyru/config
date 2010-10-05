@@ -4,6 +4,8 @@ use warnings;
 use utf8;
 
 use YAML ();
+use File::Path qw(rmtree mkpath);
+use File::Basename qw(dirname);
 
 use base qw/Exporter/;
 our @EXPORT = qw(
