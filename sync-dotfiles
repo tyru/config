@@ -65,9 +65,6 @@ my @removed_files = qw(
     .vim/sessions
     .vim/swap
 );
-my @ignore_files = qw(
-    .vim/+vcs
-);
 # do not delete these files in home directory if --extract was given
 # (if file exists, skip it)
 my %dont_overwrite = map { $_ => 1 } qw(
