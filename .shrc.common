@@ -4,6 +4,8 @@
 
 
 # alias
+alias cp='cp -i'
+alias mv='mv -i'
 alias df='df -h'
 alias diff='diff -u'
 alias du='du -h'
