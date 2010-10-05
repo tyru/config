@@ -9,7 +9,9 @@ use IO::Handle;
 use File::Spec::Functions qw(catfile);
 use File::Basename qw(dirname);
 use File::Temp qw();
-use YAML ();
+
+use lib "$Bin/lib";
+use Dotfiles::Util;
 
 # gnu_compat: --opt="..." is allowed.
 # no_bundling: single character option is not bundled.
@@ -22,14 +24,6 @@ my $VIM_RTP_SCRIPT = './write-runtimepath.vim';
 
 
 
-# do not delete these files in home directory if --extract was given
-# (if file exists, skip it)
-my %dont_overwrite = map { $_ => 1 } qw(
-    bin
-);
-
-
-
 ### sub ###
 
 sub usage () {
@@ -39,48 +33,7 @@ sub usage () {
 OPTIONS:
     -h, --help                  show this help.
     -u, --username <user>       specify username.
-    -x, --extract               extract to current environment.
 EOF
-}
-
-# Don't use non-CORE module as possible
-use subs qw(say);
-*say = sub { print @_, "\n" };
-
-sub install {
-    # install $src to $dest as $user.
-    my ($src, $dest, $user) = @_;
-
-    unless (-e $src) {
-        warn "$src:$!\n";
-        return;
-    }
-    # Delete destination
-    # TODO: Use rsync?
-    rmtree($dest);
-
-    say("$src -> $dest");
-    unless (-d (my $dir = dirname($dest))) {
-        mkpath $dir or die "$dir: $!";
-    }
-    system('cp', '-R' . ($^O eq 'MSWin32' ? '' : 'L'), $src, $dest);
-
-    if ($^O eq 'MSWin32' || $^O eq 'msys') {
-        # nop
-    } elsif ($^O eq 'cygwin') {
-        system('chown', '-R', $user, $dest);
-    } elsif ($^O eq 'freebsd') {
-        system('chown', '-R', $user, $dest);
-    } else {
-        system('chown', '-R', "$user:$user", $dest);
-    }
-}
-
-sub ask {
-    my ($msg) = @_;
-    STDERR->print("$msg [y/n]:");
-    chomp(my $ans = <STDIN>);
-    exit unless $ans =~ /^y(es)?$/i;
 }
 
 sub slurp_chomp {
@@ -116,78 +69,6 @@ sub get_git_files_from_runtimepath {
     @ret;
 }
 
-sub is_mswin {
-    $^O =~ /\A(MSWin32|cygwin)\Z/;
-}
-
-BEGIN {
-    if ($^O eq 'MSWin32') {
-        *determine_user_and_home = sub {
-            my ($user, $home);
-
-            unless (exists $ENV{HOME}) {
-                die "Please set environment variable 'HOME'.";
-            }
-            unless (-d $ENV{HOME}) {
-                die "%HOME% ($ENV{HOME}) is not accessible.";
-            }
-            $home = $ENV{HOME};
-            $user = $ENV{USERNAME};
-
-            unless (-d $home) {
-                die "$home:$!"
-            }
-
-            ($user, $home);
-        };
-        *get_home_from_user = sub {
-            unless (exists $ENV{HOME}) {
-                die "Please set environment variable 'HOME'.";
-            }
-            return $ENV{HOME};
-        };
-    }
-    else {
-        *determine_user_and_home = sub {
-            my ($user, $home);
-
-            unless (exists $ENV{USER}) {
-                die "Please set environment variable 'USER'.";
-            }
-            $user = $ENV{USER};
-
-            if ($user eq 'root') {
-                $home = "/root";
-            }
-            else {
-                $home = "/home/$user";
-            }
-
-            unless (-d $home) {
-                die "$home:$!"
-            }
-
-            ($user, $home);
-        };
-        *get_home_from_user = sub {
-            my ($username) = @_;
-
-            if ($username eq 'root') {
-                return "/root";
-            }
-            else {
-                return "/home/$username";
-            }
-        };
-    }
-}
-
-sub load_config {
-    my ($config_file) = @_;
-    die unless -f $config_file;
-    YAML::LoadFile($config_file);
-}
-
 
 
 ### main ###
@@ -197,20 +78,16 @@ chdir $Bin or die "$Bin:$!";
 
 my $home;
 my $username;
-my $extract;
 my $upload_to_vimrcbox;
 my $get_git_files_from_runtimepath;
-my $github_user = qx(git config github.user);
 my $config_file = 'files.yaml';
 
-my $help;
+my $needhelp;
 GetOptions(
     'h|help'
-        => \$help,
+        => \$needhelp,
     'u|username=s'
         => \$username,
-    'x|extract'
-        => \$extract,
     'v|vimrcbox'
         => \$upload_to_vimrcbox,
     'g|get-git-files'
@@ -218,12 +95,8 @@ GetOptions(
     'c|config-file=s'
         => \$config_file,
 ) or usage;
-usage if $help;
+usage if $needhelp;
 
-
-if (! $extract && ! defined $github_user) {
-    warn "Can't determine GITHUB_USER('git config github.user' is empty).\n";
-}
 
 if (defined $username) {
     $home = get_home_from_user $username;
@@ -234,50 +107,23 @@ else {
 
 my $c = load_config($config_file);
 
-# -x: Extract to current environment
-if ($extract) {
-    ask("may I replace the dotfiles in '$home'?");
-}
-
 for my $file (@{$c->{files}}) {
     my ($src, $dest);
 
-    if ($extract) {
-        if (is_mswin() && exists $c->{mswin_files}{$file}) {
-            $src  = $file;
-            $dest = catfile($home, $c->{mswin_files}{$file});
-        } else {
-            $src  = $file;
-            $dest = catfile($home, $file);
-        }
-        if (exists $dont_overwrite{$file}) {
-            warn "skip $file...\n";
-            next;
-        }
-
-        install($src, $dest, $username);
-
+    if (is_mswin() && exists $c->{mswin_files}{$file}) {
+        $src  = catfile($home, $c->{mswin_files}{$file});
+        $dest = $file;
     } else {
-        if (is_mswin() && exists $c->{mswin_files}{$file}) {
-            $src  = catfile($home, $c->{mswin_files}{$file});
-            $dest = $file;
-        } else {
-            $src  = catfile($home, $file);
-            $dest = $file;
-        }
-
-        install($src, $dest, $username);
+        $src  = catfile($home, $file);
+        $dest = $file;
     }
+
+    install($src, $dest, $username);
 }
 
-if ($extract) {
-    mkdir "$ENV{HOME}/.vim/backup";
-}
-else {
-    for my $f (@{$c->{removed_files}}) {
-        if (-e $f) {
-            rmtree($f) or warn "cannot remove $_: $!";
-        }
+for my $f (@{$c->{removed_files}}) {
+    if (-e $f) {
+        rmtree($f) or warn "cannot remove $_: $!";
     }
 }
 
