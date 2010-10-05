@@ -85,10 +85,7 @@ sub usage () {
 OPTIONS:
     -h, --help                  show this help.
     -u, --username <user>       specify username.
-    -c, --commit                update working tree and commit it
-    -p, --push                  exec 'git push origin master'
     -x, --extract               extract to current environment.
-    --gc                        exec 'git gc' automatically.
 EOF
 }
 
@@ -240,10 +237,7 @@ chdir $Bin or die "$Bin:$!";
 
 my $home;
 my $username;
-my $auto_commit;
-my $auto_push;
 my $extract;
-my $auto_gc;
 my $upload_to_vimrcbox;
 my $get_git_files_from_runtimepath;
 my $github_user = qx(git config github.user);
@@ -254,14 +248,8 @@ GetOptions(
         => \$help,
     'u|username=s'
         => \$username,
-    'c|commit'
-        => \$auto_commit,
-    'p|push'
-        => \$auto_push,
     'x|extract'
         => \$extract,
-    'gc'
-        => \$auto_gc,
     'v|vimrcbox'
         => \$upload_to_vimrcbox,
     'g|get-git-files'
@@ -329,20 +317,6 @@ else {
 }
 
 
-# -c: Update trees and commit all.
-if ($auto_commit) {
-    system(qw(git rm -fr --cached .));
-    system(qw(git add .));
-    system(qw(git commit));
-}
-# --gc: 'git gc'
-if ($auto_gc) {
-    system(qw(git gc));
-}
-# -p: 'git push origin master'
-if ($auto_push) {
-    system(qw(git push origin master));
-}
 # -v, --vimrcbox: upload to vimrcbox.
 if ($upload_to_vimrcbox) {
     system(@VIM_INTERP, q(-c), q(source vimrcbox.vim | RcbVimrc), qw(-c quit));
