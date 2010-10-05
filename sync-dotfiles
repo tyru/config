@@ -19,7 +19,6 @@ use Dotfiles::Util;
 use Getopt::Long qw(:config gnu_compat no_bundling no_ignore_case);
 
 my @VIM = qw(vim);
-my @VIM_INTERP = qw(vim -u NONE -U NONE --noplugin);
 my $VIM_RTP_SCRIPT = './write-runtimepath.vim';
 
 
@@ -78,7 +77,6 @@ chdir $Bin or die "$Bin:$!";
 
 my $home;
 my $username;
-my $upload_to_vimrcbox;
 my $get_git_files_from_runtimepath;
 my $config_file = 'files.yaml';
 
@@ -88,8 +86,6 @@ GetOptions(
         => \$needhelp,
     'u|username=s'
         => \$username,
-    'v|vimrcbox'
-        => \$upload_to_vimrcbox,
     'g|get-git-files'
         => \$get_git_files_from_runtimepath,
     'c|config-file=s'
@@ -128,10 +124,6 @@ for my $f (@{$c->{removed_files}}) {
 }
 
 
-# -v, --vimrcbox: upload to vimrcbox.
-if ($upload_to_vimrcbox) {
-    system(@VIM_INTERP, q(-c), q(source vimrcbox.vim | RcbVimrc), qw(-c quit));
-}
 # -g, --get-git-files: Get git cached files using by git-ls-files.
 if ($get_git_files_from_runtimepath) {
     require Git;
