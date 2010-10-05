@@ -2584,6 +2584,7 @@ let g:fencview_show_progressbar = 0
 
 MyAutocmd FileType lingr-messages
 \   Map [n] -buffer -remap o <Plug>(lingr-messages-show-say-buffer)
+autocmd FileType lingr-* Map [n] -remap -silent -buffer <C-l> :<C-u>call lingr#mark_as_read_current_room()<CR>
 
 
 let g:lingr_vim_additional_rooms = [
@@ -2606,6 +2607,8 @@ let g:lingr_vim_additional_rooms = [
 \]
 
 let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
+
+let g:lingr_vim_mark_as_read_automatically = 0
 " }}}
 " github {{{
 MyAlterCommand gh Github
