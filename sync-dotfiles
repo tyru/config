@@ -3,8 +3,6 @@ use strict;
 use warnings;
 use utf8;
 
-# TODO: DELETE ALL
-
 use FindBin qw($Bin);
 use File::Path qw(rmtree mkpath);
 use IO::Handle;
