@@ -35,7 +35,7 @@ autocmd BufNewFile,BufRead *.tmpl
             \ setfiletype html
 autocmd BufNewFile,BufRead *.mkd
             \ setfiletype markdown
-autocmd BufNewFile,BufRead SKK-JISYO*,~/.skk-jisyo*
+autocmd BufNewFile,BufRead SKK-JISYO*,.skk-jisyo*,.skk-*-jisyo*
             \ setfiletype skk
 autocmd BufNewFile,BufRead *.grass
             \ setfiletype grass
