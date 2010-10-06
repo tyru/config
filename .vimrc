@@ -2668,6 +2668,9 @@ let g:vim_indent_cont = 0
 " changelog {{{
 let changelog_username = "tyru"
 " }}}
+" syntax/sh.vim {{{
+let g:is_bash = 1
+" }}}
 
 " }}}
 " Backup {{{
