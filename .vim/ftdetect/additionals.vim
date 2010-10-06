@@ -43,3 +43,5 @@ autocmd BufNewFile,BufRead .tmux.conf
             \ setfiletype tmux
 autocmd BufNewFile,BufRead *.tjs
             \ setfiletype tjs
+autocmd BufNewFile,BufRead [0123456789][0123456789][0123456789][0123456789]-[0123456789][0123456789]-[0123456789][0123456789]*.txt
+            \ setfiletype hatena
