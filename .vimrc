@@ -1969,8 +1969,8 @@ endfunction "}}}
 " }}}
 " :WriteRoot {{{
 command!
-\   WriteRoot
 \   -nargs=0
+\   WriteRoot
 \   write !sudo tee %
 " }}}
 " }}}
