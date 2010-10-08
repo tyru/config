@@ -1,5 +1,4 @@
 files:
-  - bin
   - .vim
   - .vimrc
   - .gvimrc
