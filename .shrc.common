@@ -23,6 +23,7 @@ alias go='gopen'
 alias lingr="vim --cmd 'let g:lingr = 1' -c LingrLaunch"
 alias chalice="vim --cmd 'let g:chalice = 1' -c Chalice"
 alias tmux='tmux -u -2'
+alias sudo='sudo'
 
 which trash >/dev/null 2>/dev/null && alias rm='trash'
 which vim >/dev/null 2>/dev/null && alias vi='vim'
