@@ -2603,7 +2603,8 @@ let g:lingr_vim_additional_rooms = [
 \   'few',
 \   'gc',
 \   'scala',
-\   'lowlevel'
+\   'lowlevel',
+\   'lingr_vim',
 \]
 
 let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
