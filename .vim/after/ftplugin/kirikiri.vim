@@ -5,7 +5,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let b:caw_default_oneline_comment = ';'
+let b:caw_oneline_comment = ';'
 
 
 
