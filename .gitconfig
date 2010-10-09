@@ -19,7 +19,6 @@
 	cp = cherry-pick
 	dish = diff --cached
 	fixup = commit --amend -C HEAD
-	gcn = get-commits-num
 	gene = log --graph --pretty='%C(yellow)%h%Creset %ai %an: %s%C(yellow)%d%Creset' --all
 	last = log -p --reverse HEAD@{1}..
 	lg = log --graph
