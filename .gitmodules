@@ -184,3 +184,6 @@
 [submodule "ext/vim-ft-markdown_fold"]
 	path = ext/vim-ft-markdown_fold
 	url = git://github.com/thinca/vim-ft-markdown_fold.git
+[submodule "ext/tjs.vim"]
+	path = ext/tjs.vim
+	url = git://github.com/tyru/tjs.vim.git
