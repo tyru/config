@@ -2219,7 +2219,7 @@ call s:map_prefix_key('n', 'anything', 's')
 
 " Which anything do you like?
 let [s:anything_fuf, s:anything_ku, s:anything_unite] = range(3)
-let s:anything = s:anything_fuf
+let s:anything = s:anything_unite
 
 if s:anything == s:anything_fuf
     Map [n] <anything>d        :<C-u>FufDir<CR>
@@ -2234,7 +2234,7 @@ elseif s:anything == s:anything_ku
     Map [n] <anything>/        :<C-u>Ku cmd_mru/search<CR>
 elseif s:anything == s:anything_unite
     Map [n] <anything>f        :<C-u>Unite -buffer-name=files file<CR>
-    Map [n] <anything>h        :<C-u>Unite file_mru<CR>
+    Map [n] <anything>h        :<C-u>Unite -buffer-name=files file_mru<CR>
     Map [n] <anything>b        :<C-u>Unite buffer<CR>
     Map [n] <anything>:        :<C-u>Unite cmd_mru/cmd<CR>
     Map [n] <anything>/        :<C-u>Unite cmd_mru/search<CR>
@@ -2254,6 +2254,20 @@ let fuf_keyOpenVsplit  = '<C-v>'
 let fuf_enumeratingLimit = 20
 let fuf_previewHeight = 0
 
+" }}}
+" unite {{{
+let g:unite_enable_start_insert = 1
+let g:unite_cd_command = 'TabpageCD'
+let g:unite_lcd_command = 'TabpageCD'
+let g:unite_enable_ignore_case = 1
+let g:unite_enable_smart_case = 1
+let g:unite_update_time = 50
+
+MyAutocmd FileType unite call s:unite_settings()
+
+function! s:unite_settings() "{{{
+    Map [i] -remap -buffer <BS> <Plug>(unite_delete_backward_path)
+endfunction "}}}
 " }}}
 " }}}
 " MRU {{{
