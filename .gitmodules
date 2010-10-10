@@ -187,3 +187,6 @@
 [submodule "ext/tjs.vim"]
 	path = ext/tjs.vim
 	url = git://github.com/tyru/tjs.vim.git
+[submodule "ext/unite.vim"]
+	path = ext/unite.vim
+	url = git://github.com/Shougo/unite.vim.git
