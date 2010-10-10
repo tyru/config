@@ -1975,19 +1975,6 @@ command!
 " }}}
 " }}}
 " For Plugins {{{
-" CommentAnyWay {{{
-let ca_verbose = 0    " debug
-
-let ca_filetype_table = {
-    \ 'oneline' : {
-        \ 'dosbatch' : 'rem ###',
-    \ },
-    \ 'wrapline' : {
-        \ 'html' : [ "<!-- ", " -->" ],
-        \ 'css' : [ "/* ", " */" ],
-    \ },
-\ }
-" }}}
 " nextfile {{{
 let g:nf_map_next     = ''
 let g:nf_map_previous = ''
