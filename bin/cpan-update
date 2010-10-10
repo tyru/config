@@ -1,3 +1,5 @@
 #!/bin/sh
 
-cpan-outdated | xargs cpanm
+which cpan-outdated >/dev/null 2>&1 \
+    && which cpanm >/dev/null 2>&1 \
+    && cpan-outdated | xargs cpanm
