@@ -2214,19 +2214,31 @@ MyAlterCommand o[pen] OpenBrowser
 " AutoDate {{{
 let g:autodate_format = "%Y-%m-%d"
 " }}}
-" anything (ku,fuf,etc.) {{{
+" anything (ku,fuf,unite,etc.) {{{
 call s:map_prefix_key('n', 'anything', 's')
 
-Map [n] <anything>d        :<C-u>FufDir<CR>
-Map [n] <anything>f        :<C-u>FufFile<CR>
-Map [n] <anything>h        :<C-u>FufMruFile<CR>
-Map [n] <anything>r        :<C-u>FufRenewCache<CR>
+" Which anything do you like?
+let [s:anything_fuf, s:anything_ku, s:anything_unite] = range(3)
+let s:anything = s:anything_fuf
 
-" Map [n] <anything>f        :<C-u>Ku file<CR>
-" Map [n] <anything>h        :<C-u>Ku file/mru<CR>
-" Map [n] <anything>H        :<C-u>Ku history<CR>
-" Map [n] <anything>:        :<C-u>Ku cmd_mru/cmd<CR>
-" Map [n] <anything>/        :<C-u>Ku cmd_mru/search<CR>
+if s:anything == s:anything_fuf
+    Map [n] <anything>d        :<C-u>FufDir<CR>
+    Map [n] <anything>f        :<C-u>FufFile<CR>
+    Map [n] <anything>h        :<C-u>FufMruFile<CR>
+    Map [n] <anything>r        :<C-u>FufRenewCache<CR>
+elseif s:anything == s:anything_ku
+    Map [n] <anything>f        :<C-u>Ku file<CR>
+    Map [n] <anything>h        :<C-u>Ku file/mru<CR>
+    Map [n] <anything>H        :<C-u>Ku history<CR>
+    Map [n] <anything>:        :<C-u>Ku cmd_mru/cmd<CR>
+    Map [n] <anything>/        :<C-u>Ku cmd_mru/search<CR>
+elseif s:anything == s:anything_unite
+    Map [n] <anything>f        :<C-u>Unite -buffer-name=files file<CR>
+    Map [n] <anything>h        :<C-u>Unite file_mru<CR>
+    Map [n] <anything>b        :<C-u>Unite buffer<CR>
+    Map [n] <anything>:        :<C-u>Unite cmd_mru/cmd<CR>
+    Map [n] <anything>/        :<C-u>Unite cmd_mru/search<CR>
+endif
 
 " ku {{{
 MyAlterCommand ku Ku
