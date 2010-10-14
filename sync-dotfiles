@@ -3,12 +3,10 @@ use strict;
 use warnings;
 use utf8;
 
-use FindBin ();
 use File::Path qw(rmtree);
-use IO::Handle;
 use File::Spec::Functions qw(catfile);
-use File::Temp ();
 
+use FindBin ();
 use lib "$FindBin::Bin/lib";
 use Dotfiles::Util;
 
@@ -38,11 +36,10 @@ EOF
 # chdir parent directory of this script
 chdir $FindBin::Bin or die "$FindBin::Bin:$!";
 
+my $needhelp;
 my $home;
 my $username;
 my $config_file = 'files.yaml';
-
-my $needhelp;
 GetOptions(
     'h|help'
         => \$needhelp,
