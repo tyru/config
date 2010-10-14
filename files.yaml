@@ -23,6 +23,7 @@ files:
   - .tmux.conf
   - .tmux
   - .uim
+  - .uim.d/customs
 mswin_files:
   .vimperator/plugin: vimperator/plugin
   .vimperator/colors: vimperator/colors
