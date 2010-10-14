@@ -17,19 +17,14 @@
 	co = checkout
 	cont = rebase --continue
 	cp = cherry-pick
+	d = diff --color-words
 	dish = diff --cached
 	fixup = commit --amend -C HEAD
 	gene = log --graph --pretty='%C(yellow)%h%Creset %ai %an: %s%C(yellow)%d%Creset' --all
+	l = log --stat
 	last = log -p --reverse HEAD@{1}..
-	lg = log --graph
-	los = log --stat
 	lp = log -p
 	ls = ls-files
-	my-commit = commit -v
-	my-diff = diff --color-words
-	my-pull = pull --tags
-	my-push = push --tags
-	rb = rebase
 	re = reset
 	reha = reset --hard
 	rmsh = rm --cached
