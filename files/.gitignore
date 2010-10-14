@@ -1,7 +1,7 @@
 # Vim
 .vim/.vimbackup_deleted
 
-.vim/*/
+.vim/*
 !.vim/after
 !.vim/autoload
 !.vim/colors
