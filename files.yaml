@@ -24,10 +24,15 @@ files:
   - .tmux
   - .uim
   - .uim.d/customs
-mswin_files:
-  .vimperator/plugin: vimperator/plugin
-  .vimperator/colors: vimperator/colors
-  .vimperatorrc: _vimperatorrc
+os_files:
+  MSWin32:
+    .vimperator/plugin: vimperator/plugin
+    .vimperator/colors: vimperator/colors
+    .vimperatorrc: _vimperatorrc
+  cygwin:
+    .vimperator/plugin: vimperator/plugin
+    .vimperator/colors: vimperator/colors
+    .vimperatorrc: _vimperatorrc
 removed_files:
   - .vim/backup
   - .vim/.netrwhist

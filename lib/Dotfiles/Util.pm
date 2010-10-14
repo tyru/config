@@ -77,8 +77,8 @@ sub load_config {
 
 sub convert_filename {
     my ($c, $filename) = @_;
-    if (is_mswin() && exists $c->{mswin_files}{$filename}) {
-        return $c->{mswin_files}{$filename}
+    if (exists $c->{os_files}{$^O}{$filename}) {
+        return $c->{os_files}{$^O}{$filename}
     }
     else {
         $filename;
