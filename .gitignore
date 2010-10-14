@@ -23,13 +23,9 @@
 !.vim/dict
 !.vim/template
 
-tags
-tags-ja
 .vim/.VimballRecord
 
 # Vimperator
 .vimperator/*/
 !.vimperator/plugin
 !.vimperator/colors
-
-bin/csizeof-bin
