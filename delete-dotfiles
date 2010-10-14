@@ -53,6 +53,8 @@ GetOptions(
         => \$force,
     'v|verbose'
         => \$verbose,
+    'd|directory=s'
+        => \$home,
 ) or usage;
 usage if $needhelp;
 unless ($force) {
@@ -61,7 +63,10 @@ unless ($force) {
 }
 
 
-if (defined $username) {
+if (defined $home) {
+    # nop
+}
+elsif (defined $username) {
     $home = get_home_from_user $username;
 }
 else {
