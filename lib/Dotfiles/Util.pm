@@ -58,6 +58,16 @@ sub load_config {
     YAML::LoadFile($config_file);
 }
 
+sub convert_filename {
+    my ($c, $filename) = @_;
+    if (is_mswin() && exists $c->{mswin_files}{$filename}) {
+        return $c->{mswin_files}{$filename}
+    }
+    else {
+        $filename;
+    }
+}
+
 BEGIN {
     if ($^O eq 'MSWin32') {
         *determine_user_and_home = sub {

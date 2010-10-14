@@ -50,17 +50,11 @@ else {
 
 my $c = load_config($config_file);
 
-for my $file (@{$c->{files}}) {
+for my $file (map { convert_filename $c, $_ } @{$c->{files}}) {
     my ($src, $dest);
 
-    if (is_mswin() && exists $c->{mswin_files}{$file}) {
-        $src  = $file;
-        $dest = catfile($home, $c->{mswin_files}{$file});
-    }
-    else {
-        $src  = $file;
-        $dest = catfile($home, $file);
-    }
+    $src  = $file;
+    $dest = catfile($home, $file);
 
     install($src, $dest, $username);
 }
