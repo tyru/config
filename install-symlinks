@@ -26,6 +26,7 @@ my $needhelp;
 my $home;
 my $username;
 my $force_overwrite = 0;
+my $verbose = 0;
 my $config_file = 'files.yaml';
 GetOptions(
     'h|help'
@@ -36,6 +37,8 @@ GetOptions(
         => \$config_file,
     'f|force'
         => \$force_overwrite,
+    'v|verbose'
+        => \$verbose,
 ) or usage;
 usage if $needhelp;
 
@@ -80,7 +83,7 @@ for my $file (@files) {
         }
         rmtree($dest) or warn "$dest:Can't remove file(s).\n";
     }
-    say("$src -> $dest");
+    say("$src -> $dest") if $verbose;
     install_symlink $src, $dest, $username;
 }
 
