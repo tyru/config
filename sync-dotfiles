@@ -72,6 +72,6 @@ for my $file (map { convert_filename $c, $_ } @{$c->{files}}) {
 
 for my $f (@{$c->{removed_files}}) {
     if (-e $f) {
-        rmtree($f) or warn "cannot remove $_: $!";
+        rmtree($f);
     }
 }

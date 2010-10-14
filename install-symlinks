@@ -81,7 +81,7 @@ for my $file (@files) {
             # checked but file exists?
             die "install-symlinks: File exists '$dest'.\n";
         }
-        rmtree($dest) or warn "$dest:Can't remove file(s).\n";
+        rmtree($dest);
     }
     say("$src -> $dest") if $verbose;
     install_symlink $src, $dest, $username;

@@ -25,7 +25,7 @@ sub install {
     }
     # Delete destination
     # TODO: Use rsync?
-    rmtree($dest) or warn "$dest:Can't remove file(s).\n";
+    rmtree($dest);
 
     unless (-d (my $dir = dirname($dest))) {
         mkpath $dir or die "$dir: $!";

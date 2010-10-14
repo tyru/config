@@ -74,7 +74,7 @@ for my $file (map { convert_filename $c, $_ } @{$c->{files}}) {
     $file  = catfile($home, $file);
     if (-e $file) {
         print "Deleting $file..." if $verbose;
-        rmtree($file) or warn "$file:$!\n";
+        rmtree($file);
         print "done." if $verbose;
     }
 }
