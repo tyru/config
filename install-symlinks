@@ -75,7 +75,7 @@ for my $file (@files) {
 
     if (-e $dest) {
         unless ($force_overwrite) {
-            # hmm, it's something wrong.
+            # checked but file exists?
             die "install-symlinks: File exists '$dest'.\n";
         }
         rmtree($dest) or warn "$dest:Can't remove file(s).\n";
