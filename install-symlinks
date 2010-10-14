@@ -73,7 +73,7 @@ unless ($force_overwrite) {
 for my $file (@files) {
     my ($src, $dest);
 
-    $src  = rel2abs($file);
+    $src  = rel2abs(catfile($c->{directory}, $file));
     $dest = catfile($home, $file);
 
     if (-e $dest) {

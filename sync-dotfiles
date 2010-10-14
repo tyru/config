@@ -64,7 +64,7 @@ for my $file (map { convert_filename $c, $_ } @{$c->{files}}) {
     my ($src, $dest);
 
     $src  = catfile($home, $file);
-    $dest = $file;
+    $dest = catfile($c->{directory}, $file);
 
     say("$src -> $dest");
     install($src, $dest, $username);

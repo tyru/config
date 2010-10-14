@@ -53,7 +53,7 @@ my $c = load_config($config_file);
 for my $file (map { convert_filename $c, $_ } @{$c->{files}}) {
     my ($src, $dest);
 
-    $src  = $file;
+    $src  = catfile($c->{directory}, $file);
     $dest = catfile($home, $file);
 
     say("$src -> $dest");
