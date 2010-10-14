@@ -46,6 +46,7 @@ sub install {
 sub install_symlink {
     my ($src, $dest, $user) = @_;
 
+    # NOTE: ln overwrites $dest.
     if ($^O eq 'MSWin32' || $^O eq 'msys') {
         die "install_symlink(): Your platform does not support symbolic link.\n";
     } elsif ($^O eq 'cygwin') {
