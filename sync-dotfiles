@@ -69,6 +69,7 @@ for my $file (map { convert_filename $c, $_ } @{$c->{files}}) {
     $src  = catfile($home, $file);
     $dest = $file;
 
+    say("$src -> $dest");
     install($src, $dest, $username);
 }
 

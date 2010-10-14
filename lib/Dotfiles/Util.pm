@@ -27,7 +27,6 @@ sub install {
     # TODO: Use rsync?
     rmtree($dest);
 
-    say("$src -> $dest");
     unless (-d (my $dir = dirname($dest))) {
         mkpath $dir or die "$dir: $!";
     }
