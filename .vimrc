@@ -1250,7 +1250,6 @@ MyAlterCommand t      tabedit
 MyAlterCommand sf     setf
 MyAlterCommand hg     helpgrep
 MyAlterCommand ds     diffsplit
-MyAlterCommand se[t]  setlocal
 
 " For typo.
 MyAlterCommand qw     wq
