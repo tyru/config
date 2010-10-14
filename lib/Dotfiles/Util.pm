@@ -9,7 +9,7 @@ use File::Basename qw(dirname);
 
 use base qw/Exporter/;
 our @EXPORT = qw(
-    install is_mswin say load_config
+    install install_symlink is_mswin say load_config
     get_home_from_user determine_user_and_home
 );
 
@@ -40,6 +40,23 @@ sub install {
         system('chown', '-R', $user, $dest);
     } else {
         system('chown', '-R', "$user:$user", $dest);
+    }
+}
+
+sub install_symlink {
+    my ($src, $dest, $user) = @_;
+
+    if ($^O eq 'MSWin32' || $^O eq 'msys') {
+        die "install_symlink(): Your platform does not support symbolic link.\n";
+    } elsif ($^O eq 'cygwin') {
+        system('ln', '-sf', $src, $dest);
+        system('chown', $user, $dest);
+    } elsif ($^O eq 'freebsd') {
+        system('ln', '-sf', $src, $dest);
+        system('chown', $user, $dest);
+    } else {
+        system('ln', '-sf', $src, $dest);
+        system('chown', "$user:$user", $dest);
     }
 }
 
