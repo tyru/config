@@ -190,3 +190,6 @@
 [submodule "ext/unite.vim"]
 	path = ext/unite.vim
 	url = git://github.com/Shougo/unite.vim.git
+[submodule "tools"]
+	path = tools
+	url = git://github.com/tyru/dotto.git
