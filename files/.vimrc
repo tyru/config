@@ -2617,11 +2617,12 @@ let g:lingr_vim_additional_rooms = [
 \   'scala',
 \   'lowlevel',
 \   'lingr_vim',
+\   'vimjolts',
 \]
 
 let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
 
-let g:lingr_vim_mark_as_read_automatically = 0
+let g:lingr_vim_count_unread_at_current_room = 1
 " }}}
 " github {{{
 MyAlterCommand gh Github
