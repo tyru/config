@@ -1,0 +1,31 @@
+# Vim
+files/.vim/.vimbackup_deleted
+
+files/.vim/*
+!files/.vim/after
+!files/.vim/autoload
+!files/.vim/colors
+!files/.vim/compiler
+!files/.vim/doc
+!files/.vim/ftdetect
+!files/.vim/ftplugin
+!files/.vim/indent
+!files/.vim/keymap
+!files/.vim/lang
+!files/.vim/macros
+!files/.vim/plugin
+!files/.vim/spell
+!files/.vim/syntax
+!files/.vim/tutor
+!files/.vim/tools
+!files/.vim/bundle
+
+!files/.vim/dict
+!files/.vim/template
+
+files/.vim/.VimballRecord
+
+# Vimperator
+files/.vimperator/*/
+!files/.vimperator/plugin
+!files/.vimperator/colors
