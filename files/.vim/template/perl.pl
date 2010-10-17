@@ -16,7 +16,7 @@ sub usage () {
 
 
 ### main ###
-my ($needhelp);
+my $needhelp;
 GetOptions(
     'h|help' => \$needhelp,
 ) or usage;
