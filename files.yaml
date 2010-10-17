@@ -33,7 +33,7 @@ os_files:
     .vimperator/plugin: vimperator/plugin
     .vimperator/colors: vimperator/colors
     .vimperatorrc: _vimperatorrc
-removed_files:
+ignore_files:
   - .vim/backup
   - .vim/.netrwhist
   - .vim/.VimballRecord
