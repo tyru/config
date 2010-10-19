@@ -1966,12 +1966,6 @@ function! s:cmd_unretab(begin, end) "{{{
     \   's:' . pattern . ':' . replacement . ':'
 endfunction "}}}
 " }}}
-" :WriteRoot {{{
-command!
-\   -nargs=0
-\   WriteRoot
-\   write !sudo tee %
-" }}}
 " }}}
 " For Plugins {{{
 " nextfile {{{
