@@ -193,3 +193,6 @@
 [submodule "tools"]
 	path = tools
 	url = git://github.com/tyru/dotto.git
+[submodule "ext/multiprocessing.vim"]
+	path = ext/multiprocessing.vim
+	url = git://github.com/tyru/multiprocessing.vim.git
