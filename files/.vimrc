@@ -2255,6 +2255,8 @@ let g:unite_lcd_command = 'TabpageCD'
 let g:unite_enable_ignore_case = 1
 let g:unite_enable_smart_case = 1
 let g:unite_update_time = 50
+let g:unite_source_file_mru_ignore_pattern =
+\   '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\|COMMIT_EDITMSG'
 
 MyAutocmd FileType unite call s:unite_settings()
 
@@ -2262,17 +2264,6 @@ function! s:unite_settings() "{{{
     Map [i] -remap -buffer <BS> <Plug>(unite_delete_backward_path)
 endfunction "}}}
 " }}}
-" }}}
-" MRU {{{
-Map [n] <C-h> :<C-u>MRU<CR>
-let MRU_Max_Entries   = 500
-let MRU_Add_Menu      = 0
-let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\|COMMIT_EDITMSG'
-
-MyAutocmd FileType mru call s:mru_settings()
-function! s:mru_settings() "{{{
-    Map [n] -remap <Esc> <Plug>(mru-close)
-endfunction "}}}
 " }}}
 " Gtags {{{
 if 0
