@@ -193,3 +193,6 @@
 [submodule "tools"]
 	path = tools
 	url = git://github.com/tyru/dotto.git
+[submodule "ext/detect-coding-style.vim"]
+	path = ext/detect-coding-style.vim
+	url = git://github.com/tyru/detect-coding-style.vim.git
