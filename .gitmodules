@@ -196,3 +196,12 @@
 [submodule "dotfiles/.vim/bundle/multiprocessing.vim"]
 	path = dotfiles/.vim/bundle/multiprocessing.vim
 	url = git://github.com/tyru/multiprocessing.vim.git
+[submodule "dotfiles/.zsh/auto-fu.zsh"]
+	path = dotfiles/.zsh/auto-fu.zsh
+	url = git://github.com/hchbaw/auto-fu.zsh.git
+[submodule "dotfiles/.zsh/zex.zsh"]
+	path = dotfiles/.zsh/zex.zsh
+	url = git://github.com/hchbaw/zex.zsh.git
+[submodule "dotfiles/.zsh/opp.zsh"]
+	path = dotfiles/.zsh/opp.zsh
+	url = git://github.com/hchbaw/opp.zsh.git
