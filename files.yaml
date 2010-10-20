@@ -1,3 +1,4 @@
+directory: files
 files:
   - .vim
   - .vimrc
