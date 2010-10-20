@@ -196,3 +196,6 @@
 [submodule "ext/detect-coding-style.vim"]
 	path = ext/detect-coding-style.vim
 	url = git://github.com/tyru/detect-coding-style.vim.git
+[submodule "ext/multiprocessing.vim"]
+	path = ext/multiprocessing.vim
+	url = git://github.com/tyru/multiprocessing.vim.git
