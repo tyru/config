@@ -759,63 +759,6 @@ Map [n] <excmd>OI :<C-u>OptInit<CR>
 
 silent OptInit
 " }}}
-" Select coding style. {{{
-"
-" These settings is only about tab.
-" See the followings for the details:
-"   http://www.jukie.net/bart/blog/vim-and-linux-coding-style
-"   http://yuanjie-huang.blogspot.com/2009/03/vim-in-gnu-coding-style.html
-"   http://en.wikipedia.org/wiki/Indent_style
-" But wikipedia is dubious, I think :(
-
-let s:coding_style = {'styles': {}}
-let s:coding_style.styles['My style'] =
-\   'set expandtab   tabstop=4 shiftwidth=4 softtabstop&'
-let s:coding_style.styles['Short indent'] =
-\   'set expandtab   tabstop=2 shiftwidth=2 softtabstop&'
-let s:coding_style.styles['GNU'] =
-\   'set expandtab   tabstop=8 shiftwidth=2 softtabstop=2 preserveindent'
-let s:coding_style.styles['BSD'] =
-\   'set noexpandtab tabstop=8 shiftwidth=4 softtabstop& preserveindent'    " XXX
-let s:coding_style.styles['Linux'] =
-\   'set noexpandtab tabstop=8 shiftwidth=8 softtabstop& preserveindent'
-
-command!
-\   -bar -bang -nargs=1 -complete=customlist,s:coding_style_complete
-\   CodingStyle
-\   call s:coding_style.fire(<q-args>, <bang>0)
-
-function! s:coding_style_complete(...) "{{{
-    return keys(s:coding_style.styles)
-endfunction "}}}
-function! s:coding_style.fire(choice, banged) dict "{{{
-    execute get(self.styles, a:choice, '')
-
-    if a:banged
-        augroup vimrc-coding-style
-            autocmd!
-            execute
-            \   'autocmd BufReadPost * call s:coding_style.fire('
-            \       string(a:choice) ','
-            \       0 ','
-            \   ')'
-        augroup END
-    endif
-endfunction "}}}
-
-
-Map [n] <excmd>ot :<C-u>call <SID>toggle_tab_options()<CR>
-
-function! s:toggle_tab_options() "{{{
-    let choice = prompt#prompt('Which do you prefer?:', {
-    \   'one_char': 1,
-    \   'menu': keys(s:coding_style.styles),
-    \   'escape': 1,
-    \})
-    execute get(s:coding_style.styles, choice, '')
-endfunction "}}}
-" }}}
-
 " Close help/quickfix window {{{
 
 " s:winutil {{{
