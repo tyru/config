@@ -1842,7 +1842,7 @@ command!
 " :WhichEdit {{{
 MyAlterCommand we WhichEdit
 command!
-\   -nargs=1 -complete=customlist
+\   -nargs=1
 \   WhichEdit
 \   call s:cmd_which_edit(<f-args>)
 
