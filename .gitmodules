@@ -1,3 +1,6 @@
+[submodule "tools"]
+	path = tools
+	url = git://github.com/tyru/dotto.git
 [submodule "ext/caw.vim"]
 	path = ext/caw.vim
 	url = git://github.com/tyru/caw.vim.git
@@ -190,9 +193,6 @@
 [submodule "ext/unite.vim"]
 	path = ext/unite.vim
 	url = git://github.com/Shougo/unite.vim.git
-[submodule "tools"]
-	path = tools
-	url = git://github.com/tyru/dotto.git
 [submodule "ext/detect-coding-style.vim"]
 	path = ext/detect-coding-style.vim
 	url = git://github.com/tyru/detect-coding-style.vim.git
