@@ -166,9 +166,6 @@
 [submodule "dotfiles/.vim/bundle/operator-reverse.vim"]
 	path = dotfiles/.vim/bundle/operator-reverse.vim
 	url = git://github.com/tyru/operator-reverse.vim.git
-[submodule "dotfiles/.vim/bundle/parse_args.vim"]
-	path = dotfiles/.vim/bundle/parse_args.vim
-	url = git://github.com/tyru/parse_args.vim.git
 [submodule "dotfiles/.vim/bundle/thinca-vim-textobj-plugins"]
 	path = dotfiles/.vim/bundle/thinca-vim-textobj-plugins
 	url = git://github.com/thinca/vim-textobj-plugins.git
