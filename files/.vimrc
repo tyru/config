@@ -1657,7 +1657,7 @@ MyAlterCommand ep Expand
 MyAlterCommand has Has
 
 command!
-\   -bar -nargs=1 -complete=customlist,excomplete#feature_list#complete
+\   -bar -nargs=1 -complete=customlist,feature_list_excomplete#complete
 \   Has
 \   echo has(<q-args>)
 " }}}
@@ -1842,7 +1842,7 @@ command!
 " :WhichEdit {{{
 MyAlterCommand we WhichEdit
 command!
-\   -nargs=1 -complete=customlist,excomplete#shell#complete
+\   -nargs=1 -complete=customlist
 \   WhichEdit
 \   call s:cmd_which_edit(<f-args>)
 
