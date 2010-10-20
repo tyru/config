@@ -2593,6 +2593,15 @@ MyAlterCommand gr[ep] OMGrep
 Map [n] -remap <Space>gw <Plug>(omg-grep-cword)
 Map [n] -remap <Space>gW <Plug>(omg-grep-cWORD)
 " }}}
+" detect-coding-style {{{
+
+MyAutocmd User dcs-initialized-styles call s:dcs_register_own_styles()
+function! s:dcs_register_own_styles()
+    call dcs#register_style('My style', {'hook_excmd': 'setlocal expandtab   tabstop=4 shiftwidth=4 softtabstop&'})
+    call dcs#register_style('Short indent', {'hook_excmd': 'setlocal expandtab   tabstop=2 shiftwidth=2 softtabstop&'})
+endfunction
+
+" }}}
 
 " runtime
 " netrw {{{
