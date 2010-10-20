@@ -2204,7 +2204,7 @@ let g:unite_source_file_mru_ignore_pattern =
 MyAutocmd FileType unite call s:unite_settings()
 
 function! s:unite_settings() "{{{
-    Map [i] -remap -buffer <C-h> <Plug>(unite_delete_backward_path)
+    Map [i] -remap -buffer <BS> <Plug>(unite_delete_backward_path)
 endfunction "}}}
 " }}}
 " }}}
