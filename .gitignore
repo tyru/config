@@ -1,31 +1,31 @@
 # Vim
-files/.vim/.vimbackup_deleted
+dotfiles/.vim/.vimbackup_deleted
 
-files/.vim/*
-!files/.vim/after
-!files/.vim/autoload
-!files/.vim/colors
-!files/.vim/compiler
-!files/.vim/doc
-!files/.vim/ftdetect
-!files/.vim/ftplugin
-!files/.vim/indent
-!files/.vim/keymap
-!files/.vim/lang
-!files/.vim/macros
-!files/.vim/plugin
-!files/.vim/spell
-!files/.vim/syntax
-!files/.vim/tutor
-!files/.vim/tools
-!files/.vim/bundle
+dotfiles/.vim/*
+!dotfiles/.vim/after
+!dotfiles/.vim/autoload
+!dotfiles/.vim/colors
+!dotfiles/.vim/compiler
+!dotfiles/.vim/doc
+!dotfiles/.vim/ftdetect
+!dotfiles/.vim/ftplugin
+!dotfiles/.vim/indent
+!dotfiles/.vim/keymap
+!dotfiles/.vim/lang
+!dotfiles/.vim/macros
+!dotfiles/.vim/plugin
+!dotfiles/.vim/spell
+!dotfiles/.vim/syntax
+!dotfiles/.vim/tutor
+!dotfiles/.vim/tools
+!dotfiles/.vim/bundle
 
-!files/.vim/dict
-!files/.vim/template
+!dotfiles/.vim/dict
+!dotfiles/.vim/template
 
-files/.vim/.VimballRecord
+dotfiles/.vim/.VimballRecord
 
 # Vimperator
-files/.vimperator/*/
-!files/.vimperator/plugin
-!files/.vimperator/colors
+dotfiles/.vimperator/*/
+!dotfiles/.vimperator/plugin
+!dotfiles/.vimperator/colors
