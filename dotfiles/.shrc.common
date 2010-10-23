@@ -23,6 +23,7 @@ alias go='gopen'
 alias lingr="vim --cmd 'let g:lingr = 1' -c LingrLaunch"
 alias chalice="vim --cmd 'let g:chalice = 1' -c Chalice"
 alias tmux='tmux -u -2'
+# http://techno-st.net/2009/06/06/bash-zsh-alias-sudo.html
 alias sudo='sudo'
 
 which trash >/dev/null 2>/dev/null && alias rm='trash'
