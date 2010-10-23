@@ -196,3 +196,6 @@
 [submodule "dotfiles/.vim/bundle/multiprocessing.vim"]
 	path = dotfiles/.vim/bundle/multiprocessing.vim
 	url = git://github.com/tyru/multiprocessing.vim.git
+[submodule "dotfiles/.vim/bundle/parse_args.vim"]
+	path = dotfiles/.vim/bundle/parse_args.vim
+	url = git://github.com/tyru/parse_args.vim.git
