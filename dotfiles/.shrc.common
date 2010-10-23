@@ -26,13 +26,13 @@ alias tmux='tmux -u -2'
 # http://techno-st.net/2009/06/06/bash-zsh-alias-sudo.html
 alias sudo='sudo'
 
-which trash >/dev/null 2>/dev/null && alias rm='trash'
-which vim >/dev/null 2>/dev/null && alias vi='vim'
-which screen >/dev/null 2>/dev/null && {
+which trash >/dev/null 2>&1 && alias rm='trash'
+which vim >/dev/null 2>&1 && alias vi='vim'
+which screen >/dev/null 2>&1 && {
     alias sc="screen"
     alias screen="screen -R"
 }
-which perldocjp >/dev/null 2>/dev/null && alias perldoc='perldocjp'
+which perldocjp >/dev/null 2>&1 && alias perldoc='perldocjp'
 
 if [ "$MY_CURRENT_ENV" = "cygwin" ]; then
     alias less='less -r'
