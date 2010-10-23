@@ -205,3 +205,6 @@
 [submodule "dotfiles/.zsh/opp.zsh"]
 	path = dotfiles/.zsh/opp.zsh
 	url = git://github.com/hchbaw/opp.zsh.git
+[submodule "dotfiles/.vim/bundle/parse_args.vim"]
+	path = dotfiles/.vim/bundle/parse_args.vim
+	url = git://github.com/tyru/parse_args.vim.git
