@@ -326,10 +326,6 @@ liberator.globalVariables.copy_templates = [
 ];
 EOS
 " }}}
-" sbmincsearch {{{
-let g:sbmincsearch_service_name = "delicious"
-let g:sbmincsearch_max = 50
-" }}}
 " proxy.js {{{
 javascript <<EOS
 liberator.globalVariables.proxy_settings = [
@@ -457,8 +453,6 @@ let g:hints_for_embedded_open_parent_link = 1
 " zip-de-download.js {{{
 command! -bang -nargs=+ downthemall zipdownload<bang> -xpath='//a|//img' <args>
 " }}}
-" pluginManager.js {{{
-" lazy pluginmanager update
 " plugin_loader.js {{{
 js <<EOF
 liberator.globalVariables.plugin_loader_roots = '~/.vimperator/vimpr';
