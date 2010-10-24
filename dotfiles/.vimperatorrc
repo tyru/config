@@ -494,8 +494,8 @@ command! closedtabs echo [<><img src={tab.image}/>{tab.title}</> for each(tab in
 " (via http://vimperator.g.hatena.ne.jp/snaka72/20090217/1234831065)
 command! jsshell js (function a(){commandline.input("js> ", function(inp){if(inp=="quit"){liberator.echo("bye!");return;}liberator.echo(liberator.eval(inp)); a();})})()
 " }}}
-" :LoadConfig {{{
-command! load_config source $HOME/.vimperatorrc
+" :loadconfig {{{
+command! loadconfig source $HOME/.vimperatorrc
 " }}}
 " LDRでピンをバックグラウンドのタブで開くためのVimperatorスクリプト {{{
 " via http://d.hatena.ne.jp/mountain_dew/20091209/1260371082
