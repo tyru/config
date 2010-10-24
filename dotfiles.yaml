@@ -36,8 +36,8 @@ ignore_files:
   - .vim/backup
   - .vim/.netrwhist
   - .vim/.VimballRecord
-  - .vim/chalice
   - .vim/info
   - .vim/record
   - .vim/sessions
   - .vim/swap
+  - .vimperator/info

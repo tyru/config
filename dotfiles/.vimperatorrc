@@ -459,6 +459,35 @@ command! -bang -nargs=+ downthemall zipdownload<bang> -xpath='//a|//img' <args>
 " }}}
 " pluginManager.js {{{
 " lazy pluginmanager update
+" plugin_loader.js {{{
+js <<EOF
+liberator.globalVariables.plugin_loader_roots = '~/.vimperator/vimpr';
+liberator.globalVariables.plugin_loader_plugins = <>
+    _libly
+    appendAnchor
+    bitly
+    command_menu
+    cookieManager
+    copy
+    direct_bookmark
+    feedSomeKeys_3
+    gmperator
+    hints-for-embedded
+    ime_controller
+    migemo_completion
+    migemo_hint
+    migratestatusbar
+    multi_requester
+    opener
+    proxy
+    sbmcommentsviewer
+    subscldr
+    toggler
+    walk-input
+    nextlink
+</>.toString().split(/\s+/).filter(function(n) n);
+EOF
+
 " }}}
 " }}}
 "-----------------------------------------------------------------

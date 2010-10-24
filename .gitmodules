@@ -208,3 +208,6 @@
 [submodule "dotfiles/.vim/bundle/parse_args.vim"]
 	path = dotfiles/.vim/bundle/parse_args.vim
 	url = git://github.com/tyru/parse_args.vim.git
+[submodule "dotfiles/.vimperator/vimpr"]
+	path = dotfiles/.vimperator/vimpr
+	url = git://github.com/vimpr/vimperator-plugins.git

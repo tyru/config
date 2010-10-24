@@ -29,3 +29,5 @@ dotfiles/.vim/.VimballRecord
 dotfiles/.vimperator/*/
 !dotfiles/.vimperator/plugin
 !dotfiles/.vimperator/colors
+
+!dotfiles/.vimperator/vimpr
