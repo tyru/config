@@ -455,7 +455,6 @@ command! -bang -nargs=+ downthemall zipdownload<bang> -xpath='//a|//img' <args>
 " }}}
 " plugin_loader.js {{{
 js <<EOF
-liberator.globalVariables.plugin_loader_roots = '~/.vimperator/vimpr';
 liberator.globalVariables.plugin_loader_plugins = <>
     _libly
     appendAnchor
