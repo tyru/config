@@ -350,6 +350,15 @@ MyAutocmd FileType pl setlocal filetype=perl
 MyAutocmd FileType rb setlocal filetype=ruby
 MyAutocmd FileType scm setlocal filetype=scheme
 
+" Checking typo.
+MyAutocmd BufWriteCmd *[,*] call s:write_check_typo(expand('<afile>'))
+function! s:write_check_typo(file)
+    let prompt = "possible typo: really want to write to '" . a:file . "'?(y/n):"
+    if input(prompt) =~? '^y\(es\)\=$'
+        execute 'write' a:file
+    endif
+endfunction
+
 " }}}
 " Initializing {{{
 
