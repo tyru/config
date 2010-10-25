@@ -1,7 +1,6 @@
 " vim:set fen fdm=marker:
 " Basic {{{
 scriptencoding utf-8
-set cpo&vim
 
 syntax enable
 filetype plugin indent on
