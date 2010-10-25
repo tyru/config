@@ -1539,34 +1539,34 @@ function! s:cmd_del_file(...) "{{{
         return
     endif
 
-    for file in a:000
-        let org_file = file
-        " TODO glob
-        let file = expand(file)
-        let file = resolve(file)
+    for arg in a:000
+        for file in split(expand(arg), '\n')
+            let file = resolve(file)
+            let bufnr = bufnr(file)
 
-        " Delete the file.
-        let type = getftype(file)
-        if type ==# 'file'
-            let success = 0
-            if delete(file) !=# success
-                call tyru#util#warn("Can't delete '" . file . "'")
-                continue
+            " Delete the file.
+            let type = getftype(file)
+            if type ==# 'file'
+                let success = 0
+                if delete(file) !=# success
+                    call tyru#util#warn("Can't delete '" . file . "'")
+                    continue
+                endif
+            elseif type ==# 'dir'
+                " TODO
+            else
+                redraw
+                call tyru#util#warn(file . ": Unknown file type '" . type . "'.")
             endif
-        elseif type ==# 'dir'
-            " TODO
-        else
-            call tyru#util#warn(file . ": Unknown file type '" . type . "'.")
-        endif
 
-        " Delete the buffer.
-        let nr = bufnr(org_file)
-        if nr != -1
-            if nr == bufnr('%')
-                enew
+            " Delete the buffer.
+            if bufnr != -1
+                if bufnr == bufnr('%')
+                    enew
+                endif
+                execute bufnr 'bwipeout'
             endif
-            execute nr 'bwipeout'
-        endif
+        endfor
     endfor
 endfunction "}}}
 " }}}
