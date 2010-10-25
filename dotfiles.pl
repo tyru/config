@@ -1,0 +1,50 @@
+{
+    directory => "dotfiles",
+    files => [
+        'bin',
+        '.vim',
+        '.vimrc',
+        '.gvimrc',
+        '.vimperator',
+        '.vimperatorrc',
+        '.bash_profile',
+        '.bashrc',
+        '.screenrc',
+        '.inputrc',
+        '.zshrc',
+        '.zshenv',
+        '.zsh',
+        '.skel',
+        '.module-starter',
+        '.w3m/keymap',
+        '.Xmodmap',
+        '.shrc.common',
+        '.shrc.cygwin',
+        '.shrc.start-screen',
+        '.env.common',
+        '.tmux.conf',
+        '.tmux',
+        '.uim',
+        '.uim.d/customs',
+    ],
+    os_files => do {
+        $_ = {
+            '.vimperator' => 'vimperator',
+            '.vimperatorrc' => '_vimperatorrc',
+        };
+        {
+            MSWin32 => $_,
+            cygwin => $_,
+        };
+    },
+    ignore_files => [
+        '.vim/backup',
+        '.vim/.netrwhist',
+        '.vim/.VimballRecord',
+        '.vim/info',
+        '.vim/record',
+        '.vim/sessions',
+        '.vim/swap',
+        '.vimperator/info',
+    ],
+}
