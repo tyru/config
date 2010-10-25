@@ -211,3 +211,6 @@
 [submodule "dotfiles/.vimperator/vimpr"]
 	path = dotfiles/.vimperator/vimpr
 	url = git://github.com/vimpr/vimperator-plugins.git
+[submodule "dotfiles/.vim/bundle/grass.vim"]
+	path = dotfiles/.vim/bundle/grass.vim
+	url = git://github.com/tyru/grass.vim.git
