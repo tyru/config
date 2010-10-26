@@ -2059,15 +2059,11 @@ endif
 
 " }}}
 " eskk {{{
-let g:eskk_disable = 0
-let g:eskk_debug = 1
 let g:eskk_debug_file = '~/eskk-debug.log'
 
-call eskk#load()
-
 if has('vim_starting')
-    let g:eskk_dictionary.path = '~/.skk-jisyo'
-    let g:eskk_large_dictionary.path = '/usr/share/skk/SKK-JISYO'
+    let g:eskk_dictionary = {'path': '~/.skk/skk-user-dict'}
+    let g:eskk_large_dictionary = {'path': '~/.skk/skk-large-dict'}
 endif
 
 let g:eskk_egg_like_newline = 1
