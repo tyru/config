@@ -687,6 +687,7 @@ Map [n] <excmd>ct :<C-u>tabclose<CR>
 " }}}
 
 " Execute most used command quickly {{{
+Map [n] <excmd>ee     :<C-u>edit<CR>
 Map [n] <excmd>w      :<C-u>write<CR>
 Map [n] <excmd>q      :<C-u>quit<CR>
 " }}}
