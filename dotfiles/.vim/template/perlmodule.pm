@@ -4,7 +4,7 @@ use warnings;
 use utf8;
 use Carp;
 
-our $VERSION = eval('0.001');
+our $VERSION = eval '0.001';
 
 # use base 'Class::Accessor::Fast';
 # __PACKAGE__->mk_accessors(qw());
