@@ -1,6 +1,79 @@
 
+# vim:set ft=lua:
+
 # Show fullpath at prompt
 option prompt $e[31;40;1m[$p]$_$$ $e[37;1m
 
 # TODO: Run "ls" when changing directory
 # cd{ __cd__ $1 ; ls }
+
+
+-- MSYSのパスはインストールした場所に変更してください。
+-- MSYSを使っていない場合はdirmapを空にすれば無効になります。
+local dirmap = {}
+-- local dirmap = {
+--     ['/bin/'] = 'C:/msys/1.0/bin/',
+--     ['/usr/bin/'] = 'C:/msys/1.0/bin/',
+-- }
+
+local cmdutils = {}
+-- nnstring.cppのNnString::splitToより
+function cmdutils.split(cmdline, sep)
+    local quote = false
+    local pos = 1
+    
+    while pos <= #cmdline do
+        local s = cmdline:sub(pos, pos)
+        
+        if s == '"' then
+            quote = not quote
+        elseif s:match('^[\129-\159\224-\252]$') then
+            pos = pos + 1
+        elseif (not quote) and s:match(sep) then
+            break
+        end
+        
+        pos = pos + 1
+    end
+    
+    return cmdline:sub(1, pos - 1), cmdline:sub(pos + 1), cmdline:sub(pos, pos)
+end
+
+local function append_ext(name)
+    if nyaos.access(name, 0) then return name end
+    if nyaos.access(name .. '.exe', 0) then return name .. '.exe' end
+    if nyaos.access(name ..  '.com', 0) then return name .. '.com' end
+    return name
+end
+
+local function namefilter(name)
+    for prefix, path in pairs(dirmap) do
+        if name:sub(1, #prefix) == prefix then
+            return path .. name:sub(#prefix + 1)
+        end
+    end
+    return name
+end
+
+local function drop_first_token(args)
+    local _, param, sep = cmdutils.split(args, '%s')
+    return sep .. param
+end
+
+function nyaos.filter3.shebang(name, param)
+    local suffix = string.lower(string.sub(name, #name - 3))
+    
+    if suffix ~= '.exe' and suffix ~= '.com' then
+        local f = io.open(name, 'r')
+        if f:read(2) == '#!' then
+            local shebang = f:read():gsub('^%s*', '')
+            f:close()
+            
+            local new_name = append_ext(namefilter(cmdutils.split(shebang, '%s')))
+            local new_param = shebang .. ' ' .. name .. drop_first_token(param)
+            return new_name, new_param
+        else
+            f:close()
+        end
+    end
+end
