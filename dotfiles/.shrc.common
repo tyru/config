@@ -38,7 +38,7 @@ if [ "$MY_CURRENT_ENV" = "cygwin" ]; then
     alias less='less -r'
     alias ls='ls --color=tty --show-control-chars'
 elif [  "$MY_CURRENT_ENV" = 'freebsd' ]; then
-    # BSD ls cannot handle "--long-option".
+    # BSD ls cannot handle --long-option.
     :
 else
     alias ls='ls --color=tty'
@@ -49,3 +49,26 @@ if [ -x "/usr/local/share/vim/vim72/macros/less.sh" ]; then
 elif [ -x "/usr/share/vim/vim72/macros/less.sh" ]; then
     alias vless="/usr/share/vim/vim72/macros/less.sh"
 fi
+
+
+
+# util commands
+function mkcd() {
+    [ $# != 0 ] && mkdir "$1" && cd "$1" }
+function viwi() {
+    local p
+    [ $# != 0 ] && p=`which $1` && vi "$p"
+}
+function locallib() {
+    local INSTALL_BASE
+    INSTALL_BASE=$1
+    if [ -d $INSTALL_BASE ]; then
+        eval $(use-locallib $INSTALL_BASE)
+    fi
+}
+
+
+
+# Do not stop screen.
+# http://d.hatena.ne.jp/hogem/20090411/1239451878
+stty stop undef

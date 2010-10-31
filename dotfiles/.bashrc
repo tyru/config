@@ -1,51 +1,37 @@
 # vim:set fdm=marker:
 
+# $MY_CURRENT_ENV is necessary for .shrc.common
 MY_CURRENT_ENV="$(perl -e 'print $^O')"
 source ~/.shrc.common
 
 # exec zsh? {{{
+# This is considered as harmful.
+# See http://d.hatena.ne.jp/tyru/20100922/exec_bin_zsh_considered_harmful
+#
 # NOTE: "$PS1" to confirm user to login in interactively.
-# XXX: scp, sftp will freeze when login. Temporarily disabled.
 #if [ -x "$(which zsh)" && -z "$PS1" ]; then
 #    exec zsh
 #fi
 # }}}
 
-### shopt/set ### {{{
+# shopt/set {{{
 shopt -s nocaseglob
 shopt -s cdspell
 
 set bell-style visible
 # }}}
 
-### function ### {{{
+# List directory when changing directory {{{
 cd () {
     command cd $1
     ll
 }
 # }}}
 
-### cygwin ### {{{
+# cygwin {{{
 if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then
     source ~/.shrc.cygwin
 fi
-# }}}
-
-# misc. {{{
-# C-sによる画面の停止を無効{{{
-# http://d.hatena.ne.jp/hogem/20090411/1239451878
-stty stop undef
-# }}}
-# local::lib {{{
-function locallib () {
-    local INSTALL_BASE
-    INSTALL_BASE=$1
-    if [ -d $INSTALL_BASE ]; then
-        eval $(use-locallib $INSTALL_BASE)
-    fi
-}
-
-# }}}
 # }}}
 
 source ~/.shrc.start-screen

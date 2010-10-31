@@ -1,5 +1,6 @@
 # vim:set fdm=marker fmr=<<<<,>>>>:
 
+# $MY_CURRENT_ENV is necessary for .shrc.common
 MY_CURRENT_ENV="$(perl -e 'print $^O')"
 source ~/.shrc.common
 
@@ -86,12 +87,7 @@ setopt sh_word_split
 setopt share_history
 # setopt print_exit_value
 # >>>>
-### misc ### <<<<
-# カレントディレクトリが変わると実行される <<<<
-# via http://d.hatena.ne.jp/hiboma/20061005/1160026514
-chpwd () { ll }
-# >>>>
-# abbrev <<<<
+### abbrev ### <<<<
 # via http://homepage1.nifty.com/blankspace/zsh/zsh.html
 typeset -A myabbrev
 myabbrev=(
@@ -114,6 +110,11 @@ my-expand-abbrev() {
 }
 zle -N my-expand-abbrev
 bindkey     " "         my-expand-abbrev
+# >>>>
+### misc ### <<<<
+# カレントディレクトリが変わると実行される <<<<
+# via http://d.hatena.ne.jp/hiboma/20061005/1160026514
+chpwd () { ll }
 # >>>>
 # gitのブランチ名を右プロンプトに表示 <<<<
 # http://d.hatena.ne.jp/mollifier/20090814/p1
@@ -179,26 +180,14 @@ _quote-previous-word-in-double() {
 zle -N _quote-previous-word-in-double
 bindkey '^[Q' _quote-previous-word-in-double
 # >>>>
-# Gitのリポジトリのトップレベルにcdするコマンド <<<<
-# http://d.hatena.ne.jp/hitode909/20100211/1265879271
-function u()
-{
-    cd ./$(git rev-parse --show-cdup)
-    if [ $# = 1 ]; then
-        cd $1
-    fi
+# キーマッピングでcd ..する <<<<
+# http://gist.github.com/608246
+function cdup() {
+    cd ..
+    zle reset-prompt
 }
-# >>>>
-# mkcd <<<<
-function mkcd() {
-    [ $# = 1 ] && mkdir "$1" && cd "$1"
-}
-# >>>>
-# viwi <<<<
-function viwi() {
-    local p
-    [ $# != 0 ] && p=`which $1` && vi "$p"
-}
+zle -N cdup
+bindkey '^y' cdup
 # >>>>
 # vimperator-like completion <<<<
 # via http://gist.github.com/414589
@@ -246,16 +235,6 @@ if [ -f "$HOME/.zsh/auto-fu.zsh/auto-fu.zsh" -a "$MY_CURRENT_ENV" != "cygwin" ];
     afu-ad-delete-unambiguous-prefix afu+accept-line-and-down-history
     afu-ad-delete-unambiguous-prefix afu+accept-and-hold
 fi
-# >>>>
-# local::lib <<<<
-function locallib () {
-    local INSTALL_BASE
-    INSTALL_BASE=$1
-    if [ -d $INSTALL_BASE ]; then
-        eval $(use-locallib $INSTALL_BASE)
-    fi
-}
-
 # >>>>
 # コマンドラインの単語区切りを設定する <<<<
 # http://d.hatena.ne.jp/sugyan/20100712/1278869962
