@@ -180,15 +180,6 @@ _quote-previous-word-in-double() {
 zle -N _quote-previous-word-in-double
 bindkey '^[Q' _quote-previous-word-in-double
 # >>>>
-# キーマッピングでcd ..する <<<<
-# http://gist.github.com/608246
-function cdup() {
-    cd ..
-    zle reset-prompt
-}
-zle -N cdup
-bindkey '^y' cdup
-# >>>>
 # vimperator-like completion <<<<
 # via http://gist.github.com/414589
 if [ -f "$HOME/.zsh/auto-fu.zsh/auto-fu.zsh" -a "$MY_CURRENT_ENV" != "cygwin" ]; then
