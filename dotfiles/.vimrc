@@ -2210,6 +2210,7 @@ MyAutocmd FileType unite call s:unite_settings()
 
 function! s:unite_settings() "{{{
     Map [i] -remap -buffer <BS> <Plug>(unite_delete_backward_path)
+    Map [n] -remap -buffer <Space><Space> <Plug>(unite_toggle_mark_current_candidate)
 endfunction "}}}
 " }}}
 " }}}
