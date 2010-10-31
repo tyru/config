@@ -2484,6 +2484,8 @@ function! s:vimfiler_settings() "{{{
     Map [n] -remap -buffer L <Plug>(vimfiler_move_to_history_forward)
     Map [n] -remap -buffer H <Plug>(vimfiler_move_to_history_back)
     Unmap [n] -buffer N
+    Map [n] -remap -buffer <C-o> <Plug>(vimfiler_move_to_history_back)
+    Map [n] -remap -buffer <C-i> <Plug>(vimfiler_move_to_history_forward)
 endfunction "}}}
 " }}}
 " prettyprint {{{
