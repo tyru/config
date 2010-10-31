@@ -27,16 +27,12 @@
         '.uim',
         '.uim.d/customs',
     ],
-    os_files => do {
-        $_ = {
+    os_files => {map {
+        $_ => {
             '.vimperator' => 'vimperator',
             '.vimperatorrc' => '_vimperatorrc',
-        };
-        {
-            MSWin32 => $_,
-            cygwin => $_,
-        };
-    },
+        }
+    } qw(MSWin32 cygwin)},
     ignore_files => [
         '.vim/backup',
         '.vim/.netrwhist',
