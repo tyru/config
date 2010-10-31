@@ -26,7 +26,7 @@ alias tmux='tmux -u -2'
 # http://techno-st.net/2009/06/06/bash-zsh-alias-sudo.html
 alias sudo='sudo'
 
-which trash >/dev/null 2>&1 && alias rm='trash'
+which trash-put >/dev/null 2>&1 && alias rm='trash-put'
 which vim >/dev/null 2>&1 && alias vi='vim'
 which screen >/dev/null 2>&1 && {
     alias sc="screen"
