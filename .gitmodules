@@ -214,6 +214,3 @@
 [submodule "dotfiles/.vim/bundle/grass.vim"]
 	path = dotfiles/.vim/bundle/grass.vim
 	url = git://github.com/tyru/grass.vim.git
-[submodule "dotfiles/.vim/bundle/whichedit.vim"]
-	path = dotfiles/.vim/bundle/whichedit.vim
-	url = git://github.com/tyru/whichedit.vim.git
