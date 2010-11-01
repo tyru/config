@@ -1848,62 +1848,6 @@ command!
 \   Ack
 \   call s:ack(<f-args>)
 " }}}
-" :WhichEdit {{{
-MyAlterCommand we WhichEdit
-command!
-\   -nargs=1
-\   WhichEdit
-\   call s:cmd_which_edit(<f-args>)
-
-function! s:cmd_which_edit(arg) "{{{
-    if !exists('*Which')
-        Eecho "You have not installed which.vim yet. (script_id is 139)"
-        return
-    endif
-    execute 'edit' Which(a:arg)
-endfunction "}}}
-
-" }}}
-" :BacktickEdit {{{
-MyAlterCommand be BacktickEdit
-command!
-\   -nargs=+
-\   BacktickEdit
-\   edit `<args>`
-" }}}
-" TODO: :GlobEdit {{{
-" }}}
-" :Hyde {{{
-
-MyAlterCommand hyd[e] Hyde
-
-command!
-\   -bar -nargs=1 -complete=expression
-\   Hyde
-\   call s:cmd_hyde(<q-args>)
-
-function! s:hyde2inch(hyde_num) "{{{
-    return s:hyde2cm(a:hyde_num) / 2.54
-endfunction "}}}
-function! s:hyde2cm(hyde_num) "{{{
-    return a:hyde_num * 156
-endfunction "}}}
-
-function! s:cmd_hyde(hyde_num_str) "{{{
-    " Hyde it more accurately
-    let hyde_num = str2float(a:hyde_num_str)
-
-    " http://dic.nicovideo.jp/a/156cm
-    if v:lang ==# 'C'
-        echo s:hyde2inch(hyde_num) 'inch'
-    elseif v:lang =~# '^ja_JP'
-        echo s:hyde2cm(hyde_num) 'cm'
-    else
-        echo hyde_num 'hyde'
-    endif
-endfunction "}}}
-
-" }}}
 " :Unretab {{{
 command!
 \   -bar -range=%
@@ -2609,6 +2553,9 @@ function! s:dcs_register_own_styles()
     call dcs#register_style('Short indent', {'hook_excmd': 'setlocal expandtab   tabstop=2 shiftwidth=2 softtabstop&'})
 endfunction
 
+" }}}
+" whichedit {{{
+MyAlterCommand we WhichEdit
 " }}}
 
 " runtime
