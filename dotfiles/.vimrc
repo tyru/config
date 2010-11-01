@@ -1365,26 +1365,6 @@ endfunction "}}}
 MyAutocmd FileType * call s:load_filetype()
 " }}}
 " Commands {{{
-" :HelpTagsAll {{{
-"   do :helptags to all doc/ in &runtimepath
-command!
-\   -bar -nargs=?
-\   HelpTagsAll
-\   call s:cmd_help_tags_all(<f-args>)
-
-function! s:cmd_help_tags_all(...) "{{{
-    for path in tyru#util#split_path(&runtimepath)
-        let doc = path . '/doc'
-        if isdirectory(doc)
-            try
-                silent execute 'helptags' join(a:000) doc
-            catch
-                ShowStackTrace!
-            endtry
-        endif
-    endfor
-endfunction "}}}
-" }}}
 " :MTest {{{
 "   convert Perl's regex to Vim's regex
 command!
@@ -1718,66 +1698,6 @@ function! s:split_nicely_with(args, banged) "{{{
     catch
         Echomsg ErrorMsg substitute(v:exception, '^Vim(\w\+):', '', '')
     endtry
-endfunction "}}}
-" }}}
-" :SelectColorScheme {{{
-" via http://gist.github.com/314439
-" via http://gist.github.com/314597
-
-command!
-\   -bar
-\   SelectColorScheme
-\   call s:cmd_select_color_scheme()
-function! s:cmd_select_color_scheme() "{{{
-  30vnew
-
-  let files = tyru#util#globpath(&rtp, 'colors/*.vim'), "\n"
-  let regex = '\w\+\(\.vim\)\@='
-  let files = map(files, 'matchstr(v:val, regex)')
-  let files = sort(files)
-  let files = tyru#util#uniq(files)
-  call setline(1, files)
-
-  file `='[ColorSchemeSelector]'`
-  setlocal bufhidden=wipe
-  setlocal buftype=nofile
-  setlocal nonu
-  setlocal nomodifiable
-  setlocal cursorline
-  Map [n] -buffer <Enter>  :<C-u>execute 'colorscheme' getline('.')<CR>
-  Map [n] -buffer q        :<C-u>close<CR>
-endfunction "}}}
-
-" }}}
-" :Ack {{{
-function! s:ack(...)
-    let save_grepprg = &l:grepprg
-    try
-        let &l:grepprg = 'ack'
-        execute 'grep' join(a:000, ' ')
-    finally
-        let &l:grepprg = save_grepprg
-    endtry
-endfunction
-
-MyAlterCommand ac[k] Ack
-command!
-\   -bar -nargs=+
-\   Ack
-\   call s:ack(<f-args>)
-" }}}
-" :Unretab {{{
-command!
-\   -bar -range=%
-\   Unretab
-\   call s:cmd_unretab(<line1>, <line2>)
-
-function! s:cmd_unretab(begin, end) "{{{
-    let pattern = '^\(\%( \{' . &l:tabstop . '}\)\+\)\( *\)'
-    let replacement = '\=repeat("\t", strlen(submatch(1)) / ' . &l:tabstop . ') . submatch(2)'
-    execute
-    \   a:begin . ',' . a:end
-    \   's:' . pattern . ':' . replacement . ':'
 endfunction "}}}
 " }}}
 " }}}
