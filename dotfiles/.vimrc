@@ -1915,18 +1915,6 @@ EskkMap -remap jj <Plug>(eskk:disable)<Esc>
 " EskkMap -expr lhs3 {'foo': 'hoge'}.foo
 " EskkMap -noremap lhs4 rhs
 " }}}
-" stickykey {{{
-
-" I use stickykey for emergency use.
-" So these mappings are little bit difficult to press, but I don't care.
-
-Map [nvoicl] -remap <C-g><C-s> <Plug>(stickykey-shift-remap)
-Map [nvoicl] -remap <C-g><C-c> <Plug>(stickykey-ctrl-remap)
-Map [nvoicl] -remap <C-g><C-a> <Plug>(stickykey-alt-remap)
-" I don't have Macintosh :(
-" Map [nvoicl] -remap <C-g><C-m> <Plug>(stickykey-command-remap)
-
-" }}}
 " restart {{{
 MyAlterCommand res[tart] Restart
 MyAlterCommand ers[tart] Restart
