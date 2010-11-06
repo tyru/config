@@ -1,11 +1,36 @@
 #!/bin/sh
 
 
-remote='origin'
-
-if [ $# != 0 ]; then
+code() {
     remote="$1"
+
+    cat <<END_OF_CODE
+get_branch() {
+    git branch | egrep '^\*' | sed -e 's/^\*\s\+//'
+}
+my_repository() {
+    # If git-subupdate-{watch-repo,my-repo} are not found,
+    # Try to determine if this is my repository (currently by branch name).
+    [ ! -e 'git-subupdate-watch-repo' -a -e 'git-subupdate-my-repo' -o "`get_branch`" != '(no branch)' ]
+}
+
+if my_repository; then
+    # Repository which I'm developing
+    echo "[SKIP] '\$name' is my repository."
+else
+    # http://subtech.g.hatena.ne.jp/secondlife/20101104/1288876161
+    echo "[FETCH] '\$name' is watching repository."
+    git fetch $remote
+    git checkout $remote/master
 fi
 
-code="git branch | perl -ne 'print \$1 if /^\* (.*)/'"
-git submodule foreach 'git pull $remote `$code`; git fetch --tags $remote; true'
+true    # not to stop 'git submodule foreach'.
+END_OF_CODE
+}
+
+
+remote='origin'
+[ $# != 0 ] && remote="$1"
+
+# --quiet for git-submodule, but verbose for my code :)
+git submodule --quiet foreach "`code $remote`"
