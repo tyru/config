@@ -1780,6 +1780,9 @@ let prompt_debug = 0
 " }}}
 " skk && eskk {{{
 
+let s:skk_user_dict = '~/.skk/skk-user-dict'
+let s:skk_system_dict = '~/.skk/skk-system-dict'
+
 if 1
 " Map <C-j> to eskk, Map <C-g><C-j> to skk.vim {{{
 let skk_control_j_key = '<C-g><C-j>'
@@ -1794,8 +1797,8 @@ endif
 " skk {{{
 let g:skk_disable = 0
 
-let skk_jisyo = '~/.skk-jisyo'
-let skk_large_jisyo = '/usr/share/skk/SKK-JISYO'
+let skk_jisyo = s:skk_user_dict
+let skk_large_jisyo = s:skk_system_dict
 
 " let skk_control_j_key = ''
 " Arpeggio map! fj    <Plug>(skk-enable-im)
@@ -1844,8 +1847,8 @@ endif
 let g:eskk_debug_file = '~/eskk-debug.log'
 
 if has('vim_starting')
-    let g:eskk_dictionary = {'path': '~/.skk/skk-user-dict'}
-    let g:eskk_large_dictionary = {'path': '~/.skk/skk-large-dict'}
+    let g:eskk_dictionary = {'path': s:skk_user_dict}
+    let g:eskk_large_dictionary = {'path': s:skk_system_dict}
 endif
 
 let g:eskk_egg_like_newline = 1
