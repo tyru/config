@@ -9,9 +9,9 @@ get_branch() {
     git branch | egrep '^\*' | sed -e 's/^\*\s\+//'
 }
 my_repository() {
-    # If git-subupdate-{watch-repo,my-repo} are not found,
+    # If git-subup-{watch-repo,my-repo} are not found,
     # Try to determine if this is my repository (currently by branch name).
-    [ ! -e 'git-subupdate-watch-repo' -a -e 'git-subupdate-my-repo' -o "`get_branch`" != '(no branch)' ]
+    [ ! -e 'git-subup-watch-repo' -a -e 'git-subup-my-repo' -o "`get_branch`" != '(no branch)' ]
 }
 
 if my_repository; then
