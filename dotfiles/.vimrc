@@ -11,6 +11,15 @@ language time C
 if filereadable(expand('~/.vimrc.local'))
     execute 'source' expand('~/.vimrc.local')
 endif
+
+function! s:is_win()
+    return has('win16') || has('win32') || has('win64')
+endfunction
+if s:is_win()
+    let s:vimdir = expand('~/vimfiles')
+else
+    let s:vimdir = expand('~/.vim')
+endif
 " }}}
 " Utilities {{{
 " Function {{{
@@ -164,10 +173,6 @@ endif
 " swap
 set noswapfile
 set updatecount=0
-" set directory=$HOME/.vim/swap
-" if !isdirectory(&directory)
-"     call mkdir(&directory)
-" endif
 
 " fsync() is slow...
 if has('unix')
@@ -177,7 +182,7 @@ endif
 
 " backup
 set backup
-set backupdir=$HOME/.vim/backup
+let &backupdir = s:vimdir . '/backup'
 if !isdirectory(&backupdir)
     call mkdir(&backupdir)
 endif
@@ -293,8 +298,8 @@ set foldenable
 " :help undo-persistence
 if has('persistent_undo')
     set undofile
-    set undodir=~/.vim/info/undo
-    silent! call mkdir(expand('~/.vim/info/undo'), 'p')
+    let &undodir = s:vimdir . '/info/undo'
+    silent! call mkdir(&undodir, 'p')
 endif
 
 " misc.
@@ -1319,7 +1324,7 @@ function! s:set_dict() "{{{
     let dicts = []
     for ft in s:each_filetype()
         for ft in get(filetype_vs_dictionary, ft, [ft])
-            let dict_path = expand(printf('$HOME/.vim/dict/%s.dict', ft))
+            let dict_path = expand(printf(s:vimdir . '/dict/%s.dict', ft))
             if filereadable(dict_path)
                 call add(dicts, dict_path)
             endif
@@ -1732,7 +1737,11 @@ let g:vt_files_metainfo = {
 \}
 
 " Disable &modeline when opened template file.
-MyAutocmd BufReadPre ~/.vim/template/* setlocal nomodeline
+if s:is_win()
+    MyAutocmd BufReadPre ~/vimfiles/template/* setlocal nomodeline
+else
+    MyAutocmd BufReadPre ~/.vim/template/* setlocal nomodeline
+endif
 " }}}
 " winmove {{{
 let g:wm_move_down  = '<C-M-j>'
@@ -2252,9 +2261,6 @@ if executable('perldocjp')
     let g:ref_perldoc_cmd = 'perldocjp'
 endif
 " }}}
-" chalice {{{
-let chalice_bookmark = expand('$HOME/.vim/chalice.bmk')
-" }}}
 " vimfiler {{{
 let g:vimfiler_as_default_explorer = 1
 let g:vimfiler_split_command = 'Split'
@@ -2421,7 +2427,7 @@ let g:is_bash = 1
 " TODO Rotate backup files like writebackupversioncontrol.vim
 " (I didn't use it, though)
 
-" Delete old files in ~/.vim/backup {{{
+" Delete old files in &backupdir {{{
 function! s:delete_backup()
     if has('win32')
         if exists('$TMP')

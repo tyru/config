@@ -28,9 +28,11 @@
         '.uim.d/customs',
     ],
     os_files => {map {
+        # MS Windows-specific filenames.
         $_ => {
             '.vimperator' => 'vimperator',
             '.vimperatorrc' => '_vimperatorrc',
+            '.vim' => 'vimfiles',
         }
     } qw(MSWin32 cygwin)},
     ignore_files => [
