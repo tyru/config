@@ -2362,7 +2362,7 @@ let g:neocomplcache_plugin_disable = {}
 for s:source in map(tyru#util#globpath(&rtp, 'autoload/neocomplcache/sources/*'), 'fnamemodify(v:val, ":t:r")')
     let g:neocomplcache_plugin_disable[s:source] = 1
 endfor
-unlet s:source
+unlet! s:source
 
 Map [n] <Leader>neo :<C-u>NeoComplCacheToggle<CR>
 " }}}
