@@ -2322,6 +2322,7 @@ autocmd FileType lingr-* Map [n] -remap -silent -buffer <C-l> :<C-u>call lingr#m
 
 
 let g:lingr_vim_additional_rooms = [
+\   'tyru',
 \   'vim',
 \   'emacs',
 \   'editor',
