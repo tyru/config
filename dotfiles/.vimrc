@@ -1987,6 +1987,7 @@ let g:unite_cd_command = 'TabpageCD'
 let g:unite_lcd_command = 'TabpageCD'
 let g:unite_enable_ignore_case = 1
 let g:unite_enable_smart_case = 1
+let g:unite_enable_split_vertically = 1
 let g:unite_update_time = 50
 let g:unite_source_file_mru_ignore_pattern =
 \   '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\|COMMIT_EDITMSG'
