@@ -214,3 +214,6 @@
 [submodule "dotfiles/.vim/bundle/grass.vim"]
 	path = dotfiles/.vim/bundle/grass.vim
 	url = git://github.com/tyru/grass.vim.git
+[submodule "dotfiles/.vim/bundle/savemap.vim"]
+	path = dotfiles/.vim/bundle/savemap.vim
+	url = git://github.com/tyru/savemap.vim.git
