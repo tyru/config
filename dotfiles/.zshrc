@@ -64,7 +64,7 @@ setopt complete_in_word
 setopt correct
 setopt extended_glob
 setopt extended_history
-setopt hist_ignore_dups
+setopt hist_ignore_all_dups
 setopt hist_ignore_space
 setopt hist_verify
 setopt interactive_comments
