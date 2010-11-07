@@ -297,6 +297,30 @@ if has('persistent_undo')
     silent! call mkdir(expand('~/.vim/info/undo'), 'p')
 endif
 
+" http://vim-users.jp/2009/12/hack107/
+" Enable mouse support.
+set mouse=a
+
+" For screen.
+if &term =~ "^screen"
+    augroup MyAutoCmd
+        autocmd VimLeave * :set mouse=
+     augroup END
+
+    " workaround for freeze when using mouse on GNU screen.
+    set ttymouse=xterm2
+endif
+
+if has('gui_running')
+    " Show popup menu if right click.
+    set mousemodel=popup
+
+    " Don't focus the window when the mouse pointer is moved.
+    set nomousefocus
+    " Hide mouse pointer on insert mode.
+    set mousehide
+endif
+
 " misc.
 set diffopt=filler,vertical
 set helplang=ja,en
