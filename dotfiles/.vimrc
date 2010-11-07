@@ -527,8 +527,9 @@ let g:operator_decamelize_all_uppercase_action = 'lowercase'
 call operator#user#define_ex_command('blank-killer', 's/\s\+$//')
 Map [nvo] -remap <operator>bk <Plug>(operator-blank-killer)
 " }}}
-" operator-grep {{{
-Map [n] -remap <operator>gw <Plug>(operator-grep)
+" operator-html-escape {{{
+Map [nvo] -remap <operator>he <Plug>(operator-html-escape)
+Map [nvo] -remap <operator>hu <Plug>(operator-html-unescape)
 " }}}
 " }}}
 " motion {{{
