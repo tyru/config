@@ -223,3 +223,6 @@
 [submodule "dotfiles/.vim/bundle/unite-help"]
 	path = dotfiles/.vim/bundle/unite-help
 	url = git://github.com/tsukkee/unite-help.git
+[submodule "dotfiles/.vim/bundle/unite-tags"]
+	path = dotfiles/.vim/bundle/unite-tags
+	url = git://github.com/tsukkee/unite-tags.git
