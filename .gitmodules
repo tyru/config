@@ -220,3 +220,6 @@
 [submodule "dotfiles/.vim/bundle/operator-html-escape.vim"]
 	path = dotfiles/.vim/bundle/operator-html-escape.vim
 	url = git://github.com/tyru/operator-html-escape.vim.git
+[submodule "dotfiles/.vim/bundle/unite-help"]
+	path = dotfiles/.vim/bundle/unite-help
+	url = git://github.com/tsukkee/unite-help.git
