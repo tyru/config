@@ -16,8 +16,8 @@ our @EXPORT_OK = qw();
 
 
 sub new {
-    my $self = shift;
-    bless {}, $self;
+    my ($class) = @_;
+    bless {}, $class;
 }
 
 

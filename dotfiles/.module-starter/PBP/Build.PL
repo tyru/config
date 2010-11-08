@@ -10,7 +10,7 @@ Module::Build->new(
     requires => {
         'Test::More' => 0,
         'Test::Pod' => 0,
-        'Test::Perl::Critic' => 0,
+        'Test::Pod::Coverage' => 0,
         'version'    => 0,
     },
     add_to_cleanup      => [ '<DISTRO>-*' ],

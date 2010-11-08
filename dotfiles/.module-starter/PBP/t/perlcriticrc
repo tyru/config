@@ -1,4 +1,3 @@
-# via http://blog.bulknews.net/mt/archives/002063.html
 # for mkdir $dir, 0777
 [-ValuesAndExpressions::ProhibitLeadingZeros]
 
