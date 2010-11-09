@@ -66,6 +66,11 @@ function locallib() {
         eval $(use-locallib $INSTALL_BASE)
     fi
 }
+function fatman() {
+    local n=30
+    [ $# != 0 ] && n="$1"
+    ps aux --sort=-rss | head -"$n"
+}
 
 
 
