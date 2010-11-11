@@ -430,7 +430,8 @@ endfunction
 " Initializing {{{
 
 call pathogen#runtime_append_all_bundles()
-call pathogen#helptags()
+command! -bar HelpTagsAll call pathogen#helptags()
+HelpTagsAll
 
 
 call emap#load()
