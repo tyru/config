@@ -1783,6 +1783,8 @@ if !g:SD_disable
 endif
 " }}}
 " DumbBuf {{{
+let loaded_dumbbuf = 1    " Use unite-buffer instead.
+
 let dumbbuf_hotkey = 'gb'
 " たまにQuickBuf.vimの名残で<Esc>を押してしまう
 let dumbbuf_mappings = {
@@ -1981,17 +1983,19 @@ elseif s:anything == s:anything_ku
     Map [n] <anything>:        :<C-u>Ku cmd_mru/cmd<CR>
     Map [n] <anything>/        :<C-u>Ku cmd_mru/search<CR>
 elseif s:anything == s:anything_unite
-    Map [n] <anything>f        :<C-u>Unite -buffer-name=files file<CR>
-    Map [n] <anything>h        :<C-u>Unite -buffer-name=files file_mru<CR>
+    Map [n] <anything>f        :<C-u>Unite -buffer-name=files file file_mru<CR>
+    Map [n] <anything>F        :<C-u>Unite -buffer-name=files file_rec<CR>
+    Map [n] <anything>t        :<C-u>Unite tab<CR>
+    Map [n] <anything>T        :<C-u>Unite tags<CR>
+    Map [n] <anything>h        :<C-u>Unite help<CR>
+    Map [n] <anything>p        :<C-u>Unite -buffer-name=files buffer_tab<CR>
     Map [n] <anything>b        :<C-u>Unite buffer<CR>
-    Map [n] <anything>:        :<C-u>Unite cmd_mru/cmd<CR>
-    Map [n] <anything>/        :<C-u>Unite cmd_mru/search<CR>
 endif
 
 " ku {{{
 MyAlterCommand ku Ku
 " }}}
-" FuzzyFinder {{{
+" fuf {{{
 let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem', 'buffer', 'tag', 'taggedfile']
 
 let fuf_keyOpenTabpage = '<C-t>'
