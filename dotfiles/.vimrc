@@ -1644,10 +1644,6 @@ command!
 
 MyAlterCommand gp GlobPath
 " }}}
-" :SetTitle - Modify &titlestring {{{
-command! -nargs=+ SetTitle
-\   let &titlestring = <q-args>
-" }}}
 " :QuickFix - Wrapper for favorite quickfix opening command {{{
 " Select prefered command from cwindow, copen, and so on.
 
