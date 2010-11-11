@@ -199,23 +199,61 @@ let &titlestring = '%{getcwd()} %{haslocaldir() ? "(local)" : ""}'
 " tab
 set showtabline=2
 
-" TODO Show project name to tab.
+nnoremap <C-t> :<C-u>SetProjectName<CR>
+command! -bar -nargs=* SetProjectName call s:cmd_set_project_name(<q-args>)
+function! s:cmd_set_project_name(name) "{{{
+    if a:name == ''
+        let default = exists('t:project_name') ? t:project_name : ''
+        let t:project_name = input('Project name?:', default)
+    else
+        let t:project_name = a:name
+    endif
+endfunction "}}}
 
+function! MyTabLabel(n) "{{{
+    let project_name = gettabvar(a:n, 'project_name')
+    if project_name != ''
+        return project_name
+    endif
+    let buflist = tabpagebuflist(a:n)
+    let winnr = tabpagewinnr(a:n)
+    let bufname = bufname(buflist[winnr - 1])
+    if bufname == ''
+        return '[No Name]'
+    elseif tabpagenr() != a:n
+        return fnamemodify(bufname, ':t')
+    else
+        return pathshorten(bufname)
+    endif
+endfunction "}}}
 function! MyTabLine() "{{{
-    " Same as default.
     let s = ''
-    for tabpagenr in range(1, tabpagenr('$'))
-        let winnr = tabpagewinnr(tabpagenr)
-        for bufnr in tabpagebuflist(tabpagenr)
-            if winnr ==# bufwinnr(bufnr) && bufexists(bufnr)
-                let s .= (bufname(bufnr) == '' ? '[Empty]' : bufname(bufnr))
-                break
-            endif
-        endfor
+    for i in range(tabpagenr('$'))
+        " select the highlighting
+        if i + 1 == tabpagenr()
+            let s .= '%#TabLineSel#'
+        else
+            let s .= '%#TabLine#'
+        endif
+
+        " set the tab page number (for mouse clicks)
+        let s .= '%' . (i + 1) . 'T'
+
+        " the label is made by MyTabLabel()
+        let s .= ' %{MyTabLabel(' . (i + 1) . ')} '
     endfor
+
+    " after the last tab fill with TabLineFill and reset tab page nr
+    let s .= '%#TabLineFill#%T'
+
+    " right-align the label to close the current tab page
+    if tabpagenr('$') > 1
+        let s .= '%=%#TabLine#%999XX'
+    endif
+
     return s
 endfunction "}}}
-" set tabline=%!MyTabLine()
+set tabline=%!MyTabLine()
 
 function! MyGuiTabLabel() "{{{
     let s = '%{tabpagenr()}. [%t]'
