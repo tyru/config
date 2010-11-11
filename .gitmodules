@@ -166,9 +166,6 @@
 [submodule "dotfiles/.vim/bundle/operator-reverse.vim"]
 	path = dotfiles/.vim/bundle/operator-reverse.vim
 	url = git://github.com/tyru/operator-reverse.vim.git
-[submodule "dotfiles/.vim/bundle/thinca-vim-textobj-plugins"]
-	path = dotfiles/.vim/bundle/thinca-vim-textobj-plugins
-	url = git://github.com/thinca/vim-textobj-plugins.git
 [submodule "dotfiles/.vim/bundle/ohmygrep.vim"]
 	path = dotfiles/.vim/bundle/ohmygrep.vim
 	url = git://github.com/tyru/ohmygrep.vim.git
@@ -226,3 +223,12 @@
 [submodule "dotfiles/.vim/bundle/unite-tags"]
 	path = dotfiles/.vim/bundle/unite-tags
 	url = git://github.com/tsukkee/unite-tags.git
+[submodule "dotfiles/.vim/bundle/vim-textobj-between.git"]
+	path = dotfiles/.vim/bundle/vim-textobj-between.git
+	url = git://github.com/thinca/vim-textobj-between.git
+[submodule "dotfiles/.vim/bundle/vim-textobj-function-javascript.git"]
+	path = dotfiles/.vim/bundle/vim-textobj-function-javascript.git
+	url = git://github.com/thinca/vim-textobj-function-javascript.git
+[submodule "dotfiles/.vim/bundle/vim-textobj-function-perl.git"]
+	path = dotfiles/.vim/bundle/vim-textobj-function-perl.git
+	url = git://github.com/thinca/vim-textobj-function-perl.git
