@@ -271,22 +271,22 @@ set guitablabel=%!MyGuiTabLabel()
 " statusline
 set laststatus=2
 function! MyStatusLine() "{{{
-    let s = '%t%([%M%R%H%W]%)%(, %{&ft}%), %{&fenc}/%{&ff}'
-    let s .= ' ### +:%{b:changedtick}, u:%{changenr()}'
-    let s .= '%( ###'
+    let s = '%f%([%M%R%H%W]%)%(, %{&ft}%), %{&fenc}/%{&ff}'
+    let s .= '%( ### '
 
     " eskk, skk.vim
-    let exists_eskk = exists('g:loaded_eskk')
-    let exists_skk  = exists('g:skk_loaded')
-    if exists_eskk
-        let s .= ' %{eskk#statusline("IM:%s", "IM:off")}'
-    elseif exists_skk
-        let s .= ' %{SkkGetModeStr()}'
-    endif
+    " let exists_eskk = exists('g:loaded_eskk')
+    " let exists_skk  = exists('g:skk_loaded')
+    " if exists_eskk
+    "     let s .= ' %{eskk#statusline("IM:%s", "IM:off")}'
+    " elseif exists_skk
+    "     let s .= ' %{SkkGetModeStr()}'
+    " endif
 
     " current-func-info
-    let s .= ', %{cfi#format("%s()", "none")}'
+    let s .= '%{cfi#format("%s()", "none")}'
 
+    let s .= ' ### +:%{b:changedtick}, u:%{changenr()}'
     let s .= '%)'
 
     return s
