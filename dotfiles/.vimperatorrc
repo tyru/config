@@ -100,6 +100,11 @@ set! javascript.options.jit.chrome=true
 
 " disable IPv6
 set! network.dns.disableIPv6=true
+
+" http://www.ideaxidea.com/archives/2010/11/firefox_ram_cache.html
+set! browser.cache.disk.enable=true
+set! browser.cache.memory.enable=true
+set! browser.cache.memory.capacity=-1
 " }}}
 "-----------------------------------------------------------------
 " set {{{
