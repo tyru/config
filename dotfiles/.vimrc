@@ -398,7 +398,8 @@ set showbreak=↪
 " Autocmd {{{
 
 " colorscheme
-" NOTE: On MS Windows, setting colorscheme in .vimrc does not work
+" NOTE: On MS Windows, setting colorscheme in .vimrc does not work.
+" Because :Lazy is necessary.
 Lazy colorscheme tyru
 
 " Open on read-only if swap exists
