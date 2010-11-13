@@ -210,16 +210,16 @@ function! s:cmd_set_project_name(name) "{{{
     endif
 endfunction "}}}
 
-function! MyTabLabel(n) "{{{
+function! MyTabLabel(tabnr) "{{{
     if exists('*gettabvar')
-        let project_name = gettabvar(a:n, 'project_name')
+        let project_name = gettabvar(a:tabnr, 'project_name')
         if project_name != ''
             return project_name
         endif
     endif
 
-    let buflist = tabpagebuflist(a:n)
-    let bufname = bufname(buflist[tabpagewinnr(a:n) - 1])
+    let buflist = tabpagebuflist(a:tabnr)
+    let bufname = bufname(buflist[tabpagewinnr(a:tabnr) - 1])
     let modified = 0
     for bufnr in buflist
         if getbufvar(bufnr, '&modified')
