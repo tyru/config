@@ -211,20 +211,31 @@ function! s:cmd_set_project_name(name) "{{{
 endfunction "}}}
 
 function! MyTabLabel(n) "{{{
-    let project_name = gettabvar(a:n, 'project_name')
-    if project_name != ''
-        return project_name
+    if exists('*gettabvar')
+        let project_name = gettabvar(a:n, 'project_name')
+        if project_name != ''
+            return project_name
+        endif
     endif
+
     let buflist = tabpagebuflist(a:n)
-    let winnr = tabpagewinnr(a:n)
-    let bufname = bufname(buflist[winnr - 1])
+    let bufname = bufname(buflist[tabpagewinnr(a:n) - 1])
+    let modified = 0
+    for bufnr in buflist
+        if getbufvar(bufnr, '&modified')
+            let modified = 1
+            break
+        endif
+    endfor
+
     if bufname == ''
-        return '[No Name]'
+        let label = '[No Name]'
     elseif tabpagenr() != a:n
-        return fnamemodify(bufname, ':t')
+        let label = fnamemodify(bufname, ':t')
     else
-        return pathshorten(bufname)
+        let label = pathshorten(bufname)
     endif
+    return label . (modified ? '[+]' : '')
 endfunction "}}}
 function! MyTabLine() "{{{
     let s = ''
