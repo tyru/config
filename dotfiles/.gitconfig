@@ -5,6 +5,7 @@
 	# My github token here!
 [core]
 	excludesfile = ~/.gitignore.base
+	editor = vim
 [user]
 	name = tyru
 	email = tyru.exe@gmail.com
@@ -17,8 +18,8 @@
 	co = checkout
 	cont = rebase --continue
 	cp = cherry-pick
-	d = diff --color-words
-	dish = diff --cached
+	di = diff --color-words -M
+	dish = diff --cached -M
 	fixup = commit --amend -C HEAD
 	gene = log --graph --pretty='%C(yellow)%h%Creset %ai %an: %s%C(yellow)%d%Creset' --all
 	l = log --stat
