@@ -223,12 +223,12 @@
 [submodule "dotfiles/.vim/bundle/unite-tags"]
 	path = dotfiles/.vim/bundle/unite-tags
 	url = git://github.com/tsukkee/unite-tags.git
-[submodule "dotfiles/.vim/bundle/vim-textobj-between.git"]
-	path = dotfiles/.vim/bundle/vim-textobj-between.git
+[submodule "dotfiles/.vim/bundle/vim-textobj-between"]
+	path = dotfiles/.vim/bundle/vim-textobj-between
 	url = git://github.com/thinca/vim-textobj-between.git
-[submodule "dotfiles/.vim/bundle/vim-textobj-function-javascript.git"]
-	path = dotfiles/.vim/bundle/vim-textobj-function-javascript.git
+[submodule "dotfiles/.vim/bundle/vim-textobj-function-javascript"]
+	path = dotfiles/.vim/bundle/vim-textobj-function-javascript
 	url = git://github.com/thinca/vim-textobj-function-javascript.git
-[submodule "dotfiles/.vim/bundle/vim-textobj-function-perl.git"]
-	path = dotfiles/.vim/bundle/vim-textobj-function-perl.git
+[submodule "dotfiles/.vim/bundle/vim-textobj-function-perl"]
+	path = dotfiles/.vim/bundle/vim-textobj-function-perl
 	url = git://github.com/thinca/vim-textobj-function-perl.git
