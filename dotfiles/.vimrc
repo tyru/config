@@ -189,12 +189,16 @@ endif
 
 " title
 set title
-let &titlestring = '%{getcwd()} %{haslocaldir() ? "(local)" : ""}'
-" function! Dir()
-"     let d = fnamemodify(getcwd(), ':~')
-"     let d = substitute(d, '\/$', '', '')
-"     return d
-" endfunction
+function! MyTitleString() "{{{
+    if exists('t:cwd')
+        return t:cwd . ' (tab)'
+    elseif haslocaldir()
+        return getcwd() . ' (local)'
+    else
+        return getcwd()
+    endif
+endfunction "}}}
+let &titlestring = '%{MyTitleString()}'
 
 " tab
 set showtabline=2
@@ -230,7 +234,7 @@ function! MyTabLabel(tabnr) "{{{
 
     if bufname == ''
         let label = '[No Name]'
-    elseif tabpagenr() != a:n
+    elseif tabpagenr() != a:tabnr
         let label = fnamemodify(bufname, ':t')
     else
         let label = pathshorten(bufname)
