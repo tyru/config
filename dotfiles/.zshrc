@@ -98,6 +98,7 @@ myabbrev=(
     "u@" "| sort -u"
     "c@" "| xsel --input --clipboard"
     "x@" "| xargs"
+    "v@" "| vim -"
     "n@" ">/dev/null 2>&1"
     "e@" "2>&1"
     "h@" "--help 2>&1 | less"
