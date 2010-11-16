@@ -232,3 +232,6 @@
 [submodule "dotfiles/.vim/bundle/vim-textobj-function-perl"]
 	path = dotfiles/.vim/bundle/vim-textobj-function-perl
 	url = git://github.com/thinca/vim-textobj-function-perl.git
+[submodule "dotfiles/.vim/bundle/cul.vim"]
+	path = dotfiles/.vim/bundle/cul.vim
+	url = git://github.com/tyru/cul.vim.git
