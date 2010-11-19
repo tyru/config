@@ -235,3 +235,6 @@
 [submodule "dotfiles/.vim/bundle/cul.vim"]
 	path = dotfiles/.vim/bundle/cul.vim
 	url = git://github.com/tyru/cul.vim.git
+[submodule "dotfiles/.vim/bundle/vice.vim"]
+	path = dotfiles/.vim/bundle/vice.vim
+	url = git://github.com/tyru/vice.vim.git
