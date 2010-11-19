@@ -1,0 +1,3 @@
+#!/bin/sh
+
+scandeps.pl "$1" | perl -ne 's/'"'"'([\w:]+)'"'"'.*/$1/ && print'
