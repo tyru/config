@@ -207,18 +207,18 @@ nnoremap <C-t> :<C-u>SetProjectName<CR>
 command! -bar -nargs=* SetProjectName call s:cmd_set_project_name(<q-args>)
 function! s:cmd_set_project_name(name) "{{{
     if a:name == ''
-        let default = exists('t:project_name') ? t:project_name : ''
-        let t:project_name = input('Project name?:', default)
+        let default = exists('t:title') ? t:title : ''
+        let t:title = input('Project name?:', default)
     else
-        let t:project_name = a:name
+        let t:title = a:name
     endif
 endfunction "}}}
 
 function! MyTabLabel(tabnr) "{{{
     if exists('*gettabvar')
-        let project_name = gettabvar(a:tabnr, 'project_name')
-        if project_name != ''
-            return project_name
+        let title = gettabvar(a:tabnr, 'title')
+        if title != ''
+            return title
         endif
     endif
 
