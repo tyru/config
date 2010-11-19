@@ -1,5 +1,5 @@
 #!/bin/sh
 
 
-[ $# != 0 ] && (cd "$1" || exit 1)
+[ $# != 0 ] && { cd "$1" || exit 1; }
 vim -c SimpleTapRunDir
