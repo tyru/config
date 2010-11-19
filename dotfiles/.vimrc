@@ -1935,71 +1935,68 @@ endif
 
 " }}}
 " eskk {{{
-let g:eskk_debug_file = '~/eskk-debug.log'
+let g:eskk#dictionary = {'path': s:skk_user_dict}
+let g:eskk#large_dictionary = {'path': s:skk_system_dict}
 
-if has('vim_starting')
-    let g:eskk_dictionary = {'path': s:skk_user_dict}
-    let g:eskk_large_dictionary = {'path': s:skk_system_dict}
-endif
+let g:eskk#egg_like_newline = 1
+let g:eskk#keep_state = 1
+let g:eskk#show_candidates_count = 2
+let g:eskk#show_annotation = 1
+let g:eskk#rom_input_style = 'msime'
 
-let g:eskk_egg_like_newline = 1
-let g:eskk_keep_state = 1
-let g:eskk_show_candidates_count = 2
-let g:eskk_show_annotation = 1
-let g:eskk_rom_input_style = 'msime'
-
-let g:eskk_marker_henkan = '$'
-let g:eskk_marker_okuri = '*'
-let g:eskk_marker_henkan_select = '@'
-let g:eskk_marker_jisyo_touroku = '?'
-let g:eskk_marker_popup = '#'
+let g:eskk#marker_henkan = '$'
+let g:eskk#marker_okuri = '*'
+let g:eskk#marker_henkan_select = '@'
+let g:eskk#marker_jisyo_touroku = '?'
+let g:eskk#marker_popup = '#'
 
 
-let g:eskk_convert_at_exact_match = 0
+let g:eskk#convert_at_exact_match = 0
 
 
 " Disable "qkatakana". not ";katakanaq".
 " EskkMap -type=mode:hira:toggle-kata <Nop>
 
-let g:eskk_context_control = [{
+let g:eskk#context_control = [{
 \   'rule': 'eskk#is_enabled() && !eskk#util#has_elem(eskk#util#get_syn_names(), "Comment")',
 \   'fn': 'eskk#disable',
 \}]
 " MyAutocmd InsertEnter * call eskk#handle_context()
 
 
-let t = eskk#table#create('rom_to_hira*', 'rom_to_hira')
-call t.add('~', '〜')
-call t.add('zc', '©')
-call t.add('zr', '®')
-call t.add('zp', '☝')
-call t.add('jva', 'ゔぁ')
-call t.add('jvi', 'ゔぃ')
-call t.add('jvu', 'ゔ')
-call t.add('jve', 'ゔぇ')
-call t.add('jvo', 'ゔぉ')
-call t.add('z ', '　')
-call t.register()
-unlet t
-
-let g:eskk_mode_use_tables.hira = 'rom_to_hira*'
+" let t = eskk#table#create('rom_to_hira*', 'rom_to_hira')
+" call t.add('~', '〜')
+" call t.add('zc', '©')
+" call t.add('zr', '®')
+" call t.add('zp', '☝')
+" call t.add('jva', 'ゔぁ')
+" call t.add('jvi', 'ゔぃ')
+" call t.add('jvu', 'ゔ')
+" call t.add('jve', 'ゔぇ')
+" call t.add('jvo', 'ゔぉ')
+" call t.add('z ', '　')
+" let g:eskk#mode_use_tables = {}
+" let g:eskk#mode_use_tables.hira = t
+" unlet t
 
 
 
 inoremap <C-g> hoge
-EskkMap -remap jj <Plug>(eskk:disable)<Esc>
+MyAutocmd User eskk-initialize EskkMap -remap jj <Plug>(eskk:disable)<Esc>
 
 
 " map! <C-j> <Plug>(eskk:enable)
 " EskkMap <C-j> <Nop>
 
 
-" NOTE: Experimental
-
+" Experimental.
+"
 " inoremap <C-l> <C-o><C-l>
-
+"
 " EskkMap U <Plug>(eskk:undo-kakutei)
 
+" for test.
+"
 " EskkMap lhs rhs
 " EskkMap -silent lhs2 rhs
 " EskkMap -unique lhs2 foo
