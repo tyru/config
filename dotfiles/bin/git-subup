@@ -21,7 +21,7 @@ else
     # http://subtech.g.hatena.ne.jp/secondlife/20101104/1288876161
     echo "[FETCH] '\$name' is watching repository."
     git fetch $remote
-    git checkout $remote/master
+    git rebase $remote/master
 fi
 
 true    # not to stop 'git submodule foreach'.
