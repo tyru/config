@@ -1031,34 +1031,17 @@ if has('virtualedit') && tyru#util#has_one_of(['all', 'onemore'], split(&virtual
     Map [n] <excmd>p $p
 endif
 " }}}
-" Move around windows beyond tabs {{{
-" http://gist.github.com/358813
-" http://gist.github.com/358862
-
-Map [n] -silent <C-n> :<C-u>call <SID>NextWindowOrTab()<CR>
-Map [n] -silent <C-p> :<C-u>call <SID>PreviousWindowOrTab()<CR>
-
-function! s:NextWindowOrTab() "{{{
-    if winnr() < winnr("$")
-        wincmd w
-    else
-        tabnext
-        1wincmd w
-    endif
-endfunction "}}}
-
-function! s:PreviousWindowOrTab() "{{{
-    if winnr() > 1
-        wincmd W
-    else
-        tabprevious
-        execute winnr("$") . "wincmd w"
-    endif
-endfunction "}}}
+" <Space>[hjkl] for <C-w>[hjkl] {{{
+Map [n] -silent <Space>j <C-w>j
+Map [n] -silent <Space>k <C-w>k
+Map [n] -silent <Space>h <C-w>h
+Map [n] -silent <Space>l <C-w>l
+Map [n] -silent <Space>n <C-w>w
+Map [n] -silent <Space>p <C-w>W
 " }}}
-" Tab mappings (using with previous hack) {{{
-Map [n] -silent <C-g><C-n> gt
-Map [n] -silent <C-g><C-p> gT
+" Moving between tabs {{{
+Map [n] -silent <C-n> gt
+Map [n] -silent <C-p> gT
 " }}}
 " Count the number of <cword> in this file {{{
 " http://d.hatena.ne.jp/miho36/20100621/1277092415
@@ -2451,12 +2434,6 @@ let g:gist_detect_filetype = 1
 " }}}
 " quickey {{{
 let g:quickey_merge_window_hide_vim_window_move_cursor = 1
-
-" Hide default <C-w>[hjkl] mappings for previous mappings.
-Map [n] <Space>j <C-w>j
-Map [n] <Space>k <C-w>k
-Map [n] <Space>h <C-w>h
-Map [n] <Space>l <C-w>l
 " }}}
 " ohmygrep {{{
 MyAlterCommand gr[ep] OMGrep
