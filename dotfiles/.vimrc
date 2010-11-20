@@ -2030,6 +2030,47 @@ elseif s:anything == s:anything_unite
     Map [n] <anything>b        :<C-u>Unite buffer<CR>
 endif
 
+
+" abbrev
+function! s:register_anything_abbrev() "{{{
+    let abbrev = {
+    \   '^r@': [$VIMRUNTIME . '/'],
+    \   '^p@': map(split(&runtimepath, ','), 'v:val . "/plugin/"'),
+    \   '^h@': ['~/'],
+    \   '^v@' : ['~/.vim/'],
+    \   '^g@' : ['~/git/'],
+    \   '^d@' : ['~/git/dotfiles/'],
+    \}
+
+    if hostname() ==# 'server'
+        call extend(abbrev, {
+        \   '^m@' : ['~/Dropbox/memo/'],
+        \   '^s@' : ['~/scratch/'],
+        \})
+    elseif hostname() ==# 'laptop'
+        call extend(abbrev, {
+        \   '^m@' : ['~/Dropbox/memo/'],
+        \})
+    elseif hostname() ==? 'takuya-win'
+        call extend(abbrev, {
+        \   '^m@' : ['~/My Dropbox/memo/'],
+        \   '^de@' : ['C:' . substitute($HOMEPATH, '\', '/', 'g') . '/デスクトップ/'],
+        \   '^cy@' : [exists('$CYGHOME') ? $CYGHOME . '/' : 'C:/cygwin/home/'. $USERNAME .'/'],
+        \   '^ms@' : [exists('$MSYSHOME') ? $MSYSHOME . '/' : 'C:/msys/home/'. $USERNAME .'/'],
+        \})
+    endif
+
+    " fuf
+    let g:fuf_abbrevMap = abbrev
+    " unite
+    for [pat, subst_list] in items(abbrev)
+        if len(subst_list) == 1
+            call unite#set_substitute_pattern('files', pat, subst_list[0])
+        endif
+    endfor
+endfunction "}}}
+Lazy call s:register_anything_abbrev()
+
 " ku {{{
 MyAlterCommand ku Ku
 " }}}
