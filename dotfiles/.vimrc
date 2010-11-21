@@ -1940,30 +1940,23 @@ let g:eskk#convert_at_exact_match = 0
 " Disable "qkatakana". not ";katakanaq".
 " EskkMap -type=mode:hira:toggle-kata <Nop>
 
-let g:eskk#context_control = [{
-\   'rule': 'eskk#is_enabled() && !eskk#util#has_elem(eskk#util#get_syn_names(), "Comment")',
-\   'fn': 'eskk#disable',
-\}]
-" MyAutocmd InsertEnter * call eskk#handle_context()
 
-
-" let t = eskk#table#create('rom_to_hira*', 'rom_to_hira')
-" call t.add('~', '〜')
-" call t.add('zc', '©')
-" call t.add('zr', '®')
-" call t.add('vh', '☜')
-" call t.add('vj', '☟')
-" call t.add('vk', '☝')
-" call t.add('vl', '☞')
-" call t.add('jva', 'ゔぁ')
-" call t.add('jvi', 'ゔぃ')
-" call t.add('jvu', 'ゔ')
-" call t.add('jve', 'ゔぇ')
-" call t.add('jvo', 'ゔぉ')
-" call t.add('z ', '　')
-" let g:eskk#mode_use_tables = {}
-" let g:eskk#mode_use_tables.hira = t
-" unlet t
+let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
+call t.add_map('~', '〜')
+call t.add_map('zc', '©')
+call t.add_map('zr', '®')
+call t.add_map('vh', '☜')
+call t.add_map('vj', '☟')
+call t.add_map('vk', '☝')
+call t.add_map('vl', '☞')
+call t.add_map('jva', 'ゔぁ')
+call t.add_map('jvi', 'ゔぃ')
+call t.add_map('jvu', 'ゔ')
+call t.add_map('jve', 'ゔぇ')
+call t.add_map('jvo', 'ゔぉ')
+call t.add_map('z ', '　')
+call eskk#register_mode_table('hira', t)
+unlet t
 
 
 
