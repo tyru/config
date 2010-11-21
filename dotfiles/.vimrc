@@ -2373,9 +2373,7 @@ endfunction "}}}
 " prettyprint {{{
 MyAlterCommand pp PP
 
-let g:prettyprint_echo_type = 'buffer'
-let g:prettyprint_echomsg_highlight = 'Debug'
-let g:prettyprint_echo_buffer_new = 'New'
+let g:prettyprint_show_expression = 1
 " }}}
 " fencview {{{
 let g:fencview_auto_patterns = '*'
