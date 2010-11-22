@@ -1918,68 +1918,70 @@ endif
 
 " }}}
 " eskk {{{
-let g:eskk#dictionary = s:skk_user_dict
-let g:eskk#large_dictionary = s:skk_system_dict
+if has('vim_starting')
+    let g:eskk#dictionary = {'path': s:skk_user_dict}
+    let g:eskk#large_dictionary = {'path': s:skk_system_dict}
 
-let g:eskk#egg_like_newline = 1
-let g:eskk#keep_state = 1
-let g:eskk#show_candidates_count = 2
-let g:eskk#show_annotation = 1
-let g:eskk#rom_input_style = 'msime'
+    let g:eskk#egg_like_newline = 1
+    let g:eskk#keep_state = 1
+    let g:eskk#show_candidates_count = 2
+    let g:eskk#show_annotation = 1
+    let g:eskk#rom_input_style = 'msime'
 
-let g:eskk#marker_henkan = '$'
-let g:eskk#marker_okuri = '*'
-let g:eskk#marker_henkan_select = '@'
-let g:eskk#marker_jisyo_touroku = '?'
-let g:eskk#marker_popup = '#'
-
-
-let g:eskk#convert_at_exact_match = 0
+    let g:eskk#marker_henkan = '$'
+    let g:eskk#marker_okuri = '*'
+    let g:eskk#marker_henkan_select = '@'
+    let g:eskk#marker_jisyo_touroku = '?'
+    let g:eskk#marker_popup = '#'
 
 
-" Disable "qkatakana". not ";katakanaq".
-" EskkMap -type=mode:hira:toggle-kata <Nop>
+    let g:eskk#convert_at_exact_match = 0
 
 
-let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
-call t.add_map('~', '〜')
-call t.add_map('zc', '©')
-call t.add_map('zr', '®')
-call t.add_map('vh', '☜')
-call t.add_map('vj', '☟')
-call t.add_map('vk', '☝')
-call t.add_map('vl', '☞')
-call t.add_map('jva', 'ゔぁ')
-call t.add_map('jvi', 'ゔぃ')
-call t.add_map('jvu', 'ゔ')
-call t.add_map('jve', 'ゔぇ')
-call t.add_map('jvo', 'ゔぉ')
-call t.add_map('z ', '　')
-call eskk#register_mode_table('hira', t)
-unlet t
+    " Disable "qkatakana". not ";katakanaq".
+    " EskkMap -type=mode:hira:toggle-kata <Nop>
 
 
-MyAutocmd User eskk-initialize EskkMap -remap jj <Plug>(eskk:disable)<Esc>
+    let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
+    call t.add_map('~', '〜')
+    call t.add_map('zc', '©')
+    call t.add_map('zr', '®')
+    call t.add_map('vh', '☜')
+    call t.add_map('vj', '☟')
+    call t.add_map('vk', '☝')
+    call t.add_map('vl', '☞')
+    call t.add_map('jva', 'ゔぁ')
+    call t.add_map('jvi', 'ゔぃ')
+    call t.add_map('jvu', 'ゔ')
+    call t.add_map('jve', 'ゔぇ')
+    call t.add_map('jvo', 'ゔぉ')
+    call t.add_map('z ', '　')
+    call eskk#register_mode_table('hira', t)
+    unlet t
 
 
-" Experimental.
+    MyAutocmd User eskk-initialize EskkMap -remap jj <Plug>(eskk:disable)<Esc>
 
-" map! <C-j> <Plug>(eskk:enable)
-" EskkMap <C-j> <Nop>
-"
-" inoremap <C-g> hoge
-"
-" inoremap <C-l> <C-o><C-l>
-"
-" EskkMap U <Plug>(eskk:undo-kakutei)
 
-" for test.
-"
-" EskkMap lhs rhs
-" EskkMap -silent lhs2 rhs
-" EskkMap -unique lhs2 foo
-" EskkMap -expr lhs3 {'foo': 'hoge'}.foo
-" EskkMap -noremap lhs4 rhs
+    " Experimental.
+
+    " map! <C-j> <Plug>(eskk:enable)
+    " EskkMap <C-j> <Nop>
+    "
+    " inoremap <C-g> hoge
+    "
+    " inoremap <C-l> <C-o><C-l>
+    "
+    " EskkMap U <Plug>(eskk:undo-kakutei)
+
+    " for test.
+    "
+    " EskkMap lhs rhs
+    " EskkMap -silent lhs2 rhs
+    " EskkMap -unique lhs2 foo
+    " EskkMap -expr lhs3 {'foo': 'hoge'}.foo
+    " EskkMap -noremap lhs4 rhs
+endif
 " }}}
 " restart {{{
 MyAlterCommand res[tart] Restart
