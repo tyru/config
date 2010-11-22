@@ -1918,8 +1918,8 @@ endif
 
 " }}}
 " eskk {{{
-let g:eskk#dictionary = {'path': s:skk_user_dict}
-let g:eskk#large_dictionary = {'path': s:skk_system_dict}
+let g:eskk#dictionary = s:skk_user_dict
+let g:eskk#large_dictionary = s:skk_system_dict
 
 let g:eskk#egg_like_newline = 1
 let g:eskk#keep_state = 1
@@ -1959,16 +1959,15 @@ call eskk#register_mode_table('hira', t)
 unlet t
 
 
-
-inoremap <C-g> hoge
 MyAutocmd User eskk-initialize EskkMap -remap jj <Plug>(eskk:disable)<Esc>
 
 
+" Experimental.
+
 " map! <C-j> <Plug>(eskk:enable)
 " EskkMap <C-j> <Nop>
-
-
-" Experimental.
+"
+" inoremap <C-g> hoge
 "
 " inoremap <C-l> <C-o><C-l>
 "
