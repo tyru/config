@@ -1817,11 +1817,10 @@ let g:vt_files_metainfo = {
 \}
 
 " Disable &modeline when opened template file.
-if s:is_win()
-    MyAutocmd BufReadPre ~/vimfiles/template/* setlocal nomodeline
-else
-    MyAutocmd BufReadPre ~/.vim/template/* setlocal nomodeline
-endif
+execute
+\   'MyAutocmd BufReadPre'
+\   s:vimdir . '/template/*'
+\   'setlocal nomodeline'
 " }}}
 " winmove {{{
 let g:wm_move_down  = '<C-M-j>'
