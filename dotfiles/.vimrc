@@ -2058,7 +2058,7 @@ function! s:register_anything_abbrev() "{{{
     \   '^r@': [$VIMRUNTIME . '/'],
     \   '^p@': map(split(&runtimepath, ','), 'v:val . "/plugin/"'),
     \   '^h@': ['~/'],
-    \   '^v@' : ['~/.vim/'],
+    \   '^v@' : [s:vimdir],
     \   '^g@' : ['~/git/'],
     \   '^d@' : ['~/git/dotfiles/'],
     \}
