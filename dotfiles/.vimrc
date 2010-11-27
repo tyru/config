@@ -1768,6 +1768,23 @@ function! s:split_nicely_with(args, banged) "{{{
     endtry
 endfunction "}}}
 " }}}
+" :NonSortUniq {{{
+"
+" http://lingr.com/room/vim/archives/2010/11/18#message-1023619
+" > :let d={}|g/./let l=getline('.')|if has_key(d,l)|d|else|let d[l]=1
+
+command!
+\   -bar
+\   NonSortUniq
+\   let d={}|g/./let l=getline('.')|if has_key(d,l)|d|el|let d[l]=1
+
+" E147: Cannot do :global recursive
+" command!
+" \   -bar
+" \   NonSortUniq
+" \   g/./let l=getline('.')|g/./if l==getline('.')|d
+
+" }}}
 " }}}
 " For Plugins {{{
 " nextfile {{{
