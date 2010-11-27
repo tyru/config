@@ -2010,6 +2010,7 @@ if has('vim_starting')
 endif
 " }}}
 " restart {{{
+let g:restart_sessionoptions = 'blank,curdir,folds,help,localoptions,tabpages'
 MyAlterCommand res[tart] Restart
 MyAlterCommand ers[tart] Restart
 MyAlterCommand rse[tart] Restart
