@@ -1,0 +1,29 @@
+#!/bin/sh
+
+
+dir=
+remote="backup"
+branch="master"
+
+usage() {
+    progname="`basename $0`"
+    echo "Usage: $progname" >&2
+    exit 1
+}
+
+
+for i in dir remote branch; do
+    if [ $# -ne 0 ]; then
+        eval "$i=\"$1\""
+        shift
+    else
+        break
+    fi
+done
+
+[ -z "$dir" ] && usage
+cd "$dir" || exit $?
+
+for i in *; do
+    (cd "$i" && git push "$remote" "$branch")
+done
