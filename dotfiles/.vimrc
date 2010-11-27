@@ -1939,7 +1939,6 @@ if has('vim_starting')
     let g:eskk#large_dictionary = {'path': s:skk_system_dict}
 
     let g:eskk#egg_like_newline = 1
-    let g:eskk#keep_state = 1
     let g:eskk#show_candidates_count = 2
     let g:eskk#show_annotation = 1
     let g:eskk#rom_input_style = 'msime'
