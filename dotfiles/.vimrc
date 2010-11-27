@@ -1959,25 +1959,35 @@ if has('vim_starting')
     " EskkMap -type=mode:hira:toggle-kata <Nop>
 
 
-    let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
-    call t.add_map('~', '〜')
-    call t.add_map('zc', '©')
-    call t.add_map('zr', '®')
-    call t.add_map('vh', '☜')
-    call t.add_map('vj', '☟')
-    call t.add_map('vk', '☝')
-    call t.add_map('vl', '☞')
-    call t.add_map('jva', 'ゔぁ')
-    call t.add_map('jvi', 'ゔぃ')
-    call t.add_map('jvu', 'ゔ')
-    call t.add_map('jve', 'ゔぇ')
-    call t.add_map('jvo', 'ゔぉ')
-    call t.add_map('z ', '　')
-    call eskk#register_mode_table('hira', t)
-    unlet t
+    MyAutocmd User eskk-initialize-pre call s:eskk_initial_pre()
+    function! s:eskk_initial_pre() "{{{
+        " User can be allowed to modify
+        " eskk global variables (`g:eskk#...`)
+        " until `User eskk-initialize-pre` event.
+        " So user can do something heavy process here.
+        " (I'm a paranoia, eskk#table#new() is not so heavy.
+        " But it loads autoload/vice.vim recursively)
+        let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
+        call t.add_map('~', '〜')
+        call t.add_map('zc', '©')
+        call t.add_map('zr', '®')
+        call t.add_map('vh', '☜')
+        call t.add_map('vj', '☟')
+        call t.add_map('vk', '☝')
+        call t.add_map('vl', '☞')
+        call t.add_map('jva', 'ゔぁ')
+        call t.add_map('jvi', 'ゔぃ')
+        call t.add_map('jvu', 'ゔ')
+        call t.add_map('jve', 'ゔぇ')
+        call t.add_map('jvo', 'ゔぉ')
+        call t.add_map('z ', '　')
+        call eskk#register_mode_table('hira', t)
+    endfunction "}}}
 
-
-    MyAutocmd User eskk-initialize EskkMap -remap jj <Plug>(eskk:disable)<Esc>
+    MyAutocmd User eskk-initialize-post call s:eskk_initial_post()
+    function! s:eskk_initial_post() "{{{
+        EskkMap -remap jj <Plug>(eskk:disable)<Esc>
+    endfunction "}}}
 
 
     " Experimental.
