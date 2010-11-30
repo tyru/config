@@ -13,8 +13,8 @@
 
 (define (main args)
 
-    (if (pair? (cdr args))
-      (print (cons "args:" (cdr args)) "\n"))
+  (if (pair? (cdr args))
+    (print (cons "args:" (cdr args)) "\n"))
 
 
-    0)
+  0)
