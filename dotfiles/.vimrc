@@ -688,6 +688,8 @@ Map [n] gh :<C-u>cNext<CR>
 
 Map [n] <excmd>ct :<C-u>tabclose<CR>
 
+Map [n] gm :<C-u>make<CR>
+
 " TODO: Smart 'zd': Delete empty line {{{
 " }}}
 " TODO: Smart '{', '}': Treat folds as one non-empty line. {{{
