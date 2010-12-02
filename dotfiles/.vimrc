@@ -2000,6 +2000,7 @@ if has('vim_starting')
     let g:eskk#show_candidates_count = 2
     let g:eskk#show_annotation = 1
     let g:eskk#rom_input_style = 'msime'
+    let g:eskk#keep_state = 1
 
     let g:eskk#marker_henkan = '$'
     let g:eskk#marker_okuri = '*'
