@@ -2585,6 +2585,9 @@ endfunction
 MyAutocmd User tabclose-post call s:tabclose_post()
 " }}}
 
+" test
+let g:loaded_tyru_event_test = 1
+
 " runtime
 " netrw {{{
 function! s:filetype_netrw() "{{{
