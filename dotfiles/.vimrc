@@ -2574,6 +2574,16 @@ endfunction
 " whichedit {{{
 MyAlterCommand we WhichEdit
 " }}}
+" autocmd-tabclose {{{
+" :tabprevious on vimrc-tabclose
+function! s:tabclose_post()
+    if tabpagenr() != 1
+        Decho ':tabprevious'
+        " tabprevious
+    endif
+endfunction
+MyAutocmd User tabclose-post call s:tabclose_post()
+" }}}
 
 " runtime
 " netrw {{{
