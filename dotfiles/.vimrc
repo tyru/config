@@ -2486,7 +2486,7 @@ augroup END
 
 function! s:lingr_ctrl_l() "{{{
     call lingr#mark_as_read_current_room()
-    call s:auto_window_name()
+    call s:screen_auto_window_name()
     redraw!
 endfunction "}}}
 function! s:init_lingr(ft) "{{{
@@ -2681,32 +2681,32 @@ if $WINDOW != '' || $TMUX != ''
         set ttymouse=xterm2
     endif
 
-    function! s:set_window_name(name) "{{{2
+    function! s:screen_set_window_name(name) "{{{2
         let esc = "\<ESC>"
         silent! execute '!echo -n "' . esc . 'k' . escape(a:name, '%#!')
         \ . esc . '\\"'
         redraw!
     endfunction
-    command! -nargs=? WindowName call s:set_window_name(<q-args>)
+    command! -nargs=? WindowName call s:screen_set_window_name(<q-args>)
 
-    function! s:auto_window_name()  " {{{2
+    function! s:screen_auto_window_name()  " {{{2
         let varname = 'window_name'
         for scope in [w:, b:, t:, g:]
             if has_key(scope, varname)
-                call s:set_window_name(scope[varname])
+                call s:screen_set_window_name(scope[varname])
                 return
             endif
         endfor
         if bufname('%') !~ '^\[A-Za-z0-9\]*:/'
-            call s:set_window_name('vim:' . expand('%:t'))
+            call s:screen_set_window_name('vim:' . expand('%:t'))
         endif
     endfunction
     augroup vimrc-screen
         autocmd!
-        autocmd VimEnter * call s:set_window_name(0 < argc() ?
+        autocmd VimEnter * call s:screen_set_window_name(0 < argc() ?
         \ 'vim:' . fnamemodify(argv(0), ':t') : 'vim')
-        autocmd BufEnter,BufFilePost * call s:auto_window_name()
-        autocmd VimLeave * call s:set_window_name(len($SHELL) ?
+        autocmd BufEnter,BufFilePost * call s:screen_auto_window_name()
+        autocmd VimLeave * call s:screen_set_window_name(len($SHELL) ?
         \ fnamemodify($SHELL, ':t') : 'shell')
     augroup END
 endif
