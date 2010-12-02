@@ -2484,9 +2484,14 @@ augroup vimrc-plugin-lingr
     autocmd FileType lingr-* call s:init_lingr(expand('<amatch>'))
 augroup END
 
+function! s:lingr_ctrl_l() "{{{
+    call lingr#mark_as_read_current_room()
+    call s:auto_window_name()
+    redraw!
+endfunction "}}}
 function! s:init_lingr(ft) "{{{
     if exists('s:screen_is_running')
-        nnoremap <buffer> <silent> <C-l> :<C-u>call <SID>auto_window_name()<CR><C-l>
+        Map [n] -buffer -silent <C-l> :<C-u>call <SID>lingr_ctrl_l()<CR>
         let b:window_name = 'lingr'
     endif
 endfunction "}}}
@@ -2500,7 +2505,6 @@ endfunction "}}}
 
 MyAutocmd FileType lingr-messages
 \   Map [n] -buffer -remap o <Plug>(lingr-messages-show-say-buffer)
-autocmd FileType lingr-* Map [n] -remap -silent -buffer <C-l> :<C-u>call lingr#mark_as_read_current_room()<CR>
 
 
 let g:lingr_vim_additional_rooms = [
