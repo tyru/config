@@ -2465,35 +2465,37 @@ let g:prettyprint_show_expression = 1
 let g:fencview_auto_patterns = '*'
 let g:fencview_show_progressbar = 0
 " }}}
-" lingr {{{
-"
-" from thinca's .vimrc
+" lingr.vim {{{
+
+" from thinca's .vimrc {{{
 " http://soralabo.net/s/vrcb/s/thinca
 
-" if !exists('g:lingr')
-"     " Only when started by the 'lingr' command(alias), lingr.vim is used.
-"     "     alias lingr="vim --cmd 'let g:lingr = 1' -c LingrLaunch"
-"     let g:loaded_lingr_vim = 1
-" endif
-" 
-" let g:lingr_vim_user = 'tyru'
-" augroup vimrc-plugin-lingr
-"     autocmd!
-"     autocmd User plugin-lingr-* call s:lingr_event(
-"     \            matchstr(expand('<amatch>'), 'plugin-lingr-\zs\w*'))
-"     autocmd FileType lingr-* call s:init_lingr(expand('<amatch>'))
-" augroup END
-" function! s:init_lingr(ft) "{{{
-"     if exists('s:window')
-"         nnoremap <buffer> <silent> <C-l> :<C-u>call <SID>auto_window_name()<CR><C-l>
-"         let b:window_name = 'lingr-vim'
-"     endif
-" endfunction "}}}
-" function! s:lingr_event(event) "{{{
-"   if a:event ==# 'message' && exists(':WindowName')
-"     execute printf('WindowName %s(%d)', 'lingr-vim', lingr#unread_count())
-"   endif
-" endfunction "}}}
+if !exists('g:lingr')
+    " deactivate lingr.vim if there was not g:lingr variable.
+    " this is set in .zshrc/.bashrc like the following:
+    "   alias lingr="vim --cmd 'let g:lingr = 1' -c LingrLaunch"
+    let g:loaded_lingr_vim = 1
+endif
+
+augroup vimrc-plugin-lingr
+    autocmd!
+    autocmd User plugin-lingr-* call s:lingr_event(
+    \     matchstr(expand('<amatch>'), 'plugin-lingr-\zs\w*'))
+    autocmd FileType lingr-* call s:init_lingr(expand('<amatch>'))
+augroup END
+
+function! s:init_lingr(ft) "{{{
+    if exists('s:screen_is_running')
+        nnoremap <buffer> <silent> <C-l> :<C-u>call <SID>auto_window_name()<CR><C-l>
+        let b:window_name = 'lingr'
+    endif
+endfunction "}}}
+function! s:lingr_event(event) "{{{
+    if a:event ==# 'message' && s:screen_is_running
+        execute printf('WindowName %s(%d)', 'lingr', lingr#unread_count())
+    endif
+endfunction "}}}
+" }}}
 
 
 MyAutocmd FileType lingr-messages
@@ -2667,25 +2669,43 @@ endif
 " from thinca's .vimrc
 " http://soralabo.net/s/vrcb/s/thinca
 
-" function! s:set_window_name(name) "{{{
-"       let esc = "\<ESC>"
-"       silent! execute '!echo -n "' . esc . 'k' . escape(a:name, '%#!')
-"         \ . esc . '\\"'
-"       redraw!
-" endfunction "}}}
-" command! -nargs=? WindowName call s:set_window_name(<q-args>)
-" function! s:auto_window_name() "{{{
-"   let varname = 'window_name'
-"   for scope in ['w:', 'b:', 't:', 'g:']
-"     if exists(scope .varname)
-"       call s:set_window_name(eval(scope . varname))
-"       return
-"     endif
-"   endfor
-"   if bufname('%') !~ '^\[A-Za-z0-9\]*:/'
-"     call s:set_window_name('v:' . expand('%:t'))
-"   endif
-" endfunction "}}}
+if $WINDOW != '' || $TMUX != ''
+    let s:screen_is_running = 1
+
+    " Use a mouse in screen.
+    if has('mouse')
+        set ttymouse=xterm2
+    endif
+
+    function! s:set_window_name(name) "{{{2
+        let esc = "\<ESC>"
+        silent! execute '!echo -n "' . esc . 'k' . escape(a:name, '%#!')
+        \ . esc . '\\"'
+        redraw!
+    endfunction
+    command! -nargs=? WindowName call s:set_window_name(<q-args>)
+
+    function! s:auto_window_name()  " {{{2
+        let varname = 'window_name'
+        for scope in [w:, b:, t:, g:]
+            if has_key(scope, varname)
+                call s:set_window_name(scope[varname])
+                return
+            endif
+        endfor
+        if bufname('%') !~ '^\[A-Za-z0-9\]*:/'
+            call s:set_window_name('vim:' . expand('%:t'))
+        endif
+    endfunction
+    augroup vimrc-screen
+        autocmd!
+        autocmd VimEnter * call s:set_window_name(0 < argc() ?
+        \ 'vim:' . fnamemodify(argv(0), ':t') : 'vim')
+        autocmd BufEnter,BufFilePost * call s:auto_window_name()
+        autocmd VimLeave * call s:set_window_name(len($SHELL) ?
+        \ fnamemodify($SHELL, ':t') : 'shell')
+    augroup END
+endif
 " }}}
 " }}}
 " End. {{{
