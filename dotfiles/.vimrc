@@ -1800,6 +1800,7 @@ let g:nf_loop_files = 1    " loop at the end of file
 let g:nf_ignore_ext = ['o', 'obj', 'exe', 'bin']
 " }}}
 " starter {{{
+let g:starter_no_default_command = 1
 nnoremap <silent> gt :<C-u>call starter#launch()<CR>
 
 function! StarterAfterHookFile(path) "{{{
