@@ -31,7 +31,8 @@ endfunction "}}}
 
 " Wrapper for built-in functions.
 function! tyru#util#system(command, ...) "{{{
-    return system(join([a:command] + map(copy(a:000), 'shellescape(v:val)'), ' '))
+    return system(join(
+    \   [a:command] + map(copy(a:000), 'shellescape(v:val)')))
 endfunction "}}}
 function! tyru#util#glob(expr) "{{{
     return split(glob(a:expr), "\n")
