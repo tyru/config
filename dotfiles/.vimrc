@@ -2100,13 +2100,13 @@ elseif s:anything == s:anything_ku
     Map [n] <anything>:        :<C-u>Ku cmd_mru/cmd<CR>
     Map [n] <anything>/        :<C-u>Ku cmd_mru/search<CR>
 elseif s:anything == s:anything_unite
-    Map [n] <anything>f        :<C-u>Unite -buffer-name=files file file_mru<CR>
-    Map [n] <anything>F        :<C-u>Unite -buffer-name=files file_rec<CR>
-    Map [n] <anything>t        :<C-u>Unite tab<CR>
-    Map [n] <anything>T        :<C-u>Unite tags<CR>
-    Map [n] <anything>h        :<C-u>Unite help<CR>
-    Map [n] <anything>p        :<C-u>Unite -buffer-name=files buffer_tab<CR>
-    Map [n] <anything>b        :<C-u>Unite buffer<CR>
+    Map [n] <anything>f        :<C-u>Unite -prompt='-')/\  -buffer-name=files file file_mru<CR>
+    Map [n] <anything>F        :<C-u>Unite -prompt='-')/\  -buffer-name=files file_rec<CR>
+    Map [n] <anything>t        :<C-u>Unite -prompt='-')/\  tab<CR>
+    Map [n] <anything>T        :<C-u>Unite -prompt='-')/\  tags<CR>
+    Map [n] <anything>h        :<C-u>Unite -prompt='-')/\  help<CR>
+    Map [n] <anything>p        :<C-u>Unite -prompt='-')/\  -buffer-name=files buffer_tab<CR>
+    Map [n] <anything>b        :<C-u>Unite -prompt='-')/\  buffer<CR>
 endif
 
 
