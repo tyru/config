@@ -2001,13 +2001,13 @@ if has('vim_starting')
     let g:eskk#show_annotation = 1
     let g:eskk#rom_input_style = 'msime'
     let g:eskk#keep_state = 1
+    let g:eskk#keep_state_beyond_buffer = 1
 
     let g:eskk#marker_henkan = '$'
     let g:eskk#marker_okuri = '*'
     let g:eskk#marker_henkan_select = '@'
     let g:eskk#marker_jisyo_touroku = '?'
     let g:eskk#marker_popup = '#'
-
 
     let g:eskk#convert_at_exact_match = 0
 
