@@ -2564,6 +2564,7 @@ let g:quickey_merge_window_hide_vim_window_move_cursor = 1
 " }}}
 " ohmygrep {{{
 MyAlterCommand gr[ep] OMGrep
+MyAlterCommand re[place] OMReplace
 
 Map [n] -remap <Space>gw <Plug>(omg-grep-cword)
 Map [n] -remap <Space>gW <Plug>(omg-grep-cWORD)
