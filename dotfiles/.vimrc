@@ -2702,14 +2702,16 @@ if $WINDOW != '' || $TMUX != ''
             call s:screen_set_window_name('vim:' . expand('%:t'))
         endif
     endfunction
-    augroup vimrc-screen
-        autocmd!
-        autocmd VimEnter * call s:screen_set_window_name(0 < argc() ?
-        \ 'vim:' . fnamemodify(argv(0), ':t') : 'vim')
-        autocmd BufEnter,BufFilePost * call s:screen_auto_window_name()
-        autocmd VimLeave * call s:screen_set_window_name(len($SHELL) ?
-        \ fnamemodify($SHELL, ':t') : 'shell')
-    augroup END
+    if 0
+        augroup vimrc-screen
+            autocmd!
+            autocmd VimEnter * call s:screen_set_window_name(0 < argc() ?
+            \ 'vim:' . fnamemodify(argv(0), ':t') : 'vim')
+            autocmd BufEnter,BufFilePost * call s:screen_auto_window_name()
+            autocmd VimLeave * call s:screen_set_window_name(len($SHELL) ?
+            \ fnamemodify($SHELL, ':t') : 'shell')
+        augroup END
+    endif
 endif
 " }}}
 " }}}
