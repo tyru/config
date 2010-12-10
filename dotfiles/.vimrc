@@ -2313,11 +2313,6 @@ if has('vim_starting')
     if executable('pandoc')
         let g:quickrun_config['markdown'] = {'command' : 'pandoc'}
     endif
-    if executable('perl6')
-        let g:quickrun_config['perl6'] = {
-        \   'eval_template': join(['{%s}().perl.print'], ';')
-        \}
-    endif
     let g:quickrun_config['lisp'] = {
     \   'command': 'clisp',
     \   'eval': 1,
