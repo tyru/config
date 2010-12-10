@@ -419,7 +419,7 @@ command! -bar HelpTagsAll call pathogen#helptags()
 HelpTagsAll
 
 
-call emap#load()
+call emap#load('noprefix')    " Define :EmMap as :Map
 call emap#set_sid(s:SID())
 " call emap#set_sid_from_sfile(expand('<sfile>'))
 
