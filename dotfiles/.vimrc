@@ -2399,7 +2399,7 @@ MapAlterCommand py[doc] Ref pydoc
 Map [n] <orig>K K
 
 let g:ref_use_vimproc = 0
-let g:ref_open = 'belowright split'
+let g:ref_open = 'belowright vsplit'
 if executable('perldocjp')
     let g:ref_perldoc_cmd = 'perldocjp'
 endif
