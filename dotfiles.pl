@@ -2,6 +2,7 @@
     directory => "dotfiles",
     files => [
         'bin',
+        'bin.d/gittools',
         '.vim',
         '.vimrc',
         '.gvimrc',
