@@ -1148,9 +1148,10 @@ Map [c] <C-n> <Down>
 Map [c] <C-p> <Up>
 " }}}
 " abbr {{{
-inoreab <expr> date@      strftime("%Y-%m-%d")
-inoreab <expr> time@      strftime("%H:%M")
-inoreab <expr> dt@        strftime("%Y-%m-%d %H:%M")
+Map [i] -expr -abbr  date@ strftime('%Y-%m-%d')
+Map [i] -expr -abbr  time@ strftime("%H:%M")
+Map [i] -expr -abbr  dt@   strftime("%Y-%m-%d %H:%M")
+Map [ic] -expr -abbr mb@   [^\x01-\x7e]
 
 MapAlterCommand th     tab help
 MapAlterCommand t      tabedit
