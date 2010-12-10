@@ -1693,8 +1693,7 @@ function! s:cmd_capture(q_args) "{{{
     redir END
     let output = substitute(output, '^\n\+', '', '')
 
-    " Change as you like. for e.g., :new instead.
-    New
+    belowright split
 
     silent file `=printf('[Capture: %s]', a:q_args)`
     setlocal buftype=nofile bufhidden=unload noswapfile nobuflisted
@@ -1713,55 +1712,28 @@ command!
 \   | endfor
 \   | unlet! id
 " }}}
-" :Split, :Help, :New - Open window vertically/horizontally {{{
-MyAlterCommand sp[lit]    Split
+" :Help {{{
 MyAlterCommand h[elp]     Help
-MyAlterCommand new        New
-
-command!
-\   -bar -bang -nargs=* -complete=file
-\   Split
-\   call s:split_nicely_with(['split', <f-args>], <bang>0)
-
-command!
-\   -bar -bang -nargs=* -complete=file
-\   New
-\   call s:split_nicely_with(['new', <f-args>], <bang>0)
 
 " No -bar
 command!
 \   -bang -nargs=* -complete=help
 \   Help
-\   call s:cmd_Help(['help', <f-args>], <bang>0)
-
-function! s:cmd_Help(f_args, banged) "{{{
-    let save = {'splitright': &splitright, 'splitbelow': &splitbelow}
-    let [&splitright, &splitbelow] = [1, 0]
-    try
-        call s:split_nicely_with(a:f_args, a:banged)
-    finally
-        let [&splitright, &splitbelow] = [save.splitright, save.splitbelow]
-    endtry
+\   rightbelow help<bang> <args>
+" }}}
+" Detect current position in current tab ambiguously. {{{
+function! s:tab_on_left_side() "{{{
+    return wincol() < &columns / 2
+endfunction "}}}
+function! s:win_on_left_side(...) "{{{
+    return wincol() < winwidth(a:0 ? a:1 : 0) / 2
 endfunction "}}}
 
-function! s:vertically() "{{{
-    return 80*2 * 15/16 <= winwidth(0)  " FIXME: threshold customization
+function! s:tab_on_above_side() "{{{
+    return winline() < &lines / 2
 endfunction "}}}
-
-" Originally from kana's s:split_nicely().
-function! s:split_nicely_with(args, banged) "{{{
-    if empty(a:args)
-        return
-    endif
-
-    try
-        execute
-        \   s:vertically() ? 'vertical' : ''
-        \   a:args[0] . (a:banged ? '!' : '')
-        \   join(a:args[1:])
-    catch
-        Echomsg ErrorMsg substitute(v:exception, '^Vim(\w\+):', '', '')
-    endtry
+function! s:win_on_above_side(...) "{{{
+    return winline() < winheight(a:0 ? a:1 : 0) / 2
 endfunction "}}}
 " }}}
 " :NonSortUniq {{{
@@ -2316,7 +2288,7 @@ Map [nvo] -remap <Space>r <Plug>(quickrun)
 
 if has('vim_starting')
     let g:quickrun_config = {}
-    let g:quickrun_config['*'] = {'split': printf('{%s() ? "vertical" : ""}', s:SNR('vertically'))}
+    let g:quickrun_config['*'] = {'split': 'vertical rightbelow'}
     if executable('pandoc')
         let g:quickrun_config['markdown'] = {'command' : 'pandoc'}
     endif
@@ -2429,7 +2401,7 @@ MyAlterCommand py[doc] Ref pydoc
 call s:map_orig_key('n', 'K')
 
 let g:ref_use_vimproc = 0
-let g:ref_open = 'Split'
+let g:ref_open = 'belowright split'
 if executable('perldocjp')
     let g:ref_perldoc_cmd = 'perldocjp'
 endif
@@ -2437,7 +2409,7 @@ endif
 " vimfiler {{{
 let g:vimfiler_as_default_explorer = 1
 let g:vimfiler_safe_mode_by_default = 0
-let g:vimfiler_split_command = 'Split'
+let g:vimfiler_split_command = 'aboveleft split'
 let g:vimfiler_edit_command = 'edit'
 let g:vimfiler_change_vim_cwd = 0
 
