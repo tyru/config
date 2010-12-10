@@ -77,7 +77,9 @@ command!
 " }}}
 " Options {{{
 
+let s:tmp = &runtimepath
 set all&
+let &runtimepath = s:tmp
 
 if exists('&msghistlen')
     set msghistlen=9999
