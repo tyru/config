@@ -31,39 +31,6 @@ function! s:SNR(map) "{{{
     return printf("<SNR>%d_%s", s:SID(), a:map)
 endfunction "}}}
 
-
-function! s:map_leader(key) "{{{
-    let g:mapleader = a:key
-    Map [n] <Leader> <Nop>
-endfunction "}}}
-function! s:map_localleader(key) "{{{
-    let g:maplocalleader = a:key
-    Map [n] <LocalLeader> <Nop>
-endfunction "}}}
-function! s:map_prefix_key(modes, prefix_name, prefix_key) "{{{
-    let modes = a:modes != '' ? a:modes : 'nvoiclxs'
-
-    " execute 'DefMap' printf('[%s]', modes) a:prefix_name '<Nop>'
-    " execute 'Map'         printf('[%s]', modes)            a:prefix_key  printf('<%s>', a:prefix_name)
-
-    execute 'DefMacroMap' printf('[%s]', modes) a:prefix_name a:prefix_key
-
-    " NOTE: Uncomment this due to Vim's mapping specification.
-    " See this: http://d.hatena.ne.jp/thinca/20100525/1274799274
-    "
-    " execute 'Map'         printf('[%s]', modes) a:prefix_key '<Nop>'
-
-    " TODO
-    " DefMap [<eval modes>] <eval a:prefix_name> <Nop>
-    " Map    [<eval modes>] <eval a:prefix_key>  <<eval a:prefix_name>>
-endfunction "}}}
-function! s:map_orig_key(modes, key) "{{{
-    execute printf('Map [%s] <orig>%s %s', a:modes, a:key, a:key)
-
-    " TODO
-    " Map [<eval a:modes>] <orig><eval a:key> <eval a:key>
-endfunction "}}}
-
 " }}}
 " Commands {{{
 augroup vimrc
@@ -522,24 +489,23 @@ call dutil#load()
 
 " Set up general prefix keys. {{{
 
-" <orig>
-call s:map_prefix_key('nvo', 'orig', 'q')
-call s:map_prefix_key('ic' , 'orig', '<C-g><C-o>')
-call s:map_orig_key('n', 'q')
-" <Leader>
-call s:map_leader(';')
-" <LocalLeader>
-call s:map_localleader('\')
-" <excmd>
-call s:map_prefix_key('nvo', 'excmd', '<Space>')
-" <operator>
-call s:map_prefix_key('nvo', 'operator', ';')
-" <window>
-call s:map_prefix_key('n', 'window', '<C-w>')
-" <prompt>
-call s:map_prefix_key('nvo', 'prompt', ',t')
-" <compl>
-call s:map_prefix_key('i', 'compl', '<Tab>')
+DefMacroMap [nvo] orig q
+DefMacroMap [ic] orig <C-g><C-o>
+
+Map [n] <orig>q q
+
+DefMacroMap [nvo] excmd <Space>
+DefMacroMap [nvo] operator ;
+DefMacroMap [n] window <C-w>
+DefMacroMap [nvo] prompt ,t
+
+let g:mapleader = ';'
+Map [n] <Leader> <Nop>
+
+let g:maplocalleader = '\'
+Map [n] <LocalLeader> <Nop>
+
+DefMacroMap [i] compl <Tab>
 " }}}
 
 " map {{{
@@ -619,8 +585,9 @@ Map [nvo] -remap <operator>hu <Plug>(operator-html-unescape)
 " motion {{{
 Map [nvo] j gj
 Map [nvo] k gk
-call s:map_orig_key('nvo', 'j')
-call s:map_orig_key('nvo', 'k')
+
+Map [nvo] <orig>j j
+Map [nvo] <orig>k k
 
 " FIXME: Does not work in visual mode.
 Map [nvo] ]k :<C-u>call search('^\S', 'Ws')<CR>
@@ -648,7 +615,7 @@ Map [vo] -remap il <Plug>(textobj-lastpat-n)
 " }}}
 " nmap {{{
 
-call s:map_prefix_key('nvo', 'fold', 'z')
+DefMacroMap [nvo] fold z
 
 " Open only current line's fold.
 Map [n] <fold><Space> zMzvzz
@@ -2081,7 +2048,7 @@ MyAlterCommand o[pen] OpenBrowser
 let g:autodate_format = "%Y-%m-%d"
 " }}}
 " anything (ku,fuf,unite,etc.) {{{
-call s:map_prefix_key('n', 'anything', 's')
+DefMacroMap [n] anything s
 
 " Which anything do you like?
 let [s:anything_fuf, s:anything_ku, s:anything_unite] = range(3)
@@ -2426,7 +2393,7 @@ MyAlterCommand cppref Ref cppref
 MyAlterCommand cpp    Ref cppref
 MyAlterCommand py[doc] Ref pydoc
 
-call s:map_orig_key('n', 'K')
+Map [n] <orig>K K
 
 let g:ref_use_vimproc = 0
 let g:ref_open = 'belowright split'
