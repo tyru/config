@@ -244,3 +244,6 @@
 [submodule "dotfiles/.vim/bundle/autocmd-tabclose.vim"]
 	path = dotfiles/.vim/bundle/autocmd-tabclose.vim
 	url = git://github.com/tyru/autocmd-tabclose.vim.git
+[submodule "dotfiles/bin.d/gittools"]
+	path = dotfiles/bin.d/gittools
+	url = git://github.com/tyru/gittools.git
