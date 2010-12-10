@@ -2133,8 +2133,8 @@ let fuf_previewHeight = 0
 " }}}
 " unite {{{
 let g:unite_enable_start_insert = 1
-let g:unite_cd_command = 'TabpageCD'
-let g:unite_lcd_command = 'TabpageCD'
+let g:unite_cd_command = 'CD'
+let g:unite_lcd_command = 'CD'
 let g:unite_enable_ignore_case = 1
 let g:unite_enable_smart_case = 1
 let g:unite_enable_split_vertically = 1
