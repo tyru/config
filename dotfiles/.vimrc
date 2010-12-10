@@ -141,10 +141,6 @@ set scrolloff=15
 set shiftround
 set shiftwidth=4
 
-" window
-set splitbelow
-set nosplitright
-
 " completion
 set complete=.,w,b,u,t,i,d,k,kspell
 set wildmenu
