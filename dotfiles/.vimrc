@@ -675,8 +675,6 @@ Map [n] g; ~
 Map [n] + <C-a>
 Map [n] -- - <C-x>
 
-Map [n] <excmd>sp :<C-u>Split<CR>
-
 Map [n] r gR
 
 Map [n] gl :<C-u>cnext<CR>
