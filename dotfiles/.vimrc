@@ -431,7 +431,7 @@ call arpeggio#load()
 call altercmd#load()
 command!
 \   -bar -nargs=+
-\   MyAlterCommand
+\   MapAlterCommand
 \   CAlterCommand <args> | AlterCommand <cmdwin> <args>
 
 
@@ -1152,15 +1152,15 @@ inoreab <expr> date@      strftime("%Y-%m-%d")
 inoreab <expr> time@      strftime("%H:%M")
 inoreab <expr> dt@        strftime("%Y-%m-%d %H:%M")
 
-MyAlterCommand th     tab help
-MyAlterCommand t      tabedit
-MyAlterCommand sf     setf
-MyAlterCommand hg     helpgrep
-MyAlterCommand ds     diffsplit
+MapAlterCommand th     tab help
+MapAlterCommand t      tabedit
+MapAlterCommand sf     setf
+MapAlterCommand hg     helpgrep
+MapAlterCommand ds     diffsplit
 
 " For typo.
-MyAlterCommand qw     wq
-MyAlterCommand amp    map
+MapAlterCommand qw     wq
+MapAlterCommand amp    map
 " }}}
 
 " Mappings with option value. {{{
@@ -1539,8 +1539,8 @@ function! s:cmd_rename(...) "{{{
     endif
 endfunction "}}}
 
-MyAlterCommand mv Rename
-MyAlterCommand ren[ame] Rename
+MapAlterCommand mv Rename
+MapAlterCommand ren[ame] Rename
 " }}}
 " :Mkdir {{{
 function! s:mkdir_p(...)
@@ -1553,7 +1553,7 @@ command! -bar -nargs=+ -complete=dir
 \   Mkdir
 \   call s:mkdir_p(<f-args>)
 
-MyAlterCommand mkd[ir] Mkdir
+MapAlterCommand mkd[ir] Mkdir
 " }}}
 " :Mkcd {{{
 command!
@@ -1561,12 +1561,12 @@ command!
 \   Mkcd
 \   Mkdir <args> | CD <args>
 
-MyAlterCommand mkc[d] Mkcd
+MapAlterCommand mkc[d] Mkcd
 " }}}
 " :EchoPath - Show path-like option in a readable way {{{
 
-MyAlterCommand epa EchoPath
-MyAlterCommand rtp EchoPath<Space>&rtp
+MapAlterCommand epa EchoPath
+MapAlterCommand rtp EchoPath<Space>&rtp
 
 
 " TODO Add -complete=option
@@ -1595,10 +1595,10 @@ command!
 \   Expand
 \   echo expand(<q-args> != '' ? <q-args> : '%:p')
 
-MyAlterCommand ep Expand
+MapAlterCommand ep Expand
 " }}}
 " :Has {{{
-MyAlterCommand has Has
+MapAlterCommand has Has
 
 command!
 \   -bar -nargs=1 -complete=customlist,feature_list_excomplete#complete
@@ -1611,7 +1611,7 @@ command!
 \   GlobPath
 \   echo globpath(&rtp, <q-args>)
 
-MyAlterCommand gp GlobPath
+MapAlterCommand gp GlobPath
 " }}}
 " :QuickFix - Wrapper for favorite quickfix opening command {{{
 " Select prefered command from cwindow, copen, and so on.
@@ -1621,10 +1621,10 @@ command!
 \   QuickFix
 \   if !empty(getqflist()) | cwindow <args> | endif
 
-MyAlterCommand qf QuickFix
+MapAlterCommand qf QuickFix
 " }}}
 " :TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
-MyAlterCommand cd  TabpageCD
+MapAlterCommand cd  TabpageCD
 
 Map [n] ,cd       :<C-u>TabpageCD %:p:h<CR>
 Map [n] <Space>cd :<C-u>lcd %:p:h<CR>
@@ -1649,7 +1649,7 @@ MyAutocmd TabEnter *
 \ | execute 'cd' fnameescape(expand(t:cwd))
 " }}}
 " :Capture {{{
-MyAlterCommand cap[ture] Capture
+MapAlterCommand cap[ture] Capture
 
 command!
 \   -nargs=+ -complete=command
@@ -1682,7 +1682,7 @@ command!
 \   | unlet! id
 " }}}
 " :Help {{{
-MyAlterCommand h[elp]     Help
+MapAlterCommand h[elp]     Help
 
 " No -bar
 command!
@@ -2037,14 +2037,14 @@ endif
 " }}}
 " restart {{{
 let g:restart_sessionoptions = 'blank,curdir,folds,help,localoptions,tabpages'
-MyAlterCommand res[tart] Restart
-MyAlterCommand ers[tart] Restart
-MyAlterCommand rse[tart] Restart
+MapAlterCommand res[tart] Restart
+MapAlterCommand ers[tart] Restart
+MapAlterCommand rse[tart] Restart
 " }}}
 " openbrowser {{{
 let g:netrw_nogx = 1
 Map [nv] -remap gx <Plug>(openbrowser-open)
-MyAlterCommand o[pen] OpenBrowser
+MapAlterCommand o[pen] OpenBrowser
 " }}}
 " AutoDate {{{
 let g:autodate_format = "%Y-%m-%d"
@@ -2119,7 +2119,7 @@ endfunction "}}}
 Lazy call s:register_anything_abbrev()
 
 " ku {{{
-MyAlterCommand ku Ku
+MapAlterCommand ku Ku
 " }}}
 " fuf {{{
 let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem', 'buffer', 'tag', 'taggedfile']
@@ -2184,7 +2184,7 @@ Map [n] <C-]>     :<C-u>call <SID>JumpTags()<CR>
 endif
 " }}}
 " vimshell {{{
-MyAlterCommand vsh[ell] VimShell
+MapAlterCommand vsh[ell] VimShell
 
 let g:vimshell_user_prompt = '"(" . getcwd() . ") --- (" . $USER . "@" . hostname() . ")"'
 let g:vimshell_prompt = '$ '
@@ -2387,13 +2387,13 @@ call submode#map       ('scroll', 'n', '', 's', ':let &l:scroll += 3<CR>')
 " }}}
 " ref {{{
 " 'K' for ':Ref'.
-MyAlterCommand ref Ref
-MyAlterCommand alc Ref alc
-MyAlterCommand man Ref man
-MyAlterCommand pdoc Ref perldoc
-MyAlterCommand cppref Ref cppref
-MyAlterCommand cpp    Ref cppref
-MyAlterCommand py[doc] Ref pydoc
+MapAlterCommand ref Ref
+MapAlterCommand alc Ref alc
+MapAlterCommand man Ref man
+MapAlterCommand pdoc Ref perldoc
+MapAlterCommand cppref Ref cppref
+MapAlterCommand cpp    Ref cppref
+MapAlterCommand py[doc] Ref pydoc
 
 Map [n] <orig>K K
 
@@ -2414,13 +2414,13 @@ MyAutocmd FileType vimfiler call s:vimfiler_settings()
 function! s:vimfiler_settings() "{{{
     Map [n] -remap -buffer L <Plug>(vimfiler_move_to_history_forward)
     Map [n] -remap -buffer H <Plug>(vimfiler_move_to_history_back)
-    Unmap [n] -buffer N
+    Map! [n] -buffer N
     Map [n] -remap -buffer <C-o> <Plug>(vimfiler_move_to_history_back)
     Map [n] -remap -buffer <C-i> <Plug>(vimfiler_move_to_history_forward)
 endfunction "}}}
 " }}}
 " prettyprint {{{
-MyAlterCommand pp PP
+MapAlterCommand pp PP
 
 let g:prettyprint_show_expression = 1
 " }}}
@@ -2497,7 +2497,7 @@ let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
 let g:lingr_vim_count_unread_at_current_room = 1
 " }}}
 " github {{{
-MyAlterCommand gh Github
+MapAlterCommand gh Github
 let g:github#use_vimproc = 0
 " }}}
 " neocomplcache {{{
@@ -2526,8 +2526,8 @@ let g:gist_detect_filetype = 1
 let g:quickey_merge_window_hide_vim_window_move_cursor = 1
 " }}}
 " ohmygrep {{{
-MyAlterCommand gr[ep] OMGrep
-MyAlterCommand re[place] OMReplace
+MapAlterCommand gr[ep] OMGrep
+MapAlterCommand re[place] OMReplace
 
 Map [n] -remap <Space>gw <Plug>(omg-grep-cword)
 Map [n] -remap <Space>gW <Plug>(omg-grep-cWORD)
@@ -2542,7 +2542,7 @@ endfunction
 
 " }}}
 " whichedit {{{
-MyAlterCommand we WhichEdit
+MapAlterCommand we WhichEdit
 " }}}
 " autocmd-tabclose {{{
 " :tabprevious on vimrc-tabclose
