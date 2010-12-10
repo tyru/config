@@ -2164,7 +2164,7 @@ function! s:JumpTags() "{{{
         sleep 2
         " unmap this function.
         " use plain <C-]> next time.
-        Unmap [n] <C-]>
+        Map! [n] <C-]>
         execute "normal! \<C-]>"
         return
     endif
@@ -2256,10 +2256,10 @@ function! s:vimshell_settings() "{{{
     call vimshell#hook#set('chpwd', [s:SNR('chpwd_ls')])
 
     " Add/Remove some mappings.
-    Unmap [n] -buffer <C-n>
-    Unmap [n] -buffer <C-p>
+    Map! [n] -buffer <C-n>
+    Map! [n] -buffer <C-p>
     Map [i] -buffer -force <C-p> <Space><Bar><Space>
-    Unmap [i] -buffer <Tab>
+    Map! [i] -buffer <Tab>
     Map [i] -remap -buffer -force <Tab><Tab> <Plug>(vimshell_command_complete)
     Map [n] -remap -buffer <C-z> <Plug>(vimshell_switch)
     Map [i] -remap -buffer <compl>r <Plug>(vimshell_history_complete_whole)
