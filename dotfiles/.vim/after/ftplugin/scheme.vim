@@ -5,92 +5,91 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-" TODO Use &operatorfunc, etc.
-" Mappings {{{
+let b:undo_ftplugin =
+\   'let &l:lispwords = '.string(&l:lispwords)
+\    . '| let &l:lisp = '.string(&l:lisp)
+\    . '| let &l:cindent = '.string(&l:cindent)
+\    . '| let &l:complete = '.string(&l:complete)
 
-nnoremap <buffer> <Leader>e       :call <SID>EvalFileNormal('e')<CR>
-vnoremap <buffer> <Leader>e       :call <SID>EvalFileVisual('e')<CR>
-nnoremap <buffer> <Leader>E       :call <SID>EvalFileNormal('E')<CR>
-vnoremap <buffer> <Leader>E       :call <SID>EvalFileVisual('E')<CR>
-nnoremap <buffer> <Leader><C-e>   :echo <SID>system('gosh', expand('%'))<CR>
 
-" Utility functions {{{
-" s:system {{{
-func! s:system(command, ...)
-    let args = [a:command] + map(copy(a:000), 'shellescape(v:val)')
-    return system(join(args, ' '))
-endfunc
-" }}}
-" s:EvalFileNormal(eval_main) {{{
-func! s:EvalFileNormal(eval_main)
-    normal! %v%
-    call s:EvalFileVisual(a:eval_main)
-endfunc
-" }}}
-" s:EvalFileVisual(eval_main) {{{
-func! s:EvalFileVisual(eval_main) range
-    let z_val = getreg('z', 1)
-    let z_type = getregtype('z')
-    normal! "zy
-
-    try
-        let curfile = expand('%')
-        if !filereadable(curfile)
-            call s:warn("can't load " . curfile . "...")
-            return
-        endif
-
-        let lines = readfile(curfile) + ['(print'] + split(@z, "\n") + [')']
-
-        let tmpfile = tempname() . localtime()
-        call writefile(lines, tmpfile)
-
-        if filereadable(tmpfile)
-            if a:eval_main ==# 'e'
-                " load tmpfile, execute the function 'main'
-                echo s:system('gosh', tmpfile)
-            elseif a:eval_main ==# 'E'
-                " load tmpfile
-                echo system(printf('cat %s | gosh', shellescape(tmpfile)))
-            else
-                call s:warn("this block never reached")
-            endif
-        else
-            call s:warn("cannot write to " . tmpfile . "...")
-        endif
-    finally
-        call setreg('z', z_val, z_type)
-    endtry
-endfunc
-" }}}
-" }}}
-" }}}
-
-" Global variables {{{
 let g:is_gauche = 1
-" }}}
 
-" Options {{{
+
 setlocal lisp
 setlocal nocindent
 setlocal complete=.,t,k,kspell
 
-" lispwords {{{
-setlocal lispwords+=and-let*,begin0,call-with-client-socket,call-with-input-conversion,call-with-input-file
-setlocal lispwords+=call-with-input-process,call-with-input-string,call-with-iterator,call-with-output-conversion,call-with-output-file
-setlocal lispwords+=call-with-output-string,call-with-temporary-file,call-with-values,dolist,dotimes
-setlocal lispwords+=if-match,let*-values,let-args,let-keywords*,let-match
-setlocal lispwords+=let-optionals*,let-syntax,let-values,let/cc,let1
-setlocal lispwords+=letrec-syntax,make,match,match-lambda,match-let
-setlocal lispwords+=match-let*,match-letrec,match-let1,match-define,multiple-value-bind
-setlocal lispwords+=parameterize,parse-options,receive,rxmatch-case,rxmatch-cond
-setlocal lispwords+=rxmatch-if,rxmatch-let,syntax-rules,unless,until
-setlocal lispwords+=when,while,with-builder,with-error-handler,with-error-to-port
-setlocal lispwords+=with-input-conversion,with-input-from-port,with-input-from-process,with-input-from-string,with-iterator
-setlocal lispwords+=with-module,with-output-conversion,with-output-to-port,with-output-to-process,with-output-to-string
-setlocal lispwords+=with-port-locking,with-string-io,with-time-counter,with-signal-handlers 
-" }}}
-" }}}
+
+command!
+\   -nargs=1
+\   SchemeAddLispWords
+\   let &l:lispwords .= ',' . <q-args>
+
+SchemeAddLispWords and-let*
+SchemeAddLispWords begin0
+SchemeAddLispWords call-with-client-socket
+SchemeAddLispWords call-with-input-conversion
+SchemeAddLispWords call-with-input-file
+SchemeAddLispWords call-with-input-process
+SchemeAddLispWords call-with-input-string
+SchemeAddLispWords call-with-iterator
+SchemeAddLispWords call-with-output-conversion
+SchemeAddLispWords call-with-output-file
+SchemeAddLispWords call-with-output-string
+SchemeAddLispWords call-with-temporary-file
+SchemeAddLispWords call-with-values
+SchemeAddLispWords dolist
+SchemeAddLispWords dotimes
+SchemeAddLispWords if-match
+SchemeAddLispWords let*-values
+SchemeAddLispWords let*-values
+SchemeAddLispWords let-args
+SchemeAddLispWords let-keywords*
+SchemeAddLispWords let-match
+SchemeAddLispWords let-optionals*
+SchemeAddLispWords let-syntax
+SchemeAddLispWords let-values
+SchemeAddLispWords let/cc
+SchemeAddLispWords let1
+SchemeAddLispWords letrec-syntax
+SchemeAddLispWords make
+SchemeAddLispWords match
+SchemeAddLispWords match-define
+SchemeAddLispWords match-lambda
+SchemeAddLispWords match-let
+SchemeAddLispWords match-let*
+SchemeAddLispWords match-let1
+SchemeAddLispWords match-letrec
+SchemeAddLispWords multiple-value-bind
+SchemeAddLispWords parameterize
+SchemeAddLispWords parse-options
+SchemeAddLispWords receive
+SchemeAddLispWords rxmatch-case
+SchemeAddLispWords rxmatch-cond
+SchemeAddLispWords rxmatch-if
+SchemeAddLispWords rxmatch-let
+SchemeAddLispWords syntax-rules
+SchemeAddLispWords unless
+SchemeAddLispWords until
+SchemeAddLispWords when
+SchemeAddLispWords while
+SchemeAddLispWords with-builder
+SchemeAddLispWords with-error-handler
+SchemeAddLispWords with-error-to-port
+SchemeAddLispWords with-input-conversion
+SchemeAddLispWords with-input-from-port
+SchemeAddLispWords with-input-from-process
+SchemeAddLispWords with-input-from-string
+SchemeAddLispWords with-iterator
+SchemeAddLispWords with-module
+SchemeAddLispWords with-output-conversion
+SchemeAddLispWords with-output-to-port
+SchemeAddLispWords with-output-to-process
+SchemeAddLispWords with-output-to-string
+SchemeAddLispWords with-port-locking
+SchemeAddLispWords with-signal-handlers
+SchemeAddLispWords with-string-io
+SchemeAddLispWords with-time-counter
 
 
 let &cpo = s:save_cpo
