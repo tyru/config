@@ -1740,22 +1740,34 @@ endfunction "}}}
 " Assumption: <args> does not contain :vertical,
 " and does not change 'splitright', 'splitbelow'.
 
-command!
-\   -nargs=* -complete=file
-\   SplitToLeft
-\   leftabove vsplit <args>
-command!
-\   -nargs=* -complete=file
-\   SplitToRight
-\   rightbelow vsplit <args>
-command!
-\   -nargs=* -complete=file
-\   SplitToUp
-\   aboveleft split <args>
-command!
-\   -nargs=* -complete=file
-\   SplitToDown
-\   belowright split <args>
+Map [n] -silent <SID>(split:to-down)
+\   :<C-u>execute 'belowright' (v:count == 0 ? '' : v:count) 'split'<CR>
+Map [n] -silent <SID>(split:to-up)
+\   :<C-u>execute 'aboveleft'  (v:count == 0 ? '' : v:count) 'split'<CR>
+Map [n] -silent <SID>(split:to-left)
+\   :<C-u>execute 'aboveleft'    (v:count == 0 ? '' : v:count) 'vsplit'<CR>
+Map [n] -silent <SID>(split:to-right)
+\   :<C-u>execute 'belowright'   (v:count == 0 ? '' : v:count) 'vsplit'<CR>
+
+Map [n] -silent <SID>(new:to-down)
+\   :<C-u>execute 'belowright' (v:count == 0 ? '' : v:count) 'new'<CR>
+Map [n] -silent <SID>(new:to-up)
+\   :<C-u>execute 'aboveleft'  (v:count == 0 ? '' : v:count) 'new'<CR>
+Map [n] -silent <SID>(new:to-left)
+\   :<C-u>execute 'aboveleft'    (v:count == 0 ? '' : v:count) 'vnew'<CR>
+Map [n] -silent <SID>(new:to-right)
+\   :<C-u>execute 'belowright'   (v:count == 0 ? '' : v:count) 'vnew'<CR>
+
+
+Map [n] -remap <excmd>sj <SID>(split:to-down)
+Map [n] -remap <excmd>sk <SID>(split:to-up)
+Map [n] -remap <excmd>sh <SID>(split:to-left)
+Map [n] -remap <excmd>sl <SID>(split:to-right)
+
+Map [n] -remap <excmd>ej <SID>(new:to-down)
+Map [n] -remap <excmd>ek <SID>(new:to-up)
+Map [n] -remap <excmd>eh <SID>(new:to-left)
+Map [n] -remap <excmd>el <SID>(new:to-right)
 " }}}
 " :NonSortUniq {{{
 "
