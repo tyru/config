@@ -1736,6 +1736,27 @@ function! s:win_on_above_side(...) "{{{
     return winline() < winheight(a:0 ? a:1 : 0) / 2
 endfunction "}}}
 " }}}
+" :SplitToLeft, :SplitToRight, :SplitToUp, :SplitToDown {{{
+" Assumption: <args> does not contain :vertical,
+" and does not change 'splitright', 'splitbelow'.
+
+command!
+\   -nargs=* -complete=file
+\   SplitToLeft
+\   leftabove vsplit <args>
+command!
+\   -nargs=* -complete=file
+\   SplitToRight
+\   rightbelow vsplit <args>
+command!
+\   -nargs=* -complete=file
+\   SplitToUp
+\   aboveleft split <args>
+command!
+\   -nargs=* -complete=file
+\   SplitToDown
+\   belowright split <args>
+" }}}
 " :NonSortUniq {{{
 "
 " http://lingr.com/room/vim/archives/2010/11/18#message-1023619
