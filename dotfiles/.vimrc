@@ -1687,7 +1687,7 @@ MapAlterCommand h[elp]     Help
 command!
 \   -bang -nargs=* -complete=help
 \   Help
-\   rightbelow help<bang> <args>
+\   vertical rightbelow help<bang> <args>
 " }}}
 " Detect current position in current tab ambiguously. {{{
 function! s:tab_on_left_side() "{{{
