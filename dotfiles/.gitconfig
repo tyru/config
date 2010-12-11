@@ -37,6 +37,9 @@
 	ss = stash save
 	st = status
 	sub = submodule
+	subfor = submodule foreach
+	subinit = submodule update --init
+	subadd = submodule add
 	view = log --pretty=oneline --abbrev-commit --graph --source --tags --branches
 	wh = whatchanged
 	zip = archive --format=zip
