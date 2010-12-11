@@ -1276,20 +1276,20 @@ function! s:change_encoding()
         call tyru#util#warn("current file is empty.")
         return
     endif
-    let result =
-                \ prompt#prompt("re-open with...", {
-                \   'menu': [
-                \     'cp932',
-                \     'shift-jis',
-                \     'iso-2022-jp',
-                \     'euc-jp',
-                \     'utf-8',
-                \     'ucs-bom'
-                \   ],
-                \   'escape': 1,
-                \   'one_char': 1,
-                \   'execute_if': '<f-value> != ""',
-                \   'execute': 'edit ++enc=<value>'})
+    let result = prompt#prompt("re-open with...", {
+    \   'menu': [
+    \     'cp932',
+    \     'shift-jis',
+    \     'iso-2022-jp',
+    \     'euc-jp',
+    \     'utf-8',
+    \     'ucs-bom'
+    \   ],
+    \   'escape': 1,
+    \   'one_char': 1,
+    \   'execute_if': '<f-value> != ""',
+    \   'execute': 'edit ++enc=<value>',
+    \})
     if result !=# "\e"
         echomsg printf("re-open with '%s'.", result)
     endif
@@ -1300,26 +1300,23 @@ Map [n] <prompt>a     :<C-u>call <SID>change_encoding()<CR>
 " set fenc=... {{{
 function! s:change_fileencoding()
     let enc = prompt#prompt("changing file encoding to...", {
-                \ 'menu': [
-                \ 'cp932',
-                \ 'shift-jis',
-                \ 'iso-2022-jp',
-                \ 'euc-jp',
-                \ 'utf-8',
-                \ 'ucs-bom'
-                \ ],
-                \ 'escape': 1,
-                \ 'one_char': 1,
-                \ 'execute_if': '<f-value> != ""',
-                \ 'execute': 'set fenc=<value>'})
+    \   'menu': [
+    \     'cp932',
+    \     'shift-jis',
+    \     'iso-2022-jp',
+    \     'euc-jp',
+    \     'utf-8',
+    \     'ucs-bom'
+    \   ],
+    \   'escape': 1,
+    \   'one_char': 1,
+    \   'execute_if': '<f-value> != ""',
+    \   'execute': 'set fenc=<value>',
+    \})
     if enc ==# "\e"
         return
     endif
-    if enc == 'ucs-bom'
-        set bomb
-    else
-        set nobomb
-    endif
+    let &l:bomb = enc ==# 'ucs-bom'
     echomsg printf("changing file encoding to '%s'.", enc)
 endfunction
 
@@ -1328,11 +1325,12 @@ Map [n] <prompt>s    :<C-u>call <SID>change_fileencoding()<CR>
 " set ff=... {{{
 function! s:change_newline_format()
     let result = prompt#prompt("changing newline format to...", {
-                \ 'menu': ['dos', 'unix', 'mac'],
-                \ 'one_char': 1,
-                \ 'escape': 1,
-                \ 'execute_if': '<f-value> != ""',
-                \ 'execute': 'set ff=<value>'})
+    \   'menu': ['dos', 'unix', 'mac'],
+    \   'one_char': 1,
+    \   'escape': 1,
+    \   'execute_if': '<f-value> != ""',
+    \   'execute': 'set ff=<value>',
+    \})
     if result !=# "\e"
         echomsg printf("changing newline format to '%s'.", result)
     endif
