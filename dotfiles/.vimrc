@@ -1935,7 +1935,7 @@ endif
 
 " }}}
 " skk {{{
-let g:skk_disable = 0
+let g:plugin_skk_disable = 1
 
 let skk_jisyo = s:skk_user_dict
 let skk_large_jisyo = s:skk_system_dict
