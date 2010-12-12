@@ -1034,8 +1034,33 @@ command!
 " }}}
 " }}}
 " vmap {{{
-" TODO: '<C-g>' and 'g<C-g>' in visual mode: Show information about selected area. {{{
-" }}}
+
+" V and <C-v> are unnecessary?
+function! s:toggle_visual_mode() "{{{
+    " v -> V -> <C-v> -> v -> ...
+    return get({
+    \   'v': 'V',
+    \   'V': "\<C-v>",
+    \   "\<C-v>": 'v',
+    \}, mode(), "\<Esc>")
+endfunction "}}}
+Map [v] -expr v <SID>toggle_visual_mode()
+
+
+" '<C-g>' and 'g<C-g>' in visual mode: Show information about selected area.
+function! s:show_report_about_selected_area(verbose) "{{{
+    if a:verbose
+        echo printf('%d byte(s), %d char(s), %d width, %d display width',
+        \           strlen(@z), strchars(@z), strwidth(@z), strdisplaywidth(@z))
+    else
+        echo printf('%d byte(s), %d char(s)',
+        \           strlen(@z), strchars(@z))
+    endif
+    sleep 1
+endfunction "}}}
+Map [v] <C-g> "zy:call <SID>show_report_about_selected_area(0)<CR>gv
+Map [v] g<C-g> "zy:call <SID>show_report_about_selected_area(1)<CR>gv
+
 " }}}
 " map! {{{
 Map [ic] <C-f> <Right>
