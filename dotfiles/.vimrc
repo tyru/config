@@ -2601,6 +2601,9 @@ let changelog_username = "tyru"
 " syntax/sh.vim {{{
 let g:is_bash = 1
 " }}}
+" syntax/scheme.vim {{{
+let g:is_gauche = 1
+" }}}
 
 " }}}
 " Backup {{{
