@@ -1044,7 +1044,7 @@ function! s:toggle_visual_mode() "{{{
     \   "\<C-v>": 'v',
     \}, mode(), "\<Esc>")
 endfunction "}}}
-Map [v] -expr v <SID>toggle_visual_mode()
+" Map [v] -expr v <SID>toggle_visual_mode()
 
 
 " '<C-g>' and 'g<C-g>' in visual mode: Show information about selected area.
