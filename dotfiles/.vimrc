@@ -1196,11 +1196,11 @@ function! s:expr_with_options(cmd, opt) "{{{
     return a:cmd
 endfunction "}}}
 
-Map [n] -expr / <SID>expr_with_options('/', {'&ignorecase': 1, '&hlsearch': 0})
-Map [n] -expr ? <SID>expr_with_options('?', {'&ignorecase': 1, '&hlsearch': 0})
+Map [n] -expr / <SID>expr_with_options('/', {'&ignorecase': 1, '&hlsearch': 1})
+Map [n] -expr ? <SID>expr_with_options('?', {'&ignorecase': 1, '&hlsearch': 1})
 
-Map [n] -expr * <SID>expr_with_options('*', {'&hlsearch': 1, '&ignorecase': 0})
-Map [n] -expr # <SID>expr_with_options('#', {'&hlsearch': 1, '&ignorecase': 0})
+Map [n] -expr * <SID>expr_with_options('*', {'&ignorecase': 0, '&hlsearch': 1})
+Map [n] -expr # <SID>expr_with_options('#', {'&ignorecase': 0, '&hlsearch': 1})
 
 Map [nv] -expr : <SID>expr_with_options(':', {'&ignorecase': 1})
 
