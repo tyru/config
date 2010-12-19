@@ -1047,12 +1047,13 @@ endfunction "}}}
 
 " '<C-g>' and 'g<C-g>' in visual mode: Show information about selected area.
 function! s:show_report_about_selected_area(verbose) "{{{
+    let lines_num = getpos("'>")[1] - getpos("'<")[1] + 1
     if a:verbose
-        echo printf('%d byte(s), %d char(s), %d width, %d display width',
-        \           strlen(@z), strchars(@z), strwidth(@z), strdisplaywidth(@z))
+        echo printf('%d line(s), %d byte(s), %d char(s), %d width, %d display width',
+        \           lines_num, strlen(@z), strchars(@z), strwidth(@z), strdisplaywidth(@z))
     else
-        echo printf('%d byte(s), %d char(s)',
-        \           strlen(@z), strchars(@z))
+        echo printf('%d line(s), %d byte(s), %d char(s)',
+        \           lines_num, strlen(@z), strchars(@z))
     endif
     sleep 1
 endfunction "}}}
