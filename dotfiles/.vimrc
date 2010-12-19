@@ -168,17 +168,6 @@ let &titlestring = '%{MyTitleString()}'
 " tab
 set showtabline=2
 
-nnoremap <C-t> :<C-u>SetProjectName<CR>
-command! -bar -nargs=* SetProjectName call s:cmd_set_project_name(<q-args>)
-function! s:cmd_set_project_name(name) "{{{
-    if a:name == ''
-        let default = exists('t:title') ? t:title : ''
-        let t:title = input('Project name?:', default)
-    else
-        let t:title = a:name
-    endif
-endfunction "}}}
-
 function! MyTabLabel(tabnr) "{{{
     if exists('*gettabvar')
         let title = gettabvar(a:tabnr, 'title')
@@ -1031,6 +1020,18 @@ command!
 " }}}
 " Move all windows of current group beyond next group. {{{
 " TODO
+" }}}
+" Set tab's title {{{
+Map [n] <C-t> :<C-u>SetProjectName<CR>
+command! -bar -nargs=* SetProjectName call s:cmd_set_project_name(<q-args>)
+function! s:cmd_set_project_name(name) "{{{
+    if a:name == ''
+        let default = exists('t:title') ? t:title : ''
+        let t:title = input('Project name?:', default)
+    else
+        let t:title = a:name
+    endif
+endfunction "}}}
 " }}}
 " }}}
 " vmap {{{
