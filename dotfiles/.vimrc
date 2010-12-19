@@ -302,7 +302,7 @@ set formatoptions=mMcroqnl2
 set foldenable
 " set foldmethod=marker
 
-" :help undo-persistence
+" undo-persistence
 if has('persistent_undo')
     set undofile
     let &undodir = s:vimdir . '/info/undo'
@@ -1927,7 +1927,7 @@ let skk_control_j_key = '<C-g><C-j>'
 " }}}
 else
 " Map <C-j> to skk.vim, Map <C-g><C-j> to eskk {{{
-map! <C-g><C-j> <Plug>(eskk:toggle)
+Map [ic] -remap <C-g><C-j> <Plug>(eskk:toggle)
 " }}}
 endif
 
@@ -1949,12 +1949,8 @@ let skk_imdisable_state = -1
 let skk_keep_state = 1
 let skk_show_candidates_count = 2
 let skk_show_annotation = 0
-
-" krogue++'s patch
 let skk_sticky_key = ';'
 let skk_use_color_cursor = 1
-
-" My hacks
 let skk_remap_lang_mode = 0
 
 
@@ -1964,8 +1960,8 @@ if 0
 let skk_control_j_key = ''
 
 " `<C-j><C-e>` to enable, `<C-j><C-d>` to disable.
-map! <C-j><C-e> <Plug>(skk-enable-im)
-map! <C-j><C-d> <Nop>
+Map [ic] -remap <C-j><C-e> <Plug>(skk-enable-im)
+Map [ic] -remap <C-j><C-d> <Nop>
 function! MySkkMap()
     lunmap <buffer> <C-j>
     lmap <buffer> <C-j><C-d> <Plug>(skk-disable-im)
