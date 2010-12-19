@@ -974,15 +974,12 @@ Map [n] ;Y   "+y$
 Map [n] ,Y   "*y$
 " }}}
 " Back to col '$' when current col is right of col '$'. {{{
-if has('virtualedit') && tyru#util#has_one_of(['all', 'onemore'], split(&virtualedit, ','))
-    DefMap [n] -expr $-if-right-of-$    col('.') >= col('$') ? '$' : ''
-    DefMap [n]       Paste              P
-    DefMap [n]       paste              p
-    Map [n] -remap P <$-if-right-of-$><Paste>
-    Map [n] -remap p <$-if-right-of-$><paste>
+if has('virtualedit') && &virtualedit =~# '\<all\>'
+    DefMap [n] -expr $-if-right-of-$    (col('.') >= col('$') ? '$' : '')
+    DefMap [n]       noremap-p          p
+    Map [n] -remap p <$-if-right-of-$><noremap-p>
 
-    " omake
-    Map [n] <excmd>p $p
+    " Map [n] -expr p (col('.') >= col('$') ? '$' : '') . 'p'
 endif
 " }}}
 " <Space>[hjkl] for <C-w>[hjkl] {{{
