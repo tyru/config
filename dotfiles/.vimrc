@@ -1684,7 +1684,7 @@ function! s:cmd_capture(q_args) "{{{
     redir END
     let output = substitute(output, '^\n\+', '', '')
 
-    belowright split
+    belowright new
 
     silent file `=printf('[Capture: %s]', a:q_args)`
     setlocal buftype=nofile bufhidden=unload noswapfile nobuflisted
