@@ -1539,6 +1539,8 @@ function! s:cmd_del_file(args, delete_buffer) "{{{
             endif
         endfor
     endfor
+
+    checktime
 endfunction "}}}
 " }}}
 " :Rename {{{
