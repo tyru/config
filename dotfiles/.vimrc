@@ -1562,7 +1562,9 @@ function! s:cmd_rename(...) "{{{
     endif
 
     let success = 0
-    if rename(from, to) !=# success
+    if rename(from, to) ==# success && filereadable(to)
+        execute 'edit' to
+    else
         Echomsg WarningMsg "Can't rename():" from "=>" to
     endif
 endfunction "}}}
