@@ -2011,9 +2011,7 @@ if has('vim_starting')
     let g:eskk#marker_jisyo_touroku = '?'
     let g:eskk#marker_popup = '#'
 
-    let g:eskk#convert_at_exact_match = 0
     let g:eskk#dictionary_save_count = 5
-    let g:eskk#kakutei_when_unique_candidate = 1
 
 
     " Disable "qkatakana". not ";katakanaq".
