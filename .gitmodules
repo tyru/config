@@ -247,3 +247,6 @@
 [submodule "dotfiles/bin.d/gittools"]
 	path = dotfiles/bin.d/gittools
 	url = git://github.com/tyru/gittools.git
+[submodule "dotfiles/.vim/bundle/unite-outline"]
+	path = dotfiles/.vim/bundle/unite-outline
+	url = git://github.com/h1mesuke/unite-outline.git
