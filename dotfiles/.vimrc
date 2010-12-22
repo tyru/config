@@ -2502,7 +2502,12 @@ endfunction "}}}
 
 
 MyAutocmd FileType lingr-messages
-\   Map [n] -buffer -remap o <Plug>(lingr-messages-show-say-buffer)
+\   call s:lingr_mappings()
+function! s:lingr_mappings() "{{{
+    Map [n] -buffer -remap o <Plug>(lingr-messages-show-say-buffer)
+    Map [n] -buffer <C-g><C-n> gt
+    Map [n] -buffer <C-g><C-p> gT
+endfunction "}}}
 
 
 let g:lingr_vim_additional_rooms = [
