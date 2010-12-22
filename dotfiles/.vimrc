@@ -1507,16 +1507,16 @@ endfunction "}}}
 " :Delete {{{
 
 command!
-\   -bar -complete=file -nargs=+
+\   -bar -bang -complete=file -nargs=+
 \   Delete
-\   call s:cmd_del_file(<f-args>)
+\   call s:cmd_del_file([<f-args>], <bang>0)
 
-function! s:cmd_del_file(...) "{{{
-    if !a:0
+function! s:cmd_del_file(args, delete_buffer) "{{{
+    if empty(a:args)
         return
     endif
 
-    for arg in a:000
+    for arg in a:args
         for file in split(expand(arg), '\n')
             let file = resolve(file)
             let bufnr = bufnr(file)
@@ -1537,7 +1537,7 @@ function! s:cmd_del_file(...) "{{{
             endif
 
             " Delete the buffer.
-            if bufnr != -1
+            if a:delete_buffer && bufnr != -1
                 if bufnr == bufnr('%')
                     enew
                 endif
