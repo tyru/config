@@ -2588,8 +2588,8 @@ MapAlterCommand we WhichEdit
 " :tabprevious on vimrc-tabclose
 function! s:tabclose_post()
     if tabpagenr() != 1
-        Decho ':tabprevious'
-        " tabprevious
+        " XXX: Doing :tabprevious here cause Vim behavior strange
+        " Decho ':tabprevious'
     endif
 endfunction
 MyAutocmd User tabclose-post call s:tabclose_post()
