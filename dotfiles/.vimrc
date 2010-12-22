@@ -1800,61 +1800,67 @@ let g:nf_loop_files = 1    " loop at the end of file
 let g:nf_ignore_ext = ['o', 'obj', 'exe', 'bin']
 " }}}
 " starter {{{
-let g:starter_no_default_command = 1
-nnoremap <silent> gt :<C-u>call starter#launch()<CR>
 
-function! StarterAfterHookFile(path) "{{{
-    if !filereadable(a:path)
-        return
-    endif
+" TODO
+let g:loaded_starter = 1
 
-    " Open the file.
-    execute 'edit' a:path
+" let g:starter_no_default_command = 1
+" nnoremap <silent> gt :<C-u>call starter#launch()<CR>
 
-    " Set filetype.
-    let filetype = fnamemodify(a:path, ':e')
-    if filetype != ''
-    \   && globpath(&rtp, 'ftplugin/' . filetype . '.vim') != ''
-        execute 'setfiletype' filetype
-    endif
-endfunction "}}}
-function! s:system_list(args_list) "{{{
-    return system(join(
-    \   map(copy(a:args_list), 'shellescape(v:val)')))
-endfunction "}}}
-function! StarterAfterHookDir(path) "{{{
-    if !isdirectory(a:path)
-        return
-    endif
+" function! StarterAfterHookFile(path) "{{{
+"     if !filereadable(a:path)
+"         return
+"     endif
 
-    if filereadable(a:path . '/setup')
-        call s:system_list(a:path . '/setup', [a:path])
-        call delete(a:path . '/setup')
-    endif
-    if filereadable(a:path . '/setup.sh')
-        call s:system_list('/bin/sh', [a:path . '/setup.sh', a:path])
-        call delete(a:path . '/setup.sh')
-    endif
-    if filereadable(a:path . '/setup.pl')
-        call s:system_list('perl', [a:path . '/setup.pl', a:path])
-        call delete(a:path . '/setup.pl')
-    endif
-    if filereadable(a:path . '/setup.py')
-        call s:system_list('python', [a:path . '/setup.py', a:path])
-        call delete(a:path . '/setup.py')
-    endif
-    if filereadable(a:path . '/setup.rb')
-        call s:system_list('ruby', [a:path . '/setup.rb', a:path])
-        call delete(a:path . '/setup.rb')
-    endif
-endfunction "}}}
-let g:starter#after_hook = [
-\   'StarterAfterHookFile',
-\   'StarterAfterHookDir',
-\]
+"     " Open the file.
+"     execute 'edit' a:path
+
+"     " Set filetype.
+"     let filetype = fnamemodify(a:path, ':e')
+"     if filetype != ''
+"     \   && globpath(&rtp, 'ftplugin/' . filetype . '.vim') != ''
+"         execute 'setfiletype' filetype
+"     endif
+" endfunction "}}}
+" function! s:system_list(args_list) "{{{
+"     return system(join(
+"     \   map(copy(a:args_list), 'shellescape(v:val)')))
+" endfunction "}}}
+" function! StarterAfterHookDir(path) "{{{
+"     if !isdirectory(a:path)
+"         return
+"     endif
+
+"     if filereadable(a:path . '/setup')
+"         call s:system_list(a:path . '/setup', [a:path])
+"         call delete(a:path . '/setup')
+"     endif
+"     if filereadable(a:path . '/setup.sh')
+"         call s:system_list('/bin/sh', [a:path . '/setup.sh', a:path])
+"         call delete(a:path . '/setup.sh')
+"     endif
+"     if filereadable(a:path . '/setup.pl')
+"         call s:system_list('perl', [a:path . '/setup.pl', a:path])
+"         call delete(a:path . '/setup.pl')
+"     endif
+"     if filereadable(a:path . '/setup.py')
+"         call s:system_list('python', [a:path . '/setup.py', a:path])
+"         call delete(a:path . '/setup.py')
+"     endif
+"     if filereadable(a:path . '/setup.rb')
+"         call s:system_list('ruby', [a:path . '/setup.rb', a:path])
+"         call delete(a:path . '/setup.rb')
+"     endif
+" endfunction "}}}
+" let g:starter#after_hook = [
+" \   'StarterAfterHookFile',
+" \   'StarterAfterHookDir',
+" \]
+
 " }}}
 " vimtemplate {{{
-let g:loaded_vimtemplate = 1
+" TODO: starter.vim
+" let g:loaded_vimtemplate = 1
 
 let g:vt_author = "tyru"
 let g:vt_email = "tyru.exe@gmail.com"
