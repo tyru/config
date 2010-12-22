@@ -241,7 +241,7 @@ set guitablabel=%!MyGuiTabLabel()
 set laststatus=2
 function! MyStatusLine() "{{{
     let s = '%f%([%M%R%H%W]%)%(, %{&ft}%), %{&fenc}/%{&ff}'
-    let s .= '%( ### '
+    let s .= '%('
 
     " eskk, skk.vim
     " let exists_eskk = exists('g:loaded_eskk')
@@ -252,8 +252,9 @@ function! MyStatusLine() "{{{
     "     let s .= ' %{SkkGetModeStr()}'
     " endif
 
-    " current-func-info
-    let s .= '%{cfi#format("%s()", "none")}'
+    if !exists('g:cfi_disable')
+        let s .= ' ### %{cfi#format("%s()", "none")}'
+    endif
 
     let s .= ' ### +:%{b:changedtick}, u:%{changenr()}'
     let s .= '%)'
