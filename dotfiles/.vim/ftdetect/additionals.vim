@@ -43,5 +43,9 @@ autocmd BufNewFile,BufRead .tmux.conf
             \ setfiletype tmux
 autocmd BufNewFile,BufRead *.tjs
             \ setfiletype tjs
-autocmd BufNewFile,BufRead [0123456789][0123456789][0123456789][0123456789]-[0123456789][0123456789]-[0123456789][0123456789]*.txt
-            \ setfiletype hatena
+autocmd BufNewFile,BufRead /usr/include/c++/*
+            \ setfiletype cpp
+
+" Override runtime ftdetects
+autocmd filetypedetect BufNewFile,BufRead *.md setlocal filetype=markdown
+autocmd filetypedetect BufNewFile,BufRead *.ks setlocal filetype=kirikiri
