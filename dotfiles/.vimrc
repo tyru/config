@@ -2109,6 +2109,7 @@ elseif s:anything == s:anything_unite
     Map [n] <anything>h        :<C-u>Unite -prompt='-')/\  help<CR>
     Map [n] <anything>p        :<C-u>Unite -prompt='-')/\  -buffer-name=files buffer_tab<CR>
     Map [n] <anything>b        :<C-u>Unite -prompt='-')/\  buffer<CR>
+    Map [n] <anything>o        :<C-u>Unite -prompt='-')/\  outline<CR>
 endif
 
 
