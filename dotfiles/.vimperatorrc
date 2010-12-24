@@ -298,6 +298,10 @@ lazy fmaps -u='www\.rememberthemilk\.com/home/' a m c n p r g s h t u j y <Del> 
 " add r g d D
 lazy fmaps -u='reader\.livedoor\.com/reader/' j k s a p o v c <Space> <S-Space> Z z ZZ b < > r g d D
 " }}}
+" ReadItLater {{{
+" Greasemonkey (RILDRize): http://d.hatena.ne.jp/kiririmode/20101214/p1
+lazy fmaps -u='readitlaterlist\.com/' j k p o r s a x
+" }}}
 " }}}
 " copy.js {{{
 javascript <<EOS
