@@ -35,18 +35,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 " }}}
 
-" Global Variables {{{
-if !exists('g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug')
-    let g:<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_debug = 0
-endif
-" }}}
 
-" Functions {{{
-" }}}
-" Commands {{{
-" }}}
-" Mappings {{{
-" }}}
 
 " Restore 'cpoptions' {{{
 let &cpo = s:save_cpo
