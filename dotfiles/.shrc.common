@@ -25,6 +25,7 @@ alias chalice="vim --cmd 'let g:chalice = 1' -c Chalice"
 alias tmux='tmux -u -2'
 # http://techno-st.net/2009/06/06/bash-zsh-alias-sudo.html
 alias sudo='sudo'
+alias wget-mirror='wget -w 1 -m -k -np -r'
 
 which trash-put >/dev/null 2>&1 && alias rm='trash-put'
 which vim >/dev/null 2>&1 && alias vi='vim'
