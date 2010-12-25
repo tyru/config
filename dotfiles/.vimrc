@@ -1880,6 +1880,7 @@ let g:vt_files_metainfo = {
 \   'vimscript.vim' : {'filetype': "vim"}
 \}
 
+let g:vt_open_command = 'botright 7new'
 " Disable &modeline when opened template file.
 execute
 \   'MyAutocmd BufReadPre'
