@@ -1296,6 +1296,7 @@ function! s:change_encoding()
     endif
     let result = prompt#prompt("re-open with...", {
     \   'menu': [
+    \     'latin1',
     \     'cp932',
     \     'shift-jis',
     \     'iso-2022-jp',
@@ -1319,6 +1320,7 @@ Map [n] <prompt>a     :<C-u>call <SID>change_encoding()<CR>
 function! s:change_fileencoding()
     let enc = prompt#prompt("changing file encoding to...", {
     \   'menu': [
+    \     'latin1',
     \     'cp932',
     \     'shift-jis',
     \     'iso-2022-jp',
