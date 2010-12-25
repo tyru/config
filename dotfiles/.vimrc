@@ -2120,21 +2120,14 @@ function! s:register_anything_abbrev() "{{{
     \   '^r@': [$VIMRUNTIME . '/'],
     \   '^p@': map(split(&runtimepath, ','), 'v:val . "/plugin/"'),
     \   '^h@': ['~/'],
-    \   '^v@' : [s:vimdir . '/'],
-    \   '^g@' : ['~/git/'],
-    \   '^d@' : ['~/git/dotfiles/'],
+    \   '^v@': [s:vimdir . '/'],
+    \   '^g@': ['~/git/'],
+    \   '^d@': ['~/git/dotfiles/'],
+    \   '^m@': ['~/Dropbox/memo/'],
+    \   '^s@': ['~/scratch/'],
     \}
 
-    if hostname() ==# 'server'
-        call extend(abbrev, {
-        \   '^m@' : ['~/Dropbox/memo/'],
-        \   '^s@' : ['~/scratch/'],
-        \})
-    elseif hostname() ==# 'laptop'
-        call extend(abbrev, {
-        \   '^m@' : ['~/Dropbox/memo/'],
-        \})
-    elseif hostname() ==? 'takuya-win'
+    if hostname() ==? 'takuya-win'
         call extend(abbrev, {
         \   '^m@' : ['~/My Dropbox/memo/'],
         \   '^de@' : ['C:' . substitute($HOMEPATH, '\', '/', 'g') . '/デスクトップ/'],
