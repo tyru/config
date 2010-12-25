@@ -2588,6 +2588,9 @@ function! s:tabclose_post()
 endfunction
 MyAutocmd User tabclose-post call s:tabclose_post()
 " }}}
+" simpletap {{{
+let g:simpletap#open_command = 'botright vnew'
+" }}}
 
 " test
 let g:loaded_tyru_event_test = 1
