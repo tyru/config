@@ -152,6 +152,15 @@ if !isdirectory(&backupdir)
     call mkdir(&backupdir)
 endif
 
+function! SandboxCallOptionFn(option_name) "{{{
+    try
+        return s:{a:option_name}()
+    catch
+        call setbufvar('%', '&' . a:option_name, '')
+        return ''
+    endtry
+endfunction "}}}
+
 " title
 set title
 function! s:titlestring() "{{{
@@ -163,15 +172,7 @@ function! s:titlestring() "{{{
         return getcwd()
     endif
 endfunction "}}}
-function! MyTitleString() "{{{
-    try
-        return s:titlestring()
-    catch
-        let &l:titlestring = ''
-        return ''
-    endtry
-endfunction "}}}
-let &titlestring = '%{MyTitleString()}'
+set titlestring=%!SandboxCallOptionFn('titlestring')
 
 " tab
 set showtabline=2
@@ -230,15 +231,7 @@ function! s:tabline() "{{{
 
     return s
 endfunction "}}}
-function! MyTabLine() "{{{
-    try
-        return s:tabline()
-    catch
-        let &l:tabline = ''
-        return ''
-    endtry
-endfunction "}}}
-set tabline=%!MyTabLine()
+set tabline=%!SandboxCallOptionFn('tabline')
 
 function! s:guitablabel() "{{{
     let s = '%{tabpagenr()}. [%t]'
@@ -251,15 +244,7 @@ function! s:guitablabel() "{{{
     endif
     return s
 endfunction "}}}
-function! MyGuiTabLabel() "{{{
-    try
-        return s:guitablabel()
-    catch
-        let &l:guitablabel = ''
-        return ''
-    endtry
-endfunction "}}}
-set guitablabel=%!MyGuiTabLabel()
+set guitablabel=%!SandboxCallOptionFn('guitablabel')
 
 " statusline
 set laststatus=2
@@ -285,15 +270,7 @@ function! s:statusline() "{{{
 
     return s
 endfunction "}}}
-function! MyStatusLine() "{{{
-    try
-        return s:statusline()
-    catch
-        let &l:statusline = ''
-        return ''
-    endtry
-endfunction "}}}
-set statusline=%!MyStatusLine()
+set statusline=%!SandboxCallOptionFn('statusline')
 
 " gui
 set guioptions=agitrhpF
