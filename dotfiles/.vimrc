@@ -268,13 +268,13 @@ function! s:statusline() "{{{
     let s .= '%('
 
     " eskk, skk.vim
-    " let exists_eskk = exists('g:loaded_eskk')
-    " let exists_skk  = exists('g:skk_loaded')
-    " if exists_eskk
-    "     let s .= ' %{eskk#statusline("IM:%s", "IM:off")}'
-    " elseif exists_skk
-    "     let s .= ' %{SkkGetModeStr()}'
-    " endif
+    let exists_eskk = exists('g:loaded_eskk')
+    let exists_skk  = exists('g:skk_loaded')
+    if exists_eskk
+        let s .= ' %{eskk#statusline("IM:%s", "IM:off")}'
+    elseif exists_skk
+        let s .= ' %{SkkGetModeStr()}'
+    endif
 
     if !exists('g:cfi_disable')
         let s .= ' ### %{cfi#format("%s()", "none")}'
