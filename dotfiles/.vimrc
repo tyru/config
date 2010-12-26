@@ -2590,6 +2590,7 @@ let g:gist_detect_filetype = 1
 " }}}
 " quickey {{{
 let g:quickey_merge_window_hide_vim_window_move_cursor = 1
+let g:quickey_no_default_split_nicely_keymappings = 1
 " }}}
 " ohmygrep {{{
 MapAlterCommand gr[ep] OMGrep
