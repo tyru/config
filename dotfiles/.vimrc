@@ -154,7 +154,7 @@ endif
 
 " title
 set title
-function! MyTitleString() "{{{
+function! s:titlestring() "{{{
     if exists('t:cwd')
         return t:cwd . ' (tab)'
     elseif haslocaldir()
@@ -162,6 +162,14 @@ function! MyTitleString() "{{{
     else
         return getcwd()
     endif
+endfunction "}}}
+function! MyTitleString() "{{{
+    try
+        return s:titlestring()
+    catch
+        let &l:titlestring = ''
+        return ''
+    endtry
 endfunction "}}}
 let &titlestring = '%{MyTitleString()}'
 
@@ -195,7 +203,7 @@ function! MyTabLabel(tabnr) "{{{
     endif
     return label . (modified ? '[+]' : '')
 endfunction "}}}
-function! MyTabLine() "{{{
+function! s:tabline() "{{{
     let s = ''
     for i in range(tabpagenr('$'))
         " select the highlighting
@@ -222,9 +230,17 @@ function! MyTabLine() "{{{
 
     return s
 endfunction "}}}
+function! MyTabLine() "{{{
+    try
+        return s:tabline()
+    catch
+        let &l:tabline = ''
+        return ''
+    endtry
+endfunction "}}}
 set tabline=%!MyTabLine()
 
-function! MyGuiTabLabel() "{{{
+function! s:guitablabel() "{{{
     let s = '%{tabpagenr()}. [%t]'
     if exists('t:cwd')
         let s .= ' @ [tab: %{t:cwd}]'
@@ -235,11 +251,19 @@ function! MyGuiTabLabel() "{{{
     endif
     return s
 endfunction "}}}
+function! MyGuiTabLabel() "{{{
+    try
+        return s:guitablabel()
+    catch
+        let &l:guitablabel = ''
+        return ''
+    endtry
+endfunction "}}}
 set guitablabel=%!MyGuiTabLabel()
 
 " statusline
 set laststatus=2
-function! MyStatusLine() "{{{
+function! s:statusline() "{{{
     let s = '%f%([%M%R%H%W]%)%(, %{&ft}%), %{&fenc}/%{&ff}'
     let s .= '%('
 
@@ -260,6 +284,14 @@ function! MyStatusLine() "{{{
     let s .= '%)'
 
     return s
+endfunction "}}}
+function! MyStatusLine() "{{{
+    try
+        return s:statusline()
+    catch
+        let &l:statusline = ''
+        return ''
+    endtry
 endfunction "}}}
 set statusline=%!MyStatusLine()
 
