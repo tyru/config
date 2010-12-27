@@ -2541,7 +2541,7 @@ let g:lingr_vim_count_unread_at_current_room = 1
 " }}}
 " github {{{
 MapAlterCommand gh Github
-let g:github#use_vimproc = 0
+MapAlterCommand ghi Github issues
 " }}}
 " neocomplcache {{{
 let g:neocomplcache_enable_at_startup = 0
