@@ -29,7 +29,7 @@ __END__
 
 =head1 NAME
 
-    <NO SCRIPT NAME YET> - NO DESCRIPTION YET
+    <%filename%> - NO DESCRIPTION YET
 
 
 =head1 SYNOPSIS
@@ -48,4 +48,4 @@ Show this help.
 
 =head1 AUTHOR
 
-tyru <tyru.exe@gmail.com>
+tyru <<%email%>>
