@@ -2425,13 +2425,13 @@ call submode#map       ('scroll', 'n', '', 's', ':let &l:scroll += 3<CR>')
 " }}}
 " ref {{{
 " 'K' for ':Ref'.
-MapAlterCommand ref Ref
-MapAlterCommand alc Ref alc
-MapAlterCommand man Ref man
-MapAlterCommand pdoc Ref perldoc
-MapAlterCommand cppref Ref cppref
-MapAlterCommand cpp    Ref cppref
-MapAlterCommand py[doc] Ref pydoc
+MapAlterCommand ref         Ref
+MapAlterCommand alc         Ref -new alc
+MapAlterCommand man         Ref -new man
+MapAlterCommand pdoc        Ref -new perldoc
+MapAlterCommand cppref      Ref -new cppref
+MapAlterCommand cpp         Ref -new cppref
+MapAlterCommand py[doc]     Ref -new pydoc
 
 Map [n] <orig>K K
 
