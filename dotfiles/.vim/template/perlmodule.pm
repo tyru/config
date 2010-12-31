@@ -1,4 +1,6 @@
 package <%filename_noext%>;
+
+use 5.008_001;
 use strict;
 use warnings;
 use utf8;
