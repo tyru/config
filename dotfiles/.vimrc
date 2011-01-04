@@ -2655,7 +2655,7 @@ function! s:delete_backup()
             return
         endif
     else
-        let stamp_file = '/tmp/.vimbackup_deleted'
+        let stamp_file = expand('~/.vimbackup_deleted')
     endif
 
     if !filereadable(stamp_file)
