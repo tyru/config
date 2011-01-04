@@ -59,12 +59,13 @@ __END__
 
 =head1 NAME
 
-    kai - NO DESCRIPTION YET
+    kai - nandemo KAItou suru sugoi yatu dayo
 
 
 =head1 SYNOPSIS
 
     $ kai ARCHIVE [EXTRACT_DIR]
+
 
 =head1 OPTIONS
 
@@ -73,6 +74,14 @@ __END__
 =item -h, --help
 
 Show this help.
+
+=item -v, --verbose
+
+Show verbose messages.
+
+=item -n, --dry-run
+
+Perform a trial run without extracting ARCHIVE.
 
 =back
 
