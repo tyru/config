@@ -12,6 +12,7 @@ use Pod::Usage;
 use Archive::Extract;
 use Cwd ();
 use IO::File;
+use Path::Class;
 
 
 sub usage () {
@@ -21,10 +22,15 @@ sub usage () {
 
 my $needhelp;
 my $verbose;
+my $dry_run;
 GetOptions(
     'h|help' => \$needhelp,
     'v|verbose' => \$verbose,
+    'n|dry-run' => \$dry_run,
 ) or usage;
+$verbose = 1 if $dry_run;
+
+
 usage if $needhelp;
 usage unless @ARGV;
 
@@ -43,6 +49,17 @@ if ($verbose) {
     STDERR->printf("type:%s\n", $ae->type);
     for my $f (@{ $ae->files // [] }) {
         STDERR->say("$f");
+    }
+}
+if ($dry_run) {
+    # $ae->files() is undef until
+    # $ae->extract() is called...
+    # so delete extracted files.
+    for my $f (@{ $ae->files // [] }) {
+        unlink $f;
+        # Remove empty parent directories.
+        my $d = file($f)->dir;
+        $d = $d->parent while $d->remove;
     }
 }
 
