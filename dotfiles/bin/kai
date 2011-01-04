@@ -40,7 +40,9 @@ die "'$dir' is not directory.\n"
 
 $Archive::Extract::PREFER_BIN = 1;
 
+
 my $ae = Archive::Extract->new(archive => $archive);
+STDERR->say('Extracting ' . $ae->archive . '...') if $verbose;
 $ae->extract(
     to => ($dir // Cwd::getcwd())
 ) or die $ae->error;
