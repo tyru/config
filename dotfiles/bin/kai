@@ -10,7 +10,6 @@ use common::sense;
 use Getopt::Long qw(:config gnu_compat no_bundling no_ignore_case);
 use Pod::Usage;
 use Archive::Any;
-use Cwd ();
 use IO::File;
 use Path::Class;
 
@@ -35,14 +34,20 @@ usage if $needhelp;
 usage unless @ARGV;
 
 my ($archive, $dir) = @ARGV;
-die "'$dir' is not directory.\n"
-    if defined $dir && ! -d $dir;
+
+$dir //= '.';
+if (-e $dir && ! -d _) {
+    die "'$dir' exists and is not directory.\n";
+}
+else {
+    dir($dir)->mkpath;
+}
 
 
 my $ar = Archive::Any->new($archive);
 STDERR->say("Extracting '$archive'...") if $verbose;
 unless ($dry_run) {
-    $ar->extract($dir // Cwd::getcwd());
+    $ar->extract($dir);
 }
 
 if ($verbose) {
