@@ -1945,7 +1945,9 @@ let prompt_debug = 0
 " skk && eskk {{{
 
 let s:skk_user_dict = '~/.skk/skk-user-dict'
+let s:skk_user_dict_encoding = 'utf-8'
 let s:skk_system_dict = '~/.skk/skk-system-dict'
+let s:skk_system_dict_encoding = 'euc-jp'
 
 if 1
 " Map <C-j> to eskk, Map <C-g><C-j> to skk.vim {{{
@@ -1962,7 +1964,9 @@ endif
 let g:plugin_skk_disable = 1
 
 let skk_jisyo = s:skk_user_dict
+let skk_jisyo_encoding = s:skk_user_dict_encoding
 let skk_large_jisyo = s:skk_system_dict
+let skk_large_jisyo_encoding = s:skk_system_dict_encoding
 
 " let skk_control_j_key = ''
 " Arpeggio map! fj    <Plug>(skk-enable-im)
@@ -2005,8 +2009,14 @@ endif
 " }}}
 " eskk {{{
 if has('vim_starting')
-    let g:eskk#dictionary = {'path': s:skk_user_dict}
-    let g:eskk#large_dictionary = {'path': s:skk_system_dict}
+    let g:eskk#dictionary = {
+    \   'path': s:skk_user_dict,
+    \   'encoding': s:skk_user_dict_encoding,
+    \}
+    let g:eskk#large_dictionary = {
+    \   'path': s:skk_system_dict,
+    \   'encoding': s:skk_system_dict_encoding,
+    \}
 
     let g:eskk#egg_like_newline = 1
     let g:eskk#show_candidates_count = 2
