@@ -48,7 +48,7 @@ $ae->extract(
 ) or die $ae->error;
 
 if ($verbose) {
-    STDERR->printf("type:%s\n", $ae->type);
+    STDERR->say('type:' . $ae->type);
     for my $f (@{ $ae->files // [] }) {
         STDERR->say("$f");
     }
