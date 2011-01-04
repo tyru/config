@@ -46,7 +46,7 @@ unless ($dry_run) {
 }
 
 if ($verbose) {
-    STDERR->say('mime type:' . $ar->mime_type);
+    STDERR->say('mime type: ' . $ar->mime_type);
     STDERR->say('files:');
     for ($ar->files) {
         STDERR->say("  $_");
