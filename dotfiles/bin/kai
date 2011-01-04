@@ -9,7 +9,7 @@ use common::sense;
 # no_ignore_case: no ignore case on long option.
 use Getopt::Long qw(:config gnu_compat no_bundling no_ignore_case);
 use Pod::Usage;
-use Archive::Extract;
+use Archive::Any;
 use Cwd ();
 use IO::File;
 use Path::Class;
@@ -38,30 +38,18 @@ my ($archive, $dir) = @ARGV;
 die "'$dir' is not directory.\n"
     if defined $dir && ! -d $dir;
 
-$Archive::Extract::PREFER_BIN = 1;
 
-
-my $ae = Archive::Extract->new(archive => $archive);
-STDERR->say('Extracting ' . $ae->archive . '...') if $verbose;
-$ae->extract(
-    to => ($dir // Cwd::getcwd())
-) or die $ae->error;
+my $ar = Archive::Any->new($archive);
+STDERR->say("Extracting '$archive'...") if $verbose;
+unless ($dry_run) {
+    $ar->extract($dir // Cwd::getcwd());
+}
 
 if ($verbose) {
-    STDERR->say('type:' . $ae->type);
-    for my $f (@{ $ae->files // [] }) {
-        STDERR->say("$f");
-    }
-}
-if ($dry_run) {
-    # $ae->files() is undef until
-    # $ae->extract() is called...
-    # so delete extracted files.
-    for my $f (@{ $ae->files // [] }) {
-        unlink $f;
-        # Remove empty parent directories.
-        my $d = file($f)->dir;
-        $d = $d->parent while $d->remove;
+    STDERR->say('mime type:' . $ar->mime_type);
+    STDERR->say('files:');
+    for ($ar->files) {
+        STDERR->say("  $_");
     }
 }
 
