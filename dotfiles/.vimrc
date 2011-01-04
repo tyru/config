@@ -2130,6 +2130,7 @@ elseif s:anything == s:anything_unite
     Map [n] <anything>p        :<C-u>Unite -prompt='-')/\  -buffer-name=files buffer_tab file_rec<CR>
     Map [n] <anything>b        :<C-u>Unite -prompt='-')/\  buffer<CR>
     Map [n] <anything>o        :<C-u>Unite -prompt='-')/\  outline<CR>
+    Map [n] <anything>r        :<C-u>Unite -prompt='-')/\  -input=ref/ source<CR>
 endif
 
 
