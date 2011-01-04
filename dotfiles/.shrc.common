@@ -17,8 +17,6 @@ alias l='ll'
 alias la='ls -A'
 alias less='less -r'
 alias ll='ls -lh'
-alias whi='which'
-alias whe='where'
 alias go='gopen'
 alias lingr="vim --cmd 'let g:lingr = 1' -c LingrLaunch"
 alias chalice="vim --cmd 'let g:chalice = 1' -c Chalice"
@@ -26,13 +24,13 @@ alias tmux='tmux -u -2'
 # http://techno-st.net/2009/06/06/bash-zsh-alias-sudo.html
 alias sudo='sudo'
 alias wget-mirror='wget -w 1 -m -k -np -r'
+alias vi=vim
 
 which trash-put >/dev/null 2>&1 && alias rm='trash-put'
-which vim >/dev/null 2>&1 && alias vi='vim'
-which screen >/dev/null 2>&1 && {
+if which screen >/dev/null 2>&1; then
     alias sc="screen"
     alias screen="screen -R"
-}
+fi
 which perldocjp >/dev/null 2>&1 && alias perldoc='perldocjp'
 
 if [ "$MY_CURRENT_ENV" = "cygwin" ]; then
