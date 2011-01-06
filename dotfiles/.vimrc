@@ -80,6 +80,7 @@ command!
 let s:tmp = &runtimepath
 set all&
 let &runtimepath = s:tmp
+unlet s:tmp
 
 if exists('&msghistlen')
     set msghistlen=9999
