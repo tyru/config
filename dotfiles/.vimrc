@@ -1635,7 +1635,19 @@ command!
 command!
 \   -nargs=?
 \   Expand
-\   echo expand(<q-args> != '' ? <q-args> : '%:p')
+\   call s:cmd_expand(<q-args>)
+
+function! s:cmd_expand(args) "{{{
+    if a:args != ''
+        echo expand(a:args)
+    else
+        if getbufvar('%', '&buftype') == ''
+            echo expand('%:p')
+        else
+            echo expand('%')
+        endif
+    endif
+endfunction "}}}
 
 MapAlterCommand ep Expand
 " }}}
