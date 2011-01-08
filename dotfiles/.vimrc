@@ -1270,6 +1270,7 @@ Map [nvo] -expr L <SID>advance_between('^', '$')
 " }}}
 " Disable unused keys. {{{
 Map [n] ZZ <Nop>
+Map [n] ZQ <Nop>
 Map [n] U  <Nop>
 " }}}
 " Expand abbreviation {{{
