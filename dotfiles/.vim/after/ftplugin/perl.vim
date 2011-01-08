@@ -18,18 +18,6 @@ setlocal complete=.,w,b,t,k,kspell
 let &l:makeprg = 'perl -Mstrict -Mwarnings -c %'
 
 
-" POD highlighting
-let g:perl_include_pod = 1
-
-" Something good
-let g:perl_extended_vars = 1
-let g:perl_want_scope_in_variables = 1
-
-" Fold only sub, __END__, <<HEREDOC
-let g:perl_fold = 1
-unlet! g:perl_fold_blocks
-let g:perl_nofold_packages = 1
-
 " For avoiding flickering
 setlocal matchpairs-=<:>
 
