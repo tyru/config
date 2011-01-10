@@ -175,33 +175,30 @@ endfunction "}}}
 
 
 " Path
-function! tyru#util#split_path(path, ...) "{{{
-    " TODO: More strict
-    let sep = a:0 != 0 ? a:1 : ','
-    return split(a:path, sep)
+function! tyru#util#remove_end_sep(path) "{{{
+    " Remove separator at the end of a:path.
+    let sep = pathogen#separator()
+    let pat = (sep == '\' ? '\\' : '/') . '\+$'
+    return substitute(a:path, pat, '', '')
 endfunction "}}}
-function! tyru#util#join_path(path_list, ...) "{{{
-    " TODO: More strict
-    let sep = a:0 != 0 ? a:1 : ','
-    return join(a:path_list, sep)
+function! tyru#util#canonpath(path) "{{{
+    let path = simplify(a:path)
+    return tyru#util#remove_end_sep(path)
 endfunction "}}}
-
-
-" System
-function! tyru#util#follow_symlink(path) "{{{
-    " FIXME
-    "
-    " TODO Reveive depth of following times.
-    "
-    " Complain: Why can't Vim deal with symbolic link?
-
-    perl <<EOF
-    my $dest = sub { ($_) = @_; $_ = readlink while -l; $_ }->(VIM::Eval('a:path'));
-    # TODO: More strict
-    VIM::DoCommand sprintf "let dest = '%s'", $dest;
-EOF
-
-    return dest
+function! tyru#util#dirname(path) "{{{
+    let path = a:path
+    let orig = path
+    let path = tyru#util#remove_end_sep(path)
+    if path == ''
+        return orig    " root
+    endif
+    let path = fnamemodify(path, ':h')
+    return path
+endfunction "}}}
+function! tyru#util#catfile(path, ...) "{{{
+    let sep = pathogen#separator()
+    let path = tyru#util#remove_end_sep(a:path)
+    return join([path] + a:000, sep)
 endfunction "}}}
 
 
