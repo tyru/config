@@ -1071,7 +1071,6 @@ Map [ic] <C-b> <Left>
 Map [ic] <C-a> <Home>
 Map [ic] <C-e> <End>
 Map [ic] <C-d> <Del>
-Map [ic] <C-l> <Tab>
 
 silent Arpeggio noremap! $( ()<Left>
 silent Arpeggio noremap! 4[ []<Left>
@@ -1093,6 +1092,8 @@ silent Arpeggio noremap! #< 【】<Left>
 silent Arpeggio noremap! #{ 〔〕<Left>
 " }}}
 " imap {{{
+
+Map [i] <C-l> <Tab>
 
 " paste register
 Map [i] <C-r><C-u>  <C-r><C-o>+
@@ -1174,6 +1175,8 @@ Map [c] -expr .  getcmdtype() =~# '[/?]' ? '\.' : '.'
 
 Map [c] <C-n> <Down>
 Map [c] <C-p> <Up>
+
+Map [c] <C-l> <C-d>
 " }}}
 " abbr {{{
 Map [i] -expr -abbr  date@ strftime('%Y-%m-%d')
