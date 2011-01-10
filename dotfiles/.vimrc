@@ -1680,11 +1680,47 @@ command!
 
 MapAlterCommand qf QuickFix
 " }}}
+" :TabpageLookupCD - Set t:cwd to root directory of project working tree {{{
+Map [n] <Space>cd :<C-u>TabpageLookupCD %:p:h<CR>
+
+command!
+\   -bar -complete=dir -nargs=?
+\   TabpageLookupCD
+\   call s:cmd_tabpage_lookup_cd(<q-args>)
+
+function! s:cmd_tabpage_lookup_cd(args) "{{{
+    " Expand :cd like notation.
+    let dir = expand(a:args != '' ? a:args : '.')
+    " Get fullpath.
+    let dir = fnamemodify(dir, ':p')
+    if !isdirectory(dir)
+        Echomsg WarningMsg "No such directory: " . dir
+        return
+    endif
+    return s:lookup_repo(dir)
+endfunction "}}}
+function! s:is_root_project_dir(dir) "{{{
+    return isdirectory(tyru#util#catfile(a:dir, '.git'))
+endfunction "}}}
+function! s:lookup_repo(dir) "{{{
+    " Assert isdirectory(a:dir)
+
+    let parent = tyru#util#dirname(a:dir)
+    if a:dir ==# parent    " root
+        Echomsg WarningMsg 'Not found project directory.'
+        return
+    elseif s:is_root_project_dir(a:dir)
+        execute 'TabpageCD' a:dir
+    else
+        return s:lookup_repo(parent)
+    endif
+endfunction "}}}
+
+" }}}
 " :TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
 MapAlterCommand cd  TabpageCD
 
 Map [n] ,cd       :<C-u>TabpageCD %:p:h<CR>
-Map [n] <Space>cd :<C-u>lcd %:p:h<CR>
 
 command!
 \   -bar -complete=dir -nargs=?
