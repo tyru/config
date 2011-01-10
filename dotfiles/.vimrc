@@ -1023,7 +1023,7 @@ command!
 " TODO
 " }}}
 " Set tab's title {{{
-Map [n] <C-t> :<C-u>SetProjectName<CR>
+Map [n] -silent <C-t> :<C-u>SetProjectName<CR>
 command! -bar -nargs=* SetProjectName call s:cmd_set_project_name(<q-args>)
 function! s:cmd_set_project_name(name) "{{{
     if a:name == ''
