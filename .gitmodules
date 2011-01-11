@@ -250,3 +250,6 @@
 [submodule "dotfiles/.vim/bundle/unite-outline"]
 	path = dotfiles/.vim/bundle/unite-outline
 	url = git://github.com/h1mesuke/unite-outline.git
+[submodule "dotfiles/.vim/macros/vim-pathogen"]
+	path = dotfiles/.vim/macros/vim-pathogen
+	url = git://github.com/tpope/vim-pathogen.git
