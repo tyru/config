@@ -2532,7 +2532,7 @@ let g:fencview_show_progressbar = 0
 " }}}
 " lingr.vim {{{
 
-" from thinca's .vimrc {{{
+" from thinca's .vimrc
 " http://soralabo.net/s/vrcb/s/thinca
 
 if !exists('g:lingr')
@@ -2541,6 +2541,9 @@ if !exists('g:lingr')
     "   alias lingr="vim --cmd 'let g:lingr = 1' -c LingrLaunch"
     let g:loaded_lingr_vim = 1
 endif
+
+if 0
+" Update GNU screen tab name.
 
 augroup vimrc-plugin-lingr
     autocmd!
@@ -2565,7 +2568,9 @@ function! s:lingr_event(event) "{{{
         execute printf('WindowName %s(%d)', 'lingr', lingr#unread_count())
     endif
 endfunction "}}}
-" }}}
+
+endif    " Update GNU screen tab name.
+
 
 
 MyAutocmd FileType lingr-messages
