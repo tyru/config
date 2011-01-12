@@ -104,7 +104,7 @@ set! network.dns.disableIPv6=true
 " http://www.ideaxidea.com/archives/2010/11/firefox_ram_cache.html
 set! browser.cache.disk.enable=true
 set! browser.cache.memory.enable=true
-set! browser.cache.memory.capacity=-1
+" set! browser.cache.memory.capacity=-1
 " }}}
 "-----------------------------------------------------------------
 " set {{{
@@ -224,14 +224,21 @@ inoremap <C-n> <Nop>
 " }}}
 "-----------------------------------------------------------------
 " qmark {{{
-qmark H r@hatena-account
-qmark R r@readitlater
-qmark T r@tumblr
-qmark d r@delicious
-qmark h r@hatena
-qmark l r@lingr
-qmark m r@gmail
-qmark r r@ldr
+" qmark H http://hatenadiary.g.hatena.ne.jp/keyword/%e3%81%af%e3%81%a6%e3%81%aa%e8%a8%98%e6%b3%95%e4%b8%80%e8%a6%a7
+
+qmark G http://github.com/tyru
+qmark H http://www.hatena.ne.jp/tyru/config/account
+qmark P http://pipes.yahoo.com/pipes/
+qmark R http://www.rememberthemilk.com/
+qmark T http://tumblr.com/
+qmark d http://delicious.com/tyru/
+qmark g http://www.google.co.jp/
+qmark h http://www.hatena.ne.jp/
+qmark l http://lingr.com/
+qmark m http://mail.google.com/mail?hl=ja
+qmark n http://tyru.yu-nagi.com/
+qmark p http://www.pixiv.net/mypage.php
+qmark r http://reader.livedoor.com/reader/
 qmark t b@tumblr
 qmark z b@nico-mp3
 " }}}
@@ -295,12 +302,8 @@ lazy fmaps -u='mail\.google\.com/mail' c j k n p o u e x s r z # [ ] ! ? . gi gs
 lazy fmaps -u='www\.rememberthemilk\.com/home/' a m c n p r g s h t u j y <Del> k z l 1 2 3 4 <C-S-Left> <C-S-Right> <C-S-0> <C-S-6> <C-S-7> <C-S-8> <C-S-9> <C-S-l> <Left> <Right> <Up> <Down> <PageUp> <PageDown> <Home> <End> <C-S-/>
 " }}}
 " LDR {{{
-" add r g d D
-lazy fmaps -u='reader\.livedoor\.com/reader/' j k s a p o v c <Space> <S-Space> Z z ZZ b < > r g d D
-" }}}
-" ReadItLater {{{
-" Greasemonkey (RILDRize): http://d.hatena.ne.jp/kiririmode/20101214/p1
-lazy fmaps -u='readitlaterlist\.com/' j k p o r s a x
+" add r g
+lazy fmaps -u='reader\.livedoor\.com/reader/' j k s a p o v c <Space> <S-Space> Z z ZZ b < > r g d
 " }}}
 " }}}
 " copy.js {{{
