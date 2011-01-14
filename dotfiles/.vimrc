@@ -114,6 +114,7 @@ set shiftwidth=4
 " completion
 set complete=.,w,b,u,t,i,d,k,kspell
 set wildmenu
+set wildmode=longest:full,full
 set pumheight=20
 
 " tags
