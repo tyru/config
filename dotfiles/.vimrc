@@ -1168,16 +1168,31 @@ Map [c] <C-r><C-u>  <C-r>+
 Map [c] <C-r><C-i>  <C-r>*
 Map [c] <C-r><C-o>  <C-r>"
 
-" Make / command comfortable {{{
-Map [c] -expr /  getcmdtype() == '/' ? '\/' : '/'
-Map [c] -expr ?  getcmdtype() == '?' ? '\?' : '?'
-Map [c] -expr .  getcmdtype() =~# '[/?]' ? '\.' : '.'
-" }}}
-
 Map [c] <C-n> <Down>
 Map [c] <C-p> <Up>
 
 Map [c] <C-l> <C-d>
+
+" Make / command comfortable {{{
+function! s:cmdline_slash()
+    let cmdtype = getcmdtype()
+    if cmdtype ==# '/'
+        return '\/'
+    elseif cmdtype ==# ':'
+        " When `wildmode=longest:full,full`,
+        " escape 2nd "full" mode.
+        " TODO: See the files in the directory.
+        if getcmdline()[getcmdpos()-2] ==# '/'
+            return "\<Space>\<BS>"
+        endif
+    endif
+    return '/'
+endfunction
+
+Map [c] -expr /  <SID>cmdline_slash()
+Map [c] -expr ?  getcmdtype() == '?' ? '\?' : '?'
+Map [c] -expr .  getcmdtype() =~# '[/?]' ? '\.' : '.'
+" }}}
 " }}}
 " abbr {{{
 Map [i] -expr -abbr  date@ strftime('%Y-%m-%d')
