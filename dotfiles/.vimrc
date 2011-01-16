@@ -1147,8 +1147,8 @@ endfunction "}}}
 " Map [i] <compl>j <C-n>
 " Map [i] <compl>k <C-p>
 " TODO
-" call submode#enter_with('c', 'i', '', emap#compile_map('<compl>j', 'i'), '<C-n>')
-" call submode#enter_with('c', 'i', '', emap#compile_map('<compl>k', 'i'), '<C-p>')
+" call submode#enter_with('c', 'i', '', emap#compile_map('i', '<compl>j'), '<C-n>')
+" call submode#enter_with('c', 'i', '', emap#compile_map('i', '<compl>k'), '<C-p>')
 " call submode#leave_with('c', 'i', '', '<CR>')
 " call submode#map       ('c', 'i', '', 'j', '<C-n>')
 " call submode#map       ('c', 'i', '', 'k', '<C-p>')
@@ -2084,27 +2084,31 @@ if has('vim_starting')
     \   'path': s:skk_system_dict,
     \   'encoding': s:skk_system_dict_encoding,
     \}
-
-    let g:eskk#egg_like_newline = 1
-    let g:eskk#show_candidates_count = 2
-    let g:eskk#show_annotation = 1
-    let g:eskk#rom_input_style = 'msime'
-    let g:eskk#keep_state = 1
-    let g:eskk#keep_state_beyond_buffer = 1
-
-    let g:eskk#marker_henkan = '$'
-    let g:eskk#marker_okuri = '*'
-    let g:eskk#marker_henkan_select = '@'
-    let g:eskk#marker_jisyo_touroku = '?'
-    let g:eskk#marker_popup = '#'
-
-    let g:eskk#dictionary_save_count = 5
+endif
 
 
-    " Disable "qkatakana". not ";katakanaq".
-    " EskkMap -type=mode:hira:toggle-kata <Nop>
+let g:eskk#egg_like_newline = 1
+let g:eskk#show_candidates_count = 2
+let g:eskk#show_annotation = 1
+let g:eskk#rom_input_style = 'msime'
+" let g:eskk#rom_input_style = 'skk'
+let g:eskk#keep_state = 1
+let g:eskk#keep_state_beyond_buffer = 1
+
+let g:eskk#marker_henkan = '$'
+let g:eskk#marker_okuri = '*'
+let g:eskk#marker_henkan_select = '@'
+let g:eskk#marker_jisyo_touroku = '?'
+let g:eskk#marker_popup = '#'
+
+let g:eskk#dictionary_save_count = 5
 
 
+" Disable "qkatakana". not ";katakanaq".
+" EskkMap -type=mode:hira:toggle-kata <Nop>
+
+
+if has('vim_starting')
     MyAutocmd User eskk-initialize-pre call s:eskk_initial_pre()
     function! s:eskk_initial_pre() "{{{
         " User can be allowed to modify
@@ -2129,32 +2133,33 @@ if has('vim_starting')
         call t.add_map('z ', '　')
         call eskk#register_mode_table('hira', t)
     endfunction "}}}
-
-    MyAutocmd User eskk-initialize-post call s:eskk_initial_post()
-    function! s:eskk_initial_post() "{{{
-        EskkMap -remap jj <Plug>(eskk:disable)<Esc>
-    endfunction "}}}
-
-
-    " Experimental.
-
-    " map! <C-j> <Plug>(eskk:enable)
-    " EskkMap <C-j> <Nop>
-    "
-    " inoremap <C-g> hoge
-    "
-    " inoremap <C-l> <C-o><C-l>
-    "
-    " EskkMap U <Plug>(eskk:undo-kakutei)
-
-    " for test.
-    "
-    " EskkMap lhs rhs
-    " EskkMap -silent lhs2 rhs
-    " EskkMap -unique lhs2 foo
-    " EskkMap -expr lhs3 {'foo': 'hoge'}.foo
-    " EskkMap -noremap lhs4 rhs
 endif
+
+" MyAutocmd User eskk-initialize-post call s:eskk_initial_post()
+" function! s:eskk_initial_post() "{{{
+"     EskkMap -remap jj <Plug>(eskk:disable)<Esc>
+" endfunction "}}}
+
+
+" Experimental.
+
+" map! <C-j> <Plug>(eskk:enable)
+" EskkMap <C-j> <Nop>
+"
+" inoremap <C-g> hoge
+"
+" inoremap <C-l> <C-o><C-l>
+"
+" EskkMap U <Plug>(eskk:undo-kakutei)
+
+" for test.
+"
+" EskkMap lhs rhs
+" EskkMap -silent lhs2 rhs
+" EskkMap -unique lhs2 foo
+" EskkMap -expr lhs3 {'foo': 'hoge'}.foo
+" EskkMap -noremap lhs4 rhs
+
 " }}}
 " restart {{{
 let g:restart_sessionoptions = 'blank,curdir,folds,help,localoptions,tabpages'
