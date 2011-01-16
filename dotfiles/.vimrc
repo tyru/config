@@ -2307,7 +2307,7 @@ Map [n] <C-]>     :<C-u>call <SID>JumpTags()<CR>
 endif
 " }}}
 " vimshell {{{
-MapAlterCommand vsh[ell] VimShell
+MapAlterCommand sh[ell] VimShell
 
 let g:vimshell_user_prompt = '"(" . getcwd() . ") --- (" . $USER . "@" . hostname() . ")"'
 let g:vimshell_prompt = '$ '
