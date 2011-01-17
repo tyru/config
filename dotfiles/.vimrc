@@ -172,7 +172,7 @@ function! s:titlestring() "{{{
         return getcwd()
     endif
 endfunction "}}}
-set titlestring=%!SandboxCallOptionFn('titlestring')
+let &titlestring = '%{SandboxCallOptionFn("titlestring")}'
 
 " tab
 set showtabline=2
