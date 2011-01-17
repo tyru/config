@@ -2028,8 +2028,6 @@ endif
 
 " }}}
 " skk {{{
-let g:plugin_skk_disable = 1
-
 let skk_jisyo = s:skk_user_dict
 let skk_jisyo_encoding = s:skk_user_dict_encoding
 let skk_large_jisyo = s:skk_system_dict
