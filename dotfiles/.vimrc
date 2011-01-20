@@ -1861,6 +1861,14 @@ command!
 " \   g/./let l=getline('.')|g/./if l==getline('.')|d
 
 " }}}
+" Ctags {{{
+MapAlterCommand ctags Ctags
+
+command!
+\   -bar
+\   Ctags
+\   execute '!ctags' (filereadable('.ctags') ? '' : '-R')
+" }}}
 " }}}
 " For Plugins {{{
 " nextfile {{{
