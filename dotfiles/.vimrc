@@ -2321,6 +2321,8 @@ let g:vimshell_smart_case = 1
 
 MyAutocmd FileType vimshell call s:vimshell_settings()
 function! s:vimshell_settings() "{{{
+    call s:build_env_path()
+
     " No -bar
     command!
     \   -buffer -nargs=+
@@ -2339,19 +2341,16 @@ function! s:vimshell_settings() "{{{
     VimShellAlterCommand j jobs -l
     VimShellAlterCommand jobs jobs -l
     VimShellAlterCommand ll ls -lh
+    VimShellAlterCommand l ll
     VimShellAlterCommand la ls -A
     VimShellAlterCommand less less -r
     VimShellAlterCommand sc screen
     VimShellAlterCommand whi which
     VimShellAlterCommand whe where
     VimShellAlterCommand go gopen
-    VimShellAlterCommand termtter iexe termtter
-    VimShellAlterCommand sudo iexe sudo
 
     " VimShellAlterCommand l. ls -d .*
-    " VimShellAlterCommand l ls -lh
     call vimshell#set_alias('l.', 'ls -d .*')
-    call vimshell#set_alias('l', 'ls -lh')
 
     " Abbrev
     inoreabbrev <buffer> l@ <Bar> less
@@ -2376,10 +2375,8 @@ function! s:vimshell_settings() "{{{
     endif
 
     " Hook
-    function! s:chpwd_ls(args, context)
-        call vimshell#execute('ls')
-    endfunction
-    call vimshell#hook#set('chpwd', [s:SNR('chpwd_ls')])
+    call vimshell#hook#set('chpwd', [s:SNR('vimshell_chpwd_ls')])
+    call vimshell#hook#set('preexec', [s:SNR('vimshell_preexec_iexe')])
 
     " Add/Remove some mappings.
     Map! [n] -buffer <C-n>
@@ -2407,6 +2404,45 @@ function! s:vimshell_settings() "{{{
             autocmd TabLeave <buffer> NeoComplCacheLock
         augroup END
     endif
+endfunction "}}}
+
+function! s:vimshell_chpwd_ls(args, context) "{{{
+    call vimshell#execute('ls')
+endfunction "}}}
+function! s:vimshell_preexec_iexe(cmdline, context) "{{{
+    let args = vimproc#parser#split_args(a:cmdline)
+    if empty(args)
+        return a:cmdline
+    endif
+    if args[0] ==# 'iexe'
+        return a:cmdline
+    endif
+
+    for i in [
+    \   'termtter',
+    \   'sudo',
+    \   ['git', 'add', '-p'],
+    \]
+        if type(i) == type([]) && i ==# args[:len(i)-1]
+            return 'iexe ' . a:cmdline
+        elseif type(i) == type("") && args[0] ==# i
+            return 'iexe ' . a:cmdline
+        endif
+        unlet i
+    endfor
+    return a:cmdline
+endfunction "}}}
+
+let s:has_built_path = 0
+function! s:build_env_path() "{{{
+    if s:has_built_path
+        return
+    endif
+    let s:has_built_path = 1
+
+    " build $PATH if vim started w/o shell.
+    " XXX: :gui
+    let $PATH = system(s:is_win ? 'echo %path%' : 'echo $PATH')
 endfunction "}}}
 " }}}
 " quickrun {{{
