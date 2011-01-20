@@ -12,10 +12,8 @@ if filereadable(expand('~/.vimrc.local'))
     execute 'source' expand('~/.vimrc.local')
 endif
 
-function! s:is_win()
-    return has('win16') || has('win32') || has('win64')
-endfunction
-if s:is_win()
+let s:is_win = has('win16') || has('win32') || has('win64')
+if s:is_win
     let s:vimdir = expand('~/vimfiles')
 else
     let s:vimdir = expand('~/.vim')
