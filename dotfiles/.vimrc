@@ -495,6 +495,9 @@ DefMacroMap [nvo] prompt ,t
 let g:mapleader = ';'
 Map [n] <Leader> <Nop>
 
+Map [n] ;; ;
+Map [n] ,, ,
+
 let g:maplocalleader = '\'
 Map [n] <LocalLeader> <Nop>
 
