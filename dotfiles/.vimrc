@@ -634,9 +634,6 @@ Map [n] <excmd>di :<C-u>display<CR>
 
 Map [n] g; ~
 
-Map [n] + <C-a>
-Map [n] -- - <C-x>
-
 Map [n] r gR
 
 Map [n] gl :<C-u>cnext<CR>
