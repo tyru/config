@@ -268,3 +268,6 @@
 [submodule "dotfiles/git/git-hg"]
 	path = dotfiles/git/git-hg
 	url = https://github.com/offbytwo/git-hg.git
+[submodule "dotfiles/.vim/bundle/nclipper.vim"]
+	path = dotfiles/.vim/bundle/nclipper.vim
+	url = git://github.com/ujihisa/nclipper.vim.git
