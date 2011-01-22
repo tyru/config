@@ -12,7 +12,7 @@ use Pod::Usage;
 
 
 sub usage () {
-    pod2usage(-verbose => 2);
+    pod2usage(-verbose => 1);
 }
 
 
