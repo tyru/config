@@ -265,3 +265,6 @@
 [submodule "dotfiles/bin.d/weavel"]
 	path = dotfiles/bin.d/weavel
 	url = git://gist.github.com/790407.git
+[submodule "dotfiles/git/git-hg"]
+	path = dotfiles/git/git-hg
+	url = https://github.com/offbytwo/git-hg.git
