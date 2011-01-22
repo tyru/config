@@ -262,3 +262,6 @@
 [submodule "dotfiles/.vim/bundle/vim-fontzoom"]
 	path = dotfiles/.vim/bundle/vim-fontzoom
 	url = git://github.com/thinca/vim-fontzoom.git
+[submodule "dotfiles/bin.d/weavel"]
+	path = dotfiles/bin.d/weavel
+	url = git://gist.github.com/790407.git
