@@ -402,6 +402,12 @@ function! s:write_check_typo(file)
     endif
 endfunction
 
+" Automatic `:!chmod +x %`.
+MyAutocmd BufWritePost *
+\     if getline(1) =~# '^#!'
+\   |   !chmod +x %
+\   | endif
+
 " }}}
 " Initializing {{{
 
