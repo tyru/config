@@ -404,10 +404,13 @@ endfunction
 " }}}
 
 " Automatic `:!chmod +x %`. {{{
-MyAutocmd BufWritePost *
-\     if getline(1) =~# '^#!'
-\   |   !chmod +x %
-\   | endif
+MyAutocmd BufWritePost * call s:auto_chmod()
+function! s:auto_chmod()
+    if getfperm(expand('%'))[2] !=# 'x'
+    \   && getline(1) =~# '^#!'
+        !chmod +x %
+    endif
+endfunction
 " }}}
 
 " }}}
