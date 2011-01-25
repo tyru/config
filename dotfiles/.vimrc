@@ -2329,6 +2329,7 @@ let g:vimshell_prompt = '$ '
 let g:vimshell_right_prompt = 'vimshell#vcs#info("(%s)-[%b]", "(%s)-[%b|%a]")'
 let g:vimshell_ignore_case = 1
 let g:vimshell_smart_case = 1
+let g:vimshell_cd_command = 'CD'
 
 MyAutocmd FileType vimshell call s:vimshell_settings()
 function! s:vimshell_settings() "{{{
