@@ -274,3 +274,6 @@
 [submodule "dotfiles/bin.d/top-timestamp"]
 	path = dotfiles/bin.d/top-timestamp
 	url = git://gist.github.com/790417.git
+[submodule "dotfiles/git/termtter"]
+	path = dotfiles/git/termtter
+	url = git://github.com/jugyo/termtter.git
