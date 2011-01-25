@@ -271,3 +271,6 @@
 [submodule "dotfiles/.vim/bundle/nclipper.vim"]
 	path = dotfiles/.vim/bundle/nclipper.vim
 	url = git://github.com/ujihisa/nclipper.vim.git
+[submodule "dotfiles/bin.d/top-timestamp"]
+	path = dotfiles/bin.d/top-timestamp
+	url = git://gist.github.com/790417.git
