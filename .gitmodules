@@ -277,3 +277,6 @@
 [submodule "dotfiles/git/termtter"]
 	path = dotfiles/git/termtter
 	url = git://github.com/jugyo/termtter.git
+[submodule "dotfiles/bin.d/bookman"]
+	path = dotfiles/bin.d/bookman
+	url = git://gist.github.com/769264.git
