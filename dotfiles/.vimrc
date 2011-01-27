@@ -2683,6 +2683,9 @@ let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
 
 let g:lingr_vim_count_unread_at_current_room = 1
 " }}}
+if exists('g:chalice')
+    call pathogen#runtime_prepend_subdirectories(s:vimdir . '/macros/chalice')
+endif
 " github {{{
 MapAlterCommand gh Github
 MapAlterCommand ghi Github issues
