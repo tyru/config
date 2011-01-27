@@ -55,9 +55,6 @@
 [submodule "dotfiles/.vim/bundle/vim-visualstar"]
 	path = dotfiles/.vim/bundle/vim-visualstar
 	url = git://github.com/thinca/vim-visualstar.git
-[submodule "dotfiles/.vim/bundle/vim-narrow"]
-	path = dotfiles/.vim/bundle/vim-narrow
-	url = git://github.com/kana/vim-narrow.git
 [submodule "dotfiles/.vim/bundle/gist-vim"]
 	path = dotfiles/.vim/bundle/gist-vim
 	url = git://github.com/mattn/gist-vim.git
