@@ -4,9 +4,6 @@
 [submodule "dotfiles/.vim/bundle/caw.vim"]
 	path = dotfiles/.vim/bundle/caw.vim
 	url = git://github.com/tyru/caw.vim.git
-[submodule "dotfiles/.vim/bundle/DumbBuf.vim"]
-	path = dotfiles/.vim/bundle/DumbBuf.vim
-	url = git://github.com/tyru/DumbBuf.vim.git
 [submodule "dotfiles/.vim/bundle/eskk.vim"]
 	path = dotfiles/.vim/bundle/eskk.vim
 	url = git://github.com/tyru/eskk.vim.git
