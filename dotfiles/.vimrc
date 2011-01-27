@@ -1412,7 +1412,7 @@ function! s:set_dict() "{{{
     let dicts = []
     for ft in s:each_filetype()
         for ft in get(filetype_vs_dictionary, ft, [ft])
-            let dict_path = expand(printf(s:vimdir . '/dict/%s.dict', ft))
+            let dict_path = s:vimdir . '/dict/' . ft . '.dict'
             if filereadable(dict_path)
                 call add(dicts, dict_path)
             endif
