@@ -1,9 +1,0 @@
-#!/usr/bin/env perl
-use strict;
-use warnings;
-use utf8;
-
-
-my $n = shift || 12;
-my @a = ('a'..'z', 'A'..'Z', '0'..'9');
-map { print $a[int rand @a] } 1..$n;
