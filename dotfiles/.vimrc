@@ -2613,11 +2613,8 @@ let g:fencview_show_progressbar = 0
 " from thinca's .vimrc
 " http://soralabo.net/s/vrcb/s/thinca
 
-if !exists('g:lingr')
-    " deactivate lingr.vim if there was not g:lingr variable.
-    " this is set in .zshrc/.bashrc like the following:
-    "   alias lingr="vim --cmd 'let g:lingr = 1' -c LingrLaunch"
-    let g:loaded_lingr_vim = 1
+if exists('g:lingr')
+    call pathogen#runtime_prepend_subdirectories(s:vimdir . '/macros/lingr-vim')
 endif
 
 if 0
