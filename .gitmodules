@@ -145,9 +145,6 @@
 [submodule "dotfiles/.vim/bundle/undoclosewin.vim"]
 	path = dotfiles/.vim/bundle/undoclosewin.vim
 	url = git://github.com/tyru/undoclosewin.vim.git
-[submodule "dotfiles/.vim/bundle/neoui"]
-	path = dotfiles/.vim/bundle/neoui
-	url = git://github.com/Shougo/neoui.git
 [submodule "dotfiles/.vim/bundle/feature_list_excomplete.vim"]
 	path = dotfiles/.vim/bundle/feature_list_excomplete.vim
 	url = git://github.com/tyru/feature_list_excomplete.vim.git
