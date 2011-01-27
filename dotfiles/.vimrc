@@ -1197,7 +1197,7 @@ function! s:cmdline_slash()
     return '/'
 endfunction
 
-Map [c] -expr /  <SID>cmdline_slash()
+" Map [c] -expr /  <SID>cmdline_slash()
 Map [c] -expr ?  getcmdtype() == '?' ? '\?' : '?'
 Map [c] -expr .  getcmdtype() =~# '[/?]' ? '\.' : '.'
 " }}}
