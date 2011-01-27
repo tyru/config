@@ -187,12 +187,6 @@
 [submodule "dotfiles/.zsh/auto-fu.zsh"]
 	path = dotfiles/.zsh/auto-fu.zsh
 	url = git://github.com/hchbaw/auto-fu.zsh.git
-[submodule "dotfiles/.zsh/zex.zsh"]
-	path = dotfiles/.zsh/zex.zsh
-	url = git://github.com/hchbaw/zex.zsh.git
-[submodule "dotfiles/.zsh/opp.zsh"]
-	path = dotfiles/.zsh/opp.zsh
-	url = git://github.com/hchbaw/opp.zsh.git
 [submodule "dotfiles/.vim/bundle/parse_args.vim"]
 	path = dotfiles/.vim/bundle/parse_args.vim
 	url = git://github.com/tyru/parse_args.vim.git
