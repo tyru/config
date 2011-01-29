@@ -2,7 +2,7 @@
     directory => "dotfiles",
     files => [qw(
         bin
-        bin.d/gittools
+        bin.d
         .vim
         .vimrc
         .gvimrc
