@@ -1,0 +1,24 @@
+#!/bin/sh
+
+
+if [ $# = 0 ]; then
+    path="."
+else
+    path="$1"
+fi
+
+if [ "$(uname -o)" = "Cygwin" ]; then
+    open="/cygdrive/c/WINDOWS/explorer.exe"
+    path="$(/usr/bin/cygpath.exe -w -a $path)"
+else
+    if [ -x "$(which gnome-open)" ]; then
+        open="gnome-open"
+    elif [ -x "$(which thunar)" ]; then
+        open="thunar"
+    else
+        exit    # no file browser found
+    fi
+fi
+
+
+"$open"   "$path"    # exec

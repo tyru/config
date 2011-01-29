@@ -1,0 +1,38 @@
+
+#if 0
+CC="gcc"
+
+source="$0"
+bin="$0-bin"
+
+if [ -f "$bin" ]; then
+    exec "$bin"
+fi
+$CC -x c -o "$bin" "$source" || exit
+if [ -f "$bin" ]; then
+    exec "$bin"
+fi
+
+exit    # Do not forget this.
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int
+main(int argc, char *argv[])
+{
+#define show_size(type) \
+    printf("sizeof " #type ": %d\n", sizeof(type))
+
+    show_size(char);
+    show_size(int);
+    show_size(short);
+    show_size(long);
+    show_size(float);
+    show_size(double);
+    show_size(long double);
+
+
+    return EXIT_SUCCESS;
+}

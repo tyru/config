@@ -1,0 +1,12 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use utf8;
+
+use HTML::TreeBuilder;
+use LWP::Simple 'get';
+
+my $tree = HTML::TreeBuilder->new;
+$tree->parse(get('http://taruo.net/ip/?'));
+$tree->eof;
+print $tree->find('body')->as_text, "\n";

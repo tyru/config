@@ -1,0 +1,7 @@
+#!/bin/sh
+
+path="$1"
+while [ -L "$path" ]; do
+    path="`readlink "$path"`"
+done
+echo "$path"

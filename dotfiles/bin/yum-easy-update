@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ "$UID" -ne 0 ]; then
+    echo "error: you need to be root." >&2
+    exit 1
+fi
+yum check-update
+yum -y update

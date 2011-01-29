@@ -1,0 +1,96 @@
+#!/usr/bin/env perl
+use common::sense;
+# use strict;
+# use warnings;
+# use utf8;
+
+# gnu_compat: --opt="..." is allowed.
+# no_bundling: single character option is not bundled.
+# no_ignore_case: no ignore case on long option.
+use Getopt::Long qw(:config gnu_compat no_bundling no_ignore_case);
+use Pod::Usage;
+use Archive::Any;
+use IO::File;
+use Path::Class;
+
+
+sub usage () {
+    pod2usage(-verbose => 2);
+}
+
+
+my $needhelp;
+my $verbose;
+my $dry_run;
+GetOptions(
+    'h|help' => \$needhelp,
+    'v|verbose' => \$verbose,
+    'n|dry-run' => \$dry_run,
+) or usage;
+$verbose = 1 if $dry_run;
+
+
+usage if $needhelp;
+usage unless @ARGV;
+
+my ($archive, $dir) = @ARGV;
+
+$dir //= '.';
+if (-e $dir && ! -d _) {
+    die "'$dir' exists and is not directory.\n";
+}
+else {
+    dir($dir)->mkpath;
+}
+
+
+my $ar = Archive::Any->new($archive);
+STDERR->say("Extracting '$archive'...") if $verbose;
+unless ($dry_run) {
+    $ar->extract($dir);
+}
+
+if ($verbose) {
+    STDERR->say('mime type: ' . $ar->mime_type);
+    STDERR->say('files:');
+    for ($ar->files) {
+        STDERR->say("  $_");
+    }
+}
+
+
+
+__END__
+
+=head1 NAME
+
+    kai - nandemo KAItou suru sugoi yatu dayo
+
+
+=head1 SYNOPSIS
+
+    $ kai ARCHIVE [EXTRACT_DIR]
+
+
+=head1 OPTIONS
+
+=over
+
+=item -h, --help
+
+Show this help.
+
+=item -v, --verbose
+
+Show verbose messages.
+
+=item -n, --dry-run
+
+Perform a trial run without extracting ARCHIVE.
+
+=back
+
+
+=head1 AUTHOR
+
+tyru <tyru.exe@gmail.com>

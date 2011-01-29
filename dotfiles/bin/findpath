@@ -1,0 +1,21 @@
+#!/bin/sh
+
+if [ $# = 0 ]; then
+    echo "Usage: $(basename $0) [dir to find in PATH] [find's parameters ...]"
+    exit 1
+fi
+
+dir="$1"
+shift
+
+IFS=:
+for i in $PATH; do
+    search_dir="$i/.."
+    [ ! -d $search_dir ] && continue
+    # convert to full path
+    search_dir="$(cd $search_dir 2>/dev/null && pwd)"
+    # skip if failed to chdir
+    [ $? -ne 0 ] && continue
+
+    [ -d "$search_dir/$dir" ] && find "$search_dir/$dir" $@
+done | sort | uniq

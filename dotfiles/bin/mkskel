@@ -1,0 +1,59 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use utf8;
+
+use Getopt::Long;
+use Perl6::Say;
+use Pod::Usage;
+use File::Copy::Recursive qw(rcopy);
+use File::Spec;
+
+
+my $skel_dir = File::Spec->catfile($ENV{HOME}, '.skel');
+
+### sub ###
+sub usage () {
+    pod2usage(-verbose => 2);
+}
+
+
+### main ###
+my ($needhelp);
+GetOptions(
+    'help' => \$needhelp,
+) or usage;
+usage   if $needhelp;
+usage   unless @ARGV;
+
+my ($src, $dest) = @ARGV;
+$src = File::Spec->catfile($skel_dir, $src);
+die $!  unless -e $src;
+
+if (defined $dest) {
+    rcopy($src, $dest) or die $!;
+} else {
+    my $dest = pop @{[ File::Spec->splitdir($src) ]};
+    rcopy($src, $dest) or die $!;
+}
+
+
+
+
+
+__END__
+
+=head1 NAME
+
+    mkskel - copy skel file
+
+
+=head1 SYNOPSIS
+
+
+=head1 OPTIONS
+
+
+=head1 AUTHOR
+
+tyru <tyru.exe@gmail.com>

@@ -1,0 +1,22 @@
+#!/bin/sh
+
+MINICPAN_MIRROR="$HOME/minicpan"
+
+
+# Check if prereq commands are installed.
+for prereq in cpan-outdated cpanm; do
+    if ! which $prereq >/dev/null 2>&1; then
+        echo "error: $prereq is not installed." >&2
+        exit 1
+    fi
+done
+
+# TODO: Check if local::lib is installed.
+
+
+if [ -d "$MINICPAN_MIRROR" ]; then
+    mirror="--mirror $MINICPAN_MIRROR"
+else
+    mirror=
+fi
+cpan-outdated | xargs cpanm $mirror

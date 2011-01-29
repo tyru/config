@@ -1,0 +1,133 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use utf8;
+
+use Getopt::Long;
+use Perl6::Say;
+use Pod::Usage;
+use Data::Util qw(anon_scalar);
+
+
+
+sub usage () {
+    pod2usage(-verbose => 2);
+}
+sub d {
+    use Data::Dumper;
+    local $Data::Dumper::Terse = 1;
+    Dumper(@_);
+}
+sub w { warn d @_ }
+
+
+
+sub determine_shell {
+    # In my Ubuntu, '/bin/sh' is alias to '/bin/dash'.
+    "/bin/sh -c";
+}
+
+sub shell_stringify {
+    map {
+        s/"/\\"/g;
+
+        qq("$_")
+    } @_;
+}
+
+sub get_shell_args {
+    my ($shell, $command, @args) = @_;
+    my ($shell_args) = shell_stringify(join ' ', $command, shell_stringify(@args));
+
+    "$shell $shell_args"
+}
+
+sub convert_options {
+    my ($argv) = @_;
+    +{
+        map {
+            my $key = my $orig = $_;
+            $key =~ s/^.*\|//;
+            $key =~ s/-/_/g;
+            $key => ${ $argv->{$orig} }
+        } keys %$argv
+    }
+}
+
+sub do_loop {
+    my ($opt, $each_sec, @args) = @_;
+    return unless @args;
+
+    my $shell_args = get_shell_args($opt->{shell}, @args);
+    my $bg = $opt->{background} ? '&' : '';
+    my $redirect = $opt->{silent} ? '>/dev/null 2>/dev/null' : '';
+    my $run = <<EOT;
+while :
+do
+    $shell_args
+    sleep $each_sec
+done $redirect $bg
+EOT
+    chomp $run;
+
+    if ($opt->{oneline}) {
+        # FIXME: '/bin/dash' makes syntax error for this $run arguments.
+        $run = join $opt->{shell_cont_sep}, split /\n/, $run;
+    }
+
+    if ($opt->{print}) {
+        print $run;
+    }
+    else {
+        exec $run;
+    }
+}
+
+
+### main ###
+my $needhelp;
+%ARGV = (
+    'h|help'
+        => \$needhelp,
+    's|silent'
+        => anon_scalar(0),
+    'b|background'
+        => anon_scalar(0),
+    'shell'
+        => anon_scalar(determine_shell()),
+    'shell-cont-sep'
+        => anon_scalar(';'),
+    'p|print'
+        => anon_scalar(0),
+    'oneline'
+        => anon_scalar(0),
+);
+GetOptions(%ARGV) or usage;
+usage if $needhelp;
+
+
+do_loop(
+    convert_options(\%ARGV),
+    @ARGV
+);
+__END__
+
+=head1 NAME
+
+    do-each - NO DESCRIPTION YET.
+
+
+=head1 SYNOPSIS
+
+    do-each -s -b -- 10 ctags
+    # '-p' option only prints out 'exec' code.
+    do-each -s -b -p -- 10 ctags
+
+=head1 OPTIONS
+
+See my code.
+
+
+=head1 AUTHOR
+
+tyru <tyru.exe@gmail.com>

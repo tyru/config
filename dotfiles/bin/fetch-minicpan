@@ -1,0 +1,14 @@
+#!/bin/sh
+
+mirror_url="ftp://ftp.kddilabs.jp/CPAN/"
+minicpan_dir="$HOME/minicpan"
+
+if [ $# -ne 0 ]; then
+    mirror_url="$1"
+    shift
+fi
+if [ $# -ne 0 ]; then
+    minicpan_dir="$1"
+    shift
+fi
+minicpan -r $mirror_url -l $minicpan_dir

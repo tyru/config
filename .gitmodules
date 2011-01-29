@@ -229,6 +229,9 @@
 [submodule "dotfiles/.vim/bundle/autocmd-tabclose.vim"]
 	path = dotfiles/.vim/bundle/autocmd-tabclose.vim
 	url = git://github.com/tyru/autocmd-tabclose.vim.git
+[submodule "dotfiles/bin.d/gittools"]
+	path = dotfiles/bin.d/gittools
+	url = git://github.com/tyru/gittools.git
 [submodule "dotfiles/.vim/bundle/unite-outline"]
 	path = dotfiles/.vim/bundle/unite-outline
 	url = git://github.com/h1mesuke/unite-outline.git
@@ -244,6 +247,21 @@
 [submodule "dotfiles/.vim/bundle/vim-fontzoom"]
 	path = dotfiles/.vim/bundle/vim-fontzoom
 	url = git://github.com/thinca/vim-fontzoom.git
+[submodule "dotfiles/bin.d/weavel"]
+	path = dotfiles/bin.d/weavel
+	url = git://gist.github.com/790407.git
+[submodule "dotfiles/git/git-hg"]
+	path = dotfiles/git/git-hg
+	url = git://github.com/offbytwo/git-hg.git
 [submodule "dotfiles/.vim/bundle/nclipper.vim"]
 	path = dotfiles/.vim/bundle/nclipper.vim
 	url = git://github.com/ujihisa/nclipper.vim.git
+[submodule "dotfiles/bin.d/top-timestamp"]
+	path = dotfiles/bin.d/top-timestamp
+	url = git://gist.github.com/790417.git
+[submodule "dotfiles/git/termtter"]
+	path = dotfiles/git/termtter
+	url = git://github.com/jugyo/termtter.git
+[submodule "dotfiles/bin.d/bookman"]
+	path = dotfiles/bin.d/bookman
+	url = git://gist.github.com/769264.git

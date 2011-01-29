@@ -1,0 +1,178 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use utf8;
+
+use DateTime;
+use Digest::SHA1 qw(sha1);
+use Getopt::Long qw(:config pass_through auto_help);    # pass through unrecognized options.
+use HTTP::Request;
+use LWP::UserAgent;
+use MIME::Base64 qw(encode_base64);
+use Perl6::Say;
+use Pod::Usage;
+use Term::ReadPassword;
+
+
+
+
+
+# default values
+%ARGV = (
+    file => 'hatebu.bmk',
+    mode => 'atom',
+    output => 'hatebu.bmk',
+    password => undef,
+    username => undef,
+);
+
+GetOptions(
+    'file=s' => \$ARGV{file},
+    'mode=s' => \$ARGV{mode},
+    'output=s' => \$ARGV{output},
+    'password=s' => \$ARGV{password},
+    'username=s' => \$ARGV{username},
+);
+
+
+if ($ARGV{mode} !~ /^(atom|rss|bookmarks)$/) {
+    warn "warning: --mode: use default 'atom'.\n";
+    $ARGV{mode} = "atom";
+}
+# set default
+unless (defined $ARGV{username}) {
+    print "put your hatena username:";
+    chomp( $ARGV{username} = <STDIN> );
+}
+until (defined $ARGV{password}) {
+    $ARGV{password} = read_password( "put your password:" );
+}
+
+
+import_hatena_bookmark(\%ARGV);
+
+warn "$ARGV{file}: Can't import hatena bookmarks\n"
+    unless (-f $ARGV{file});
+
+
+
+
+
+sub import_hatena_bookmark {
+    my $data = shift;
+
+    # wsse authentication
+    my $nonce = sha1(sha1(time() . {} . rand() . $$));
+    my $now = DateTime->now->iso8601 . 'Z';
+    my $digest = encode_base64(sha1($nonce . $now . $data->{password} || ''), '');
+    my $credentials =
+        sprintf(qq(UsernameToken Username="%s", PasswordDigest="%s", Nonce="%s", Created="%s"),
+                $data->{username}, $digest,  encode_base64($nonce, ''), $now);
+
+    my $url = 'http://b.hatena.ne.jp/dump' .
+                ($data->{mode} eq "atom" ? "" : "?mode=" . $data->{mode});
+    my $req = HTTP::Request->new(GET => $url);
+    $req->header(Accept => 'application/x.atom+xml, application/xml, text/xml, */*');
+    $req->header('X-WSSE' => $credentials);
+
+    # saving data
+    my $ua = LWP::UserAgent->new;
+    $ua->show_progress(1);
+    my $res = $ua->request($req);
+    unless ($res->is_success) {
+        die $res->status_line . "\n";
+    }
+    my $FH = FileHandle->new("> " . $data->{file})
+            or die sprintf "can't open '%s'.\n", $data->{file};
+    $FH->print($res->content);
+    $FH->close;
+}
+
+
+__END__
+
+=head1 NAME
+
+    hatebu.pl - manipulate hatena bookmarks
+
+
+
+=head1 SYNOPSIS
+
+    hatebu.pl [-u username] [-p password] [-f hatena-bookmark-file] [-m mode] [-o output-bookmark-file] [-h] command arg1 arg2 ...
+
+
+
+=head1 OPTIONS
+
+=over 6
+
+=item -u, --user
+
+hatena username.
+
+
+=item -p, --pass
+
+hatena password.
+
+
+=item -h, --help
+
+show help.
+
+
+=item -f, --file
+
+default:"hatebu.bmk"
+hatena bookmark file path.
+
+
+=item -o, --output
+
+default:same as --file.
+output bookmark file path.
+
+
+=item -m, --mode I<modes>
+
+default:"atom"
+modes:"atom", "rss", bookmarks"
+hatena bookmark file's mode.
+
+
+=back
+
+
+
+=head1 COMMANDS
+
+=over 4
+
+=item help
+
+show help.
+
+
+=item add
+
+add the URL.
+
+
+=item delete_tag I<tag1> I<tag2> ...
+
+delete tags
+
+
+=item replace_tag I<from-tag> I<to-tag> [I<to-tag2> ...]
+
+replace tag.
+
+
+=item 
+
+
+=back
+
+
+
