@@ -2584,6 +2584,9 @@ let g:vimfiler_safe_mode_by_default = 0
 let g:vimfiler_split_command = 'aboveleft split'
 let g:vimfiler_edit_command = 'edit'
 let g:vimfiler_change_vim_cwd = 0
+if executable('trash-put')
+    let g:vimfiler_external_delete_command = 'trash-put $srcs'
+endif
 
 MyAutocmd FileType vimfiler call s:vimfiler_settings()
 function! s:vimfiler_settings() "{{{
