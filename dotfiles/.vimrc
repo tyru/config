@@ -2213,7 +2213,8 @@ elseif s:anything == s:anything_unite
     Map [n] <anything>F        :<C-u>Unite -prompt='-')/\  -buffer-name=files file_rec<CR>
     Map [n] <anything>p        :<C-u>Unite -prompt='-')/\  -buffer-name=files buffer_tab<CR>
     Map [n] <anything>h        :<C-u>Unite -prompt='-')/\  -buffer-name=files file_mru<CR>
-    Map [n] <anything>t        :<C-u>Unite -prompt='-')/\  tab<CR>
+    Map [n] <anything>t        :<C-u>Unite -prompt='-')/\  -immediately tab:no-current<CR>
+    Map [n] <anything>w        :<C-u>Unite -prompt='-')/\  -immediately window:no-current<CR>
     Map [n] <anything>T        :<C-u>Unite -prompt='-')/\  tags<CR>
     Map [n] <anything>H        :<C-u>Unite -prompt='-')/\  help<CR>
     Map [n] <anything>b        :<C-u>Unite -prompt='-')/\  buffer<CR>
