@@ -235,6 +235,11 @@ select-word-style default
 zstyle ':zle:*' word-chars " _-./;@"
 zstyle ':zle:*' word-style unspecified
 # >>>>
+# <<<<
+# zshのgitファイル補完の高速化
+# http://u7fa9.org/memo/HEAD/archives/2011-02/2011-02-01.rst
+__git_files() { _files }
+# >>>>
 # >>>>
 ### cygwin ### <<<<
 if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then
