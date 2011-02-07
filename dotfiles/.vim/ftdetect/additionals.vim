@@ -43,3 +43,5 @@ autocmd BufNewFile,BufRead *.tjs
             \ setfiletype tjs
 autocmd BufNewFile,BufRead /usr/include/c++/*
             \ setfiletype cpp
+autocmd BufNewFile,BufRead ~/Dropbox/memo/**.txt
+            \ setfiletype mkd
