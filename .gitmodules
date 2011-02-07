@@ -265,3 +265,6 @@
 [submodule "dotfiles/bin.d/bookman"]
 	path = dotfiles/bin.d/bookman
 	url = git://gist.github.com/769264.git
+[submodule "dotfiles/.vim/bundle/skkdict.vim"]
+	path = dotfiles/.vim/bundle/skkdict.vim
+	url = git://github.com/tyru/skkdict.vim.git
