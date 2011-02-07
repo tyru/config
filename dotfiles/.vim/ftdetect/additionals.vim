@@ -1,6 +1,4 @@
 
-" Depend some ftdetects on runtime?
-
 autocmd BufNewFile,BufRead *.as
             \ setfiletype actionscript
 autocmd BufNewFile,BufRead *.c
@@ -45,7 +43,3 @@ autocmd BufNewFile,BufRead *.tjs
             \ setfiletype tjs
 autocmd BufNewFile,BufRead /usr/include/c++/*
             \ setfiletype cpp
-
-" Override runtime ftdetects
-autocmd filetypedetect BufNewFile,BufRead *.md setlocal filetype=markdown
-autocmd filetypedetect BufNewFile,BufRead *.ks setlocal filetype=kirikiri
