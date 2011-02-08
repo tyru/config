@@ -27,6 +27,7 @@
         .tmux
         .uim
         .uim.d/customs
+        .muttrc
     )],
     os_files => {map {
         # MS Windows-specific filenames.
