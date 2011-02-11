@@ -684,7 +684,6 @@ function! s:cmdwin_enter()
 endfunction
 MyAutocmd CmdwinEnter * call s:cmdwin_enter()
 
-let loaded_cmdbuf = 1
 Map [n] <excmd>: q:
 Map [n] <excmd>/ q/
 Map [n] <excmd>? q?
@@ -1997,8 +1996,6 @@ if !g:SD_disable
 endif
 " }}}
 " DumbBuf {{{
-let loaded_dumbbuf = 1    " Use unite-buffer instead.
-
 let dumbbuf_hotkey = 'gb'
 " たまにQuickBuf.vimの名残で<Esc>を押してしまう
 let dumbbuf_mappings = {
@@ -2754,6 +2751,9 @@ MyAutocmd User tabclose-post call s:tabclose_post()
 " }}}
 " simpletap {{{
 let g:simpletap#open_command = 'botright vnew'
+" }}}
+" fontzoom {{{
+let loaded_fontzoom = 1
 " }}}
 
 " test
