@@ -240,6 +240,9 @@ zstyle ':zle:*' word-style unspecified
 # http://u7fa9.org/memo/HEAD/archives/2011-02/2011-02-01.rst
 __git_files() { _files }
 # >>>>
+# 右プロンプトに終了ステータスを含める <<<<
+RPROMPT="$RPROMPT%(?.. %F{red}[%B%?%b%F{red}])"
+# >>>>
 # >>>>
 ### cygwin ### <<<<
 if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then
