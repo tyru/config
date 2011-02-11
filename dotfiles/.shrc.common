@@ -57,7 +57,8 @@ fi
 
 # util commands
 function mkcd() {
-    [ $# != 0 ] && mkdir "$1" && cd "$1" }
+    [ $# != 0 ] && mkdir "$1" && cd "$1"
+}
 function viwi() {
     local p
     [ $# != 0 ] && p=`which $1` && vi "$p"
