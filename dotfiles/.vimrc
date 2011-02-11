@@ -1635,7 +1635,7 @@ MapAlterCommand mkd[ir] Mkdir
 command!
 \   -bar -nargs=1 -complete=dir
 \   Mkcd
-\   Mkdir <args> | CD <args>
+\   silent! Mkdir <args> | CD <args>
 
 MapAlterCommand mkc[d] Mkcd
 " }}}
