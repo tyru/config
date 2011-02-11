@@ -988,13 +988,19 @@ Map [n] ;Y   "+y$
 Map [n] ,Y   "*y$
 " }}}
 " Back to col '$' when current col is right of col '$'. {{{
+"
+" 1. move to the last col
+" when over the last col ('virtualedit').
+" 2. do not insert " " before inserted text
+" when characterwise.
+
 if has('virtualedit') && &virtualedit =~# '\<all\>'
     DefMap [n] -expr $-if-right-of-$    (col('.') >= col('$') ? '$' : '')
-    DefMap [n]       noremap-p          p
-    Map [n] -remap p <$-if-right-of-$><noremap-p>
-
-    " Map [n] -expr p (col('.') >= col('$') ? '$' : '') . 'p'
+else
+    DefMap [n]       $-if-right-of-$    <Nop>
 endif
+DefMap [n] -expr paste-nicely       getline('.') == '' ? 'p0"_x' : 'p'
+Map [n] -remap -expr p getregtype(v:register) ==# 'v' ? emap#compile_map('n', '<$-if-right-of-$><paste-nicely>') : 'p'
 " }}}
 " <Space>[hjkl] for <C-w>[hjkl] {{{
 Map [n] -silent <Space>j <C-w>j
