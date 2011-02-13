@@ -1864,7 +1864,7 @@ command!
 " \   g/./let l=getline('.')|g/./if l==getline('.')|d
 
 " }}}
-" Ctags {{{
+" :Ctags {{{
 MapAlterCommand ctags Ctags
 
 command!
