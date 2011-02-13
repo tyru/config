@@ -1814,21 +1814,6 @@ command!
 \   Help
 \   vertical rightbelow help<bang> <args>
 " }}}
-" Detect current position in current tab ambiguously. {{{
-function! s:tab_on_left_side() "{{{
-    return wincol() < &columns / 2
-endfunction "}}}
-function! s:win_on_left_side(...) "{{{
-    return wincol() < winwidth(a:0 ? a:1 : 0) / 2
-endfunction "}}}
-
-function! s:tab_on_above_side() "{{{
-    return winline() < &lines / 2
-endfunction "}}}
-function! s:win_on_above_side(...) "{{{
-    return winline() < winheight(a:0 ? a:1 : 0) / 2
-endfunction "}}}
-" }}}
 " :SplitToLeft, :SplitToRight, :SplitToUp, :SplitToDown {{{
 " Assumption: <args> does not contain :vertical,
 " and does not change 'splitright', 'splitbelow'.
