@@ -418,8 +418,8 @@ endfunction
 " }}}
 " Initializing {{{
 
-call pathogen#runtime_append_all_bundles()
-command! -bar HelpTagsAll call pathogen#helptags()
+call rtputil#bundle()
+command! -bar HelpTagsAll call rtputil#helptags()
 HelpTagsAll
 
 
@@ -2607,7 +2607,7 @@ let g:fencview_show_progressbar = 0
 " http://soralabo.net/s/vrcb/s/thinca
 
 if exists('g:lingr')
-    call pathogen#runtime_prepend_subdirectories(s:vimdir . '/macros/lingr-vim')
+    call rtputil#append(s:vimdir . '/macros/lingr-vim')
 endif
 
 if 0
@@ -2678,7 +2678,7 @@ let g:lingr_vim_count_unread_at_current_room = 1
 " }}}
 " chalice {{{
 if exists('g:chalice')
-    call pathogen#runtime_prepend_subdirectories(s:vimdir . '/macros/chalice')
+    call rtputil#append(s:vimdir . '/macros/chalice')
 endif
 " }}}
 " github {{{
