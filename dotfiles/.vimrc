@@ -2605,8 +2605,8 @@ let g:fencview_show_progressbar = 0
 " from thinca's .vimrc
 " http://soralabo.net/s/vrcb/s/thinca
 
-if exists('g:lingr')
-    call rtputil#append(s:vimdir . '/macros/lingr-vim')
+if !exists('g:lingr')
+    call rtputil#remove('\<lingr-vim\>')
 endif
 
 if 0
@@ -2676,8 +2676,8 @@ let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
 let g:lingr_vim_count_unread_at_current_room = 1
 " }}}
 " chalice {{{
-if exists('g:chalice')
-    call rtputil#append(s:vimdir . '/macros/chalice')
+if !exists('g:chalice')
+    call rtputil#remove('\<chalice\>')
 endif
 " }}}
 " github {{{
