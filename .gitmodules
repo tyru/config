@@ -121,8 +121,8 @@
 [submodule "dotfiles/.vim/bundle/vimshell"]
 	path = dotfiles/.vim/bundle/vimshell
 	url = git://github.com/Shougo/vimshell.git
-[submodule "dotfiles/.vim/macros/lingr-vim/repos"]
-	path = dotfiles/.vim/macros/lingr-vim/repos
+[submodule "dotfiles/.vim/macros/lingr-vim"]
+	path = dotfiles/.vim/macros/lingr-vim
 	url = git://github.com/tsukkee/lingr-vim.git
 [submodule "dotfiles/.vim/bundle/neocomplcache"]
 	path = dotfiles/.vim/bundle/neocomplcache
