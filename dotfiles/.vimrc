@@ -2692,11 +2692,7 @@ let g:neocomplcache_enable_ignore_case = 1
 let g:neocomplcache_enable_quick_match = 1
 let g:neocomplcache_enable_underbar_completion = 1
 let g:neocomplcache_enable_camel_case_completion = 1
-let g:neocomplcache_plugin_disable = {}
-for s:source in map(tyru#util#globpath(&rtp, 'autoload/neocomplcache/sources/*'), 'fnamemodify(v:val, ":t:r")')
-    let g:neocomplcache_plugin_disable[s:source] = 1
-endfor
-unlet! s:source
+let g:neocomplcache_auto_completion_start_length = 3
 
 Map [n] <Leader>neo :<C-u>NeoComplCacheToggle<CR>
 " }}}
