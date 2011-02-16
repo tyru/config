@@ -1426,7 +1426,6 @@ function! s:set_dict() "{{{
         endfor
     endfor
 
-    " FIXME Use pathogen.vim!!
     for d in dicts
         let &l:dictionary = join(tyru#util#uniq(dicts), ',')
     endfor
