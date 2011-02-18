@@ -177,7 +177,7 @@ endfunction "}}}
 " Path
 function! tyru#util#remove_end_sep(path) "{{{
     " Remove separator at the end of a:path.
-    let sep = pathogen#separator()
+    let sep = tyru#util#path_separator()
     let pat = (sep == '\' ? '\\' : '/') . '\+$'
     return substitute(a:path, pat, '', '')
 endfunction "}}}
@@ -196,9 +196,12 @@ function! tyru#util#dirname(path) "{{{
     return path
 endfunction "}}}
 function! tyru#util#catfile(path, ...) "{{{
-    let sep = pathogen#separator()
+    let sep = tyru#util#path_separator()
     let path = tyru#util#remove_end_sep(a:path)
     return join([path] + a:000, sep)
+endfunction "}}}
+function! tyru#util#path_separator()  " {{{
+  return !exists('+shellslash') || &shellslash ? '/' : '\'
 endfunction "}}}
 
 
