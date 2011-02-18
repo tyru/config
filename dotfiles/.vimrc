@@ -2592,7 +2592,13 @@ function! s:vimfiler_settings() "{{{
     Map! [n] -buffer N
     Map! [n] -buffer j
     Map! [n] -buffer k
+
+    " dd as <Plug>(vimfiler_force_delete_file)
+    " because I want to use trash-put.
     Map! [n] -buffer d
+    Map [n] -buffer -remap dd <Plug>(vimfiler_force_delete_file)
+
+    Map [n] -buffer -remap <Space><Space> <Plug>(vimfiler_toggle_mark_current_line)
 endfunction "}}}
 " }}}
 " prettyprint {{{
