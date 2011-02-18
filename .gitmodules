@@ -184,9 +184,6 @@
 [submodule "dotfiles/.zsh/auto-fu.zsh"]
 	path = dotfiles/.zsh/auto-fu.zsh
 	url = git://github.com/hchbaw/auto-fu.zsh.git
-[submodule "dotfiles/.vim/bundle/parse_args.vim"]
-	path = dotfiles/.vim/bundle/parse_args.vim
-	url = git://github.com/tyru/parse_args.vim.git
 [submodule "dotfiles/.vimperator/vimpr"]
 	path = dotfiles/.vimperator/vimpr
 	url = git://github.com/vimpr/vimperator-plugins.git
