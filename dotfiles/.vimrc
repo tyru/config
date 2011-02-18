@@ -1606,12 +1606,14 @@ function! s:cmd_rename(...) "{{{
         let to = to . '/' . fnamemodify(from, ':t')
     endif
 
-    let success = 0
-    if rename(from, to) ==# success && filereadable(to)
-        execute 'edit' to
-    else
+    try
+        call rename(from, to)
+        if from !=# expand('%') && filereadable(to)
+            execute 'edit' to
+        endif
+    catch
         Echomsg WarningMsg "Can't rename():" from "=>" to
-    endif
+    endtry
 endfunction "}}}
 
 MapAlterCommand mv Rename
