@@ -199,9 +199,9 @@
 [submodule "dotfiles/.vim/bundle/unite-help"]
 	path = dotfiles/.vim/bundle/unite-help
 	url = git://github.com/tsukkee/unite-help.git
-[submodule "dotfiles/.vim/bundle/unite-tags"]
-	path = dotfiles/.vim/bundle/unite-tags
-	url = git://github.com/tsukkee/unite-tags.git
+[submodule "dotfiles/.vim/bundle/unite-tag"]
+	path = dotfiles/.vim/bundle/unite-tag
+	url = git://github.com/tsukkee/unite-tag.git
 [submodule "dotfiles/.vim/bundle/vim-textobj-between"]
 	path = dotfiles/.vim/bundle/vim-textobj-between
 	url = git://github.com/thinca/vim-textobj-between.git
