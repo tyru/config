@@ -222,6 +222,35 @@ function! tyru#util#execute_multiline(excmds, ...) "{{{
 endfunction "}}}
 
 
+" command-line parser
+function! tyru#util#skip_white(q_args) "{{{
+    return substitute(a:q_args, '^\s*', '', '')
+endfunction "}}}
+function! tyru#util#parse_pattern(str, pat) "{{{
+    let str = a:str
+    " TODO: Use matchlist() for capturing group \1, \2, ...
+    " and specify which group to use with arguments.
+    let head = matchstr(str, a:pat)
+    let rest = strpart(str, strlen(head))
+    return [head, rest]
+endfunction "}}}
+function! tyru#util#parse_one_arg_from_q_args(q_args) "{{{
+    let q_args = tyru#util#skip_white(a:q_args)
+    return tyru#util#parse_pattern(q_args, '^.\{-}[^\\]\ze\([ \t]\|$\)')
+endfunction "}}}
+function! tyru#util#eat_n_args_from_q_args(q_args, n) "{{{
+    let rest = a:q_args
+    for _ in range(1, a:n)
+        let rest = tyru#util#parse_one_arg_from_q_args(rest)[1]
+    endfor
+    let rest = tyru#util#skip_white(rest)    " for next arguments.
+    return rest
+endfunction "}}}
+function! tyru#util#parse_one_string_from_q_args(q_args) "{{{
+    " TODO
+endfunction "}}}
+
+
 
 
 " Restore 'cpoptions' {{{
