@@ -2021,9 +2021,9 @@ let prompt_debug = 0
 " }}}
 " skk && eskk {{{
 
-let s:skk_user_dict = '~/.skk/skk-user-dict'
+let s:skk_user_dict = '~/.skk/user-dict'
 let s:skk_user_dict_encoding = 'utf-8'
-let s:skk_system_dict = '~/.skk/skk-system-dict'
+let s:skk_system_dict = '~/.skk/system-dict'
 let s:skk_system_dict_encoding = 'euc-jp'
 
 if 1
