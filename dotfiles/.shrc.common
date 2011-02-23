@@ -18,8 +18,6 @@ alias la='ls -A'
 alias less='less -r'
 alias ll='ls -lh'
 alias go='gopen'
-alias lingr="vim --cmd 'let g:lingr = 1' -c LingrLaunch"
-alias chalice="vim --cmd 'let g:chalice = 1' -c Chalice"
 alias tmux='tmux -u -2'
 # http://techno-st.net/2009/06/06/bash-zsh-alias-sudo.html
 alias sudo='sudo'
@@ -29,6 +27,9 @@ if which vim >/dev/null 2>&1; then
     alias vi=vim
     alias vim-noplugin='vim -u NONE -i NONE -N'
 fi
+alias lingr="vim --cmd 'let g:lingr = 1' -c LingrLaunch"
+alias chalice="vim --cmd 'let g:chalice = 1' -c Chalice"
+alias vimshell="vim -c VimShell"
 
 which trash-put >/dev/null 2>&1 && alias rm='trash-put'
 if which screen >/dev/null 2>&1; then
