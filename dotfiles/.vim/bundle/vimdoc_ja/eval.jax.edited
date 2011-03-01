@@ -2476,9 +2476,15 @@ deepcopy({expr}[, {noref}])				*deepcopy()* *E698*
 		要素があると、{noref}が1の場合は失敗する。
 		|copy()|も参照。
 
+<<<<<<< .mine
+							*delete()*
+delete({fname})	{fname}という名前のファイルを削除する。戻り値は数値で、削除に
+		成功したら0、失敗したら0以外が返る。
+=======
 delete({fname})							*delete()*
 		{fname}という名前のファイルを削除する。戻り値は数値で、削除に
 		成功したら0、失敗したら0以外が返る。
+>>>>>>> .r330
 		リスト|List|から要素を削除するには|remove()|を使う。
 
 							*did_filetype()*

@@ -1,7 +1,7 @@
 COMMENT: Vimスクリプト
 STATUS: finished 7.3
-TRANSLATOR: 村岡太郎 <koron@tka.att.ne.jp>
 TRANSLATOR: 青山正太郎(mm) <jod@r9.dion.ne.jp>
+TRANSLATOR: 村岡太郎 <koron.kaoriya@gmail.com>
 
 *eval.txt*	For Vim バージョン 7.3.  Last change: 2010 Dec 01
 
@@ -1833,7 +1833,7 @@ remote_peek( {serverid} [, {retvar}])
 remote_read( {serverid})	文字列	返信文字列を読み込む
 remote_send( {server}, {string} [, {idvar}])
 				文字列	キーシーケンスを送信する
-remove( {list}, {idx} [, {end}])  任意	{list}から{idx}〜{end}の要素を削除
+remove( {list}, {idx} [, {end}])  任意	{list}から{idx}と{end}間の要素を削除
 remove( {dict}, {key})		任意	{dict}から要素{key}を削除
 rename({from}, {to})		数値	{file}から{to}へファイル名変更
 repeat( {expr}, {count})	文字列	{expr}を{count}回繰り返す
@@ -1916,7 +1916,7 @@ tabpagenr( [{arg}])		数値	現在または最後のタブページの番号
 tabpagewinnr( {tabarg}[, {arg}])
 				数値	タブページ内の現在のウィンドウの番号
 taglist( {expr})		リスト	{expr}にマッチするタグのリスト
-tagfiles()			リスト  使用しているタグファイルのリスと
+tagfiles()			リスト  使用しているタグファイルのリスト
 tempname()			文字列	テンポラリファイルの名前
 tan( {expr})			浮動小数点数	{expr}のタンジェント
 tanh( {expr})			浮動小数点数	{expr}のハイパボリックタンジェ
@@ -1925,8 +1925,7 @@ tolower( {expr})		文字列	文字列{expr}を小文字にする
 toupper( {expr})		文字列	文字列{expr}を大文字にする
 tr( {src}, {fromstr}, {tostr})	文字列	{src}中に現れる文字{fromstr}を{tostr}
 					に変換する。
-trunc( {expr}			浮動小数点数	浮動小数点数 {expr} を切り詰め
-				    	る
+trunc( {expr}			浮動小数点数	浮動小数点数{expr}を切り詰める
 type( {name})			数値	変数{name}の型
 undofile( {name})		文字列	{name}に対するアンドゥファイルの名前
 undotree()			リスト	アンドゥファイルツリー
@@ -2477,9 +2476,9 @@ deepcopy({expr}[, {noref}])				*deepcopy()* *E698*
 		要素があると、{noref}が1の場合は失敗する。
 		|copy()|も参照。
 
-							*delete()*
-delete({fname})	{fname}という名前のファイルを削除する。戻り値は数値で、削除に
-		成功したら0、失敗したら1が返る。
+delete({fname})							*delete()*
+		{fname}という名前のファイルを削除する。戻り値は数値で、削除に
+		成功したら0、失敗したら0以外が返る。
 		リスト|List|から要素を削除するには|remove()|を使う。
 
 							*did_filetype()*

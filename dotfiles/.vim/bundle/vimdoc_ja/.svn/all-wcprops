@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 33
-/svn/vimdoc/!svn/ver/324/trunk/ja
+/svn/vimdoc/!svn/ver/329/trunk/ja
 END
 netbeans.jax
 K 25
@@ -117,17 +117,17 @@ svn:wc:ra_dav:version-url
 V 43
 /svn/vimdoc/!svn/ver/191/trunk/ja/farsi.jax
 END
-recover.jax
-K 25
-svn:wc:ra_dav:version-url
-V 45
-/svn/vimdoc/!svn/ver/249/trunk/ja/recover.jax
-END
 motion.jax
 K 25
 svn:wc:ra_dav:version-url
 V 44
 /svn/vimdoc/!svn/ver/323/trunk/ja/motion.jax
+END
+recover.jax
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/vimdoc/!svn/ver/249/trunk/ja/recover.jax
 END
 version4.jax
 K 25
@@ -151,7 +151,7 @@ if_perl.jax
 K 25
 svn:wc:ra_dav:version-url
 V 45
-/svn/vimdoc/!svn/ver/205/trunk/ja/if_perl.jax
+/svn/vimdoc/!svn/ver/325/trunk/ja/if_perl.jax
 END
 gui_w16.jax
 K 25
@@ -169,7 +169,7 @@ syntax.jax
 K 25
 svn:wc:ra_dav:version-url
 V 44
-/svn/vimdoc/!svn/ver/323/trunk/ja/syntax.jax
+/svn/vimdoc/!svn/ver/327/trunk/ja/syntax.jax
 END
 help.jax
 K 25
@@ -177,17 +177,17 @@ svn:wc:ra_dav:version-url
 V 42
 /svn/vimdoc/!svn/ver/201/trunk/ja/help.jax
 END
-if_ole.jax
-K 25
-svn:wc:ra_dav:version-url
-V 44
-/svn/vimdoc/!svn/ver/204/trunk/ja/if_ole.jax
-END
 pi_paren.jax
 K 25
 svn:wc:ra_dav:version-url
 V 46
 /svn/vimdoc/!svn/ver/240/trunk/ja/pi_paren.jax
+END
+if_ole.jax
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/vimdoc/!svn/ver/204/trunk/ja/if_ole.jax
 END
 os_risc.jax
 K 25
@@ -319,7 +319,7 @@ filetype.jax
 K 25
 svn:wc:ra_dav:version-url
 V 46
-/svn/vimdoc/!svn/ver/309/trunk/ja/filetype.jax
+/svn/vimdoc/!svn/ver/328/trunk/ja/filetype.jax
 END
 editing.jax
 K 25
@@ -349,7 +349,7 @@ eval.jax
 K 25
 svn:wc:ra_dav:version-url
 V 42
-/svn/vimdoc/!svn/ver/323/trunk/ja/eval.jax
+/svn/vimdoc/!svn/ver/329/trunk/ja/eval.jax
 END
 starting.jax
 K 25
@@ -405,17 +405,17 @@ svn:wc:ra_dav:version-url
 V 44
 /svn/vimdoc/!svn/ver/269/trunk/ja/usr_05.jax
 END
-usr_42.jax
-K 25
-svn:wc:ra_dav:version-url
-V 44
-/svn/vimdoc/!svn/ver/293/trunk/ja/usr_42.jax
-END
 pi_tar.jax
 K 25
 svn:wc:ra_dav:version-url
 V 44
 /svn/vimdoc/!svn/ver/320/trunk/ja/pi_tar.jax
+END
+usr_42.jax
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/vimdoc/!svn/ver/293/trunk/ja/usr_42.jax
 END
 usr_07.jax
 K 25
@@ -471,17 +471,11 @@ svn:wc:ra_dav:version-url
 V 44
 /svn/vimdoc/!svn/ver/312/trunk/ja/if_lua.jax
 END
-vimtutor-ja.UTF-8.1
+pi_gzip.jax
 K 25
 svn:wc:ra_dav:version-url
-V 53
-/svn/vimdoc/!svn/ver/308/trunk/ja/vimtutor-ja.UTF-8.1
-END
-helphelp.jax
-K 25
-svn:wc:ra_dav:version-url
-V 46
-/svn/vimdoc/!svn/ver/315/trunk/ja/helphelp.jax
+V 45
+/svn/vimdoc/!svn/ver/237/trunk/ja/pi_gzip.jax
 END
 os_mac.jax
 K 25
@@ -489,11 +483,17 @@ svn:wc:ra_dav:version-url
 V 44
 /svn/vimdoc/!svn/ver/226/trunk/ja/os_mac.jax
 END
-pi_gzip.jax
+helphelp.jax
 K 25
 svn:wc:ra_dav:version-url
-V 45
-/svn/vimdoc/!svn/ver/237/trunk/ja/pi_gzip.jax
+V 46
+/svn/vimdoc/!svn/ver/315/trunk/ja/helphelp.jax
+END
+vimtutor-ja.UTF-8.1
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/vimdoc/!svn/ver/308/trunk/ja/vimtutor-ja.UTF-8.1
 END
 visual.jax
 K 25
@@ -513,17 +513,17 @@ svn:wc:ra_dav:version-url
 V 46
 /svn/vimdoc/!svn/ver/200/trunk/ja/hangulin.jax
 END
-usr_10.jax
-K 25
-svn:wc:ra_dav:version-url
-V 44
-/svn/vimdoc/!svn/ver/275/trunk/ja/usr_10.jax
-END
 quickref.jax
 K 25
 svn:wc:ra_dav:version-url
 V 46
 /svn/vimdoc/!svn/ver/322/trunk/ja/quickref.jax
+END
+usr_10.jax
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/vimdoc/!svn/ver/275/trunk/ja/usr_10.jax
 END
 usr_12.jax
 K 25
@@ -561,17 +561,17 @@ svn:wc:ra_dav:version-url
 V 44
 /svn/vimdoc/!svn/ver/309/trunk/ja/remote.jax
 END
-print.jax
-K 25
-svn:wc:ra_dav:version-url
-V 43
-/svn/vimdoc/!svn/ver/245/trunk/ja/print.jax
-END
 pi_getscript.jax
 K 25
 svn:wc:ra_dav:version-url
 V 50
 /svn/vimdoc/!svn/ver/236/trunk/ja/pi_getscript.jax
+END
+print.jax
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/vimdoc/!svn/ver/245/trunk/ja/print.jax
 END
 scroll.jax
 K 25
@@ -633,11 +633,11 @@ svn:wc:ra_dav:version-url
 V 45
 /svn/vimdoc/!svn/ver/188/trunk/ja/digraph.jax
 END
-usr_25.jax
+os_amiga.jax
 K 25
 svn:wc:ra_dav:version-url
-V 44
-/svn/vimdoc/!svn/ver/283/trunk/ja/usr_25.jax
+V 46
+/svn/vimdoc/!svn/ver/223/trunk/ja/os_amiga.jax
 END
 tips.jax
 K 25
@@ -645,11 +645,11 @@ svn:wc:ra_dav:version-url
 V 42
 /svn/vimdoc/!svn/ver/262/trunk/ja/tips.jax
 END
-os_amiga.jax
+usr_25.jax
 K 25
 svn:wc:ra_dav:version-url
-V 46
-/svn/vimdoc/!svn/ver/223/trunk/ja/os_amiga.jax
+V 44
+/svn/vimdoc/!svn/ver/283/trunk/ja/usr_25.jax
 END
 quotes.jax
 K 25
@@ -687,29 +687,29 @@ svn:wc:ra_dav:version-url
 V 43
 /svn/vimdoc/!svn/ver/323/trunk/ja/mlang.jax
 END
-howto.jax
-K 25
-svn:wc:ra_dav:version-url
-V 43
-/svn/vimdoc/!svn/ver/202/trunk/ja/howto.jax
-END
 if_tcl.jax
 K 25
 svn:wc:ra_dav:version-url
 V 44
 /svn/vimdoc/!svn/ver/209/trunk/ja/if_tcl.jax
 END
-vim-ja.UTF-8.1
+howto.jax
 K 25
 svn:wc:ra_dav:version-url
-V 48
-/svn/vimdoc/!svn/ver/306/trunk/ja/vim-ja.UTF-8.1
+V 43
+/svn/vimdoc/!svn/ver/202/trunk/ja/howto.jax
 END
 tabpage.jax
 K 25
 svn:wc:ra_dav:version-url
 V 45
 /svn/vimdoc/!svn/ver/259/trunk/ja/tabpage.jax
+END
+vim-ja.UTF-8.1
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/vimdoc/!svn/ver/306/trunk/ja/vim-ja.UTF-8.1
 END
 undo.jax
 K 25
@@ -729,11 +729,11 @@ svn:wc:ra_dav:version-url
 V 44
 /svn/vimdoc/!svn/ver/288/trunk/ja/usr_30.jax
 END
-usr_32.jax
+pattern.jax
 K 25
 svn:wc:ra_dav:version-url
-V 44
-/svn/vimdoc/!svn/ver/290/trunk/ja/usr_32.jax
+V 45
+/svn/vimdoc/!svn/ver/311/trunk/ja/pattern.jax
 END
 map.jax
 K 25
@@ -741,11 +741,11 @@ svn:wc:ra_dav:version-url
 V 41
 /svn/vimdoc/!svn/ver/320/trunk/ja/map.jax
 END
-pattern.jax
+usr_32.jax
 K 25
 svn:wc:ra_dav:version-url
-V 45
-/svn/vimdoc/!svn/ver/311/trunk/ja/pattern.jax
+V 44
+/svn/vimdoc/!svn/ver/290/trunk/ja/usr_32.jax
 END
 usr_toc.jax
 K 25
@@ -769,7 +769,7 @@ fold.jax
 K 25
 svn:wc:ra_dav:version-url
 V 42
-/svn/vimdoc/!svn/ver/309/trunk/ja/fold.jax
+/svn/vimdoc/!svn/ver/326/trunk/ja/fold.jax
 END
 os_unix.jax
 K 25
