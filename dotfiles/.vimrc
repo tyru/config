@@ -147,7 +147,7 @@ endif
 set backup
 let &backupdir = s:vimdir . '/backup'
 if !isdirectory(&backupdir)
-    call mkdir(&backupdir)
+    call mkdir(&backupdir, 'p')
 endif
 
 function! SandboxCallOptionFn(option_name) "{{{
