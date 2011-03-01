@@ -1170,7 +1170,8 @@ endfunction "}}}
 " call submode#map       ('c', 'i', '', 'k', '<C-p>')
 
 
-Map [i] -expr <C-y> pumvisible() ? neocomplcache#cancel_popup() : "\<C-y>"
+Map [i] -expr <C-y> neocomplcache#close_popup()
+Map [i] -expr <CR>  pumvisible() ? neocomplcache#close_popup() . "\<CR>" : "\<CR>"
 
 " }}}
 " }}}
