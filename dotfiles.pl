@@ -1,8 +1,6 @@
 {
     directory => "dotfiles",
     files => [qw(
-        bin
-        bin.d
         .vim
         .vimrc
         .gvimrc

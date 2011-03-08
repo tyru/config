@@ -1,7 +1,5 @@
 directory: dotfiles
 files:
-  - bin
-  - bin.d
   - .vim
   - .vimrc
   - .gvimrc
