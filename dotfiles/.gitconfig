@@ -5,30 +5,18 @@
 	# My github token here!
 [core]
 	excludesfile = ~/.gitignore.base
-	editor = vim
+	editor = vim -u NONE -N -c 'syntax on'
 [user]
 	name = tyru
 	email = tyru.exe@gmail.com
 [alias]
+	# short name (+ some options)
 	ar = archive
 	br = branch
-	ci = commit -v
-	cia = commit -v --all
-	ciam = commit -v --amend
 	co = checkout
-	cont = rebase --continue
 	cp = cherry-pick
-	di = diff --color-words -M
-	dish = diff --cached -M
-	fixup = commit --amend -C HEAD
-	gene = log --graph --pretty='%C(yellow)%h%Creset %ai %an: %s%C(yellow)%d%Creset' --all
-	l = log --stat
-	last = log -p --reverse HEAD@{1}..
-	lp = log -p
 	ls = ls-files
 	re = reset
-	reha = reset --hard
-	rmsh = rm --cached
 	s = show
 	sa = stash apply
 	sd = stash drop
@@ -40,9 +28,24 @@
 	subfor = submodule foreach
 	subinit = submodule update --init
 	subadd = submodule add
-	view = log --pretty=oneline --abbrev-commit --graph --source --tags --branches
 	wh = whatchanged
 	zip = archive --format=zip
+	cont = rebase --continue
+	reha = reset --hard
+	dish = diff --color-words -M --cached
+	rmsh = rm --cached
+	ci = commit -v
+	cia = commit -v --all
+	ciam = commit -v --amend
+	fixup = commit --amend -C HEAD
+	gene = log --graph --pretty='%C(yellow)%h%Creset %ai %an: %s%C(yellow)%d%Creset' --all
+	view = log --pretty=oneline --abbrev-commit --graph --source --tags --branches
+	last = log --stat -p --reverse HEAD@{1}..
+	lp = log --stat -p
+	short = rev-parse --short
+
+	my-diff = diff --color-words -M
+	my-log = log --stat
 [color]
 	branch = auto
 	diff = auto
@@ -51,3 +54,7 @@
 	ui = auto
 [rerere]
 	enabled = true
+[interactive]
+	singlekey = true
+[help]
+	autocorrect = -1
