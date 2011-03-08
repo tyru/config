@@ -249,7 +249,7 @@
 	url = git://github.com/thinca/vim-rtputil.git
 [submodule "dotfiles/.vim/bundle/karma.vim"]
 	path = dotfiles/.vim/bundle/karma.vim
-	url = https://github.com/vim-scripts/karma.vim.git
+	url = git://github.com/vim-scripts/karma.vim.git
 [submodule "dotfiles/.vim/bundle/visualctrlg.vim"]
 	path = dotfiles/.vim/bundle/visualctrlg.vim
 	url = git://github.com/tyru/visualctrlg.vim.git
