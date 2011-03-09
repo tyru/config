@@ -2141,7 +2141,12 @@ endif
 
 " }}}
 " restart {{{
-let g:restart_sessionoptions = 'blank,curdir,folds,help,localoptions,tabpages'
+command!
+\   RestartWithSession
+\   -bar
+\   let g:restart_sessionoptions = 'blank,curdir,folds,help,localoptions,tabpages'
+\   | Restart
+
 MapAlterCommand res[tart] Restart
 MapAlterCommand ers[tart] Restart
 MapAlterCommand rse[tart] Restart
