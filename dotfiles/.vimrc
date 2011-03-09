@@ -2627,11 +2627,32 @@ endif    " Update GNU screen tab name.
 
 
 MyAutocmd FileType lingr-messages
-\   call s:lingr_mappings()
-function! s:lingr_mappings() "{{{
+\   call s:lingr_messages_mappings()
+function! s:lingr_messages_mappings() "{{{
     Map [n] -buffer -remap o <Plug>(lingr-messages-show-say-buffer)
     Map [n] -buffer <C-g><C-n> gt
     Map [n] -buffer <C-g><C-p> gT
+endfunction "}}}
+
+MyAutocmd FileType lingr-say
+\   call s:lingr_say_mappings()
+function! s:lingr_say_mappings() "{{{
+    Map [n] -buffer -remap <CR> <SID>(lingr-say-say)
+endfunction "}}}
+
+Map [n] <SID>(lingr-say-say) :<C-u>call <SID>lingr_say_say()<CR>
+function! s:lingr_say_say() "{{{
+    let all_lines = getline(1, '$')
+    let blank_line = '^\s*$'
+    call filter(all_lines, 'v:val =~# blank_line')
+    if empty(all_lines)    " has blank line(s).
+        let doit = 1
+    else
+        let doit = input('lingr-say buffer has one or more blank lines. say it?[y/n]:') =~? '^y\%[es]'
+    endif
+    if doit
+        execute "normal \<Plug>(lingr-say-say)"
+    endif
 endfunction "}}}
 
 
