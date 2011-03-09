@@ -2153,8 +2153,8 @@ MapAlterCommand rse[tart] Restart
 " }}}
 " openbrowser {{{
 let g:netrw_nogx = 1
-Map [nv] -remap gx <Plug>(openbrowser-open)
-MapAlterCommand o[pen] OpenBrowser
+Map [nv] -remap gx <Plug>(openbrowser-smart-search)
+MapAlterCommand o[pen] OpenBrowserSmartSearch
 " }}}
 " AutoDate {{{
 let g:autodate_format = "%Y-%m-%d"
