@@ -2588,7 +2588,7 @@ let g:fencview_show_progressbar = 0
 " }}}
 " lingr.vim {{{
 
-" from thinca's .vimrc
+" from thinca's .vimrc {{{
 " http://soralabo.net/s/vrcb/s/thinca
 
 if !exists('g:lingr')
@@ -2623,6 +2623,7 @@ function! s:lingr_event(event) "{{{
 endfunction "}}}
 
 endif    " Update GNU screen tab name.
+" }}}
 
 
 
@@ -2640,7 +2641,7 @@ function! s:lingr_say_mappings() "{{{
     Map [n] -buffer -remap <CR> <SID>(lingr-say-say)
 endfunction "}}}
 
-Map [n] <SID>(lingr-say-say) :<C-u>call <SID>lingr_say_say()<CR>
+Map [n] -silent <SID>(lingr-say-say) :<C-u>call <SID>lingr_say_say()<CR>
 function! s:lingr_say_say() "{{{
     let all_lines = getline(1, '$')
     let blank_line = '^\s*$'
@@ -2654,6 +2655,7 @@ function! s:lingr_say_say() "{{{
         execute "normal \<Plug>(lingr-say-say)"
     endif
 endfunction "}}}
+
 
 
 let g:lingr_vim_additional_rooms = [
@@ -2677,9 +2679,7 @@ let g:lingr_vim_additional_rooms = [
 \   'lingr_vim',
 \   'vimjolts',
 \]
-
 let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
-
 let g:lingr_vim_count_unread_at_current_room = 1
 " }}}
 " chalice {{{
