@@ -2727,11 +2727,6 @@ let g:simpletap#open_command = 'botright vnew'
 " fontzoom {{{
 let loaded_fontzoom = 1
 " }}}
-" visualctrlg {{{
-" '<C-g>' and 'g<C-g>' in visual mode: Show information about selected area.
-Map [v] -remap g<C-g> <Plug>(visualctrlg-verbosely)
-Map [v] -remap <C-g>  <Plug>(visualctrlg-briefly)
-" }}}
 
 " test
 let g:loaded_tyru_event_test = 1
