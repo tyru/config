@@ -267,6 +267,16 @@ __git_files() { _files }
 # 右プロンプトに終了ステータスを含める <<<<
 RPROMPT="$RPROMPT%(?.. %F{red}[%B%?%b%F{red}])"
 # >>>>
+# ^R, ^S: history-incremental-pattern-search-(forward|backward) <<<<
+autoload -Uz is-at-least
+if is-at-least 4.3.10; then
+    # http://subtech.g.hatena.ne.jp/secondlife/20110222/1298354852
+    # http://subtech.g.hatena.ne.jp/mayuki/20110310/1299761759
+    # zsh 4.3.10 でないと動かない
+    bindkey '^R' history-incremental-pattern-search-backward
+    bindkey '^S' history-incremental-pattern-search-forward
+fi
+# >>>>
 # >>>>
 ### cygwin ### <<<<
 if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then
