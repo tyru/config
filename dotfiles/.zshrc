@@ -227,6 +227,30 @@ if [ -f "$HOME/.zsh/auto-fu.zsh/auto-fu.zsh" -a "$MY_CURRENT_ENV" != "cygwin" ];
     afu-ad-delete-unambiguous-prefix afu+accept-line
     afu-ad-delete-unambiguous-prefix afu+accept-line-and-down-history
     afu-ad-delete-unambiguous-prefix afu+accept-and-hold
+
+
+    # `Perl -M` の時に候補を探しにいくのを抑制する {{{
+    # http://d.hatena.ne.jp/hchbaw/20110309/1299680906
+    #
+    # ':auto-fu:var' autoable-function/preds に登録されたそれぞれの関数には順に、
+    # - $1にカーソルの直前の引数
+    # - $2にカーソル付近のコマンド(のようなもの)
+    # - $3にカーソル付近のコマンド(のようなもの)からカーソルまでの文字列
+    # - $4にカーソル付近のコマンド(のようなもの)全体の文字列
+    # が渡されます。(上の方に書いたパターンをもとに自動補完の抑制を行なっている
+    # のもここに登録された関数で実装されています。)
+    # この場合、コマンドがperlで、引数-Mxxxを処理している際に非0を返して自動補完
+    # を抑制するようにしています。
+    # 仮にここで-1をかえすと_ただちに自動補完をする_ということになります。
+    afu-autoable-pm-p () { [[ ! ("$2" == 'perl' && "$1" == -(#i)m*) ]] }
+
+    # デフォルト値を'preds'へと取得します
+    local -a preds; afu-autoable-default-functions preds
+    preds+=afu-autoable-pm-p
+    # }}}
+
+
+    zstyle ':auto-fu:var' autoable-function/preds $preds
 fi
 # >>>>
 # コマンドラインの単語区切りを設定する <<<<
