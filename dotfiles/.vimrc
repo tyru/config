@@ -405,11 +405,16 @@ endfunction
 
 " Automatic `:!chmod +x %`. {{{
 command! -bar DisableAutoChmod let b:disable_auto_chmod = 1
+command! -bar EnableAutoChmod  unlet! b:disable_auto_chmod
 MyAutocmd BufWritePost * call s:auto_chmod()
-function! s:auto_chmod()
-    if !exists('b:disable_auto_chmod')
+function! s:check_auto_chmod() "{{{
+    return !exists('b:disable_auto_chmod')
     \   && getfperm(expand('%'))[2] !=# 'x'
     \   && getline(1) =~# '^#!'
+    \   && executable('chmod')
+endfunction "}}}
+function! s:auto_chmod()
+    if s:check_auto_chmod()
         !chmod +x %
     endif
 endfunction
