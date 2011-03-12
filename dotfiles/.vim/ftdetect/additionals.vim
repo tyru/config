@@ -31,8 +31,8 @@ autocmd BufNewFile,BufRead *.lua
             \ setfiletype lua
 autocmd BufNewFile,BufRead *.tmpl
             \ setfiletype html
-autocmd BufNewFile,BufRead *.mkd
-            \ setfiletype markdown
+autocmd BufNewFile,BufRead *.markdown,*.mkd,*.md,*.mkdn
+            \ setlocal filetype=markdown
 autocmd BufNewFile,BufRead SKK-JISYO*,.skk-jisyo*,.skk-*-jisyo*,skk-*-dict,~/.skk/*
             \ setfiletype skk
 autocmd BufNewFile,BufRead *.grass
