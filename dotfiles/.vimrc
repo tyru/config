@@ -428,7 +428,7 @@ augroup vimrc-auto-mkdir
     function! s:auto_mkdir(dir, force)
         if !isdirectory(a:dir)
         \   && (a:force
-        \       || input("'" . a:dir . "' does not exist. Create? [y/N]", a:dir) =~? '^y\%[es]$')
+        \       || input("'" . a:dir . "' does not exist. Create? [y/N]") =~? '^y\%[es]$')
             call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
         endif
     endfunction
