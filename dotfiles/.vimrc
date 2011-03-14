@@ -404,8 +404,8 @@ endfunction
 " }}}
 
 " Automatic `:!chmod +x %`. {{{
-command! -bar DisableAutoChmod let b:disable_auto_chmod = 1
-command! -bar EnableAutoChmod  unlet! b:disable_auto_chmod
+command! -bar AutoChmodDisable let b:disable_auto_chmod = 1
+command! -bar AutoChmodEnable  unlet! b:disable_auto_chmod
 MyAutocmd BufWritePost * call s:auto_chmod()
 function! s:check_auto_chmod() "{{{
     return !exists('b:disable_auto_chmod')
