@@ -86,8 +86,11 @@ function! tyru#util#has_one_of(list, elem) "{{{
 endfunction "}}}
 function! tyru#util#uniq(list) "{{{
     let dict = {}
+    let counter = 1
+    " TODO: Support except string and number?
     for str_or_num in a:list
-        let dict[str_or_num] = 1
+        let dict[str_or_num] = counter
+        let counter += 1
     endfor
     return tyru#util#sort_by(keys(dict), 'tyru#util#cmp(dict[a], dict[b])', {'dict': dict})
 endfunction "}}}
