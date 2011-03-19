@@ -545,6 +545,11 @@ EOS
 " http://vimperator.g.hatena.ne.jp/teramako/20100416/1271432039
 command! cal js liberator.echo(<datepicker type="grid" xmlns={XUL}/>)
 " }}}
+" LDR 購読停止 {{{
+" http://vimperator.g.hatena.ne.jp/snaka72/20090209/1234172041
+autocmd LocationChange .* nunmap U
+autocmd LocationChange reader\\.livedoor\\.com nnoremap U :js window.content.window.wrappedJSObject.Control.unsubscribe()<CR>
+" }}}
 " }}}
 "-----------------------------------------------------------------
 
