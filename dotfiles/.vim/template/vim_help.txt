@@ -36,6 +36,12 @@ INTRODUCTION						*<%filename_noext%>-introduction* {{{
 INTERFACE				*<%filename_noext%>-interface* {{{
 ------------------------------------------------------------------------------
 KEYMAPPINGS					*<%filename_noext%>-keymappings* {{{
+
+
+Default keymappings
+--------------------
+
+
 }}}
 ------------------------------------------------------------------------------
 VARIABLES					*<%filename_noext%>-variables* {{{
