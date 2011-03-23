@@ -39,6 +39,12 @@ Changelog					|<%filename_noext%>-changelog|
 }}}
 ------------------------------------------------------------------------------
 グローバル変数					*<%filename_noext%>-variables* {{{
+
+					*g:<%filename_noext%>_no_default_keymappings*
+g:<%filename_noext%>_no_default_keymappings
+	この変数が定義されていて、かつ0以外であれば
+	|<%filename_noext%>| はデフォルトキーマッピングを定義しません。
+
 }}}
 ------------------------------------------------------------------------------
 コマンド						*<%filename_noext%>-commands* {{{

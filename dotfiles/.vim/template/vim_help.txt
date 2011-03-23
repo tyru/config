@@ -39,6 +39,12 @@ KEYMAPPINGS					*<%filename_noext%>-keymappings* {{{
 }}}
 ------------------------------------------------------------------------------
 VARIABLES					*<%filename_noext%>-variables* {{{
+
+					*g:<%filename_noext%>_no_default_keymappings*
+g:<%filename_noext%>_no_default_keymappings
+	If this variable is defined and non-zero,
+	|<%filename_noext%>| will not define default keymappings.
+
 }}}
 ------------------------------------------------------------------------------
 COMMANDS					*<%filename_noext%>-commands* {{{
