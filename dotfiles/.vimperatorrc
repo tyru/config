@@ -302,8 +302,8 @@ lazy fmaps -u='mail\.google\.com/mail' c j k n p o u e x s r z # [ ] ! ? . gi gs
 lazy fmaps -u='www\.rememberthemilk\.com/home/' a m c n p r g s h t u j y <Del> k z l 1 2 3 4 <C-S-Left> <C-S-Right> <C-S-0> <C-S-6> <C-S-7> <C-S-8> <C-S-9> <C-S-l> <Left> <Right> <Up> <Down> <PageUp> <PageDown> <Home> <End> <C-S-/>
 " }}}
 " LDR {{{
-" add r g
-lazy fmaps -u='reader\.livedoor\.com/reader/' j k s a p o v c <Space> <S-Space> Z z ZZ b < > r g d
+" add r g d D
+lazy fmaps -u='reader\.livedoor\.com/reader/' j k s a p o v c <Space> <S-Space> Z z ZZ b < > r g d D
 " }}}
 " }}}
 " copy.js {{{
