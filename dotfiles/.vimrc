@@ -1862,7 +1862,14 @@ MapAlterCommand ctags Ctags
 command!
 \   -bar
 \   Ctags
-\   execute '!ctags' (filereadable('.ctags') ? '' : '-R')
+\   call s:cmd_ctags()
+
+function! s:cmd_ctags() "{{{
+    if !executable('ctags')
+        return
+    endif
+    execute '!ctags' (filereadable('.ctags') ? '' : '-R')
+endfunction "}}}
 " }}}
 " }}}
 " For Plugins {{{
