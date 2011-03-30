@@ -377,8 +377,6 @@ MyAutocmd QuickfixCmdPost * QuickFix
 MyAutocmd InsertLeave * setlocal nocursorline
 MyAutocmd InsertEnter * setlocal cursorline ignorecase
 
-" Delete filetypedetect.
-
 " Set syntaxes
 MyAutocmd BufNewFile,BufRead *.as setlocal syntax=actionscript
 MyAutocmd BufNewFile,BufRead _vimperatorrc,.vimperatorrc setlocal syntax=vimperator
