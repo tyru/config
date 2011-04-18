@@ -1,5 +1,5 @@
 " Utilities for 'runtimepath'.
-" Version: 0.1.0
+" Version: 0.1.1
 " Author : thinca <thinca+vim@gmail.com>
 " License: Creative Commons Attribution 2.1 Japan License
 "          <http://creativecommons.org/licenses/by/2.1/jp/deed.en>
@@ -98,6 +98,14 @@ function! s:RTP.remove(pattern)  " {{{2
   return self._update_index()
 endfunction
 
+function! s:RTP.unify(mods, ...)  " {{{2
+  let sep = a:0 ? a:1 : s:path_separator()
+  for entry in self._entries
+    let entry.path = s:unify(entry.path, a:mods, sep)
+  endfor
+  return self
+endfunction
+
 function! s:RTP.helptags(...)  " {{{2
   let verbose = a:0 && a:1
   for dir in self.to_list()
@@ -146,11 +154,7 @@ function! s:RTP.apply()  " {{{2
 endfunction
 
 function! s:RTP._update_index()  " {{{2
-  let index = {}
-  for e in self._entries
-    let index[e.normalized] = 1
-  endfor
-  let self._index = index
+  let self._index = s:list2dict(map(copy(self._entries), 'v:val.normalized'))
   return self
 endfunction
 
@@ -187,6 +191,11 @@ endfunction
 " Remove the directory from runtimepath.
 function! rtputil#remove(path)  " {{{2
   return rtputil#new().remove(a:path).apply()
+endfunction
+
+" Unify the form of each path.
+function! rtputil#unify(mods, ...)  " {{{2
+  return rtputil#new().unify(a:mods, a:0 ? a:1 : s:path_separator())
 endfunction
 
 " Do :helptags for all of 'runtimepath'.
@@ -271,13 +280,12 @@ endfunction
 " - Unify the path separators.
 " - Modify the path form with {mods}.
 " - Remove the path separator of tail.
-function! s:unify(path, mods, ...)  " {{{2
-  let sep = a:0 ? a:1 : s:path_separator()
+function! s:unify(path, mods, sep)  " {{{2
   if type(a:path) == type([])
-    return map(a:path, 's:unify(v:val, a:mods, sep)')
+    return map(a:path, 's:unify(v:val, a:mods, a:sep)')
   endif
 
-  let sep = escape(sep, '\')
+  let sep = escape(a:sep, '\')
   let path = a:path
   let path = fnamemodify(path, a:mods)
   let path = substitute(path, s:path_sep_pattern, sep, 'g')
@@ -296,24 +304,6 @@ function! s:path_separator()  " {{{2
 endfunction
 
 let s:path_sep_pattern = exists('+shellslash') ? '[\\/]' : '/'
-
-" Remove duplicates from a list.
-" - string only.
-" - can not treat a empty string.
-function! s:uniq(list)  " {{{2
-  let i = 0
-  let len = len(a:list)
-  let seen = {}
-  while i < len
-    if has_key(seen, a:list[i])
-      call remove(a:list, i)
-    else
-      let seen[a:list[i]] = 1
-      let i += 1
-    endif
-  endwhile
-  return a:list
-endfunction
 
 function! s:echoerr(mes)  " {{{2
   echohl ErrorMsg
