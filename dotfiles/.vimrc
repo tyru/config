@@ -105,6 +105,8 @@ set scroll=5
 " set scrolloff=15
 " set scrolloff=9999
 
+" Hack for <LeftMouse> not to adjust ('scrolloff') when clicking.
+" Implement 'scrolloff' by auto-command to control the fire.
 set scrolloff=0
 let g:scrolloff = 15
 MyAutocmd CursorMoved * call s:reinventing_scrolloff()
@@ -1341,8 +1343,11 @@ Map   [ic] -remap <C-]>     <C-]><bs-ctrl-]>
 " TODO: Add frequently-used-commands to the top level of the menu.
 " like MS Windows Office 2007 Ribborn interface.
 
+" Do not adjust current scroll position (do not fire 'scrolloff') on single-click.
 Map [n] -silent <LeftMouse>   <Esc>:set eventignore=all<CR><LeftMouse>:set eventignore=<CR>
+" Double-click for searching the word under the cursor.
 Map [n]         <2-LeftMouse> g*
+" Single-click for searching the word selected in visual-mode.
 Map [v] -remap  <LeftMouse> <Plug>(visualstar-g*)
 
 " }}}
