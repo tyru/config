@@ -102,8 +102,38 @@ set listchars=tab:>_,extends:>,precedes:<,eol:/
 
 " scroll
 set scroll=5
-set scrolloff=15
+" set scrolloff=15
 " set scrolloff=9999
+
+set scrolloff=0
+let g:scrolloff = 15
+MyAutocmd CursorMoved * call s:reinventing_scrolloff()
+let s:last_lnum = -1
+function! s:reinventing_scrolloff()
+    if s:last_lnum > 0 && line('.') ==# s:last_lnum
+        return
+    endif
+    let s:last_lnum = line('.')
+    let winline     = winline()
+    let winheight   = winheight(0)
+    let middle      = winheight / 2
+    let upside      = (winheight / winline) >= 2
+    " If upside is true, add winlines to above the cursor.
+    " If upside is false, add winlines to under the cursor.
+    if upside
+        let up_num = g:scrolloff - winline + 1
+        let up_num = winline + up_num > middle ? middle - winline : up_num
+        if up_num > 0
+            execute 'normal!' up_num."\<C-y>"
+        endif
+    else
+        let down_num = g:scrolloff - (winheight - winline)
+        let down_num = winline - down_num < middle ? winline - middle : down_num
+        if down_num > 0
+            execute 'normal!' down_num."\<C-e>"
+        endif
+    endif
+endfunction
 
 " shift
 set shiftround
