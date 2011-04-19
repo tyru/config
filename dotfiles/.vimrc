@@ -1343,6 +1343,7 @@ Map   [ic] -remap <C-]>     <C-]><bs-ctrl-]>
 
 Map [n] -silent <LeftMouse>   <Esc>:set eventignore=all<CR><LeftMouse>:set eventignore=<CR>
 Map [n]         <2-LeftMouse> g*
+Map [v] -remap  <LeftMouse> <Plug>(visualstar-g*)
 
 " }}}
 " }}}
