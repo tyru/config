@@ -1335,6 +1335,16 @@ DefMap [i] -expr bs-ctrl-] getline('.')[col('.') - 2]    ==# "\<C-]>" ? "\<BS>" 
 DefMap [c] -expr bs-ctrl-] getcmdline()[getcmdpos() - 2] ==# "\<C-]>" ? "\<BS>" : ''
 Map   [ic] -remap <C-]>     <C-]><bs-ctrl-]>
 " }}}
+
+" Mouse {{{
+
+" TODO: Add frequently-used-commands to the top level of the menu.
+" like MS Windows Office 2007 Ribborn interface.
+
+Map [n] -silent <LeftMouse>   <Esc>:set eventignore=all<CR><LeftMouse>:set eventignore=<CR>
+Map [n]         <2-LeftMouse> g*
+
+" }}}
 " }}}
 " Encoding {{{
 let s:enc = 'utf-8'
