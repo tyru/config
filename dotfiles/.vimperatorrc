@@ -292,6 +292,11 @@ noremap <Leader>tg      :toggle go<CR>
 noremap <Leader>ts      :toggle sb<CR>
 " }}}
 " feedSomeKeys_3.js {{{
+
+" http://vimperator.g.hatena.ne.jp/nokturnalmortum/20110406/1302077288
+fmap -modes=i -events=keydown,keypress <C-p> <Up>
+fmap -modes=i -events=keydown,keypress <C-n> <Down>
+
 " GMail {{{
 "   add ! l gl g/
 "   delete /
