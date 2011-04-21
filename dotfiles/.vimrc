@@ -104,11 +104,11 @@ set listchars=tab:>_,extends:>,precedes:<,eol:/
 set scroll=5
 " set scrolloff=15
 " set scrolloff=9999
-
-" Hack for <LeftMouse> not to adjust ('scrolloff') when clicking.
-" Implement 'scrolloff' by auto-command to control the fire.
 set scrolloff=0
-let g:scrolloff = 15
+let g:scrolloff = 15    " see below
+
+" Hack for <LeftMouse> not to adjust ('scrolloff') when single-clicking.
+" Implement 'scrolloff' by auto-command to control the fire.
 MyAutocmd CursorMoved * call s:reinventing_scrolloff()
 let s:last_lnum = -1
 function! s:reinventing_scrolloff()
