@@ -7,7 +7,7 @@ set cpo&vim
 " }}}
 
 
-function! visualctrlg#load() "{{{
+function! <%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>#load() "{{{
     " dummy function to load this script.
 endfunction "}}}
 
