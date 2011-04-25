@@ -277,6 +277,10 @@ if is-at-least 4.3.10; then
     bindkey '^S' history-incremental-pattern-search-forward
 fi
 # >>>
+# Ctrl+wで､直前の/までを削除する <<<
+# http://edvakf.tumblr.com/post/24017596/setopt-hist-ignore-dups
+WORDCHARS='*?_-.[]~=&;!#$%^(){}'
+# >>>
 # >>>
 ### cygwin ### <<<
 if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then
