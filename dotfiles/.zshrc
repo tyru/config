@@ -1,4 +1,4 @@
-# vim:set fdm=marker fmr=<<<<,>>>>:
+# vim:set fdm=marker fmr=<<<,>>>:
 
 # $MY_CURRENT_ENV is necessary for .shrc.common
 MY_CURRENT_ENV="$(perl -e 'print $^O')"
@@ -11,32 +11,32 @@ if [ -f "$HOME/.zshrc.local" ]; then
     source "$HOME/.zshrc.local"
 fi
 
-### fpath ### <<<<
+### fpath ### <<<
 fpath=(~/.zsh/functions $fpath)
 autoload -U ~/.zsh/functions/*(:t)
-# >>>>
-### compinit ### <<<<
+# >>>
+### compinit ### <<<
 autoload -U compinit
 compinit -u
-# >>>>
-### promptinit ### <<<<
+# >>>
+### promptinit ### <<<
 if [ $UID != 0 ]; then
     autoload promptinit
     promptinit
     prompt adam2
     # prompt elite2
 fi
-# >>>>
-### color ### <<<<
+# >>>
+### color ### <<<
 # ${fg[...]} や $reset_color をロード
 autoload -U colors; colors
-# >>>>
-### completion ### <<<<
+# >>>
+### completion ### <<<
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # ignore alphabet case when completion,
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-# >>>>
-### search history ### <<<<
+# >>>
+### search history ### <<<
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
@@ -44,8 +44,8 @@ bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
 
 # bindkey "^I" menu-complete
-# >>>>
-### setopt ### <<<<
+# >>>
+### setopt ### <<<
 
 # http://journal.mycom.co.jp/column/zsh/index.html
 # http://www.crimson-snow.net/tips/unix/zsh.html
@@ -86,8 +86,8 @@ setopt rm_star_wait
 setopt sh_word_split
 setopt share_history
 # setopt print_exit_value
-# >>>>
-### abbrev ### <<<<
+# >>>
+### abbrev ### <<<
 # via http://homepage1.nifty.com/blankspace/zsh/zsh.html
 typeset -A myabbrev
 myabbrev=(
@@ -112,13 +112,13 @@ my-expand-abbrev() {
 }
 zle -N my-expand-abbrev
 bindkey     " "         my-expand-abbrev
-# >>>>
-### misc ### <<<<
-# カレントディレクトリが変わると実行される <<<<
+# >>>
+### misc ### <<<
+# カレントディレクトリが変わると実行される <<<
 # via http://d.hatena.ne.jp/hiboma/20061005/1160026514
 chpwd () { ll }
-# >>>>
-# gitのブランチ名を右プロンプトに表示 <<<<
+# >>>
+# gitのブランチ名を右プロンプトに表示 <<<
 # http://d.hatena.ne.jp/mollifier/20090814/p1
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' formats '(%s)-[%b]'
@@ -129,8 +129,8 @@ precmd () {
     [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
 }
 RPROMPT="%1(v|%F{green}%1v%f|)"
-# >>>>
-# 補完時に色んな情報を出す <<<<
+# >>>
+# 補完時に色んな情報を出す <<<
 # via http://d.hatena.ne.jp/voidy21/20090902/1251918174
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
@@ -142,26 +142,26 @@ zstyle ':completion:*:options' description 'yes'
 # グループ名に空文字列を指定すると，マッチ対象のタグ名がグループ名に使われる。
 # したがって，すべての マッチ種別を別々に表示させたいなら以下のようにする
 zstyle ':completion:*' group-name ''
-# >>>>
-# 補完のセパレータを設定する <<<<
+# >>>
+# 補完のセパレータを設定する <<<
 # via http://d.hatena.ne.jp/voidy21/20090902/1251918174
 zstyle ':completion:*' list-separator '-->'
-# >>>>
-# manの補完をセクション番号別に表示させる <<<<
+# >>>
+# manの補完をセクション番号別に表示させる <<<
 # via http://d.hatena.ne.jp/voidy21/20090902/1251918174
 zstyle ':completion:*:manuals' separate-sections true
-# >>>>
-# 起動済みバックグランドプロセスの標準出力を見るワンライナー <<<<
+# >>>
+# 起動済みバックグランドプロセスの標準出力を見るワンライナー <<<
 # via http://subtech.g.hatena.ne.jp/cho45/20091118/1258554176
 function snatch () {
     gdb -p $1 -batch -n -x =( echo -e "p (int)open(\"/proc/$$/fd/1\", 1)\np (int)dup2(\$1, 1)\np (int)dup2(\$1, 2)" )
 }
-# >>>>
-# C-sによる画面の停止を無効 <<<<
+# >>>
+# C-sによる画面の停止を無効 <<<
 # http://d.hatena.ne.jp/hogem/20090411/1239451878
 stty stop undef
-# >>>>
-# surround.vimみたいにクォートで囲む <<<<
+# >>>
+# surround.vimみたいにクォートで囲む <<<
 # http://d.hatena.ne.jp/mollifier/20091220/p1
 
 autoload -U modify-current-argument
@@ -181,8 +181,8 @@ _quote-previous-word-in-double() {
 }
 zle -N _quote-previous-word-in-double
 bindkey '^[Q' _quote-previous-word-in-double
-# >>>>
-# vimperator-like completion <<<<
+# >>>
+# vimperator-like completion <<<
 # via http://gist.github.com/414589
 if [ -f "$HOME/.zsh/auto-fu.zsh/auto-fu.zsh" -a "$MY_CURRENT_ENV" != "cygwin" ]; then
     unsetopt sh_word_split
@@ -252,22 +252,22 @@ if [ -f "$HOME/.zsh/auto-fu.zsh/auto-fu.zsh" -a "$MY_CURRENT_ENV" != "cygwin" ];
 
     zstyle ':auto-fu:var' autoable-function/preds $preds
 fi
-# >>>>
-# コマンドラインの単語区切りを設定する <<<<
+# >>>
+# コマンドラインの単語区切りを設定する <<<
 # http://d.hatena.ne.jp/sugyan/20100712/1278869962
 autoload -Uz select-word-style
 select-word-style default
 zstyle ':zle:*' word-chars " _-./;@"
 zstyle ':zle:*' word-style unspecified
-# >>>>
-# zshのgitファイル補完の高速化 <<<<
+# >>>
+# zshのgitファイル補完の高速化 <<<
 # http://u7fa9.org/memo/HEAD/archives/2011-02/2011-02-01.rst
 __git_files() { _files }
-# >>>>
-# 右プロンプトに終了ステータスを含める <<<<
+# >>>
+# 右プロンプトに終了ステータスを含める <<<
 RPROMPT="$RPROMPT%(?.. %F{red}[%B%?%b%F{red}])"
-# >>>>
-# ^R, ^S: history-incremental-pattern-search-(forward|backward) <<<<
+# >>>
+# ^R, ^S: history-incremental-pattern-search-(forward|backward) <<<
 autoload -Uz is-at-least
 if is-at-least 4.3.10; then
     # http://subtech.g.hatena.ne.jp/secondlife/20110222/1298354852
@@ -276,12 +276,12 @@ if is-at-least 4.3.10; then
     bindkey '^R' history-incremental-pattern-search-backward
     bindkey '^S' history-incremental-pattern-search-forward
 fi
-# >>>>
-# >>>>
-### cygwin ### <<<<
+# >>>
+# >>>
+### cygwin ### <<<
 if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then
     source ~/.shrc.cygwin
 fi
-# >>>>
+# >>>
 
 source ~/.shrc.start-screen
