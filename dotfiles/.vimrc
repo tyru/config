@@ -2764,7 +2764,7 @@ MapAlterCommand ghi Github issues
 " }}}
 " neocomplcache {{{
 let g:neocomplcache_enable_at_startup = 1
-let g:neocomplcache_disable_caching_buffer_name_pattern = '.*'
+let g:neocomplcache_disable_caching_file_path_pattern = '.*'
 let g:neocomplcache_enable_ignore_case = 1
 let g:neocomplcache_enable_quick_match = 1
 let g:neocomplcache_enable_underbar_completion = 1
