@@ -114,7 +114,7 @@ set! browser.sessionstore.max_concurrent_tabs=0
 " set {{{
 set complete=stl
 set focuscontent
-set guioptions=br
+set gui=noaddons,nobookmarks,nomenu,navigation,tabs
 set hlsearch
 set ignorecase
 set incsearch
@@ -125,7 +125,6 @@ set smartcase
 set titlestring=Firefox
 set urlseparator=
 set visualbell
-set wildoptions=auto
 " }}}
 "-----------------------------------------------------------------
 " map {{{
