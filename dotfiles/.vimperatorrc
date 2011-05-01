@@ -298,8 +298,8 @@ noremap <Leader>ts      :toggle sb<CR>
 " feedSomeKeys_3.js {{{
 
 " http://vimperator.g.hatena.ne.jp/nokturnalmortum/20110406/1302077288
-fmap -modes=i -events=keydown,keypress <C-p> <Up>
-fmap -modes=i -events=keydown,keypress <C-n> <Down>
+lazy fmap -modes=i -events=keydown,keypress <C-p> <Up>
+lazy fmap -modes=i -events=keydown,keypress <C-n> <Down>
 
 " GMail {{{
 "   add ! l gl g/
@@ -556,7 +556,7 @@ command! cal js liberator.echo(<datepicker type="grid" xmlns={XUL}/>)
 " }}}
 " LDR 購読停止 {{{
 " http://vimperator.g.hatena.ne.jp/snaka72/20090209/1234172041
-autocmd LocationChange .* nunmap U
+autocmd LocationChange .* nnoremap U <NOP>
 autocmd LocationChange reader\\.livedoor\\.com nnoremap U :js window.content.window.wrappedJSObject.Control.unsubscribe()<CR>
 " }}}
 " }}}
