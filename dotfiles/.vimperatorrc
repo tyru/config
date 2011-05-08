@@ -558,6 +558,10 @@ command! cal js liberator.echo(<datepicker type="grid" xmlns={XUL}/>)
 autocmd LocationChange .* nnoremap U <NOP>
 autocmd LocationChange reader\\.livedoor\\.com nnoremap U :js window.content.window.wrappedJSObject.Control.unsubscribe()<CR>
 " }}}
+" Firefox4でリンクにマウスオーバーしたときに出る下部のラベルを表示させない {{{
+" via http://twitter.com/#!/teramako/status/51672045787938816
+style chrome://* #statusbar-display { display: none; }
+" }}}
 " }}}
 "-----------------------------------------------------------------
 
