@@ -2181,6 +2181,8 @@ if has('vim_starting')
         call t.add_map('jve', 'ゔぇ')
         call t.add_map('jvo', 'ゔぉ')
         call t.add_map('z ', '　')
+        " It is better to register the word "Exposé" than to register this map :)
+        " call t.add_map('qe', 'é')
         call eskk#register_mode_table('hira', t)
     endfunction "}}}
 endif
