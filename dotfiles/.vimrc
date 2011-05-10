@@ -2477,6 +2477,7 @@ function! s:vimshell_preexec_iexe(cmdline, context) "{{{
     \   'termtter',
     \   'sudo',
     \   ['git', 'add', '-p'],
+    \   'earthquake',
     \]
         if type(i) == type([]) && i ==# args[:len(i)-1]
             return 'iexe ' . a:cmdline
