@@ -25,6 +25,7 @@ files:
   - .uim
   - .uim.d/customs
   - .muttrc
+  - .hgrc
 os_files:
   MSWin32:
     .vimperator: vimperator

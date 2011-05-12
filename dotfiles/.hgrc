@@ -1,0 +1,10 @@
+
+# Mercurial for Git user (Japanese)
+# http://labs.timedia.co.jp/2011/03/mercurial-extensions-we-should-setup-for-gituser.html
+
+[extensions]
+color =
+# for MS Windows
+# [color]
+# choose one of 'win32', 'ansi', 'auto', 'off'
+# mode = win32

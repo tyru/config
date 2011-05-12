@@ -26,6 +26,7 @@
         .uim
         .uim.d/customs
         .muttrc
+        .hgrc
     )],
     os_files => {map {
         # MS Windows-specific filenames.
