@@ -640,6 +640,24 @@ Map [nvo] -remap <operator>bk <Plug>(operator-blank-killer)
 Map [nvo] -remap <operator>he <Plug>(operator-html-escape)
 Map [nvo] -remap <operator>hu <Plug>(operator-html-unescape)
 " }}}
+" operator-zentaku2hankaku {{{
+let s:zenkaku_vs_hankaku = {
+\   'Ａ': 'A',
+\}
+
+call operator#user#define('zenkaku2hankaku', 'Op_zenkaku2hankaku')
+function! Op_zenkaku2hankaku(motion_wiseness)
+    " TODO
+endfunction
+
+call operator#user#define('hankaku2zenkaku', 'Op_hankaku2zenkaku')
+function! Op_hankaku2zenkaku(motion_wiseness)
+    " TODO
+endfunction
+
+Map [nvo] -remap <operator>zh <Plug>(operator-zenkaku2hankaku)
+Map [nvo] -remap <operator>zh <Plug>(operator-hankaku2zenkaku)
+" }}}
 " }}}
 " motion {{{
 Map [nvo] j gj
