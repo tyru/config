@@ -2158,8 +2158,7 @@ endif
 let g:eskk#egg_like_newline = 1
 let g:eskk#show_candidates_count = 2
 let g:eskk#show_annotation = 1
-let g:eskk#rom_input_style = 'msime'
-" let g:eskk#rom_input_style = 'skk'
+let g:eskk#rom_input_style = 1 ? 'msime' : 'skk'
 let g:eskk#keep_state = 1
 let g:eskk#keep_state_beyond_buffer = 1
 
@@ -2211,18 +2210,23 @@ endif
 " endfunction "}}}
 
 
-" Experimental.
+" Experimental
 
 " map! <C-j> <Plug>(eskk:enable)
 " EskkMap <C-j> <Nop>
 "
+" EskkMap U <Plug>(eskk:undo-kakutei)
+
+
+
+" Debug
+
+command! -bar EskkDumpBuftable PP! eskk#get_buftable().dump()
+command! -bar EskkDumpTable    PP! eskk#table#<args>#load()
+
 " inoremap <C-g> hoge
 "
 " inoremap <C-l> <C-o><C-l>
-"
-" EskkMap U <Plug>(eskk:undo-kakutei)
-
-" for test.
 "
 " EskkMap lhs rhs
 " EskkMap -silent lhs2 rhs
