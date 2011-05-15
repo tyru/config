@@ -282,12 +282,12 @@ function! s:statusline() "{{{
     let s = '%f%([%M%R%H%W]%)%(, %{&ft}%), %{&fenc}/%{&ff}'
     let s .= '%('
 
-    " eskk, skk.vim
-    let exists_eskk = exists('g:loaded_eskk')
-    let exists_skk  = exists('g:skk_loaded')
-    if exists_eskk
-        let s .= ' %{eskk#statusline("IM:%s", "IM:off")}'
-    elseif exists_skk
+    if exists('g:loaded_eskk')    " eskk.vim
+        " postpone the load of autoload/eskk.vim
+        if exists('g:loaded_autoload_eskk')
+            let s .= ' %{eskk#statusline("IM:%s", "IM:off")}'
+        endif
+    elseif exists('g:skk_loaded')    " skk.vim
         let s .= ' %{SkkGetModeStr()}'
     endif
 
