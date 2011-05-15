@@ -2273,7 +2273,7 @@ elseif s:anything == s:anything_ku
     Map [n] <anything>:        :<C-u>Ku cmd_mru/cmd<CR>
     Map [n] <anything>/        :<C-u>Ku cmd_mru/search<CR>
 elseif s:anything == s:anything_unite
-    Map [n] <anything>f        :<C-u>Unite -prompt='-')/\  -buffer-name=files file buffer<CR>
+    Map [n] <anything>f        :<C-u>Unite -prompt='-')/\  -buffer-name=files file buffer file_mru<CR>
     Map [n] <anything>F        :<C-u>Unite -prompt='-')/\  -buffer-name=files file_rec<CR>
     Map [n] <anything>p        :<C-u>Unite -prompt='-')/\  -buffer-name=files buffer_tab<CR>
     Map [n] <anything>h        :<C-u>Unite -prompt='-')/\  -buffer-name=files file_mru<CR>
