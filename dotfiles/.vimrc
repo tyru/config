@@ -112,7 +112,7 @@ let g:scrolloff = 15    " see below
 MyAutocmd CursorMoved * call s:reinventing_scrolloff()
 let s:last_lnum = -1
 function! s:reinventing_scrolloff()
-    if s:last_lnum > 0 && line('.') ==# s:last_lnum
+    if g:scrolloff ==# 0 || s:last_lnum > 0 && line('.') ==# s:last_lnum
         return
     endif
     let s:last_lnum = line('.')
