@@ -5,13 +5,22 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let b:match_words = &matchpairs . ',\<if\>:\<en\%[dif]\>'
-let b:match_words += ',\<fu\%[nction]!\=\>:\<endf\%[unction]\>'
-let b:match_words += ',\<wh\%[ile]\>:\<endwh\%[ile]\>'
-let b:match_words += ',\<for\>:\<endfor\=\>'
+function! s:run()
+    let opt = tyru#util#undo_ftplugin_helper#new()
 
-setlocal iskeyword+=#
-setlocal comments=:\",:\
+    let match_words = &matchpairs . ',\<if\>:\<en\%[dif]\>'
+    let match_words += ',\<fu\%[nction]!\=\>:\<endf\%[unction]\>'
+    let match_words += ',\<wh\%[ile]\>:\<endwh\%[ile]\>'
+    let match_words += ',\<for\>:\<endfor\=\>'
+    call opt.let('b:match_words', match_words)
+
+    call opt.append('iskeyword', '#')
+    call opt.set('comments', ':"\,:\')
+    call opt.unset('modeline')
+
+    let b:undo_ftplugin = opt.make_undo_ftplugin()
+endfunction
+call s:run()
 
 
 let &cpo = s:save_cpo
