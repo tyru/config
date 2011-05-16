@@ -71,10 +71,17 @@ function! s:save_old_option_value(this, option)
 endfunction
 
 function! s:save_old_variable_value(this, variable)
-    let Value = s:get_variable(a:variable)
+    try
+        let Value = s:get_variable(a:variable)
+        let function = printf('let %s=%s', a:variable, string(Value))
+    catch /E121:/
+        " E121: Undefined variable: hoge
+        let function = printf('unlet! %s', a:variable)
+    endtry
+
     call add(
     \   a:this._restore_functions,
-    \   printf('let %s=%s', a:variable, string(Value))
+    \   function
     \)
 endfunction
 
