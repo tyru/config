@@ -338,10 +338,6 @@ set whichwrap=b,s
 set backspace=indent,eol,start
 set formatoptions=mMcroqnl2
 
-" fold
-set foldenable
-" set foldmethod=marker
-
 " undo-persistence
 if has('persistent_undo')
     set undofile
