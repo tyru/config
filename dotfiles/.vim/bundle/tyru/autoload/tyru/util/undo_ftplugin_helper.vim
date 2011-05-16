@@ -40,7 +40,7 @@ function! s:validate_option_name(option)
     endif
 endfunction
 
-function! s:getvar(option)
+function! s:get_option(option)
     " getbufvar() only see buffer-local options
     " not global options.
     " (e.g.: getbufvar('%', '&hlsearch') returns "")
@@ -48,7 +48,7 @@ function! s:getvar(option)
 endfunction
 
 function! s:save_old_option_value(this, option)
-    let value = s:getvar(a:option)
+    let value = s:get_option(a:option)
     call add(
     \   a:this._restore_functions,
     \   printf('let &%s=%s', a:option, string(value))
@@ -74,14 +74,14 @@ endfunction
 function! s:Helper_prepend(option, value) dict
     call s:validate_option_name(a:option)
     call s:save_old_option_value(self, a:option)
-    let value = a:value . ',' . s:getvar(a:option)
+    let value = a:value . ',' . s:get_option(a:option)
     call setbufvar('%', '&' . a:option, value)
 endfunction
 
 function! s:Helper_append(option, value) dict
     call s:validate_option_name(a:option)
     call s:save_old_option_value(self, a:option)
-    let value = s:getvar(a:option) . ',' . a:value
+    let value = s:get_option(a:option) . ',' . a:value
     call setbufvar('%', '&' . a:option, value)
 endfunction
 
