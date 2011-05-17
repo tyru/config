@@ -2975,7 +2975,7 @@ if $WINDOW != '' || $TMUX != ''
         set ttymouse=xterm2
     endif
 
-    function! s:screen_set_window_name(name) "{{{2
+    function! s:screen_set_window_name(name)
         let esc = "\<ESC>"
         silent! execute '!echo -n "' . esc . 'k' . escape(a:name, '%#!')
         \ . esc . '\\"'
@@ -2983,7 +2983,7 @@ if $WINDOW != '' || $TMUX != ''
     endfunction
     command! -nargs=? WindowName call s:screen_set_window_name(<q-args>)
 
-    function! s:screen_auto_window_name()  " {{{2
+    function! s:screen_auto_window_name()
         let varname = 'window_name'
         for scope in [w:, b:, t:, g:]
             if has_key(scope, varname)
