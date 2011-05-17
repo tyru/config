@@ -2220,6 +2220,8 @@ endif
 command! -bar EskkDumpBuftable PP! eskk#get_buftable().dump()
 command! -bar EskkDumpTable    PP! eskk#table#<args>#load()
 
+" let g:eskk#cache_table_map = 0
+"
 " inoremap <C-g> hoge
 "
 " inoremap <C-l> <C-o><C-l>
