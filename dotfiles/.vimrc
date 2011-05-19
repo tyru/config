@@ -345,7 +345,7 @@ if has('persistent_undo')
     silent! call mkdir(&undodir, 'p')
 endif
 
-if has('&colorcolumn')
+if exists('&colorcolumn')
     set colorcolumn=+1
 endif
 
