@@ -2866,6 +2866,16 @@ if exists('g:loaded_surround') && exists('*SurroundRegister')
     call SurroundRegister('g', 'jt', "〔\r〕")
     call SurroundRegister('g', 'js', "【\r】")
 endif
+" }}}
+" ftplugin/vim_fold.vim {{{
+autocmd InsertEnter * if &l:foldmethod ==# 'expr'
+\                   |   let b:foldmethod = &l:foldmethod
+\                   |   let &l:foldmethod = 'manual'
+\                   | endif
+autocmd InsertLeave * if exists('b:foldmethod')
+\                   |   let &l:foldmethod = b:foldmethod
+\                   | endif
+" }}}
 
 " test
 let g:loaded_tyru_event_test = 1
