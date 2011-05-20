@@ -2283,6 +2283,7 @@ elseif s:anything == s:anything_unite
     Map [n] <anything>o        :<C-u>Unite -prompt='-')/\  outline<CR>
     Map [n] <anything>r        :<C-u>Unite -prompt='-')/\  -input=ref/ source<CR>
     Map [n] <anything>s        :<C-u>Unite -prompt='-')/\  source<CR>
+    Map [n] <anything>g        :<C-u>Unite -prompt='-')/\  grep<CR>
 endif
 
 
