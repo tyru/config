@@ -21,6 +21,7 @@ License:
 CONTENTS						*<%filename_noext%>-contents*
 
 Introduction		|<%filename_noext%>-introduction|
+Requirements		|<%filename_noext%>-requirements|
 Interface			|<%filename_noext%>-interface|
   Keymappings		|<%filename_noext%>-keymappings|
   Variables			|<%filename_noext%>-variables|
@@ -31,6 +32,9 @@ Changelog			|<%filename_noext%>-changelog|
 
 ==============================================================================
 INTRODUCTION						*<%filename_noext%>-introduction* {{{
+}}}
+==============================================================================
+REQUIREMENTS						*<%filename_noext%>-requirements* {{{
 }}}
 ==============================================================================
 INTERFACE				*<%filename_noext%>-interface* {{{

@@ -7,9 +7,9 @@ set cpo&vim
 " }}}
 
 
-function! <%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>#load() "{{{
+function! <%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>#load()
     " dummy function to load this script.
-endfunction "}}}
+endfunction
 
 
 " Restore 'cpoptions' {{{

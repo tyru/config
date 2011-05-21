@@ -21,6 +21,7 @@ License:
 目次						*<%filename_noext%>-contents*
 
 概要						|<%filename_noext%>-introduction|
+依存モジュール		|<%filename_noext%>-requirements|
 インターフェース			|<%filename_noext%>-interface|
   キーマッピング			|<%filename_noext%>-keymappings|
   グローバル変数			|<%filename_noext%>-variables|
@@ -31,6 +32,9 @@ Changelog					|<%filename_noext%>-changelog|
 
 ==============================================================================
 概要						*<%filename_noext%>-introduction* {{{
+}}}
+==============================================================================
+依存モジュール						*<%filename_noext%>-requirements* {{{
 }}}
 ==============================================================================
 インターフェース				*<%filename_noext%>-interface* {{{
