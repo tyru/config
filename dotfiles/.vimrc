@@ -3017,6 +3017,10 @@ if $WINDOW != '' || $TMUX != ''
     endif
 endif
 " }}}
+" Highlight end-of-line whitespaces. {{{
+highlight WhitespaceEOL ctermbg=red guibg=red
+match WhitespaceEOL /s+$/
+" }}}
 " }}}
 " End. {{{
 
