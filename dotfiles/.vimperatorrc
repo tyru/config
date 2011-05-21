@@ -313,6 +313,9 @@ lazy fmaps -u='www\.rememberthemilk\.com/home/' a m c n p r g s h t u j y <Del> 
 " add r g d D
 lazy fmaps -u='reader\.livedoor\.com/reader/' j k s a p o v c <Space> <S-Space> Z z ZZ b < > r g d D
 " }}}
+" GitHub {{{
+fmaps -u 'github\.com' -e vkeydown a,t
+" }}}
 " }}}
 " copy.js {{{
 javascript <<EOS
