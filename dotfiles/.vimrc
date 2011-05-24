@@ -2865,13 +2865,16 @@ if exists('g:loaded_surround') && exists('*SurroundRegister')
 endif
 " }}}
 " ftplugin/vim_fold.vim {{{
-autocmd InsertEnter * if &l:foldmethod ==# 'expr'
-\                   |   let b:foldmethod = &l:foldmethod
-\                   |   let &l:foldmethod = 'manual'
-\                   | endif
-autocmd InsertLeave * if exists('b:foldmethod')
-\                   |   let &l:foldmethod = b:foldmethod
-\                   | endif
+augroup foldmethod-expr
+  autocmd!
+  autocmd InsertEnter * if &l:foldmethod ==# 'expr'
+  \                   |   let b:foldinfo = [&l:foldmethod, &l:foldexpr]
+  \                   |   setlocal foldmethod=manual foldexpr=0
+  \                   | endif
+  autocmd InsertLeave * if exists('b:foldmethod')
+  \                   |   let [&l:foldmethod, &l:foldexpr] = b:foldinfo
+  \                   | endif
+augroup END
 " }}}
 
 " test
