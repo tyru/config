@@ -262,3 +262,6 @@
 [submodule "dotfiles/.vim/bundle/vim-javascript"]
 	path = dotfiles/.vim/bundle/vim-javascript
 	url = git://github.com/pangloss/vim-javascript.git
+[submodule "dotfiles/.vim/bundle/vim-scala"]
+	path = dotfiles/.vim/bundle/vim-scala
+	url = git://github.com/ewiplayer/vim-scala.git
