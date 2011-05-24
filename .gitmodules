@@ -259,3 +259,6 @@
 [submodule "dotfiles/.vim/bundle/unite-grep"]
 	path = dotfiles/.vim/bundle/unite-grep
 	url = git://github.com/Shougo/unite-grep.git
+[submodule "dotfiles/.vim/bundle/vim-javascript"]
+	path = dotfiles/.vim/bundle/vim-javascript
+	url = git://github.com/pangloss/vim-javascript.git
