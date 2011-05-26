@@ -54,6 +54,8 @@ elif [ -x "/usr/share/vim/vim72/macros/less.sh" ]; then
     alias vless="/usr/share/vim/vim72/macros/less.sh"
 fi
 
+alias freemem='free && sync && echo 3 > /proc/sys/vm/drop_caches && free'
+
 
 
 # util commands
