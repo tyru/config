@@ -190,9 +190,6 @@
 [submodule "dotfiles/.vim/bundle/grass.vim"]
 	path = dotfiles/.vim/bundle/grass.vim
 	url = git://github.com/tyru/grass.vim.git
-[submodule "dotfiles/.vim/bundle/savemap.vim"]
-	path = dotfiles/.vim/bundle/savemap.vim
-	url = git://github.com/tyru/savemap.vim.git
 [submodule "dotfiles/.vim/bundle/operator-html-escape.vim"]
 	path = dotfiles/.vim/bundle/operator-html-escape.vim
 	url = git://github.com/tyru/operator-html-escape.vim.git
@@ -265,3 +262,6 @@
 [submodule "dotfiles/.vim/bundle/vim-scala"]
 	path = dotfiles/.vim/bundle/vim-scala
 	url = git://github.com/ewiplayer/vim-scala.git
+[submodule "dotfiles/.vim/macros/savemap.vim"]
+	path = dotfiles/.vim/macros/savemap.vim
+	url = git://github.com/tyru/savemap.vim.git
