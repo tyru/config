@@ -4,9 +4,11 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let b:caw_oneline_comment = '#'
+call s:opt = tyru#util#undo_ftplugin_helper#new()
 
+call s:opt.let('b:caw_oneline_comment', '#')
 
+let b:undo_ftplugin = s:opt.make_undo_ftplugin()
 
 
 let &cpo = s:save_cpo

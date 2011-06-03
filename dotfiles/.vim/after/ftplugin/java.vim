@@ -5,9 +5,13 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
+call s:opt = tyru#util#undo_ftplugin_helper#new()
+
 " for javadoc
-setlocal iskeyword+=@-@
-setlocal makeprg=javac\ %
+call s:opt.append('iskeyword', '@-@')
+call s:opt.set('makeprg', 'javac %')
+
+let b:undo_ftplugin = s:opt.make_undo_ftplugin()
 
 
 let &cpo = s:save_cpo

@@ -5,8 +5,12 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
+call s:opt = tyru#util#undo_ftplugin_helper#new()
+
 " TODO: Do not re-indent when comment inserted.
-setlocal comments+=b:#
+call s:opt.append('comments', 'b:#')
+
+let b:undo_ftplugin = s:opt.make_undo_ftplugin()
 
 
 let &cpo = s:save_cpo

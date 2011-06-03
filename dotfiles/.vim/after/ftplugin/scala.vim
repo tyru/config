@@ -5,16 +5,22 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
+call s:opt = tyru#util#undo_ftplugin_helper#new()
+
 runtime! ftplugin/java.vim
 runtime! compiler/java.vim
 
-setlocal includeexpr=substitute(v:fname,'\\.','/','g')
-setlocal suffixesadd=.scala
-setlocal suffixes+=.class
+call s:opt.set('includeexpr', 'substitute(v:fname,"\\.","/","g")')
+call s:opt.set('suffixesadd', '.scala')
+call s:opt.append('suffixes', '.class')
+call s:opt.restore_option('comments')
 setlocal comments& comments^=s1:/*,mb:*,ex:*/,://
-setlocal commentstring=//%s
+call s:opt.set('commentstring', '//%s')
+call s:opt.restore_option('formatoptions')
 setlocal formatoptions-=t formatoptions+=croql
-setlocal makeprg=
+call s:opt.set('makeprg', '')
+
+let b:undo_ftplugin = s:opt.make_undo_ftplugin()
 
 
 let &cpo = s:save_cpo

@@ -5,18 +5,13 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let b:undo_ftplugin =
-\   'let &l:lispwords = '.string(&l:lispwords)
-\    . '| let &l:lisp = '.string(&l:lisp)
-\    . '| let &l:cindent = '.string(&l:cindent)
-\    . '| let &l:complete = '.string(&l:complete)
+call s:opt = tyru#util#undo_ftplugin_helper#new()
 
+call s:opt.set('lisp')
+call s:opt.unset('cindent')
+call s:opt.set('complete', '.,t,k,kspell')
 
-
-setlocal lisp
-setlocal nocindent
-setlocal complete=.,t,k,kspell
-
+let b:undo_ftplugin = s:opt.make_undo_ftplugin()
 
 
 let &cpo = s:save_cpo

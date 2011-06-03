@@ -4,8 +4,11 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let b:undo_ftplugin = 'let &et = '.string(&et)
-setlocal noet
+call s:opt = tyru#util#undo_ftplugin_helper#new()
+
+call s:opt.set('et')
+
+let b:undo_ftplugin = s:opt.make_undo_ftplugin()
 
 
 let &cpo = s:save_cpo
