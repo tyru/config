@@ -85,6 +85,14 @@ function! s:save_old_variable_value(this, variable)
     \)
 endfunction
 
+function! s:save_old_mapping(this, mode, lhs)
+    call add(
+    \   a:this._restore_functions,
+    \   printf('call %s.restore()',
+    \           string(savemap#save_map(a:mode, a:lhs)))
+    \)
+endfunction
+
 
 
 function! s:Helper_set(option, ...) dict
@@ -127,6 +135,26 @@ function! s:Helper_unlet(variable) dict
     unlet {a:variable}
 endfunction
 
+function! s:Helper_map(modes, lhs, rhs) dict
+    if a:modes ==# '' || a:lhs ==# '' || a:rhs ==# ''
+        return
+    endif
+    for _ in split(a:modes, '\zs')
+        call s:save_old_mapping(self, _, a:lhs)
+        execute _.'map <buffer>' a:lhs a:rhs
+    endfor
+endfunction
+
+function! s:Helper_unmap(modes, lhs, rhs) dict
+    if a:modes ==# '' || a:lhs ==# '' || a:rhs ==# ''
+        return
+    endif
+    for _ in split(a:modes, '\zs')
+        call s:save_old_mapping(self, _, a:lhs)
+        execute _.'unmap <buffer>' a:lhs a:rhs
+    endfor
+endfunction
+
 function! s:Helper_make_undo_ftplugin() dict
     return join(
     \   (exists('b:undo_ftplugin') ? [b:undo_ftplugin] : [])
@@ -144,6 +172,9 @@ let s:Helper = {
 \   'append': s:local_func('Helper_append'),
 \   'let': s:local_func('Helper_let'),
 \   'unlet': s:local_func('Helper_unlet'),
+\   'map': s:local_func('Helper_map'),
+\   'unmap': s:local_func('Helper_unmap'),
+\
 \   'make_undo_ftplugin': s:local_func('Helper_make_undo_ftplugin'),
 \}
 
