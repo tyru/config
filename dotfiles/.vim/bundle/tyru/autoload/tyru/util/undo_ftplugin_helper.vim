@@ -141,7 +141,7 @@ function! s:Helper_map(modes, lhs, rhs) dict
     endif
     for _ in split(a:modes, '\zs')
         call s:save_old_mapping(self, _, a:lhs)
-        execute _.'map <buffer>' a:lhs a:rhs
+        execute _.'noremap <buffer>' a:lhs a:rhs
     endfor
 endfunction
 
