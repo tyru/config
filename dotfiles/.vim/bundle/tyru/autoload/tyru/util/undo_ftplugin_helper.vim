@@ -155,6 +155,18 @@ function! s:Helper_unmap(modes, lhs, rhs) dict
     endfor
 endfunction
 
+function! s:Helper_restore_option(option) dict
+    call s:save_old_option_value(self, a:option)
+endfunction
+
+function! s:Helper_restore_variable(variable) dict
+    call s:save_old_variable_value(self, a:variable)
+endfunction
+
+function! s:Helper_restore_mapping(lhs) dict
+    call s:save_old_mapping(self, a:lhs)
+endfunction
+
 function! s:Helper_make_undo_ftplugin() dict
     return join(
     \   (exists('b:undo_ftplugin') ? [b:undo_ftplugin] : [])
@@ -174,6 +186,9 @@ let s:Helper = {
 \   'unlet': s:local_func('Helper_unlet'),
 \   'map': s:local_func('Helper_map'),
 \   'unmap': s:local_func('Helper_unmap'),
+\   'restore_option': s:local_func('Helper_restore_option'),
+\   'restore_variable': s:local_func('Helper_restore_variable'),
+\   'restore_mapping': s:local_func('Helper_restore_mapping'),
 \
 \   'make_undo_ftplugin': s:local_func('Helper_make_undo_ftplugin'),
 \}
