@@ -394,7 +394,9 @@ set showbreak=↪
 " colorscheme
 " NOTE: On MS Windows, setting colorscheme in .vimrc does not work.
 " Because :Lazy is necessary.
-Lazy colorscheme tyru
+" XXX: `:Lazy colorscheme tyru` does not throw ColorScheme event,
+" what the fuck?
+Lazy colorscheme tyru | doautocmd ColorScheme
 
 " Open on read-only if swap exists
 MyAutocmd SwapExists * let v:swapchoice = 'o'
