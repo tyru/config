@@ -3025,6 +3025,8 @@ function! s:register_highlight(hi, hiarg, pat)
     call s:add_pattern(a:hi, a:pat)
 endfunction
 function! s:add_pattern(hi, pat)
+    " matchadd() will throw an error
+    " when a:hi is not defined.
     if !hlexists(a:hi)
         return
     endif
