@@ -3020,8 +3020,8 @@ augroup own-highlight
     autocmd!
 augroup END
 
-function! s:register_highlight(hi, def, pat)
-    execute 'highlight' a:hi a:def
+function! s:register_highlight(hi, hiarg, pat)
+    execute 'highlight' a:hiarg
     call s:add_pattern(a:hi, a:pat)
 endfunction
 function! s:add_pattern(hi, pat)
@@ -3038,15 +3038,18 @@ function! s:add_pattern(hi, pat)
 endfunction
 
 function! s:register_own_highlight()
-    for [hi, def, pat] in [
+    for [hi, hiarg, pat] in [
     \   ['IdeographicSpace',
-    \    'term=underline ctermbg=DarkGreen guibg=DarkGreen',
+    \    'IdeographicSpace term=underline ctermbg=DarkGreen guibg=DarkGreen',
     \    '　'],
+    \   ['WhitespaceEOL',
+    \    'def link WhitespaceEOL Error',
+    \    '\s\+$'],
     \]
         execute
         \   'autocmd own-highlight Colorscheme *'
         \   'call s:register_highlight('
-        \       string(hi) ',' string(def) ',' string(pat)
+        \       string(hi) ',' string(hiarg) ',' string(pat)
         \   ')'
         execute
         \   'autocmd own-highlight VimEnter,WinEnter *'
