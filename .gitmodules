@@ -265,3 +265,6 @@
 [submodule "dotfiles/.vim/macros/vice.vim"]
 	path = dotfiles/.vim/macros/vice.vim
 	url = git://github.com/tyru/vice.vim.git
+[submodule "dotfiles/.vim/bundle/operator-star.vim"]
+	path = dotfiles/.vim/bundle/operator-star.vim
+	url = git://github.com/tyru/operator-star.vim
