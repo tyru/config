@@ -3019,11 +3019,46 @@ if $WINDOW != '' || $TMUX != ''
 endif
 " }}}
 " Highlight zenkaku-space. {{{
-augroup highlightIdegraphicSpace
+augroup own-highlight
     autocmd!
-    autocmd Colorscheme * highlight IdeographicSpace term=underline ctermbg=DarkGreen guibg=DarkGreen
-    autocmd VimEnter,WinEnter * call matchadd('IdeographicSpace', '　')
 augroup END
+
+function! s:register_highlight(hi, def, pat)
+    execute 'highlight' a:hi a:def
+    call s:add_pattern(a:hi, a:pat)
+endfunction
+function! s:add_pattern(hi, pat)
+    if !hlexists(a:hi)
+        return
+    endif
+    if !exists('w:did_pattern')
+        let w:did_pattern = {}
+    endif
+    if !has_key(w:did_pattern, a:hi)
+        call matchadd(a:hi, a:pat)
+        let w:did_pattern[a:hi] = 1
+    endif
+endfunction
+
+function! s:register_own_highlight()
+    for [hi, def, pat] in [
+    \   ['IdeographicSpace',
+    \    'term=underline ctermbg=DarkGreen guibg=DarkGreen',
+    \    '　'],
+    \]
+        execute
+        \   'autocmd own-highlight Colorscheme *'
+        \   'call s:register_highlight('
+        \       string(hi) ',' string(def) ',' string(pat)
+        \   ')'
+        execute
+        \   'autocmd own-highlight VimEnter,WinEnter *'
+        \   'call s:add_pattern('
+        \       string(hi) ',' string(pat)
+        \   ')'
+    endfor
+endfunction
+call s:register_own_highlight()
 " }}}
 " }}}
 " End. {{{
