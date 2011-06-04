@@ -3016,9 +3016,12 @@ if $WINDOW != '' || $TMUX != ''
     endif
 endif
 " }}}
-" Highlight end-of-line whitespaces. {{{
-highlight WhitespaceEOL ctermbg=red guibg=red
-match WhitespaceEOL /s+$/
+" Highlight zenkaku-space. {{{
+augroup highlightIdegraphicSpace
+    autocmd!
+    autocmd Colorscheme * highlight IdeographicSpace term=underline ctermbg=DarkGreen guibg=DarkGreen
+    autocmd VimEnter,WinEnter * call matchadd('IdeographicSpace', '　')
+augroup END
 " }}}
 " }}}
 " End. {{{
