@@ -345,10 +345,6 @@ if has('persistent_undo')
     silent! call mkdir(&undodir, 'p')
 endif
 
-if exists('&colorcolumn')
-    set colorcolumn=+1
-endif
-
 " http://vim-users.jp/2009/12/hack107/
 " Enable mouse support.
 set mouse=a
