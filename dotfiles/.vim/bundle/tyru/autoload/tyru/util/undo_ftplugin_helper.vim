@@ -63,10 +63,9 @@ function! s:get_variable(variable)
 endfunction
 
 function! s:save_old_option_value(this, option)
-    let value = s:get_option(a:option)
     call add(
     \   a:this._restore_functions,
-    \   printf('let &%s=%s', a:option, string(value))
+    \   printf('setlocal %s<', a:option)
     \)
 endfunction
 
