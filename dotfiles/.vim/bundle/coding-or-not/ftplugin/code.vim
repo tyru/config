@@ -22,10 +22,6 @@ let s:opt = tyru#util#undo_ftplugin_helper#new()
 call s:opt.set('textwidth', "80")
 call s:opt.set('colorcolumn', "+1")
 
-" Highlight end-of-line whitespaces.
-hi def link WhitespaceEOL Error
-call matchadd('WhitespaceEOL', '\s\+$')
-
 
 let b:undo_ftplugin = s:opt.make_undo_ftplugin()
 
