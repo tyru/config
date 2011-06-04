@@ -5,7 +5,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-call s:opt = tyru#util#undo_ftplugin_helper#new()
+let s:opt = tyru#util#undo_ftplugin_helper#new()
 
 call s:opt.set('lisp')
 call s:opt.unset('cindent')
