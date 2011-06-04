@@ -1200,6 +1200,7 @@ endfunction "}}}
 
 Map [i] -expr <C-y> neocomplcache#close_popup()
 Map [i] -expr <CR>  pumvisible() ? neocomplcache#close_popup() . "\<CR>" : "\<CR>"
+Map [is] -remap <C-t> <Plug>(neocomplcache_snippets_expand)
 
 " }}}
 " }}}
