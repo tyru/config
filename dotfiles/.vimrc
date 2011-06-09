@@ -1542,28 +1542,6 @@ function! s:MTest(args) "{{{
     echo @"
 endfunction "}}}
 " }}}
-" :ListChars {{{
-command!
-\   -bar
-\   ListChars
-\   call s:cmd_list_chars()
-
-function! s:cmd_list_chars() "{{{
-    let lcs = prompt#prompt('changing &listchars to...', {
-    \       'menu': [
-    \           'tab:>-,extends:>,precedes:<,eol:.',
-    \           'tab:>-',
-    \           'tab:\ \ ',
-    \       ],
-    \       'one_char': 1,
-    \       'escape': 1,
-    \       'execute_if': '<f-value> != ""',
-    \       'execute': 'set listchars=<value>'})
-    if lcs !=# "\e"
-        echomsg printf("changing &listchars to '%s'.", lcs)
-    endif
-endfunction "}}}
-" }}}
 " :Open {{{
 command!
 \   -nargs=? -complete=dir
