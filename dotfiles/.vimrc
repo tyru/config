@@ -400,8 +400,7 @@ MyAutocmd SwapExists * let v:swapchoice = 'o'
 MyAutocmd QuickfixCmdPost * QuickFix
 
 " InsertLeave, InsertEnter
-MyAutocmd InsertLeave * setlocal nocursorline
-MyAutocmd InsertEnter * setlocal cursorline ignorecase
+MyAutocmd InsertEnter * setlocal ignorecase
 
 " Set syntaxes
 MyAutocmd BufNewFile,BufRead *.as setlocal syntax=actionscript
