@@ -3019,14 +3019,18 @@ function! s:add_pattern(hi, pat)
 endfunction
 
 function! s:register_own_highlight()
+    " I found that I'm very nervous about whitespaces.
+    " so it's better to concern about this.
+    " just notice its presence.
     for [hi, hiarg, pat] in [
     \   ['IdeographicSpace',
-    \    'IdeographicSpace term=underline ctermbg=DarkGreen guibg=DarkGreen',
+    \    'IdeographicSpace term=underline cterm=underline gui=underline ctermfg=4 guifg=Cyan',
     \    '　'],
     \   ['WhitespaceEOL',
-    \    'def link WhitespaceEOL Error',
-    \    '\s\+$'],
+    \    'WhitespaceEOL term=underline cterm=underline gui=underline ctermfg=4 guifg=Cyan',
+    \    ' \+$'],
     \]
+        " TODO: filetype
         execute
         \   'autocmd own-highlight Colorscheme *'
         \   'call s:register_highlight('
