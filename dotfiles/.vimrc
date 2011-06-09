@@ -2994,7 +2994,7 @@ if $WINDOW != '' || $TMUX != ''
     endif
 endif
 " }}}
-" Highlight zenkaku-space. {{{
+" own-highlight {{{
 augroup own-highlight
     autocmd!
 augroup END
