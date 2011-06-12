@@ -19,6 +19,12 @@ shopt -s nocaseglob
 shopt -s cdspell
 
 set bell-style visible
+
+# Do not overwrite existing file by redirect `>`.
+# Use `>|` to override this setting.
+# http://answer.pythonpath.jp/questions/312/bashrc
+shopt -s noclobber
+
 # }}}
 
 # List directory when changing directory {{{
