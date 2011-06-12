@@ -40,4 +40,17 @@ if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then
 fi
 # }}}
 
+# Share history between multiple terminals {{{
+# http://answer.pythonpath.jp/questions/312/bashrc
+# http://iandeth.dyndns.org/mt/ian/archives/000651.html
+
+function share_history {
+    history -a
+    history -c
+    history -r
+}
+PROMPT_COMMAND='share_history'
+shopt -u histappend
+# }}}
+
 source ~/.shrc.start-screen
