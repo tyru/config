@@ -31,13 +31,7 @@ alias lingr="vim --cmd 'let g:lingr = 1' -c LingrLaunch"
 alias chalice="vim --cmd 'let g:chalice = 1' -c Chalice"
 alias vimshell="vim -c VimShell"
 
-# safety for /bin/rm
-if which trash-put >/dev/null 2>&1; then
-    alias rm='trash-put'
-else
-    alias rm='rm -i'
-fi
-
+which trash-put >/dev/null 2>&1 && alias rm='trash-put'
 if which screen >/dev/null 2>&1; then
     alias sc="screen"
     alias screen="screen -R"
