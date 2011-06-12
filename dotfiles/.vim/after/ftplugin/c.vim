@@ -25,6 +25,7 @@ unlet s:_
 
 call s:opt.set('foldmethod', 'syntax')
 call s:opt.let('g:c_no_curly_error_fold', 1)
+call s:opt.let('g:c_no_comment_fold', 1)
 
 let b:undo_ftplugin = s:opt.make_undo_ftplugin()
 
