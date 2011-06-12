@@ -5,6 +5,6 @@ if [ -f "$HOME/.env.common" ]; then
 fi
 
 export HISTFILE=~/.zsh_history
-export HISTSIZE=1000
-export SAVESIZE=1000
+export HISTSIZE=300000
+export SAVESIZE=300000
 export LISTMAX=0
