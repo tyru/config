@@ -244,9 +244,6 @@
 [submodule "dotfiles/.vim/bundle/karma.vim"]
 	path = dotfiles/.vim/bundle/karma.vim
 	url = git://github.com/vim-scripts/karma.vim.git
-[submodule "dotfiles/.vim/bundle/visualctrlg.vim"]
-	path = dotfiles/.vim/bundle/visualctrlg.vim
-	url = git://github.com/tyru/visualctrlg.vim.git
 [submodule "dotfiles/.vim/bundle/vim-ft-vim_fold"]
 	path = dotfiles/.vim/bundle/vim-ft-vim_fold
 	url = git://github.com/thinca/vim-ft-vim_fold.git
