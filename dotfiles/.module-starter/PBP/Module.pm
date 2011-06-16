@@ -31,11 +31,6 @@ __END__
 <MODULE NAME> - [One line description of module's purpose here]
 
 
-=head1 VERSION
-
-This document describes <MODULE NAME> version 0.0.1
-
-
 =head1 SYNOPSIS
 
     use <MODULE NAME>;
@@ -53,11 +48,6 @@ This document describes <MODULE NAME> version 0.0.1
 create instance.
 
 =back
-
-
-=head1 DEPENDENCIES
-
-None.
 
 
 =head1 BUGS
