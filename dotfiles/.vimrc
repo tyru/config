@@ -1108,6 +1108,9 @@ function! s:cmd_set_project_name(name) "{{{
 endfunction "}}}
 " }}}
 " }}}
+" vmap {{{
+Map [v] <C-g> g<C-g>
+" }}}
 " map! {{{
 Map [ic] <C-f> <Right>
 Map [ic] <C-b> <Left>
