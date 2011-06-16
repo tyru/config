@@ -494,6 +494,7 @@ liberator.globalVariables.plugin_loader_plugins = <>
     toggler
     walk-input
     nextlink
+    escape-from-iframe
 </>.toString().split(/\s+/).filter(function(n) n);
 EOF
 
