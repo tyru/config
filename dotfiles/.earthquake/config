@@ -4,7 +4,13 @@ Earthquake.config[:secret] = '...'
 
 Earthquake.alias_command :rt, :retweet
 Earthquake.alias_command :ls, :recent
+
 Earthquake.alias_command :fav, :favorite
 Earthquake.alias_command :f, :favorite
+
 Earthquake.alias_command :del, :delete
 Earthquake.alias_command :rm, :delete
+Earthquake.alias_command :rm, :delete
+
+Earthquake.alias_command :r, :mentions
+Earthquake.alias_command :replies, :mentions
