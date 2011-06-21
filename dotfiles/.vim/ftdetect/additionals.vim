@@ -45,3 +45,5 @@ autocmd BufNewFile,BufRead /usr/include/c++/*
             \ setfiletype cpp
 autocmd BufNewFile,BufRead ~/Dropbox/memo/**.txt
             \ setfiletype mkd
+autocmd BufNewFile,BufRead ~/.earthquake/config
+            \ setfiletype ruby
