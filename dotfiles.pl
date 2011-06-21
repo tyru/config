@@ -27,6 +27,7 @@
         .uim.d/customs
         .muttrc
         .hgrc
+        .earthquake/config
     )],
     os_files => {map {
         # MS Windows-specific filenames.
