@@ -181,10 +181,21 @@ function! s:Helper_unlet(variable) dict
     unlet {a:variable}
 endfunction
 
-function! s:Helper_map(modes, lhs, rhs) dict
+function! s:Helper_map(modes, lhs, rhs, ...) dict
     if a:modes ==# '' || a:lhs ==# '' || a:rhs ==# ''
         return
     endif
+    " Convert options from char to map-<> notation.
+    let table = {
+    \   's': '<silent>',
+    \   'S': '<script>',
+    \   'e': '<expr>',
+    \   'b': '<buffer>',
+    \   'u': '<unique>',
+    \}
+    let opts = a:0 ? a:1 : ''
+    let opts = join(map(split(opts, '\zs'), 'get(table, v:val, "")'), '')
+    " Create mappings.
     for _ in split(a:modes, '\zs')
         call s:save_old_mapping(self, _, a:lhs)
         execute _.'noremap <buffer>' a:lhs a:rhs
