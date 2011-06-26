@@ -151,9 +151,6 @@
 [submodule "dotfiles/.vim/bundle/current-func-info.vim"]
 	path = dotfiles/.vim/bundle/current-func-info.vim
 	url = git://github.com/tyru/current-func-info.vim.git
-[submodule "dotfiles/.vim/bundle/operator-reverse.vim"]
-	path = dotfiles/.vim/bundle/operator-reverse.vim
-	url = git://github.com/tyru/operator-reverse.vim.git
 [submodule "dotfiles/.vim/bundle/ohmygrep.vim"]
 	path = dotfiles/.vim/bundle/ohmygrep.vim
 	url = git://github.com/tyru/ohmygrep.vim.git
