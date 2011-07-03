@@ -16,11 +16,9 @@ sub usage () {
 }
 
 
-my $needhelp;
 GetOptions(
-    'h|help' => \$needhelp,
+    'h|help' => \&usage,
 ) or usage;
-usage if $needhelp;
 
 
 
