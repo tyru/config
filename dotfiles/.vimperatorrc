@@ -518,26 +518,29 @@ command! showtabnum echo config.browser.mTabs.length
 " http://vimperator.g.hatena.ne.jp/nokturnalmortum/20100410/1270905036
 javascript <<EOS
 window.addEventListener(
-'keypress',
-function (event) {
-  function killEvent ()
-    (event.preventDefault(), event.stopPropagation());
+  'keypress',
+  function (event) {
+    function killEvent ()
+      (event.preventDefault(), event.stopPropagation());
 
-  if (liberator.mode === modes.COMMAND_LINE && modes.extended === modes.HINTS) {
-    let key = events.toString(event);
-    if (/^<[CA]/(key))
-      killEvent();
-  }
-
-  if (liberator.mode === modes.INSERT && modes.extended === modes.MENU) {
-    let map = mappings.get(modes.INSERT, events.toString(event));
-    if (map) {
-      killEvent();
-      map.execute();
+    if (liberator.mode === modes.COMMAND_LINE && modes.extended === modes.HINTS) {
+      let key = events.toString(event);
+      if (/^<[CA]/.test(key))
+        killEvent();
     }
-  }
-},
-false
+
+    if (modes.isMenuShown) {
+      let key = events.toString(event);
+      if (key == '<Space>')
+        return;
+      let map = mappings.get(modes.INSERT, events.toString(event));
+      if (map) {
+        killEvent();
+        map.execute();
+      }
+    }
+  },
+  false
 );
 EOS
 " }}}
