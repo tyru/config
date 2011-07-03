@@ -13,7 +13,7 @@ autocmd BufNewFile,BufRead *.java
             \ setfiletype java
 autocmd BufNewFile,BufRead *.js
             \ setfiletype javascript
-autocmd BufNewFile,BufRead *.pl,*.pm
+autocmd BufNewFile,BufRead *.pl,*.pm,*.psgi
             \ setfiletype perl
 autocmd BufNewFile,BufRead *.ps1
             \ setfiletype powershell
