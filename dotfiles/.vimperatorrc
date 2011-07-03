@@ -420,26 +420,26 @@ liberator.globalVariables.useragent_list = [
 EOS
 " }}}
 " migratestatusbar.js {{{
-javascript <<EOS
-liberator.globalVariables.migrate_elements = [
-    {
-        // icon that show the existence of RSS and Atom on current page
-        id:    'feed-button',
-        dest:  'security-button',
-        after: true,
-    },
-    {
-        id:    'isRitL-later',
-        dest:  'security-button',
-        after: true,
-    },
-    {
-        id:    'isRitL-mark1',
-        dest:  'security-button',
-        after: true,
-    },
-];
-EOS
+" javascript <<EOS
+" liberator.globalVariables.migrate_elements = [
+"     {
+"         // icon that show the existence of RSS and Atom on current page
+"         id:    'feed-button',
+"         dest:  'security-button',
+"         after: true,
+"     },
+"     {
+"         id:    'isRitL-later',
+"         dest:  'security-button',
+"         after: true,
+"     },
+"     {
+"         id:    'isRitL-mark1',
+"         dest:  'security-button',
+"         after: true,
+"     },
+" ];
+" EOS
 " }}}
 " opener.js {{{
 nnoremap <Leader>o :opener<Space>
@@ -473,7 +473,6 @@ liberator.globalVariables.plugin_loader_plugins = <>
     ime_controller
     migemo_completion
     migemo_hint
-    migratestatusbar
     multi_requester
     opener
     proxy
