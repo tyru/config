@@ -620,8 +620,7 @@ let g:narrow_allow_overridingp = 1
 Map [nvo] -remap <operator>p  <Plug>(operator-replace)
 " }}}
 " operator-camelize {{{
-Map [nvo] -remap <operator>c <Plug>(operator-camelize)
-Map [nvo] -remap <operator>C <Plug>(operator-decamelize)
+Map [nvo] -remap <operator>c <Plug>(operator-camelize-toggle)
 let g:operator_camelize_all_uppercase_action = 'camelize'
 let g:operator_decamelize_all_uppercase_action = 'lowercase'
 " }}}
