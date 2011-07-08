@@ -2280,6 +2280,7 @@ elseif s:anything == s:anything_unite
     Map [n] <anything>r        :<C-u>Unite -prompt='-')/\  -input=ref/ source<CR>
     Map [n] <anything>s        :<C-u>Unite -prompt='-')/\  source<CR>
     Map [n] <anything>g        :<C-u>Unite -prompt='-')/\  grep<CR>
+    Map [n] <anything>/        :<C-u>Unite -prompt='-')/\  -buffer-name=files line<CR>
 endif
 
 
