@@ -2450,6 +2450,7 @@ function! s:vimshell_settings() "{{{
     " Hook
     call vimshell#hook#set('chpwd', [s:SNR('vimshell_chpwd_ls')])
     call vimshell#hook#set('preexec', [s:SNR('vimshell_preexec_iexe')])
+    call vimshell#hook#set('preexec', [s:SNR('vimshell_preexec_less')])
 
     " Add/Remove some mappings.
     Map! [n] -buffer <C-n>
@@ -2501,6 +2502,27 @@ function! s:vimshell_preexec_iexe(cmdline, context) "{{{
             return 'iexe ' . a:cmdline
         elseif type(i) == type("") && args[0] ==# i
             return 'iexe ' . a:cmdline
+        endif
+        unlet i
+    endfor
+    return a:cmdline
+endfunction "}}}
+function! s:vimshell_preexec_less(cmdline, context) "{{{
+    let args = vimproc#parser#split_args(a:cmdline)
+    if empty(args)
+        return a:cmdline
+    endif
+    if args[0] ==# 'less'
+        return a:cmdline
+    endif
+
+    for i in [
+    \   ['git', 'log'],
+    \]
+        if type(i) == type([]) && i ==# args[:len(i)-1]
+            return 'less ' . a:cmdline
+        elseif type(i) == type("") && args[0] ==# i
+            return 'less ' . a:cmdline
         endif
         unlet i
     endfor
