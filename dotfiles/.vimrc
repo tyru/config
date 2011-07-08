@@ -2455,7 +2455,6 @@ function! s:vimshell_settings() "{{{
     " Add/Remove some mappings.
     Map! [n] -buffer <C-n>
     Map! [n] -buffer <C-p>
-    Map [i] -buffer -force <C-p> <Space><Bar><Space>
     Map! [i] -buffer <Tab>
     Map [i] -remap -buffer -force <Tab><Tab> <Plug>(vimshell_command_complete)
     Map [n] -remap -buffer <C-z> <Plug>(vimshell_switch)
