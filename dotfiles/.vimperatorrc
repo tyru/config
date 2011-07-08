@@ -114,7 +114,7 @@ set! browser.sessionstore.max_concurrent_tabs=0
 " set {{{
 set complete=stl
 set focuscontent
-set gui=noaddons,nobookmarks,nomenu,navigation,tabs
+set gui=addons,nobookmarks,nomenu,navigation,tabs
 set hlsearch
 set ignorecase
 set incsearch
