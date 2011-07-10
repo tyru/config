@@ -1,0 +1,9 @@
+# for mkdir $dir, 0777
+[-ValuesAndExpressions::ProhibitLeadingZeros]
+
+# eval $string
+[-BuiltinFunctions::ProhibitStringyEval]
+
+# no strict 'refs'
+[TestingAndDebugging::ProhibitNoStrict]
+allow = refs
