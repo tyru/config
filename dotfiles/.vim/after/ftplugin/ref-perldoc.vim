@@ -7,25 +7,15 @@ set cpo&vim
 
 let s:opt = tyru#util#undo_ftplugin_helper#new()
 
-function! b:ref_toggle_buffer(fallback)
-    if b:ref_perldoc_mode ==# 'module'
-        return ":\<C-u>Ref perldoc -m "
-        \       . b:ref_perldoc_word
-        \       . "\<CR>"
-    elseif b:ref_perldoc_mode ==# 'source'
-        return ":\<C-u>Ref perldoc "
-        \       . b:ref_perldoc_word
-        \       . "\<CR>"
-    else
-        return a:fallback
-    endif
-endfunction
 call s:opt.map(
 \   'n',
 \   '<LocalLeader>t',
-\   'b:ref_toggle_buffer(g:maplocalleader . "t")',
-\   'se'
+\   '<Plug>(ref-source-perldoc-switch)',
+\   'r'
 \)
+" Delete default <Plug>(ref-source-perldoc-switch) mapping.
+" call s:opt.unmap('n', 's', 'b')
+
 
 let b:undo_ftplugin = s:opt.make_undo_ftplugin()
 
