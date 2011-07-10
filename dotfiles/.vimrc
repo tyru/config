@@ -2267,20 +2267,21 @@ elseif s:anything == s:anything_ku
     Map [n] <anything>:        :<C-u>Ku cmd_mru/cmd<CR>
     Map [n] <anything>/        :<C-u>Ku cmd_mru/search<CR>
 elseif s:anything == s:anything_unite
-    Map [n] <anything>f        :<C-u>Unite -prompt='-')/\  -buffer-name=files file buffer file_mru<CR>
-    Map [n] <anything>F        :<C-u>Unite -prompt='-')/\  -buffer-name=files file_rec<CR>
-    Map [n] <anything>p        :<C-u>Unite -prompt='-')/\  -buffer-name=files buffer_tab<CR>
-    Map [n] <anything>h        :<C-u>Unite -prompt='-')/\  -buffer-name=files file_mru<CR>
-    Map [n] <anything>t        :<C-u>Unite -prompt='-')/\  -immediately tab:no-current<CR>
-    Map [n] <anything>w        :<C-u>Unite -prompt='-')/\  -immediately window:no-current<CR>
-    Map [n] <anything>T        :<C-u>Unite -prompt='-')/\  tag<CR>
-    Map [n] <anything>H        :<C-u>Unite -prompt='-')/\  help<CR>
-    Map [n] <anything>b        :<C-u>Unite -prompt='-')/\  buffer<CR>
-    Map [n] <anything>o        :<C-u>Unite -prompt='-')/\  outline<CR>
-    Map [n] <anything>r        :<C-u>Unite -prompt='-')/\  -input=ref/ source<CR>
-    Map [n] <anything>s        :<C-u>Unite -prompt='-')/\  source<CR>
-    Map [n] <anything>g        :<C-u>Unite -prompt='-')/\  grep<CR>
-    Map [n] <anything>/        :<C-u>Unite -prompt='-')/\  -buffer-name=files line<CR>
+    command -nargs=* UniteKawaii Unite -prompt='-')/\  <args>
+    Map [n] <anything>f        :<C-u>UniteKawaii -buffer-name=files file buffer file_mru<CR>
+    Map [n] <anything>F        :<C-u>UniteKawaii -buffer-name=files file_rec<CR>
+    Map [n] <anything>p        :<C-u>UniteKawaii -buffer-name=files buffer_tab<CR>
+    Map [n] <anything>h        :<C-u>UniteKawaii -buffer-name=files file_mru<CR>
+    Map [n] <anything>t        :<C-u>UniteKawaii -immediately tab:no-current<CR>
+    Map [n] <anything>w        :<C-u>UniteKawaii -immediately window:no-current<CR>
+    Map [n] <anything>T        :<C-u>UniteKawaii tag<CR>
+    Map [n] <anything>H        :<C-u>UniteKawaii help<CR>
+    Map [n] <anything>b        :<C-u>UniteKawaii buffer<CR>
+    Map [n] <anything>o        :<C-u>UniteKawaii outline<CR>
+    Map [n] <anything>r        :<C-u>UniteKawaii -input=ref/ source<CR>
+    Map [n] <anything>s        :<C-u>UniteKawaii source<CR>
+    Map [n] <anything>g        :<C-u>UniteKawaii grep<CR>
+    Map [n] <anything>/        :<C-u>UniteKawaii line<CR>
 endif
 
 
