@@ -292,15 +292,39 @@ function! s:statusline() "{{{
     endif
 
     if !exists('g:cfi_disable')
-        let s .= ' ### %{cfi#format("%s()", "none")}'
+        let s .= '%( | %{cfi#format("%s()", "")}%)'
     endif
 
-    let s .= ' ### +:%{b:changedtick}, u:%{changenr()}'
+    let s .= '%( | [%{GetCCharAndHex()}]%)'
+
     let s .= '%)'
 
     return s
 endfunction "}}}
 set statusline=%!SandboxCallOptionFn('statusline')
+
+function! GetCCharAndHex()
+    if mode() !=# 'n'
+        return ''
+    endif
+    let cchar = s:get_cchar()
+    return cchar ==# '' ? '' : cchar . ":" . "0x".char2nr(cchar)
+endfunction
+function! s:get_cchar()
+    let reg     = getreg('z', 1)
+    let regtype = getregtype('z')
+    try
+        if col('.') ==# col('$') || virtcol('.') > virtcol('$')
+            return ''
+        endif
+        normal! "zyl
+        return @z
+    catch
+        return ''
+    finally
+        call setreg('z', reg, regtype)
+    endtry
+endfunction
 
 " gui
 set guioptions=agitrhpF
