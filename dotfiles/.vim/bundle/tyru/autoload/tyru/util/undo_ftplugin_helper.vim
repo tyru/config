@@ -7,6 +7,11 @@ set cpo&vim
 " }}}
 
 
+
+let s:Mapping = vital#of('vimrc').import('Mapping')
+
+
+
 function! tyru#util#undo_ftplugin_helper#load()
     " dummy function to load this script.
 endfunction
@@ -185,30 +190,30 @@ function! s:Helper_map(modes, lhs, rhs, ...) dict
     if a:modes ==# '' || a:lhs ==# '' || a:rhs ==# ''
         return
     endif
-    " Convert options from char to map-<> notation.
-    let table = {
-    \   's': '<silent>',
-    \   'S': '<script>',
-    \   'e': '<expr>',
-    \   'b': '<buffer>',
-    \   'u': '<unique>',
-    \}
-    let opts = a:0 ? a:1 : ''
-    let opts = join(map(split(opts, '\zs'), 'get(table, v:val, "")'), '')
+    let opts = (a:0 ? a:1 : '').'b'
+    let dict = s:Mapping.options_chars2dict(opts)
     " Create mappings.
     for _ in split(a:modes, '\zs')
+        if !s:Mapping.is_mode_char(_)
+            continue
+        endif
         call s:save_old_mapping(self, _, a:lhs)
-        execute _.'noremap <buffer>' a:lhs a:rhs
+        call s:Mapping.execute_map_command(_, dict, a:lhs, a:rhs)
     endfor
 endfunction
 
-function! s:Helper_unmap(modes, lhs, rhs) dict
-    if a:modes ==# '' || a:lhs ==# '' || a:rhs ==# ''
+function! s:Helper_unmap(modes, lhs, ...) dict
+    if a:modes ==# '' || a:lhs ==# ''
         return
     endif
+    let opts = (a:0 ? a:1 : '').'b'
+    let dict = s:Mapping.options_chars2dict(opts)
     for _ in split(a:modes, '\zs')
+        if !s:Mapping.is_mode_char(_)
+            continue
+        endif
         call s:save_old_mapping(self, _, a:lhs)
-        execute _.'unmap <buffer>' a:lhs a:rhs
+        call s:Mapping.execute_unmap_command(_, dict, a:lhs)
     endfor
 endfunction
 
