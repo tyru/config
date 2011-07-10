@@ -297,11 +297,17 @@ function! s:statusline() "{{{
 
     let s .= '%( | [%{GetCCharAndHex()}]%)'
 
+    let s .= '%( | %{GetDocumentPosition()}%)'
+
     let s .= '%)'
 
     return s
 endfunction "}}}
 set statusline=%!SandboxCallOptionFn('statusline')
+
+function! GetDocumentPosition()
+    return float2nr(str2float(line('.')) / str2float(line('$')) * 100) . "%"
+endfunction
 
 function! GetCCharAndHex()
     if mode() !=# 'n'
