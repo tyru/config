@@ -2508,53 +2508,50 @@ function! s:vimshell_chpwd_ls(args, context) "{{{
     call vimshell#execute('ls')
 endfunction "}}}
 function! s:vimshell_preexec_iexe(cmdline, context) "{{{
-    let args = vimproc#parser#split_args(a:cmdline)
-    if empty(args)
-        return a:cmdline
-    endif
-    if args[0] ==# 'iexe'
-        return a:cmdline
-    endif
-
-    for i in [
-    \   'termtter',
-    \   'sudo',
-    \   ['git', 'add', '-p'],
-    \   ['git', 'log'],
-    \   ['git', 'view'],
-    \   'earthquake',
-    \]
-        if type(i) == type([]) && i ==# args[:len(i)-1]
-            return 'iexe ' . a:cmdline
-        elseif type(i) == type("") && args[0] ==# i
-            return 'iexe ' . a:cmdline
-        endif
-        unlet i
-    endfor
-    return a:cmdline
+    return s:vimshell_preexec_command(
+    \   'iexe',
+    \   [
+    \       'termtter',
+    \       'sudo',
+    \       ['git', 'add', '-p'],
+    \       ['git', 'log'],
+    \       ['git', 'view'],
+    \       'earthquake',
+    \   ],
+    \   a:cmdline,
+    \   a:context,
+    \)
 endfunction "}}}
 function! s:vimshell_preexec_less(cmdline, context) "{{{
+    return s:vimshell_preexec_command(
+    \   'less',
+    \   [
+    \       ['git', 'log'],
+    \       ['git', 'view'],
+    \   ],
+    \   a:cmdline,
+    \   a:context,
+    \)
+endfunction "}}}
+function! s:vimshell_preexec_command(command, patlist, cmdline, context)
     let args = vimproc#parser#split_args(a:cmdline)
     if empty(args)
         return a:cmdline
     endif
-    if args[0] ==# 'less'
+    if args[0] ==# a:command
         return a:cmdline
     endif
 
-    for i in [
-    \   ['git', 'log'],
-    \   ['git', 'view'],
-    \]
-        if type(i) == type([]) && i ==# args[:len(i)-1]
-            return 'less ' . a:cmdline
-        elseif type(i) == type("") && args[0] ==# i
-            return 'less ' . a:cmdline
+    for i in a:patlist
+        let list_match = type(i) == type([]) && i ==# args[:len(i)-1]
+        let string_match = type(i) == type("") && args[0] ==# i
+        if list_match || string_match
+            return a:command . ' ' . a:cmdline
         endif
         unlet i
     endfor
     return a:cmdline
-endfunction "}}}
+endfunction
 
 let s:has_built_path = 0
 function! s:build_env_path() "{{{
