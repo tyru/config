@@ -307,6 +307,9 @@ function! GetCCharAndHex()
     if mode() !=# 'n'
         return ''
     endif
+    if foldclosed(line('.')) isnot -1
+        return ''
+    endif
     let cchar = s:get_cchar()
     return cchar ==# '' ? '' : cchar . ":" . "0x".char2nr(cchar)
 endfunction
