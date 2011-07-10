@@ -2475,7 +2475,7 @@ function! s:vimshell_settings() "{{{
     " Hook
     call vimshell#hook#set('chpwd', [s:SNR('vimshell_chpwd_ls')])
     call vimshell#hook#set('preexec', [s:SNR('vimshell_preexec_iexe')])
-    call vimshell#hook#set('preexec', [s:SNR('vimshell_preexec_less')])
+    " call vimshell#hook#set('preexec', [s:SNR('vimshell_preexec_less')])
 
     " Add/Remove some mappings.
     Map! [n] -buffer <C-n>
@@ -2520,6 +2520,8 @@ function! s:vimshell_preexec_iexe(cmdline, context) "{{{
     \   'termtter',
     \   'sudo',
     \   ['git', 'add', '-p'],
+    \   ['git', 'log'],
+    \   ['git', 'view'],
     \   'earthquake',
     \]
         if type(i) == type([]) && i ==# args[:len(i)-1]
@@ -2542,6 +2544,7 @@ function! s:vimshell_preexec_less(cmdline, context) "{{{
 
     for i in [
     \   ['git', 'log'],
+    \   ['git', 'view'],
     \]
         if type(i) == type([]) && i ==# args[:len(i)-1]
             return 'less ' . a:cmdline
