@@ -2301,7 +2301,7 @@ elseif s:anything == s:anything_ku
     Map [n] <anything>:        :<C-u>Ku cmd_mru/cmd<CR>
     Map [n] <anything>/        :<C-u>Ku cmd_mru/search<CR>
 elseif s:anything == s:anything_unite
-    command -nargs=* UniteKawaii Unite -prompt='-')/\  <args>
+    command! -nargs=* UniteKawaii Unite -prompt='-')/\  <args>
     Map [n] <anything>f        :<C-u>UniteKawaii -buffer-name=files file buffer file_mru<CR>
     Map [n] <anything>F        :<C-u>UniteKawaii -buffer-name=files file_rec<CR>
     Map [n] <anything>p        :<C-u>UniteKawaii -buffer-name=files buffer_tab<CR>
