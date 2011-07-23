@@ -295,7 +295,8 @@ function! s:statusline() "{{{
         let s .= '%( | %{cfi#format("%s()", "")}%)'
     endif
 
-    let s .= '%( | [%{GetCCharAndHex()}]%)'
+    " XXX: calling GetCCharAndHex() destroys also unnamed register. it may be the problem of Vim.
+    " let s .= '%( | [%{GetCCharAndHex()}]%)'
 
     let s .= '%( | %{GetDocumentPosition()}%)'
 
