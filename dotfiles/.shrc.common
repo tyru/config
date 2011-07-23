@@ -22,6 +22,7 @@ alias tmux='tmux -u -2'
 # http://techno-st.net/2009/06/06/bash-zsh-alias-sudo.html
 alias sudo='sudo'
 alias wget-mirror='wget -w 1 -m -k -np -r'
+alias crontab='crontab -i'
 
 if which vim >/dev/null 2>&1; then
     alias vi=vim
