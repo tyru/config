@@ -8,7 +8,7 @@ set cpo&vim
 
 
 
-let s:Mapping = vital#of('vimrc').import('Mapping')
+let s:Mapping = vital#of('vital').import('Mapping')
 
 
 
