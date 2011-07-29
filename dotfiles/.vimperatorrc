@@ -262,7 +262,8 @@ let g:def_sbms       = "hd"
 noremap b   :viewSBMComments<CR>
 " }}}
 " migemo_hint.js {{{
-set hintmatching=custom
+" FIXME: XUL/Migemo does not support Fx 5?
+" set hintmatching=custom
 " }}}
 " multi_requester.js {{{
 nnoremap s :mr<Space>
