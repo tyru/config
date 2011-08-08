@@ -264,6 +264,7 @@ noremap b   :viewSBMComments<CR>
 " migemo_hint.js {{{
 " FIXME: XUL/Migemo does not support Fx 5?
 " set hintmatching=custom
+lazy set hintmatching&
 " }}}
 " multi_requester.js {{{
 nnoremap s :mr<Space>
