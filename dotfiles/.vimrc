@@ -2265,8 +2265,8 @@ command! -bar EskkDumpTable    PP! eskk#table#<args>#load()
 " }}}
 " restart {{{
 command!
-\   RestartWithSession
 \   -bar
+\   RestartWithSession
 \   let g:restart_sessionoptions = 'blank,curdir,folds,help,localoptions,tabpages'
 \   | Restart
 
