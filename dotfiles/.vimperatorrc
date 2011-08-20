@@ -258,7 +258,7 @@ noremap <Leader>b  :tab bentry<Space>
 " }}}
 " sbmcommentsviewer.js {{{
 let g:def_sbm_format = "id,timestamp,tags,comment"
-let g:def_sbms       = "hd"
+let g:def_sbms       = "h"
 noremap b   :viewSBMComments<CR>
 " }}}
 " migemo_hint.js {{{
