@@ -2316,6 +2316,7 @@ elseif s:anything == s:anything_unite
     Map [n] <anything>s        :<C-u>UniteKawaii source<CR>
     Map [n] <anything>g        :<C-u>UniteKawaii grep<CR>
     Map [n] <anything>/        :<C-u>UniteKawaii line<CR>
+    Map [n] <anything>:        :<C-u>UniteKawaii history/command<CR>
 endif
 
 
