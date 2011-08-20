@@ -265,3 +265,6 @@
 [submodule "dotfiles/.vim/bundle/vital.vim"]
 	path = dotfiles/.vim/bundle/vital.vim
 	url = git://github.com/ujihisa/vital.vim
+[submodule "dotfiles/.vim/bundle/vim-unite-history"]
+	path = dotfiles/.vim/bundle/vim-unite-history
+	url = git://github.com/thinca/vim-unite-history.git
