@@ -61,6 +61,10 @@ altercommand th tab help
 " }}}
 "-----------------------------------------------------------------
 " set! {{{
+" Firefoxでタブの閉じるボタンを消す方法 - Hello, world! - s21g
+" http://blog.s21g.com/articles/1981
+set! browser.tabs.closeButtons=2
+
 " via http://retlet.net/log/2008/06/awesomebar-bookmarklet.html
 set! browser.urlbar.filter.javascript=false
 " set! browser.urlbar.maxRichResults=50
