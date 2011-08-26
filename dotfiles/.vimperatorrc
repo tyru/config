@@ -562,6 +562,11 @@ autocmd LocationChange reader\\.livedoor\\.com nnoremap U :js window.content.win
 " via http://twitter.com/#!/teramako/status/51672045787938816
 style chrome://* #statusbar-display { display: none; }
 " }}}
+" 現在のタブを指定された秒数ごとに自動リロード {{
+" https://gist.github.com/1172791
+command! -nargs=1 autoreload js liberator.execute('stopautoreload'); let (tab = gBrowser.mCurrentTab) { tab.__autoReloadTimer = setInterval(function () tabs.reload(tab), <args> * 1000) }
+command! stopautoreload js gBrowser.mCurrentTab.__autoReloadTimer && clearInterval(gBrowser.mCurrentTab.__autoReloadTimer);
+" }}}
 " }}}
 "-----------------------------------------------------------------
 
