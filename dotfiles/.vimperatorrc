@@ -208,6 +208,8 @@ nnoremap <Leader>td :tabduplicate<CR>
 
 nnoremap <Leader>n  n
 nnoremap <Leader>N  N
+
+nnoremap <C-q> <Nop>
 " }}}
 " ~ c ~ {{{
 cnoremap <C-c>          <C-v><C-c>
