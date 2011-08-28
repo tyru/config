@@ -572,4 +572,4 @@ command! stopautoreload js gBrowser.mCurrentTab.__autoReloadTimer && clearInterv
 " }}}
 "-----------------------------------------------------------------
 
-source! $HOME/.vimperatorrc.local
+silent! source $HOME/.vimperatorrc.local
