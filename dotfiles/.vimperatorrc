@@ -569,6 +569,37 @@ style chrome://* #statusbar-display { display: none; }
 command! -nargs=1 autoreload js liberator.execute('stopautoreload'); let (tab = gBrowser.mCurrentTab) { tab.__autoReloadTimer = setInterval(function () tabs.reload(tab), <args> * 1000) }
 command! stopautoreload js gBrowser.mCurrentTab.__autoReloadTimer && clearInterval(gBrowser.mCurrentTab.__autoReloadTimer);
 " }}}
+" Vimperator のコマンドラインバグをもんやり修正するパッチ {{{
+" https://gist.github.com/1064025
+js <<EOM
+  liberator.registerObserver(
+    'enter',
+    function () {
+      plugins.libly.$U.around(
+        commandline,
+        'input',
+        function (next, [prompt, callback, extra]) {
+          if (callback === finder.closure.onSubmit)
+            return next();
+          if (extra && (extra.onChange === hints.closure._onInput))
+            return next();
+          setTimeout(function () next(), 0);
+        }
+      );
+
+      if (plugins.xHint) {
+        [commands.get('xhint'), commands.get('xhintdo')].forEach(function (cmd) {
+          plugins.libly.$U.around(
+            cmd,
+            'action',
+            function (next) setTimeout(function () next(), 0)
+          );
+        });
+      }
+    }
+  );
+EOM
+" }}}
 " }}}
 "-----------------------------------------------------------------
 
