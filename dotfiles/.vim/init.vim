@@ -1407,6 +1407,8 @@ Map [n] -silent <LeftMouse>   <Esc>:set eventignore=all<CR><LeftMouse>:set event
 Map [n]         <2-LeftMouse> g*
 " Single-click for searching the word selected in visual-mode.
 Map [v] -remap  <LeftMouse> <Plug>(visualstar-g*)
+" Select lines with <S-LeftMouse>
+Map [n]         <S-LeftMouse> V
 
 " }}}
 " }}}
