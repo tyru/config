@@ -47,3 +47,5 @@ autocmd BufNewFile,BufRead ~/Dropbox/memo/**.txt
             \ setfiletype mkd
 autocmd BufNewFile,BufRead ~/.earthquake/config
             \ setfiletype ruby
+autocmd BufNewFile,BufRead *.ftl
+            \ setfiletype ftl
