@@ -268,3 +268,6 @@
 [submodule "dotfiles/.vim/bundle/vim-unite-history"]
 	path = dotfiles/.vim/bundle/vim-unite-history
 	url = git://github.com/thinca/vim-unite-history.git
+[submodule "dotfiles/.vim/bundle/vice.vim"]
+	path = dotfiles/.vim/bundle/vice.vim
+	url = git://github.com/tyru/vice.vim.git
