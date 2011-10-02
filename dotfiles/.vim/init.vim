@@ -2718,6 +2718,7 @@ function! s:vimfiler_settings() "{{{
     Map! [n] -buffer N
     Map! [n] -buffer j
     Map! [n] -buffer k
+    Map! [n] -buffer ?
 
     " dd as <Plug>(vimfiler_force_delete_file)
     " because I want to use trash-put.
