@@ -2382,6 +2382,9 @@ MyAutocmd FileType unite call s:unite_settings()
 function! s:unite_settings() "{{{
     Map [i] -remap -buffer <BS> <Plug>(unite_delete_backward_path)
     Map [n] -remap -buffer <Space><Space> <Plug>(unite_toggle_mark_current_candidate)
+    " Map <Plug>(unite_exit) to <Esc> with a small tweak.
+    Map! [n] q
+    Map [n] -remap -expr <Esc> input('Exit unite?[y/N]:') =~? '^y\%[es]$' ? "\<Plug>(unite_exit)" : ''
 endfunction "}}}
 " }}}
 " }}}
