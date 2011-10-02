@@ -100,7 +100,10 @@ set scroll=5
 " set scrolloff=15
 " set scrolloff=9999
 set scrolloff=0
-let g:scrolloff = 15    " see below
+" let g:scrolloff = 15    " see below
+
+" Disable it temporarily...
+let g:scrolloff = 0
 
 " Hack for <LeftMouse> not to adjust ('scrolloff') when single-clicking.
 " Implement 'scrolloff' by auto-command to control the fire.
