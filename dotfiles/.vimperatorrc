@@ -490,6 +490,7 @@ liberator.globalVariables.plugin_loader_plugins = <>
     walk-input
     nextlink
     escape-from-iframe
+    slideshare
 </>.toString().split(/\s+/).filter(function(n) n);
 EOF
 
@@ -599,6 +600,11 @@ js <<EOM
     }
   );
 EOM
+" }}}
+" slideshare のスライドをめくるマッピング {{{
+" http://vimperator.g.hatena.ne.jp/nokturnalmortum/20111013/1318502000
+nnoremap -urls=www\\.slideshare\\.net l :slideshare next<CR>
+nnoremap -urls=www\\.slideshare\\.net h :slideshare prev<CR>
 " }}}
 " }}}
 "-----------------------------------------------------------------
