@@ -1168,6 +1168,8 @@ Map [ic] <C-a> <Home>
 Map [ic] <C-e> <End>
 Map [ic] <C-d> <Del>
 
+if 1
+
 silent Arpeggio noremap! $( ()<Left>
 silent Arpeggio noremap! 4[ []<Left>
 silent Arpeggio noremap! $< <><Left>
@@ -1186,6 +1188,28 @@ silent Arpeggio noremap! #( 「」<Left>
 silent Arpeggio noremap! 3[ 『』<Left>
 silent Arpeggio noremap! #< 【】<Left>
 silent Arpeggio noremap! #{ 〔〕<Left>
+
+else
+
+function! s:eclipse_like_autoclose(quote)
+    if mode() !~# '^\(i\|R\|Rv\|c\|cv\|ce\)$'
+        return a:quote
+    endif
+    return
+    \   col('.') <=# 1 || col('.') >=# col('$') ?
+    \       a:quote.a:quote."\<Left>" :
+    \   getline('.')[col('.') - 1] ==# a:quote ?
+    \       "\<Right>" :
+    \   getline('.')[col('.') - 2] ==# a:quote ?
+    \       a:quote.a:quote."\<Left>" :
+    \       a:quote
+endfunction
+
+noremap! <expr> " <SID>eclipse_like_autoclose('"')
+noremap! <expr> ' <SID>eclipse_like_autoclose("'")
+
+endif
+
 " }}}
 " imap {{{
 
