@@ -40,7 +40,6 @@
 	sub = submodule
 	subadd = submodule add
 	subfor = submodule foreach
-	subinit = submodule update --init
 	view = log --pretty=oneline --abbrev-commit --graph --source --tags --branches
 	wh = whatchanged
 	zip = archive --format=zip
