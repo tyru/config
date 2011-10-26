@@ -28,6 +28,8 @@
         .muttrc
         .hgrc
         .earthquake/config
+        .gitconfig
+        .gitignore.base
     )],
     os_files => {map {
         # MS Windows-specific filenames.
