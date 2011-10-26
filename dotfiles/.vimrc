@@ -9,4 +9,8 @@ else
 endif
 let $MYVIMRC = $MYVIMDIR . '/init.vim'
 
-source $MYVIMRC
+try
+    source $MYVIMRC
+catch
+    echoerr 'Disabled loading .vimrc ...: ['.v:exception.'] at ['.v:throwpoint.']'
+endtry
