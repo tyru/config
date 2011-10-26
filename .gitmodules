@@ -271,3 +271,6 @@
 [submodule "dotfiles/.vim/bundle/vice.vim"]
 	path = dotfiles/.vim/bundle/vice.vim
 	url = git://github.com/tyru/vice.vim.git
+[submodule "dotfiles/.vim/bundle/ftl-vim-syntax"]
+	path = dotfiles/.vim/bundle/ftl-vim-syntax
+	url = git://github.com/chaquotay/ftl-vim-syntax.git
