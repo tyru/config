@@ -1,6 +1,3 @@
-[submodule "tools"]
-	path = tools
-	url = git://github.com/tyru/dotto.git
 [submodule "dotfiles/.vim/bundle/caw.vim"]
 	path = dotfiles/.vim/bundle/caw.vim
 	url = git://github.com/tyru/caw.vim.git
