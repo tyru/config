@@ -2370,9 +2370,7 @@ function! s:register_anything_abbrev() "{{{
     let g:fuf_abbrevMap = abbrev
     " unite
     for [pat, subst_list] in items(abbrev)
-        if len(subst_list) == 1
-            call unite#set_substitute_pattern('files', pat, subst_list[0])
-        endif
+        call unite#set_substitute_pattern('files', pat, subst_list)
     endfor
 endfunction "}}}
 Lazy call s:register_anything_abbrev()
