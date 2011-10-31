@@ -2357,7 +2357,7 @@ function! s:register_anything_abbrev() "{{{
     \   '^s@': ['~/scratch/'],
     \}
 
-    if hostname() ==? 'takuya-win'
+    if has('win16') || has('win32') || has('win64') || has('win95')
         call extend(abbrev, {
         \   '^m@' : ['~/My Dropbox/memo/'],
         \   '^de@' : ['C:' . substitute($HOMEPATH, '\', '/', 'g') . '/デスクトップ/'],
