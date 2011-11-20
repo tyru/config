@@ -268,3 +268,6 @@
 [submodule "dotfiles/.vim/bundle/ftl-vim-syntax"]
 	path = dotfiles/.vim/bundle/ftl-vim-syntax
 	url = git://github.com/chaquotay/ftl-vim-syntax.git
+[submodule "dotfiles/.vim/bundle/vim-narrow"]
+	path = dotfiles/.vim/bundle/vim-narrow
+	url = git://github.com/kana/vim-narrow.git
