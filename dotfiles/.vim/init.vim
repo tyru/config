@@ -2181,11 +2181,11 @@ let g:eskk#rom_input_style = 1 ? 'msime' : 'skk'
 let g:eskk#keep_state = 1
 let g:eskk#keep_state_beyond_buffer = 1
 
-let g:eskk#marker_henkan = '$'
-let g:eskk#marker_okuri = '*'
-let g:eskk#marker_henkan_select = '@'
-let g:eskk#marker_jisyo_touroku = '?'
-let g:eskk#marker_popup = '#'
+" let g:eskk#marker_henkan = '$'
+" let g:eskk#marker_okuri = '*'
+" let g:eskk#marker_henkan_select = '@'
+" let g:eskk#marker_jisyo_touroku = '?'
+" let g:eskk#marker_popup = '#'
 
 let g:eskk#dictionary_save_count = 5
 
