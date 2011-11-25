@@ -5,6 +5,10 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
+if globpath(&rtp, 'autoload/tyru/util.vim') == ''
+    finish
+endif
+
 let s:opt = tyru#util#undo_ftplugin_helper#new()
 
 " Do not search from header
