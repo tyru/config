@@ -2377,7 +2377,6 @@ function! s:unite_settings() "{{{
     Map [i] -buffer -remap <BS> <Plug>(unite_delete_backward_path)
     Map [n] -buffer -remap <Space><Space> <Plug>(unite_toggle_mark_current_candidate)
     " Map <Plug>(unite_exit) to <Esc> with a small tweak.
-    Map! [n] -buffer q
     Map [n] -buffer -remap -expr <Esc> input('Exit unite?[y/N]:') =~? '^y\%[es]$' ? "\<Plug>(unite_exit)" : ''
 endfunction "}}}
 " }}}
