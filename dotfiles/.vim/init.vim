@@ -1690,36 +1690,8 @@ function! s:cmd_del_file(args, delete_buffer) "{{{
     checktime
 endfunction "}}}
 " }}}
-" :Rename {{{
-command!
-\   -nargs=+ -complete=file
-\   Rename
-\   call s:cmd_rename(<f-args>)
-
-function! s:cmd_rename(...) "{{{
-    if a:0 == 1
-        let [from, to] = [expand('%'), expand(a:1)]
-    elseif a:0 == 2
-        let [from, to] = [expand(a:1), expand(a:2)]
-    else
-        return
-    endif
-    if isdirectory(to)
-        let to = to . '/' . fnamemodify(from, ':t')
-    endif
-
-    try
-        call rename(from, to)
-        if from !=# expand('%') && filereadable(to)
-            execute 'edit' to
-        endif
-    catch
-        Echomsg WarningMsg "Can't rename():" from "=>" to
-    endtry
-endfunction "}}}
-
-MapAlterCommand mv Rename
-MapAlterCommand ren[ame] Rename
+" :mv -> :saveas {{{
+MapAlterCommand mv saveas
 " }}}
 " :Mkdir {{{
 function! s:mkdir_p(...)
