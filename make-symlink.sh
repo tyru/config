@@ -2,5 +2,5 @@
 
 cwd=`pwd`
 for i in `cat dotfiles.lst`; do
-	ln "$@" -T -s $cwd/dotfiles/$i ~/$i
+	ln "$@" -T -s $cwd/dotfiles/$i ~/$i && echo "created ~/$i"
 done
