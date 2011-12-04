@@ -1215,12 +1215,6 @@ endif
 
 Map [i] <C-l> <Tab>
 
-" paste register
-Map [i] <C-r><C-u>  <C-r><C-o>+
-Map [i] <C-r><C-i>  <C-r><C-o>*
-Map [i] <C-r><C-o>  <C-r><C-o>"
-Map [i] <C-r>       <C-r><C-r>
-
 " shift left (indent)
 Map [i] <C-q>   <C-d>
 
