@@ -271,3 +271,6 @@
 [submodule "dotfiles/.vim/bundle/vim-narrow"]
 	path = dotfiles/.vim/bundle/vim-narrow
 	url = git://github.com/kana/vim-narrow.git
+[submodule "dotfiles/.vim/bundle/vimdoc-ja"]
+	path = dotfiles/.vim/bundle/vimdoc-ja
+	url = git://github.com/vim-jp/vimdoc-ja.git
