@@ -3087,8 +3087,8 @@ endfunction
 
 function! s:register_own_highlight()
     " I found that I'm very nervous about whitespaces.
-    " so it's better to concern about this.
-    " just notice its presence.
+    " so I'd better think about this.
+    " This settings just notice its presence.
     for [hi, hiarg, pat] in [
     \   ['IdeographicSpace',
     \    'IdeographicSpace term=underline cterm=underline gui=underline ctermfg=4 guifg=Cyan',
