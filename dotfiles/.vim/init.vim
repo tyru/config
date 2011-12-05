@@ -764,6 +764,9 @@ Map [n] <excmd>ct :<C-u>tabclose<CR>
 
 Map [n] gm :<C-u>make<CR>
 
+Map [n] <Space>tl :<C-u>tabedit<CR>
+Map [n] <Space>th :<C-u>tabedit<CR>:execute 'tabmove' (tabpagenr() isnot 1 ? tabpagenr() - 2 : '')<CR>
+
 " TODO: Smart 'zd': Delete empty line {{{
 " }}}
 " TODO: Smart '{', '}': Treat folds as one non-empty line. {{{
