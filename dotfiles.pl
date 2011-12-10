@@ -1,37 +1,10 @@
-{
+use IO::File;
++{
     directory => "dotfiles",
-    files => [qw(
-        .vim
-        .vimrc
-        .gvimrc
-        .vimperator
-        .vimperatorrc
-        .bash_profile
-        .bashrc
-        .screenrc
-        .inputrc
-        .zshrc
-        .zshenv
-        .zsh
-        .skel
-        .module-starter
-        .w3m/keymap
-        .Xmodmap
-        .shrc.common
-        .shrc.cygwin
-        .shrc.start-screen
-        .env.common
-        .tmux.conf
-        .tmux
-        .uim
-        .uim.d/customs
-        .muttrc
-        .hgrc
-        .earthquake/config
-        .gitconfig
-        .gitignore.base
-        .Xresources
-    )],
+    files => [do {
+        my $FH = IO::File->new('dotfiles.lst') or die "dotfiles.lst: $!";
+        map { chomp; $_ } <$FH>;
+    }],
     os_files => {map {
         # MS Windows-specific filenames.
         $_ => {
