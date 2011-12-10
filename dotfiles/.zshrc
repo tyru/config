@@ -120,9 +120,13 @@ chpwd () { ll }
 # >>>
 # gitのブランチ名を右プロンプトに表示 <<<
 # http://d.hatena.ne.jp/mollifier/20090814/p1
+# http://www.pshared.net/diary/20100708.html
 autoload -Uz vcs_info
+zstyle ':vcs_info:*' enable svn hg git bzr
 zstyle ':vcs_info:*' formats '(%s)-[%b]'
 zstyle ':vcs_info:*' actionformats '(%s)-[%b|%a]'
+zstyle ':vcs_info:(svn|bzr)*' branchformat '%b:r%r'
+zstyle ':vcs_info:bzr:*' use-simple true
 precmd () {
     psvar=()
     LANG=en_US.UTF-8 vcs_info
