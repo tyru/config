@@ -5,11 +5,11 @@ is_screen_running() {
     # tscreen also uses this varariable.
     [ ! -z "$WINDOW" ]
 }
-is_tmux_runnning() {
+is_tmux_running() {
     [ ! -z "$TMUX" ]
 }
 is_screen_or_tmux_running() {
-    is_screen_running || is_tmux_runnning
+    is_screen_running || is_tmux_running
 }
 shell_has_started_interactively() {
     [ ! -z "$PS1" ]
