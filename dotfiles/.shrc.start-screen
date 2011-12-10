@@ -16,7 +16,11 @@ shell_has_started_interactively() {
 }
 resolve_alias() {
     cmd="$1"
-    while type "$cmd" >/dev/null 2>/dev/null; do
+    old_cmd=''
+    while type "$cmd" >/dev/null 2>/dev/null && \
+          [ "$cmd" != "$old_cmd" ]
+    do
+        old_cmd="$cmd"
         if [ "$SHELL" = bash ]; then
             # "$cmd is aliased to \`$cmd'"
             cmd=$(type "$cmd" | sed 's/.*`\([^'"'"']\+\)'"'"'/\1/')
