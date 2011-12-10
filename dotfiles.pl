@@ -30,6 +30,7 @@
         .earthquake/config
         .gitconfig
         .gitignore.base
+        .Xresources
     )],
     os_files => {map {
         # MS Windows-specific filenames.

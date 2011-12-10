@@ -29,6 +29,7 @@ files:
   - .earthquake/config
   - .gitconfig
   - .gitignore.base
+  - .Xresources
 os_files:
   MSWin32:
     .vimperator: vimperator
