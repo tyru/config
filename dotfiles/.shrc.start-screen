@@ -17,8 +17,13 @@ shell_has_started_interactively() {
 resolve_alias() {
     cmd="$1"
     while type "$cmd" >/dev/null 2>/dev/null; do
-        # "$cmd is aliased to \`$cmd'"
-        cmd=$(type "$cmd" | sed 's/.*`\([^'"'"']\+\)'"'"'/\1/')
+        if [ "$SHELL" = bash ]; then
+            # "$cmd is aliased to \`$cmd'"
+            cmd=$(type "$cmd" | sed 's/.*`\([^'"'"']\+\)'"'"'/\1/')
+        elif [ "$SHELL" = zsh ]; then
+            # "$cmd is an alias for $cmd"
+            cmd=$(type "$cmd" | sed 's/.* is an alias for \(.\+\)/\1/')
+        fi
     done
     echo "$cmd"
 }
