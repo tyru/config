@@ -16,11 +16,9 @@ shell_has_started_interactively() {
 }
 resolve_alias() {
     cmd="$1"
-    while \
-        whence "$cmd" >/dev/null 2>/dev/null \
-        && [ "$(whence "$cmd")" != "$cmd" ]
-    do
-        cmd=$(whence "$cmd")
+    while type "$cmd" >/dev/null 2>/dev/null; do
+        # "$cmd is aliased to \`$cmd'"
+        cmd=$(type "$cmd" | sed 's/.*`\([^'"'"']\+\)'"'"'/\1/')
     done
     echo "$cmd"
 }
@@ -36,8 +34,9 @@ then
     # I tested tmux a bit, however,
     # I prefer screen's copy-mode(it is tmux term, though) behavior.
     for cmd in screen tscreen tmux; do
-        if whence $cmd >/dev/null 2>/dev/null; then
-            $(resolve_alias "$cmd")
+        cmd=$(resolve_alias "$cmd")
+        if [ "$cmd" ]; then
+            $cmd
             break
         fi
     done
