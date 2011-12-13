@@ -289,7 +289,7 @@ function! s:statusline() "{{{
         let s .= ' %{SkkGetModeStr()}'
     endif
 
-    if !exists('g:cfi_disable')
+    if !get(g:, 'cfi_disable')
         let s .= '%( | %{cfi#format("%s()", "")}%)'
     endif
 
