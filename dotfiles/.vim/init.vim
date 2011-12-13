@@ -2958,6 +2958,11 @@ augroup foldmethod-expr
   \                   | endif
 augroup END
 " }}}
+" GraVit {{{
+Map [nvo] -remap f <Plug>gravit->forward
+Map [nvo] -remap F <Plug>gravit->backward
+" highlight GraVitCurrentMatch term=underline cterm=underline gui=underline ctermfg=4 guifg=Purple
+" }}}
 
 " test
 let g:loaded_tyru_event_test = 1
