@@ -835,6 +835,7 @@ Map [n] <excmd>op :<C-u>call <SID>toggle_option('paste')<CR>
 Map [n] <excmd>ow :<C-u>call <SID>toggle_option('wrap')<CR>
 Map [n] <excmd>oe :<C-u>call <SID>toggle_option('expandtab')<CR>
 Map [n] <excmd>ol :<C-u>call <SID>toggle_option('list')<CR>
+Map [n] <excmd>on :<C-u>call <SID>toggle_option('number')<CR>
 Map [n] <excmd>om :<C-u>call <SID>toggle_option('modeline')<CR>
 Map [n] <excmd>ofc :<C-u>call <SID>advance_option_state(['', 'all'], 'foldclose')<CR>
 Map [n] <excmd>ofm :<C-u>call <SID>advance_option_state(['manual', 'marker', 'indent'], 'foldmethod')<CR>
