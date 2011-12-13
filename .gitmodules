@@ -277,3 +277,6 @@
 [submodule "dotfiles/.vim/bundle/vim-hier"]
 	path = dotfiles/.vim/bundle/vim-hier
 	url = git://github.com/jceb/vim-hier.git
+[submodule "dotfiles/.vim/bundle/gravit.vim"]
+	path = dotfiles/.vim/bundle/gravit.vim
+	url = git://github.com/tyru/gravit.vim.git
