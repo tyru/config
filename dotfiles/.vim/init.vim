@@ -2901,9 +2901,6 @@ function! s:dcs_register_own_styles()
 endfunction
 
 " }}}
-" whichedit {{{
-MapAlterCommand we WhichEdit
-" }}}
 " autocmd-tabclose {{{
 " :tabprevious on vimrc-tabclose
 function! s:tabclose_post()
