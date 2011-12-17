@@ -5,22 +5,29 @@ is_screen_running() {
     # tscreen also uses this varariable.
     [ ! -z "$WINDOW" ]
 }
-is_tmux_runnning() {
+is_tmux_running() {
     [ ! -z "$TMUX" ]
 }
 is_screen_or_tmux_running() {
-    is_screen_running || is_tmux_runnning
+    is_screen_running || is_tmux_running
 }
 shell_has_started_interactively() {
     [ ! -z "$PS1" ]
 }
 resolve_alias() {
     cmd="$1"
-    while \
-        whence "$cmd" >/dev/null 2>/dev/null \
-        && [ "$(whence "$cmd")" != "$cmd" ]
+    old_cmd=''
+    while type "$cmd" >/dev/null 2>/dev/null && \
+          [ "$cmd" != "$old_cmd" ]
     do
-        cmd=$(whence "$cmd")
+        old_cmd="$cmd"
+        if [ "$SHELL" = bash ]; then
+            # "$cmd is aliased to \`$cmd'"
+            cmd=$(type "$cmd" | sed 's/.*`\([^'"'"']\+\)'"'"'/\1/')
+        elif [ "$SHELL" = zsh ]; then
+            # "$cmd is an alias for $cmd"
+            cmd=$(type "$cmd" | sed 's/.* is an alias for \(.\+\)/\1/')
+        fi
     done
     echo "$cmd"
 }
@@ -36,8 +43,9 @@ then
     # I tested tmux a bit, however,
     # I prefer screen's copy-mode(it is tmux term, though) behavior.
     for cmd in screen tscreen tmux; do
-        if whence $cmd >/dev/null 2>/dev/null; then
-            $(resolve_alias "$cmd")
+        cmd=$(resolve_alias "$cmd")
+        if [ "$cmd" ]; then
+            $cmd
             break
         fi
     done

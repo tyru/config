@@ -1,0 +1,4 @@
+xterm*foreground: gray
+xterm*background: black
+xterm*visualbell: off
+xterm*scrollBar: false

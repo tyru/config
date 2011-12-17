@@ -23,7 +23,7 @@ set bell-style visible
 # Do not overwrite existing file by redirect `>`.
 # Use `>|` to override this setting.
 # http://answer.pythonpath.jp/questions/312/bashrc
-shopt -s noclobber
+set -o noclobber
 
 # }}}
 
