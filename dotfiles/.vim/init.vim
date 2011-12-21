@@ -2956,8 +2956,8 @@ augroup foldmethod-expr
 augroup END
 " }}}
 " GraVit {{{
-Map [nvo] -remap f <Plug>gravit->forward
-Map [nvo] -remap F <Plug>gravit->backward
+Map [nvo] -remap g/ <Plug>gravit->forward
+Map [nvo] -remap g? <Plug>gravit->backward
 " highlight GraVitCurrentMatch term=underline cterm=underline gui=underline ctermfg=4 guifg=Purple
 " }}}
 
