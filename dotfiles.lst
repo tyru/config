@@ -28,3 +28,8 @@
 .gitconfig
 .gitignore.base
 .Xresources
+.fluxbox/init
+.fluxbox/keys
+.fluxbox/menu
+.fluxbox/slitlist
+.fluxbox/startup
