@@ -328,11 +328,12 @@ lazy fmaps -u 'github\.com' -e vkeydown t
 " copy.js {{{
 javascript <<EOS
 liberator.globalVariables.copy_templates = [
-  { label: 'titleAndURL',    value: '%TITLE%\n%URL%' },
-  { label: 'title',          value: '%TITLE%', map: ',y' },
-  { label: 'anchor',         value: '<a href="%URL%">%TITLE%</a>' },
-  { label: 'selanchor',      value: '<a href="%URL%" title="%TITLE%">%SEL%</a>' },
-  { label: 'htmlblockquote', value: '<blockquote cite="%URL%" title="%TITLE%">%HTMLSEL%</blockquote>' },
+  { label: 'titleAndURL',      value: '%TITLE%\n%URL%' },
+  { label: 'titleURLMarkdown', value: '[%TITLE%](%URL%)' },
+  { label: 'title',            value: '%TITLE%', map: ',y' },
+  { label: 'anchor',           value: '<a href="%URL%">%TITLE%</a>' },
+  { label: 'selanchor',        value: '<a href="%URL%" title="%TITLE%">%SEL%</a>' },
+  { label: 'htmlblockquote',   value: '<blockquote cite="%URL%" title="%TITLE%">%HTMLSEL%</blockquote>' },
   { label: 'ASIN', value: 'copy ASIN code from Amazon', custom: function() { return content.document.getElementById('ASIN').value; } },
 
   { label: 'Tabslist',
