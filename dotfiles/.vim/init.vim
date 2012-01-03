@@ -2202,6 +2202,7 @@ endif
 
 
 let g:eskk#egg_like_newline = 1
+let g:eskk#egg_like_newline_completion = 1
 let g:eskk#show_candidates_count = 2
 let g:eskk#show_annotation = 1
 let g:eskk#rom_input_style = 1 ? 'msime' : 'skk'
