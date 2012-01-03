@@ -457,7 +457,7 @@ nnoremap <Leader>o :opener<Space>
 nnoremap <Leader>g  :gmset!<CR>
 " }}}
 " subscldr.js {{{
-nnoremap <Leader>s :subscldr<CR>
+nnoremap <Leader>s :subscldr<Space>-rate=
 " }}}
 " hints-for-embedded.js {{{
 let g:hints_for_embedded_mode = "e"
