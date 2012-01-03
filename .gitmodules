@@ -283,3 +283,6 @@
 [submodule "dotfiles/.vim/bundle/SudoEdit.vim"]
 	path = dotfiles/.vim/bundle/SudoEdit.vim
 	url = git://github.com/vim-scripts/SudoEdit.vim.git
+[submodule "dotfiles/.vim/bundle/hatena-vim"]
+	path = dotfiles/.vim/bundle/hatena-vim
+	url = git://github.com/motemen/hatena-vim.git
