@@ -2960,6 +2960,11 @@ Map [nvo] -remap g/ <Plug>gravit->forward
 Map [nvo] -remap g? <Plug>gravit->backward
 " highlight GraVitCurrentMatch term=underline cterm=underline gui=underline ctermfg=4 guifg=Purple
 " }}}
+" hatena.vim {{{
+if !exists('g:hateda')
+    call rtputil#remove('\<hatena-vim\>')
+endif
+" }}}
 
 " test
 let g:loaded_tyru_event_test = 1
