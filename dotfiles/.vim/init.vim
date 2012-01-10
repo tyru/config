@@ -1455,76 +1455,6 @@ if exists('&ambiwidth')
     set ambiwidth=double
 endif
 
-" set enc=... {{{
-function! s:change_encoding()
-    if expand('%') == ''
-        call tyru#util#warn("current file is empty.")
-        return
-    endif
-    let result = prompt#prompt("re-open with...", {
-    \   'menu': [
-    \     'latin1',
-    \     'cp932',
-    \     'shift-jis',
-    \     'iso-2022-jp',
-    \     'euc-jp',
-    \     'utf-8',
-    \     'ucs-bom'
-    \   ],
-    \   'escape': 1,
-    \   'one_char': 1,
-    \   'execute_if': '<f-value> != ""',
-    \   'execute': 'edit ++enc=<value>',
-    \})
-    if result !=# "\e"
-        echomsg printf("re-open with '%s'.", result)
-    endif
-endfunction
-
-Map [n] <prompt>a     :<C-u>call <SID>change_encoding()<CR>
-" }}}
-" set fenc=... {{{
-function! s:change_fileencoding()
-    let enc = prompt#prompt("changing file encoding to...", {
-    \   'menu': [
-    \     'latin1',
-    \     'cp932',
-    \     'shift-jis',
-    \     'iso-2022-jp',
-    \     'euc-jp',
-    \     'utf-8',
-    \     'ucs-bom'
-    \   ],
-    \   'escape': 1,
-    \   'one_char': 1,
-    \   'execute_if': '<f-value> != ""',
-    \   'execute': 'set fenc=<value>',
-    \})
-    if enc ==# "\e"
-        return
-    endif
-    let &l:bomb = enc ==# 'ucs-bom'
-    echomsg printf("changing file encoding to '%s'.", enc)
-endfunction
-
-Map [n] <prompt>s    :<C-u>call <SID>change_fileencoding()<CR>
-" }}}
-" set ff=... {{{
-function! s:change_newline_format()
-    let result = prompt#prompt("changing newline format to...", {
-    \   'menu': ['dos', 'unix', 'mac'],
-    \   'one_char': 1,
-    \   'escape': 1,
-    \   'execute_if': '<f-value> != ""',
-    \   'execute': 'set ff=<value>',
-    \})
-    if result !=# "\e"
-        echomsg printf("changing newline format to '%s'.", result)
-    endif
-endfunction
-
-Map [n] <prompt>d    :<C-u>call <SID>change_newline_format()<CR>
-" }}}
 " }}}
 " FileType {{{
 function! s:each_filetype() "{{{
@@ -2398,6 +2328,88 @@ let g:unite_enable_split_vertically = 1
 let g:unite_update_time = 50
 let g:unite_source_file_mru_ignore_pattern =
 \   '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\|COMMIT_EDITMSG'
+
+" unite-source-menu {{{
+
+let s:Vital = vital#of('vital')
+call s:Vital.load('Data.List')
+
+let g:unite_source_menu_menus = {}
+
+function! UniteSourceMenuMenusMap(key, value)
+    return {
+    \   'word' : a:key,
+    \   'kind' : 'command',
+    \   'action__command' : a:value,
+    \}
+endfunction
+
+
+" set enc=... {{{
+let g:unite_source_menu_menus.enc = {
+\   'description' : 'set enc=...',
+\   'candidates'  : {},
+\   'map': function('UniteSourceMenuMenusMap'),
+\}
+for s:tmp in [
+\           'latin1',
+\           'cp932',
+\           'shift-jis',
+\           'iso-2022-jp',
+\           'euc-jp',
+\           'utf-8',
+\           'ucs-bom'
+\       ]
+    call extend(g:unite_source_menu_menus.enc.candidates,
+    \           {s:tmp : 'edit ++enc='.s:tmp},
+    \           'error')
+endfor
+unlet s:tmp
+
+Map [n] -silent <prompt>a  :<C-u>Unite menu:enc<CR>
+" }}}
+" set fenc=... {{{
+let g:unite_source_menu_menus.fenc = {
+\   'description' : 'set fenc=...',
+\   'candidates'  : {},
+\   'map': function('UniteSourceMenuMenusMap'),
+\}
+for s:tmp in [
+\           'latin1',
+\           'cp932',
+\           'shift-jis',
+\           'iso-2022-jp',
+\           'euc-jp',
+\           'utf-8',
+\           'ucs-bom'
+\       ]
+    call extend(g:unite_source_menu_menus.fenc.candidates,
+    \           {s:tmp : 'set fenc='.s:tmp},
+    \           'error')
+endfor
+unlet s:tmp
+
+Map [n] -silent <prompt>s  :<C-u>Unite menu:fenc<CR>
+" }}}
+" set ff=... {{{
+let g:unite_source_menu_menus.ff = {
+\   'description' : 'set ff=...',
+\   'candidates'  : {},
+\   'map': function('UniteSourceMenuMenusMap'),
+\}
+for s:tmp in ['dos', 'unix', 'mac']
+    call extend(g:unite_source_menu_menus.ff.candidates,
+    \           {s:tmp : 'set ff='.s:tmp},
+    \           'error')
+endfor
+unlet s:tmp
+
+Map [n] -silent <prompt>d  :<C-u>Unite menu:ff<CR>
+" }}}
+
+" }}}
+
+
 
 MyAutocmd FileType unite call s:unite_settings()
 
