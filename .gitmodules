@@ -286,3 +286,6 @@
 [submodule "dotfiles/.vim/bundle/hatena-vim"]
 	path = dotfiles/.vim/bundle/hatena-vim
 	url = git://github.com/motemen/hatena-vim.git
+[submodule "dotfiles/.vim/bundle/vim-benchmark"]
+	path = dotfiles/.vim/bundle/vim-benchmark
+	url = git://github.com/h1mesuke/vim-benchmark.git
