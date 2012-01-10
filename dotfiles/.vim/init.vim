@@ -2962,6 +2962,8 @@ Map [nvo] -remap g? <Plug>gravit->backward
 " highlight GraVitCurrentMatch term=underline cterm=underline gui=underline ctermfg=4 guifg=Purple
 " }}}
 " hatena.vim {{{
+let g:hatena_user = 'tyru'
+let g:hatena_upload_on_write = 0
 if !exists('g:hateda')
     call rtputil#remove('\<hatena-vim\>')
 endif
