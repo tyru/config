@@ -2717,6 +2717,7 @@ call submode#map       ('scroll', 'n', '', 's', ':let &l:scroll += 3<CR>')
 " 'K' for ':Ref'.
 MapAlterCommand ref         Ref
 MapAlterCommand alc         Ref -new alc
+MapAlterCommand rfc         Ref -new rfc
 MapAlterCommand man         Ref -new man
 MapAlterCommand pdoc        Ref -new perldoc
 MapAlterCommand cppref      Ref -new cppref
