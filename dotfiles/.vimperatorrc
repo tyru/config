@@ -210,6 +210,11 @@ nnoremap <Leader>n  n
 nnoremap <Leader>N  N
 
 nnoremap <C-q> <Nop>
+
+" search mappings
+nnoremap s :open<Space>google<Space>
+nnoremap S :tabopen<Space>google<Space>
+
 " }}}
 " ~ c ~ {{{
 cnoremap <C-c>          <C-v><C-c>
@@ -271,9 +276,6 @@ noremap b   :viewSBMComments<CR>
 " FIXME: XUL/Migemo does not support Fx 5?
 " set hintmatching=custom
 lazy set hintmatching&
-" }}}
-" multi_requester.js {{{
-nnoremap s :mr<Space>
 " }}}
 " ime_controller.js {{{
 let g:ex_ime_mode = "inactive"  
