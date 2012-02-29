@@ -1111,7 +1111,7 @@ else
     DefMap [n]       $-if-right-of-$    <Nop>
 endif
 DefMap [n] -expr paste-nicely       getline('.') == '' ? 'p0"_x' : 'p'
-Map [n] -remap -expr p getregtype(v:register) ==# 'v' ? emap#compile_map('n', '<$-if-right-of-$><paste-nicely>') : 'p'
+Map [n] -remap -expr p getregtype(v:register) ==# 'v' ? emap#compile_map('n', '<$-if-right-of-$><paste-nicely>') : (v:register !=# '' ? '"'.v:register : '').'<paste-nicely>'
 " }}}
 " <Space>[hjkl] for <C-w>[hjkl] {{{
 Map [n] -silent <Space>j <C-w>j
