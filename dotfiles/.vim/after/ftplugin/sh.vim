@@ -11,6 +11,7 @@ let s:match_words = &matchpairs . ',\<if\>:\<fi\>'
 let s:match_words += ',\<do\>:\<done\>'
 let s:match_words += ',\<case\>:\<esac\>'
 call s:opt.let('b:match_words', s:match_words)
+call s:opt.remove('iskeyword', '.')
 
 let b:undo_ftplugin = s:opt.make_undo_ftplugin()
 
