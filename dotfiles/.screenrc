@@ -11,7 +11,6 @@ defkanji utf-8
 # bind ^E encoding euc
 # bind ^U encoding utf-8
 
-
 # idle 600
 # blanker
 # blankerprg /usr/bin/fortune -s
@@ -32,12 +31,33 @@ attrcolor b ".I"
 termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
 defbce on
 
-bind ^K copy
+# mouse support
+defmousetrack on
+
+
+
 bind ^O title
-bind h prev
-bind k
-bind l next
 bind w windowlist
+
+# split
+bind j eval 'split' 'focus down'
+bind k split
+bind l eval 'split -v' 'focus right'
+bind h split -v
+
+# moving across windows
+bind ^H focus left
+bind ^K focus up
+bind ^L focus right
+bind ^J focus down
+
+# close window
+bind c remove
+bind ^C remove
+
+# spawn another shell
+bind n screen
+bind ^N screen
 
 
 # more options:
