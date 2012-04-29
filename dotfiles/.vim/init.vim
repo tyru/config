@@ -768,7 +768,7 @@ Map [n] <Space>th :<C-u>tabedit<CR>:execute 'tabmove' (tabpagenr() isnot 1 ? tab
 
 " Execute most used command quickly {{{
 Map [n] <excmd>ee     :<C-u>edit<CR>
-Map [n] <excmd>w      :<C-u>write<CR>
+Map [n] <excmd>w      :<C-u>update<CR>
 Map [n] <excmd>q      :<C-u>quit<CR>
 " }}}
 " Edit/Apply .vimrc quickly {{{
