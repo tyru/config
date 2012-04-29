@@ -2940,32 +2940,6 @@ let g:simpletap#open_command = 'botright vnew'
 " fontzoom {{{
 let loaded_fontzoom = 1
 " }}}
-" surround {{{
-runtime! plugin/surround.vim
-
-" below config was originally github.com/kana/config 's plugin/surround_config.vim
-
-" Skip if the loaded plugin is not a modified version of the following:
-" http://github.com/kana/config/tree/master/vim/dot.vim/plugin/surround.vim
-if exists('g:loaded_surround') && exists('*SurroundRegister')
-    " for XML.
-    call SurroundRegister('g', '&', "&lt;\r&gt;")
-    call SurroundRegister('g', 'C', "<![CDATA[\r]]>")
-
-    " for various braces in Japanese language.
-    call SurroundRegister('g', 'jb', "（\r）")
-    call SurroundRegister('g', 'jB', "｛\r｝")
-    call SurroundRegister('g', 'jr', "［\r］")
-    call SurroundRegister('g', 'jk', "「\r」")
-    call SurroundRegister('g', 'jK', "『\r』")
-    call SurroundRegister('g', 'ja', "＜\r＞")
-    call SurroundRegister('g', 'jA', "≪\r≫")
-    call SurroundRegister('g', 'jy', "〈\r〉")
-    call SurroundRegister('g', 'jY', "《\r》")
-    call SurroundRegister('g', 'jt', "〔\r〕")
-    call SurroundRegister('g', 'js', "【\r】")
-endif
-" }}}
 " ftplugin/vim_fold.vim {{{
 augroup foldmethod-expr
   autocmd!
