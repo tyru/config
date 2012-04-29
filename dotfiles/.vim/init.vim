@@ -167,12 +167,6 @@ endif
 set noswapfile
 set updatecount=0
 
-" fsync() is slow...
-if has('unix')
-    set nofsync
-    set swapsync=
-endif
-
 " backup
 set backup
 let &backupdir = $MYVIMDIR . '/backup'
