@@ -1320,6 +1320,7 @@ MapAlterCommand t      tabedit
 MapAlterCommand sf     setf
 MapAlterCommand hg     helpgrep
 MapAlterCommand ds     diffsplit
+MapAlterCommand do     diffoff!
 
 " For typo.
 MapAlterCommand qw     wq
