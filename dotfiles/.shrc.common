@@ -81,6 +81,15 @@ function fatmen() {
     [ $# != 0 ] && n="$1"
     ps aux --sort=-rss | head -"$n"
 }
+if [ -x "`which column`" ]; then
+function mount() {
+    if [ $# -eq 0 ]; then
+        command mount | column -t
+    else
+        command mount "$@"
+    fi
+}
+fi
 
 
 # perlbrew
