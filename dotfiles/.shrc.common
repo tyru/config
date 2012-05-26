@@ -90,6 +90,16 @@ function mount() {
     fi
 }
 fi
+if [ -x "`which wakeonlan`" ]; then
+wol() {
+    addr=`getent ethers $1 2>/dev/null | sed -re 's/^(\S+).*/\1/'`
+    if [ "$addr" ]; then
+        wakeonlan "$addr"
+    else
+        echo 'Usage: wol {hostname-or-IP-address}'
+    fi
+}
+fi
 
 
 # perlbrew
