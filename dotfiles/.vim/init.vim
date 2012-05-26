@@ -2164,26 +2164,28 @@ if has('vim_starting')
         " So user can do something heavy process here.
         " (I'm a paranoia, eskk#table#new() is not so heavy.
         " But it loads autoload/vice.vim recursively)
-        let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
-        call t.add_map('~', '〜')
-        call t.add_map('zc', '©')
-        call t.add_map('zr', '®')
-        call t.add_map('vh', '☜')
-        call t.add_map('vj', '☟')
-        call t.add_map('vk', '☝')
-        call t.add_map('vl', '☞')
-        call t.add_map('jva', 'ゔぁ')
-        call t.add_map('jvi', 'ゔぃ')
-        call t.add_map('jvu', 'ゔ')
-        call t.add_map('jve', 'ゔぇ')
-        call t.add_map('jvo', 'ゔぉ')
-        call t.add_map('z ', '　')
-        " Input hankaku characters.
-        call t.add_map('(', '(')
-        call t.add_map(')', ')')
-        " It is better to register the word "Exposé" than to register this map :)
-        " call t.add_map('qe', 'é')
-        call eskk#register_mode_table('hira', t)
+        for [orgtable, mode] in [['rom_to_hira', 'hira'], ['rom_to_kata', 'kata']]
+            let t = eskk#table#new(orgtable.'*', orgtable)
+            call t.add_map('~', '〜')
+            call t.add_map('zc', '©')
+            call t.add_map('zr', '®')
+            call t.add_map('vh', '☜')
+            call t.add_map('vj', '☟')
+            call t.add_map('vk', '☝')
+            call t.add_map('vl', '☞')
+            call t.add_map('jva', 'ゔぁ')
+            call t.add_map('jvi', 'ゔぃ')
+            call t.add_map('jvu', 'ゔ')
+            call t.add_map('jve', 'ゔぇ')
+            call t.add_map('jvo', 'ゔぉ')
+            call t.add_map('z ', '　')
+            " Input hankaku characters.
+            call t.add_map('(', '(')
+            call t.add_map(')', ')')
+            " It is better to register the word "Exposé" than to register this map :)
+            " call t.add_map('qe', 'é')
+            call eskk#register_mode_table(mode, t)
+        endfor
     endfunction "}}}
 endif
 
