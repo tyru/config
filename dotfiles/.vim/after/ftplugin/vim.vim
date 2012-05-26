@@ -15,6 +15,7 @@ function! s:run()
     call opt.let('b:match_words', match_words)
 
     call opt.append('iskeyword', '#')
+    call opt.remove('iskeyword', ':')
     call opt.set('comments', ':"\,:\')
     call opt.unset('modeline')
 
