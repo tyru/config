@@ -425,6 +425,17 @@ MyAutocmd SwapExists * let v:swapchoice = 'o'
 
 MyAutocmd QuickfixCmdPost * QuickFix
 
+MyAutocmd QuickfixCmdPost * command! -buffer QFSearchAgain call s:qf_search_again()
+function! s:qf_search_again()
+    if !exists('w:quickfix_title')
+        return
+    endif
+    let @/ = substitute(w:quickfix_title, '^:vimgrep /', '', '')
+    setlocal hlsearch
+    execute 'normal!' "/\<C-o>"
+endfunction
+
+
 " InsertLeave, InsertEnter
 MyAutocmd InsertEnter * setlocal ignorecase
 
