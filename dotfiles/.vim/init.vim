@@ -2154,9 +2154,6 @@ let g:eskk#marker_popup = '#'
 let g:eskk#dictionary_save_count = 5
 
 
-" Disable "qkatakana". not ";katakanaq".
-" EskkMap -type=mode:hira:toggle-kata <Nop>
-
 
 if has('vim_starting')
     MyAutocmd User eskk-initialize-pre call s:eskk_initial_pre()
@@ -2190,10 +2187,11 @@ if has('vim_starting')
     endfunction "}}}
 endif
 
-" MyAutocmd User eskk-initialize-post call s:eskk_initial_post()
-" function! s:eskk_initial_post() "{{{
-"     EskkMap -remap jj <Plug>(eskk:disable)<Esc>
-" endfunction "}}}
+MyAutocmd User eskk-initialize-post call s:eskk_initial_post()
+function! s:eskk_initial_post() "{{{
+    " Disable "qkatakana", but ";katakanaq" works.
+    EskkMap -type=mode:hira:toggle-kata <Nop>
+endfunction "}}}
 
 
 " Experimental
