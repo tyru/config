@@ -2187,6 +2187,18 @@ if has('vim_starting')
             call eskk#register_mode_table(mode, t)
         endfor
     endfunction "}}}
+
+    " by @hinagishi
+    " function! s:eskk_initial_pre() "{{{
+    "     let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
+    "     call t.add_map(',', ', ')
+    "     call t.add_map('.', '.')
+    "     call eskk#register_mode_table('hira', t)
+    "     let t = eskk#table#new('rom_to_kata*', 'rom_to_kata')
+    "     call t.add_map(',', ', ')
+    "     call t.add_map('.', '.')
+    "     call eskk#register_mode_table('kata', t)
+    " endfunction "}}}
 endif
 
 MyAutocmd User eskk-initialize-post call s:eskk_initial_post()
