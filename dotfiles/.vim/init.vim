@@ -2204,7 +2204,8 @@ endif
 MyAutocmd User eskk-initialize-post call s:eskk_initial_post()
 function! s:eskk_initial_post() "{{{
     " Disable "qkatakana", but ";katakanaq" works.
-    EskkMap -type=mode:hira:toggle-kata <Nop>
+    " NOTE: This makes some eskk tests fail!
+    " EskkMap -type=mode:hira:toggle-kata <Nop>
 endfunction "}}}
 
 
