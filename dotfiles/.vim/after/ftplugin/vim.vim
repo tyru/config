@@ -17,7 +17,7 @@ function! s:run()
     call opt.append('iskeyword', '#')
     call opt.remove('iskeyword', ':')
     call opt.set('comments', ':"\,:\')
-    call opt.unset('modeline')
+    " call opt.unset('modeline')
 
     let b:undo_ftplugin = opt.make_undo_ftplugin()
 endfunction
