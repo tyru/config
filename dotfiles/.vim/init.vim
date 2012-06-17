@@ -1770,6 +1770,7 @@ function! s:cmd_tabpage_lookup_cd(args) "{{{
 endfunction "}}}
 function! s:is_root_project_dir(dir) "{{{
     return isdirectory(tyru#util#catfile(a:dir, '.git'))
+    \   || isdirectory(tyru#util#catfile(a:dir, '.hg'))
 endfunction "}}}
 function! s:lookup_repo(dir) "{{{
     " Assert isdirectory(a:dir)
