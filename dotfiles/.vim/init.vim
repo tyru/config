@@ -425,16 +425,6 @@ MyAutocmd SwapExists * let v:swapchoice = 'o'
 
 MyAutocmd QuickfixCmdPost * QuickFix
 
-MyAutocmd QuickfixCmdPost * command! -buffer QFSearchAgain call s:qf_search_again()
-function! s:qf_search_again()
-    if !exists('w:quickfix_title')
-        return
-    endif
-    let @/ = substitute(w:quickfix_title, '^:vimgrep /', '', '')
-    setlocal hlsearch
-    execute 'normal!' "/\<C-o>"
-endfunction
-
 
 " InsertLeave, InsertEnter
 MyAutocmd InsertEnter * setlocal ignorecase
@@ -1426,6 +1416,107 @@ Map [n] U  <Nop>
 DefMap [i] -expr bs-ctrl-] getline('.')[col('.') - 2]    ==# "\<C-]>" ? "\<BS>" : ''
 DefMap [c] -expr bs-ctrl-] getcmdline()[getcmdpos() - 2] ==# "\<C-]>" ? "\<BS>" : ''
 Map   [ic] -remap <C-]>     <C-]><bs-ctrl-]>
+" }}}
+" Add current line to quickfix. {{{
+" nnoremap <SID>(quickfix:add-curline) :<C-u>call <SID>quickfix_add_curline()<CR>
+command! QFAddCurrentLine call s:quickfix_add_curline()
+
+function! s:quickfix_add_curline()
+    let qf = {
+    \   'bufnr': bufnr('%'),
+    \   'lnum': line('.'),
+    \   'text': getline('.'),
+    \}
+    if s:quickfix_supported_quickfix_title()
+        call s:quickfix_add_curline_set_col(qf)
+    endif
+    call setqflist([qf], 'a')
+endfunction
+function! s:quickfix_add_curline_set_col(qf)
+    let qf = a:qf
+
+    let search_word = s:quickfix_get_search_word()
+    if search_word !=# ''
+        let idx = match(getline('.'), search_word[1:])
+        if idx isnot -1
+            let qf.col = idx + 1
+            let qf.vcol = 0
+        endif
+    endif
+endfunction
+" }}}
+" :QFSearchAgain {{{
+command! QFSearchAgain call s:qf_search_again()
+function! s:qf_search_again()
+    let qf_winnr = s:quickfix_get_winnr()
+    if !qf_winnr
+        copen
+    endif
+    let search_word = s:quickfix_get_search_word()
+    if search_word !=# ''
+        let @/ = search_word[1:]
+        setlocal hlsearch
+        try
+            execute 'normal!' "/\<CR>"
+        catch
+            echohl ErrorMsg
+            echomsg v:exception
+            echohl None
+        endtry
+    endif
+endfunction
+" }}}
+
+" Quickfix utility functions {{{
+function! s:quickfix_get_winnr()
+    for winnr in range(1, winnr('$'))
+        if getwinvar(winnr, '&buftype') ==# 'quickfix'
+            return winnr
+        endif
+    endfor
+    return 0
+endfunction
+function! s:quickfix_exists_window()
+    return !!s:quickfix_get_winnr()
+endfunction
+function! s:quickfix_supported_quickfix_title()
+    return v:version >=# 703
+endfunction
+function! s:quickfix_get_search_word()
+    " NOTE: This function returns a string starting with "/"
+    " if previous search word is found.
+    " because if this function returns an empty string
+    " as a failure return value, ":vimgrep /" also returns an empty string.
+
+    if !s:quickfix_supported_quickfix_title()
+        return ''
+    endif
+
+    let qf_winnr = s:quickfix_get_winnr()
+    if !qf_winnr
+        copen
+    endif
+
+    try
+        let qf_title = getwinvar(qf_winnr, 'quickfix_title')
+        if qf_title ==# ''
+            return ''
+        endif
+
+        " NOTE: Supported only :vim[grep] command.
+        let rx = '^:\s*\<vim\%[grep]\>\s*\(/.*\)'
+        let m = matchlist(qf_title, rx)
+        if empty(m)
+            return ''
+        endif
+
+        return m[1]
+    finally
+        if !qf_winnr
+            cclose
+        endif
+    endtry
+endfunction
 " }}}
 
 " Mouse {{{
