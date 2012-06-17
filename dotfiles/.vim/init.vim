@@ -1096,17 +1096,24 @@ Map [n] ,Y   "*y$
 " Back to col '$' when current col is right of col '$'. {{{
 "
 " 1. move to the last col
-" when over the last col ('virtualedit').
+" when over the last col ('virtualedit') and getregtype(v:register) ==# 'v'.
 " 2. do not insert " " before inserted text
-" when characterwise.
+" when characterwise and getregtype(v:register) ==# 'v'.
 
-if has('virtualedit') && &virtualedit =~# '\<all\>'
-    DefMap [n] -expr $-if-right-of-$    (col('.') >= col('$') ? '$' : '')
-else
-    DefMap [n]       $-if-right-of-$    <Nop>
-endif
-DefMap [n] -expr paste-nicely       getline('.') == '' ? 'p0"_x' : 'p'
-Map [n] -remap -expr p getregtype(v:register) ==# 'v' ? emap#compile_map('n', '<$-if-right-of-$><paste-nicely>') : (v:register !=# '' ? '"'.v:register : '').'<paste-nicely>'
+function! s:paste_characterwise_nicely()
+    let reg = '"' . v:register
+    let move_to_last_col =
+    \   (has('virtualedit')
+    \       && &virtualedit =~# '\<all\>'
+    \       && col('.') >= col('$'))
+    \   ? '$' : ''
+    let paste =
+    \   reg . (getline('.') ==# '' ? 'P' : 'p')
+    return getregtype(v:register) ==# 'v' ?
+    \   move_to_last_col . paste :
+    \   reg . 'p'
+endfunction
+Map [n] -expr p <SID>paste_characterwise_nicely()
 " }}}
 " <Space>[hjkl] for <C-w>[hjkl] {{{
 Map [n] -silent <Space>j <C-w>j
