@@ -150,6 +150,11 @@ javascript <<EOS
     );
 EOS
 
+noremap <F1> <Nop>
+" Vimperator has only Normal, Visual, Insert, Command-line mode.
+" noremap! <F1> <Nop>
+
+
 " ~ n ~ {{{
 nnoremap ZZ <Nop>
 
