@@ -2235,105 +2235,94 @@ if has('vim_starting')
     \}
 endif
 
+if 1    " for debugging default behavior.
+    let g:eskk#egg_like_newline = 0
+    let g:eskk#egg_like_newline_completion = 0
+    let g:eskk#show_candidates_count = 2
+    let g:eskk#show_annotation = 1
+    let g:eskk#rom_input_style = 'msime'
+    let g:eskk#keep_state = 1
+    let g:eskk#keep_state_beyond_buffer = 1
+    let g:eskk#marker_henkan = '$'
+    let g:eskk#marker_okuri = '*'
+    let g:eskk#marker_henkan_select = '@'
+    let g:eskk#marker_jisyo_touroku = '?'
+    let g:eskk#dictionary_save_count = 5
 
-let g:eskk#egg_like_newline = 1
-let g:eskk#egg_like_newline_completion = 1
-let g:eskk#show_candidates_count = 2
-let g:eskk#show_annotation = 1
-let g:eskk#rom_input_style = 1 ? 'msime' : 'skk'
-let g:eskk#keep_state = 1
-let g:eskk#keep_state_beyond_buffer = 1
+    if has('vim_starting')
+        " MyAutocmd User eskk-initialize-pre call s:eskk_initial_pre()
+        function! s:eskk_initial_pre() "{{{
+            " User can be allowed to modify
+            " eskk global variables (`g:eskk#...`)
+            " until `User eskk-initialize-pre` event.
+            " So user can do something heavy process here.
+            " (I'm a paranoia, eskk#table#new() is not so heavy.
+            " But it loads autoload/vice.vim recursively)
+            for [orgtable, mode] in [['rom_to_hira', 'hira'], ['rom_to_kata', 'kata']]
+                let t = eskk#table#new(orgtable.'*', orgtable)
+                call t.add_map('~', '〜')
+                call t.add_map('vc', '©')
+                call t.add_map('vr', '®')
+                call t.add_map('vh', '☜')
+                call t.add_map('vj', '☟')
+                call t.add_map('vk', '☝')
+                call t.add_map('vl', '☞')
+                call t.add_map('jva', 'ゔぁ')
+                call t.add_map('jvi', 'ゔぃ')
+                call t.add_map('jvu', 'ゔ')
+                call t.add_map('jve', 'ゔぇ')
+                call t.add_map('jvo', 'ゔぉ')
+                call t.add_map('z ', '　')
+                " Input hankaku characters.
+                call t.add_map('(', '(')
+                call t.add_map(')', ')')
+                " It is better to register the word "Exposé" than to register this map :)
+                call t.add_map('qe', 'é')
+                if g:eskk#rom_input_style ==# 'skk'
+                    call t.add_map('zw', 'w', 'z')
+                endif
 
-let g:eskk#marker_henkan = '$'
-let g:eskk#marker_okuri = '*'
-let g:eskk#marker_henkan_select = '@'
-let g:eskk#marker_jisyo_touroku = '?'
-let g:eskk#marker_popup = '#'
+                call eskk#register_mode_table(mode, t)
+            endfor
+        endfunction "}}}
 
-let g:eskk#dictionary_save_count = 5
+        " by @hinagishi
+        " function! s:eskk_initial_pre() "{{{
+        "     let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
+        "     call t.add_map(',', ', ')
+        "     call t.add_map('.', '.')
+        "     call eskk#register_mode_table('hira', t)
+        "     let t = eskk#table#new('rom_to_kata*', 'rom_to_kata')
+        "     call t.add_map(',', ', ')
+        "     call t.add_map('.', '.')
+        "     call eskk#register_mode_table('kata', t)
+        " endfunction "}}}
 
+        MyAutocmd User eskk-initialize-post call s:eskk_initial_post()
+        function! s:eskk_initial_post() "{{{
+            " Disable "qkatakana", but ";katakanaq" works.
+            " NOTE: This makes some eskk tests fail!
+            " EskkMap -type=mode:hira:toggle-kata <Nop>
 
+            " map! <C-j> <Plug>(eskk:enable)
+            " EskkMap <C-j> <Nop>
+            "
+            " EskkMap U <Plug>(eskk:undo-kakutei)
 
-if has('vim_starting')
-    MyAutocmd User eskk-initialize-pre call s:eskk_initial_pre()
-    function! s:eskk_initial_pre() "{{{
-        " User can be allowed to modify
-        " eskk global variables (`g:eskk#...`)
-        " until `User eskk-initialize-pre` event.
-        " So user can do something heavy process here.
-        " (I'm a paranoia, eskk#table#new() is not so heavy.
-        " But it loads autoload/vice.vim recursively)
-        for [orgtable, mode] in [['rom_to_hira', 'hira'], ['rom_to_kata', 'kata']]
-            let t = eskk#table#new(orgtable.'*', orgtable)
-            call t.add_map('~', '〜')
-            call t.add_map('zc', '©')
-            call t.add_map('zr', '®')
-            call t.add_map('vh', '☜')
-            call t.add_map('vj', '☟')
-            call t.add_map('vk', '☝')
-            call t.add_map('vl', '☞')
-            call t.add_map('jva', 'ゔぁ')
-            call t.add_map('jvi', 'ゔぃ')
-            call t.add_map('jvu', 'ゔ')
-            call t.add_map('jve', 'ゔぇ')
-            call t.add_map('jvo', 'ゔぉ')
-            call t.add_map('z ', '　')
-            " Input hankaku characters.
-            call t.add_map('(', '(')
-            call t.add_map(')', ')')
-            " It is better to register the word "Exposé" than to register this map :)
-            " call t.add_map('qe', 'é')
-            call eskk#register_mode_table(mode, t)
-        endfor
-    endfunction "}}}
+            " EskkMap jj <Esc>
+            " EskkMap -no-unique jj hoge
+        endfunction "}}}
+    endif
 
-    " by @hinagishi
-    " function! s:eskk_initial_pre() "{{{
-    "     let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
-    "     call t.add_map(',', ', ')
-    "     call t.add_map('.', '.')
-    "     call eskk#register_mode_table('hira', t)
-    "     let t = eskk#table#new('rom_to_kata*', 'rom_to_kata')
-    "     call t.add_map(',', ', ')
-    "     call t.add_map('.', '.')
-    "     call eskk#register_mode_table('kata', t)
-    " endfunction "}}}
+    " Debug
+    command! -bar EskkDumpBuftable PP! eskk#get_buftable().dump()
+    command! -bar EskkDumpTable    PP! eskk#table#<args>#load()
+    " EskkMap lhs rhs
+    " EskkMap -silent lhs2 rhs
+    " EskkMap -unique lhs2 foo
+    " EskkMap -expr lhs3 {'foo': 'hoge'}.foo
+    " EskkMap -noremap lhs4 rhs
 endif
-
-MyAutocmd User eskk-initialize-post call s:eskk_initial_post()
-function! s:eskk_initial_post() "{{{
-    " Disable "qkatakana", but ";katakanaq" works.
-    " NOTE: This makes some eskk tests fail!
-    " EskkMap -type=mode:hira:toggle-kata <Nop>
-endfunction "}}}
-
-
-" Experimental
-
-" map! <C-j> <Plug>(eskk:enable)
-" EskkMap <C-j> <Nop>
-"
-" EskkMap U <Plug>(eskk:undo-kakutei)
-
-
-
-" Debug
-
-command! -bar EskkDumpBuftable PP! eskk#get_buftable().dump()
-command! -bar EskkDumpTable    PP! eskk#table#<args>#load()
-
-" let g:eskk#cache_table_map = 0
-"
-" inoremap <C-g> hoge
-"
-" inoremap <C-l> <C-o><C-l>
-"
-" EskkMap lhs rhs
-" EskkMap -silent lhs2 rhs
-" EskkMap -unique lhs2 foo
-" EskkMap -expr lhs3 {'foo': 'hoge'}.foo
-" EskkMap -noremap lhs4 rhs
-
 " }}}
 " restart {{{
 command!
