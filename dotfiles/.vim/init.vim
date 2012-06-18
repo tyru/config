@@ -1435,6 +1435,7 @@ function! s:quickfix_add_curline()
     \   'text': getline('.'),
     \}
     if s:quickfix_supported_quickfix_title()
+        " Set 'qf.col' and 'qf.vcol'.
         call s:quickfix_add_curline_set_col(qf)
     endif
     call setqflist([qf], 'a')
