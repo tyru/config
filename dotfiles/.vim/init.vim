@@ -1744,7 +1744,7 @@ function! s:cmd_rename(...) "{{{
 
     try
         call rename(from, to)
-        if from !=# expand('%') && filereadable(to)
+        if from ==# expand('%') && filereadable(to)
             execute 'edit' to
         endif
     catch
