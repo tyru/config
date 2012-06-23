@@ -1425,27 +1425,35 @@ DefMap [c] -expr bs-ctrl-] getcmdline()[getcmdpos() - 2] ==# "\<C-]>" ? "\<BS>" 
 Map   [ic] -remap <C-]>     <C-]><bs-ctrl-]>
 " }}}
 " Add current line to quickfix. {{{
-" nnoremap <SID>(quickfix:add-curline) :<C-u>call <SID>quickfix_add_curline()<CR>
-command! QFAddCurrentLine call s:quickfix_add_curline()
+command! -range QFAddCurrentLine <line1>,<line2>call s:quickfix_add_range()
 
-function! s:quickfix_add_curline()
+
+function! s:quickfix_add_range() range
+    for lnum in range(a:firstline, a:lastline)
+        call s:quickfix_add_line(lnum)
+    endfor
+endfunction
+
+function! s:quickfix_add_line(lnum)
+    let lnum = a:lnum =~# '^\d\+$' ? a:lnum : line(a:lnum)
     let qf = {
     \   'bufnr': bufnr('%'),
-    \   'lnum': line('.'),
-    \   'text': getline('.'),
+    \   'lnum': lnum,
+    \   'text': getline(lnum),
     \}
     if s:quickfix_supported_quickfix_title()
         " Set 'qf.col' and 'qf.vcol'.
-        call s:quickfix_add_curline_set_col(qf)
+        call s:quickfix_add_line_set_col(lnum, qf)
     endif
     call setqflist([qf], 'a')
 endfunction
-function! s:quickfix_add_curline_set_col(qf)
+function! s:quickfix_add_line_set_col(lnum, qf)
+    let lnum = a:lnum
     let qf = a:qf
 
     let search_word = s:quickfix_get_search_word()
     if search_word !=# ''
-        let idx = match(getline('.'), search_word[1:])
+        let idx = match(getline(lnum), search_word[1:])
         if idx isnot -1
             let qf.col = idx + 1
             let qf.vcol = 0
