@@ -1429,7 +1429,7 @@ DefMap [c] -expr bs-ctrl-] getcmdline()[getcmdpos() - 2] ==# "\<C-]>" ? "\<BS>" 
 Map   [ic] -remap <C-]>     <C-]><bs-ctrl-]>
 " }}}
 " Add current line to quickfix. {{{
-command! -range QFAddCurrentLine <line1>,<line2>call s:quickfix_add_range()
+command! -range QFAddLine <line1>,<line2>call s:quickfix_add_range()
 
 
 function! s:quickfix_add_range() range
