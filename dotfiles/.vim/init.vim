@@ -1155,11 +1155,15 @@ command!
 Map [n] -silent <C-t> :<C-u>SetProjectName<CR>
 command! -bar -nargs=* SetProjectName call s:cmd_set_project_name(<q-args>)
 function! s:cmd_set_project_name(name) "{{{
+    let old_title = exists('t:title') ? t:title : ''
     if a:name == ''
-        let default = exists('t:title') ? t:title : ''
-        let t:title = input('Project name?:', default)
+        let t:title = input('Project name?:', old_title)
     else
         let t:title = a:name
+    endif
+    if t:title !=# old_title
+        " :redraw does not update tabline.
+        redraw!
     endif
 endfunction "}}}
 " }}}
