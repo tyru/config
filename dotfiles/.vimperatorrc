@@ -615,6 +615,21 @@ EOM
 nnoremap -urls=www\\.slideshare\\.net l :slideshare next<CR>
 nnoremap -urls=www\\.slideshare\\.net h :slideshare prev<CR>
 " }}}
+" コマンドラインで<Esc>を押してもコマンドライン履歴に残す {{{
+" https://gist.github.com/2944628
+javascript <<EOS
+mappings.addUserMap(
+    [modes.COMMAND_LINE],
+    ['<Esc>'],
+    'I wish to escape to the blue sky.',
+    (function () {
+        this._history.save();
+        events.onEscape();
+    }).bind(commandline),
+    {}
+);
+EOS
+" }}}
 " }}}
 "-----------------------------------------------------------------
 
