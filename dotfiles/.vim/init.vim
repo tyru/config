@@ -1170,6 +1170,21 @@ endfunction "}}}
 " }}}
 " vmap {{{
 Map [v] <C-g> g<C-g>
+
+Map [v] -silent y y:<C-u>call <SID>remove_trailing_spaces_V()<CR>
+function! s:remove_trailing_spaces_V()
+    let regname = v:register
+    if getregtype(regname)[0] !=# "\<C-v>"
+        return ''
+    endif
+    let value = getreg(regname, 1)
+    let expr = 'substitute(v:val, '.string('\v\s+$').', "", "")'
+    let value = s:splitmapjoin(value, '\n', expr, "\n")
+    call setreg(regname, value, "\<C-v>")
+endfunction
+function! s:splitmapjoin(str, pattern, expr, sep)
+    return join(map(split(a:str, a:pattern, 1), a:expr), a:sep)
+endfunction
 " }}}
 " map! {{{
 Map [ic] <C-f> <Right>
