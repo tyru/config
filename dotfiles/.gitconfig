@@ -1,8 +1,9 @@
-# vim:set noet:
+# vim:noet:
 
+[include]
+	path = .gitconfig.secret
 [github]
 	user = tyru
-	# My github token here!
 [core]
 	excludesfile = ~/.gitignore.base
 	editor = vim
@@ -36,13 +37,14 @@
 	sl = stash list
 	sp = stash pop
 	ss = stash save
-	st = status
+	st = !"git status; git stash list"
 	sub = submodule
 	subadd = submodule add
 	subfor = submodule foreach
 	view = log --pretty=oneline --abbrev-commit --graph --source --tags --branches
 	wh = whatchanged
 	zip = archive --format=zip
+	shortrev = rev-parse --short
 [color]
 	branch = auto
 	diff = auto
