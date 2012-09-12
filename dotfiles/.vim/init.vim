@@ -3092,6 +3092,8 @@ let g:EasyGrepInvertWholeWord = 1
 " }}}
 " gist {{{
 let g:gist_detect_filetype = 1
+let g:gist_open_browser_after_post = 1
+let g:gist_browser_command = ":OpenBrowser %URL%"
 " }}}
 " quickey {{{
 let g:quickey_merge_window_hide_vim_window_move_cursor = 1
