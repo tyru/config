@@ -2579,12 +2579,30 @@ Map [n] -silent <prompt>d  :<C-u>Unite menu:ff<CR>
 
 MyAutocmd FileType unite call s:unite_settings()
 
+let g:unite_winheight = 5    " default winheight.
+let g:unite_winwidth  = 10    " default winwidth.
 function! s:unite_settings() "{{{
     Map [i] -buffer -remap <BS> <Plug>(unite_delete_backward_path)
     Map [n] -buffer -remap <Space><Space> <Plug>(unite_toggle_mark_current_candidate)
-    " Map <Plug>(unite_exit) to <Esc> with a small tweak.
-    Map [n] -buffer -remap -expr <Esc> input('Exit unite?[y/N]:') =~? '^y\%[es]$' ? "\<Plug>(unite_exit)" : ''
+
+    Map [i] -buffer -remap <C-n> <SID>(expand_unite_window)<Plug>(unite_select_next_line)
+    Map [i] -buffer -remap <C-p> <SID>(expand_unite_window)<Plug>(unite_select_previous_line)
 endfunction "}}}
+
+" Expand current unite window width/height 2/3
+Map [i] -remap <SID>(expand_unite_window) <Plug>(unite_insert_leave)<SID>(expand_unite_window_fn)<Plug>(unite_insert_enter)
+
+Map [n] -silent <SID>(expand_unite_window_fn) :<C-u>call <SID>unite_resize_window(&columns / 3 * 2, &lines / 3 * 2)<CR>
+function! s:unite_resize_window(width, height)
+    if g:unite_enable_split_vertically
+        execute 'vertical resize' a:width
+    else
+        execute 'resize' a:height
+    endif
+
+    Map [i] -buffer -remap <C-n> <Plug>(unite_select_next_line)
+    Map [i] -buffer -remap <C-p> <Plug>(unite_select_previous_line)
+endfunction
 " }}}
 " }}}
 " Gtags {{{
