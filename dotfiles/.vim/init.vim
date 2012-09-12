@@ -649,6 +649,7 @@ let g:narrow_allow_overridingp = 1
 " }}}
 " operator-replace {{{
 Map [nvo] -remap <operator>p  <Plug>(operator-replace)
+Map [vo] -remap p <Plug>(operator-replace)
 " }}}
 " operator-camelize {{{
 Map [nvo] -remap <operator>c <Plug>(operator-camelize-toggle)
