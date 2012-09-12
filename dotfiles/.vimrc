@@ -9,8 +9,17 @@ else
 endif
 let $MYVIMRC = $MYVIMDIR . '/init.vim'
 
-try
+function! s:load_init_vim()
+    " Use plain vim when vim was invoked by 'sudo'
+    if exists('$SUDO_USER')
+        return
+    endif
+
     source $MYVIMRC
+endfunction
+
+try
+    call s:load_init_vim()
 catch
     echoerr 'Disabled loading .vimrc ...: ['.v:exception.'] at ['.v:throwpoint.']'
 endtry
