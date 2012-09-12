@@ -119,6 +119,9 @@ bindkey     " "         my-expand-abbrev
 # via http://d.hatena.ne.jp/hiboma/20061005/1160026514
 chpwd () { ll }
 # >>>
+# <<<
+RPROMPT="$RPROMPT%T "
+# >>>
 # gitのブランチ名を右プロンプトに表示 <<<
 # http://d.hatena.ne.jp/mollifier/20090814/p1
 # http://www.pshared.net/diary/20100708.html
@@ -133,7 +136,7 @@ precmd () {
     LANG=en_US.UTF-8 vcs_info
     [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
 }
-RPROMPT="%1(v|%F{green}%1v%f|)"
+RPROMPT="$RPROMPT%1(v|%F{green}%1v%f|)"
 # >>>
 # 補完時に色んな情報を出す <<<
 # via http://d.hatena.ne.jp/voidy21/20090902/1251918174
