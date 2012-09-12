@@ -503,10 +503,6 @@ call emap#set_sid(s:SID())
 " call emap#set_sid_from_sfile(expand('<sfile>'))
 
 
-let g:arpeggio_timeoutlen = 40
-call arpeggio#load()
-
-
 call altercmd#load()
 command!
 \   -bar -nargs=+
@@ -1200,25 +1196,6 @@ Map [ic] <C-e> <End>
 Map [ic] <C-d> <Del>
 
 if 1
-
-silent Arpeggio noremap! $( ()<Left>
-silent Arpeggio noremap! 4[ []<Left>
-silent Arpeggio noremap! $< <><Left>
-silent Arpeggio noremap! ${ {}<Left>
-
-silent Arpeggio noremap! $' ''<Left>
-silent Arpeggio noremap! *" ""<Left>
-silent Arpeggio noremap! $` ``<Left>
-
-silent Arpeggio noremap! $) \(\)<Left><Left>
-silent Arpeggio noremap! 4] \[\]<Left><Left>
-silent Arpeggio noremap! $> \<\><Left><Left>
-silent Arpeggio noremap! $} \{\}<Left><Left>
-
-silent Arpeggio noremap! #( 「」<Left>
-silent Arpeggio noremap! 3[ 『』<Left>
-silent Arpeggio noremap! #< 【】<Left>
-silent Arpeggio noremap! #{ 〔〕<Left>
 
 else
 
