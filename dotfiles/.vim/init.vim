@@ -411,6 +411,7 @@ set nrformats=hex
 set shortmess=aI
 set switchbuf=useopen,usetab
 set textwidth=0
+set colorcolumn=80
 set viminfo='50,h,f1,n$HOME/.viminfo
 set matchpairs+=<:>
 set showbreak=↪
