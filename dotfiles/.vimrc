@@ -21,5 +21,29 @@ endfunction
 try
     call s:load_init_vim()
 catch
-    echoerr 'Disabled loading .vimrc ...: ['.v:exception.'] at ['.v:throwpoint.']'
+    echohl ErrorMsg
+    echomsg 'an error occurred... starting as debug mode.'
+    echo    "\n"
+    echomsg 'v:exception = '.v:exception
+    echomsg 'v:throwpoint = '.v:throwpoint
+    echohl None
+
+    let lnum = matchstr(v:throwpoint, '\C\%(line\|行\) \zs\d\+')
+    if lnum != ''
+        " Highlight error line with quickfix.
+        call setqflist([{
+        \   'filename': $MYVIMRC,
+        \   'lnum': lnum,
+        \   'text': v:exception,
+        \}])
+
+        " Open .vimrc
+        let open = argc() is 0 ? 'edit' : 'tabedit'
+        silent execute open $MYVIMRC
+
+        " Go to error line.
+        execute ':' . lnum
+        " Open quickfix.
+        copen
+    endif
 endtry
