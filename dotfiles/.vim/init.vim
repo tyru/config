@@ -1,4 +1,8 @@
 " vim:set fen fdm=marker:
+"
+" See also: ~/.vimrc
+"
+
 " Basic {{{
 scriptencoding utf-8
 
