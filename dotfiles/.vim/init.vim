@@ -1900,7 +1900,9 @@ function! s:cmd_tabpage_lookup_cd(args) "{{{
     return s:lookup_repo(dir)
 endfunction "}}}
 function! s:is_root_project_dir(dir) "{{{
+    " .git may be a file when its repository is a submodule.
     return isdirectory(tyru#util#catfile(a:dir, '.git'))
+    \   || filereadable(tyru#util#catfile(a:dir, '.git'))
     \   || isdirectory(tyru#util#catfile(a:dir, '.hg'))
 endfunction "}}}
 function! s:lookup_repo(dir) "{{{
