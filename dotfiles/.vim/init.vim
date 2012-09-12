@@ -1882,7 +1882,7 @@ command!
 MapAlterCommand qf QuickFix
 " }}}
 " :TabpageLookupCD - Set t:cwd to root directory of project working tree {{{
-Map [n] <Space>cd :<C-u>TabpageLookupCD %:p:h<CR>
+Map [n] cd :<C-u>TabpageLookupCD %:p:h<CR>
 
 command!
 \   -bar -complete=dir -nargs=?
