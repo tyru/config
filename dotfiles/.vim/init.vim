@@ -138,6 +138,10 @@ endfunction
 " shift
 set shiftround
 set shiftwidth=4
+if v:version > 703 || v:version is 703 && has('patch629')
+    " Follow 'tabstop' value.
+    set shiftwidth=0
+endif
 
 " completion
 set complete=.,w,b,u,t,i,d,k,kspell
