@@ -876,8 +876,9 @@ function! s:toggle_option(option_name) "{{{
 endfunction "}}}
 
 function! s:advance_state(state, elem) "{{{
-    let curidx = tyru#util#get_idx(a:state, a:elem, 0)
-    return a:state[tyru#util#has_idx(a:state, curidx + 1) ? curidx + 1 : 0]
+    let curidx = index(a:state, a:elem)
+    let curidx = curidx is -1 ? 0 : curidx
+    return a:state[index(a:state, curidx + 1) isnot -1 ? curidx + 1 : 0]
 endfunction "}}}
 
 function! s:advance_option_state(state, optname) "{{{
@@ -978,7 +979,7 @@ function! s:move_current_winnr_to_head(winnr_list) "{{{
     let winnr_list = a:winnr_list
     let curwinnr = winnr()
     let counter = 0
-    while tyru#util#has_idx(winnr_list, counter)
+    while index(winnr_list, counter) isnot -1
         let nr = winnr_list[counter]
         if curwinnr ==# nr
             call remove(winnr_list, counter)
