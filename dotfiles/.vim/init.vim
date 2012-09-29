@@ -108,6 +108,7 @@ command!
 " }}}
 " Options {{{
 
+" Reset all options except 'runtimepath'.
 let s:tmp = &runtimepath
 set all&
 let &runtimepath = s:tmp
