@@ -33,6 +33,14 @@ function! s:SNR(map) "{{{
     return printf("<SNR>%d_%s", s:SID(), a:map)
 endfunction "}}}
 
+" e.g.) s:has_plugin('eskk') ? 'yes' : 'no'
+function! s:has_plugin(name)
+    let nosuffix = a:name =~? '\.vim$' ? substitute(a:name, '\c\.vim$', '', '') : a:name
+    let suffix   = a:name =~? '\.vim$' ? a:name : a:name . '.vim'
+    return &rtp =~# '\c\<' . nosuffix . '\>'
+    \   || globpath(&rtp, 'autoload/' . suffix) != ''
+endfunction
+
 " }}}
 " Commands {{{
 augroup vimrc
@@ -318,6 +326,7 @@ function! s:statusline() "{{{
     endif
 
     if !get(g:, 'cfi_disable')
+    \   && s:has_plugin('current-func-info')
         let s .= '%( | %{cfi#format("%s()", "")}%)'
     endif
 
@@ -446,6 +455,48 @@ set viminfo='50,h,f1,n$HOME/.viminfo
 set matchpairs+=<:>
 set showbreak=↪
 " }}}
+" Initializing {{{
+
+if !exists('$VIMRC_DEBUG')
+    call rtputil#bundle()
+else
+    " TODO: Reduce dependency plugins.
+
+    " Basic plugins
+    call rtputil#append('~/.vim/bundle/tyru')
+    call rtputil#append('~/.vim/bundle/vital.vim')
+    call rtputil#append('~/.vim/bundle/emap.vim')
+    call rtputil#append('~/.vim/bundle/vim-altercmd')
+
+    " Useful plugins for debug
+    call rtputil#append('~/.vim/bundle/dutil.vim')
+    call rtputil#append('~/.vim/bundle/vim-prettyprint')
+    call rtputil#append('~/.vim/bundle/restart.vim')
+
+    " Load plugins to debug
+    call rtputil#append('~/.vim/bundle/eskk.vim')
+    call rtputil#append('~/.vim/bundle/neocomplcache')
+endif
+
+command! -bar HelpTagsAll call rtputil#helptags()
+HelpTagsAll
+
+
+call emap#load('noprefix')    " Define :EmMap as :Map
+" call emap#set_sid_from_vimrc()
+call emap#set_sid(s:SID())
+" call emap#set_sid_from_sfile(expand('<sfile>'))
+
+
+call altercmd#load()
+command!
+\   -bar -nargs=+
+\   MapAlterCommand
+\   CAlterCommand <args> | AlterCommand <cmdwin> <args>
+
+
+call dutil#load()
+" }}}
 " Autocmd {{{
 
 " colorscheme
@@ -519,28 +570,6 @@ augroup vimrc-auto-mkdir
     endfunction
 augroup END " }}}
 
-" }}}
-" Initializing {{{
-
-call rtputil#bundle()
-command! -bar HelpTagsAll call rtputil#helptags()
-HelpTagsAll
-
-
-call emap#load('noprefix')    " Define :EmMap as :Map
-" call emap#set_sid_from_vimrc()
-call emap#set_sid(s:SID())
-" call emap#set_sid_from_sfile(expand('<sfile>'))
-
-
-call altercmd#load()
-command!
-\   -bar -nargs=+
-\   MapAlterCommand
-\   CAlterCommand <args> | AlterCommand <cmdwin> <args>
-
-
-call dutil#load()
 " }}}
 " Mappings and/or Abbreviations {{{
 
@@ -635,95 +664,99 @@ Map [nvo] x "_x
 Map [nvo] <operator>e =
 
 
-" operator-adjust {{{
-call operator#user#define('adjust', 'Op_adjust_window_height')
-function! Op_adjust_window_height(motion_wiseness)
-  execute (line("']") - line("'[") + 1) 'wincmd' '_'
-  normal! `[zt
-endfunction
+if s:has_plugin('operator-user')
 
-Map [nvo] -remap <operator>adj <Plug>(operator-adjust)
-" }}}
-" operator-sort {{{
-call operator#user#define_ex_command('sort', 'sort')
-Map [nvo] -remap <operator>s <Plug>(operator-sort)
-" }}}
-" operator-retab {{{
-call operator#user#define_ex_command('retab', 'retab')
-Map [nvo] -remap <operator>t <Plug>(operator-retab)
-" }}}
-" operator-join {{{
-call operator#user#define_ex_command('join', 'join')
-Map [nvo] -remap <operator>j <Plug>(operator-join)
-" }}}
-" operator-uniq {{{
-call operator#user#define_ex_command('uniq', 'sort u')
-Map [nvo] -remap <operator>u <Plug>(operator-uniq)
-" }}}
-" operator-reverse-lines {{{
-Map [nvo] -remap <operator>rl <Plug>(operator-reverse-lines)
-" }}}
-" operator-reverse-text {{{
-Map [nvo] -remap <operator>rw <Plug>(operator-reverse-text)
-" }}}
-" operator-narrow {{{
-call operator#user#define_ex_command('narrow', 'Narrow')
+    " operator-adjust {{{
+    call operator#user#define('adjust', 'Op_adjust_window_height')
+    function! Op_adjust_window_height(motion_wiseness)
+      execute (line("']") - line("'[") + 1) 'wincmd' '_'
+      normal! `[zt
+    endfunction
 
-Map [nvo] -remap <operator>na <Plug>(operator-narrow)
-Map [nvo]        <operator>nw :<C-u>Widen<CR>
+    Map [nvo] -remap <operator>adj <Plug>(operator-adjust)
+    " }}}
+    " operator-sort {{{
+    call operator#user#define_ex_command('sort', 'sort')
+    Map [nvo] -remap <operator>s <Plug>(operator-sort)
+    " }}}
+    " operator-retab {{{
+    call operator#user#define_ex_command('retab', 'retab')
+    Map [nvo] -remap <operator>t <Plug>(operator-retab)
+    " }}}
+    " operator-join {{{
+    call operator#user#define_ex_command('join', 'join')
+    Map [nvo] -remap <operator>j <Plug>(operator-join)
+    " }}}
+    " operator-uniq {{{
+    call operator#user#define_ex_command('uniq', 'sort u')
+    Map [nvo] -remap <operator>u <Plug>(operator-uniq)
+    " }}}
+    " operator-reverse-lines {{{
+    Map [nvo] -remap <operator>rl <Plug>(operator-reverse-lines)
+    " }}}
+    " operator-reverse-text {{{
+    Map [nvo] -remap <operator>rw <Plug>(operator-reverse-text)
+    " }}}
+    " operator-narrow {{{
+    call operator#user#define_ex_command('narrow', 'Narrow')
 
-let g:narrow_allow_overridingp = 1
-" }}}
-" operator-replace {{{
-Map [nvo] -remap <operator>p  <Plug>(operator-replace)
-Map [vo] -remap p <Plug>(operator-replace)
-" }}}
-" operator-camelize {{{
-Map [nvo] -remap <operator>c <Plug>(operator-camelize-toggle)
-let g:operator_camelize_all_uppercase_action = 'camelize'
-let g:operator_decamelize_all_uppercase_action = 'lowercase'
+    Map [nvo] -remap <operator>na <Plug>(operator-narrow)
+    Map [nvo]        <operator>nw :<C-u>Widen<CR>
 
-
-" Test: g:operator_camelize_detect_function
-" function! Camelized(word)
-"     return 0
-" endfunction
-" let g:operator_camelize_detect_function = 'Camelized'
-" E704: Funcref variable name must start with a capital: g:operator_camelize_detect_function
-" let g:operator_camelize_detect_function = function('Camelized')
-
-" Test: mappings
-" Map [nvo] -remap <operator>c <Plug>(operator-camelize)
-" Map [nvo] -remap <operator>C <Plug>(operator-decamelize)
+    let g:narrow_allow_overridingp = 1
+    " }}}
+    " operator-replace {{{
+    Map [nvo] -remap <operator>p  <Plug>(operator-replace)
+    Map [vo] -remap p <Plug>(operator-replace)
+    " }}}
+    " operator-camelize {{{
+    Map [nvo] -remap <operator>c <Plug>(operator-camelize-toggle)
+    let g:operator_camelize_all_uppercase_action = 'camelize'
+    let g:operator_decamelize_all_uppercase_action = 'lowercase'
 
 
-" See "keymappings" branch.
-" Map [nvo] -remap <operator>c <Plug>(operator-camelize/camelize)
-" Map [nvo] -remap <operator>C <Plug>(operator-decamelize/lowercase)
+    " Test: g:operator_camelize_detect_function
+    " function! Camelized(word)
+    "     return 0
+    " endfunction
+    " let g:operator_camelize_detect_function = 'Camelized'
+    " E704: Funcref variable name must start with a capital: g:operator_camelize_detect_function
+    " let g:operator_camelize_detect_function = function('Camelized')
 
-" }}}
-" operator-blank-killer {{{
-call operator#user#define_ex_command('blank-killer', 's/\s\+$//')
-Map [nvo] -remap <operator>bk <Plug>(operator-blank-killer)
-" }}}
-" operator-html-escape {{{
-Map [nvo] -remap <operator>he <Plug>(operator-html-escape)
-Map [nvo] -remap <operator>hu <Plug>(operator-html-unescape)
-" }}}
-" operator-zen2han, operator-han2zen {{{
-call operator#user#define('zen2han', 'Op_zen2han')
-function! Op_zen2han(motion_wiseness)
-    " TODO
-endfunction
+    " Test: mappings
+    " Map [nvo] -remap <operator>c <Plug>(operator-camelize)
+    " Map [nvo] -remap <operator>C <Plug>(operator-decamelize)
 
-call operator#user#define('han2zen', 'Op_han2zen')
-function! Op_han2zen(motion_wiseness)
-    " TODO
-endfunction
 
-Map [nvo] -remap <operator>zh <Plug>(operator-zen2han)
-Map [nvo] -remap <operator>hz <Plug>(operator-han2zen)
-" }}}
+    " See "keymappings" branch.
+    " Map [nvo] -remap <operator>c <Plug>(operator-camelize/camelize)
+    " Map [nvo] -remap <operator>C <Plug>(operator-decamelize/lowercase)
+
+    " }}}
+    " operator-blank-killer {{{
+    call operator#user#define_ex_command('blank-killer', 's/\s\+$//')
+    Map [nvo] -remap <operator>bk <Plug>(operator-blank-killer)
+    " }}}
+    " operator-html-escape {{{
+    Map [nvo] -remap <operator>he <Plug>(operator-html-escape)
+    Map [nvo] -remap <operator>hu <Plug>(operator-html-unescape)
+    " }}}
+    " operator-zen2han, operator-han2zen {{{
+    call operator#user#define('zen2han', 'Op_zen2han')
+    function! Op_zen2han(motion_wiseness)
+        " TODO
+    endfunction
+
+    call operator#user#define('han2zen', 'Op_han2zen')
+    function! Op_han2zen(motion_wiseness)
+        " TODO
+    endfunction
+
+    Map [nvo] -remap <operator>zh <Plug>(operator-zen2han)
+    Map [nvo] -remap <operator>hz <Plug>(operator-han2zen)
+    " }}}
+
+endif
 " }}}
 " motion {{{
 Map [nvo] j gj
@@ -2061,352 +2094,352 @@ endfunction "}}}
 " }}}
 " }}}
 " For Plugins {{{
-" nextfile {{{
-let g:nf_map_next     = ''
-let g:nf_map_previous = ''
-Map [n] -remap ,n <Plug>(nextfile-next)
-Map [n] -remap ,p <Plug>(nextfile-previous)
+if s:has_plugin('nextfile') " {{{
+    let g:nf_map_next     = ''
+    let g:nf_map_previous = ''
+    Map [n] -remap ,n <Plug>(nextfile-next)
+    Map [n] -remap ,p <Plug>(nextfile-previous)
 
-let g:nf_include_dotfiles = 1    " don't skip dotfiles
-let g:nf_ignore_ext = ['o', 'obj', 'exe', 'bin']
+    let g:nf_include_dotfiles = 1    " don't skip dotfiles
+    let g:nf_ignore_ext = ['o', 'obj', 'exe', 'bin']
 
 
-function! NFLoopMsg(file_to_open)
-    echohl WarningMsg
-    echom 'open a file from the start...'
-    echohl None
-    " Always open a next/previous file...
-    return 1
-endfunction
-function! NFLoopPrompt(file_to_open)
-    return input('open a file from the start? [y/n]:') =~? 'y\%[es]'
-endfunction
+    function! NFLoopMsg(file_to_open)
+        echohl WarningMsg
+        echom 'open a file from the start...'
+        echohl None
+        " Always open a next/previous file...
+        return 1
+    endfunction
+    function! NFLoopPrompt(file_to_open)
+        return input('open a file from the start? [y/n]:') =~? 'y\%[es]'
+    endfunction
 
-" g:nf_loop_hook_fn only works when g:nf_loop_files is true.
-let g:nf_loop_files = 1
-" Call this function when wrap around.
-" let g:nf_loop_hook_fn = 'NFLoopPrompt'
-let g:nf_loop_hook_fn = 'NFLoopMsg'
-" To avoid |hit-enter| for NFLoopMsg().
-let g:nf_open_command = 'silent edit'
+    " g:nf_loop_hook_fn only works when g:nf_loop_files is true.
+    let g:nf_loop_files = 1
+    " Call this function when wrap around.
+    " let g:nf_loop_hook_fn = 'NFLoopPrompt'
+    let g:nf_loop_hook_fn = 'NFLoopMsg'
+    " To avoid |hit-enter| for NFLoopMsg().
+    let g:nf_open_command = 'silent edit'
 
-" }}}
-" starter {{{
+endif " }}}
+if s:has_plugin('starter') " {{{
 
-" TODO
-let g:loaded_starter = 1
+    " TODO
+    let g:loaded_starter = 1
 
-" let g:starter_no_default_command = 1
-" nnoremap <silent> gt :<C-u>call starter#launch()<CR>
+    " let g:starter_no_default_command = 1
+    " nnoremap <silent> gt :<C-u>call starter#launch()<CR>
 
-" function! StarterAfterHookFile(path) "{{{
-"     if !filereadable(a:path)
-"         return
-"     endif
+    " function! StarterAfterHookFile(path) "{{{
+    "     if !filereadable(a:path)
+    "         return
+    "     endif
 
-"     " Open the file.
-"     execute 'edit' a:path
+    "     " Open the file.
+    "     execute 'edit' a:path
 
-"     " Set filetype.
-"     let filetype = fnamemodify(a:path, ':e')
-"     if filetype != ''
-"     \   && globpath(&rtp, 'ftplugin/' . filetype . '.vim') != ''
-"         execute 'setfiletype' filetype
-"     endif
-" endfunction "}}}
-" function! s:system_list(args_list) "{{{
-"     return system(join(
-"     \   map(copy(a:args_list), 'shellescape(v:val)')))
-" endfunction "}}}
-" function! StarterAfterHookDir(path) "{{{
-"     if !isdirectory(a:path)
-"         return
-"     endif
+    "     " Set filetype.
+    "     let filetype = fnamemodify(a:path, ':e')
+    "     if filetype != ''
+    "     \   && globpath(&rtp, 'ftplugin/' . filetype . '.vim') != ''
+    "         execute 'setfiletype' filetype
+    "     endif
+    " endfunction "}}}
+    " function! s:system_list(args_list) "{{{
+    "     return system(join(
+    "     \   map(copy(a:args_list), 'shellescape(v:val)')))
+    " endfunction "}}}
+    " function! StarterAfterHookDir(path) "{{{
+    "     if !isdirectory(a:path)
+    "         return
+    "     endif
 
-"     if filereadable(a:path . '/setup')
-"         call s:system_list(a:path . '/setup', [a:path])
-"         call delete(a:path . '/setup')
-"     endif
-"     if filereadable(a:path . '/setup.sh')
-"         call s:system_list('/bin/sh', [a:path . '/setup.sh', a:path])
-"         call delete(a:path . '/setup.sh')
-"     endif
-"     if filereadable(a:path . '/setup.pl')
-"         call s:system_list('perl', [a:path . '/setup.pl', a:path])
-"         call delete(a:path . '/setup.pl')
-"     endif
-"     if filereadable(a:path . '/setup.py')
-"         call s:system_list('python', [a:path . '/setup.py', a:path])
-"         call delete(a:path . '/setup.py')
-"     endif
-"     if filereadable(a:path . '/setup.rb')
-"         call s:system_list('ruby', [a:path . '/setup.rb', a:path])
-"         call delete(a:path . '/setup.rb')
-"     endif
-" endfunction "}}}
-" let g:starter#after_hook = [
-" \   'StarterAfterHookFile',
-" \   'StarterAfterHookDir',
-" \]
+    "     if filereadable(a:path . '/setup')
+    "         call s:system_list(a:path . '/setup', [a:path])
+    "         call delete(a:path . '/setup')
+    "     endif
+    "     if filereadable(a:path . '/setup.sh')
+    "         call s:system_list('/bin/sh', [a:path . '/setup.sh', a:path])
+    "         call delete(a:path . '/setup.sh')
+    "     endif
+    "     if filereadable(a:path . '/setup.pl')
+    "         call s:system_list('perl', [a:path . '/setup.pl', a:path])
+    "         call delete(a:path . '/setup.pl')
+    "     endif
+    "     if filereadable(a:path . '/setup.py')
+    "         call s:system_list('python', [a:path . '/setup.py', a:path])
+    "         call delete(a:path . '/setup.py')
+    "     endif
+    "     if filereadable(a:path . '/setup.rb')
+    "         call s:system_list('ruby', [a:path . '/setup.rb', a:path])
+    "         call delete(a:path . '/setup.rb')
+    "     endif
+    " endfunction "}}}
+    " let g:starter#after_hook = [
+    " \   'StarterAfterHookFile',
+    " \   'StarterAfterHookDir',
+    " \]
 
-" }}}
-" vimtemplate {{{
-" TODO: starter.vim
-" let g:loaded_vimtemplate = 1
+endif " }}}
+if s:has_plugin('vimtemplate') " {{{
+    " TODO: starter.vim
+    " let g:loaded_vimtemplate = 1
 
-let g:vt_author = "tyru"
-let g:vt_email = "tyru.exe@gmail.com"
-let g:vt_files_metainfo = {
-\   'cppsrc-scratch.cpp': {'filetype': "cpp"},
-\   'cppsrc.cpp'    : {'filetype': "cpp"},
-\   'csharp.cs'     : {'filetype': "cs"},
-\   'csrc.c'        : {'filetype': "c"},
-\   'header.h'      : {'filetype': "c"},
-\   'hina.html'     : {'filetype': "html"},
-\   'javasrc.java'  : {'filetype': "java"},
-\   'perl.pl'       : {'filetype': "perl"},
-\   'perlmodule.pm' : {'filetype': "perl"},
-\   'python.py'     : {'filetype': "python"},
-\   'scala.scala'   : {'filetype': "scala"},
-\   'scheme.scm'    : {'filetype': "scheme"},
-\   'vimscript.vim' : {'filetype': "vim"}
-\}
-
-let g:vt_open_command = 'botright 7new'
-" Disable &modeline when opened template file.
-execute
-\   'MyAutocmd BufReadPre'
-\   $MYVIMDIR . '/template/*'
-\   'setlocal nomodeline'
-" }}}
-" winmove {{{
-let g:wm_move_down  = '<C-M-j>'
-let g:wm_move_up    = '<C-M-k>'
-let g:wm_move_left  = '<C-M-h>'
-let g:wm_move_right = '<C-M-l>'
-" }}}
-" sign-diff {{{
-" let g:SD_debug = 1
-let g:SD_disable = 1
-
-if !g:SD_disable
-    Map [n] -silent <C-l> :SDUpdate<CR><C-l>
-endif
-" }}}
-" DumbBuf {{{
-let dumbbuf_hotkey = 'gb'
-" たまにQuickBuf.vimの名残で<Esc>を押してしまう
-let dumbbuf_mappings = {
-    \'n': {
-        \'<Esc>': {'alias_to': 'q'},
+    let g:vt_author = "tyru"
+    let g:vt_email = "tyru.exe@gmail.com"
+    let g:vt_files_metainfo = {
+    \   'cppsrc-scratch.cpp': {'filetype': "cpp"},
+    \   'cppsrc.cpp'    : {'filetype': "cpp"},
+    \   'csharp.cs'     : {'filetype': "cs"},
+    \   'csrc.c'        : {'filetype': "c"},
+    \   'header.h'      : {'filetype': "c"},
+    \   'hina.html'     : {'filetype': "html"},
+    \   'javasrc.java'  : {'filetype': "java"},
+    \   'perl.pl'       : {'filetype': "perl"},
+    \   'perlmodule.pm' : {'filetype': "perl"},
+    \   'python.py'     : {'filetype': "python"},
+    \   'scala.scala'   : {'filetype': "scala"},
+    \   'scheme.scm'    : {'filetype': "scheme"},
+    \   'vimscript.vim' : {'filetype': "vim"}
     \}
-\}
-let dumbbuf_wrap_cursor = 0
-let dumbbuf_remove_marked_when_close = 1
-" let dumbbuf_shown_type = 'project'
-" let dumbbuf_close_when_exec = 1
 
+    let g:vt_open_command = 'botright 7new'
+    " Disable &modeline when opened template file.
+    execute
+    \   'MyAutocmd BufReadPre'
+    \   $MYVIMDIR . '/template/*'
+    \   'setlocal nomodeline'
+endif " }}}
+if s:has_plugin('winmove') " {{{
+    let g:wm_move_down  = '<C-M-j>'
+    let g:wm_move_up    = '<C-M-k>'
+    let g:wm_move_left  = '<C-M-h>'
+    let g:wm_move_right = '<C-M-l>'
+endif " }}}
+if s:has_plugin('sign-diff') " {{{
+    " let g:SD_debug = 1
+    let g:SD_disable = 1
 
-" DumbBuf nmap s    split #<bufnr>
-" DumbBuf nmap g    sbuffer <bufnr>
-" call dumbbuf#map('n', '', 0, 'g', ':sbuffer %d')
-
-" let dumbbuf_cursor_pos = 'keep'
-
-" For (compatibility) test
-"
-" let dumbbuf_shown_type = 'foobar'
-" let dumbbuf_listed_buffer_name = "*foo bar*"
-"
-" let dumbbuf_verbose = 1
-" }}}
-" prompt {{{
-let prompt_debug = 0
-" }}}
-" skk && eskk {{{
-
-let s:skk_user_dict = '~/.skk/user-dict'
-let s:skk_user_dict_encoding = 'utf-8'
-let s:skk_system_dict = '~/.skk/system-dict'
-let s:skk_system_dict_encoding = 'euc-jp'
-
-if 1
-" Map <C-j> to eskk, Map <C-g><C-j> to skk.vim {{{
-let skk_control_j_key = '<C-g><C-j>'
-" }}}
-else
-" Map <C-j> to skk.vim, Map <C-g><C-j> to eskk {{{
-Map [ic] -remap <C-g><C-j> <Plug>(eskk:toggle)
-" }}}
-endif
-
-" }}}
-" skk {{{
-let skk_jisyo = s:skk_user_dict
-let skk_jisyo_encoding = s:skk_user_dict_encoding
-let skk_large_jisyo = s:skk_system_dict
-let skk_large_jisyo_encoding = s:skk_system_dict_encoding
-
-" let skk_control_j_key = ''
-" Arpeggio map! fj    <Plug>(skk-enable-im)
-
-let skk_manual_save_jisyo_keys = ''
-
-let skk_egg_like_newline = 1
-let skk_auto_save_jisyo = 1
-let skk_imdisable_state = -1
-let skk_keep_state = 1
-let skk_show_candidates_count = 2
-let skk_show_annotation = 0
-let skk_sticky_key = ';'
-let skk_use_color_cursor = 1
-let skk_remap_lang_mode = 0
-
-
-if 0
-" g:skk_enable_hook test {{{
-" Do not map `<Plug>(skk-toggle-im)`.
-let skk_control_j_key = ''
-
-" `<C-j><C-e>` to enable, `<C-j><C-d>` to disable.
-Map [ic] -remap <C-j><C-e> <Plug>(skk-enable-im)
-Map [ic] -remap <C-j><C-d> <Nop>
-function! MySkkMap()
-    lunmap <buffer> <C-j>
-    lmap <buffer> <C-j><C-d> <Plug>(skk-disable-im)
-endfunction
-function! HelloWorld()
-    echomsg 'Hello.'
-endfunction
-function! Hogera()
-    echomsg 'hogera'
-endfunction
-let skk_enable_hook = 'MySkkMap,HelloWorld,Hogera'
-" }}}
-endif
-
-" }}}
-" eskk {{{
-if has('vim_starting')
-    let g:eskk#dictionary = {
-    \   'path': s:skk_user_dict,
-    \   'encoding': s:skk_user_dict_encoding,
+    if !g:SD_disable
+        Map [n] -silent <C-l> :SDUpdate<CR><C-l>
+    endif
+endif " }}}
+if s:has_plugin('DumbBuf') " {{{
+    let dumbbuf_hotkey = 'gb'
+    " たまにQuickBuf.vimの名残で<Esc>を押してしまう
+    let dumbbuf_mappings = {
+        \'n': {
+            \'<Esc>': {'alias_to': 'q'},
+        \}
     \}
-    let g:eskk#large_dictionary = {
-    \   'path': s:skk_system_dict,
-    \   'encoding': s:skk_system_dict_encoding,
-    \}
-endif
+    let dumbbuf_wrap_cursor = 0
+    let dumbbuf_remove_marked_when_close = 1
+    " let dumbbuf_shown_type = 'project'
+    " let dumbbuf_close_when_exec = 1
 
-let g:eskk#debug = 1
-if 1    " for debugging default behavior.
-    let g:eskk#egg_like_newline = 1
-    let g:eskk#egg_like_newline_completion = 1
-    let g:eskk#show_candidates_count = 2
-    let g:eskk#show_annotation = 1
-    let g:eskk#rom_input_style = 'msime'
-    let g:eskk#keep_state = 1
-    let g:eskk#keep_state_beyond_buffer = 1
-    let g:eskk#marker_henkan = '$'
-    let g:eskk#marker_okuri = '*'
-    let g:eskk#marker_henkan_select = '@'
-    let g:eskk#marker_jisyo_touroku = '?'
-    let g:eskk#dictionary_save_count = 5
 
-    if has('vim_starting')
-        " MyAutocmd User eskk-initialize-pre call s:eskk_initial_pre()
-        function! s:eskk_initial_pre() "{{{
-            " User can be allowed to modify
-            " eskk global variables (`g:eskk#...`)
-            " until `User eskk-initialize-pre` event.
-            " So user can do something heavy process here.
-            " (I'm a paranoia, eskk#table#new() is not so heavy.
-            " But it loads autoload/vice.vim recursively)
-            for [orgtable, mode] in [['rom_to_hira', 'hira'], ['rom_to_kata', 'kata']]
-                let t = eskk#table#new(orgtable.'*', orgtable)
-                call t.add_map('~', '〜')
-                call t.add_map('vc', '©')
-                call t.add_map('vr', '®')
-                call t.add_map('vh', '☜')
-                call t.add_map('vj', '☟')
-                call t.add_map('vk', '☝')
-                call t.add_map('vl', '☞')
-                call t.add_map('jva', 'ゔぁ')
-                call t.add_map('jvi', 'ゔぃ')
-                call t.add_map('jvu', 'ゔ')
-                call t.add_map('jve', 'ゔぇ')
-                call t.add_map('jvo', 'ゔぉ')
-                call t.add_map('z ', '　')
-                " Input hankaku characters.
-                call t.add_map('(', '(')
-                call t.add_map(')', ')')
-                " It is better to register the word "Exposé" than to register this map :)
-                call t.add_map('qe', 'é')
-                if g:eskk#rom_input_style ==# 'skk'
-                    call t.add_map('zw', 'w', 'z')
-                endif
+    " DumbBuf nmap s    split #<bufnr>
+    " DumbBuf nmap g    sbuffer <bufnr>
+    " call dumbbuf#map('n', '', 0, 'g', ':sbuffer %d')
 
-                call eskk#register_mode_table(mode, t)
-            endfor
-        endfunction "}}}
+    " let dumbbuf_cursor_pos = 'keep'
 
-        " by @hinagishi
-        " function! s:eskk_initial_pre() "{{{
-        "     let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
-        "     call t.add_map(',', ', ')
-        "     call t.add_map('.', '.')
-        "     call eskk#register_mode_table('hira', t)
-        "     let t = eskk#table#new('rom_to_kata*', 'rom_to_kata')
-        "     call t.add_map(',', ', ')
-        "     call t.add_map('.', '.')
-        "     call eskk#register_mode_table('kata', t)
-        " endfunction "}}}
+    " For (compatibility) test
+    "
+    " let dumbbuf_shown_type = 'foobar'
+    " let dumbbuf_listed_buffer_name = "*foo bar*"
+    "
+    " let dumbbuf_verbose = 1
+endif " }}}
+if s:has_plugin('prompt') " {{{
+    let prompt_debug = 0
+endif " }}}
+if s:has_plugin('skk') || s:has_plugin('eskk') " {{{
 
-        MyAutocmd User eskk-initialize-post call s:eskk_initial_post()
-        function! s:eskk_initial_post() "{{{
-            " Disable "qkatakana", but ";katakanaq" works.
-            " NOTE: This makes some eskk tests fail!
-            " EskkMap -type=mode:hira:toggle-kata <Nop>
+    call rtputil#append('~/.vim/bundle/skkdict.vim')
 
-            " map! <C-j> <Plug>(eskk:enable)
-            " EskkMap <C-j> <Nop>
-            "
-            " EskkMap U <Plug>(eskk:undo-kakutei)
+    let s:skk_user_dict = '~/.skk/user-dict'
+    let s:skk_user_dict_encoding = 'utf-8'
+    let s:skk_system_dict = '~/.skk/system-dict'
+    let s:skk_system_dict_encoding = 'euc-jp'
 
-            " EskkMap jj <Esc>
-            " EskkMap -no-unique jj hoge
-        endfunction "}}}
+    if 1
+        " Map <C-j> to eskk, Map <C-g><C-j> to skk.vim
+        let skk_control_j_key = '<C-g><C-j>'
+    else
+        " Map <C-j> to skk.vim, Map <C-g><C-j> to eskk
+        Map [ic] -remap <C-g><C-j> <Plug>(eskk:toggle)
     endif
 
-    " Debug
-    command! -bar EskkDumpBuftable PP! eskk#get_buftable().dump()
-    command! -bar EskkDumpTable    PP! eskk#table#<args>#load()
-    " EskkMap lhs rhs
-    " EskkMap -silent lhs2 rhs
-    " EskkMap -unique lhs2 foo
-    " EskkMap -expr lhs3 {'foo': 'hoge'}.foo
-    " EskkMap -noremap lhs4 rhs
-endif
-" }}}
-" restart {{{
-command!
-\   -bar
-\   RestartWithSession
-\   let g:restart_sessionoptions = 'blank,curdir,folds,help,localoptions,tabpages'
-\   | Restart
+endif " }}}
+if s:has_plugin('skk') " {{{
+    let skk_jisyo = s:skk_user_dict
+    let skk_jisyo_encoding = s:skk_user_dict_encoding
+    let skk_large_jisyo = s:skk_system_dict
+    let skk_large_jisyo_encoding = s:skk_system_dict_encoding
 
-MapAlterCommand res[tart] Restart
-MapAlterCommand ers[tart] Restart
-MapAlterCommand rse[tart] Restart
-" }}}
-" openbrowser {{{
-let g:netrw_nogx = 1
-Map [nv] -remap gx <Plug>(openbrowser-smart-search)
-MapAlterCommand o[pen] OpenBrowserSmartSearch
-" }}}
-" AutoDate {{{
-let g:autodate_format = "%Y-%m-%d"
-" }}}
+    " let skk_control_j_key = ''
+    " Arpeggio map! fj    <Plug>(skk-enable-im)
+
+    let skk_manual_save_jisyo_keys = ''
+
+    let skk_egg_like_newline = 1
+    let skk_auto_save_jisyo = 1
+    let skk_imdisable_state = -1
+    let skk_keep_state = 1
+    let skk_show_candidates_count = 2
+    let skk_show_annotation = 0
+    let skk_sticky_key = ';'
+    let skk_use_color_cursor = 1
+    let skk_remap_lang_mode = 0
+
+
+    if 0
+    " g:skk_enable_hook test {{{
+    " Do not map `<Plug>(skk-toggle-im)`.
+    let skk_control_j_key = ''
+
+    " `<C-j><C-e>` to enable, `<C-j><C-d>` to disable.
+    Map [ic] -remap <C-j><C-e> <Plug>(skk-enable-im)
+    Map [ic] -remap <C-j><C-d> <Nop>
+    function! MySkkMap()
+        lunmap <buffer> <C-j>
+        lmap <buffer> <C-j><C-d> <Plug>(skk-disable-im)
+    endfunction
+    function! HelloWorld()
+        echomsg 'Hello.'
+    endfunction
+    function! Hogera()
+        echomsg 'hogera'
+    endfunction
+    let skk_enable_hook = 'MySkkMap,HelloWorld,Hogera'
+    " }}}
+    endif
+
+endif " }}}
+if s:has_plugin('eskk') " {{{
+    if has('vim_starting')
+        let g:eskk#dictionary = {
+        \   'path': s:skk_user_dict,
+        \   'encoding': s:skk_user_dict_encoding,
+        \}
+        let g:eskk#large_dictionary = {
+        \   'path': s:skk_system_dict,
+        \   'encoding': s:skk_system_dict_encoding,
+        \}
+    endif
+
+    let g:eskk#debug = 1
+    if 1    " for debugging default behavior.
+        let g:eskk#egg_like_newline = 1
+        let g:eskk#egg_like_newline_completion = 1
+        let g:eskk#show_candidates_count = 2
+        let g:eskk#show_annotation = 1
+        let g:eskk#rom_input_style = 'msime'
+        let g:eskk#keep_state = 1
+        let g:eskk#keep_state_beyond_buffer = 1
+        let g:eskk#marker_henkan = '$'
+        let g:eskk#marker_okuri = '*'
+        let g:eskk#marker_henkan_select = '@'
+        let g:eskk#marker_jisyo_touroku = '?'
+        let g:eskk#dictionary_save_count = 5
+
+        if has('vim_starting')
+            " MyAutocmd User eskk-initialize-pre call s:eskk_initial_pre()
+            function! s:eskk_initial_pre() "{{{
+                " User can be allowed to modify
+                " eskk global variables (`g:eskk#...`)
+                " until `User eskk-initialize-pre` event.
+                " So user can do something heavy process here.
+                " (I'm a paranoia, eskk#table#new() is not so heavy.
+                " But it loads autoload/vice.vim recursively)
+                for [orgtable, mode] in [['rom_to_hira', 'hira'], ['rom_to_kata', 'kata']]
+                    let t = eskk#table#new(orgtable.'*', orgtable)
+                    call t.add_map('~', '〜')
+                    call t.add_map('vc', '©')
+                    call t.add_map('vr', '®')
+                    call t.add_map('vh', '☜')
+                    call t.add_map('vj', '☟')
+                    call t.add_map('vk', '☝')
+                    call t.add_map('vl', '☞')
+                    call t.add_map('jva', 'ゔぁ')
+                    call t.add_map('jvi', 'ゔぃ')
+                    call t.add_map('jvu', 'ゔ')
+                    call t.add_map('jve', 'ゔぇ')
+                    call t.add_map('jvo', 'ゔぉ')
+                    call t.add_map('z ', '　')
+                    " Input hankaku characters.
+                    call t.add_map('(', '(')
+                    call t.add_map(')', ')')
+                    " It is better to register the word "Exposé" than to register this map :)
+                    call t.add_map('qe', 'é')
+                    if g:eskk#rom_input_style ==# 'skk'
+                        call t.add_map('zw', 'w', 'z')
+                    endif
+
+                    call eskk#register_mode_table(mode, t)
+                endfor
+            endfunction "}}}
+
+            " by @hinagishi
+            " function! s:eskk_initial_pre() "{{{
+            "     let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
+            "     call t.add_map(',', ', ')
+            "     call t.add_map('.', '.')
+            "     call eskk#register_mode_table('hira', t)
+            "     let t = eskk#table#new('rom_to_kata*', 'rom_to_kata')
+            "     call t.add_map(',', ', ')
+            "     call t.add_map('.', '.')
+            "     call eskk#register_mode_table('kata', t)
+            " endfunction "}}}
+
+            MyAutocmd User eskk-initialize-post call s:eskk_initial_post()
+            function! s:eskk_initial_post() "{{{
+                " Disable "qkatakana", but ";katakanaq" works.
+                " NOTE: This makes some eskk tests fail!
+                " EskkMap -type=mode:hira:toggle-kata <Nop>
+
+                " map! <C-j> <Plug>(eskk:enable)
+                " EskkMap <C-j> <Nop>
+                "
+                " EskkMap U <Plug>(eskk:undo-kakutei)
+
+                " EskkMap jj <Esc>
+                " EskkMap -no-unique jj hoge
+            endfunction "}}}
+        endif
+
+        " Debug
+        command! -bar EskkDumpBuftable PP! eskk#get_buftable().dump()
+        command! -bar EskkDumpTable    PP! eskk#table#<args>#load()
+        " EskkMap lhs rhs
+        " EskkMap -silent lhs2 rhs
+        " EskkMap -unique lhs2 foo
+        " EskkMap -expr lhs3 {'foo': 'hoge'}.foo
+        " EskkMap -noremap lhs4 rhs
+    endif
+endif " }}}
+if s:has_plugin('restart') " {{{
+    command!
+    \   -bar
+    \   RestartWithSession
+    \   let g:restart_sessionoptions = 'blank,curdir,folds,help,localoptions,tabpages'
+    \   | Restart
+
+    MapAlterCommand res[tart] Restart
+    MapAlterCommand ers[tart] Restart
+    MapAlterCommand rse[tart] Restart
+endif " }}}
+if s:has_plugin('openbrowser') " {{{
+    let g:netrw_nogx = 1
+    Map [nv] -remap gx <Plug>(openbrowser-smart-search)
+    MapAlterCommand o[pen] OpenBrowserSmartSearch
+endif " }}}
+if s:has_plugin('AutoDate') " {{{
+    let g:autodate_format = "%Y-%m-%d"
+endif " }}}
 " anything (ku,fuf,unite,etc.) {{{
 DefMacroMap [n] anything s
 
@@ -2414,18 +2447,18 @@ DefMacroMap [n] anything s
 let [s:anything_fuf, s:anything_ku, s:anything_unite] = range(3)
 let s:anything = s:anything_unite
 
-if s:anything == s:anything_fuf
+if s:anything == s:anything_fuf && s:has_plugin('fuf')
     Map [n] <anything>d        :<C-u>FufDir<CR>
     Map [n] <anything>f        :<C-u>FufFile<CR>
     Map [n] <anything>h        :<C-u>FufMruFile<CR>
     Map [n] <anything>r        :<C-u>FufRenewCache<CR>
-elseif s:anything == s:anything_ku
+elseif s:anything == s:anything_ku && s:has_plugin('ku')
     Map [n] <anything>f        :<C-u>Ku file<CR>
     Map [n] <anything>h        :<C-u>Ku file/mru<CR>
     Map [n] <anything>H        :<C-u>Ku history<CR>
     Map [n] <anything>:        :<C-u>Ku cmd_mru/cmd<CR>
     Map [n] <anything>/        :<C-u>Ku cmd_mru/search<CR>
-elseif s:anything == s:anything_unite
+elseif s:has_plugin('unite') " fallback, or you select this :)
     command! -nargs=* UniteKawaii Unite -prompt='-')/\  -no-split <args>
     Map [n] <anything>f        :<C-u>UniteKawaii -buffer-name=files file buffer file_mru<CR>
     Map [n] <anything>F        :<C-u>UniteKawaii -buffer-name=files file_rec<CR>
@@ -2442,6 +2475,8 @@ elseif s:anything == s:anything_unite
     Map [n] <anything>g        :<C-u>UniteKawaii grep<CR>
     Map [n] <anything>/        :<C-u>UniteKawaii line<CR>
     Map [n] <anything>:        :<C-u>UniteKawaii history/command<CR>
+else
+    let s:anything_not_found = 1
 endif
 
 
@@ -2468,704 +2503,706 @@ function! s:register_anything_abbrev() "{{{
     endif
 
     " fuf
-    let g:fuf_abbrevMap = abbrev
+    if s:has_plugin('fuf')
+        let g:fuf_abbrevMap = abbrev
+    endif
     " unite
-    for [pat, subst_list] in items(abbrev)
-        call unite#set_substitute_pattern('files', pat, subst_list)
-    endfor
-endfunction "}}}
-Lazy call s:register_anything_abbrev()
-
-" ku {{{
-MapAlterCommand ku Ku
-" }}}
-" fuf {{{
-let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem', 'buffer', 'tag', 'taggedfile']
-
-let fuf_keyOpenTabpage = '<C-t>'
-let fuf_keyNextMode    = '<C-l>'
-let fuf_keyPrevMode    = '<C-h>'
-let fuf_keyOpenSplit   = '<C-s>'
-let fuf_keyOpenVsplit  = '<C-v>'
-let fuf_enumeratingLimit = 20
-let fuf_previewHeight = 0
-
-" }}}
-" unite {{{
-let g:unite_enable_start_insert = 1
-let g:unite_enable_ignore_case = 1
-let g:unite_enable_smart_case = 1
-let g:unite_enable_split_vertically = 0
-let g:unite_split_rule =
-\   g:unite_enable_split_vertically ?
-\       'topleft' : 'rightbelow'
-let g:unite_update_time = 50
-let g:unite_source_file_mru_ignore_pattern =
-\   '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\|COMMIT_EDITMSG'
-
-" unite-source-menu {{{
-
-let s:Vital = vital#of('vital')
-call s:Vital.load('Data.List')
-
-let g:unite_source_menu_menus = {}
-
-function! UniteSourceMenuMenusMap(key, value)
-    return {
-    \   'word' : a:key,
-    \   'kind' : 'command',
-    \   'action__command' : a:value,
-    \}
-endfunction
-
-
-" set enc=... {{{
-let g:unite_source_menu_menus.enc = {
-\   'description' : 'set enc=...',
-\   'candidates'  : {},
-\   'map': function('UniteSourceMenuMenusMap'),
-\}
-for s:tmp in [
-\           'latin1',
-\           'cp932',
-\           'shift-jis',
-\           'iso-2022-jp',
-\           'euc-jp',
-\           'utf-8',
-\           'ucs-bom'
-\       ]
-    call extend(g:unite_source_menu_menus.enc.candidates,
-    \           {s:tmp : 'edit ++enc='.s:tmp},
-    \           'error')
-endfor
-unlet s:tmp
-
-Map [n] -silent <prompt>a  :<C-u>Unite menu:enc<CR>
-" }}}
-" set fenc=... {{{
-let g:unite_source_menu_menus.fenc = {
-\   'description' : 'set fenc=...',
-\   'candidates'  : {},
-\   'map': function('UniteSourceMenuMenusMap'),
-\}
-for s:tmp in [
-\           'latin1',
-\           'cp932',
-\           'shift-jis',
-\           'iso-2022-jp',
-\           'euc-jp',
-\           'utf-8',
-\           'ucs-bom'
-\       ]
-    call extend(g:unite_source_menu_menus.fenc.candidates,
-    \           {s:tmp : 'set fenc='.s:tmp},
-    \           'error')
-endfor
-unlet s:tmp
-
-Map [n] -silent <prompt>s  :<C-u>Unite menu:fenc<CR>
-" }}}
-" set ff=... {{{
-let g:unite_source_menu_menus.ff = {
-\   'description' : 'set ff=...',
-\   'candidates'  : {},
-\   'map': function('UniteSourceMenuMenusMap'),
-\}
-for s:tmp in ['dos', 'unix', 'mac']
-    call extend(g:unite_source_menu_menus.ff.candidates,
-    \           {s:tmp : 'set ff='.s:tmp},
-    \           'error')
-endfor
-unlet s:tmp
-
-Map [n] -silent <prompt>d  :<C-u>Unite menu:ff<CR>
-" }}}
-
-" }}}
-
-
-
-MyAutocmd FileType unite call s:unite_settings()
-
-let g:unite_winheight = 5    " default winheight.
-let g:unite_winwidth  = 10    " default winwidth.
-function! s:unite_settings() "{{{
-    Map [i] -buffer -remap <BS> <Plug>(unite_delete_backward_path)
-    Map [n] -buffer -remap <Space><Space> <Plug>(unite_toggle_mark_current_candidate)
-
-    Map [i] -buffer -remap <C-n> <SID>(expand_unite_window)<Plug>(unite_select_next_line)
-    Map [i] -buffer -remap <C-p> <SID>(expand_unite_window)<Plug>(unite_select_previous_line)
-endfunction "}}}
-
-" Expand current unite window width/height 2/3
-Map [i] -remap <SID>(expand_unite_window) <Plug>(unite_insert_leave)<SID>(expand_unite_window_fn)<Plug>(unite_insert_enter)
-
-Map [n] -silent <SID>(expand_unite_window_fn) :<C-u>call <SID>unite_resize_window(&columns / 3 * 2, &lines / 3 * 2)<CR>
-function! s:unite_resize_window(width, height)
-    if g:unite_enable_split_vertically
-        execute 'vertical resize' a:width
-    else
-        execute 'resize' a:height
-    endif
-
-    Map [i] -buffer -remap <C-n> <Plug>(unite_select_next_line)
-    Map [i] -buffer -remap <C-p> <Plug>(unite_select_previous_line)
-endfunction
-" }}}
-" }}}
-" Gtags {{{
-if 0
-" <C-]> for gtags. {{{
-function! s:JumpTags() "{{{
-    if expand('%') == '' | return | endif
-
-    if !exists(':GtagsCursor')
-        echo "gtags.vim is not installed. do default <C-]>..."
-        sleep 2
-        " unmap this function.
-        " use plain <C-]> next time.
-        Map! [n] <C-]>
-        execute "normal! \<C-]>"
-        return
-    endif
-
-    let gtags = expand('%:h') . '/GTAGS'
-    if filereadable(gtags)
-        " use gtags if found GTAGS.
-        lcd %:p:h
-        GtagsCursor
-        lcd -
-    else
-        " or use ctags.
-        execute "normal! \<C-]>"
+    if s:has_plugin('unite')
+        for [pat, subst_list] in items(abbrev)
+            call unite#set_substitute_pattern('files', pat, subst_list)
+        endfor
     endif
 endfunction "}}}
-Map [n] <C-]>     :<C-u>call <SID>JumpTags()<CR>
-" }}}
+if !exists('s:anything_not_found')
+    Lazy call s:register_anything_abbrev()
 endif
-" }}}
-" vimshell {{{
-MapAlterCommand sh[ell] VimShell
 
-let g:vimshell_user_prompt = '"(" . getcwd() . ") --- (" . $USER . "@" . hostname() . ")"'
-let g:vimshell_prompt = '$ '
-let g:vimshell_right_prompt = 'vimshell#vcs#info("(%s)-[%b]", "(%s)-[%b|%a]")'
-let g:vimshell_ignore_case = 1
-let g:vimshell_smart_case = 1
-let g:vimshell_cd_command = 'CD'
+if s:has_plugin('ku') " {{{
+    MapAlterCommand ku Ku
+endif " }}}
+if s:has_plugin('fuf') " {{{
+    let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem', 'buffer', 'tag', 'taggedfile']
 
-MyAutocmd FileType vimshell call s:vimshell_settings()
-function! s:vimshell_settings() "{{{
-    call s:build_env_path()
+    let fuf_keyOpenTabpage = '<C-t>'
+    let fuf_keyNextMode    = '<C-l>'
+    let fuf_keyPrevMode    = '<C-h>'
+    let fuf_keyOpenSplit   = '<C-s>'
+    let fuf_keyOpenVsplit  = '<C-v>'
+    let fuf_enumeratingLimit = 20
+    let fuf_previewHeight = 0
+endif " }}}
+if s:has_plugin('unite') " {{{
+    let g:unite_enable_start_insert = 1
+    let g:unite_enable_ignore_case = 1
+    let g:unite_enable_smart_case = 1
+    let g:unite_enable_split_vertically = 0
+    let g:unite_split_rule =
+    \   g:unite_enable_split_vertically ?
+    \       'topleft' : 'rightbelow'
+    let g:unite_update_time = 50
+    let g:unite_source_file_mru_ignore_pattern =
+    \   '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\|COMMIT_EDITMSG'
 
-    " No -bar
-    command!
-    \   -buffer -nargs=+
-    \   VimShellAlterCommand
-    \   call vimshell#altercmd#define(
-    \       tyru#util#parse_one_arg_from_q_args(<q-args>)[0],
-    \       tyru#util#eat_n_args_from_q_args(<q-args>, 1)
-    \   )
+    " unite-source-menu {{{
 
-    " Alias
-    VimShellAlterCommand vi vim
-    VimShellAlterCommand df df -h
-    VimShellAlterCommand diff diff --unified
-    VimShellAlterCommand du du -h
-    VimShellAlterCommand free free -m -l -t
-    VimShellAlterCommand j jobs -l
-    VimShellAlterCommand jobs jobs -l
-    VimShellAlterCommand ll ls -lh
-    VimShellAlterCommand l ll
-    VimShellAlterCommand la ls -A
-    VimShellAlterCommand less less -r
-    VimShellAlterCommand sc screen
-    VimShellAlterCommand whi which
-    VimShellAlterCommand whe where
-    VimShellAlterCommand go gopen
+    let s:Vital = vital#of('vital')
+    call s:Vital.load('Data.List')
 
-    " VimShellAlterCommand l. ls -d .*
-    call vimshell#set_alias('l.', 'ls -d .*')
+    let g:unite_source_menu_menus = {}
 
-    " Abbrev
-    inoreabbrev <buffer> l@ <Bar> less
-    inoreabbrev <buffer> g@ <Bar> grep
-    inoreabbrev <buffer> p@ <Bar> perl
-    inoreabbrev <buffer> s@ <Bar> sort
-    inoreabbrev <buffer> u@ <Bar> sort -u
-    inoreabbrev <buffer> c@ <Bar> xsel --input --clipboard
-    inoreabbrev <buffer> x@ <Bar> xargs --no-run-if-empty
-    inoreabbrev <buffer> n@ >/dev/null 2>/dev/null
-    inoreabbrev <buffer> e@ 2>&1
-    inoreabbrev <buffer> h@ --help 2>&1 <Bar> less
-    inoreabbrev <buffer> H@ --help 2>&1
+    function! UniteSourceMenuMenusMap(key, value)
+        return {
+        \   'word' : a:key,
+        \   'kind' : 'command',
+        \   'action__command' : a:value,
+        \}
+    endfunction
 
-    if executable('perldocjp')
-        VimShellAlterCommand perldoc perldocjp
-    endif
 
-    let less_sh = tyru#util#globpath(&rtp, 'macros/less.sh')
-    if !empty(less_sh)
-        call vimshell#altercmd#define('vless', less_sh[0])
-    endif
-
-    " Hook
-    call vimshell#hook#set('chpwd', [s:SNR('vimshell_chpwd_ls')])
-    call vimshell#hook#set('preexec', [s:SNR('vimshell_preexec_iexe')])
-    " call vimshell#hook#set('preexec', [s:SNR('vimshell_preexec_less')])
-
-    " Add/Remove some mappings.
-    Map! [n] -buffer <C-n>
-    Map! [n] -buffer <C-p>
-    Map! [i] -buffer <Tab>
-    Map [i] -remap -buffer -force <Tab><Tab> <Plug>(vimshell_command_complete)
-    Map [n] -remap -buffer <C-z> <Plug>(vimshell_switch)
-    Map [i] -remap -buffer <compl>r <Plug>(vimshell_history_complete_whole)
-
-    " Misc.
-    setlocal backspace-=eol
-    setlocal updatetime=1000
-    setlocal nowrap
-
-    if 0
-        if !exists(':NeoComplCacheDisable')
-            NeoComplCacheEnable
-        endif
-        NeoComplCacheAutoCompletionLength 1
-        NeoComplCacheUnlock
-        augroup vimrc-vimshell-settings
-            autocmd!
-            autocmd TabEnter <buffer> NeoComplCacheUnlock
-            autocmd TabLeave <buffer> NeoComplCacheLock
-        augroup END
-    endif
-endfunction "}}}
-
-function! s:vimshell_chpwd_ls(args, context) "{{{
-    call vimshell#execute('ls')
-endfunction "}}}
-function! s:vimshell_preexec_iexe(cmdline, context) "{{{
-    return s:vimshell_preexec_command(
-    \   'iexe',
-    \   [
-    \       'termtter',
-    \       'sudo',
-    \       ['git', 'add', '-p'],
-    \       ['git', 'log'],
-    \       ['git', 'view'],
-    \       'earthquake',
-    \   ],
-    \   a:cmdline,
-    \   a:context,
-    \)
-endfunction "}}}
-function! s:vimshell_preexec_less(cmdline, context) "{{{
-    return s:vimshell_preexec_command(
-    \   'less',
-    \   [
-    \       ['git', 'log'],
-    \       ['git', 'view'],
-    \   ],
-    \   a:cmdline,
-    \   a:context,
-    \)
-endfunction "}}}
-function! s:vimshell_preexec_command(command, patlist, cmdline, context)
-    let args = vimproc#parser#split_args(a:cmdline)
-    if empty(args)
-        return a:cmdline
-    endif
-    if args[0] ==# a:command
-        return a:cmdline
-    endif
-
-    for i in a:patlist
-        let list_match = type(i) == type([]) && i ==# args[:len(i)-1]
-        let string_match = type(i) == type("") && args[0] ==# i
-        if list_match || string_match
-            return a:command . ' ' . a:cmdline
-        endif
-        unlet i
-    endfor
-    return a:cmdline
-endfunction
-
-let s:has_built_path = 0
-function! s:build_env_path() "{{{
-    if s:has_built_path
-        return
-    endif
-    let s:has_built_path = 1
-
-    " build $PATH if vim started w/o shell.
-    " XXX: :gui
-    let $PATH = system(s:is_win ? 'echo %path%' : 'echo $PATH')
-endfunction "}}}
-" }}}
-" quickrun {{{
-let g:loaded_quicklaunch = 1
-
-let g:quickrun_no_default_key_mappings = 1
-Map [nvo] -remap <Space>r <Plug>(quickrun)
-
-if has('vim_starting')
-    let g:quickrun_config = {}
-    let g:quickrun_config['*'] = {'split': 'vertical rightbelow'}
-    if executable('pandoc')
-        let g:quickrun_config['markdown'] = {'command' : 'pandoc'}
-    endif
-    let g:quickrun_config['lisp'] = {
-    \   'command': 'clisp',
-    \   'eval': 1,
-    \   'eval_template': '(print %s)',
+    " set enc=... {{{
+    let g:unite_source_menu_menus.enc = {
+    \   'description' : 'set enc=...',
+    \   'candidates'  : {},
+    \   'map': function('UniteSourceMenuMenusMap'),
     \}
+    for s:tmp in [
+    \           'latin1',
+    \           'cp932',
+    \           'shift-jis',
+    \           'iso-2022-jp',
+    \           'euc-jp',
+    \           'utf-8',
+    \           'ucs-bom'
+    \       ]
+        call extend(g:unite_source_menu_menus.enc.candidates,
+        \           {s:tmp : 'edit ++enc='.s:tmp},
+        \           'error')
+    endfor
+    unlet s:tmp
 
-    function! s:build_quickrun_config_cpp0x()
-        if !executable('g++')
+    Map [n] -silent <prompt>a  :<C-u>Unite menu:enc<CR>
+    " }}}
+    " set fenc=... {{{
+    let g:unite_source_menu_menus.fenc = {
+    \   'description' : 'set fenc=...',
+    \   'candidates'  : {},
+    \   'map': function('UniteSourceMenuMenusMap'),
+    \}
+    for s:tmp in [
+    \           'latin1',
+    \           'cp932',
+    \           'shift-jis',
+    \           'iso-2022-jp',
+    \           'euc-jp',
+    \           'utf-8',
+    \           'ucs-bom'
+    \       ]
+        call extend(g:unite_source_menu_menus.fenc.candidates,
+        \           {s:tmp : 'set fenc='.s:tmp},
+        \           'error')
+    endfor
+    unlet s:tmp
+
+    Map [n] -silent <prompt>s  :<C-u>Unite menu:fenc<CR>
+    " }}}
+    " set ff=... {{{
+    let g:unite_source_menu_menus.ff = {
+    \   'description' : 'set ff=...',
+    \   'candidates'  : {},
+    \   'map': function('UniteSourceMenuMenusMap'),
+    \}
+    for s:tmp in ['dos', 'unix', 'mac']
+        call extend(g:unite_source_menu_menus.ff.candidates,
+        \           {s:tmp : 'set ff='.s:tmp},
+        \           'error')
+    endfor
+    unlet s:tmp
+
+    Map [n] -silent <prompt>d  :<C-u>Unite menu:ff<CR>
+    " }}}
+
+    " }}}
+
+
+
+    MyAutocmd FileType unite call s:unite_settings()
+
+    let g:unite_winheight = 5    " default winheight.
+    let g:unite_winwidth  = 10    " default winwidth.
+    function! s:unite_settings() "{{{
+        Map [i] -buffer -remap <BS> <Plug>(unite_delete_backward_path)
+        Map [n] -buffer -remap <Space><Space> <Plug>(unite_toggle_mark_current_candidate)
+
+        Map [i] -buffer -remap <C-n> <SID>(expand_unite_window)<Plug>(unite_select_next_line)
+        Map [i] -buffer -remap <C-p> <SID>(expand_unite_window)<Plug>(unite_select_previous_line)
+    endfunction "}}}
+
+    " Expand current unite window width/height 2/3
+    Map [i] -remap <SID>(expand_unite_window) <Plug>(unite_insert_leave)<SID>(expand_unite_window_fn)<Plug>(unite_insert_enter)
+
+    Map [n] -silent <SID>(expand_unite_window_fn) :<C-u>call <SID>unite_resize_window(&columns / 3 * 2, &lines / 3 * 2)<CR>
+    function! s:unite_resize_window(width, height)
+        if g:unite_enable_split_vertically
+            execute 'vertical resize' a:width
+        else
+            execute 'resize' a:height
+        endif
+
+        Map [i] -buffer -remap <C-n> <Plug>(unite_select_next_line)
+        Map [i] -buffer -remap <C-p> <Plug>(unite_select_previous_line)
+    endfunction
+endif " }}}
+" }}}
+if s:has_plugin('Gtags') " {{{
+    " <C-]> for gtags.
+    function! s:JumpTags() "{{{
+        if expand('%') == '' | return | endif
+
+        if !exists(':GtagsCursor')
+            echo "gtags.vim is not installed. do default <C-]>..."
+            sleep 2
+            " unmap this function.
+            " use plain <C-]> next time.
+            Map! [n] <C-]>
+            execute "normal! \<C-]>"
             return
         endif
-        let g:quickrun_config['cpp0x'] = deepcopy(g:quickrun#default_config['cpp'])
-        let g:quickrun_config['cpp0x'].command = 'g++ --std=c++0x'
+
+        let gtags = expand('%:h') . '/GTAGS'
+        if filereadable(gtags)
+            " use gtags if found GTAGS.
+            lcd %:p:h
+            GtagsCursor
+            lcd -
+        else
+            " or use ctags.
+            execute "normal! \<C-]>"
+        endif
+    endfunction "}}}
+    Map [n] <C-]>     :<C-u>call <SID>JumpTags()<CR>
+endif " }}}
+if s:has_plugin('vimshell') " {{{
+    MapAlterCommand sh[ell] VimShell
+
+    let g:vimshell_user_prompt = '"(" . getcwd() . ") --- (" . $USER . "@" . hostname() . ")"'
+    let g:vimshell_prompt = '$ '
+    let g:vimshell_right_prompt = 'vimshell#vcs#info("(%s)-[%b]", "(%s)-[%b|%a]")'
+    let g:vimshell_ignore_case = 1
+    let g:vimshell_smart_case = 1
+    let g:vimshell_cd_command = 'CD'
+
+    MyAutocmd FileType vimshell call s:vimshell_settings()
+    function! s:vimshell_settings() "{{{
+        call s:build_env_path()
+
+        " No -bar
+        command!
+        \   -buffer -nargs=+
+        \   VimShellAlterCommand
+        \   call vimshell#altercmd#define(
+        \       tyru#util#parse_one_arg_from_q_args(<q-args>)[0],
+        \       tyru#util#eat_n_args_from_q_args(<q-args>, 1)
+        \   )
+
+        " Alias
+        VimShellAlterCommand vi vim
+        VimShellAlterCommand df df -h
+        VimShellAlterCommand diff diff --unified
+        VimShellAlterCommand du du -h
+        VimShellAlterCommand free free -m -l -t
+        VimShellAlterCommand j jobs -l
+        VimShellAlterCommand jobs jobs -l
+        VimShellAlterCommand ll ls -lh
+        VimShellAlterCommand l ll
+        VimShellAlterCommand la ls -A
+        VimShellAlterCommand less less -r
+        VimShellAlterCommand sc screen
+        VimShellAlterCommand whi which
+        VimShellAlterCommand whe where
+        VimShellAlterCommand go gopen
+
+        " VimShellAlterCommand l. ls -d .*
+        call vimshell#set_alias('l.', 'ls -d .*')
+
+        " Abbrev
+        inoreabbrev <buffer> l@ <Bar> less
+        inoreabbrev <buffer> g@ <Bar> grep
+        inoreabbrev <buffer> p@ <Bar> perl
+        inoreabbrev <buffer> s@ <Bar> sort
+        inoreabbrev <buffer> u@ <Bar> sort -u
+        inoreabbrev <buffer> c@ <Bar> xsel --input --clipboard
+        inoreabbrev <buffer> x@ <Bar> xargs --no-run-if-empty
+        inoreabbrev <buffer> n@ >/dev/null 2>/dev/null
+        inoreabbrev <buffer> e@ 2>&1
+        inoreabbrev <buffer> h@ --help 2>&1 <Bar> less
+        inoreabbrev <buffer> H@ --help 2>&1
+
+        if executable('perldocjp')
+            VimShellAlterCommand perldoc perldocjp
+        endif
+
+        let less_sh = tyru#util#globpath(&rtp, 'macros/less.sh')
+        if !empty(less_sh)
+            call vimshell#altercmd#define('vless', less_sh[0])
+        endif
+
+        " Hook
+        call vimshell#hook#set('chpwd', [s:SNR('vimshell_chpwd_ls')])
+        call vimshell#hook#set('preexec', [s:SNR('vimshell_preexec_iexe')])
+        " call vimshell#hook#set('preexec', [s:SNR('vimshell_preexec_less')])
+
+        " Add/Remove some mappings.
+        Map! [n] -buffer <C-n>
+        Map! [n] -buffer <C-p>
+        Map! [i] -buffer <Tab>
+        Map [i] -remap -buffer -force <Tab><Tab> <Plug>(vimshell_command_complete)
+        Map [n] -remap -buffer <C-z> <Plug>(vimshell_switch)
+        Map [i] -remap -buffer <compl>r <Plug>(vimshell_history_complete_whole)
+
+        " Misc.
+        setlocal backspace-=eol
+        setlocal updatetime=1000
+        setlocal nowrap
+
+        if 0
+            if !exists(':NeoComplCacheDisable')
+                NeoComplCacheEnable
+            endif
+            NeoComplCacheAutoCompletionLength 1
+            NeoComplCacheUnlock
+            augroup vimrc-vimshell-settings
+                autocmd!
+                autocmd TabEnter <buffer> NeoComplCacheUnlock
+                autocmd TabLeave <buffer> NeoComplCacheLock
+            augroup END
+        endif
+    endfunction "}}}
+
+    function! s:vimshell_chpwd_ls(args, context) "{{{
+        call vimshell#execute('ls')
+    endfunction "}}}
+    function! s:vimshell_preexec_iexe(cmdline, context) "{{{
+        return s:vimshell_preexec_command(
+        \   'iexe',
+        \   [
+        \       'termtter',
+        \       'sudo',
+        \       ['git', 'add', '-p'],
+        \       ['git', 'log'],
+        \       ['git', 'view'],
+        \       'earthquake',
+        \   ],
+        \   a:cmdline,
+        \   a:context,
+        \)
+    endfunction "}}}
+    function! s:vimshell_preexec_less(cmdline, context) "{{{
+        return s:vimshell_preexec_command(
+        \   'less',
+        \   [
+        \       ['git', 'log'],
+        \       ['git', 'view'],
+        \   ],
+        \   a:cmdline,
+        \   a:context,
+        \)
+    endfunction "}}}
+    function! s:vimshell_preexec_command(command, patlist, cmdline, context)
+        let args = vimproc#parser#split_args(a:cmdline)
+        if empty(args)
+            return a:cmdline
+        endif
+        if args[0] ==# a:command
+            return a:cmdline
+        endif
+
+        for i in a:patlist
+            let list_match = type(i) == type([]) && i ==# args[:len(i)-1]
+            let string_match = type(i) == type("") && args[0] ==# i
+            if list_match || string_match
+                return a:command . ' ' . a:cmdline
+            endif
+            unlet i
+        endfor
+        return a:cmdline
     endfunction
-    Lazy call s:build_quickrun_config_cpp0x()
-endif
-" }}}
-" submode {{{
 
-" Move GUI window.
-call submode#enter_with('guiwinmove', 'n', '', 'mgw')
-call submode#leave_with('guiwinmove', 'n', '', '<Esc>')
-call submode#map       ('guiwinmove', 'n', 'r', 'j', '<Plug>(winmove-down)')
-call submode#map       ('guiwinmove', 'n', 'r', 'k', '<Plug>(winmove-up)')
-call submode#map       ('guiwinmove', 'n', 'r', 'h', '<Plug>(winmove-left)')
-call submode#map       ('guiwinmove', 'n', 'r', 'l', '<Plug>(winmove-right)')
+    let s:has_built_path = 0
+    function! s:build_env_path() "{{{
+        if s:has_built_path
+            return
+        endif
+        let s:has_built_path = 1
 
-" Change GUI window size.
-call submode#enter_with('guiwinsize', 'n', '', 'mgs', '<Nop>')
-call submode#leave_with('guiwinsize', 'n', '', '<Esc>')
-call submode#map       ('guiwinsize', 'n', '', 'j', ':set lines+=1<CR>')
-call submode#map       ('guiwinsize', 'n', '', 'k', ':set lines-=1<CR>')
-call submode#map       ('guiwinsize', 'n', '', 'h', ':set columns-=5<CR>')
-call submode#map       ('guiwinsize', 'n', '', 'l', ':set columns+=5<CR>')
+        " build $PATH if vim started w/o shell.
+        " XXX: :gui
+        let $PATH = system(s:is_win ? 'echo %path%' : 'echo $PATH')
+    endfunction "}}}
+endif " }}}
+if s:has_plugin('quickrun') " {{{
+    let g:loaded_quicklaunch = 1
 
-" Change current window size.
-call submode#enter_with('winsize', 'n', '', 'mws', ':<C-u>call VimrcSubmodeResizeWindow()<CR>')
-call submode#leave_with('winsize', 'n', '', '<Esc>')
+    let g:quickrun_no_default_key_mappings = 1
+    Map [nvo] -remap <Space>r <Plug>(quickrun)
 
-" TODO or FIXME: submode#leave_with() can't do that.
-" call submode#leave_with('winsize', 'n', '', '<Esc>', ':<C-u>call VimrcSubmodeResizeWindowRestore()<CR>')
+    if has('vim_starting')
+        let g:quickrun_config = {}
+        let g:quickrun_config['*'] = {'split': 'vertical rightbelow'}
+        if executable('pandoc')
+            let g:quickrun_config['markdown'] = {'command' : 'pandoc'}
+        endif
+        let g:quickrun_config['lisp'] = {
+        \   'command': 'clisp',
+        \   'eval': 1,
+        \   'eval_template': '(print %s)',
+        \}
 
-function! VimrcSubmodeResizeWindow()
-    let curwin = winnr()
-    wincmd j | let target1 = winnr() | exe curwin "wincmd w"
-    wincmd l | let target2 = winnr() | exe curwin "wincmd w"
+        function! s:build_quickrun_config_cpp0x()
+            if !executable('g++')
+                return
+            endif
+            let g:quickrun_config['cpp0x'] = deepcopy(g:quickrun#default_config['cpp'])
+            let g:quickrun_config['cpp0x'].command = 'g++ --std=c++0x'
+        endfunction
+        Lazy call s:build_quickrun_config_cpp0x()
+    endif
+endif " }}}
+if s:has_plugin('submode') "{{{
 
-    execute printf("call submode#map ('winsize', 'n', 'r', 'j', '<C-w>%s')", curwin == target1 ? "-" : "+")
-    execute printf("call submode#map ('winsize', 'n', 'r', 'k', '<C-w>%s')", curwin == target1 ? "+" : "-")
-    execute printf("call submode#map ('winsize', 'n', 'r', 'h', '<C-w>%s')", curwin == target2 ? ">" : "<")
-    execute printf("call submode#map ('winsize', 'n', 'r', 'l', '<C-w>%s')", curwin == target2 ? "<" : ">")
-endfunction
-" function! VimrcSubmodeResizeWindowRestore()
-"     if exists('s:submode_save_lazyredraw')
-"         let &l:lazyredraw = s:submode_save_lazyredraw
-"         unlet s:submode_save_lazyredraw
-"     endif
-" endfunction
+    " Move GUI window.
+    call submode#enter_with('guiwinmove', 'n', '', 'mgw')
+    call submode#leave_with('guiwinmove', 'n', '', '<Esc>')
+    call submode#map       ('guiwinmove', 'n', 'r', 'j', '<Plug>(winmove-down)')
+    call submode#map       ('guiwinmove', 'n', 'r', 'k', '<Plug>(winmove-up)')
+    call submode#map       ('guiwinmove', 'n', 'r', 'h', '<Plug>(winmove-left)')
+    call submode#map       ('guiwinmove', 'n', 'r', 'l', '<Plug>(winmove-right)')
 
-" undo/redo
-call submode#enter_with('undo/redo', 'n', '', 'g-', 'g-')
-call submode#enter_with('undo/redo', 'n', '', 'g+', 'g+')
-call submode#leave_with('undo/redo', 'n', '', '<Esc>')
-call submode#map       ('undo/redo', 'n', '', '-', 'g-')
-call submode#map       ('undo/redo', 'n', '', '+', 'g+')
+    " Change GUI window size.
+    call submode#enter_with('guiwinsize', 'n', '', 'mgs', '<Nop>')
+    call submode#leave_with('guiwinsize', 'n', '', '<Esc>')
+    call submode#map       ('guiwinsize', 'n', '', 'j', ':set lines+=1<CR>')
+    call submode#map       ('guiwinsize', 'n', '', 'k', ':set lines-=1<CR>')
+    call submode#map       ('guiwinsize', 'n', '', 'h', ':set columns-=5<CR>')
+    call submode#map       ('guiwinsize', 'n', '', 'l', ':set columns+=5<CR>')
 
-" Tab walker.
-call submode#enter_with('tabwalker', 'n', '', 'mt', '<Nop>')
-call submode#leave_with('tabwalker', 'n', '', '<Esc>')
-call submode#map       ('tabwalker', 'n', '', 'h', 'gT')
-call submode#map       ('tabwalker', 'n', '', 'l', 'gt')
-call submode#map       ('tabwalker', 'n', '', 'H', ':execute "tabmove" tabpagenr() - 2<CR>')
-call submode#map       ('tabwalker', 'n', '', 'L', ':execute "tabmove" tabpagenr()<CR>')
+    " Change current window size.
+    call submode#enter_with('winsize', 'n', '', 'mws', ':<C-u>call VimrcSubmodeResizeWindow()<CR>')
+    call submode#leave_with('winsize', 'n', '', '<Esc>')
 
-" FIXME: Weird character is showed.
-" call submode#enter_with('indent/dedent', 'i', '', '<C-q>', '<C-d>')
-" call submode#enter_with('indent/dedent', 'i', '', '<C-t>', '<C-t>')
-" call submode#leave_with('indent/dedent', 'i', '', '<Esc>')
-" call submode#map       ('indent/dedent', 'i', '', 'h', '<C-d>')
-" call submode#map       ('indent/dedent', 'i', '', 'l', '<C-t>')
+    " TODO or FIXME: submode#leave_with() can't do that.
+    " call submode#leave_with('winsize', 'n', '', '<Esc>', ':<C-u>call VimrcSubmodeResizeWindowRestore()<CR>')
 
-" Scroll by j and k.
-" TODO Stash &scroll value.
-" TODO Make utility function to generate current shortest <SID> map.
-call submode#enter_with('scroll', 'n', '', 'gj', '<C-d>')
-call submode#enter_with('scroll', 'n', '', 'gk', '<C-u>')
-call submode#leave_with('scroll', 'n', '', '<Esc>')
-call submode#map       ('scroll', 'n', '', 'j', '<C-d>')
-call submode#map       ('scroll', 'n', '', 'k', '<C-u>')
-call submode#map       ('scroll', 'n', '', 'a', ':let &l:scroll -= 3<CR>')
-call submode#map       ('scroll', 'n', '', 's', ':let &l:scroll += 3<CR>')
-" }}}
-" ref {{{
-" 'K' for ':Ref'.
-MapAlterCommand ref         Ref
-MapAlterCommand alc         Ref -new alc
-MapAlterCommand rfc         Ref -new rfc
-MapAlterCommand man         Ref -new man
-MapAlterCommand pdoc        Ref -new perldoc
-MapAlterCommand cppref      Ref -new cppref
-MapAlterCommand cpp         Ref -new cppref
-MapAlterCommand py[doc]     Ref -new pydoc
+    function! VimrcSubmodeResizeWindow()
+        let curwin = winnr()
+        wincmd j | let target1 = winnr() | exe curwin "wincmd w"
+        wincmd l | let target2 = winnr() | exe curwin "wincmd w"
 
-Map [n] <orig>K K
+        execute printf("call submode#map ('winsize', 'n', 'r', 'j', '<C-w>%s')", curwin == target1 ? "-" : "+")
+        execute printf("call submode#map ('winsize', 'n', 'r', 'k', '<C-w>%s')", curwin == target1 ? "+" : "-")
+        execute printf("call submode#map ('winsize', 'n', 'r', 'h', '<C-w>%s')", curwin == target2 ? ">" : "<")
+        execute printf("call submode#map ('winsize', 'n', 'r', 'l', '<C-w>%s')", curwin == target2 ? "<" : ">")
+    endfunction
+    " function! VimrcSubmodeResizeWindowRestore()
+    "     if exists('s:submode_save_lazyredraw')
+    "         let &l:lazyredraw = s:submode_save_lazyredraw
+    "         unlet s:submode_save_lazyredraw
+    "     endif
+    " endfunction
 
-let g:ref_use_vimproc = 0
-let g:ref_open = 'belowright vsplit'
-if executable('perldocjp')
-    let g:ref_perldoc_cmd = 'perldocjp'
-endif
-" }}}
-" vimfiler {{{
-let g:vimfiler_as_default_explorer = 1
-let g:vimfiler_safe_mode_by_default = 0
-let g:vimfiler_split_command = 'aboveleft split'
-if executable('trash-put')
-    let g:vimfiler_external_delete_command = 'trash-put $srcs'
-endif
+    " undo/redo
+    call submode#enter_with('undo/redo', 'n', '', 'g-', 'g-')
+    call submode#enter_with('undo/redo', 'n', '', 'g+', 'g+')
+    call submode#leave_with('undo/redo', 'n', '', '<Esc>')
+    call submode#map       ('undo/redo', 'n', '', '-', 'g-')
+    call submode#map       ('undo/redo', 'n', '', '+', 'g+')
 
-MyAutocmd FileType vimfiler call s:vimfiler_settings()
-function! s:vimfiler_settings() "{{{
-    Map [n] -remap -buffer L <Plug>(vimfiler_move_to_history_forward)
-    Map [n] -remap -buffer H <Plug>(vimfiler_move_to_history_back)
-    Map [n] -remap -buffer <C-o> <Plug>(vimfiler_move_to_history_back)
-    Map [n] -remap -buffer <C-i> <Plug>(vimfiler_move_to_history_forward)
+    " Tab walker.
+    call submode#enter_with('tabwalker', 'n', '', 'mt', '<Nop>')
+    call submode#leave_with('tabwalker', 'n', '', '<Esc>')
+    call submode#map       ('tabwalker', 'n', '', 'h', 'gT')
+    call submode#map       ('tabwalker', 'n', '', 'l', 'gt')
+    call submode#map       ('tabwalker', 'n', '', 'H', ':execute "tabmove" tabpagenr() - 2<CR>')
+    call submode#map       ('tabwalker', 'n', '', 'L', ':execute "tabmove" tabpagenr()<CR>')
 
-    " TODO
-    " Map! [n] -buffer N j k
-    Map! [n] -buffer N
-    Map! [n] -buffer j
-    Map! [n] -buffer k
-    Map! [n] -buffer ?
+    " FIXME: Weird character is showed.
+    " call submode#enter_with('indent/dedent', 'i', '', '<C-q>', '<C-d>')
+    " call submode#enter_with('indent/dedent', 'i', '', '<C-t>', '<C-t>')
+    " call submode#leave_with('indent/dedent', 'i', '', '<Esc>')
+    " call submode#map       ('indent/dedent', 'i', '', 'h', '<C-d>')
+    " call submode#map       ('indent/dedent', 'i', '', 'l', '<C-t>')
 
-    " dd as <Plug>(vimfiler_force_delete_file)
-    " because I want to use trash-put.
-    Map! [n] -buffer d
-    Map [n] -buffer -remap dd <Plug>(vimfiler_force_delete_file)
+    " Scroll by j and k.
+    " TODO Stash &scroll value.
+    " TODO Make utility function to generate current shortest <SID> map.
+    call submode#enter_with('scroll', 'n', '', 'gj', '<C-d>')
+    call submode#enter_with('scroll', 'n', '', 'gk', '<C-u>')
+    call submode#leave_with('scroll', 'n', '', '<Esc>')
+    call submode#map       ('scroll', 'n', '', 'j', '<C-d>')
+    call submode#map       ('scroll', 'n', '', 'k', '<C-u>')
+    call submode#map       ('scroll', 'n', '', 'a', ':let &l:scroll -= 3<CR>')
+    call submode#map       ('scroll', 'n', '', 's', ':let &l:scroll += 3<CR>')
+endif "}}}
+if s:has_plugin('ref') " {{{
+    " 'K' for ':Ref'.
+    MapAlterCommand ref         Ref
+    MapAlterCommand alc         Ref -new alc
+    MapAlterCommand rfc         Ref -new rfc
+    MapAlterCommand man         Ref -new man
+    MapAlterCommand pdoc        Ref -new perldoc
+    MapAlterCommand cppref      Ref -new cppref
+    MapAlterCommand cpp         Ref -new cppref
+    MapAlterCommand py[doc]     Ref -new pydoc
 
-    Map [n] -buffer -remap <Space><Space> <Plug>(vimfiler_toggle_mark_current_line)
-endfunction "}}}
-" }}}
-" prettyprint {{{
-MapAlterCommand pp PP
+    Map [n] <orig>K K
 
-let g:prettyprint_show_expression = 1
-" }}}
-" fencview {{{
-let g:fencview_auto_patterns = '*'
-let g:fencview_show_progressbar = 0
-" }}}
-" lingr.vim {{{
+    let g:ref_use_vimproc = 0
+    let g:ref_open = 'belowright vsplit'
+    if executable('perldocjp')
+        let g:ref_perldoc_cmd = 'perldocjp'
+    endif
+endif " }}}
+if s:has_plugin('vimfiler') " {{{
+    let g:vimfiler_as_default_explorer = 1
+    let g:vimfiler_safe_mode_by_default = 0
+    let g:vimfiler_split_command = 'aboveleft split'
+    if executable('trash-put')
+        let g:vimfiler_external_delete_command = 'trash-put $srcs'
+    endif
 
-" from thinca's .vimrc {{{
-" http://soralabo.net/s/vrcb/s/thinca
+    MyAutocmd FileType vimfiler call s:vimfiler_settings()
+    function! s:vimfiler_settings() "{{{
+        Map [n] -remap -buffer L <Plug>(vimfiler_move_to_history_forward)
+        Map [n] -remap -buffer H <Plug>(vimfiler_move_to_history_back)
+        Map [n] -remap -buffer <C-o> <Plug>(vimfiler_move_to_history_back)
+        Map [n] -remap -buffer <C-i> <Plug>(vimfiler_move_to_history_forward)
 
-if !exists('g:lingr')
-    call rtputil#remove('\<lingr-vim\>')
-endif
+        " TODO
+        " Map! [n] -buffer N j k
+        Map! [n] -buffer N
+        Map! [n] -buffer j
+        Map! [n] -buffer k
+        Map! [n] -buffer ?
 
-if 0
-" Update GNU screen tab name.
+        " dd as <Plug>(vimfiler_force_delete_file)
+        " because I want to use trash-put.
+        Map! [n] -buffer d
+        Map [n] -buffer -remap dd <Plug>(vimfiler_force_delete_file)
 
-augroup vimrc-plugin-lingr
+        Map [n] -buffer -remap <Space><Space> <Plug>(vimfiler_toggle_mark_current_line)
+    endfunction "}}}
+endif " }}}
+if s:has_plugin('prettyprint') " {{{
+    MapAlterCommand pp PP
+
+    let g:prettyprint_show_expression = 1
+endif " }}}
+if s:has_plugin('lingr') " {{{
+
+    " from thinca's .vimrc {{{
+    " http://soralabo.net/s/vrcb/s/thinca
+
+    if !exists('g:lingr')
+        call rtputil#remove('\<lingr-vim\>')
+    endif
+
+    if 0
+    " Update GNU screen tab name.
+
+    augroup vimrc-plugin-lingr
+        autocmd!
+        autocmd User plugin-lingr-* call s:lingr_event(
+        \     matchstr(expand('<amatch>'), 'plugin-lingr-\zs\w*'))
+        autocmd FileType lingr-* call s:init_lingr(expand('<amatch>'))
+    augroup END
+
+    function! s:lingr_ctrl_l() "{{{
+        call lingr#mark_as_read_current_room()
+        call s:screen_auto_window_name()
+        redraw!
+    endfunction "}}}
+    function! s:init_lingr(ft) "{{{
+        if exists('s:screen_is_running')
+            Map [n] -buffer -silent <C-l> :<C-u>call <SID>lingr_ctrl_l()<CR>
+            let b:window_name = 'lingr'
+        endif
+    endfunction "}}}
+    function! s:lingr_event(event) "{{{
+        if a:event ==# 'message' && s:screen_is_running
+            execute printf('WindowName %s(%d)', 'lingr', lingr#unread_count())
+        endif
+    endfunction "}}}
+
+    endif    " Update GNU screen tab name.
+    " }}}
+
+
+
+    MyAutocmd FileType lingr-messages
+    \   call s:lingr_messages_mappings()
+    function! s:lingr_messages_mappings() "{{{
+        Map [n] -buffer -remap o <Plug>(lingr-messages-show-say-buffer)
+        Map [n] -buffer <C-g><C-n> gt
+        Map [n] -buffer <C-g><C-p> gT
+    endfunction "}}}
+
+    MyAutocmd FileType lingr-say
+    \   call s:lingr_say_mappings()
+    function! s:lingr_say_mappings() "{{{
+        Map [n] -buffer -remap <CR> <SID>(lingr-say-say)
+    endfunction "}}}
+
+    Map [n] -silent <SID>(lingr-say-say) :<C-u>call <SID>lingr_say_say()<CR>
+    function! s:lingr_say_say() "{{{
+        let all_lines = getline(1, '$')
+        let blank_line = '^\s*$'
+        call filter(all_lines, 'v:val =~# blank_line')
+        if empty(all_lines)    " has blank line(s).
+            let doit = 1
+        else
+            let doit = input('lingr-say buffer has one or more blank lines. say it?[y/n]:') =~? '^y\%[es]'
+        endif
+        if doit
+            execute "normal \<Plug>(lingr-say-say)"
+        endif
+    endfunction "}}}
+
+
+
+    let g:lingr_vim_additional_rooms = [
+    \   'tyru',
+    \   'vim',
+    \   'emacs',
+    \   'editor',
+    \   'vim_users_en',
+    \   'vimperator',
+    \   'filer',
+    \   'completion',
+    \   'shell',
+    \   'git',
+    \   'termtter',
+    \   'lingr',
+    \   'ruby',
+    \   'few',
+    \   'gc',
+    \   'scala',
+    \   'lowlevel',
+    \   'lingr_vim',
+    \   'vimjolts',
+    \   'gentoo',
+    \   'LinuxKernel',
+    \]
+    let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
+    let g:lingr_vim_count_unread_at_current_room = 1
+endif " }}}
+if s:has_plugin('chalice') " {{{
+    if !exists('g:chalice')
+        call rtputil#remove('\<chalice\>')
+    endif
+endif " }}}
+if s:has_plugin('github') " {{{
+    MapAlterCommand gh Github
+    MapAlterCommand ghi Github issues
+endif " }}}
+if s:has_plugin('neocomplcache') "{{{
+    let g:neocomplcache_enable_at_startup = 1
+    let g:neocomplcache_disable_caching_file_path_pattern = '.*'
+    let g:neocomplcache_enable_ignore_case = 1
+    let g:neocomplcache_enable_underbar_completion = 1
+    let g:neocomplcache_enable_camel_case_completion = 1
+    let g:neocomplcache_auto_completion_start_length = 3
+
+    Map [n] <Leader>neo :<C-u>NeoComplCacheToggle<CR>
+
+    " http://d.hatena.ne.jp/basyura/20120318/p1
+    MyAutocmd InsertEnter * call s:neco_pre_cache()
+    function! s:neco_pre_cache()
+        if exists('b:neco_pre_cache')
+            return
+        endif
+        let b:neco_pre_cache = 1
+        if bufname('%') =~ g:neocomplcache_lock_buffer_name_pattern
+            return
+        endif
+        NeoComplCacheCachingBuffer
+        NeoComplCacheCachingDictionary
+    endfunction
+endif "}}}
+if s:has_plugin('EasyGrep') " {{{
+    let g:EasyGrepCommand = 2
+    let g:EasyGrepInvertWholeWord = 1
+endif " }}}
+if s:has_plugin('gist') "{{{
+    let g:gist_detect_filetype = 1
+    let g:gist_open_browser_after_post = 1
+    let g:gist_browser_command = ":OpenBrowser %URL%"
+endif "}}}
+if s:has_plugin('quickey') " {{{
+    let g:quickey_merge_window_hide_vim_window_move_cursor = 1
+    let g:quickey_no_default_split_nicely_keymappings = 1
+endif " }}}
+if s:has_plugin('ohmygrep') " {{{
+    MapAlterCommand gr[ep] OMGrep
+    MapAlterCommand re[place] OMReplace
+
+    Map [n] -remap <Space>gw <Plug>(omg-grep-cword)
+    Map [n] -remap <Space>gW <Plug>(omg-grep-cWORD)
+endif " }}}
+if s:has_plugin('detect-coding-style') " {{{
+
+    MyAutocmd User dcs-initialized-styles call s:dcs_register_own_styles()
+    function! s:dcs_register_own_styles()
+        call dcs#register_style('My style', {'hook_excmd': 'setlocal expandtab   tabstop=4 shiftwidth=4 softtabstop&'})
+        call dcs#register_style('Short indent', {'hook_excmd': 'setlocal expandtab   tabstop=2 shiftwidth=2 softtabstop&'})
+    endfunction
+
+endif " }}}
+if s:has_plugin('autocmd-tabclose') " {{{
+    " :tabprevious on vimrc-tabclose
+    function! s:tabclose_post()
+        if tabpagenr() != 1
+            " XXX: Doing :tabprevious here cause Vim behavior strange
+            " Decho ':tabprevious'
+        endif
+    endfunction
+    MyAutocmd User tabclose-post call s:tabclose_post()
+endif " }}}
+if s:has_plugin('simpletap') " {{{
+    let g:simpletap#open_command = 'botright vnew'
+endif " }}}
+if s:has_plugin('fontzoom') " {{{
+    let loaded_fontzoom = 1
+endif " }}}
+if s:has_plugin('ftplugin/vim_fold.vim') " {{{
+    augroup foldmethod-expr
     autocmd!
-    autocmd User plugin-lingr-* call s:lingr_event(
-    \     matchstr(expand('<amatch>'), 'plugin-lingr-\zs\w*'))
-    autocmd FileType lingr-* call s:init_lingr(expand('<amatch>'))
-augroup END
+    autocmd InsertEnter * if &l:foldmethod ==# 'expr'
+    \                   |   let b:foldinfo = [&l:foldmethod, &l:foldexpr]
+    \                   |   setlocal foldmethod=manual foldexpr=0
+    \                   | endif
+    autocmd InsertLeave * if exists('b:foldmethod')
+    \                   |   let [&l:foldmethod, &l:foldexpr] = b:foldinfo
+    \                   | endif
+    augroup END
+endif " }}}
+if s:has_plugin('GraVit') " {{{
 
-function! s:lingr_ctrl_l() "{{{
-    call lingr#mark_as_read_current_room()
-    call s:screen_auto_window_name()
-    redraw!
-endfunction "}}}
-function! s:init_lingr(ft) "{{{
-    if exists('s:screen_is_running')
-        Map [n] -buffer -silent <C-l> :<C-u>call <SID>lingr_ctrl_l()<CR>
-        let b:window_name = 'lingr'
-    endif
-endfunction "}}}
-function! s:lingr_event(event) "{{{
-    if a:event ==# 'message' && s:screen_is_running
-        execute printf('WindowName %s(%d)', 'lingr', lingr#unread_count())
-    endif
-endfunction "}}}
+    " XXX: 2012-09-17 19:48: syntax/vim.vim wrong highlight...
+    " Map [nvo] -remap g/ <Plug>gravit->forward
+    " Map [nvo] -remap g? <Plug>gravit->backward
 
-endif    " Update GNU screen tab name.
-" }}}
+    " highlight GraVitCurrentMatch term=underline cterm=underline gui=underline ctermfg=4 guifg=Purple
 
-
-
-MyAutocmd FileType lingr-messages
-\   call s:lingr_messages_mappings()
-function! s:lingr_messages_mappings() "{{{
-    Map [n] -buffer -remap o <Plug>(lingr-messages-show-say-buffer)
-    Map [n] -buffer <C-g><C-n> gt
-    Map [n] -buffer <C-g><C-p> gT
-endfunction "}}}
-
-MyAutocmd FileType lingr-say
-\   call s:lingr_say_mappings()
-function! s:lingr_say_mappings() "{{{
-    Map [n] -buffer -remap <CR> <SID>(lingr-say-say)
-endfunction "}}}
-
-Map [n] -silent <SID>(lingr-say-say) :<C-u>call <SID>lingr_say_say()<CR>
-function! s:lingr_say_say() "{{{
-    let all_lines = getline(1, '$')
-    let blank_line = '^\s*$'
-    call filter(all_lines, 'v:val =~# blank_line')
-    if empty(all_lines)    " has blank line(s).
-        let doit = 1
-    else
-        let doit = input('lingr-say buffer has one or more blank lines. say it?[y/n]:') =~? '^y\%[es]'
-    endif
-    if doit
-        execute "normal \<Plug>(lingr-say-say)"
-    endif
-endfunction "}}}
-
-
-
-let g:lingr_vim_additional_rooms = [
-\   'tyru',
-\   'vim',
-\   'emacs',
-\   'editor',
-\   'vim_users_en',
-\   'vimperator',
-\   'filer',
-\   'completion',
-\   'shell',
-\   'git',
-\   'termtter',
-\   'lingr',
-\   'ruby',
-\   'few',
-\   'gc',
-\   'scala',
-\   'lowlevel',
-\   'lingr_vim',
-\   'vimjolts',
-\   'gentoo',
-\   'LinuxKernel',
-\]
-let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
-let g:lingr_vim_count_unread_at_current_room = 1
-" }}}
-" chalice {{{
-if !exists('g:chalice')
-    call rtputil#remove('\<chalice\>')
-endif
-" }}}
-" github {{{
-MapAlterCommand gh Github
-MapAlterCommand ghi Github issues
-" }}}
-" neocomplcache {{{
-let g:neocomplcache_enable_at_startup = 1
-let g:neocomplcache_disable_caching_file_path_pattern = '.*'
-let g:neocomplcache_enable_ignore_case = 1
-let g:neocomplcache_enable_underbar_completion = 1
-let g:neocomplcache_enable_camel_case_completion = 1
-let g:neocomplcache_auto_completion_start_length = 3
-
-Map [n] <Leader>neo :<C-u>NeoComplCacheToggle<CR>
-
-" http://d.hatena.ne.jp/basyura/20120318/p1
-MyAutocmd InsertEnter * call s:neco_pre_cache()
-function! s:neco_pre_cache()
-    if exists('b:neco_pre_cache')
-        return
-    endif
-    let b:neco_pre_cache = 1
-    if bufname('%') =~ g:neocomplcache_lock_buffer_name_pattern
-        return
-    endif
-    NeoComplCacheCachingBuffer
-    NeoComplCacheCachingDictionary
-endfunction
-" }}}
-" EasyGrep {{{
-let g:EasyGrepCommand = 2
-let g:EasyGrepInvertWholeWord = 1
-" }}}
-" gist {{{
-let g:gist_detect_filetype = 1
-let g:gist_open_browser_after_post = 1
-let g:gist_browser_command = ":OpenBrowser %URL%"
-" }}}
-" quickey {{{
-let g:quickey_merge_window_hide_vim_window_move_cursor = 1
-let g:quickey_no_default_split_nicely_keymappings = 1
-" }}}
-" ohmygrep {{{
-MapAlterCommand gr[ep] OMGrep
-MapAlterCommand re[place] OMReplace
-
-Map [n] -remap <Space>gw <Plug>(omg-grep-cword)
-Map [n] -remap <Space>gW <Plug>(omg-grep-cWORD)
-" }}}
-" detect-coding-style {{{
-
-MyAutocmd User dcs-initialized-styles call s:dcs_register_own_styles()
-function! s:dcs_register_own_styles()
-    call dcs#register_style('My style', {'hook_excmd': 'setlocal expandtab   tabstop=4 shiftwidth=4 softtabstop&'})
-    call dcs#register_style('Short indent', {'hook_excmd': 'setlocal expandtab   tabstop=2 shiftwidth=2 softtabstop&'})
-endfunction
-
-" }}}
-" autocmd-tabclose {{{
-" :tabprevious on vimrc-tabclose
-function! s:tabclose_post()
-    if tabpagenr() != 1
-        " XXX: Doing :tabprevious here cause Vim behavior strange
-        " Decho ':tabprevious'
-    endif
-endfunction
-MyAutocmd User tabclose-post call s:tabclose_post()
-" }}}
-" simpletap {{{
-let g:simpletap#open_command = 'botright vnew'
-" }}}
-" fontzoom {{{
-let loaded_fontzoom = 1
-" }}}
-" ftplugin/vim_fold.vim {{{
-augroup foldmethod-expr
-  autocmd!
-  autocmd InsertEnter * if &l:foldmethod ==# 'expr'
-  \                   |   let b:foldinfo = [&l:foldmethod, &l:foldexpr]
-  \                   |   setlocal foldmethod=manual foldexpr=0
-  \                   | endif
-  autocmd InsertLeave * if exists('b:foldmethod')
-  \                   |   let [&l:foldmethod, &l:foldexpr] = b:foldinfo
-  \                   | endif
-augroup END
-" }}}
-" GraVit {{{
-Map [nvo] -remap g/ <Plug>gravit->forward
-Map [nvo] -remap g? <Plug>gravit->backward
-" highlight GraVitCurrentMatch term=underline cterm=underline gui=underline ctermfg=4 guifg=Purple
-" }}}
-" hatena.vim {{{
+endif " }}}
+if s:has_plugin('hatena.vim') " {{{
 let g:hatena_user = 'tyru'
 let g:hatena_upload_on_write = 0
-" }}}
+endif " }}}
 
 " test
 let g:loaded_tyru_event_test = 1
 
 " runtime
-" netrw {{{
+if s:has_plugin('netrw') " {{{
 function! s:filetype_netrw() "{{{
     Map [n] -buffer -remap h -
     Map [n] -buffer -remap l <CR>
@@ -3173,20 +3210,20 @@ function! s:filetype_netrw() "{{{
 endfunction "}}}
 
 MyAutocmd FileType netrw call s:filetype_netrw()
-" }}}
-" indent/vim.vim {{{
+endif " }}}
+if s:has_plugin('indent/vim.vim') " {{{
 let g:vim_indent_cont = 0
-" }}}
-" changelog {{{
+endif " }}}
+if s:has_plugin('changelog') " {{{
 let changelog_username = "tyru"
-" }}}
-" syntax/sh.vim {{{
+endif " }}}
+if s:has_plugin('syntax/sh.vim') " {{{
 let g:is_bash = 1
-" }}}
-" syntax/scheme.vim {{{
+endif " }}}
+if s:has_plugin('syntax/scheme.vim') " {{{
 let g:is_gauche = 1
-" }}}
-" syntax/perl.vim {{{
+endif " }}}
+if s:has_plugin('syntax/perl.vim') " {{{
 
 " POD highlighting
 let g:perl_include_pod = 1
@@ -3194,7 +3231,7 @@ let g:perl_include_pod = 1
 let g:perl_fold = 1
 let g:perl_nofold_packages = 1
 
-" }}}
+endif " }}}
 
 " }}}
 " Backup {{{
