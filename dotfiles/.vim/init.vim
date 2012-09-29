@@ -1026,7 +1026,7 @@ function! s:is_cmdwin_window(winnr) "{{{
     return s:in_cmdwin
 endfunction "}}}
 
-call s:window.register('cmdwin', {'close': function('s:close_cmdwin_window'), 'determine': function('s:is_cmdwin_window')})
+call s:window.register('cmdwin', {'close': function('s:close_cmdwin_window'), 'detect': function('s:is_cmdwin_window')})
 " }}}
 
 " help {{{
@@ -1037,7 +1037,7 @@ function! s:is_help_window(winnr) "{{{
     return getbufvar(winbufnr(a:winnr), '&buftype') ==# 'help'
 endfunction "}}}
 
-call s:window.register('help', {'close': function('s:close_help_window'), 'determine': function('s:is_help_window')})
+call s:window.register('help', {'close': function('s:close_help_window'), 'detect': function('s:is_help_window')})
 " }}}
 
 " quickfix {{{
@@ -1049,7 +1049,7 @@ function! s:is_quickfix_window(winnr) "{{{
     return getbufvar(winbufnr(a:winnr), '&buftype') ==# 'quickfix'
 endfunction "}}}
 
-call s:window.register('quickfix', {'close': function('s:close_quickfix_window'), 'determine': function('s:is_quickfix_window')})
+call s:window.register('quickfix', {'close': function('s:close_quickfix_window'), 'detect': function('s:is_quickfix_window')})
 " }}}
 
 " ref {{{
@@ -1060,7 +1060,7 @@ function! s:is_ref_window(winnr) "{{{
     return getbufvar(winbufnr(a:winnr), '&filetype') ==# 'ref'
 endfunction "}}}
 
-call s:window.register('ref', {'close': function('s:close_ref_window'), 'determine': function('s:is_ref_window')})
+call s:window.register('ref', {'close': function('s:close_ref_window'), 'detect': function('s:is_ref_window')})
 " }}}
 
 " quickrun {{{
@@ -1071,7 +1071,7 @@ function! s:is_quickrun_window(winnr) "{{{
     return getbufvar(winbufnr(a:winnr), '&filetype') ==# 'quickrun'
 endfunction "}}}
 
-call s:window.register('quickrun', {'close': function('s:close_quickrun_window'), 'determine': function('s:is_quickrun_window')})
+call s:window.register('quickrun', {'close': function('s:close_quickrun_window'), 'detect': function('s:is_quickrun_window')})
 " }}}
 
 " unlisted {{{
@@ -1082,7 +1082,7 @@ function! s:is_unlisted_window(winnr) "{{{
     return !getbufvar(winbufnr(a:winnr), '&buflisted')
 endfunction "}}}
 
-call s:window.register('unlisted', {'close': function('s:close_unlisted_window'), 'determine': function('s:is_unlisted_window')})
+call s:window.register('unlisted', {'close': function('s:close_unlisted_window'), 'detect': function('s:is_unlisted_window')})
 " }}}
 
 
@@ -1092,7 +1092,7 @@ function! s:close_certain_window() "{{{
 
     " Close current.
     for group in groups
-        if group.determine(curwinnr)
+        if group.detect(curwinnr)
             call group.close()
             return
         endif
