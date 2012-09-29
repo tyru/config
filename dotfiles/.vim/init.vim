@@ -72,7 +72,14 @@ function! s:cmd_lazy(q_args) "{{{
         return
     endif
     if has('vim_starting')
-        execute 'MyAutocmd VimEnter *' a:q_args
+        execute 'MyAutocmd VimEnter *'
+        \       join([
+        \           'try',
+        \               'execute '.string(a:q_args),
+        \           'catch',
+        \               'call StartDebugMode()',
+        \           'endtry',
+        \       ], " | ")
     else
         execute a:q_args
     endif
