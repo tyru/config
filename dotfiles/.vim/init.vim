@@ -3,6 +3,11 @@
 " See also: ~/.vimrc
 "
 
+" let $VIMRC_DEBUG = 1
+" let $VIMRC_DISABLE_MYAUTOCMD = 1
+" let $VIMRC_DISABLE_VIMENTER = 1
+
+
 " Basic {{{
 scriptencoding utf-8
 
@@ -35,11 +40,21 @@ augroup vimrc
 augroup END
 
 
+command!
+\   -nargs=1
+\   Nop
+\   command! -bang -nargs=* <args> :
+
+
 
 command!
 \   -bang -nargs=*
 \   MyAutocmd
 \   autocmd<bang> vimrc <args>
+
+if exists('$VIMRC_DISABLE_MYAUTOCMD')
+    Nop MyAutoCmd
+endif
 
 
 
@@ -47,6 +62,10 @@ command!
 \   -nargs=+
 \   Lazy
 \   call s:cmd_lazy(<q-args>)
+
+if exists('$VIMRC_DISABLE_VIMENTER')
+    Nop MyAutoCmd
+endif
 
 function! s:cmd_lazy(q_args) "{{{
     if a:q_args == ''
