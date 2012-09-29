@@ -513,9 +513,6 @@ MyAutocmd SwapExists * let v:swapchoice = 'o'
 MyAutocmd QuickfixCmdPost * QuickFix
 
 
-" InsertLeave, InsertEnter
-MyAutocmd InsertEnter * setlocal ignorecase
-
 " Set syntaxes
 MyAutocmd BufNewFile,BufRead *.as setlocal syntax=actionscript
 MyAutocmd BufNewFile,BufRead _vimperatorrc,.vimperatorrc setlocal syntax=vimperator
