@@ -17,15 +17,20 @@ function! s:load_init_vim()
 
     source $MYVIMRC
 endfunction
-
-try
-    call s:load_init_vim()
-catch
+function! StartDebugMode()
     echohl ErrorMsg
-    echomsg 'an error occurred... starting as debug mode.'
-    echo    "\n"
-    echomsg 'v:exception = '.v:exception
-    echomsg 'v:throwpoint = '.v:throwpoint
+    let msg =
+    \   "an error occurred... starting as debug mode.\n"
+    \   . "\n"
+    \   . 'v:exception = '.v:exception."\n"
+    \   . 'v:throwpoint = '.v:throwpoint
+    if has('gui_running')
+        call confirm(msg)
+    else
+        for l in split(msg, '\n', 1)
+            execute l !=# '' ? 'echomsg l' : 'echo "\n"'
+        endfor
+    endif
     echohl None
 
     let lnum = matchstr(v:throwpoint, '\C\%(line\|行\) \zs\d\+')
@@ -46,4 +51,10 @@ catch
         " Open quickfix.
         copen
     endif
+endfunction
+
+try
+    call s:load_init_vim()
+catch
+    call StartDebugMode()
 endtry
