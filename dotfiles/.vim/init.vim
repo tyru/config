@@ -145,6 +145,7 @@ let g:scrolloff = 0
 
 " Hack for <LeftMouse> not to adjust ('scrolloff') when single-clicking.
 " Implement 'scrolloff' by auto-command to control the fire.
+" cf. http://vim-users.jp/2011/04/hack213/
 MyAutocmd CursorMoved * call s:reinventing_scrolloff()
 let s:last_lnum = -1
 function! s:reinventing_scrolloff()
@@ -506,7 +507,7 @@ call dutil#load()
 " what the fuck?
 Lazy colorscheme tyru | doautocmd ColorScheme
 
-" Open on read-only if swap exists
+" Open a file as read-only if swap exists
 MyAutocmd SwapExists * let v:swapchoice = 'o'
 
 MyAutocmd QuickfixCmdPost * QuickFix
@@ -901,7 +902,6 @@ Map [n] <excmd>ofc :<C-u>call <SID>advance_option_state(['', 'all'], 'foldclose'
 Map [n] <excmd>ofm :<C-u>call <SID>advance_option_state(['manual', 'marker', 'indent'], 'foldmethod')<CR>
 
 
-" FIXME: Bad name :(
 command!
 \   -bar
 \   OptInit
@@ -1560,16 +1560,14 @@ endfunction
 function! s:quickfix_exists_window()
     return !!s:quickfix_get_winnr()
 endfunction
-function! s:quickfix_supported_quickfix_title()
-    return v:version >=# 703
-endfunction
 function! s:quickfix_get_search_word()
     " NOTE: This function returns a string starting with "/"
     " if previous search word is found.
-    " because if this function returns an empty string
-    " as a failure return value, ":vimgrep /" also returns an empty string.
+    " This function can't use an empty string
+    " as a failure return value, because ":vimgrep /" also returns an empty string.
 
-    if !s:quickfix_supported_quickfix_title()
+    " w:quickfix_title only works 7.3 or later.
+    if v:version <# 703
         return ''
     endif
 
