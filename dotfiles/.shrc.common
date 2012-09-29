@@ -58,6 +58,7 @@ fi
 
 alias freemem='free && sync && echo 3 > /proc/sys/vm/drop_caches && free'
 alias cpam=cpanm
+alias gopen=gnome-open
 
 
 
