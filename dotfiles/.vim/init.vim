@@ -759,6 +759,10 @@ endif
 " motion {{{
 Map [nvo] j gj
 Map [nvo] k gk
+MyAutocmd CmdwinEnter * Map [nvo] -buffer j j
+MyAutocmd CmdwinEnter * Map [nvo] -buffer k k
+MyAutocmd CmdwinLeave * Map [nvo] -buffer j j
+MyAutocmd CmdwinLeave * Map [nvo] -buffer k k
 
 Map [nvo] <orig>j j
 Map [nvo] <orig>k k
