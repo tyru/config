@@ -34,12 +34,6 @@ function! tyru#util#system(command, ...) "{{{
     return system(join(
     \   [a:command] + map(copy(a:000), 'shellescape(v:val)')))
 endfunction "}}}
-function! tyru#util#glob(expr) "{{{
-    return split(glob(a:expr), "\n")
-endfunction "}}}
-function! tyru#util#globpath(path, expr) "{{{
-    return split(globpath(a:path, a:expr), "\n")
-endfunction "}}}
 function! tyru#util#getchar(...) "{{{
     let c = call('getchar', a:000)
     return type(c) == type("") ? c : nr2char(c)
@@ -102,42 +96,20 @@ function! tyru#util#uniq_path(path, ...) "{{{
         return join(tyru#util#uniq(split(a:path, sep)), sep)
     endif
 endfunction "}}}
-function! tyru#util#has_idx(list, idx) "{{{
-    let idx = a:idx
-    " Support negative index?
-    " let idx = a:idx >= 0 ? a:idx : len(a:list) + a:idx
-    return 0 <= idx && idx < len(a:list)
-endfunction "}}}
 function! tyru#util#mapf(list, fmt) "{{{
     return map(copy(a:list), "printf(a:fmt, v:val)")
 endfunction "}}}
 function! tyru#util#zip(list, list2) "{{{
     let ret = []
     let i = 0
-    while tyru#util#has_idx(a:list, i) || tyru#util#has_idx(a:list2, i)
+    while i <# len(a:list) || i <# len(a:list2)
         call add(ret,
-        \   (tyru#util#has_idx(a:list, i) ? [a:list[i]] : [])
-        \   + (tyru#util#has_idx(a:list2, i) ? [a:list2[i]] : []))
+        \   (i <# len(a:list) ? [a:list[i]] : [])
+        \   + (i <# len(a:list2) ? [a:list2[i]] : []))
 
         let i += 1
     endwhile
     return ret
-endfunction "}}}
-function! tyru#util#get_idx(list, elem, ...) "{{{
-    let idx = 0
-
-    while tyru#util#has_idx(a:list, idx)
-        if a:list[idx] ==# a:elem
-            return idx
-        endif
-        let idx += 1
-    endwhile
-
-    if a:0 == 0
-        throw 'internal error'
-    else
-        return a:1
-    endif
 endfunction "}}}
 function! tyru#util#reduce(list, expr) "{{{
     " TODO
