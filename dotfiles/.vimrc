@@ -10,8 +10,14 @@ endif
 let $MYVIMRC = $MYVIMDIR . '/init.vim'
 
 function! s:load_init_vim()
-    " Use plain vim when vim was invoked by 'sudo'
+    " Use plain vim
+    " when vim was invoked by 'sudo' command.
     if exists('$SUDO_USER')
+        return
+    endif
+    " Do not start debug-mode
+    " when vim was invoked by 'git' command.
+    if exists('$GIT_DIR')
         return
     endif
 
