@@ -31,8 +31,6 @@ autocmd BufNewFile,BufRead *.lua
             \ setfiletype lua
 autocmd BufNewFile,BufRead *.tmpl
             \ setfiletype html
-autocmd BufNewFile,BufRead *.markdown,*.mkd,*.md,*.mkdn
-            \ setlocal filetype=markdown
 autocmd BufNewFile,BufRead SKK-JISYO*,.skk-jisyo*,.skk-*-jisyo*,skk-*-dict,~/.skk/*
             \ setfiletype skk
 autocmd BufNewFile,BufRead *.grass
@@ -43,8 +41,6 @@ autocmd BufNewFile,BufRead *.tjs
             \ setfiletype tjs
 autocmd BufNewFile,BufRead /usr/include/c++/*
             \ setfiletype cpp
-autocmd BufNewFile,BufRead ~/Dropbox/memo/**.txt
-            \ setfiletype mkd
 autocmd BufNewFile,BufRead ~/.earthquake/config
             \ setfiletype ruby
 autocmd BufNewFile,BufRead *.ftl
