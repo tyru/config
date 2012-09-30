@@ -41,6 +41,15 @@ function! s:has_plugin(name)
     \   || globpath(&rtp, 'autoload/' . suffix) != ''
 endfunction
 
+function! s:warn(msg) "{{{
+    echohl WarningMsg
+    try
+        echomsg a:msg
+    finally
+        echohl None
+    endtry
+endfunction "}}}
+
 " }}}
 " Commands {{{
 augroup vimrc
@@ -1622,11 +1631,11 @@ let s:enc = 'utf-8'
 let &enc = s:enc
 let &fenc = s:enc
 let &termencoding = s:enc
-let &fileencodings = tyru#util#uniq_path(
+let &fileencodings = join(s:Vital.Data.List.uniq(
 \   [s:enc]
 \   + split(&fileencodings, ',')
 \   + ['iso-2022-jp', 'iso-2022-jp-3', 'cp932']
-\)
+\), ',')
 unlet s:enc
 
 set fileformats=unix,dos,mac
@@ -1636,7 +1645,7 @@ endif
 
 " }}}
 " FileType {{{
-function! s:each_filetype() "{{{
+function! s:current_filetypes() "{{{
     return split(&l:filetype, '\.')
 endfunction "}}}
 
@@ -1649,7 +1658,7 @@ function! s:set_dict() "{{{
     \}
 
     let dicts = []
-    for ft in s:each_filetype()
+    for ft in s:current_filetypes()
         for ft in get(filetype_vs_dictionary, ft, [ft])
             let dict_path = $MYVIMDIR . '/dict/' . ft . '.dict'
             if filereadable(dict_path)
@@ -1658,12 +1667,24 @@ function! s:set_dict() "{{{
         endfor
     endfor
 
-    for d in dicts
-        let &l:dictionary = join(tyru#util#uniq(dicts), ',')
-    endfor
+    let &l:dictionary = join(s:Vital.Data.List.uniq(dicts), ',')
 endfunction "}}}
+function! s:is_current_filetype(filetypes)
+    if type(a:filetypes) isnot type([])
+        return s:is_current_filetype([a:filetypes])
+    endif
+    let filetypes = copy(a:filetypes)
+    for ft in s:current_filetypes()
+        if !empty(filter(filetypes, 'v:val ==# ft'))
+            return 1
+        endif
+    endfor
+    return 0
+endfunction
 function! s:set_tab_width() "{{{
-    if tyru#util#has_one_of(['css', 'xml', 'html', 'lisp', 'scheme', 'yaml'], s:each_filetype())
+    if s:is_current_filetype(
+    \   ['css', 'xml', 'html', 'lisp', 'scheme', 'yaml']
+    \)
         CodingStyle Short indent
     else
         CodingStyle My style
@@ -1677,7 +1698,7 @@ function! s:set_compiler() "{{{
     \   'java': 'javac',
     \}
     try
-        for ft in s:each_filetype()
+        for ft in s:current_filetypes()
             execute 'compiler' get(filetype_vs_compiler, ft, ft)
         endfor
     catch /E666:/    " compiler not supported: ...
@@ -1739,7 +1760,7 @@ function! s:Open(...) "{{{
     let dir =   a:0 == 1 ? a:1 : '.'
 
     if !isdirectory(dir)
-        call tyru#util#warn(dir .': No such a directory')
+        call s:warn(dir .': No such a directory')
         return
     endif
 
@@ -2742,7 +2763,7 @@ if s:has_plugin('vimshell') " {{{
             VimShellAlterCommand perldoc perldocjp
         endif
 
-        let less_sh = tyru#util#globpath(&rtp, 'macros/less.sh')
+        let less_sh = s:Vital.globpath(&rtp, 'macros/less.sh')
         if !empty(less_sh)
             call vimshell#altercmd#define('vless', less_sh[0])
         endif
@@ -3267,7 +3288,7 @@ function! s:delete_backup()
         call filter(backup_files, 'localtime() - getftime(v:val) > thirty_days_sec')
         for i in backup_files
             if delete(i) != 0
-                call tyru#util#warn("can't delete " . i)
+                call s:warn("can't delete " . i)
             endif
         endfor
         call writefile([localtime()], stamp_file)

@@ -20,7 +20,7 @@ setlocal complete-=d
 call s:opt.append('path', '/usr/local/include')
 
 " set path+=/usr/include/c++/*
-let s:_ = tyru#util#glob('/usr/include/c++/*')
+let s:_ = split(glob('/usr/include/c++/*', 1), '\n')
 if !empty(s:_)
     let &path .= ',' . s:_[-1]    " Include only the latest version.
 endif
