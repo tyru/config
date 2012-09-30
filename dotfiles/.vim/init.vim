@@ -38,7 +38,7 @@ function! s:has_plugin(name)
     let nosuffix = a:name =~? '\.vim$' ? substitute(a:name, '\c\.vim$', '', '') : a:name
     let suffix   = a:name =~? '\.vim$' ? a:name : a:name . '.vim'
     return &rtp =~# '\c\<' . nosuffix . '\>'
-    \   || globpath(&rtp, 'autoload/' . suffix) != ''
+    \   || globpath(&rtp, 'autoload/' . suffix, 1) != ''
 endfunction
 
 function! s:warn(msg) "{{{
@@ -1967,15 +1967,16 @@ function! s:cmd_tabpage_lookup_cd(args) "{{{
     return s:lookup_repo(dir)
 endfunction "}}}
 function! s:is_root_project_dir(dir) "{{{
+    let FP = s:Vital.System.Filepath
     " .git may be a file when its repository is a submodule.
-    return isdirectory(tyru#util#catfile(a:dir, '.git'))
-    \   || filereadable(tyru#util#catfile(a:dir, '.git'))
-    \   || isdirectory(tyru#util#catfile(a:dir, '.hg'))
+    return isdirectory(FP.join(a:dir, '.git'))
+    \   || filereadable(FP.join(a:dir, '.git'))
+    \   || isdirectory(FP.join(a:dir, '.hg'))
 endfunction "}}}
 function! s:lookup_repo(dir) "{{{
     " Assert isdirectory(a:dir)
 
-    let parent = tyru#util#dirname(a:dir)
+    let parent = s:Vital.System.Filepath.dirname(a:dir)
     if a:dir ==# parent    " root
         Echomsg WarningMsg 'Not found project directory.'
         return
@@ -2570,9 +2571,6 @@ if s:has_plugin('unite') " {{{
     \   '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\|COMMIT_EDITMSG'
 
     " unite-source-menu {{{
-
-    let s:Vital = vital#of('vital')
-    call s:Vital.load('Data.List')
 
     let g:unite_source_menu_menus = {}
 
