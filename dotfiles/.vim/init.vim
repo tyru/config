@@ -1791,34 +1791,33 @@ function! s:cmd_del_file(args, delete_buffer) "{{{
         return
     endif
 
-    for arg in a:args
-        for file in split(expand(arg), '\n')
-            let file = resolve(file)
-            let bufnr = bufnr(file)
+    for file in a:args
+        let file = resolve(file)
+        let file = expand(file)
+        let bufnr = bufnr(file)
 
-            " Delete the file.
-            let type = getftype(file)
-            if type ==# 'file'
-                let success = 0
-                if delete(file) !=# success
-                    call tyru#util#warn("Can't delete '" . file . "'")
-                    continue
-                endif
-            elseif type ==# 'dir'
-                " TODO
-            else
-                redraw
-                call tyru#util#warn(file . ": Unknown file type '" . type . "'.")
+        " Delete the file.
+        let type = getftype(file)
+        if type ==# 'file'
+            let success = 0
+            if delete(file) !=# success
+                call s:warn("Can't delete '" . file . "'")
+                continue
             endif
+        elseif type ==# 'dir'
+            " TODO
+        else
+            redraw
+            call s:warn(file . ": Unknown file type '" . type . "'.")
+        endif
 
-            " Delete the buffer.
-            if a:delete_buffer && bufnr != -1
-                if bufnr == bufnr('%')
-                    enew
-                endif
-                execute bufnr 'bwipeout'
+        " Delete the buffer.
+        if a:delete_buffer && bufnr != -1
+            if bufnr == bufnr('%')
+                enew
             endif
-        endfor
+            execute bufnr 'bwipeout'
+        endif
     endfor
 
     checktime
