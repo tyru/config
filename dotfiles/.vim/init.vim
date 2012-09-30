@@ -115,6 +115,53 @@ command!
 
 " }}}
 " }}}
+" Initializing {{{
+
+if !exists('$VIMRC_DEBUG')
+    call rtputil#bundle()
+else
+    " TODO: Reduce dependency plugins.
+
+    " Basic plugins
+    call rtputil#append('~/.vim/bundle/tyru')
+    call rtputil#append('~/.vim/bundle/emap.vim')
+    call rtputil#append('~/.vim/bundle/vim-altercmd')
+
+    call rtputil#append('~/.vim/bundle/vital.vim')
+
+    " Useful plugins for debug
+    call rtputil#append('~/.vim/bundle/dutil.vim')
+    call rtputil#append('~/.vim/bundle/vim-prettyprint')
+    call rtputil#append('~/.vim/bundle/restart.vim')
+
+    " Load plugins to debug
+    call rtputil#append('~/.vim/bundle/eskk.vim')
+    call rtputil#append('~/.vim/bundle/neocomplcache')
+endif
+
+let s:Vital = vital#of('vital')
+call s:Vital.load('Data.List')
+call s:Vital.load('System.Filepath')
+
+command! -bar HelpTagsAll call rtputil#helptags()
+HelpTagsAll
+
+
+call emap#load('noprefix')    " Define :EmMap as :Map
+" call emap#set_sid_from_vimrc()
+call emap#set_sid(s:SID())
+" call emap#set_sid_from_sfile(expand('<sfile>'))
+
+
+call altercmd#load()
+command!
+\   -bar -nargs=+
+\   MapAlterCommand
+\   CAlterCommand <args> | AlterCommand <cmdwin> <args>
+
+
+call dutil#load()
+" }}}
 " Options {{{
 
 " Reset all options except 'runtimepath'.
@@ -465,48 +512,6 @@ set colorcolumn=80
 set viminfo='50,h,f1,n$HOME/.viminfo
 set matchpairs+=<:>
 set showbreak=↪
-" }}}
-" Initializing {{{
-
-if !exists('$VIMRC_DEBUG')
-    call rtputil#bundle()
-else
-    " TODO: Reduce dependency plugins.
-
-    " Basic plugins
-    call rtputil#append('~/.vim/bundle/tyru')
-    call rtputil#append('~/.vim/bundle/vital.vim')
-    call rtputil#append('~/.vim/bundle/emap.vim')
-    call rtputil#append('~/.vim/bundle/vim-altercmd')
-
-    " Useful plugins for debug
-    call rtputil#append('~/.vim/bundle/dutil.vim')
-    call rtputil#append('~/.vim/bundle/vim-prettyprint')
-    call rtputil#append('~/.vim/bundle/restart.vim')
-
-    " Load plugins to debug
-    call rtputil#append('~/.vim/bundle/eskk.vim')
-    call rtputil#append('~/.vim/bundle/neocomplcache')
-endif
-
-command! -bar HelpTagsAll call rtputil#helptags()
-HelpTagsAll
-
-
-call emap#load('noprefix')    " Define :EmMap as :Map
-" call emap#set_sid_from_vimrc()
-call emap#set_sid(s:SID())
-" call emap#set_sid_from_sfile(expand('<sfile>'))
-
-
-call altercmd#load()
-command!
-\   -bar -nargs=+
-\   MapAlterCommand
-\   CAlterCommand <args> | AlterCommand <cmdwin> <args>
-
-
-call dutil#load()
 " }}}
 " Autocmd {{{
 
