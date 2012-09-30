@@ -209,7 +209,9 @@ nnoremap y :javascript util.copyToClipboard(buffer.URL);<CR>
 
 nnoremap <Leader>a :buffer!<Space>
 
-nnoremap <Leader>td :tabduplicate<CR>
+" タブを開く順番の設定が:tabduplicateだと無視される
+"nnoremap <Leader>td :tabduplicate<CR>
+nnoremap <Leader>td yP
 
 nnoremap <Leader>n  n
 nnoremap <Leader>N  N
