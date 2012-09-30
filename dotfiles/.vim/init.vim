@@ -2666,7 +2666,9 @@ if s:has_plugin('unite') " {{{
 
     Map [n] -silent <SID>(expand_unite_window_fn) :<C-u>call <SID>unite_resize_window(&columns / 3 * 2, &lines / 3 * 2)<CR>
     function! s:unite_resize_window(width, height)
-        if g:unite_enable_split_vertically
+        if winnr('$') is 1
+            return
+        elseif g:unite_enable_split_vertically
             execute 'vertical resize' a:width
         else
             execute 'resize' a:height
