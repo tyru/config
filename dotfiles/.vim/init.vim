@@ -623,7 +623,7 @@ augroup END " }}}
 "   DisableMap [n] $ % & ' ( ) ^
 "
 " MapCount:
-"   " Map [n] -expr <C-n> v:count1 . 'gt'
+"   " Map -expr [n] <C-n> v:count1 . 'gt'
 "   MapCount [n] <C-n> gt
 
 
@@ -686,44 +686,44 @@ if s:has_plugin('operator-user')
       normal! `[zt
     endfunction
 
-    Map [nvo] -remap <operator>adj <Plug>(operator-adjust)
+    Map -remap [nvo] <operator>adj <Plug>(operator-adjust)
     " }}}
     " operator-sort {{{
     call operator#user#define_ex_command('sort', 'sort')
-    Map [nvo] -remap <operator>s <Plug>(operator-sort)
+    Map -remap [nvo] <operator>s <Plug>(operator-sort)
     " }}}
     " operator-retab {{{
     call operator#user#define_ex_command('retab', 'retab')
-    Map [nvo] -remap <operator>t <Plug>(operator-retab)
+    Map -remap [nvo] <operator>t <Plug>(operator-retab)
     " }}}
     " operator-join {{{
     call operator#user#define_ex_command('join', 'join')
-    Map [nvo] -remap <operator>j <Plug>(operator-join)
+    Map -remap [nvo] <operator>j <Plug>(operator-join)
     " }}}
     " operator-uniq {{{
     call operator#user#define_ex_command('uniq', 'sort u')
-    Map [nvo] -remap <operator>u <Plug>(operator-uniq)
+    Map -remap [nvo] <operator>u <Plug>(operator-uniq)
     " }}}
     " operator-reverse-lines {{{
-    Map [nvo] -remap <operator>rl <Plug>(operator-reverse-lines)
+    Map -remap [nvo] <operator>rl <Plug>(operator-reverse-lines)
     " }}}
     " operator-reverse-text {{{
-    Map [nvo] -remap <operator>rw <Plug>(operator-reverse-text)
+    Map -remap [nvo] <operator>rw <Plug>(operator-reverse-text)
     " }}}
     " operator-narrow {{{
     call operator#user#define_ex_command('narrow', 'Narrow')
 
-    Map [nvo] -remap <operator>na <Plug>(operator-narrow)
+    Map -remap [nvo] <operator>na <Plug>(operator-narrow)
     Map [nvo]        <operator>nw :<C-u>Widen<CR>
 
     let g:narrow_allow_overridingp = 1
     " }}}
     " operator-replace {{{
-    Map [nvo] -remap <operator>p  <Plug>(operator-replace)
-    Map [vo] -remap p <Plug>(operator-replace)
+    Map -remap [nvo] <operator>p  <Plug>(operator-replace)
+    " Map -remap [vo] p <Plug>(operator-replace)
     " }}}
     " operator-camelize {{{
-    Map [nvo] -remap <operator>c <Plug>(operator-camelize-toggle)
+    Map -remap [nvo] <operator>c <Plug>(operator-camelize-toggle)
     let g:operator_camelize_all_uppercase_action = 'camelize'
     let g:operator_decamelize_all_uppercase_action = 'lowercase'
 
@@ -737,22 +737,22 @@ if s:has_plugin('operator-user')
     " let g:operator_camelize_detect_function = function('Camelized')
 
     " Test: mappings
-    " Map [nvo] -remap <operator>c <Plug>(operator-camelize)
-    " Map [nvo] -remap <operator>C <Plug>(operator-decamelize)
+    " Map -remap [nvo] <operator>c <Plug>(operator-camelize)
+    " Map -remap [nvo] <operator>C <Plug>(operator-decamelize)
 
 
     " See "keymappings" branch.
-    " Map [nvo] -remap <operator>c <Plug>(operator-camelize/camelize)
-    " Map [nvo] -remap <operator>C <Plug>(operator-decamelize/lowercase)
+    " Map -remap [nvo] <operator>c <Plug>(operator-camelize/camelize)
+    " Map -remap [nvo] <operator>C <Plug>(operator-decamelize/lowercase)
 
     " }}}
     " operator-blank-killer {{{
     call operator#user#define_ex_command('blank-killer', 's/\s\+$//')
-    Map [nvo] -remap <operator>bk <Plug>(operator-blank-killer)
+    Map -remap [nvo] <operator>bk <Plug>(operator-blank-killer)
     " }}}
     " operator-html-escape {{{
-    Map [nvo] -remap <operator>he <Plug>(operator-html-escape)
-    Map [nvo] -remap <operator>hu <Plug>(operator-html-unescape)
+    Map -remap [nvo] <operator>he <Plug>(operator-html-escape)
+    Map -remap [nvo] <operator>hu <Plug>(operator-html-unescape)
     " }}}
     " operator-zen2han, operator-han2zen {{{
     call operator#user#define('zen2han', 'Op_zen2han')
@@ -765,8 +765,8 @@ if s:has_plugin('operator-user')
         " TODO
     endfunction
 
-    Map [nvo] -remap <operator>zh <Plug>(operator-zen2han)
-    Map [nvo] -remap <operator>hz <Plug>(operator-han2zen)
+    Map -remap [nvo] <operator>zh <Plug>(operator-zen2han)
+    Map -remap [nvo] <operator>hz <Plug>(operator-han2zen)
     " }}}
 
 endif
@@ -789,21 +789,21 @@ Map [nvo] [k :<C-u>call search('^\S', 'Wsb')<CR>
 Map [nvo] gp %
 " }}}
 " textobj {{{
-Map [vo] -remap iF <Plug>(textobj-fold-i)
-Map [vo] -remap aF <Plug>(textobj-fold-a)
+Map -remap [vo] iF <Plug>(textobj-fold-i)
+Map -remap [vo] aF <Plug>(textobj-fold-a)
 
-Map [vo] -remap iF <Plug>(textobj-between-i)
-Map [vo] -remap aF <Plug>(textobj-between-a)
+Map -remap [vo] iF <Plug>(textobj-between-i)
+Map -remap [vo] aF <Plug>(textobj-between-a)
 
-Map [vo] -remap if <Plug>(textobj-function-i)
-Map [vo] -remap af <Plug>(textobj-function-a)
+Map -remap [vo] if <Plug>(textobj-function-i)
+Map -remap [vo] af <Plug>(textobj-function-a)
 
 Map [vo] aa a>
 Map [vo] ia i>
 Map [vo] ar a]
 Map [vo] ir i]
 
-Map [vo] -remap il <Plug>(textobj-lastpat-n)
+Map -remap [vo] il <Plug>(textobj-lastpat-n)
 " }}}
 " }}}
 " nmap {{{
@@ -861,11 +861,11 @@ Map [n] <excmd>sv     :<C-u>source $MYVIMRC<CR>
 " Cmdwin {{{
 set cedit=<C-z>
 function! s:cmdwin_enter()
-    Map [ni] -force -buffer <C-z>         <C-c>
-    Map [n]  -buffer <Esc>         :<C-u>quit<CR>
-    Map [n]  -force -buffer <window>k        :<C-u>quit<CR>
-    Map [n]  -force -buffer <window><C-k>    :<C-u>quit<CR>
-    Map [i]  -force -buffer -expr <BS>       col('.') == 1 ? "\<Esc>:quit\<CR>" : "\<BS>"
+    Map -buffer -force       [ni] <C-z>         <C-c>
+    Map -buffer              [n]  <Esc> :<C-u>quit<CR>
+    Map -buffer -force       [n]  <window>k        :<C-u>quit<CR>
+    Map -buffer -force       [n]  <window><C-k>    :<C-u>quit<CR>
+    Map -buffer -force -expr [i]  <BS>       col('.') == 1 ? "\<Esc>:quit\<CR>" : "\<BS>"
 
     startinsert!
 endfunction
@@ -1195,19 +1195,19 @@ function! s:paste_characterwise_nicely()
     \   move_to_last_col . paste :
     \   reg . 'p'
 endfunction
-Map [n] -expr p <SID>paste_characterwise_nicely()
+Map -expr [n] p <SID>paste_characterwise_nicely()
 " }}}
 " <Space>[hjkl] for <C-w>[hjkl] {{{
-Map [n] -silent <Space>j <C-w>j
-Map [n] -silent <Space>k <C-w>k
-Map [n] -silent <Space>h <C-w>h
-Map [n] -silent <Space>l <C-w>l
-Map [n] -silent <Space>n <C-w>w
-Map [n] -silent <Space>p <C-w>W
+Map -silent [n] <Space>j <C-w>j
+Map -silent [n] <Space>k <C-w>k
+Map -silent [n] <Space>h <C-w>h
+Map -silent [n] <Space>l <C-w>l
+Map -silent [n] <Space>n <C-w>w
+Map -silent [n] <Space>p <C-w>W
 " }}}
 " Moving between tabs {{{
-Map [n] -silent <C-n> gt
-Map [n] -silent <C-p> gT
+Map -silent [n] <C-n> gt
+Map -silent [n] <C-p> gT
 " }}}
 " Count the number of <cword> in this file {{{
 " http://d.hatena.ne.jp/miho36/20100621/1277092415
@@ -1253,7 +1253,7 @@ endfunction "}}}
 " vmap {{{
 Map [v] <C-g> g<C-g>
 
-Map [v] -silent y y:<C-u>call <SID>remove_trailing_spaces_V()<CR>
+Map -silent [v] y y:<C-u>call <SID>remove_trailing_spaces_V()<CR>
 function! s:remove_trailing_spaces_V()
     let regname = v:register
     if getregtype(regname)[0] !=# "\<C-v>"
@@ -1333,7 +1333,7 @@ Map [i] <compl>l <C-x><C-l>
 " Map [i] <compl>s <C-x><C-s>
 " Map [i] <compl>t <C-x><C-t>
 
-Map [i] -expr <compl>o <SID>omni_or_user_func()
+Map -expr [i] <compl>o <SID>omni_or_user_func()
 
 function! s:omni_or_user_func() "{{{
     if &omnifunc != ''
@@ -1356,16 +1356,16 @@ endfunction "}}}
 " call submode#map       ('c', 'i', '', 'k', '<C-p>')
 
 
-Map [i] -expr <C-y> neocomplcache#close_popup()
-Map [i] -expr <CR>  pumvisible() ? neocomplcache#close_popup() . "\<CR>" : "\<CR>"
-Map [is] -remap <C-t> <Plug>(neocomplcache_snippets_expand)
+Map -expr [i] <C-y> neocomplcache#close_popup()
+Map -expr [i] <CR>  pumvisible() ? neocomplcache#close_popup() . "\<CR>" : "\<CR>"
+Map -remap [is] <C-t> <Plug>(neocomplcache_snippets_expand)
 
 " }}}
 " }}}
 " cmap {{{
 if &wildmenu
-    Map [c] -force <C-f> <Space><BS><Right>
-    Map [c] -force <C-b> <Space><BS><Left>
+    Map -force [c] <C-f> <Space><BS><Right>
+    Map -force [c] <C-b> <Space><BS><Left>
 endif
 
 " paste register
@@ -1394,16 +1394,16 @@ function! s:cmdline_slash()
     return '/'
 endfunction
 
-" Map [c] -expr /  <SID>cmdline_slash()
-Map [c] -expr ?  getcmdtype() == '?' ? '\?' : '?'
-Map [c] -expr .  getcmdtype() =~# '[/?]' ? '\.' : '.'
+" Map -expr [c] /  <SID>cmdline_slash()
+Map -expr [c] ?  getcmdtype() == '?' ? '\?' : '?'
+Map -expr [c] .  getcmdtype() =~# '[/?]' ? '\.' : '.'
 " }}}
 " }}}
 " abbr {{{
-Map [i] -expr -abbr  date@ strftime('%Y-%m-%d')
-Map [i] -expr -abbr  time@ strftime("%H:%M")
-Map [i] -expr -abbr  dt@   strftime("%Y-%m-%d %H:%M")
-Map [ic] -expr -abbr mb@   [^\x01-\x7e]
+Map -abbr -expr [i]  date@ strftime('%Y-%m-%d')
+Map -abbr -expr [i]  time@ strftime("%H:%M")
+Map -abbr -expr [i]  dt@   strftime("%Y-%m-%d %H:%M")
+Map -abbr -expr [ic] mb@   [^\x01-\x7e]
 
 MapAlterCommand th     tab help
 MapAlterCommand t      tabedit
@@ -1425,28 +1425,28 @@ function! s:expr_with_options(cmd, opt) "{{{
     return a:cmd
 endfunction "}}}
 
-Map [n] -expr / <SID>expr_with_options('/', {'&ignorecase': 1, '&hlsearch': 1})
-Map [n] -expr ? <SID>expr_with_options('?', {'&ignorecase': 1, '&hlsearch': 1})
+Map -expr [n] / <SID>expr_with_options('/', {'&ignorecase': 1, '&hlsearch': 1})
+Map -expr [n] ? <SID>expr_with_options('?', {'&ignorecase': 1, '&hlsearch': 1})
 
-Map [n] -expr * <SID>expr_with_options('*', {'&ignorecase': 0, '&hlsearch': 1})
-Map [n] -expr # <SID>expr_with_options('#', {'&ignorecase': 0, '&hlsearch': 1})
+Map -expr [n] * <SID>expr_with_options('*', {'&ignorecase': 0, '&hlsearch': 1})
+Map -expr [n] # <SID>expr_with_options('#', {'&ignorecase': 0, '&hlsearch': 1})
 
-Map [nv] -expr : <SID>expr_with_options(':', {'&ignorecase': 1})
+Map -expr [nv] : <SID>expr_with_options(':', {'&ignorecase': 1})
 
-Map [n] -expr gd <SID>expr_with_options('gd', {'&hlsearch': 1})
-Map [n] -expr gD <SID>expr_with_options('gD', {'&hlsearch': 1})
+Map -expr [n] gd <SID>expr_with_options('gd', {'&hlsearch': 1})
+Map -expr [n] gD <SID>expr_with_options('gD', {'&hlsearch': 1})
 " }}}
 " Emacs like kill-line. {{{
-Map [i] -expr <C-k> "\<C-g>u".(col('.') == col('$') ? '<C-o>gJ' : '<C-o>D')
+Map -expr [i] <C-k> "\<C-g>u".(col('.') == col('$') ? '<C-o>gJ' : '<C-o>D')
 Map [c] <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 " }}}
 " Make searching directions consistent {{{
   " 'zv' is harmful for Operator-pending mode and it should not be included.
   " For example, 'cn' is expanded into 'cnzv' so 'zv' will be inserted.
-Map [nv] -expr n <SID>search_forward_p() ? 'nzv' : 'Nzv'
-Map [nv] -expr N <SID>search_forward_p() ? 'Nzv' : 'nzv'
-Map [o]  -expr n <SID>search_forward_p() ? 'n' : 'N'
-Map [o]  -expr N <SID>search_forward_p() ? 'N' : 'n'
+Map -expr [nv] n <SID>search_forward_p() ? 'nzv' : 'Nzv'
+Map -expr [nv] N <SID>search_forward_p() ? 'Nzv' : 'nzv'
+Map -expr [o]  n <SID>search_forward_p() ? 'n' : 'N'
+Map -expr [o]  N <SID>search_forward_p() ? 'N' : 'n'
 
 function! s:search_forward_p()
   return exists('v:searchforward') ? v:searchforward : 1
@@ -1481,15 +1481,15 @@ function! s:advance_between(tilde, dollar) "{{{
 endfunction "}}}
 
 " imap
-Map [i] -expr -force <C-a> <SID>back_between("\<Home>", "\<C-o>^", "\<End>")
-Map [i] -expr -force <C-e> <SID>advance_between("\<C-o>^", "\<End>")
+Map -force -expr [i] <C-a> <SID>back_between("\<Home>", "\<C-o>^", "\<End>")
+Map -force -expr [i] <C-e> <SID>advance_between("\<C-o>^", "\<End>")
 
 " motion
-Map [nvo] -expr H <SID>back_between('0', '^', '$')
-Map [nvo] -expr L <SID>advance_between('^', '$')
+Map -expr [nvo] H <SID>back_between('0', '^', '$')
+Map -expr [nvo] L <SID>advance_between('^', '$')
 
 " TODO
-" Map [nvo] -expr L <SID>advance_between('^', '$', '')    " <comment Go right edge of window.>
+" Map -expr [nvo] L <SID>advance_between('^', '$', '')    " <comment Go right edge of window.>
 
 " }}}
 " Disable unused keys. {{{
@@ -1504,7 +1504,7 @@ Map [n] U  <Nop>
 
 DefMap [i] -expr bs-ctrl-] getline('.')[col('.') - 2]    ==# "\<C-]>" ? "\<BS>" : ''
 DefMap [c] -expr bs-ctrl-] getcmdline()[getcmdpos() - 2] ==# "\<C-]>" ? "\<BS>" : ''
-Map   [ic] -remap <C-]>     <C-]><bs-ctrl-]>
+Map -remap   [ic] <C-]>     <C-]><bs-ctrl-]>
 " }}}
 " Add current line to quickfix. {{{
 command! -range QFAddLine <line1>,<line2>call s:quickfix_add_range()
@@ -1621,11 +1621,11 @@ endfunction
 " like MS Windows Office 2007 Ribborn interface.
 
 " Do not adjust current scroll position (do not fire 'scrolloff') on single-click.
-Map [n] -silent <LeftMouse>   <Esc>:set eventignore=all<CR><LeftMouse>:set eventignore=<CR>
+Map -silent [n] <LeftMouse>   <Esc>:set eventignore=all<CR><LeftMouse>:set eventignore=<CR>
 " Double-click for searching the word under the cursor.
 Map [n]         <2-LeftMouse> g*
 " Single-click for searching the word selected in visual-mode.
-Map [v] -remap  <LeftMouse> <Plug>(visualstar-g*)
+Map -remap [v]  <LeftMouse> <Plug>(visualstar-g*)
 " Select lines with <S-LeftMouse>
 Map [n]         <S-LeftMouse> V
 
@@ -2058,34 +2058,34 @@ command!
 " Assumption: <args> does not contain :vertical,
 " and does not change 'splitright', 'splitbelow'.
 
-Map [n] -silent <SID>(split:to-down)
+Map -silent [n] <SID>(split:to-down)
 \   :<C-u>execute 'belowright' (v:count == 0 ? '' : v:count) 'split'<CR>
-Map [n] -silent <SID>(split:to-up)
+Map -silent [n] <SID>(split:to-up)
 \   :<C-u>execute 'aboveleft'  (v:count == 0 ? '' : v:count) 'split'<CR>
-Map [n] -silent <SID>(split:to-left)
+Map -silent [n] <SID>(split:to-left)
 \   :<C-u>execute 'aboveleft'    (v:count == 0 ? '' : v:count) 'vsplit'<CR>
-Map [n] -silent <SID>(split:to-right)
+Map -silent [n] <SID>(split:to-right)
 \   :<C-u>execute 'belowright'   (v:count == 0 ? '' : v:count) 'vsplit'<CR>
 
-Map [n] -silent <SID>(new:to-down)
+Map -silent [n] <SID>(new:to-down)
 \   :<C-u>execute 'belowright' (v:count == 0 ? '' : v:count) 'new'<CR>
-Map [n] -silent <SID>(new:to-up)
+Map -silent [n] <SID>(new:to-up)
 \   :<C-u>execute 'aboveleft'  (v:count == 0 ? '' : v:count) 'new'<CR>
-Map [n] -silent <SID>(new:to-left)
+Map -silent [n] <SID>(new:to-left)
 \   :<C-u>execute 'aboveleft'    (v:count == 0 ? '' : v:count) 'vnew'<CR>
-Map [n] -silent <SID>(new:to-right)
+Map -silent [n] <SID>(new:to-right)
 \   :<C-u>execute 'belowright'   (v:count == 0 ? '' : v:count) 'vnew'<CR>
 
 
-Map [n] -remap <excmd>sj <SID>(split:to-down)
-Map [n] -remap <excmd>sk <SID>(split:to-up)
-Map [n] -remap <excmd>sh <SID>(split:to-left)
-Map [n] -remap <excmd>sl <SID>(split:to-right)
+Map -remap [n] <excmd>sj <SID>(split:to-down)
+Map -remap [n] <excmd>sk <SID>(split:to-up)
+Map -remap [n] <excmd>sh <SID>(split:to-left)
+Map -remap [n] <excmd>sl <SID>(split:to-right)
 
-Map [n] -remap <excmd>ej <SID>(new:to-down)
-Map [n] -remap <excmd>ek <SID>(new:to-up)
-Map [n] -remap <excmd>eh <SID>(new:to-left)
-Map [n] -remap <excmd>el <SID>(new:to-right)
+Map -remap [n] <excmd>ej <SID>(new:to-down)
+Map -remap [n] <excmd>ek <SID>(new:to-up)
+Map -remap [n] <excmd>eh <SID>(new:to-left)
+Map -remap [n] <excmd>el <SID>(new:to-right)
 " }}}
 " :NonSortUniq {{{
 "
@@ -2124,8 +2124,8 @@ endfunction "}}}
 if s:has_plugin('nextfile') " {{{
     let g:nf_map_next     = ''
     let g:nf_map_previous = ''
-    Map [n] -remap ,n <Plug>(nextfile-next)
-    Map [n] -remap ,p <Plug>(nextfile-previous)
+    Map -remap [n] ,n <Plug>(nextfile-next)
+    Map -remap [n] ,p <Plug>(nextfile-previous)
 
     let g:nf_include_dotfiles = 1    " don't skip dotfiles
     let g:nf_ignore_ext = ['o', 'obj', 'exe', 'bin']
@@ -2250,7 +2250,7 @@ if s:has_plugin('sign-diff') " {{{
     let g:SD_disable = 1
 
     if !g:SD_disable
-        Map [n] -silent <C-l> :SDUpdate<CR><C-l>
+        Map -silent [n] <C-l> :SDUpdate<CR><C-l>
     endif
 endif " }}}
 if s:has_plugin('DumbBuf') " {{{
@@ -2297,7 +2297,7 @@ if s:has_plugin('skk') || s:has_plugin('eskk') " {{{
         let skk_control_j_key = '<C-g><C-j>'
     else
         " Map <C-j> to skk.vim, Map <C-g><C-j> to eskk
-        Map [ic] -remap <C-g><C-j> <Plug>(eskk:toggle)
+        Map -remap [ic] <C-g><C-j> <Plug>(eskk:toggle)
     endif
 
 endif " }}}
@@ -2329,8 +2329,8 @@ if s:has_plugin('skk') " {{{
     let skk_control_j_key = ''
 
     " `<C-j><C-e>` to enable, `<C-j><C-d>` to disable.
-    Map [ic] -remap <C-j><C-e> <Plug>(skk-enable-im)
-    Map [ic] -remap <C-j><C-d> <Nop>
+    Map -remap [ic] <C-j><C-e> <Plug>(skk-enable-im)
+    Map -remap [ic] <C-j><C-d> <Nop>
     function! MySkkMap()
         lunmap <buffer> <C-j>
         lmap <buffer> <C-j><C-d> <Plug>(skk-disable-im)
@@ -2461,7 +2461,7 @@ if s:has_plugin('restart') " {{{
 endif " }}}
 if s:has_plugin('openbrowser') " {{{
     let g:netrw_nogx = 1
-    Map [nv] -remap gx <Plug>(openbrowser-smart-search)
+    Map -remap [nv] gx <Plug>(openbrowser-smart-search)
     MapAlterCommand o[pen] OpenBrowserSmartSearch
 endif " }}}
 if s:has_plugin('AutoDate') " {{{
@@ -2604,7 +2604,7 @@ if s:has_plugin('unite') " {{{
     endfor
     unlet s:tmp
 
-    Map [n] -silent <prompt>a  :<C-u>Unite menu:enc<CR>
+    Map -silent [n] <prompt>a  :<C-u>Unite menu:enc<CR>
     " }}}
     " set fenc=... {{{
     let g:unite_source_menu_menus.fenc = {
@@ -2627,7 +2627,7 @@ if s:has_plugin('unite') " {{{
     endfor
     unlet s:tmp
 
-    Map [n] -silent <prompt>s  :<C-u>Unite menu:fenc<CR>
+    Map -silent [n] <prompt>s  :<C-u>Unite menu:fenc<CR>
     " }}}
     " set ff=... {{{
     let g:unite_source_menu_menus.ff = {
@@ -2642,7 +2642,7 @@ if s:has_plugin('unite') " {{{
     endfor
     unlet s:tmp
 
-    Map [n] -silent <prompt>d  :<C-u>Unite menu:ff<CR>
+    Map -silent [n] <prompt>d  :<C-u>Unite menu:ff<CR>
     " }}}
 
     " }}}
@@ -2654,17 +2654,17 @@ if s:has_plugin('unite') " {{{
     let g:unite_winheight = 5    " default winheight.
     let g:unite_winwidth  = 10    " default winwidth.
     function! s:unite_settings() "{{{
-        Map [i] -buffer -remap <BS> <Plug>(unite_delete_backward_path)
-        Map [n] -buffer -remap <Space><Space> <Plug>(unite_toggle_mark_current_candidate)
+        Map -remap -buffer [i] <BS> <Plug>(unite_delete_backward_path)
+        Map -remap -buffer [n] <Space><Space> <Plug>(unite_toggle_mark_current_candidate)
 
-        Map [i] -buffer -remap <C-n> <SID>(expand_unite_window)<Plug>(unite_select_next_line)
-        Map [i] -buffer -remap <C-p> <SID>(expand_unite_window)<Plug>(unite_select_previous_line)
+        Map -remap -buffer [i] <C-n> <SID>(expand_unite_window)<Plug>(unite_select_next_line)
+        Map -remap -buffer [i] <C-p> <SID>(expand_unite_window)<Plug>(unite_select_previous_line)
     endfunction "}}}
 
     " Expand current unite window width/height 2/3
-    Map [i] -remap <SID>(expand_unite_window) <Plug>(unite_insert_leave)<SID>(expand_unite_window_fn)<Plug>(unite_insert_enter)
+    Map -remap [i] <SID>(expand_unite_window) <Plug>(unite_insert_leave)<SID>(expand_unite_window_fn)<Plug>(unite_insert_enter)
 
-    Map [n] -silent <SID>(expand_unite_window_fn) :<C-u>call <SID>unite_resize_window(&columns / 3 * 2, &lines / 3 * 2)<CR>
+    Map -silent [n] <SID>(expand_unite_window_fn) :<C-u>call <SID>unite_resize_window(&columns / 3 * 2, &lines / 3 * 2)<CR>
     function! s:unite_resize_window(width, height)
         if winnr('$') is 1
             return
@@ -2674,8 +2674,8 @@ if s:has_plugin('unite') " {{{
             execute 'resize' a:height
         endif
 
-        Map [i] -buffer -remap <C-n> <Plug>(unite_select_next_line)
-        Map [i] -buffer -remap <C-p> <Plug>(unite_select_previous_line)
+        Map -remap -buffer [i] <C-n> <Plug>(unite_select_next_line)
+        Map -remap -buffer [i] <C-p> <Plug>(unite_select_previous_line)
     endfunction
 endif " }}}
 " }}}
@@ -2781,9 +2781,9 @@ if s:has_plugin('vimshell') " {{{
         Map! [n] -buffer <C-n>
         Map! [n] -buffer <C-p>
         Map! [i] -buffer <Tab>
-        Map [i] -remap -buffer -force <Tab><Tab> <Plug>(vimshell_command_complete)
-        Map [n] -remap -buffer <C-z> <Plug>(vimshell_switch)
-        Map [i] -remap -buffer <compl>r <Plug>(vimshell_history_complete_whole)
+        Map -buffer -remap [i] -force <Tab><Tab> <Plug>(vimshell_command_complete)
+        Map -buffer -remap [n] <C-z> <Plug>(vimshell_switch)
+        Map -buffer -remap [i] <compl>r <Plug>(vimshell_history_complete_whole)
 
         " Misc.
         setlocal backspace-=eol
@@ -2869,7 +2869,7 @@ if s:has_plugin('quickrun') " {{{
     let g:loaded_quicklaunch = 1
 
     let g:quickrun_no_default_key_mappings = 1
-    Map [nvo] -remap <Space>r <Plug>(quickrun)
+    Map -remap [nvo] <Space>r <Plug>(quickrun)
 
     if has('vim_starting')
         let g:quickrun_config = {}
@@ -2997,10 +2997,10 @@ if s:has_plugin('vimfiler') " {{{
 
     MyAutocmd FileType vimfiler call s:vimfiler_settings()
     function! s:vimfiler_settings() "{{{
-        Map [n] -remap -buffer L <Plug>(vimfiler_move_to_history_forward)
-        Map [n] -remap -buffer H <Plug>(vimfiler_move_to_history_back)
-        Map [n] -remap -buffer <C-o> <Plug>(vimfiler_move_to_history_back)
-        Map [n] -remap -buffer <C-i> <Plug>(vimfiler_move_to_history_forward)
+        Map -buffer -remap [n] L <Plug>(vimfiler_move_to_history_forward)
+        Map -buffer -remap [n] H <Plug>(vimfiler_move_to_history_back)
+        Map -buffer -remap [n] <C-o> <Plug>(vimfiler_move_to_history_back)
+        Map -buffer -remap [n] <C-i> <Plug>(vimfiler_move_to_history_forward)
 
         " TODO
         " Map! [n] -buffer N j k
@@ -3012,9 +3012,9 @@ if s:has_plugin('vimfiler') " {{{
         " dd as <Plug>(vimfiler_force_delete_file)
         " because I want to use trash-put.
         Map! [n] -buffer d
-        Map [n] -buffer -remap dd <Plug>(vimfiler_force_delete_file)
+        Map -remap -buffer [n] dd <Plug>(vimfiler_force_delete_file)
 
-        Map [n] -buffer -remap <Space><Space> <Plug>(vimfiler_toggle_mark_current_line)
+        Map -remap -buffer [n] <Space><Space> <Plug>(vimfiler_toggle_mark_current_line)
     endfunction "}}}
 endif " }}}
 if s:has_plugin('prettyprint') " {{{
@@ -3048,7 +3048,7 @@ if s:has_plugin('lingr') " {{{
     endfunction "}}}
     function! s:init_lingr(ft) "{{{
         if exists('s:screen_is_running')
-            Map [n] -buffer -silent <C-l> :<C-u>call <SID>lingr_ctrl_l()<CR>
+            Map -silent -buffer [n] <C-l> :<C-u>call <SID>lingr_ctrl_l()<CR>
             let b:window_name = 'lingr'
         endif
     endfunction "}}}
@@ -3066,18 +3066,18 @@ if s:has_plugin('lingr') " {{{
     MyAutocmd FileType lingr-messages
     \   call s:lingr_messages_mappings()
     function! s:lingr_messages_mappings() "{{{
-        Map [n] -buffer -remap o <Plug>(lingr-messages-show-say-buffer)
-        Map [n] -buffer <C-g><C-n> gt
-        Map [n] -buffer <C-g><C-p> gT
+        Map -remap -buffer [n] o <Plug>(lingr-messages-show-say-buffer)
+        Map -buffer [n] <C-g><C-n> gt
+        Map -buffer [n] <C-g><C-p> gT
     endfunction "}}}
 
     MyAutocmd FileType lingr-say
     \   call s:lingr_say_mappings()
     function! s:lingr_say_mappings() "{{{
-        Map [n] -buffer -remap <CR> <SID>(lingr-say-say)
+        Map -remap -buffer [n] <CR> <SID>(lingr-say-say)
     endfunction "}}}
 
-    Map [n] -silent <SID>(lingr-say-say) :<C-u>call <SID>lingr_say_say()<CR>
+    Map -silent [n] <SID>(lingr-say-say) :<C-u>call <SID>lingr_say_say()<CR>
     function! s:lingr_say_say() "{{{
         let all_lines = getline(1, '$')
         let blank_line = '^\s*$'
@@ -3170,8 +3170,8 @@ if s:has_plugin('ohmygrep') " {{{
     MapAlterCommand gr[ep] OMGrep
     MapAlterCommand re[place] OMReplace
 
-    Map [n] -remap <Space>gw <Plug>(omg-grep-cword)
-    Map [n] -remap <Space>gW <Plug>(omg-grep-cWORD)
+    Map -remap [n] <Space>gw <Plug>(omg-grep-cword)
+    Map -remap [n] <Space>gW <Plug>(omg-grep-cWORD)
 endif " }}}
 if s:has_plugin('detect-coding-style') " {{{
 
@@ -3213,8 +3213,8 @@ endif " }}}
 if s:has_plugin('GraVit') " {{{
 
     " XXX: 2012-09-17 19:48: syntax/vim.vim wrong highlight...
-    " Map [nvo] -remap g/ <Plug>gravit->forward
-    " Map [nvo] -remap g? <Plug>gravit->backward
+    " Map -remap [nvo] g/ <Plug>gravit->forward
+    " Map -remap [nvo] g? <Plug>gravit->backward
 
     " highlight GraVitCurrentMatch term=underline cterm=underline gui=underline ctermfg=4 guifg=Purple
 
@@ -3230,9 +3230,9 @@ let g:loaded_tyru_event_test = 1
 " runtime
 if s:has_plugin('netrw') " {{{
 function! s:filetype_netrw() "{{{
-    Map [n] -buffer -remap h -
-    Map [n] -buffer -remap l <CR>
-    Map [n] -buffer -remap e <CR>
+    Map -remap -buffer [n] h -
+    Map -remap -buffer [n] l <CR>
+    Map -remap -buffer [n] e <CR>
 endfunction "}}}
 
 MyAutocmd FileType netrw call s:filetype_netrw()
