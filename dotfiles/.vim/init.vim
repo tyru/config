@@ -1248,27 +1248,6 @@ Map -silent [n] <Space>p <C-w>W
 Map -silent [n] <C-n> gt
 Map -silent [n] <C-p> gT
 " }}}
-" Count the number of <cword> in this file {{{
-" http://d.hatena.ne.jp/miho36/20100621/1277092415
-
-function! s:count_word(word) "{{{
-    if a:word == ''
-        return
-    endif
-
-    redir => output
-    silent execute "%s/" . a:word . "/&/gn"
-    redir END
-    let output = substitute(output, '^\n\+', '', '')
-
-    echomsg printf('"%s" => %s', a:word, output)
-endfunction "}}}
-
-command!
-\   -bar -nargs=?
-\   CountWord
-\   call s:count_word(expand(empty([<f-args>]) ? '<cword>' : <q-args>))
-" }}}
 " Move all windows of current group beyond next group. {{{
 " TODO
 " }}}
