@@ -3101,6 +3101,8 @@ if s:has_plugin('lingr') " {{{
 
 
 
+    let g:lingr_vim_user = 'tyru'
+
     let g:lingr_vim_additional_rooms = [
     \   'tyru',
     \   'vim',
