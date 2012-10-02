@@ -1233,8 +1233,74 @@ command!
 " Move all windows of current group beyond next group. {{{
 " TODO
 " }}}
-" Set tab's title {{{
-Map [n] -silent <C-t> :<C-u>SetProjectName<CR>
+" "Use one tabpage per project" project {{{
+" :TabpageLookupCD - Set t:cwd to root directory of project working tree {{{
+Map [n] cd :<C-u>TabpageLookupCD %:p:h<CR>
+
+command!
+\   -bar -complete=dir -nargs=?
+\   TabpageLookupCD
+\   call s:cmd_tabpage_lookup_cd(<q-args>)
+
+function! s:cmd_tabpage_lookup_cd(args) "{{{
+    " Expand :cd like notation.
+    let dir = expand(a:args != '' ? a:args : '.')
+    " Get fullpath.
+    let dir = fnamemodify(dir, ':p')
+    if !isdirectory(dir)
+        Echomsg WarningMsg "No such directory: " . dir
+        return
+    endif
+    return s:lookup_repo(dir)
+endfunction "}}}
+function! s:is_root_project_dir(dir) "{{{
+    let FP = s:Vital.System.Filepath
+    " .git may be a file when its repository is a submodule.
+    return isdirectory(FP.join(a:dir, '.git'))
+    \   || filereadable(FP.join(a:dir, '.git'))
+    \   || isdirectory(FP.join(a:dir, '.hg'))
+endfunction "}}}
+function! s:lookup_repo(dir) "{{{
+    " Assert isdirectory(a:dir)
+
+    let parent = s:Vital.System.Filepath.dirname(a:dir)
+    if a:dir ==# parent    " root
+        Echomsg WarningMsg 'Not found project directory.'
+        return
+    elseif s:is_root_project_dir(a:dir)
+        execute 'TabpageCD' a:dir
+    else
+        return s:lookup_repo(parent)
+    endif
+endfunction "}}}
+
+" }}}
+" :TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
+MapAlterCommand cd  TabpageCD
+
+Map [n] ,cd       :<C-u>TabpageCD %:p:h<CR>
+
+command!
+\   -bar -complete=dir -nargs=?
+\   CD
+\   TabpageCD <args>
+command!
+\   -bar -complete=dir -nargs=?
+\   TabpageCD
+\   execute 'cd' fnameescape(expand(<q-args>))
+\   | let t:cwd = getcwd()
+
+MyAutocmd TabEnter *
+\   if exists('t:cwd') && !isdirectory(t:cwd)
+\ |     unlet t:cwd
+\ | endif
+\ | if !exists('t:cwd')
+\ |   let t:cwd = getcwd()
+\ | endif
+\ | execute 'cd' fnameescape(expand(t:cwd))
+" }}}
+" :SetProjectName - Set tab's title {{{
+Map -silent [n] <C-t> :<C-u>SetProjectName<CR>
 command! -bar -nargs=* SetProjectName call s:cmd_set_project_name(<q-args>)
 function! s:cmd_set_project_name(name) "{{{
     let old_title = exists('t:title') ? t:title : ''
@@ -1248,6 +1314,7 @@ function! s:cmd_set_project_name(name) "{{{
         redraw!
     endif
 endfunction "}}}
+" }}}
 " }}}
 " }}}
 " vmap {{{
@@ -1946,71 +2013,6 @@ command!
 \   if !empty(getqflist()) | cwindow <args> | endif
 
 MapAlterCommand qf QuickFix
-" }}}
-" :TabpageLookupCD - Set t:cwd to root directory of project working tree {{{
-Map [n] cd :<C-u>TabpageLookupCD %:p:h<CR>
-
-command!
-\   -bar -complete=dir -nargs=?
-\   TabpageLookupCD
-\   call s:cmd_tabpage_lookup_cd(<q-args>)
-
-function! s:cmd_tabpage_lookup_cd(args) "{{{
-    " Expand :cd like notation.
-    let dir = expand(a:args != '' ? a:args : '.')
-    " Get fullpath.
-    let dir = fnamemodify(dir, ':p')
-    if !isdirectory(dir)
-        Echomsg WarningMsg "No such directory: " . dir
-        return
-    endif
-    return s:lookup_repo(dir)
-endfunction "}}}
-function! s:is_root_project_dir(dir) "{{{
-    let FP = s:Vital.System.Filepath
-    " .git may be a file when its repository is a submodule.
-    return isdirectory(FP.join(a:dir, '.git'))
-    \   || filereadable(FP.join(a:dir, '.git'))
-    \   || isdirectory(FP.join(a:dir, '.hg'))
-endfunction "}}}
-function! s:lookup_repo(dir) "{{{
-    " Assert isdirectory(a:dir)
-
-    let parent = s:Vital.System.Filepath.dirname(a:dir)
-    if a:dir ==# parent    " root
-        Echomsg WarningMsg 'Not found project directory.'
-        return
-    elseif s:is_root_project_dir(a:dir)
-        execute 'TabpageCD' a:dir
-    else
-        return s:lookup_repo(parent)
-    endif
-endfunction "}}}
-
-" }}}
-" :TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
-MapAlterCommand cd  TabpageCD
-
-Map [n] ,cd       :<C-u>TabpageCD %:p:h<CR>
-
-command!
-\   -bar -complete=dir -nargs=?
-\   CD
-\   TabpageCD <args>
-command!
-\   -bar -complete=dir -nargs=?
-\   TabpageCD
-\   execute 'cd' fnameescape(expand(<q-args>))
-\   | let t:cwd = getcwd()
-
-MyAutocmd TabEnter *
-\   if exists('t:cwd') && !isdirectory(t:cwd)
-\ |     unlet t:cwd
-\ | endif
-\ | if !exists('t:cwd')
-\ |   let t:cwd = getcwd()
-\ | endif
-\ | execute 'cd' fnameescape(expand(t:cwd))
 " }}}
 " :Capture {{{
 MapAlterCommand cap[ture] Capture
