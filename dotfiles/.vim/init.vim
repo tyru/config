@@ -1221,20 +1221,27 @@ Map [n] ,Y   "*y$
 " 2. do not insert " " before inserted text
 " when characterwise and getregtype(v:register) ==# 'v'.
 
-function! s:paste_characterwise_nicely()
-    let reg = '"' . v:register
-    let move_to_last_col =
-    \   (has('virtualedit')
-    \       && &virtualedit =~# '\<all\>'
-    \       && col('.') >= col('$'))
-    \   ? '$' : ''
-    let paste =
-    \   reg . (getline('.') ==# '' ? 'P' : 'p')
-    return getregtype(v:register) ==# 'v' ?
-    \   move_to_last_col . paste :
-    \   reg . 'p'
+function! s:virtualedit_enabled()
+    return has('virtualedit')
+    \   && &virtualedit =~# '\<all\>\|\<onemore\>'
 endfunction
-Map -expr [n] p <SID>paste_characterwise_nicely()
+
+if s:virtualedit_enabled()
+    function! s:paste_characterwise_nicely()
+        let reg = '"' . v:register
+        let move_to_last_col =
+        \   (s:virtualedit_enabled()
+        \       && col('.') >= col('$'))
+        \   ? '$' : ''
+        let paste =
+        \   reg . (getline('.') ==# '' ? 'P' : 'p')
+        return getregtype(v:register) ==# 'v' ?
+        \   move_to_last_col . paste :
+        \   reg . 'p'
+    endfunction
+
+    Map -expr [n] p <SID>paste_characterwise_nicely()
+endif
 " }}}
 " <Space>[hjkl] for <C-w>[hjkl] {{{
 Map -silent [n] <Space>j <C-w>j
