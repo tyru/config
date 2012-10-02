@@ -295,3 +295,6 @@
 [submodule "dotfiles/.vim/bundle/unretab.vim"]
 	path = dotfiles/.vim/bundle/unretab.vim
 	url = git://github.com/tyru/unretab.vim.git
+[submodule "vim-tabpagecd"]
+	path = vim-tabpagecd
+	url = git://github.com/kana/vim-tabpagecd
