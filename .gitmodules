@@ -199,9 +199,6 @@
 [submodule "dotfiles/.vim/bundle/vim-textobj-function-perl"]
 	path = dotfiles/.vim/bundle/vim-textobj-function-perl
 	url = git://github.com/thinca/vim-textobj-function-perl.git
-[submodule "dotfiles/.vim/bundle/cul.vim"]
-	path = dotfiles/.vim/bundle/cul.vim
-	url = git://github.com/tyru/cul.vim.git
 [submodule "dotfiles/.vim/bundle/starter.vim"]
 	path = dotfiles/.vim/bundle/starter.vim
 	url = git://github.com/tyru/starter.vim.git
@@ -292,3 +289,9 @@
 [submodule "dotfiles/.vim/bundle/vim-textobj-line"]
 	path = dotfiles/.vim/bundle/vim-textobj-line
 	url = git://github.com/kana/vim-textobj-line.git
+[submodule "dotfiles/.vim/bundle/cpp-vim"]
+	path = dotfiles/.vim/bundle/cpp-vim
+	url = git://github.com/vim-jp/cpp-vim.git
+[submodule "dotfiles/.vim/bundle/unretab.vim"]
+	path = dotfiles/.vim/bundle/unretab.vim
+	url = git://github.com/tyru/unretab.vim.git
