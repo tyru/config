@@ -917,7 +917,7 @@ Map [n] <excmd>? q?
 " Moving tabs {{{
 Map [n] <Left>    :<C-u>execute 'tabmove' (tabpagenr() == 1 ? tabpagenr('$') : tabpagenr() - 2)<CR>
 Map [n] <Right>   :<C-u>execute 'tabmove' (tabpagenr() == tabpagenr('$') ? 0 : tabpagenr())<CR>
-" NOTE: gVim only
+" NOTE: Mappings <S-Left>, <S-Right> work only in gVim
 Map [n] <S-Left>  :<C-u>execute 'tabmove' 0<CR>
 Map [n] <S-Right> :<C-u>execute 'tabmove' tabpagenr('$')<CR>
 " }}}
@@ -3154,8 +3154,8 @@ if s:has_plugin('GraVit') " {{{
 
 endif " }}}
 if s:has_plugin('hatena.vim') " {{{
-let g:hatena_user = 'tyru'
-let g:hatena_upload_on_write = 0
+    let g:hatena_user = 'tyru'
+    let g:hatena_upload_on_write = 0
 endif " }}}
 
 " test
@@ -3163,33 +3163,33 @@ let g:loaded_tyru_event_test = 1
 
 " runtime
 if s:has_plugin('netrw') " {{{
-function! s:filetype_netrw() "{{{
-    Map -remap -buffer [n] h -
-    Map -remap -buffer [n] l <CR>
-    Map -remap -buffer [n] e <CR>
-endfunction "}}}
+    function! s:filetype_netrw() "{{{
+        Map -remap -buffer [n] h -
+        Map -remap -buffer [n] l <CR>
+        Map -remap -buffer [n] e <CR>
+    endfunction "}}}
 
-MyAutocmd FileType netrw call s:filetype_netrw()
+    MyAutocmd FileType netrw call s:filetype_netrw()
 endif " }}}
 if s:has_plugin('indent/vim.vim') " {{{
-let g:vim_indent_cont = 0
+    let g:vim_indent_cont = 0
 endif " }}}
 if s:has_plugin('changelog') " {{{
-let changelog_username = "tyru"
+    let changelog_username = "tyru"
 endif " }}}
 if s:has_plugin('syntax/sh.vim') " {{{
-let g:is_bash = 1
+    let g:is_bash = 1
 endif " }}}
 if s:has_plugin('syntax/scheme.vim') " {{{
-let g:is_gauche = 1
+    let g:is_gauche = 1
 endif " }}}
 if s:has_plugin('syntax/perl.vim') " {{{
 
-" POD highlighting
-let g:perl_include_pod = 1
-" Fold only sub, __END__, <<HEREDOC
-let g:perl_fold = 1
-let g:perl_nofold_packages = 1
+    " POD highlighting
+    let g:perl_include_pod = 1
+    " Fold only sub, __END__, <<HEREDOC
+    let g:perl_fold = 1
+    let g:perl_nofold_packages = 1
 
 endif " }}}
 
@@ -3242,9 +3242,9 @@ let did_install_default_menus = 1
 " }}}
 " About japanese input method {{{
 if has('multi_byte_ime') || has('xim')
-  " Cursor color when IME is on.
-  highlight CursorIM guibg=Purple guifg=NONE
-  set iminsert=0 imsearch=0
+    " Cursor color when IME is on.
+    highlight CursorIM guibg=Purple guifg=NONE
+    set iminsert=0 imsearch=0
 endif
 " }}}
 " GNU Screen, Tmux {{{
@@ -3293,6 +3293,8 @@ if $WINDOW != '' || $TMUX != ''
 endif
 " }}}
 " own-highlight {{{
+" TODO: Plugin-ize
+
 augroup own-highlight
     autocmd!
 augroup END
