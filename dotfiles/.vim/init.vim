@@ -2140,6 +2140,7 @@ if s:has_plugin('nextfile') " {{{
 
     function! NFLoopMsg(file_to_open)
         echohl WarningMsg
+        redraw
         echom 'open a file from the start...'
         echohl None
         " Always open a next/previous file...
