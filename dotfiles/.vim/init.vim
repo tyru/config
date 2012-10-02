@@ -774,10 +774,6 @@ endif
 " motion {{{
 Map [nvo] j gj
 Map [nvo] k gk
-MyAutocmd CmdwinEnter * Map [nvo] -buffer j j
-MyAutocmd CmdwinEnter * Map [nvo] -buffer k k
-MyAutocmd CmdwinLeave * Map [nvo] -buffer j j
-MyAutocmd CmdwinLeave * Map [nvo] -buffer k k
 
 Map [nvo] <orig>j j
 Map [nvo] <orig>k k
@@ -1232,6 +1228,13 @@ command!
 " }}}
 " Move all windows of current group beyond next group. {{{
 " TODO
+" }}}
+" quickfix buffer-local mappings {{{
+MyAutocmd FileType qf call s:quickfix_settings()
+function! s:quickfix_settings()
+    Map -buffer [n] j j<CR>zo<C-w><C-w>
+    Map -buffer [n] k k<CR>zo<C-w><C-w>
+endfunction
 " }}}
 " "Use one tabpage per project" project {{{
 " :TabpageLookupCD - Set t:cwd to root directory of project working tree {{{
