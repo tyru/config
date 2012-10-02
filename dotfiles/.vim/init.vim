@@ -1851,6 +1851,8 @@ endfunction "}}}
 " }}}
 " :Delete {{{
 
+MapAlterCommand rm Delete
+
 command!
 \   -bar -bang -complete=file -nargs=+
 \   Delete
