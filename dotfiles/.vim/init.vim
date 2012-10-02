@@ -1280,13 +1280,13 @@ function! s:quickfix_settings()
 endfunction
 " }}}
 " "Use one tabpage per project" project {{{
-" :SetProjectName - Set tab's title {{{
-Map -silent [n] <C-t> :<C-u>SetProjectName<CR>
-command! -bar -nargs=* SetProjectName call s:cmd_set_project_name(<q-args>)
-function! s:cmd_set_project_name(name) "{{{
+" :SetTabName - Set tab's title {{{
+Map -silent [n] <C-t> :<C-u>SetTabName<CR>
+command! -bar -nargs=* SetTabName call s:cmd_set_tab_name(<q-args>)
+function! s:cmd_set_tab_name(name) "{{{
     let old_title = exists('t:title') ? t:title : ''
     if a:name == ''
-        let t:title = input('Project name?:', old_title)
+        let t:title = input('tab name?:', old_title)
     else
         let t:title = a:name
     endif
