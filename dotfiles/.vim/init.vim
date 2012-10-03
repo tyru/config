@@ -106,17 +106,6 @@ function! s:cmd_lazy(q_args) "{{{
     endif
 endfunction "}}}
 
-
-
-command!
-\   -nargs=+
-\   Echomsg
-\
-\   let [hl, msg] = tyru#util#parse_one_arg_from_q_args(<q-args>)
-\   | execute 'echohl' hl
-\   | echomsg eval(msg)
-\   | echohl None
-
 " }}}
 " }}}
 " Initializing {{{
@@ -821,10 +810,9 @@ Map [n] n nzz
 Map [n] N Nzz
 
 " Operate on line without newline.
-DefMacroMap [n] line-w/o-newline <Space>
-Map [n] d<line-w/o-newline> 0d$
-Map [n] y<line-w/o-newline> 0y$
-Map [n] c<line-w/o-newline> 0c$
+Map [n] d<Space> 0d$
+Map [n] y<Space> 0y$
+Map [n] c<Space> 0c$
 
 " http://vim-users.jp/2009/08/hack57/
 Map [n] d<CR> :<C-u>call append(line('.'), '')<CR>j
@@ -862,7 +850,7 @@ function! s:cmd_lookup_cd(args) "{{{
     " Get fullpath.
     let dir = fnamemodify(dir, ':p')
     if !isdirectory(dir)
-        Echomsg WarningMsg "No such directory: " . dir
+        call s:warn("No such directory: " . dir)
         return
     endif
     return s:lookup_repo(dir)
@@ -879,7 +867,7 @@ function! s:lookup_repo(dir) "{{{
 
     let parent = s:Vital.System.Filepath.dirname(a:dir)
     if a:dir ==# parent    " root
-        Echomsg WarningMsg 'Not found project directory.'
+        call s:warn('Not found project directory.')
         return
     elseif s:is_root_project_dir(a:dir)
         cd `=a:dir`
@@ -1253,10 +1241,11 @@ endfunction "}}}
 " }}}
 " }}}
 " vmap {{{
-Map [v] <C-g> g<C-g>
 
-Map -silent [v] y y:<C-u>call <SID>remove_trailing_spaces_V()<CR>
-function! s:remove_trailing_spaces_V()
+" Map [v] <C-g> g<C-g>1gs
+
+Map -silent [v] y y:<C-u>call <SID>remove_trailing_spaces_blockwise()<CR>
+function! s:remove_trailing_spaces_blockwise()
     let regname = v:register
     if getregtype(regname)[0] !=# "\<C-v>"
         return ''
@@ -1277,9 +1266,7 @@ Map [ic] <C-a> <Home>
 Map [ic] <C-e> <End>
 Map [ic] <C-d> <Del>
 
-if 1
-
-else
+if 0
 
 function! s:eclipse_like_autoclose(quote)
     if mode() !~# '^\(i\|R\|Rv\|c\|cv\|ce\)$'
@@ -1853,7 +1840,7 @@ function! s:cmd_rename(...) "{{{
             execute 'edit' to
         endif
     catch
-        Echomsg WarningMsg "Can't rename():" from "=>" to
+        call s:warn("Can't rename():" from "=>" to)
     endtry
 endfunction "}}}
 
