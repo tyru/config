@@ -228,7 +228,7 @@
 	url = git://github.com/tyru/skkdict.vim.git
 [submodule "dotfiles/.vim/macros/vim-rtputil"]
 	path = dotfiles/.vim/macros/vim-rtputil
-	url = git://github.com/thinca/vim-rtputil.git
+	url = git://github.com/thinca/vim-rtputil
 [submodule "dotfiles/.vim/bundle/karma.vim"]
 	path = dotfiles/.vim/bundle/karma.vim
 	url = git://github.com/vim-scripts/karma.vim.git
