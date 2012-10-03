@@ -35,10 +35,13 @@ endfunction "}}}
 
 " e.g.) s:has_plugin('eskk') ? 'yes' : 'no'
 function! s:has_plugin(name)
-    let nosuffix = a:name =~? '\.vim$' ? substitute(a:name, '\c\.vim$', '', '') : a:name
-    let suffix   = a:name =~? '\.vim$' ? a:name : a:name . '.vim'
+    let nosuffix = a:name =~? '\.vim$' ? a:name[:-5] : a:name
+    let suffix   = a:name =~? '\.vim$' ? a:name      : a:name . '.vim'
     return &rtp =~# '\c\<' . nosuffix . '\>'
+    \   || globpath(&rtp, suffix, 1) != ''
+    \   || globpath(&rtp, nosuffix, 1) != ''
     \   || globpath(&rtp, 'autoload/' . suffix, 1) != ''
+    \   || globpath(&rtp, 'autoload/' . tolower(suffix), 1) != ''
 endfunction
 
 function! s:warn(msg) "{{{
