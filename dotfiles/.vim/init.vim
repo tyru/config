@@ -2994,6 +2994,7 @@ if s:has_plugin('GraVit') " {{{
 
 endif " }}}
 if s:has_plugin('hatena.vim') " {{{
+    let g:hatena_no_default_keymappings = 1
     let g:hatena_user = 'tyru'
     let g:hatena_upload_on_write = 0
 endif " }}}
