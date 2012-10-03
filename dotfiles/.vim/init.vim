@@ -2997,6 +2997,19 @@ if s:has_plugin('hatena.vim') " {{{
     let g:hatena_user = 'tyru'
     let g:hatena_upload_on_write = 0
 endif " }}}
+if s:has_plugin('fileutils') " {{{
+    call fileutils#load('noprefix')
+
+    MapAlterCommand rm Delete
+    MapAlterCommand del[ete] Delete
+
+    MapAlterCommand mv Rename
+    MapAlterCommand ren[ame] Rename
+
+    MapAlterCommand mkd[ir] Mkdir
+
+    MapAlterCommand mkc[d] Mkcd
+endif "}}}
 
 " test
 let g:loaded_tyru_event_test = 1
