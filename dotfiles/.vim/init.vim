@@ -1969,39 +1969,6 @@ command!
 \   Help
 \   vertical rightbelow help<bang> <args>
 " }}}
-" :SplitToLeft, :SplitToRight, :SplitToUp, :SplitToDown {{{
-" Assumption: <args> does not contain :vertical,
-" and does not change 'splitright', 'splitbelow'.
-
-Map -silent [n] <SID>(split:to-down)
-\   :<C-u>execute 'belowright' (v:count == 0 ? '' : v:count) 'split'<CR>
-Map -silent [n] <SID>(split:to-up)
-\   :<C-u>execute 'aboveleft'  (v:count == 0 ? '' : v:count) 'split'<CR>
-Map -silent [n] <SID>(split:to-left)
-\   :<C-u>execute 'aboveleft'    (v:count == 0 ? '' : v:count) 'vsplit'<CR>
-Map -silent [n] <SID>(split:to-right)
-\   :<C-u>execute 'belowright'   (v:count == 0 ? '' : v:count) 'vsplit'<CR>
-
-Map -silent [n] <SID>(new:to-down)
-\   :<C-u>execute 'belowright' (v:count == 0 ? '' : v:count) 'new'<CR>
-Map -silent [n] <SID>(new:to-up)
-\   :<C-u>execute 'aboveleft'  (v:count == 0 ? '' : v:count) 'new'<CR>
-Map -silent [n] <SID>(new:to-left)
-\   :<C-u>execute 'aboveleft'    (v:count == 0 ? '' : v:count) 'vnew'<CR>
-Map -silent [n] <SID>(new:to-right)
-\   :<C-u>execute 'belowright'   (v:count == 0 ? '' : v:count) 'vnew'<CR>
-
-
-Map -remap [n] <excmd>sj <SID>(split:to-down)
-Map -remap [n] <excmd>sk <SID>(split:to-up)
-Map -remap [n] <excmd>sh <SID>(split:to-left)
-Map -remap [n] <excmd>sl <SID>(split:to-right)
-
-Map -remap [n] <excmd>ej <SID>(new:to-down)
-Map -remap [n] <excmd>ek <SID>(new:to-up)
-Map -remap [n] <excmd>eh <SID>(new:to-left)
-Map -remap [n] <excmd>el <SID>(new:to-right)
-" }}}
 " :NonSortUniq {{{
 "
 " http://lingr.com/room/vim/archives/2010/11/18#message-1023619
@@ -3079,10 +3046,6 @@ if s:has_plugin('gist') "{{{
     let g:gist_open_browser_after_post = 1
     let g:gist_browser_command = ":OpenBrowser %URL%"
 endif "}}}
-if s:has_plugin('quickey') " {{{
-    let g:quickey_merge_window_hide_vim_window_move_cursor = 1
-    let g:quickey_no_default_split_nicely_keymappings = 1
-endif " }}}
 if s:has_plugin('ohmygrep') " {{{
     MapAlterCommand gr[ep] OMGrep
     MapAlterCommand re[place] OMReplace
