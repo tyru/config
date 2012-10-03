@@ -1367,25 +1367,9 @@ Map [c] <C-p> <Up>
 
 Map [c] <C-l> <C-d>
 
-" Make / command comfortable {{{
-function! s:cmdline_slash()
-    let cmdtype = getcmdtype()
-    if cmdtype ==# '/'
-        return '\/'
-    elseif cmdtype ==# ':'
-        " When `wildmode=longest:full,full`,
-        " escape 2nd "full" mode.
-        " TODO: See the files in the directory.
-        if getcmdline()[getcmdpos()-2] ==# '/'
-            return "\<Space>\<BS>"
-        endif
-    endif
-    return '/'
-endfunction
-
-" Map -expr [c] /  <SID>cmdline_slash()
+" Escape /,? {{{
+Map -expr [c] /  getcmdtype() == '/' ? '\/' : '/'
 Map -expr [c] ?  getcmdtype() == '?' ? '\?' : '?'
-Map -expr [c] .  getcmdtype() =~# '[/?]' ? '\.' : '.'
 " }}}
 " }}}
 " abbr {{{
