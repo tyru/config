@@ -44,13 +44,16 @@ function! s:has_plugin(name)
     \   || globpath(&rtp, 'autoload/' . tolower(suffix), 1) != ''
 endfunction
 
-function! s:warn(msg) "{{{
-    echohl WarningMsg
+function! s:echomsg(hl, msg) "{{{
+    execute 'echohl' a:hl
     try
         echomsg a:msg
     finally
         echohl None
     endtry
+endfunction "}}}
+function! s:warn(msg) "{{{
+    call s:echomsg('WarningMsg', a:msg)
 endfunction "}}}
 
 " }}}
@@ -565,8 +568,9 @@ function! s:auto_chmod()
         try
             " Change permission.
             !chmod +x %
+
             redraw
-            echo 'chmod +x '.expand('%').' ... done.'
+            call s:echomsg('Special', 'chmod +x '.expand('%').' ... done.')
             sleep 1
         catch
             return
@@ -1545,9 +1549,7 @@ function! s:qf_search_again()
         try
             execute 'normal!' "/\<CR>"
         catch
-            echohl ErrorMsg
-            echomsg v:exception
-            echohl None
+            call s:echomsg('ErrorMsg', v:exception)
         endtry
     endif
 endfunction
@@ -2029,10 +2031,8 @@ if s:has_plugin('nextfile') " {{{
 
 
     function! NFLoopMsg(file_to_open)
-        echohl WarningMsg
         redraw
-        echom 'open a file from the start...'
-        echohl None
+        call s:echomsg('WarningMsg', 'open a file from the start...')
         " Always open a next/previous file...
         return 1
     endfunction
