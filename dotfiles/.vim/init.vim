@@ -1550,6 +1550,9 @@ endfunction
 function! s:quickfix_exists_window()
     return !!s:quickfix_get_winnr()
 endfunction
+function! s:quickfix_supported_quickfix_title()
+    return v:version >=# 703
+endfunction
 function! s:quickfix_get_search_word()
     " NOTE: This function returns a string starting with "/"
     " if previous search word is found.
@@ -1557,7 +1560,7 @@ function! s:quickfix_get_search_word()
     " as a failure return value, because ":vimgrep /" also returns an empty string.
 
     " w:quickfix_title only works 7.3 or later.
-    if v:version <# 703
+    if !s:quickfix_supported_quickfix_title()
         return ''
     endif
 
