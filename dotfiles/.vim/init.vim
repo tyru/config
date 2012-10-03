@@ -1913,7 +1913,7 @@ command!
 command!
 \   -bar -nargs=1 -complete=file
 \   GlobPath
-\   echo globpath(&rtp, <q-args>)
+\   echo globpath(&rtp, <q-args>, 1)
 
 MapAlterCommand gp GlobPath
 " }}}
