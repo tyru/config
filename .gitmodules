@@ -298,3 +298,9 @@
 [submodule "vim-tabpagecd"]
 	path = vim-tabpagecd
 	url = git://github.com/kana/vim-tabpagecd
+[submodule "dotfiles/.vim/bundle/shabadou.vim"]
+	path = dotfiles/.vim/bundle/shabadou.vim
+	url = git://github.com/osyo-manga/shabadou.vim.git
+[submodule "dotfiles/.vim/bundle/vim-watchdogs"]
+	path = dotfiles/.vim/bundle/vim-watchdogs
+	url = git://github.com/osyo-manga/vim-watchdogs.git
