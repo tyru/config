@@ -557,7 +557,22 @@ function! s:check_auto_chmod() "{{{
 endfunction "}}}
 function! s:auto_chmod()
     if s:check_auto_chmod()
-        !chmod +x %
+        " XXX: 'setlocal autoread' and
+        " 'autocmd FileChangedShell' also do not work.
+        " This is expected behavior?
+        let save_autoread = &g:autoread
+        set autoread
+        try
+            " Change permission.
+            !chmod +x %
+            redraw
+            echo 'chmod +x '.expand('%').' ... done.'
+            sleep 1
+        catch
+            return
+        finally
+            let &g:autoread = save_autoread
+        endtry
     endif
 endfunction
 " }}}
