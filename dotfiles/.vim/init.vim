@@ -554,6 +554,7 @@ command! -bar AutoChmodEnable  unlet! b:disable_auto_chmod
 MyAutocmd BufWritePost * call s:auto_chmod()
 function! s:check_auto_chmod() "{{{
     return !exists('b:disable_auto_chmod')
+    \   && has('unix')
     \   && getfperm(expand('%'))[2] !=# 'x'
     \   && getline(1) =~# '^#!'
     \   && executable('chmod')
