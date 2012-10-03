@@ -304,3 +304,6 @@
 [submodule "dotfiles/.vim/bundle/vim-watchdogs"]
 	path = dotfiles/.vim/bundle/vim-watchdogs
 	url = git://github.com/osyo-manga/vim-watchdogs.git
+[submodule "dotfiles/.vim/bundle/fileutils.vim"]
+	path = dotfiles/.vim/bundle/fileutils.vim
+	url = git://github.com/tyru/fileutils.vim
