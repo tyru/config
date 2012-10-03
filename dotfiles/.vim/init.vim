@@ -61,12 +61,13 @@ augroup END
 
 
 command!
-\   -nargs=1
+\   -bar -nargs=1
 \   Nop
-\   command! -bang -nargs=* <args> :
+\   command! -bar -bang -nargs=* <args> :
 
 
 
+" :autocmd is listed in |:bar|
 command!
 \   -bang -nargs=*
 \   MyAutocmd
@@ -146,7 +147,7 @@ let s:Vital = vital#of('vital')
 call s:Vital.load('Data.List')
 call s:Vital.load('System.Filepath')
 
-command! -bar HelpTagsAll call rtputil#helptags()
+command! -bar -bang HelpTagsAll call rtputil#helptags(<bang>0)
 HelpTagsAll
 
 
@@ -1505,7 +1506,7 @@ DefMap [c] -expr bs-ctrl-] getcmdline()[getcmdpos() - 2] ==# "\<C-]>" ? "\<BS>" 
 Map -remap   [ic] <C-]>     <C-]><bs-ctrl-]>
 " }}}
 " Add current line to quickfix. {{{
-command! -range QFAddLine <line1>,<line2>call s:quickfix_add_range()
+command! -bar -range QFAddLine <line1>,<line2>call s:quickfix_add_range()
 
 
 function! s:quickfix_add_range() range
@@ -1542,7 +1543,7 @@ function! s:quickfix_add_line_set_col(lnum, qf)
 endfunction
 " }}}
 " :QFSearchAgain {{{
-command! QFSearchAgain call s:qf_search_again()
+command! -bar QFSearchAgain call s:qf_search_again()
 function! s:qf_search_again()
     let qf_winnr = s:quickfix_get_winnr()
     if !qf_winnr
@@ -1726,11 +1727,13 @@ MyAutocmd FileType * call s:load_filetype()
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
 " Only define it when not defined already.
-command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+command! -bar DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
         \ | wincmd p | diffthis
 " }}}
 " :MTest {{{
-"   convert Perl's regex to Vim's regex
+" convert Perl's regex to Vim's regex
+
+" No -bar
 command!
 \   -nargs=+
 \   MTest
@@ -1755,7 +1758,7 @@ endfunction "}}}
 " }}}
 " :Open {{{
 command!
-\   -nargs=? -complete=dir
+\   -bar -nargs=? -complete=dir
 \   Open
 \   call s:Open(<f-args>)
 
@@ -1825,7 +1828,7 @@ endfunction "}}}
 " }}}
 " :Rename {{{
 command!
-\   -nargs=+ -complete=file
+\   -bar -nargs=+ -complete=file
 \   Rename
 \   call s:cmd_rename(<f-args>)
 
@@ -1883,7 +1886,7 @@ MapAlterCommand rtp EchoPath<Space>&rtp
 
 " TODO Add -complete=option
 command!
-\   -nargs=+ -complete=expression
+\   -bar -nargs=+ -complete=expression
 \   EchoPath
 \   call s:cmd_echo_path(<f-args>)
 
@@ -1903,7 +1906,7 @@ command!
 " }}}
 " :Expand {{{
 command!
-\   -nargs=?
+\   -bar -nargs=?
 \   Expand
 \   call s:cmd_expand(<q-args>)
 
@@ -2375,8 +2378,8 @@ if s:has_plugin('eskk') " {{{
         endif
 
         " Debug
-        command! -bar EskkDumpBuftable PP! eskk#get_buftable().dump()
-        command! -bar EskkDumpTable    PP! eskk#table#<args>#load()
+        command! -bar          EskkDumpBuftable PP! eskk#get_buftable().dump()
+        command! -bar -nargs=1 EskkDumpTable    PP! eskk#table#<args>#load()
         " EskkMap lhs rhs
         " EskkMap -silent lhs2 rhs
         " EskkMap -unique lhs2 foo
@@ -2422,7 +2425,7 @@ elseif s:anything == s:anything_ku && s:has_plugin('ku')
     Map [n] <anything>:        :<C-u>Ku cmd_mru/cmd<CR>
     Map [n] <anything>/        :<C-u>Ku cmd_mru/search<CR>
 elseif s:has_plugin('unite') " fallback, or you select this :)
-    command! -nargs=* UniteKawaii Unite -prompt='-')/\  -no-split <args>
+    command! -bar -nargs=* UniteKawaii Unite -prompt='-')/\  -no-split <args>
     Map [n] <anything>f        :<C-u>UniteKawaii -buffer-name=files file buffer file_mru<CR>
     Map [n] <anything>F        :<C-u>UniteKawaii -buffer-name=files file_rec<CR>
     Map [n] <anything>p        :<C-u>UniteKawaii -buffer-name=files buffer_tab<CR>
@@ -3269,7 +3272,7 @@ if $WINDOW != '' || $TMUX != ''
         \ . esc . '\\"'
         redraw!
     endfunction
-    command! -nargs=? WindowName call s:screen_set_window_name(<q-args>)
+    command! -bar -nargs=? WindowName call s:screen_set_window_name(<q-args>)
 
     function! s:screen_auto_window_name()
         let varname = 'window_name'
