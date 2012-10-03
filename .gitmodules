@@ -273,7 +273,7 @@
 	url = git://github.com/vim-jp/vimdoc-ja.git
 [submodule "dotfiles/.vim/bundle/vim-hier"]
 	path = dotfiles/.vim/bundle/vim-hier
-	url = git://github.com/jceb/vim-hier.git
+	url = git://github.com/jceb/vim-hier
 [submodule "dotfiles/.vim/bundle/gravit.vim"]
 	path = dotfiles/.vim/bundle/gravit.vim
 	url = git://github.com/tyru/gravit.vim.git
@@ -307,3 +307,6 @@
 [submodule "dotfiles/.vim/bundle/vim-tabpagecd"]
 	path = dotfiles/.vim/bundle/vim-tabpagecd
 	url = git://github.com/kana/vim-tabpagecd
+[submodule "dotfiles/.vim/bundle/quickfixstatus"]
+	path = dotfiles/.vim/bundle/quickfixstatus
+	url = git://github.com/dannyob/quickfixstatus
