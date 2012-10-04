@@ -2064,9 +2064,9 @@ if s:has_plugin('skk') || s:has_plugin('eskk') " {{{
 
     call rtputil#append('~/.vim/bundle/skkdict.vim')
 
-    let s:skk_user_dict = '~/.skk/user-dict'
+    let s:skk_user_dict = '~/.skkdict/user-dict'
     let s:skk_user_dict_encoding = 'utf-8'
-    let s:skk_system_dict = '~/.skk/system-dict'
+    let s:skk_system_dict = '~/.skkdict/system-dict'
     let s:skk_system_dict_encoding = 'euc-jp'
 
     if 1
