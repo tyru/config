@@ -826,8 +826,8 @@ Map [n] <fold><Space> zMzvzz
 Map [n] <fold>l zo
 Map [n] <fold>h zc
 
-Map [n] n nzz
-Map [n] N Nzz
+Map -silent [n] n nzz
+Map -silent [n] N Nzz
 
 " Operate on line without newline.
 Map [n] d<Space> 0d$
