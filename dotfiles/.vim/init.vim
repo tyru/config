@@ -1286,6 +1286,21 @@ endfunction
 function! s:splitmapjoin(str, pattern, expr, sep)
     return join(map(split(a:str, a:pattern, 1), a:expr), a:sep)
 endfunction
+
+
+" http://labs.timedia.co.jp/2012/10/vim-more-useful-blockwise-insertion.html
+Map -expr [v] I <SID>force_blockwise_visual('I')
+Map -expr [v] A <SID>force_blockwise_visual('A')
+
+function! s:force_blockwise_visual(next_key)
+    if mode() ==# 'v'
+        return "\<C-v>" . a:next_key
+    elseif mode() ==# 'V'
+        return "\<C-v>0o$" . a:next_key
+    else  " mode() ==# "\<C-v>"
+        return a:next_key
+    endif
+endfunction
 " }}}
 " map! {{{
 Map [ic] <C-f> <Right>
