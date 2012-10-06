@@ -1474,11 +1474,11 @@ function! s:back_between(zero, tilde, dollar) "{{{
     let curcol = col('.')
     let tilde_col = match(getline('.'), '\S') + 1
 
-    if curcol > col('$')
+    if curcol > col('$')        " $ ~
         return a:dollar
-    elseif curcol > tilde_col
+    elseif curcol > tilde_col   " ^ ~ $
         return a:tilde
-    else
+    else                        " 0 ~ ^
         return a:zero
     endif
 endfunction "}}}
@@ -1486,11 +1486,11 @@ function! s:advance_between(tilde, dollar) "{{{
     let curcol = col('.')
     let tilde_col = match(getline('.'), '\S') + 1
 
-    if curcol < tilde_col
+    if curcol < tilde_col      " 0 ~ ^
         return a:tilde
-    elseif curcol < col('$')
+    elseif curcol < col('$')   " ^ ~ $
         return a:dollar
-    else
+    else                       " $ ~
         return ''
         " return a:right_edge
     endif
