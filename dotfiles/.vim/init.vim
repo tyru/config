@@ -2110,7 +2110,7 @@ if s:has_plugin('skk') " {{{
     let skk_large_jisyo_encoding = s:skk_system_dict_encoding
 
     " let skk_control_j_key = ''
-    " Arpeggio map! fj    <Plug>(skk-enable-im)
+    " Map -remap [lic] <C-j> <Plug>(skk-enable-im)
 
     let skk_manual_save_jisyo_keys = ''
 
