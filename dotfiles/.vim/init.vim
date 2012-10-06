@@ -1057,7 +1057,7 @@ endfunction "}}}
 function! s:move_current_winnr_to_head(winnr_list) "{{{
     let winnr_list = a:winnr_list
     let curwinnr = winnr()
-    let counter = 0
+    let counter = 1
     while index(winnr_list, counter) isnot -1
         let nr = winnr_list[counter]
         if curwinnr ==# nr
