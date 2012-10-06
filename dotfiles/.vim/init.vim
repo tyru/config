@@ -477,7 +477,7 @@ set mouse=a
 if &term =~ "^screen"
     augroup MyAutoCmd
         autocmd VimLeave * :set mouse=
-     augroup END
+    augroup END
 
     " workaround for freeze when using mouse on GNU screen.
     set ttymouse=xterm2
@@ -531,6 +531,7 @@ MyAutocmd BufNewFile,BufRead _vimperatorrc,.vimperatorrc setlocal syntax=vimpera
 MyAutocmd BufNewFile,BufRead *.avs setlocal syntax=avs
 
 " Aliases
+" http://vim-users.jp/2010/04/hack138/
 MyAutocmd FileType mkd setlocal filetype=markdown
 MyAutocmd FileType js setlocal filetype=javascript
 MyAutocmd FileType c++ setlocal filetype=cpp
@@ -540,8 +541,8 @@ MyAutocmd FileType rb setlocal filetype=ruby
 MyAutocmd FileType scm setlocal filetype=scheme
 
 " Checking typo. {{{
-MyAutocmd BufWriteCmd *[,*] call s:write_check_typo(expand('<afile>'))
-function! s:write_check_typo(file)
+MyAutocmd BufWriteCmd *[,*] call s:check_filename_typo(expand('<afile>'))
+function! s:check_filename_typo(file)
     let prompt = "possible typo: really want to write to '" . a:file . "'?(y/n):"
     if input(prompt) =~? '^\s*y'
         execute 'write' a:file
