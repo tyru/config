@@ -3042,6 +3042,53 @@ if s:has_plugin('watchdogs') " {{{
     endif
     let g:watchdogs_check_BufWritePost_enable = 1
 endif "}}}
+if s:has_plugin('hier') " {{{
+    function! s:quickfix_is_target()
+        " let buftype = getbufvar(expand('<abuf>'), '&buftype')
+        let winnr = bufwinnr(expand('<abuf>'))
+        let buftype = getwinvar(winnr, '&buftype')
+        " Dump [winnr, buftype]
+        return buftype ==# 'quickfix'
+    endfunction
+    function! s:stop_hier_on_quickfix_close()
+        if s:quickfix_is_target() || !s:quickfix_exists_window()
+            HierStop
+        endif
+    endfunction
+    function! s:start_hier_on_quickfix_open()
+        if s:quickfix_is_target() || s:quickfix_exists_window()
+            HierStart
+        endif
+    endfunction
+    MyAutocmd BufWinLeave,BufDelete,BufUnload,BufWipeout *
+    \   call s:stop_hier_on_quickfix_close()
+    MyAutocmd QuickFixCmdPost *
+    \   call s:start_hier_on_quickfix_open()
+
+
+    function! s:check_auto_commands(evname)
+        " disable
+        if 1 | return | endif
+
+        echom a:evname.': <afile> = '.expand('<afile>').', <abuf> = '.expand('<abuf>').', <amatch> = '.expand('<amatch>')
+        Dump bufexists(expand('<abuf>'))
+        let winnr = s:quickfix_get_winnr()
+        Dump [getbufvar(expand('<abuf>'), '&buftype'), winnr, getwinvar(winnr, '&buftype')]
+        let quickfix_is_target = s:quickfix_is_target()
+        let quickfix_exists_window = s:quickfix_exists_window()
+        Dump [quickfix_is_target, quickfix_exists_window]
+    endfunction
+
+    for s:tmp in [
+    \   'BufWinLeave',
+    \   'BufUnload',
+    \   'BufDelete',
+    \   'BufWipeout',
+    \]
+        execute 'MyAutocmd '.s:tmp.' * call s:check_auto_commands('.string(s:tmp).')'
+    endfor
+    unlet s:tmp
+endif "}}}
 
 " test
 let g:loaded_tyru_event_test = 1
