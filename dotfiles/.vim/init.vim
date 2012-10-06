@@ -1581,7 +1581,9 @@ endfunction
 
 " Quickfix utility functions {{{
 function! s:quickfix_get_winnr()
-    for winnr in range(1, winnr('$'))
+    " quickfix window is usually at bottom,
+    " thus reverse-lookup.
+    for winnr in reverse(range(1, winnr('$')))
         if getwinvar(winnr, '&buftype') ==# 'quickfix'
             return winnr
         endif
