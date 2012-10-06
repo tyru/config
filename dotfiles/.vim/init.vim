@@ -3040,16 +3040,7 @@ if s:has_plugin('watchdogs') " {{{
     if has('vim_starting')
         call watchdogs#setup(g:quickrun_config)
     endif
-    " TODO: Run check on BufWritePost
-    " if current filetype are supported
-    let g:watchdogs_check_BufWritePost_enables = {
-    \   "perl" : 1,
-    \   "ruby" : 1,
-    \   "javascript" : 1,
-    \   "c"  : 1,
-    \   "cpp"  : 1,
-    \   "haskell"  : 1,
-    \}
+    let g:watchdogs_check_BufWritePost_enable = 1
 endif "}}}
 
 " test
