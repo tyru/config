@@ -802,8 +802,8 @@ Map [nvo] <orig>j j
 Map [nvo] <orig>k k
 
 " FIXME: Does not work in visual mode.
-Map [nvo] ]k :<C-u>call search('^\S', 'Ws')<CR>
-Map [nvo] [k :<C-u>call search('^\S', 'Wsb')<CR>
+Map [n] ]k :<C-u>call search('^\S', 'Ws')<CR>
+Map [n] [k :<C-u>call search('^\S', 'Wsb')<CR>
 
 Map [nvo] gp %
 " }}}
