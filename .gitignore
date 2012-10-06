@@ -1,6 +1,10 @@
 # Vim
 dotfiles/.vim/.vimbackup_deleted
 
+# Emacs
+*.elc
+dotfiles/.emacs.d/info/
+
 dotfiles/.vim/*
 !dotfiles/.vim/after
 !dotfiles/.vim/autoload
