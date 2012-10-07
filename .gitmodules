@@ -310,3 +310,6 @@
 [submodule "dotfiles/.vim/bundle/quickfixstatus"]
 	path = dotfiles/.vim/bundle/quickfixstatus
 	url = git://github.com/dannyob/quickfixstatus
+[submodule "dotfiles/.vim/bundle/autochmodx.vim"]
+	path = dotfiles/.vim/bundle/autochmodx.vim
+	url = git://github.com/tyru/autochmodx.vim

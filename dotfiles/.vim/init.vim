@@ -550,48 +550,6 @@ function! s:check_filename_typo(file)
 endfunction
 " }}}
 
-" Automatic `:!chmod +x %`. {{{
-command! -bar AutoChmodDisable let b:disable_auto_chmod = 1
-command! -bar AutoChmodEnable  unlet! b:disable_auto_chmod
-MyAutocmd BufWritePost * call s:auto_chmod()
-function! s:check_auto_chmod() "{{{
-    return !exists('b:disable_auto_chmod')
-    \   && has('unix')
-    \   && getfperm(expand('%'))[2] !=# 'x'
-    \   && getline(1) =~# '^#!'
-    \   && executable('chmod')
-endfunction "}}}
-function! s:auto_chmod()
-    if s:check_auto_chmod()
-        " XXX: 'setlocal autoread' and
-        " 'setglobal autoread' and
-        " 'autocmd FileChangedShell' also do not work.
-        " This is expected behavior?
-        let save_global_autoread = &g:autoread
-        let save_local_autoread  = &l:autoread
-        set autoread
-        try
-            " Change permission.
-            !chmod +x %
-
-            redraw
-            call s:echomsg('Special', 'chmod +x '.expand('%').' ... done.')
-            sleep 1
-        catch
-            return
-        finally
-            if save_global_autoread ==# save_local_autoread
-                let &g:autoread = save_global_autoread
-                set autoread<
-            else
-                let &l:autoread = save_local_autoread
-                let &g:autoread = save_global_autoread
-            endif
-        endtry
-    endif
-endfunction
-" }}}
-
 " Automatic mkdir when :edit nonexistent-file {{{
 " http://vim-users.jp/2011/02/hack202/
 augroup vimrc-auto-mkdir
