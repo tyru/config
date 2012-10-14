@@ -2207,6 +2207,9 @@ if s:has_plugin('eskk') " {{{
         " EskkMap -unique lhs2 foo
         " EskkMap -expr lhs3 {'foo': 'hoge'}.foo
         " EskkMap -noremap lhs4 rhs
+
+        " by @_atton
+        " Map -remap [icl] <C-j> <Plug>(eskk:enable)
     endif
 endif " }}}
 if s:has_plugin('restart') " {{{
