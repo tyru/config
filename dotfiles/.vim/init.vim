@@ -120,20 +120,20 @@ else
     " TODO: Reduce dependency plugins.
 
     " Basic plugins
-    call rtputil#append('~/.vim/bundle/tyru')
-    call rtputil#append('~/.vim/bundle/emap.vim')
-    call rtputil#append('~/.vim/bundle/vim-altercmd')
+    call rtputil#append($MYVIMDIR.'/bundle/tyru')
+    call rtputil#append($MYVIMDIR.'/bundle/emap.vim')
+    call rtputil#append($MYVIMDIR.'/bundle/vim-altercmd')
 
-    call rtputil#append('~/.vim/bundle/vital.vim')
+    call rtputil#append($MYVIMDIR.'/bundle/vital.vim')
 
     " Useful plugins for debug
-    call rtputil#append('~/.vim/bundle/dutil.vim')
-    call rtputil#append('~/.vim/bundle/vim-prettyprint')
-    call rtputil#append('~/.vim/bundle/restart.vim')
+    call rtputil#append($MYVIMDIR.'/bundle/dutil.vim')
+    call rtputil#append($MYVIMDIR.'/bundle/vim-prettyprint')
+    call rtputil#append($MYVIMDIR.'/bundle/restart.vim')
 
     " Load plugins to debug
-    call rtputil#append('~/.vim/bundle/eskk.vim')
-    call rtputil#append('~/.vim/bundle/neocomplcache')
+    call rtputil#append($MYVIMDIR.'/bundle/eskk.vim')
+    call rtputil#append($MYVIMDIR.'/bundle/neocomplcache')
 endif
 
 let s:Vital = vital#of('vital')
@@ -2046,7 +2046,7 @@ if s:has_plugin('prompt') " {{{
 endif " }}}
 if s:has_plugin('skk') || s:has_plugin('eskk') " {{{
 
-    call rtputil#append('~/.vim/bundle/skkdict.vim')
+    call rtputil#append($MYVIMDIR.'/bundle/skkdict.vim')
 
     let s:skk_user_dict = '~/.skkdict/user-dict'
     let s:skk_user_dict_encoding = 'utf-8'
