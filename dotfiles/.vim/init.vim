@@ -2541,9 +2541,9 @@ if s:has_plugin('vimshell') " {{{
         " call vimshell#hook#set('preexec', [s:SNR('vimshell_preexec_less')])
 
         " Add/Remove some mappings.
-        Map! [n] -buffer <C-n>
-        Map! [n] -buffer <C-p>
-        Map! [i] -buffer <Tab>
+        Map! -buffer [n] <C-n>
+        Map! -buffer [n] <C-p>
+        Map! -buffer [i] <Tab>
         Map -buffer -remap [i] -force <Tab><Tab> <Plug>(vimshell_command_complete)
         Map -buffer -remap [n] <C-z> <Plug>(vimshell_switch)
         Map -buffer -remap [i] <compl>r <Plug>(vimshell_history_complete_whole)
@@ -2766,15 +2766,15 @@ if s:has_plugin('vimfiler') " {{{
         Map -buffer -remap [n] <C-i> <Plug>(vimfiler_move_to_history_forward)
 
         " TODO
-        " Map! [n] -buffer N j k
-        Map! [n] -buffer N
-        Map! [n] -buffer j
-        Map! [n] -buffer k
-        Map! [n] -buffer ?
+        " Map! -buffer [n] N j k
+        Map! -buffer [n] N
+        Map! -buffer [n] j
+        Map! -buffer [n] k
+        Map! -buffer [n] ?
 
         " dd as <Plug>(vimfiler_force_delete_file)
         " because I want to use trash-put.
-        Map! [n] -buffer d
+        Map! -buffer [n] d
         Map -remap -buffer [n] dd <Plug>(vimfiler_force_delete_file)
 
         Map -remap -buffer [n] <Space><Space> <Plug>(vimfiler_toggle_mark_current_line)
