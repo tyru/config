@@ -2754,9 +2754,6 @@ if s:has_plugin('vimfiler') " {{{
     let g:vimfiler_as_default_explorer = 1
     let g:vimfiler_safe_mode_by_default = 0
     let g:vimfiler_split_command = 'aboveleft split'
-    if executable('trash-put')
-        let g:vimfiler_external_delete_command = 'trash-put $srcs'
-    endif
 
     MyAutocmd FileType vimfiler call s:vimfiler_settings()
     function! s:vimfiler_settings() "{{{
