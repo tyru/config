@@ -2421,8 +2421,8 @@ if s:has_plugin('unite') " {{{
         Map -remap -buffer [i] <BS> <Plug>(unite_delete_backward_path)
         Map -remap -buffer [n] <Space><Space> <Plug>(unite_toggle_mark_current_candidate)
 
-        Map -remap -buffer [i] <C-n> <SID>(expand_unite_window)<Plug>(unite_select_next_line)
-        Map -remap -buffer [i] <C-p> <SID>(expand_unite_window)<Plug>(unite_select_previous_line)
+        " Map -remap -buffer [i] <C-n> <SID>(expand_unite_window)<Plug>(unite_select_next_line)
+        " Map -remap -buffer [i] <C-p> <SID>(expand_unite_window)<Plug>(unite_select_previous_line)
     endfunction "}}}
 
     " Expand current unite window width/height 2/3
