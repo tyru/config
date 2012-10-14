@@ -2046,23 +2046,34 @@ if s:has_plugin('prompt') " {{{
 endif " }}}
 if s:has_plugin('skk') || s:has_plugin('eskk') " {{{
 
-    call rtputil#append($MYVIMDIR.'/bundle/skkdict.vim')
+    " Switch SKK plugin.
+    let [s:skk_plugin_skk, s:skk_plugin_eskk] = ['skk.vim', 'eskk']
+    let s:skk_plugin = s:skk_plugin_skk
 
+    " skkdict
+    call rtputil#append($MYVIMDIR.'/bundle/skkdict.vim')
     let s:skk_user_dict = '~/.skkdict/user-dict'
     let s:skk_user_dict_encoding = 'utf-8'
     let s:skk_system_dict = '~/.skkdict/system-dict'
     let s:skk_system_dict_encoding = 'euc-jp'
 
-    if 1
-        " Map <C-j> to eskk, Map <C-g><C-j> to skk.vim
-        let skk_control_j_key = '<C-g><C-j>'
-    else
-        " Map <C-j> to skk.vim, Map <C-g><C-j> to eskk
-        Map -remap [ic] <C-g><C-j> <Plug>(eskk:toggle)
-    endif
+    " Disable this settings because now I do not use skk.vim and eskk together.
+    " if 1
+    "     " Map <C-j> to eskk, Map <C-g><C-j> to skk.vim
+    "     let skk_control_j_key = '<C-g><C-j>'
+    " else
+    "     " Map <C-j> to skk.vim, Map <C-g><C-j> to eskk
+    "     Map -remap [ic] <C-g><C-j> <Plug>(eskk:toggle)
+    " endif
 
 endif " }}}
-if s:has_plugin('skk') " {{{
+if s:has_plugin('skk') && s:skk_plugin is s:skk_plugin_skk " {{{
+    let s:skk_plugin_loaded = 1
+
+    " disable eskk
+    call rtputil#remove('\<eskk.vim\>')
+
+    " skkdict
     let skk_jisyo = s:skk_user_dict
     let skk_jisyo_encoding = s:skk_user_dict_encoding
     let skk_large_jisyo = s:skk_system_dict
@@ -2107,12 +2118,20 @@ if s:has_plugin('skk') " {{{
     endif
 
 endif " }}}
-if s:has_plugin('eskk') " {{{
-    if has('vim_starting')
+if s:has_plugin('eskk') && s:skk_plugin is s:skk_plugin_eskk " {{{
+    let s:skk_plugin_loaded = 1
+
+    " disable skk.vim
+    call rtputil#remove('\<skk.vim\>')
+
+    " skkdict
+    if !exists('g:eskk#dictionary')
         let g:eskk#dictionary = {
         \   'path': s:skk_user_dict,
         \   'encoding': s:skk_user_dict_encoding,
         \}
+    endif
+    if !exists('g:eskk#large_dictionary')
         let g:eskk#large_dictionary = {
         \   'path': s:skk_system_dict,
         \   'encoding': s:skk_system_dict_encoding,
@@ -2172,16 +2191,16 @@ if s:has_plugin('eskk') " {{{
             endfunction "}}}
 
             " by @hinagishi
-            " function! s:eskk_initial_pre() "{{{
-            "     let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
-            "     call t.add_map(',', ', ')
-            "     call t.add_map('.', '.')
-            "     call eskk#register_mode_table('hira', t)
-            "     let t = eskk#table#new('rom_to_kata*', 'rom_to_kata')
-            "     call t.add_map(',', ', ')
-            "     call t.add_map('.', '.')
-            "     call eskk#register_mode_table('kata', t)
-            " endfunction "}}}
+            function! s:eskk_initial_pre() "{{{
+                let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
+                call t.add_map(',', ', ')
+                call t.add_map('.', '.')
+                call eskk#register_mode_table('hira', t)
+                let t = eskk#table#new('rom_to_kata*', 'rom_to_kata')
+                call t.add_map(',', ', ')
+                call t.add_map('.', '.')
+                call eskk#register_mode_table('kata', t)
+            endfunction "}}}
 
             MyAutocmd User eskk-initialize-post call s:eskk_initial_post()
             function! s:eskk_initial_post() "{{{
@@ -2212,6 +2231,11 @@ if s:has_plugin('eskk') " {{{
         " Map -remap [icl] <C-j> <Plug>(eskk:enable)
     endif
 endif " }}}
+" SKK plugin finalization "{{{
+if !exists('s:skk_plugin_loaded')
+    call s:warn("warning: Could not load '".s:skk_plugin."'.")
+endif
+" }}}
 if s:has_plugin('restart') " {{{
     command!
     \   -bar

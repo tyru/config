@@ -62,6 +62,11 @@ g:<%filename_noext%>_no_default_keymappings
 }}}
 ==============================================================================
 TODO						*<%filename_noext%>-todo* {{{
+
+リクエストはこちらから。
+
+https://github.com/tyru/autochmodx.vim/issues
+
 }}}
 ==============================================================================
 Changelog						*<%filename_noext%>-changelog* {{{
