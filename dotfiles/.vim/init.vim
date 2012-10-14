@@ -1759,7 +1759,7 @@ endfunction "}}}
 command!
 \   -nargs=* -complete=mapping
 \   AllMaps
-\   map <args> | map! <args> | lmap <args>
+\   Capture map <args> | map! <args> | lmap <args>
 " }}}
 " :Expand {{{
 command!
