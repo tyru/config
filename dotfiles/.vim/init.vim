@@ -2900,20 +2900,6 @@ if s:has_plugin('neocomplcache') "{{{
     let g:neocomplcache_auto_completion_start_length = 3
 
     Map [n] <Leader>neo :<C-u>NeoComplCacheToggle<CR>
-
-    " http://d.hatena.ne.jp/basyura/20120318/p1
-    MyAutocmd InsertEnter * call s:neco_pre_cache()
-    function! s:neco_pre_cache()
-        if exists('b:neco_pre_cache')
-            return
-        endif
-        let b:neco_pre_cache = 1
-        if bufname('%') =~ g:neocomplcache_lock_buffer_name_pattern
-            return
-        endif
-        NeoComplCacheCachingBuffer
-        NeoComplCacheCachingDictionary
-    endfunction
 endif "}}}
 if s:has_plugin('EasyGrep') " {{{
     let g:EasyGrepCommand = 2
