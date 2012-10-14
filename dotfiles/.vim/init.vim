@@ -2953,9 +2953,6 @@ endif " }}}
 if s:has_plugin('simpletap') " {{{
     let g:simpletap#open_command = 'botright vnew'
 endif " }}}
-if s:has_plugin('fontzoom') " {{{
-    let loaded_fontzoom = 1
-endif " }}}
 if s:has_plugin('ftplugin/vim_fold.vim') " {{{
     augroup foldmethod-expr
     autocmd!

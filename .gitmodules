@@ -217,9 +217,6 @@
 [submodule "dotfiles/.vim/bundle/webapi-vim"]
 	path = dotfiles/.vim/bundle/webapi-vim
 	url = git://github.com/mattn/webapi-vim.git
-[submodule "dotfiles/.vim/bundle/vim-fontzoom"]
-	path = dotfiles/.vim/bundle/vim-fontzoom
-	url = git://github.com/thinca/vim-fontzoom.git
 [submodule "dotfiles/.vim/bundle/nclipper.vim"]
 	path = dotfiles/.vim/bundle/nclipper.vim
 	url = git://github.com/ujihisa/nclipper.vim.git
