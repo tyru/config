@@ -2154,7 +2154,7 @@ if s:has_plugin('eskk') && s:skk_plugin is s:skk_plugin_eskk " {{{
         let g:eskk#dictionary_save_count = 5
 
         if has('vim_starting')
-            " MyAutocmd User eskk-initialize-pre call s:eskk_initial_pre()
+            MyAutocmd User eskk-initialize-pre call s:eskk_initial_pre()
             function! s:eskk_initial_pre() "{{{
                 " User can be allowed to modify
                 " eskk global variables (`g:eskk#...`)
@@ -2189,33 +2189,6 @@ if s:has_plugin('eskk') && s:skk_plugin is s:skk_plugin_eskk " {{{
                     call eskk#register_mode_table(mode, t)
                 endfor
             endfunction "}}}
-
-            " by @hinagishi
-            function! s:eskk_initial_pre() "{{{
-                let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
-                call t.add_map(',', ', ')
-                call t.add_map('.', '.')
-                call eskk#register_mode_table('hira', t)
-                let t = eskk#table#new('rom_to_kata*', 'rom_to_kata')
-                call t.add_map(',', ', ')
-                call t.add_map('.', '.')
-                call eskk#register_mode_table('kata', t)
-            endfunction "}}}
-
-            MyAutocmd User eskk-initialize-post call s:eskk_initial_post()
-            function! s:eskk_initial_post() "{{{
-                " Disable "qkatakana", but ";katakanaq" works.
-                " NOTE: This makes some eskk tests fail!
-                " EskkMap -type=mode:hira:toggle-kata <Nop>
-
-                " map! <C-j> <Plug>(eskk:enable)
-                " EskkMap <C-j> <Nop>
-                "
-                " EskkMap U <Plug>(eskk:undo-kakutei)
-
-                " EskkMap jj <Esc>
-                " EskkMap -no-unique jj hoge
-            endfunction "}}}
         endif
 
         " Debug
@@ -2229,6 +2202,34 @@ if s:has_plugin('eskk') && s:skk_plugin is s:skk_plugin_eskk " {{{
 
         " by @_atton
         " Map -remap [icl] <C-j> <Plug>(eskk:enable)
+
+        " by @hinagishi
+        " MyAutocmd User eskk-initialize-pre call s:eskk_initial_pre()
+        " function! s:eskk_initial_pre() "{{{
+        "     let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
+        "     call t.add_map(',', ', ')
+        "     call t.add_map('.', '.')
+        "     call eskk#register_mode_table('hira', t)
+        "     let t = eskk#table#new('rom_to_kata*', 'rom_to_kata')
+        "     call t.add_map(',', ', ')
+        "     call t.add_map('.', '.')
+        "     call eskk#register_mode_table('kata', t)
+        " endfunction "}}}
+
+        " MyAutocmd User eskk-initialize-post call s:eskk_initial_post()
+        function! s:eskk_initial_post() "{{{
+            " Disable "qkatakana", but ";katakanaq" works.
+            " NOTE: This makes some eskk tests fail!
+            " EskkMap -type=mode:hira:toggle-kata <Nop>
+
+            map! <C-j> <Plug>(eskk:enable)
+            EskkMap <C-j> <Nop>
+
+            EskkMap U <Plug>(eskk:undo-kakutei)
+
+            EskkMap jj <Esc>
+            EskkMap -no-unique jj hoge
+        endfunction "}}}
     endif
 endif " }}}
 " SKK plugin finalization "{{{
