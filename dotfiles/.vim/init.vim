@@ -1249,8 +1249,8 @@ endfunction
 
 
 " http://labs.timedia.co.jp/2012/10/vim-more-useful-blockwise-insertion.html
-Map -expr [v] I <SID>force_blockwise_visual('I')
-Map -expr [v] A <SID>force_blockwise_visual('A')
+Map -expr [v] I <SID>force_blockwise_visual(<q-lhs>)
+Map -expr [v] A <SID>force_blockwise_visual(<q-lhs>)
 
 function! s:force_blockwise_visual(next_key)
     if mode() ==# 'v'
