@@ -198,7 +198,12 @@ set autoindent
 set smartindent
 set expandtab
 set smarttab
+set shiftround
+
+" Follow 'tabstop' value.
 set tabstop=4
+let &shiftwidth = s:fill_version('7.3.629') ? 0 : &ts
+let &softtabstop = s:fill_version('7.3.693') ? -1 : &ts
 
 " search
 set hlsearch
@@ -249,14 +254,6 @@ function! s:reinventing_scrolloff()
         endif
     endif
 endfunction
-
-" shift
-set shiftround
-set shiftwidth=4
-if v:version > 703 || v:version is 703 && has('patch629')
-    " Follow 'tabstop' value.
-    set shiftwidth=0
-endif
 
 " completion
 set complete=.,w,b,u,t,i,d,k,kspell
@@ -2968,8 +2965,10 @@ if s:has_plugin('detect-coding-style') " {{{
 
     MyAutocmd User dcs-initialized-styles call s:dcs_register_own_styles()
     function! s:dcs_register_own_styles()
-        call dcs#register_style('My style', {'hook_excmd': 'setlocal expandtab   tabstop=4 shiftwidth=4 softtabstop&'})
-        call dcs#register_style('Short indent', {'hook_excmd': 'setlocal expandtab   tabstop=2 shiftwidth=2 softtabstop&'})
+        let shiftwidth = 'shiftwidth='.(s:fill_version('7.3.629') ? 0 : &sw)
+        let softtabstop = 'softtabstop='.(s:fill_version('7.3.693') ? -1 : &sts)
+        call dcs#register_style('My style', {'hook_excmd': 'setlocal expandtab   tabstop=4 '.shiftwidth.' '.softtabstop})
+        call dcs#register_style('Short indent', {'hook_excmd': 'setlocal expandtab   tabstop=2 '.shiftwidth.' '.softtabstop})
     endfunction
 
 endif " }}}
