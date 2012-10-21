@@ -2578,7 +2578,7 @@ if s:has_plugin('vimshell') " {{{
 
     let g:vimshell_user_prompt = '"(" . getcwd() . ") --- (" . $USER . "@" . hostname() . ")"'
     let g:vimshell_prompt = '$ '
-    let g:vimshell_right_prompt = 'vimshell#vcs#info("(%s)-[%b]", "(%s)-[%b|%a]")'
+    let g:vimshell_right_prompt = 'vcs#info("(%s)-[%b]", "(%s)-[%b|%a]")'
     let g:vimshell_ignore_case = 1
     let g:vimshell_smart_case = 1
 
