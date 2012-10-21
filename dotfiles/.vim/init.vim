@@ -2124,7 +2124,7 @@ if s:has_plugin('skk') || s:has_plugin('eskk') " {{{
 
     " Switch SKK plugin.
     let [s:skk_plugin_skk, s:skk_plugin_eskk] = ['skk.vim', 'eskk']
-    let s:skk_plugin = s:skk_plugin_skk
+    let s:skk_plugin = s:skk_plugin_eskk
 
     " skkdict
     call rtputil#append($MYVIMDIR.'/bundle/skkdict.vim')
@@ -2272,7 +2272,7 @@ if s:has_plugin('eskk') && s:skk_plugin is s:skk_plugin_eskk " {{{
         command! -bar -nargs=1 EskkDumpTable    PP! eskk#table#<args>#load()
         " EskkMap lhs rhs
         " EskkMap -silent lhs2 rhs
-        " EskkMap -unique lhs2 foo
+        " EskkMap lhs2 foo
         " EskkMap -expr lhs3 {'foo': 'hoge'}.foo
         " EskkMap -noremap lhs4 rhs
 
@@ -2304,8 +2304,9 @@ if s:has_plugin('eskk') && s:skk_plugin is s:skk_plugin_eskk " {{{
             EskkMap U <Plug>(eskk:undo-kakutei)
 
             EskkMap jj <Esc>
-            EskkMap -no-unique jj hoge
+            EskkMap -force jj hoge
         endfunction "}}}
+
     endif
 endif " }}}
 " SKK plugin finalization "{{{
