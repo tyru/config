@@ -88,8 +88,7 @@ command!
 \   call s:cmd_lazy(<q-args>)
 
 if exists('$VIMRC_DISABLE_VIMENTER')
-    " FIXME: Disable only VimEnter event.
-    Nop MyAutoCmd
+    Nop Lazy
 endif
 
 function! s:cmd_lazy(q_args) "{{{
