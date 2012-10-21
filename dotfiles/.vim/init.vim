@@ -791,8 +791,8 @@ Map [nvo] gp %
 Map -remap [vo] iF <Plug>(textobj-fold-i)
 Map -remap [vo] aF <Plug>(textobj-fold-a)
 
-Map -remap [vo] iF <Plug>(textobj-between-i)
-Map -remap [vo] aF <Plug>(textobj-between-a)
+Map -remap [vo] ib <Plug>(textobj-between-i)
+Map -remap [vo] ab <Plug>(textobj-between-a)
 
 Map -remap [vo] if <Plug>(textobj-function-i)
 Map -remap [vo] af <Plug>(textobj-function-a)
