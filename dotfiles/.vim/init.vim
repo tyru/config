@@ -1830,7 +1830,7 @@ command!
 MapAlterCommand qf QuickFix
 " }}}
 " :Capture {{{
-MapAlterCommand cap[ture] Capture
+MapAlterCommand c[apture] Capture
 
 command!
 \   -nargs=+ -complete=command
