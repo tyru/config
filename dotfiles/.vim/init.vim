@@ -1845,10 +1845,22 @@ function! s:cmd_capture(q_args) "{{{
 
     belowright new
 
-    silent file `=printf('[Capture: %s]', a:q_args)`
+    let bufname = s:create_unique_capture_bufname(a:q_args)
+    silent file `=bufname`
     setlocal buftype=nofile bufhidden=unload noswapfile nobuflisted
     call setline(1, split(output, '\n'))
 endfunction "}}}
+
+function! s:create_unique_capture_bufname(q_args)
+    let fmt = '[Capture #%d: "'.a:q_args.'"]'
+    let i = 0
+    let bufname = printf(fmt, i)
+    while bufexists(bufname)
+        let i += 1
+        let bufname = printf(fmt, i)
+    endwhile
+    return bufname
+endfunction
 " }}}
 " :SynNames {{{
 " :help synstack()
