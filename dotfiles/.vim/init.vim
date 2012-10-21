@@ -816,9 +816,6 @@ Map [n] <fold><Space> zMzvzz
 Map [n] <fold>l zo
 Map [n] <fold>h zc
 
-Map -silent [n] n nzz
-Map -silent [n] N Nzz
-
 " Operate on line without newline.
 Map [n] d<Space> 0d$
 Map [n] y<Space> 0y$
@@ -1441,8 +1438,8 @@ Map [c] <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 " Make searching directions consistent {{{
   " 'zv' is harmful for Operator-pending mode and it should not be included.
   " For example, 'cn' is expanded into 'cnzv' so 'zv' will be inserted.
-Map -expr [nv] n <SID>search_forward_p() ? 'nzv' : 'Nzv'
-Map -expr [nv] N <SID>search_forward_p() ? 'Nzv' : 'nzv'
+Map -expr [nv] n (<SID>search_forward_p() ? 'n' : 'Nzv').'zvzz'
+Map -expr [nv] N (<SID>search_forward_p() ? 'N' : 'n').'zvzz'
 Map -expr [o]  n <SID>search_forward_p() ? 'n' : 'N'
 Map -expr [o]  N <SID>search_forward_p() ? 'N' : 'n'
 
