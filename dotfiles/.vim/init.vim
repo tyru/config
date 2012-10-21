@@ -109,6 +109,14 @@ function! s:cmd_lazy(q_args) "{{{
     endif
 endfunction "}}}
 
+command!
+\   -bar -nargs=+
+\   Echomsg
+\   call s:echomsg(
+\       matchstr(<q-args>, '^\s*\zs\S\+'),
+\       eval(matchstr(<q-args>, '^\s*\S\+\s\+\zs.*'))
+\   )
+
 " }}}
 " }}}
 " Initializing {{{
