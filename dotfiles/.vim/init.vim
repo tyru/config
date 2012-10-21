@@ -1224,8 +1224,8 @@ Map -silent [n] <C-p> gT
 " quickfix buffer-local mappings {{{
 MyAutocmd FileType qf call s:quickfix_settings()
 function! s:quickfix_settings()
-    Map -buffer [n] j j<CR>zo<C-w><C-w>
-    Map -buffer [n] k k<CR>zo<C-w><C-w>
+    Map -buffer -force [n] j j<CR>zo<C-w><C-w>
+    Map -buffer -force [n] k k<CR>zo<C-w><C-w>
 endfunction
 " }}}
 " "Use one tabpage per project" project {{{
@@ -2517,11 +2517,11 @@ if s:has_plugin('unite') " {{{
     let g:unite_winheight = 5    " default winheight.
     let g:unite_winwidth  = 10    " default winwidth.
     function! s:unite_settings() "{{{
-        Map -remap -buffer [i] <BS> <Plug>(unite_delete_backward_path)
-        Map -remap -buffer [n] <Space><Space> <Plug>(unite_toggle_mark_current_candidate)
+        Map -remap -buffer -force [i] <BS> <Plug>(unite_delete_backward_path)
+        Map -remap -buffer -force [n] <Space><Space> <Plug>(unite_toggle_mark_current_candidate)
 
-        " Map -remap -buffer [i] <C-n> <SID>(expand_unite_window)<Plug>(unite_select_next_line)
-        " Map -remap -buffer [i] <C-p> <SID>(expand_unite_window)<Plug>(unite_select_previous_line)
+        " Map -remap -buffer -force [i] <C-n> <SID>(expand_unite_window)<Plug>(unite_select_next_line)
+        " Map -remap -buffer -force [i] <C-p> <SID>(expand_unite_window)<Plug>(unite_select_previous_line)
     endfunction "}}}
 
     " Expand current unite window width/height 2/3
@@ -2643,9 +2643,9 @@ if s:has_plugin('vimshell') " {{{
         Map! -buffer [n] <C-n>
         Map! -buffer [n] <C-p>
         Map! -buffer [i] <Tab>
-        Map -buffer -remap [i] -force <Tab><Tab> <Plug>(vimshell_command_complete)
-        Map -buffer -remap [n] <C-z> <Plug>(vimshell_switch)
-        Map -buffer -remap [i] <compl>r <Plug>(vimshell_history_complete_whole)
+        Map -buffer -remap -force [i] <Tab><Tab> <Plug>(vimshell_command_complete)
+        Map -buffer -remap -force [n] <C-z> <Plug>(vimshell_switch)
+        Map -buffer -remap -force [i] <compl>r <Plug>(vimshell_history_complete_whole)
 
         " Misc.
         setlocal backspace-=eol
@@ -2856,10 +2856,10 @@ if s:has_plugin('vimfiler') " {{{
 
     MyAutocmd FileType vimfiler call s:vimfiler_settings()
     function! s:vimfiler_settings() "{{{
-        Map -buffer -remap [n] L <Plug>(vimfiler_move_to_history_forward)
-        Map -buffer -remap [n] H <Plug>(vimfiler_move_to_history_back)
-        Map -buffer -remap [n] <C-o> <Plug>(vimfiler_move_to_history_back)
-        Map -buffer -remap [n] <C-i> <Plug>(vimfiler_move_to_history_forward)
+        Map -buffer -remap -force [n] L <Plug>(vimfiler_move_to_history_forward)
+        Map -buffer -remap -force [n] H <Plug>(vimfiler_move_to_history_back)
+        Map -buffer -remap -force [n] <C-o> <Plug>(vimfiler_move_to_history_back)
+        Map -buffer -remap -force [n] <C-i> <Plug>(vimfiler_move_to_history_forward)
 
         " TODO
         " Map! -buffer [n] N j k
@@ -2871,9 +2871,9 @@ if s:has_plugin('vimfiler') " {{{
         " dd as <Plug>(vimfiler_force_delete_file)
         " because I want to use trash-put.
         Map! -buffer [n] d
-        Map -remap -buffer [n] dd <Plug>(vimfiler_force_delete_file)
+        Map -remap -buffer -force [n] dd <Plug>(vimfiler_force_delete_file)
 
-        Map -remap -buffer [n] <Space><Space> <Plug>(vimfiler_toggle_mark_current_line)
+        Map -remap -buffer -force [n] <Space><Space> <Plug>(vimfiler_toggle_mark_current_line)
     endfunction "}}}
 endif " }}}
 if s:has_plugin('prettyprint') " {{{
