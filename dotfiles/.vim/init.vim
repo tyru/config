@@ -44,6 +44,21 @@ function! s:has_plugin(name)
     \   || globpath(&rtp, 'autoload/' . tolower(suffix), 1) != ''
 endfunction
 
+" e.g.)
+" echo s:fill_version('7.3.629')
+" echo s:fill_version('7.3')
+function! s:fill_version(str)
+    let m = matchlist(a:str, '\v'.'^(\d+)\.(\d{1,2})(\.\d+)?$')
+    if empty(m)
+        throw 'error: s:fill_version(): '
+        \   . 'version string format is invalid: '.a:str
+    endif
+    let ver = printf('%d%02d', m[1], m[2])
+    let patch = m[3] ==# '' ? '1' : m[3][1:]
+    return v:version ># ver
+    \   || (v:version is ver && has('patch'.patch))
+endfunction
+
 function! s:echomsg(hl, msg) "{{{
     execute 'echohl' a:hl
     try
@@ -1560,7 +1575,7 @@ function! s:quickfix_exists_window()
     return !!s:quickfix_get_winnr()
 endfunction
 function! s:quickfix_supported_quickfix_title()
-    return v:version >=# 703
+    return s:fill_version('7.3')
 endfunction
 function! s:quickfix_get_search_word()
     " NOTE: This function returns a string starting with "/"
