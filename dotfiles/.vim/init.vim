@@ -1915,6 +1915,48 @@ function! s:cmd_ctags() "{{{
     execute '!ctags' (filereadable('.ctags') ? '' : '-R')
 endfunction "}}}
 " }}}
+" :WatchAutocmd {{{
+
+" Create watch-autocmd augroup.
+augroup watch-autocmd
+    autocmd!
+augroup END
+
+command! -bar -nargs=1 -complete=event WatchAutocmd
+\   call s:cmd_{<bang>0 ? "un" : ""}watch_autocmd(<q-args>)
+
+
+let s:watching_events = {}
+
+function! s:cmd_unwatch_autocmd(event)
+    if !exists('#'.a:event)
+        Echomsg ErrorMsg "Invalid event name: ".a:event
+        return
+    endif
+    if !has_key(s:watching_events, a:event)
+        Echomsg ErrorMsg "Not watching ".a:event." event yet..."
+        return
+    endif
+
+    unlet s:watching_events[a:event]
+    echomsg 'Removed watch for '.a:event.' event.'
+endfunction
+function! s:cmd_watch_autocmd(event)
+    if !exists('#'.a:event)
+        Echomsg ErrorMsg "Invalid event name: ".a:event
+        return
+    endif
+    if has_key(s:watching_events, a:event)
+        echomsg "Already watching ".a:event." event."
+        return
+    endif
+
+    execute 'autocmd watch-autocmd' a:event
+    \       '* Echomsg Debug "Executing '.string(a:event).' event..."'
+    let s:watching_events[a:event] = 1
+    echomsg 'Added watch for '.a:event.' event.'
+endfunction
+" }}}
 " }}}
 " For Plugins {{{
 if s:has_plugin('nextfile') " {{{
