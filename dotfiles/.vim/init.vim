@@ -480,6 +480,9 @@ set fillchars=stl:\ ,stlnc::,vert:\ ,fold:-,diff:-
 set whichwrap=b,s
 set backspace=indent,eol,start
 set formatoptions=mMcroqnl2
+if s:fill_version('7.3.541')
+    set formatoptions+=j
+endif
 
 " undo-persistence
 if has('persistent_undo')
