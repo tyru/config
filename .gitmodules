@@ -313,3 +313,6 @@
 [submodule "dotfiles/.vim/bundle/vim-vcs"]
 	path = dotfiles/.vim/bundle/vim-vcs
 	url = git://github.com/Shougo/vim-vcs
+[submodule "dotfiles/.vim/bundle/neobundle.vim"]
+	path = dotfiles/.vim/bundle/neobundle.vim
+	url = git://github.com/Shougo/neobundle.vim
