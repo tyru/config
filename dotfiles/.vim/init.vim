@@ -1966,6 +1966,27 @@ function! s:cmd_watch_autocmd(event)
     echomsg 'Added watch for '.a:event.' event.'
 endfunction
 " }}}
+" ChangeIndent {{{
+command! -nargs=+ -bar ChangeSpaceIndent call s:cmd_change_space_indent(<f-args>)
+function! s:cmd_change_space_indent(before, ...)
+    if a:before !~# '^\d\+$'
+        echoerr 'argument must be a number: '.a:before
+        return
+    endif
+    if a:0
+        if a:1 =~# '^\d\+$'
+            let after = a:1
+        else
+            echoerr 'argument must be a number: '.after
+            return
+        endif
+    else
+        let after = &tabstop
+    endif
+
+    execute '%s:^ \+:\=repeat(" ", strlen(submatch(0)) / '.a:before.' * '.after.'):'
+endfunction
+" }}}
 " }}}
 " For Plugins {{{
 if s:has_plugin('nextfile') " {{{
