@@ -94,6 +94,21 @@ function mount() {
     fi
 }
 fi
+function rdesk() {
+    if [ $# -eq 0 ]; then
+        echo 'Usage: rdesk hostname [user [password]]' >&2
+    fi
+
+    hostname="$1"
+    user="$2"
+    password="$3"
+
+    [ "$user"     ] && user="-u $user"
+    [ "$password" ] && password="-p $password"
+
+    #rdesktop $user $password -a 24 -f -r sound -x l -z "$hostname"
+    rdesktop $user $password -a 24 -r sound -x l -z "$hostname"
+}
 
 
 # perlbrew
