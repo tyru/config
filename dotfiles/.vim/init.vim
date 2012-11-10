@@ -820,6 +820,14 @@ Map [n] <fold><Space> zMzvzz
 Map [n] <fold>l zo
 Map [n] <fold>h zc
 
+" +virtualedit
+if has('virtualedit')
+    Map -expr [n] i col('$') <# virtcol('.') ? 'A' : 'i'
+    Map -expr [n] a col('$') <# virtcol('.') ? 'A' : 'a'
+    Map -expr [n] <orig>i i
+    Map -expr [n] <orig>a a
+endif
+
 " Operate on line without newline.
 Map [n] d<Space> 0d$
 Map [n] y<Space> 0y$
