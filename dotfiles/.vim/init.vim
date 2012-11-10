@@ -3130,7 +3130,7 @@ if s:has_plugin('watchdogs') " {{{
     endif
     let g:watchdogs_check_BufWritePost_enable = 1
 endif "}}}
-if s:has_plugin('hier') " {{{
+if s:has_plugin('vim-hier') " {{{
     function! s:quickfix_is_target()
         " let buftype = getbufvar(expand('<abuf>'), '&buftype')
         let winnr = bufwinnr(expand('<abuf>'))
