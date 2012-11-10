@@ -1987,6 +1987,20 @@ function! s:cmd_change_space_indent(before, ...)
     execute '%s:^ \+:\=repeat(" ", strlen(submatch(0)) / '.a:before.' * '.after.'):'
 endfunction
 " }}}
+" Alias {{{
+command!
+\   -nargs=+ -bar
+\   Alias
+\   call s:cmd_alias('<bang>', [<f-args>], <q-args>)
+
+function! s:cmd_alias(bang, args, q_args)
+    if len(a:args) is 1 && a:args[0] =~# '^[A-Z][A-Za-z0-9]*$'
+        execute 'command '.a:args[0]
+    elseif len(a:args) is 2
+        execute 'command! -bang -nargs=* '.a:args[0].' '.a:args[1].a:bang.' '.a:q_args
+    endif
+endfunction
+" }}}
 " }}}
 " For Plugins {{{
 if s:has_plugin('nextfile') " {{{
