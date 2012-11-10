@@ -289,6 +289,18 @@ fi
 # http://edvakf.tumblr.com/post/24017596/setopt-hist-ignore-dups
 WORDCHARS='*?_-.[]~=&;!#$%^(){}'
 # >>>
+# zshでワイルドカードをその場で展開する <<<
+# http://qiita.com/items/232f1aac398215f6bcf4
+function _delete-char-or-list-expand() {
+    if [[ -z "${RBUFFER}" ]]; then
+        zle list-expand
+    else
+        zle delete-char
+    fi
+}
+zle -N _delete-char-or-list-expand
+bindkey '^D' _delete-char-or-list-expand
+# >>>
 # >>>
 ### cygwin ### <<<
 if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then
