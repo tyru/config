@@ -842,8 +842,6 @@ Map [n] <excmd>di :<C-u>display<CR>
 
 Map [n] g; ~
 
-Map [n] r gR
-
 Map [n] gl :<C-u>cnext<CR>
 Map [n] gh :<C-u>cNext<CR>
 
