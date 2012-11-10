@@ -491,6 +491,10 @@ if has('persistent_undo')
     silent! call mkdir(&undodir, 'p')
 endif
 
+if has('conceal')
+    set concealcursor=nvic
+endif
+
 " http://vim-users.jp/2009/12/hack107/
 " Enable mouse support.
 set mouse=a
