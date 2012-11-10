@@ -3367,6 +3367,15 @@ function! s:register_own_highlight()
 endfunction
 call s:register_own_highlight()
 " }}}
+" Maximize window on startup {{{
+if has('gui_running')
+    if s:is_win
+        Lazy simalt ~x
+    else
+        " TODO
+    endif
+endif
+" }}}
 " }}}
 " End. {{{
 
