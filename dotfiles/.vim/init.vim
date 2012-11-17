@@ -779,8 +779,9 @@ if s:has_plugin('operator-user')
 endif
 " }}}
 " motion {{{
-Map [nvo] j gj
-Map [nvo] k gk
+" j,k in normal mode for accelerated-jk.vim
+Map [vo] j gj
+Map [vo] k gk
 
 Map [nvo] <orig>j j
 Map [nvo] <orig>k k
@@ -3176,6 +3177,23 @@ if s:has_plugin('vim-hier') " {{{
         execute 'MyAutocmd '.s:tmp.' * call s:check_auto_commands('.string(s:tmp).')'
     endfor
     unlet s:tmp
+endif "}}}
+if s:has_plugin('accelerated-jk') " {{{
+    Map -remap [n] j <Plug>(accelerated_jk_gj)
+    Map -remap [n] k <Plug>(accelerated_jk_gk)
+    let g:accelerated_jk_deceleration_table = [
+    \   [200, 10],
+    \   [300, 15],
+    \   [500, 30],
+    \   [600, 40],
+    \   [700, 50],
+    \   [800, 60],
+    \   [900, 70],
+    \   [1000, 9999],
+    \]
+endif "}}}
+if s:has_plugin('vertr') " {{{
+    Map -remap [n] r <Plug>(vertical-R)
 endif "}}}
 
 " test

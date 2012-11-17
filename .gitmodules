@@ -316,3 +316,6 @@
 [submodule "dotfiles/.vim/bundle/neobundle.vim"]
 	path = dotfiles/.vim/bundle/neobundle.vim
 	url = git://github.com/Shougo/neobundle.vim
+[submodule "dotfiles/.vim/bundle/accelerated-jk"]
+	path = dotfiles/.vim/bundle/accelerated-jk
+	url = git://github.com/rhysd/accelerated-jk.git
