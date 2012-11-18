@@ -138,6 +138,16 @@ command!
 
 if !exists('$VIMRC_DEBUG')
     call rtputil#bundle()
+
+    if !executable('git')
+        call rtputil#remove('gist-vim')
+    endif
+    if !has('signs') ||
+    \  !has('diff')  ||
+    \  (!exists('*mkdir') && !executable('mkdir')) ||
+    \  !executable('diff')
+        call rtputil#remove('sign-diff')
+    endif
 else
     " TODO: Reduce dependency plugins.
 
@@ -3050,7 +3060,7 @@ if s:has_plugin('EasyGrep') " {{{
     let g:EasyGrepCommand = 2
     let g:EasyGrepInvertWholeWord = 1
 endif " }}}
-if s:has_plugin('gist') "{{{
+if s:has_plugin('gist-vim') "{{{
     let g:gist_detect_filetype = 1
     let g:gist_open_browser_after_post = 1
     let g:gist_browser_command = ":OpenBrowser %URL%"
