@@ -3151,11 +3151,17 @@ if s:has_plugin('vim-hier') " {{{
         return buftype ==# 'quickfix'
     endfunction
     function! s:stop_hier_on_quickfix_close()
+        if !exists(':HierStop')
+            return
+        endif
         if s:quickfix_is_target() || !s:quickfix_exists_window()
             HierStop
         endif
     endfunction
     function! s:start_hier_on_quickfix_open()
+        if !exists(':HierStart')
+            return
+        endif
         if s:quickfix_is_target() || s:quickfix_exists_window()
             HierStart
         endif
