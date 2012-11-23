@@ -40,9 +40,6 @@
 [submodule "dotfiles/.vim/bundle/vim-altercmd"]
 	path = dotfiles/.vim/bundle/vim-altercmd
 	url = git://github.com/tyru/vim-altercmd.git
-[submodule "dotfiles/.vim/bundle/vim-arpeggio"]
-	path = dotfiles/.vim/bundle/vim-arpeggio
-	url = git://github.com/tyru/vim-arpeggio.git
 [submodule "dotfiles/.vim/bundle/vim-repeat"]
 	path = dotfiles/.vim/bundle/vim-repeat
 	url = git://github.com/kana/vim-repeat.git
@@ -103,9 +100,6 @@
 [submodule "dotfiles/.vim/bundle/vim-textobj-fold"]
 	path = dotfiles/.vim/bundle/vim-textobj-fold
 	url = git://github.com/kana/vim-textobj-fold.git
-[submodule "dotfiles/.vim/bundle/textobj-pattern.vim"]
-	path = dotfiles/.vim/bundle/textobj-pattern.vim
-	url = git://github.com/tyru/textobj-pattern.vim.git
 [submodule "dotfiles/.vim/bundle/vim-prettyprint"]
 	path = dotfiles/.vim/bundle/vim-prettyprint
 	url = git://github.com/thinca/vim-prettyprint.git
@@ -208,9 +202,6 @@
 [submodule "dotfiles/.vim/bundle/unite-outline"]
 	path = dotfiles/.vim/bundle/unite-outline
 	url = git://github.com/h1mesuke/unite-outline.git
-[submodule "dotfiles/.vim/macros/vim-pathogen"]
-	path = dotfiles/.vim/macros/vim-pathogen
-	url = git://github.com/tpope/vim-pathogen.git
 [submodule "dotfiles/.vim/bundle/vim-openbuf"]
 	path = dotfiles/.vim/bundle/vim-openbuf
 	url = git://github.com/thinca/vim-openbuf.git
