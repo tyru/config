@@ -155,6 +155,7 @@ else
     call rtputil#append($MYVIMDIR.'/bundle/tyru')
     call rtputil#append($MYVIMDIR.'/bundle/emap.vim')
     call rtputil#append($MYVIMDIR.'/bundle/vim-altercmd')
+    call rtputil#append($MYVIMDIR.'/bundle/detect-coding-style.vim')
 
     call rtputil#append($MYVIMDIR.'/bundle/vital.vim')
 
