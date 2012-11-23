@@ -790,9 +790,8 @@ if s:has_plugin('operator-user')
 endif
 " }}}
 " motion {{{
-" j,k in normal mode for accelerated-jk.vim
-Map [vo] j gj
-Map [vo] k gk
+Map [nvo] j gj
+Map [nvo] k gk
 
 Map [nvo] <orig>j j
 Map [nvo] <orig>k k
