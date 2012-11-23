@@ -2809,7 +2809,7 @@ if s:has_plugin('quickrun') " {{{
             let g:quickrun_config['cpp0x'] = deepcopy(g:quickrun#default_config['cpp'])
             let g:quickrun_config['cpp0x'].command = 'g++ --std=c++0x'
         endfunction
-        Lazy call s:build_quickrun_config_cpp0x()
+        " Lazy call s:build_quickrun_config_cpp0x()
     endif
 endif " }}}
 if s:has_plugin('submode') "{{{
