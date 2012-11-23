@@ -7,9 +7,6 @@
 [submodule "dotfiles/.vim/bundle/nextfile.vim"]
 	path = dotfiles/.vim/bundle/nextfile.vim
 	url = git://github.com/tyru/nextfile.vim.git
-[submodule "dotfiles/.vim/bundle/prompt.vim"]
-	path = dotfiles/.vim/bundle/prompt.vim
-	url = git://github.com/tyru/prompt.vim.git
 [submodule "dotfiles/.vim/bundle/restart.vim"]
 	path = dotfiles/.vim/bundle/restart.vim
 	url = git://github.com/tyru/restart.vim.git
@@ -22,9 +19,6 @@
 [submodule "dotfiles/.vim/bundle/skk.vim"]
 	path = dotfiles/.vim/bundle/skk.vim
 	url = git://github.com/tyru/skk.vim.git
-[submodule "dotfiles/.vim/bundle/stickykey.vim"]
-	path = dotfiles/.vim/bundle/stickykey.vim
-	url = git://github.com/tyru/stickykey.vim.git
 [submodule "dotfiles/.vim/bundle/vimtemplate.vim"]
 	path = dotfiles/.vim/bundle/vimtemplate.vim
 	url = git://github.com/tyru/vimtemplate.vim.git
@@ -88,12 +82,6 @@
 [submodule "dotfiles/.vim/bundle/vim-submode"]
 	path = dotfiles/.vim/bundle/vim-submode
 	url = git://github.com/kana/vim-submode.git
-[submodule "dotfiles/.vim/bundle/vim-metarw"]
-	path = dotfiles/.vim/bundle/vim-metarw
-	url = git://github.com/kana/vim-metarw.git
-[submodule "dotfiles/.vim/bundle/vim-metarw-git"]
-	path = dotfiles/.vim/bundle/vim-metarw-git
-	url = git://github.com/kana/vim-metarw-git.git
 [submodule "dotfiles/.vim/bundle/vim-textobj-lastpat"]
 	path = dotfiles/.vim/bundle/vim-textobj-lastpat
 	url = git://github.com/kana/vim-textobj-lastpat.git
@@ -106,9 +94,6 @@
 [submodule "dotfiles/.vim/bundle/vimfiler"]
 	path = dotfiles/.vim/bundle/vimfiler
 	url = git://github.com/Shougo/vimfiler.git
-[submodule "dotfiles/.vim/bundle/syslib.vim"]
-	path = dotfiles/.vim/bundle/syslib.vim
-	url = git://github.com/tyru/syslib.vim.git
 [submodule "dotfiles/.vim/bundle/vimshell"]
 	path = dotfiles/.vim/bundle/vimshell
 	url = git://github.com/Shougo/vimshell.git
@@ -130,9 +115,6 @@
 [submodule "dotfiles/.vim/bundle/vim-github"]
 	path = dotfiles/.vim/bundle/vim-github
 	url = git://github.com/thinca/vim-github.git
-[submodule "dotfiles/.vim/bundle/regbuf.vim"]
-	path = dotfiles/.vim/bundle/regbuf.vim
-	url = git://github.com/tyru/regbuf.vim.git
 [submodule "dotfiles/.vim/bundle/undoclosewin.vim"]
 	path = dotfiles/.vim/bundle/undoclosewin.vim
 	url = git://github.com/tyru/undoclosewin.vim.git
@@ -196,15 +178,9 @@
 [submodule "dotfiles/.vim/bundle/starter.vim"]
 	path = dotfiles/.vim/bundle/starter.vim
 	url = git://github.com/tyru/starter.vim.git
-[submodule "dotfiles/.vim/bundle/autocmd-tabclose.vim"]
-	path = dotfiles/.vim/bundle/autocmd-tabclose.vim
-	url = git://github.com/tyru/autocmd-tabclose.vim.git
 [submodule "dotfiles/.vim/bundle/unite-outline"]
 	path = dotfiles/.vim/bundle/unite-outline
 	url = git://github.com/h1mesuke/unite-outline.git
-[submodule "dotfiles/.vim/bundle/vim-openbuf"]
-	path = dotfiles/.vim/bundle/vim-openbuf
-	url = git://github.com/thinca/vim-openbuf.git
 [submodule "dotfiles/.vim/bundle/webapi-vim"]
 	path = dotfiles/.vim/bundle/webapi-vim
 	url = git://github.com/mattn/webapi-vim.git
@@ -229,15 +205,9 @@
 [submodule "dotfiles/.vim/macros/vice.vim"]
 	path = dotfiles/.vim/macros/vice.vim
 	url = git://github.com/tyru/vice.vim.git
-[submodule "dotfiles/.vim/bundle/operator-star.vim"]
-	path = dotfiles/.vim/bundle/operator-star.vim
-	url = git://github.com/tyru/operator-star.vim
 [submodule "dotfiles/.vim/bundle/vim-unimpaired"]
 	path = dotfiles/.vim/bundle/vim-unimpaired
 	url = git://github.com/tpope/vim-unimpaired.git
-[submodule "dotfiles/.vim/bundle/vim-abolish"]
-	path = dotfiles/.vim/bundle/vim-abolish
-	url = git://github.com/tpope/vim-abolish.git
 [submodule "dotfiles/.vim/bundle/vital.vim"]
 	path = dotfiles/.vim/bundle/vital.vim
 	url = git://github.com/vim-jp/vital.vim.git
@@ -250,9 +220,6 @@
 [submodule "dotfiles/.vim/bundle/ftl-vim-syntax"]
 	path = dotfiles/.vim/bundle/ftl-vim-syntax
 	url = git://github.com/chaquotay/ftl-vim-syntax.git
-[submodule "dotfiles/.vim/bundle/vim-narrow"]
-	path = dotfiles/.vim/bundle/vim-narrow
-	url = git://github.com/kana/vim-narrow.git
 [submodule "dotfiles/.vim/bundle/vimdoc-ja"]
 	path = dotfiles/.vim/bundle/vimdoc-ja
 	url = git://github.com/vim-jp/vimdoc-ja.git
