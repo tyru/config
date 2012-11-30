@@ -297,9 +297,7 @@ set updatecount=0
 " backup
 set backup
 let &backupdir = $MYVIMDIR . '/backup'
-if !isdirectory(&backupdir)
-    call mkdir(&backupdir, 'p')
-endif
+silent! call mkdir(&backupdir, 'p')
 
 function! SandboxCallOptionFn(option_name) "{{{
     try
