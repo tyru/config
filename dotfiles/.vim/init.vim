@@ -803,14 +803,13 @@ Map [n] [k :<C-u>call search('^\S', 'Wsb')<CR>
 Map [nvo] gp %
 " }}}
 " textobj {{{
-Map -remap [vo] iF <Plug>(textobj-fold-i)
-Map -remap [vo] aF <Plug>(textobj-fold-a)
-
+let g:textobj_between_no_default_key_mappings = 1
 Map -remap [vo] ib <Plug>(textobj-between-i)
 Map -remap [vo] ab <Plug>(textobj-between-a)
 
-Map -remap [vo] if <Plug>(textobj-function-i)
-Map -remap [vo] af <Plug>(textobj-function-a)
+let g:textobj_entire_no_default_key_mappings = 1
+Map -remap [vo] i@ <Plug>(textobj-entire-i)
+Map -remap [vo] a@ <Plug>(textobj-entire-a)
 
 Map [vo] aa a>
 Map [vo] ia i>
