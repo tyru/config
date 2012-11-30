@@ -2412,6 +2412,7 @@ if s:has_plugin('openbrowser') " {{{
     let g:netrw_nogx = 1
     Map -remap [nv] gx <Plug>(openbrowser-smart-search)
     MapAlterCommand o[pen] OpenBrowserSmartSearch
+    MapAlterCommand alc OpenBrowserSmartSearch -alc
 endif " }}}
 if s:has_plugin('AutoDate') " {{{
     let g:autodate_format = "%Y-%m-%d"
@@ -2918,7 +2919,7 @@ endif "}}}
 if s:has_plugin('ref') " {{{
     " 'K' for ':Ref'.
     MapAlterCommand ref         Ref
-    MapAlterCommand alc         Ref -new alc
+    " MapAlterCommand alc         Ref -new alc    " See openbrowser.vim config
     MapAlterCommand rfc         Ref -new rfc
     MapAlterCommand man         Ref -new man
     MapAlterCommand pdoc        Ref -new perldoc
