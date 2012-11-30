@@ -2290,32 +2290,63 @@ if s:has_plugin('eskk') && s:skk_plugin is s:skk_plugin_eskk " {{{
                 " So user can do something heavy process here.
                 " (I'm a paranoia, eskk#table#new() is not so heavy.
                 " But it loads autoload/vice.vim recursively)
-                for [orgtable, mode] in [['rom_to_hira', 'hira'], ['rom_to_kata', 'kata']]
-                    let t = eskk#table#new(orgtable.'*', orgtable)
-                    call t.add_map('~', '〜')
-                    call t.add_map('vc', '©')
-                    call t.add_map('vr', '®')
-                    call t.add_map('vh', '☜')
-                    call t.add_map('vj', '☟')
-                    call t.add_map('vk', '☝')
-                    call t.add_map('vl', '☞')
-                    call t.add_map('jva', 'ゔぁ')
-                    call t.add_map('jvi', 'ゔぃ')
-                    call t.add_map('jvu', 'ゔ')
-                    call t.add_map('jve', 'ゔぇ')
-                    call t.add_map('jvo', 'ゔぉ')
-                    call t.add_map('z ', '　')
-                    " Input hankaku characters.
-                    call t.add_map('(', '(')
-                    call t.add_map(')', ')')
-                    " It is better to register the word "Exposé" than to register this map :)
-                    call t.add_map('qe', 'é')
-                    if g:eskk#rom_input_style ==# 'skk'
-                        call t.add_map('zw', 'w', 'z')
-                    endif
 
-                    call eskk#register_mode_table(mode, t)
-                endfor
+                " rom_to_hira
+                let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
+                call t.add_map('~', '〜')
+                call t.add_map('vc', '©')
+                call t.add_map('vr', '®')
+                call t.add_map('vh', '☜')
+                call t.add_map('vj', '☟')
+                call t.add_map('vk', '☝')
+                call t.add_map('vl', '☞')
+                call t.add_map('jva', 'ゔぁ')
+                call t.add_map('jvi', 'ゔぃ')
+                call t.add_map('jvu', 'ゔ')
+                call t.add_map('jve', 'ゔぇ')
+                call t.add_map('jvo', 'ゔぉ')
+                call t.add_map('z ', '　')
+                " Input hankaku characters.
+                call t.add_map('(', '(')
+                call t.add_map(')', ')')
+                " It is better to register the word "Exposé" than to register this map :)
+                call t.add_map('qe', 'é')
+                if g:eskk#rom_input_style ==# 'skk'
+                    call t.add_map('zw', 'w', 'z')
+                endif
+                call t.add_map('wyi', 'ゐ', '')
+                call t.add_map('wye', 'ゑ', '')
+
+                call eskk#register_mode_table('hira', t)
+
+
+                " rom_to_kata
+                let t = eskk#table#new('rom_to_kata*', 'rom_to_kata')
+                call t.add_map('~', '〜')
+                call t.add_map('vc', '©')
+                call t.add_map('vr', '®')
+                call t.add_map('vh', '☜')
+                call t.add_map('vj', '☟')
+                call t.add_map('vk', '☝')
+                call t.add_map('vl', '☞')
+                call t.add_map('jva', 'ゔぁ')
+                call t.add_map('jvi', 'ゔぃ')
+                call t.add_map('jvu', 'ゔ')
+                call t.add_map('jve', 'ゔぇ')
+                call t.add_map('jvo', 'ゔぉ')
+                call t.add_map('z ', '　')
+                " Input hankaku characters.
+                call t.add_map('(', '(')
+                call t.add_map(')', ')')
+                " It is better to register the word "Exposé" than to register this map :)
+                call t.add_map('qe', 'é')
+                if g:eskk#rom_input_style ==# 'skk'
+                    call t.add_map('zw', 'w', 'z')
+                endif
+                call t.add_map('wyi', 'ヰ', '')
+                call t.add_map('wye', 'ヱ', '')
+
+                call eskk#register_mode_table('kata', t)
             endfunction "}}}
         endif
 
