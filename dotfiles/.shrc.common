@@ -63,6 +63,8 @@ if ! which pit >/dev/null && which ppit >/dev/null; then
     alias pit=ppit
 fi
 
+alias unzip4win='unzip -Ocp932'
+
 
 
 # util commands
