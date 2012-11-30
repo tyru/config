@@ -3238,9 +3238,6 @@ if s:has_plugin('accelerated-jk') " {{{
     \   [1000, 9999],
     \]
 endif "}}}
-if s:has_plugin('vertr') " {{{
-    Map -remap [n] r <Plug>(vertical-R)
-endif "}}}
 
 " test
 let g:loaded_tyru_event_test = 1
