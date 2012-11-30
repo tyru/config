@@ -2831,14 +2831,13 @@ if s:has_plugin('quickrun') " {{{
         \   'eval_template': '(print %s)',
         \}
 
-        function! s:build_quickrun_config_cpp0x()
-            if !executable('g++')
-                return
-            endif
-            let g:quickrun_config['cpp0x'] = deepcopy(g:quickrun#default_config['cpp'])
-            let g:quickrun_config['cpp0x'].command = 'g++ --std=c++0x'
-        endfunction
-        " Lazy call s:build_quickrun_config_cpp0x()
+        " http://d.hatena.ne.jp/osyo-manga/20121125/1353826182
+        let g:quickrun_config = {}
+        let g:quickrun_config["cpp0x"] = {
+        \   "command" : "g++",
+        \   "cmdopt" : "--std=c++0x",
+        \   "type" : "cpp/g++",
+        \}
     endif
 endif " }}}
 if s:has_plugin('submode') "{{{
