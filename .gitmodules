@@ -271,3 +271,6 @@
 [submodule "dotfiles/.vim/bundle/instant-markdown-vim"]
 	path = dotfiles/.vim/bundle/instant-markdown-vim
 	url = git://github.com/teramako/instant-markdown-vim.git
+[submodule "dotfiles/.vim/bundle/vertR.vim"]
+	path = dotfiles/.vim/bundle/vertR.vim
+	url = git://github.com/tyru/vertR.vim.git
