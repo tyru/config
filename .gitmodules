@@ -274,3 +274,6 @@
 [submodule "dotfiles/.vim/bundle/vertR.vim"]
 	path = dotfiles/.vim/bundle/vertR.vim
 	url = git://github.com/tyru/vertR.vim.git
+[submodule "dotfiles/.vim/bundle/capture.vim"]
+	path = dotfiles/.vim/bundle/capture.vim
+	url = git://github.com/tyru/capture.vim.git
