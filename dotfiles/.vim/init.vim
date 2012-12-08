@@ -832,8 +832,8 @@ Map [n] <fold>h zc
 if has('virtualedit')
     Map -expr [n] i col('$') <# virtcol('.') ? 'A' : 'i'
     Map -expr [n] a col('$') <# virtcol('.') ? 'A' : 'a'
-    Map -expr [n] <orig>i i
-    Map -expr [n] <orig>a a
+    Map       [n] <orig>i i
+    Map       [n] <orig>a a
 endif
 
 " Operate on line without newline.
