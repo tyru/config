@@ -268,3 +268,6 @@
 [submodule "dotfiles/.vim/bundle/vim-vcs"]
 	path = dotfiles/.vim/bundle/vim-vcs
 	url = git://github.com/Shougo/vim-vcs
+[submodule "dotfiles/.vim/bundle/instant-markdown-vim"]
+	path = dotfiles/.vim/bundle/instant-markdown-vim
+	url = git://github.com/teramako/instant-markdown-vim.git
