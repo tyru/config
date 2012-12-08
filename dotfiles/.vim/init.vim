@@ -3236,27 +3236,6 @@ if s:has_plugin('accelerated-jk') " {{{
     \   [1000, 9999],
     \]
 endif "}}}
-if s:has_plugin('reanimate') "{{{
-    let g:reanimate_save_dir = expand("$MYVIMDIR/info/reanimate")
-    silent! call mkdir(g:reanimate_save_dir, 'p')
-
-    let g:reanimate_default_save_name = "latest"
-    " let g:reanimate_sessionoptions="curdir,folds,help,localoptions,slash,tabpages,winsize"
-    let g:reanimate_sessionoptions = &sessionoptions
-
-    " Disable:
-    " - reanimate_session
-    " - reanimate_viminfo
-    " Enable:
-    " - reanimate_window
-    let g:reanimate_disables = ["reanimate_session", "reanimate_viminfo"]
-
-    " Save tabpages/windows when VimLeave,CursorHold.
-    MyAutocmd VimLeavePre * ReanimateSave
-    " MyAutocmd CursorHold  * ReanimateSaveCursorHold
-    " Restore tabpages/windows when VimEnter.
-    MyAutocmd VimEnter    * ReanimateLoadLatest
-endif "}}}
 
 " test
 let g:loaded_tyru_event_test = 1
