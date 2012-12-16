@@ -35,3 +35,4 @@ dotfiles/.vimperator/*/
 !dotfiles/.vimperator/colors
 
 !dotfiles/.vimperator/vimpr
+!dotfiles/.vimperator/vimperator-plugin-httpdjs

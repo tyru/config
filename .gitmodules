@@ -277,3 +277,6 @@
 [submodule "dotfiles/.vim/bundle/capture.vim"]
 	path = dotfiles/.vim/bundle/capture.vim
 	url = git://github.com/tyru/capture.vim.git
+[submodule "dotfiles/.vimperator/vimperator-plugin-httpdjs"]
+	path = dotfiles/.vimperator/vimperator-plugin-httpdjs
+	url = git://github.com/teramako/vimperator-plugin-httpdjs.git
