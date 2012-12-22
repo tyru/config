@@ -1276,7 +1276,9 @@ command! -bar -nargs=* SetTabName call s:cmd_set_tab_name(<q-args>)
 function! s:cmd_set_tab_name(name) "{{{
     let old_title = exists('t:title') ? t:title : ''
     if a:name == ''
-        let t:title = input('tab name?:', old_title)
+        " Hitting <Esc> returns empty string.
+        let title = input('tab name?:', old_title)
+        let t:title = title != '' ? title : old_title
     else
         let t:title = a:name
     endif
