@@ -71,6 +71,14 @@ function! s:warn(msg) "{{{
     call s:echomsg('WarningMsg', a:msg)
 endfunction "}}}
 
+function! s:splitmapjoin(str, pattern, expr, sep)
+    return join(map(split(a:str, a:pattern, 1), a:expr), a:sep)
+endfunction
+function! s:map_lines(str, expr)
+    " return s:splitmapjoin(value, '\n', expr, "\n")
+    return join(map(split(a:str, '\n', 1), a:expr), "\n")
+endfunction
+
 " }}}
 " Commands {{{
 augroup vimrc
@@ -1071,18 +1079,11 @@ endfunction "}}}
 
 " TODO Simplify
 function! s:move_current_winnr_to_head(winnr_list) "{{{
-    let winnr_list = a:winnr_list
-    let curwinnr = winnr()
-    let counter = 1
-    while index(winnr_list, counter) isnot -1
-        let nr = winnr_list[counter]
-        if curwinnr ==# nr
-            call remove(winnr_list, counter)
-            return [nr] + winnr_list
-        endif
-        let counter += 1
-    endwhile
-    return winnr_list
+    let winnr = winnr()
+    if index(a:winnr_list, winnr) is -1
+        return a:winnr_list
+    endif
+    return [winnr] + filter(a:winnr_list, 'v:val isnot winnr')
 endfunction "}}}
 
 lockvar 1 s:winutil
@@ -1298,11 +1299,8 @@ function! s:remove_trailing_spaces_blockwise()
     endif
     let value = getreg(regname, 1)
     let expr = 'substitute(v:val, '.string('\v\s+$').', "", "")'
-    let value = s:splitmapjoin(value, '\n', expr, "\n")
+    let value = s:map_lines(value, expr)
     call setreg(regname, value, "\<C-v>")
-endfunction
-function! s:splitmapjoin(str, pattern, expr, sep)
-    return join(map(split(a:str, a:pattern, 1), a:expr), a:sep)
 endfunction
 
 
@@ -1872,10 +1870,10 @@ command!
 \   -bar
 \   SynNames
 \
-\     for id in synstack(line("."), col("."))
+\     for s:id in synstack(line("."), col("."))
 \   |     echo synIDattr(id, "name")
 \   | endfor
-\   | unlet! id
+\   | unlet! s:id
 " }}}
 " :Help {{{
 MapAlterCommand h[elp]     Help
