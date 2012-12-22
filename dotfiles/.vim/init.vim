@@ -1904,7 +1904,7 @@ MapAlterCommand h[elp]     Help
 command!
 \   -bang -nargs=* -complete=help
 \   Help
-\   vertical rightbelow help<bang> <args>
+\   SplitNicely help<bang> <args>
 " }}}
 " :NonSortUniq {{{
 "
@@ -2828,10 +2828,13 @@ if s:has_plugin('quickrun') " {{{
 
     if has('vim_starting')
         let g:quickrun_config = {}
-        let g:quickrun_config['*'] = {'split': 'vertical rightbelow'}
+
+        let g:quickrun_config['_'] = {'outputter/buffer/split': 'SplitNicely'}
+
         if executable('pandoc')
             let g:quickrun_config['markdown'] = {'command' : 'pandoc'}
         endif
+
         let g:quickrun_config['lisp'] = {
         \   'command': 'clisp',
         \   'eval': 1,
@@ -2839,7 +2842,6 @@ if s:has_plugin('quickrun') " {{{
         \}
 
         " http://d.hatena.ne.jp/osyo-manga/20121125/1353826182
-        let g:quickrun_config = {}
         let g:quickrun_config["cpp0x"] = {
         \   "command" : "g++",
         \   "cmdopt" : "--std=c++0x",
@@ -2922,7 +2924,7 @@ if s:has_plugin('submode') "{{{
     call submode#map       ('scroll', 'n', '', 'a', ':let &l:scroll -= 3<CR>')
     call submode#map       ('scroll', 'n', '', 's', ':let &l:scroll += 3<CR>')
 endif "}}}
-if s:has_plugin('ref') " {{{
+if s:has_plugin('vim-ref') " {{{
     " 'K' for ':Ref'.
     MapAlterCommand ref         Ref
     " MapAlterCommand alc         Ref -new alc    " See openbrowser.vim config
@@ -2936,7 +2938,7 @@ if s:has_plugin('ref') " {{{
     Map [n] <orig>K K
 
     let g:ref_use_vimproc = 0
-    let g:ref_open = 'belowright vsplit'
+    let g:ref_open = 'SplitNicely'
     if executable('perldocjp')
         let g:ref_perldoc_cmd = 'perldocjp'
     endif
