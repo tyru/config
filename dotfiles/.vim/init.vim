@@ -1203,14 +1203,14 @@ function! s:close_certain_window() "{{{
 endfunction "}}}
 
 
-Map [n] <excmd>c: :<C-u>call <SID>close_cmdwin_window()<CR>
-Map [n] <excmd>ch :<C-u>call <SID>close_help_window()<CR>
-Map [n] <excmd>cQ :<C-u>call <SID>close_quickfix_window()<CR>
-Map [n] <excmd>cr :<C-u>call <SID>close_ref_window()<CR>
-Map [n] <excmd>cq :<C-u>call <SID>close_quickrun_window()<CR>
-Map [n] <excmd>cb :<C-u>call <SID>close_unlisted_window()<CR>
+Map -silent [n] <excmd>c: :<C-u>call <SID>close_cmdwin_window()<CR>
+Map -silent [n] <excmd>ch :<C-u>call <SID>close_help_window()<CR>
+Map -silent [n] <excmd>cQ :<C-u>call <SID>close_quickfix_window()<CR>
+Map -silent [n] <excmd>cr :<C-u>call <SID>close_ref_window()<CR>
+Map -silent [n] <excmd>cq :<C-u>call <SID>close_quickrun_window()<CR>
+Map -silent [n] <excmd>cb :<C-u>call <SID>close_unlisted_window()<CR>
 
-Map [n] <excmd>cc :<C-u>call <SID>close_certain_window()<CR>
+Map -silent [n] <excmd>cc :<C-u>call <SID>close_certain_window()<CR>
 " }}}
 " 'Y' to yank till the end of line. {{{
 Map [n] Y    y$
