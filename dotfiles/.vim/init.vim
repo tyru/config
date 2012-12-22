@@ -3114,10 +3114,10 @@ if s:has_plugin('detect-coding-style') " {{{
 
     MyAutocmd User dcs-initialized-styles call s:dcs_register_own_styles()
     function! s:dcs_register_own_styles()
-        let shiftwidth = 'shiftwidth='.(s:fill_version('7.3.629') ? 0 : &sw)
-        let softtabstop = 'softtabstop='.(s:fill_version('7.3.693') ? -1 : &sts)
-        call dcs#register_style('My style', {'hook_excmd': 'setlocal expandtab   tabstop=4 '.shiftwidth.' '.softtabstop})
-        call dcs#register_style('Short indent', {'hook_excmd': 'setlocal expandtab   tabstop=2 '.shiftwidth.' '.softtabstop})
+        " let shiftwidth = 'shiftwidth='.(s:fill_version('7.3.629') ? 0 : &sw)
+        " let softtabstop = 'softtabstop='.(s:fill_version('7.3.693') ? -1 : &sts)
+        call dcs#register_style('My style', {'hook_excmd': 'setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4'})
+        call dcs#register_style('Short indent', {'hook_excmd': 'setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2'})
     endfunction
 
 endif " }}}
