@@ -784,6 +784,27 @@ if s:has_plugin('operator-user')
     Map -remap [nvo] <operator>zh <Plug>(operator-zen2han)
     Map -remap [nvo] <operator>hz <Plug>(operator-han2zen)
     " }}}
+    " operator-fillblank {{{
+    " from daisuzu .vimrc:
+    "   http://vim-jp.org/reading-vimrc/archive/023.html
+    "   http://lingr.com/room/vim/archives/2012/12/08#message-13176343
+    "   https://raw.github.com/daisuzu/dotvim/master/.vimrc
+
+    function! OperatorFillBlank(motion_wise)
+        let v = operator#user#visual_command_from_wise_name(a:motion_wise)
+        execute 'normal! `['.v.'`]"xy'
+        let text = getreg('x', 1)
+        let text = s:map_lines(text,
+        \   'substitute(v:val, ".", "\\=s:charwidthwise_r(submatch(0))", "g")')
+        call setreg('x', text, v)
+        normal! gv"xp
+    endfunction
+    function! s:charwidthwise_r(char)
+        return repeat(' ', exists('*strwidth') ? strwidth(a:char) : 1)
+    endfunction
+    call operator#user#define('fillblank', 'OperatorFillBlank')
+    Map -remap [nvo] <operator><Space> <Plug>(operator-fillblank)
+    " }}}
 
 endif
 " }}}
