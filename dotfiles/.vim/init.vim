@@ -3261,6 +3261,10 @@ endif "}}}
 if s:has_plugin('capture') "{{{
     MapAlterCommand c[apture] Capture
 endif "}}}
+if s:has_plugin('instant-markdown-vim') "{{{
+    MyAutocmd FileType hatena let b:instant_markdown_path = '/html?type=hatena'
+    MyAutocmd FileType hatena InstantMarkdownStart
+endif "}}}
 
 " test
 let g:loaded_tyru_event_test = 1
