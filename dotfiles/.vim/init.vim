@@ -156,6 +156,7 @@ if !exists('$VIMRC_DEBUG')
     \  !executable('diff')
         call rtputil#remove('sign-diff')
     endif
+    call rtputil#remove('sign-diff')
 else
     " TODO: Reduce dependency plugins.
 
