@@ -1876,6 +1876,27 @@ command!
 \   | endfor
 \   | unlet! s:id
 " }}}
+" :SplitNicely {{{
+" originally from kana's .vimrc
+" https://github.com/kana/config
+
+command! -bar -nargs=* SplitNicely
+\   call s:cmd_split_nicely(<q-args>)
+
+function! s:cmd_split_nicely(q_args)
+    " FIXME: If already opened a window, it gets smaller!
+    let save_winwidth = winwidth(0)
+    let cmd = a:q_args != '' ?
+    \           'belowright vertical '.a:q_args :
+    \           'belowright vsplit'
+    execute cmd
+    if !&l:winfixwidth
+        execute save_winwidth / 3 'wincmd |'
+        setlocal winfixwidth
+    endif
+endfunction
+
+" }}}
 " :Help {{{
 MapAlterCommand h[elp]     Help
 
