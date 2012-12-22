@@ -640,6 +640,39 @@ source ~/.vimperator/vimperator-plugin-httpdjs/httpd.js
 " open ~/jstest.html quickly {{{
 command! jstest tabopen ~/jstest.html
 " }}}
+" サイト内検索 (powered by Google) {{{
+" http://blog.feelmy.net/2012/12/22/useful-tips-for-vimperator/
+
+nnoremap ,/ :sitesearch<Space>
+
+javascript <<EOM
+commands.addUserCommand(
+  ['sitesearch'],
+  'Search in this site',
+  function (args) {
+    let url = window.content.location.hostname;
+    [
+      /d\.hatena\.ne\.jp/,
+      /www\d+\.atwiki\.jp/,
+    ].forEach(function(r){
+      url += r.test(url) ? '/' + window.content.location.pathname.split('/')[1] : '';
+    });
+    liberator.open(
+      'http://www.google.com/search?q=' +
+        encodeURIComponent(args.literalArg) +
+        '+site%3A' +
+        url,
+      liberator.NEW_TAB
+    );
+  },
+  {
+    completer: function (context) completion.url(context, 'S'),
+    literal: 0,
+  },
+  true
+);
+EOM
+" }}}
 " }}}
 "-----------------------------------------------------------------
 
