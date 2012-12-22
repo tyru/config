@@ -635,7 +635,7 @@ mappings.addUserMap(
 EOS
 " }}}
 " Vimと連携してMarkdownをリアルタイムで表示 {{{
-source ~/git/vimperator-plugin-httpdjs/httpd.js
+source ~/.vimperator/vimperator-plugin-httpdjs/httpd.js
 " }}}
 " }}}
 "-----------------------------------------------------------------
