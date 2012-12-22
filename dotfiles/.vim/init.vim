@@ -818,8 +818,8 @@ if s:has_plugin('operator-user')
 endif
 " }}}
 " motion {{{
-Map [nvo] j gj
-Map [nvo] k gk
+Map -expr [nvo] j v:count == 0 ? 'gj' : 'j'
+Map -expr [nvo] k v:count == 0 ? 'gk' : 'k'
 
 Map [nvo] <orig>j j
 Map [nvo] <orig>k k
