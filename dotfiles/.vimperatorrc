@@ -113,6 +113,10 @@ set! browser.cache.memory.enable=true
 " via http://mozlinks-jp.blogspot.com/2010/09/firefox-4.html
 " http://d.hatena.ne.jp/amatanoyo/20110324/1300969572
 set! browser.sessionstore.max_concurrent_tabs=0
+
+" Disable "Quick Find"
+" http://www.bigbizblog.com/archives/2008/06/03/how-to-turn-off-quick-find-in-firefox/
+set! searchkeys.disable.all=true
 " }}}
 "-----------------------------------------------------------------
 " set {{{
