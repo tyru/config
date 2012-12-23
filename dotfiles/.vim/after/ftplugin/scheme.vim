@@ -11,6 +11,15 @@ call s:opt.set('lisp')
 call s:opt.unset('cindent')
 call s:opt.set('complete', '.,t,k,kspell')
 
+" inoremap <buffer> ( ()<Left>
+" inoremap <buffer> [ []<Left>
+
+" inoremap <buffer> () ()<Left>
+" inoremap <buffer> [] []<Left>
+
+inoremap <buffer> <Tab><Tab> <C-o>mz<C-o>=ip<C-o>'z
+nnoremap <buffer> <Tab><Tab> mz=ip'z
+
 let b:undo_ftplugin = s:opt.make_undo_ftplugin()
 
 
