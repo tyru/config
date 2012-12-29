@@ -511,6 +511,8 @@ liberator.globalVariables.plugin_loader_plugins = <>
 </>.toString().split(/\s+/).filter(function(n) n);
 EOF
 
+let g:plugin_loader_roots = '~/.vimperator/vimpr'
+
 " }}}
 " }}}
 "-----------------------------------------------------------------
