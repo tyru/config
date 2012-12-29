@@ -843,8 +843,6 @@ Map [vo] aa a>
 Map [vo] ia i>
 Map [vo] ar a]
 Map [vo] ir i]
-
-Map -remap [vo] il <Plug>(textobj-lastpat-n)
 " }}}
 " }}}
 " nmap {{{
