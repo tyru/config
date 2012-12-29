@@ -2288,6 +2288,7 @@ if s:has_plugin('eskk') && s:skk_plugin is s:skk_plugin_eskk " {{{
         let g:eskk#marker_henkan_select = '@'
         let g:eskk#marker_jisyo_touroku = '?'
         let g:eskk#dictionary_save_count = 5
+        let g:eskk#start_completion_length = 1
 
         if has('vim_starting')
             MyAutocmd User eskk-initialize-pre call s:eskk_initial_pre()
