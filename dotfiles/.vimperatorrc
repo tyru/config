@@ -326,7 +326,7 @@ lazy fmap -modes=i -events=keydown,keypress <C-n> <Down>
 " GMail {{{
 "   add ! l gl g/ + - I U , R a A
 "   delete /
-lazy fmaps -u='mail\.google\.com/mail' c j k n p o u e x s r R a A z # [ ] ! ? , . gi gs gt gd ga gc gk gl <C-s> l *a *n *r *u *s *t T g/ + - I U
+lazy fmaps -u='mail\.google\.com/mail' c j k n p o u e x s r <S-r> a <S-a> z # [ ] ! ? , . gi gs gt gd ga gc gk gl <C-s> l *a *n *r *u *s *t T g/ + - <S-i> <S-u>
 " }}}
 " RememberTheMilk {{{
 "   remove f <Esc> i d + - <Tab> <S-Tab>
