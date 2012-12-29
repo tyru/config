@@ -102,6 +102,8 @@ myabbrev=(
     "n@" ">/dev/null 2>&1"
     "e@" "2>&1"
     "h@" "--help 2>&1 | less"
+    "ch@" "./configure --help 2>&1 | less"
+    "c@" "./configure --prefix=/usr/local"
     "r@" "3>&2 2>&1 1>&3"
     "t@" "&>/dev/null </dev/null &"
 )
