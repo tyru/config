@@ -3453,6 +3453,16 @@ function! s:register_own_highlight()
 endfunction
 call s:register_own_highlight()
 " }}}
+" Change cursor color on xterm {{{
+if &term =~? 'xterm'
+    " blue in insert-mode
+    let &t_SI = "\<Esc>]12blue\x7"
+    " white in normal-mode
+    " NOTE: Vim doesn't have option to
+    " restore cursor color on VimLeave.
+    let &t_EI = "\<Esc>]12;white\x7"
+endif
+" }}}
 " }}}
 " End. {{{
 
