@@ -82,9 +82,6 @@
 [submodule "dotfiles/.vim/bundle/vim-submode"]
 	path = dotfiles/.vim/bundle/vim-submode
 	url = git://github.com/kana/vim-submode.git
-[submodule "dotfiles/.vim/bundle/vim-textobj-lastpat"]
-	path = dotfiles/.vim/bundle/vim-textobj-lastpat
-	url = git://github.com/kana/vim-textobj-lastpat.git
 [submodule "dotfiles/.vim/bundle/vim-textobj-fold"]
 	path = dotfiles/.vim/bundle/vim-textobj-fold
 	url = git://github.com/kana/vim-textobj-fold.git
