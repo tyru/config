@@ -22,8 +22,8 @@ bind ^A caption always
 deflogin off
 defscrollback 10000
 
-shell -$SHELL
-term xterm-color
+# shell -$SHELL
+# term xterm-color
 vbell off
 
 # support 256 color (via http://vim-users.jp/2009/08/hack64/)
@@ -33,6 +33,7 @@ defbce on
 
 # mouse support
 defmousetrack on
+mousetrack on
 
 
 
