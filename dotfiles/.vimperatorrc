@@ -516,6 +516,13 @@ let g:plugin_loader_roots = '~/.vimperator/vimpr'
 " }}}
 " }}}
 "-----------------------------------------------------------------
+" Customize css {{{
+" Qiitaのうざい奴消し飛ばすコマンド {{{
+" via https://twitter.com/ebith/status/285079863348576258
+style http://qiita.com #explanation-card{ display: none !important; }
+" }}}
+" }}}
+"-----------------------------------------------------------------
 " misc. {{{
 " 閉じたタブ一覧を出すワンライナー {{{
 " (via http://vimperator.g.hatena.ne.jp/teramako/20091105/1257429235)
