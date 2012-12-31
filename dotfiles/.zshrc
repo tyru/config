@@ -1,5 +1,11 @@
 # vim:set fdm=marker fmr=<<<,>>>:
 
+if [ -z "$RPROMPT_DEFAULT" ]; then
+    export RPROMPT_DEFAULT="$RPROMPT"
+else
+    RPROMPT="$RPROMPT_DEFAULT"
+fi
+
 # $MY_CURRENT_ENV is necessary for .shrc.common
 MY_CURRENT_ENV="$(perl -e 'print $^O')"
 source ~/.shrc.common
@@ -309,5 +315,7 @@ if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then
     source ~/.shrc.cygwin
 fi
 # >>>
+
+export ZSHRC_IS_LOADED=true
 
 source ~/.shrc.start-screen
