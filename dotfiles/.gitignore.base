@@ -1,7 +1,7 @@
 tags
 tags-ja
 
-*~
-*.old
-*.bak
-*.swp
+#*~
+#*.old
+#*.bak
+#*.swp
