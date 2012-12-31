@@ -994,6 +994,16 @@ function! s:advance_option_state(state, optname) "{{{
     execute 'setlocal' a:optname . '?'
 endfunction "}}}
 
+function! s:toggle_winfix()
+    if &winfixheight || &winfixwidth
+        setlocal nowinfixheight nowinfixwidth
+        echo 'released.'
+    else
+        setlocal winfixheight winfixwidth
+        echo 'fixed!'
+    endif
+endfunction
+
 Map [n] <excmd>oh :<C-u>call <SID>toggle_option('hlsearch')<CR>
 Map [n] <excmd>oi :<C-u>call <SID>toggle_option('ignorecase')<CR>
 Map [n] <excmd>op :<C-u>call <SID>toggle_option('paste')<CR>
@@ -1004,6 +1014,7 @@ Map [n] <excmd>on :<C-u>call <SID>toggle_option('number')<CR>
 Map [n] <excmd>om :<C-u>call <SID>toggle_option('modeline')<CR>
 Map [n] <excmd>ofc :<C-u>call <SID>advance_option_state(['', 'all'], 'foldclose')<CR>
 Map [n] <excmd>ofm :<C-u>call <SID>advance_option_state(['manual', 'marker', 'indent'], 'foldmethod')<CR>
+Map [n] <excmd>ofw :<C-u>call <SID>toggle_winfix()<CR>
 
 
 command!
