@@ -1723,7 +1723,7 @@ function! s:is_current_filetype(filetypes)
 endfunction
 function! s:set_tab_width() "{{{
     if s:is_current_filetype(
-    \   ['css', 'xml', 'html', 'lisp', 'scheme', 'yaml']
+    \   ['css', 'xml', 'html', 'lisp', 'scheme', 'yaml', 'python']
     \)
         CodingStyle Short indent
     else
