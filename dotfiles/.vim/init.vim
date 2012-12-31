@@ -1903,8 +1903,8 @@ function! s:cmd_split_nicely(q_args)
     execute cmd
     if !&l:winfixwidth
         execute save_winwidth / 3 'wincmd |'
-        setlocal winfixwidth
     endif
+    setlocal winfixwidth winfixheight
 endfunction
 
 " }}}
