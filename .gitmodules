@@ -277,3 +277,6 @@
 [submodule "dotfiles/.vimperator/vimperator-plugin-httpdjs"]
 	path = dotfiles/.vimperator/vimperator-plugin-httpdjs
 	url = git://github.com/teramako/vimperator-plugin-httpdjs.git
+[submodule "dotfiles/.vim/bundle/vim-indent-guides"]
+	path = dotfiles/.vim/bundle/vim-indent-guides
+	url = git://github.com/nathanaelkane/vim-indent-guides.git
