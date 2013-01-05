@@ -280,3 +280,6 @@
 [submodule "dotfiles/.vim/bundle/vim-indent-guides"]
 	path = dotfiles/.vim/bundle/vim-indent-guides
 	url = git://github.com/nathanaelkane/vim-indent-guides.git
+[submodule "dotfiles/.vim/bundle/concealedyank.vim"]
+	path = dotfiles/.vim/bundle/concealedyank.vim
+	url = git://github.com/chikatoike/concealedyank.vim.git
