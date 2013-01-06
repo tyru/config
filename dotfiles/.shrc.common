@@ -112,6 +112,19 @@ function rdesk() {
     rdesktop $user $password -a 24 -r sound -x l -z "$hostname"
 }
 
+# 画面を復元するコマンド altscreenコマンド作った - 技術メモ帳
+# http://d.hatena.ne.jp/lurker/20061127/1164639643
+# http://d.hatena.ne.jp/tyru/20130106/altscreen_mod
+function altscreen()
+{
+    {
+        tput smcup || tput ti;
+        $@;
+    } always {
+        tput rmcup || tput te;
+    }
+}
+
 
 # perlbrew
 [ -f $HOME/local/perlbrew/etc/bashrc ] && source $HOME/local/perlbrew/etc/bashrc
