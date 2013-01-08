@@ -309,6 +309,11 @@ function _delete-char-or-list-expand() {
 zle -N _delete-char-or-list-expand
 bindkey '^D' _delete-char-or-list-expand
 # >>>
+# z <<<
+if [ -f "$HOME/.zsh/z/z.sh" ]; then
+    source $HOME/.zsh/z/z.sh
+fi
+# >>>
 # >>>
 ### cygwin ### <<<
 if [ "$MY_PERL_DOLLAR_O" = 'cygwin' ]; then

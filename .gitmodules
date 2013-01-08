@@ -283,3 +283,6 @@
 [submodule "dotfiles/.vim/bundle/concealedyank.vim"]
 	path = dotfiles/.vim/bundle/concealedyank.vim
 	url = git://github.com/chikatoike/concealedyank.vim.git
+[submodule "dotfiles/.zsh/z"]
+	path = dotfiles/.zsh/z
+	url = git://github.com/rupa/z.git
