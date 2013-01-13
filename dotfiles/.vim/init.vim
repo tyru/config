@@ -2816,12 +2816,13 @@ if s:has_plugin('vimshell') " {{{
             return 'less '.a:cmdline
         endif
 
+        " TODO: Detect args[1] is correct git command.
         " Avoid error like "git ls ..."
         " This also avoids "git git ..." :-)
-        if len(args) >= 2 &&
-        \   args[0] ==# 'git' && executable(args[1])
-            return join(args[1:], ' ')
-        endif
+        " if len(args) >= 2 &&
+        " \   args[0] ==# 'git' && executable(args[1])
+        "     return join(args[1:], ' ')
+        " endif
 
         " TODO: Implement a feature like zsh correct
 
