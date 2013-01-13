@@ -858,8 +858,8 @@ Map [n] <fold>h zc
 
 " +virtualedit
 if has('virtualedit')
-    Map -expr [n] i col('$') <# virtcol('.') ? 'A' : 'i'
-    Map -expr [n] a col('$') <# virtcol('.') ? 'A' : 'a'
+    Map -expr [n] i col('$') is col('.') ? 'A' : 'i'
+    Map -expr [n] a col('$') is col('.') ? 'A' : 'a'
     Map       [n] <orig>i i
     Map       [n] <orig>a a
 endif
