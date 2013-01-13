@@ -63,7 +63,12 @@ altercommand th tab help
 " set! {{{
 " Firefoxでタブの閉じるボタンを消す方法 - Hello, world! - s21g
 " http://blog.s21g.com/articles/1981
-set! browser.tabs.closeButtons=2
+" set! browser.tabs.closeButtons=2
+
+" すべてのタブに常に閉じるボタンを表示する
+" http://foxkeh.jp/howto/1134/
+set! browser.tabs.closeButtons=1
+set! browser.tabs.tabClipWidth=0
 
 " via http://retlet.net/log/2008/06/awesomebar-bookmarklet.html
 set! browser.urlbar.filter.javascript=false
@@ -73,10 +78,10 @@ set! browser.urlbar.filter.javascript=false
 set! ui.key.generalAccessKey=0
 
 " open in background
-set! browser.tabs.loadDivertedInBackground=true
+" set! browser.tabs.loadDivertedInBackground=true
 
 " open also bookmarks in background
-set! browser.tabs.loadBookmarksInBackground=true
+" set! browser.tabs.loadBookmarksInBackground=true
 
 " make caret mode's bar more visible
 set! ui.caretWidth=1
@@ -94,8 +99,8 @@ set! config.trim_on_minimize=true
 set! browser.history_expire_days=30
 set! browser.history_expire_days_min=7
 set! browser.history_expire_sites=1000
-set! browser.cache.memory.capacity=32768
-set! browser.sessionstore.max_tabs_undo=5
+set! browser.cache.memory.capacity=65536
+set! browser.sessionstore.max_tabs_undo=20
 set! browser.sessionhistory.max_total_viewers=5
 
 " Fx 3.5 only?
