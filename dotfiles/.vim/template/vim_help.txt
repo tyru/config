@@ -2,7 +2,7 @@
 
 Author:
   <%author%> <<%email%>>
-Version: 0.0.0
+Version: x.y.z
 License: NEW BSD LICENSE {{{
   Copyright (c) <%eval:strftime("%Y")%>, tyru
   All rights reserved.
@@ -64,7 +64,7 @@ TODO						*<%filename_noext%>-todo* {{{
 
 any request? ;)
 
-https://github.com/tyru/autochmodx.vim/issues
+https://github.com/tyru/<%filename%>/issues
 
 }}}
 ==============================================================================
