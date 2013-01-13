@@ -1704,7 +1704,7 @@ function! s:set_dict() "{{{
     let filetype_vs_dictionary = {
     \   'c': ['c', 'cpp'],
     \   'cpp': ['c', 'cpp'],
-    \   'html': ['html', 'css', 'javascript'],
+    \   'html': ['html', 'css', 'javascript', 'smarty', 'htmldjango'],
     \   'scala': ['scala', 'java'],
     \}
 
@@ -1734,7 +1734,8 @@ function! s:is_current_filetype(filetypes)
 endfunction
 function! s:set_tab_width() "{{{
     if s:is_current_filetype(
-    \   ['css', 'xml', 'html', 'lisp', 'scheme', 'yaml', 'python']
+    \   ['css', 'xml', 'html', 'smarty', 'htmldjango',
+    \    'lisp', 'scheme', 'yaml', 'python']
     \)
         CodingStyle Short indent
     else
