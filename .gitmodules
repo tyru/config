@@ -286,3 +286,6 @@
 [submodule "dotfiles/.zsh/z"]
 	path = dotfiles/.zsh/z
 	url = git://github.com/rupa/z.git
+[submodule "dotfiles/.vim/bundle/vim-perlbrew"]
+	path = dotfiles/.vim/bundle/vim-perlbrew
+	url = git://github.com/telemachus/vim-perlbrew.git
