@@ -2829,12 +2829,12 @@ if s:has_plugin('vimshell') " {{{
         return a:cmdline
     endfunction "}}}
     function! s:vimshell_preexec_match(args, patlist)
-        if empty(args)
+        if empty(a:args)
             return 0
         endif
         for i in a:patlist
-            let list_match = type(i) == type([]) && i ==# args[:len(i)-1]
-            let string_match = type(i) == type("") && args[0] ==# i
+            let list_match = type(i) == type([]) && i ==# a:args[:len(i)-1]
+            let string_match = type(i) == type("") && a:args[0] ==# i
             if list_match || string_match
                 return 1
             endif
