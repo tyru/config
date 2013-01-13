@@ -2440,7 +2440,7 @@ if s:has_plugin('openbrowser') " {{{
     MapAlterCommand alc OpenBrowserSmartSearch -alc
 endif " }}}
 if s:has_plugin('AutoDate') " {{{
-    let g:autodate_format = "%Y-%m-%d"
+    " let g:autodate_format = "%Y-%m-%d"
 endif " }}}
 " anything (ku,fuf,unite,etc.) {{{
 DefMacroMap [n] anything s
