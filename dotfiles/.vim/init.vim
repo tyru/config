@@ -2715,7 +2715,7 @@ if s:has_plugin('vimshell') " {{{
         VimShellAlterCommand ll ls -lh
         VimShellAlterCommand l ll
         VimShellAlterCommand la ls -A
-        VimShellAlterCommand less less -r
+        " VimShellAlterCommand less less -r
         VimShellAlterCommand sc screen
         VimShellAlterCommand whi which
         VimShellAlterCommand whe where
@@ -2748,7 +2748,7 @@ if s:has_plugin('vimshell') " {{{
 
         " Hook
         call vimshell#hook#set('chpwd', [s:SNR('vimshell_chpwd_ls')])
-        call vimshell#hook#set('preexec', [s:SNR('vimshell_preexec_iexe')])
+        call vimshell#hook#set('preexec', [s:SNR('vimshell_preexec')])
         " call vimshell#hook#set('preexec', [s:SNR('vimshell_preexec_less')])
 
         " Add/Remove some mappings.
@@ -2781,50 +2781,66 @@ if s:has_plugin('vimshell') " {{{
     function! s:vimshell_chpwd_ls(args, context) "{{{
         call vimshell#execute('ls')
     endfunction "}}}
-    function! s:vimshell_preexec_iexe(cmdline, context) "{{{
-        return s:vimshell_preexec_command(
-        \   'iexe',
-        \   [
-        \       'termtter',
-        \       'sudo',
-        \       ['git', 'add', '-p'],
-        \       ['git', 'log'],
-        \       ['git', 'view'],
-        \       'earthquake',
-        \   ],
-        \   a:cmdline,
-        \   a:context,
-        \)
-    endfunction "}}}
-    function! s:vimshell_preexec_less(cmdline, context) "{{{
-        return s:vimshell_preexec_command(
-        \   'less',
-        \   [
-        \       ['git', 'log'],
-        \       ['git', 'view'],
-        \   ],
-        \   a:cmdline,
-        \   a:context,
-        \)
-    endfunction "}}}
-    function! s:vimshell_preexec_command(command, patlist, cmdline, context)
+
+    let s:PREEXEC_IEXE = [
+    \   'termtter',
+    \   'sudo',
+    \   ['git', 'add', '-p'],
+    \   ['git', 'log'],
+    \   ['git', 'view'],
+    \   ['git', 'blame'],
+    \   ['git', 'help'],
+    \   'earthquake',
+    \]
+    let s:PREEXEC_LESS = [
+    \   ['git', 'log'],
+    \   ['git', 'view'],
+    \]
+    function! s:vimshell_preexec(cmdline, context) "{{{
         let args = vimproc#parser#split_args(a:cmdline)
         if empty(args)
             return a:cmdline
         endif
-        if args[0] ==# a:command
+
+        " Prepend "iexe".
+        if args[0] ==# 'iexe'
             return a:cmdline
+        elseif s:vimshell_preexec_match(args, s:PREEXEC_IEXE)
+            return 'iexe '.a:cmdline
         endif
 
+        " Prepend "less".
+        if args[0] ==# 'less'
+            return a:cmdline
+        elseif s:vimshell_preexec_match(args, s:PREEXEC_LESS)
+            return 'less '.a:cmdline
+        endif
+
+        " Avoid error like "git ls ..."
+        " This also avoids "git git ..." :-)
+        if len(args) >= 2 &&
+        \   args[0] ==# 'git' && executable(args[1])
+            return join(args[1:], ' ')
+        endif
+
+        " TODO: Implement a feature like zsh correct
+
+        " No rewrite.
+        return a:cmdline
+    endfunction "}}}
+    function! s:vimshell_preexec_match(args, patlist)
+        if empty(args)
+            return 0
+        endif
         for i in a:patlist
             let list_match = type(i) == type([]) && i ==# args[:len(i)-1]
             let string_match = type(i) == type("") && args[0] ==# i
             if list_match || string_match
-                return a:command . ' ' . a:cmdline
+                return 1
             endif
             unlet i
         endfor
-        return a:cmdline
+        return 0
     endfunction
 
     let s:has_built_path = 0
