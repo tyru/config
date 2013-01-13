@@ -1896,12 +1896,18 @@ command! -bar -nargs=* SplitNicely
 \   call s:cmd_split_nicely(<q-args>)
 
 function! s:cmd_split_nicely(q_args)
+    let winnum = winnr('$')
     " FIXME: If already opened a window, it gets smaller!
     let save_winwidth = winwidth(0)
     let cmd = a:q_args != '' ?
     \           'belowright vertical '.a:q_args :
     \           'belowright vsplit'
     execute cmd
+    if winnr('$') is winnum
+        " if no new window is opened
+        return
+    endif
+    " Adjust split window.
     if !&l:winfixwidth
         execute save_winwidth / 3 'wincmd |'
     endif
