@@ -3304,6 +3304,17 @@ endif "}}}
 if s:has_plugin('concealedyank.vim') && has('conceal') "{{{
     Map -remap [x] <operator>cy <Plug>(operator-concealedyank)
 endif "}}}
+if s:has_plugin('syntax/vim.vim') "{{{
+    " augroup: a
+    " function: f
+    " lua: l
+    " perl: p
+    " ruby: r
+    " python: P
+    " tcl: t
+    " mzscheme: m
+    let g:vimsyn_folding = 'af'
+endif "}}}
 
 " test
 let g:loaded_tyru_event_test = 1
