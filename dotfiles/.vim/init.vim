@@ -1884,7 +1884,7 @@ command!
 \   SynNames
 \
 \     for s:id in synstack(line("."), col("."))
-\   |     echo synIDattr(id, "name")
+\   |     echo synIDattr(s:id, "name")
 \   | endfor
 \   | unlet! s:id
 " }}}
