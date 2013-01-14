@@ -199,9 +199,6 @@
 [submodule "dotfiles/.vim/macros/vice.vim"]
 	path = dotfiles/.vim/macros/vice.vim
 	url = git://github.com/tyru/vice.vim.git
-[submodule "dotfiles/.vim/bundle/vim-unimpaired"]
-	path = dotfiles/.vim/bundle/vim-unimpaired
-	url = git://github.com/tpope/vim-unimpaired.git
 [submodule "dotfiles/.vim/bundle/vital.vim"]
 	path = dotfiles/.vim/bundle/vital.vim
 	url = git://github.com/vim-jp/vital.vim.git
