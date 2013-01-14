@@ -283,3 +283,9 @@
 [submodule "dotfiles/.vim/bundle/vim-perlbrew"]
 	path = dotfiles/.vim/bundle/vim-perlbrew
 	url = git://github.com/telemachus/vim-perlbrew.git
+[submodule "dotfiles/.vim/bundle/operator-reverse.vim"]
+	path = dotfiles/.vim/bundle/operator-reverse.vim
+	url = git://github.com/tyru/operator-reverse.vim.git
+[submodule "dotfiles/.vim/bundle/operator-html-escape.vim"]
+	path = dotfiles/.vim/bundle/operator-html-escape.vim
+	url = git://github.com/tyru/operator-html-escape.vim.git
