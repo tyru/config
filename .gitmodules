@@ -289,3 +289,6 @@
 [submodule "dotfiles/.vim/bundle/operator-html-escape.vim"]
 	path = dotfiles/.vim/bundle/operator-html-escape.vim
 	url = git://github.com/tyru/operator-html-escape.vim.git
+[submodule "dotfiles/.vim/bundle/foldCC"]
+	path = dotfiles/.vim/bundle/foldCC
+	url = git://github.com/LeafCage/foldCC.git
