@@ -292,3 +292,6 @@
 [submodule "dotfiles/.vim/bundle/foldCC"]
 	path = dotfiles/.vim/bundle/foldCC
 	url = git://github.com/LeafCage/foldCC.git
+[submodule "dotfiles/.vim/bundle/HybridText"]
+	path = dotfiles/.vim/bundle/HybridText
+	url = git://github.com/vim-scripts/HybridText.git
