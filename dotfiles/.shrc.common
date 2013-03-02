@@ -4,6 +4,7 @@
 
 
 # alias
+[ -x "`which ack-grep`" ] && alias ack='ack-grep'
 alias cp='cp -i'
 alias mv='mv -i'
 alias df='df -h'
