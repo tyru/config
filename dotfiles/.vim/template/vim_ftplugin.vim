@@ -4,7 +4,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 " Load Once {{{
-if exists('g:loaded_<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_ftplugin') && g:loaded_<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_ftplugin
+if get(g:, 'loaded_<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>_ftplugin', 0) || &cp
     finish
 endif
 

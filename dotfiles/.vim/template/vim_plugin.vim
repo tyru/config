@@ -25,7 +25,7 @@ scriptencoding utf-8
 " }}}
 
 " Load Once {{{
-if (exists('g:loaded_<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>') && g:loaded_<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>) || &cp
+if get(g:, 'loaded_<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%>', 0) || &cp
     finish
 endif
 let g:loaded_<%eval:substitute(expand("%:t:r"), "\\m\\W", "_", "g")%> = 1
