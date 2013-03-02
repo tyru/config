@@ -70,7 +70,7 @@ alias unzip4win='unzip -Ocp932'
 
 # util commands
 function mkcd() {
-    [ $# != 0 ] && mkdir "$1" && cd "$1"
+    [ $# != 0 ] && mkdir -p "$1" && cd "$1"
 }
 function viwi() {
     local p
