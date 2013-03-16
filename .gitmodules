@@ -292,3 +292,6 @@
 [submodule "dotfiles/.vim/bundle/foldCC"]
 	path = dotfiles/.vim/bundle/foldCC
 	url = git://github.com/LeafCage/foldCC.git
+[submodule "dotfiles/.zsh/zsh-completions"]
+	path = dotfiles/.zsh/zsh-completions
+	url = git://github.com/zsh-users/zsh-completions.git
