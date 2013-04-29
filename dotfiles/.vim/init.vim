@@ -595,11 +595,20 @@ MyAutocmd FileType rb setlocal filetype=ruby
 MyAutocmd FileType scm setlocal filetype=scheme
 
 " Checking typo. {{{
-MyAutocmd BufWriteCmd *[,*] call s:check_filename_typo(expand('<afile>'))
-function! s:check_filename_typo(file)
+MyAutocmd BufWriteCmd *[,*] call s:write_check_typo(expand('<afile>'))
+function! s:write_check_typo(file)
+    let writecmd = 'write'.(v:cmdbang ? '!' : '').' '.a:file
+    if exists('b:write_check_typo_nocheck')
+        execute writecmd
+        return
+    endif
     let prompt = "possible typo: really want to write to '" . a:file . "'?(y/n):"
-    if input(prompt) =~? '^\s*y'
-        execute 'write' a:file
+    let input = input(prompt)
+    if input ==# 'YES'
+        execute writecmd
+        let b:write_check_typo_nocheck = 1
+    elseif input =~? '^y\(es\)\=$'
+        execute writecmd
     endif
 endfunction
 " }}}
