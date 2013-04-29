@@ -2039,6 +2039,104 @@ function! s:cmd_alias(bang, args, q_args)
     endif
 endfunction
 " }}}
+" :Kwbd {{{
+" http://nanasi.jp/articles/vim/kwbd_vim.html
+command! Kwbd let s:kwbd_bn= bufnr("%")|enew|exe "bdel ".s:kwbd_bn|unlet s:kwbd_bn
+MapAlterCommand bd[elete] Kwbd
+" }}}
+" :KeepView {{{
+command! -nargs=+ -complete=command KeepView call s:cmd_keepview(<q-args>)
+
+function! s:cmd_keepview(excmd)
+    let sessionoptions = &l:sessionoptions
+    setlocal sessionoptions=
+    setlocal sessionoptions+=blank
+    setlocal sessionoptions+=buffers
+    setlocal sessionoptions+=curdir
+    setlocal sessionoptions+=folds
+    setlocal sessionoptions+=help
+    setlocal sessionoptions+=localoptions
+    setlocal sessionoptions+=options
+    setlocal sessionoptions+=resize
+    setlocal sessionoptions+=tabpages
+    setlocal sessionoptions+=winpos
+    setlocal sessionoptions+=winsize
+
+    let tmpfile = tempname()
+    mksession `=tmpfile`
+
+    try
+        execute a:excmd
+    finally
+        source `=tmpfile`
+        call delete(tmpfile)
+        let &l:sessionoptions = sessionoptions
+    endtry
+endfunction
+" }}}
+" :ScrollbindEnable, :ScrollbindDisable, :ScrollbindToggle {{{
+
+" Enable/Disable 'scrollbind', 'cursorbind' options.
+command! -bar ScrollbindEnable  call s:cmd_scrollbind(1)
+command! -bar ScrollbindDisable call s:cmd_scrollbind(0)
+command! -bar ScrollbindToggle  call s:cmd_scrollbind_toggle()
+
+function! s:cmd_scrollbind_toggle()
+    if get(t:, 'vimrc_scrollbind', 0)
+        ScrollbindDisable
+    else
+        ScrollbindEnable
+    endif
+endfunction
+
+function! s:cmd_scrollbind(enable)
+    let winnr = winnr()
+    try
+        call s:scrollbind_specific_mappings(a:enable)
+        windo let &l:scrollbind = a:enable
+        if exists('+cursorbind')
+            windo let &l:cursorbind = a:enable
+        endif
+        let t:vimrc_scrollbind = a:enable
+    finally
+        execute winnr . 'wincmd w'
+    endtry
+endfunction
+
+function! s:scrollbind_specific_mappings(enable)
+    if a:enable
+        " Check either buffer-local those mappings are mapped already or not.
+        if get(maparg('<C-e>', 'n', 0, 1), 'buffer', 0)
+            nnoremap <buffer> <C-e> :<C-u>call <SID>no_scrollbind('<C-e>')<CR>
+        endif
+        if get(maparg('<C-y>', 'n', 0, 1), 'buffer', 0)
+            nnoremap <buffer> <C-y> :<C-u>call <SID>no_scrollbind('<C-y>')<CR>
+        endif
+    else
+        " Check either those mappings are above one or not.
+        let map = maparg('<C-e>', 'n', 0, 1)
+        if get(map, 'buffer', 0)
+        \   || get(map, 'rhs', '') =~# 'no_scrollbind('
+            nunmap <buffer> <C-e>
+        endif
+        let map = maparg('<C-y>', 'n', 0, 1)
+        if get(map, 'buffer', 0)
+        \   || get(map, 'rhs', '') =~# 'no_scrollbind('
+            nunmap <buffer> <C-y>
+        endif
+    endif
+endfunction
+
+function! s:no_scrollbind(key)
+    let scrollbind = &l:scrollbind
+    try
+        execute 'normal!' a:key
+    finally
+        let &l:scrollbind = scrollbind
+    endtry
+endfunction
+
+" }}}
 " }}}
 " For Plugins {{{
 if s:has_plugin('nextfile') " {{{
