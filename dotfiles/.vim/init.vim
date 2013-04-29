@@ -1299,8 +1299,8 @@ Map -silent [n] <C-p> gT
 " quickfix buffer-local mappings {{{
 MyAutocmd FileType qf call s:quickfix_settings()
 function! s:quickfix_settings()
-    Map -buffer -force [n] j j<CR>:silent! normal! zo<CR><C-w><C-w>
-    Map -buffer -force [n] k k<CR>:silent! normal! zo<CR><C-w><C-w>
+    " Map -buffer -force [n] j j<CR>:silent! normal! zo<CR><C-w><C-w>
+    " Map -buffer -force [n] k k<CR>:silent! normal! zo<CR><C-w><C-w>
 endfunction
 " }}}
 " "Use one tabpage per project" project {{{
