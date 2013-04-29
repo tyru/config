@@ -3440,6 +3440,16 @@ if s:has_plugin('syntax/vim.vim') "{{{
     " mzscheme: m
     let g:vimsyn_folding = 'af'
 endif "}}}
+if s:has_plugin('indent-guides') "{{{
+    let g:indent_guides_enable_on_vim_startup = 1
+    let g:indent_guides_auto_colors = 0
+    MyAutocmd ColorScheme * hi IndentGuidesOdd ctermbg=233
+    MyAutocmd ColorScheme * hi IndentGuidesEven ctermbg=235
+    let g:indent_guides_color_change_percent = 30
+endif "}}}
+if s:has_plugin('foldCC') "{{{
+    set foldtext=FoldCCtext()
+endif "}}}
 
 " test
 let g:loaded_tyru_event_test = 1
