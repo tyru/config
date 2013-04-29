@@ -964,7 +964,11 @@ Map [n] <excmd>q      :<C-u>quit<CR>
 " }}}
 " Edit/Apply .vimrc quickly {{{
 Map [n] <excmd>ev     :<C-u>edit $MYVIMRC<CR>
-Map [n] <excmd>sv     :<C-u>source $MYVIMRC<CR>
+if has('gui_running')
+    Map [n] <excmd>sv     :<C-u>source $MYVIMRC<CR>:source $MYGVIMRC<CR>
+else
+    Map [n] <excmd>sv     :<C-u>source $MYVIMRC<CR>
+endif
 " }}}
 " Cmdwin {{{
 set cedit=<C-z>
