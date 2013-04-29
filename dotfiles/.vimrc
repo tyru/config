@@ -7,9 +7,9 @@ if s:is_win
 else
     let $MYVIMDIR = expand('~/.vim')
 endif
-let $MYVIMRC = $MYVIMDIR . '/init.vim'
+let s:vimrc = $MYVIMDIR . '/init.vim'
 
-function! s:load_init_vim()
+function! s:load_init_vim(vimrc)
     " Use plain vim
     " when vim was invoked by 'sudo' command.
     if exists('$SUDO_USER')
@@ -21,9 +21,9 @@ function! s:load_init_vim()
         return
     endif
 
-    source $MYVIMRC
+    source `=a:vimrc`
 endfunction
-function! StartDebugMode()
+function! StartDebugMode(vimrc)
     echohl ErrorMsg
     let msg =
     \   "an error occurred... starting as debug mode.\n"
@@ -43,14 +43,14 @@ function! StartDebugMode()
     if lnum != ''
         " Highlight error line with quickfix.
         call setqflist([{
-        \   'filename': $MYVIMRC,
+        \   'filename': a:vimrc,
         \   'lnum': lnum,
         \   'text': v:exception,
         \}])
 
         " Open .vimrc
         let open = argc() is 0 ? 'edit' : 'tabedit'
-        silent execute open $MYVIMRC
+        silent execute open a:vimrc
 
         " Go to error line.
         execute ':' . lnum
@@ -60,7 +60,10 @@ function! StartDebugMode()
 endfunction
 
 try
-    call s:load_init_vim()
+    call s:load_init_vim(s:vimrc)
+
+    " init.vim was loaded with no errors.
+    let $MYVIMRC = s:vimrc
 catch
-    call StartDebugMode()
+    call StartDebugMode(s:vimrc)
 endtry
