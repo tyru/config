@@ -560,7 +560,9 @@ set textwidth=0
 set colorcolumn=80
 set viminfo='50,h,f1,n$HOME/.viminfo
 set matchpairs+=<:>
-set showbreak=↪
+if has('multibyte')
+    set showbreak=↪
+endif
 " }}}
 " Autocmd {{{
 
