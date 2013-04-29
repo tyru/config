@@ -94,10 +94,7 @@ command!
 
 
 " :autocmd is listed in |:bar|
-command!
-\   -bang -nargs=*
-\   MyAutocmd
-\   autocmd<bang> vimrc <args>
+command! -bang -nargs=* MyAutocmd autocmd<bang> vimrc <args>
 
 if exists('$VIMRC_DISABLE_MYAUTOCMD')
     Nop MyAutoCmd
@@ -726,8 +723,8 @@ if s:has_plugin('operator-user')
     " operator-adjust {{{
     call operator#user#define('adjust', 'Op_adjust_window_height')
     function! Op_adjust_window_height(motion_wiseness)
-      execute (line("']") - line("'[") + 1) 'wincmd' '_'
-      normal! `[zt
+        execute (line("']") - line("'[") + 1) 'wincmd' '_'
+        normal! `[zt
     endfunction
 
     Map -remap [nxo] <operator>adj <Plug>(operator-adjust)
@@ -1358,22 +1355,22 @@ Map [ic] <C-d> <Del>
 
 if 0
 
-function! s:eclipse_like_autoclose(quote)
-    if mode() !~# '^\(i\|R\|Rv\|c\|cv\|ce\)$'
-        return a:quote
-    endif
-    return
-    \   col('.') <=# 1 || col('.') >=# col('$') ?
-    \       a:quote.a:quote."\<Left>" :
-    \   getline('.')[col('.') - 1] ==# a:quote ?
-    \       "\<Right>" :
-    \   getline('.')[col('.') - 2] ==# a:quote ?
-    \       a:quote.a:quote."\<Left>" :
-    \       a:quote
-endfunction
+    function! s:eclipse_like_autoclose(quote)
+        if mode() !~# '^\(i\|R\|Rv\|c\|cv\|ce\)$'
+            return a:quote
+        endif
+        return
+        \   col('.') <=# 1 || col('.') >=# col('$') ?
+        \       a:quote.a:quote."\<Left>" :
+        \   getline('.')[col('.') - 1] ==# a:quote ?
+        \       "\<Right>" :
+        \   getline('.')[col('.') - 2] ==# a:quote ?
+        \       a:quote.a:quote."\<Left>" :
+        \       a:quote
+    endfunction
 
-noremap! <expr> " <SID>eclipse_like_autoclose('"')
-noremap! <expr> ' <SID>eclipse_like_autoclose("'")
+    noremap! <expr> " <SID>eclipse_like_autoclose('"')
+    noremap! <expr> ' <SID>eclipse_like_autoclose("'")
 
 endif
 
@@ -1512,7 +1509,7 @@ Map -expr [o]  n <SID>search_forward_p() ? 'n' : 'N'
 Map -expr [o]  N <SID>search_forward_p() ? 'N' : 'n'
 
 function! s:search_forward_p()
-  return exists('v:searchforward') ? v:searchforward : 1
+    return exists('v:searchforward') ? v:searchforward : 1
 endfunction
 " }}}
 " Walk between columns at 0, ^, $, window's right edge(virtualedit). {{{
@@ -1796,7 +1793,7 @@ MyAutocmd FileType * call s:load_filetype()
 " file it was loaded from, thus the changes you made.
 " Only define it when not defined already.
 command! -bar DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
-        \ | wincmd p | diffthis
+\ | wincmd p | diffthis
 " }}}
 " :MTest {{{
 " convert Perl's regex to Vim's regex
@@ -2190,9 +2187,9 @@ if s:has_plugin('DumbBuf') " {{{
     let dumbbuf_hotkey = 'gb'
     " たまにQuickBuf.vimの名残で<Esc>を押してしまう
     let dumbbuf_mappings = {
-        \'n': {
-            \'<Esc>': {'alias_to': 'q'},
-        \}
+    \'n': {
+    \'<Esc>': {'alias_to': 'q'},
+    \}
     \}
     let dumbbuf_wrap_cursor = 0
     let dumbbuf_remove_marked_when_close = 1
@@ -2268,25 +2265,25 @@ if s:has_plugin('skk') && s:skk_plugin is s:skk_plugin_skk " {{{
 
 
     if 0
-    " g:skk_enable_hook test {{{
-    " Do not map `<Plug>(skk-toggle-im)`.
-    let skk_control_j_key = ''
+        " g:skk_enable_hook test {{{
+        " Do not map `<Plug>(skk-toggle-im)`.
+        let skk_control_j_key = ''
 
-    " `<C-j><C-e>` to enable, `<C-j><C-d>` to disable.
-    Map -remap [ic] <C-j><C-e> <Plug>(skk-enable-im)
-    Map -remap [ic] <C-j><C-d> <Nop>
-    function! MySkkMap()
-        lunmap <buffer> <C-j>
-        lmap <buffer> <C-j><C-d> <Plug>(skk-disable-im)
-    endfunction
-    function! HelloWorld()
-        echomsg 'Hello.'
-    endfunction
-    function! Hogera()
-        echomsg 'hogera'
-    endfunction
-    let skk_enable_hook = 'MySkkMap,HelloWorld,Hogera'
-    " }}}
+        " `<C-j><C-e>` to enable, `<C-j><C-d>` to disable.
+        Map -remap [ic] <C-j><C-e> <Plug>(skk-enable-im)
+        Map -remap [ic] <C-j><C-d> <Nop>
+        function! MySkkMap()
+            lunmap <buffer> <C-j>
+            lmap <buffer> <C-j><C-d> <Plug>(skk-disable-im)
+        endfunction
+        function! HelloWorld()
+            echomsg 'Hello.'
+        endfunction
+        function! Hogera()
+            echomsg 'hogera'
+        endfunction
+        let skk_enable_hook = 'MySkkMap,HelloWorld,Hogera'
+        " }}}
     endif
 
 endif " }}}
@@ -3041,31 +3038,31 @@ if s:has_plugin('lingr') " {{{
     endif
 
     if 0
-    " Update GNU screen tab name.
+        " Update GNU screen tab name.
 
-    augroup vimrc-plugin-lingr
-        autocmd!
-        autocmd User plugin-lingr-* call s:lingr_event(
-        \     matchstr(expand('<amatch>'), 'plugin-lingr-\zs\w*'))
-        autocmd FileType lingr-* call s:init_lingr(expand('<amatch>'))
-    augroup END
+        augroup vimrc-plugin-lingr
+            autocmd!
+            autocmd User plugin-lingr-* call s:lingr_event(
+            \     matchstr(expand('<amatch>'), 'plugin-lingr-\zs\w*'))
+            autocmd FileType lingr-* call s:init_lingr(expand('<amatch>'))
+        augroup END
 
-    function! s:lingr_ctrl_l() "{{{
-        call lingr#mark_as_read_current_room()
-        call s:screen_auto_window_name()
-        redraw!
-    endfunction "}}}
-    function! s:init_lingr(ft) "{{{
-        if exists('s:screen_is_running')
-            Map -silent -buffer [n] <C-l> :<C-u>call <SID>lingr_ctrl_l()<CR>
-            let b:window_name = 'lingr'
-        endif
-    endfunction "}}}
-    function! s:lingr_event(event) "{{{
-        if a:event ==# 'message' && s:screen_is_running
-            execute printf('WindowName %s(%d)', 'lingr', lingr#unread_count())
-        endif
-    endfunction "}}}
+        function! s:lingr_ctrl_l() "{{{
+            call lingr#mark_as_read_current_room()
+            call s:screen_auto_window_name()
+            redraw!
+        endfunction "}}}
+        function! s:init_lingr(ft) "{{{
+            if exists('s:screen_is_running')
+                Map -silent -buffer [n] <C-l> :<C-u>call <SID>lingr_ctrl_l()<CR>
+                let b:window_name = 'lingr'
+            endif
+        endfunction "}}}
+        function! s:lingr_event(event) "{{{
+            if a:event ==# 'message' && s:screen_is_running
+                execute printf('WindowName %s(%d)', 'lingr', lingr#unread_count())
+            endif
+        endfunction "}}}
 
     endif    " Update GNU screen tab name.
     " }}}
@@ -3193,14 +3190,14 @@ if s:has_plugin('simpletap') " {{{
 endif " }}}
 if s:has_plugin('ftplugin/vim_fold.vim') " {{{
     augroup foldmethod-expr
-    autocmd!
-    autocmd InsertEnter * if &l:foldmethod ==# 'expr'
-    \                   |   let b:foldinfo = [&l:foldmethod, &l:foldexpr]
-    \                   |   setlocal foldmethod=manual foldexpr=0
-    \                   | endif
-    autocmd InsertLeave * if exists('b:foldmethod')
-    \                   |   let [&l:foldmethod, &l:foldexpr] = b:foldinfo
-    \                   | endif
+        autocmd!
+        autocmd InsertEnter * if &l:foldmethod ==# 'expr'
+        \                   |   let b:foldinfo = [&l:foldmethod, &l:foldexpr]
+        \                   |   setlocal foldmethod=manual foldexpr=0
+        \                   | endif
+        autocmd InsertLeave * if exists('b:foldmethod')
+        \                   |   let [&l:foldmethod, &l:foldexpr] = b:foldinfo
+        \                   | endif
     augroup END
 endif " }}}
 if s:has_plugin('GraVit') " {{{
