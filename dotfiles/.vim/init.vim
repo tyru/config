@@ -2910,6 +2910,7 @@ if s:has_plugin('vimshell') " {{{
     \   'sudo',
     \   ['git', 'add', '-p'],
     \   ['git', 'log'],
+    \   ['git', 'lp'],
     \   ['git', 'view'],
     \   ['git', 'blame'],
     \   ['git', 'help'],
