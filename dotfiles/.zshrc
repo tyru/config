@@ -18,7 +18,7 @@ if [ -f "$HOME/.zshrc.local" ]; then
 fi
 
 ### fpath ### <<<
-fpath=(~/.zsh/functions $fpath)
+fpath=(~/.zsh/functions ~/.zsh/zsh-completions/src $fpath)
 autoload -U ~/.zsh/functions/*(:t)
 # >>>
 ### compinit ### <<<
