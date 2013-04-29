@@ -1911,7 +1911,7 @@ command!
 \   SynNames
 \
 \     for s:id in synstack(line("."), col("."))
-\   |     echo synIDattr(s:id, "name")
+\   |     echo printf('%s (%s)', synIDattr(s:id, "name"), synIDattr(synIDtrans(s:id), "name"))
 \   | endfor
 \   | unlet! s:id
 " }}}
