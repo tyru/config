@@ -3655,6 +3655,11 @@ if !has('gui_running')
     endif
 endif
 " }}}
+" Make <M-Space> same as ordinal applications on MS Windows {{{
+if has('gui_running') && s:is_win
+    nnoremap <M-Space> :<C-u>simalt ~<CR>
+endif
+" }}}
 " }}}
 " End. {{{
 
