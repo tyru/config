@@ -470,6 +470,11 @@ endfunction
 " gui
 set guioptions=agitrhpF
 
+" GUI
+set guioptions+=a
+" CUI
+set clipboard+=autoselect
+
 " &migemo
 if has("migemo")
     set migemo
@@ -533,8 +538,7 @@ endif
 
 if has('gui_running')
     " Show popup menu if right click.
-    set mousemodel=popup
-
+    "set mousemodel=popup
     " Don't focus the window when the mouse pointer is moved.
     set nomousefocus
     " Hide mouse pointer on insert mode.
