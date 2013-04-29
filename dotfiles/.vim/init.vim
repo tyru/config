@@ -21,7 +21,7 @@ if filereadable(expand('~/.vimrc.local'))
     execute 'source' expand('~/.vimrc.local')
 endif
 
-let s:is_win = has('win16') || has('win32') || has('win64')
+let s:is_win = has('win16') || has('win32') || has('win64') || has('win95')
 " }}}
 " Utilities {{{
 " Function {{{
