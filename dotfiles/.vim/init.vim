@@ -219,6 +219,7 @@ set smartindent
 set expandtab
 set smarttab
 set shiftround
+set preserveindent
 
 " Follow 'tabstop' value.
 set tabstop=4
