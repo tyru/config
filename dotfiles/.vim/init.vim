@@ -242,39 +242,42 @@ set scroll=5
 set scrolloff=0
 " let g:scrolloff = 15    " see below
 
-" Disable it temporarily...
 let g:scrolloff = 0
+if g:scrolloff ># 0
+    " Hack for <LeftMouse> not to adjust ('scrolloff') when single-clicking.
+    " Implement 'scrolloff' by auto-command to control the fire.
+    " cf. http://vim-users.jp/2011/04/hack213/
+    MyAutocmd CursorMoved * call s:reinventing_scrolloff()
+    let s:last_lnum = -1
+    function! s:reinventing_scrolloff()
+        if g:scrolloff ==# 0 || s:last_lnum > 0 && line('.') ==# s:last_lnum
+            return
+        endif
+        let s:last_lnum = line('.')
+        let winline     = winline()
+        let winheight   = winheight(0)
+        let middle      = winheight / 2
+        let upside      = (winheight / winline) >= 2
+        " If upside is true, add winlines to above the cursor.
+        " If upside is false, add winlines to under the cursor.
+        if upside
+            let up_num = g:scrolloff - winline + 1
+            let up_num = winline + up_num > middle ? middle - winline : up_num
+            if up_num > 0
+                execute 'normal!' up_num."\<C-y>"
+            endif
+        else
+            let down_num = g:scrolloff - (winheight - winline)
+            let down_num = winline - down_num < middle ? winline - middle : down_num
+            if down_num > 0
+                execute 'normal!' down_num."\<C-e>"
+            endif
+        endif
+    endfunction
 
-" Hack for <LeftMouse> not to adjust ('scrolloff') when single-clicking.
-" Implement 'scrolloff' by auto-command to control the fire.
-" cf. http://vim-users.jp/2011/04/hack213/
-MyAutocmd CursorMoved * call s:reinventing_scrolloff()
-let s:last_lnum = -1
-function! s:reinventing_scrolloff()
-    if g:scrolloff ==# 0 || s:last_lnum > 0 && line('.') ==# s:last_lnum
-        return
-    endif
-    let s:last_lnum = line('.')
-    let winline     = winline()
-    let winheight   = winheight(0)
-    let middle      = winheight / 2
-    let upside      = (winheight / winline) >= 2
-    " If upside is true, add winlines to above the cursor.
-    " If upside is false, add winlines to under the cursor.
-    if upside
-        let up_num = g:scrolloff - winline + 1
-        let up_num = winline + up_num > middle ? middle - winline : up_num
-        if up_num > 0
-            execute 'normal!' up_num."\<C-y>"
-        endif
-    else
-        let down_num = g:scrolloff - (winheight - winline)
-        let down_num = winline - down_num < middle ? winline - middle : down_num
-        if down_num > 0
-            execute 'normal!' down_num."\<C-e>"
-        endif
-    endif
-endfunction
+    " Do not adjust current scroll position (do not fire 'scrolloff') on single-click.
+    Map -silent [n] <LeftMouse>   <Esc>:set eventignore=all<CR><LeftMouse>:set eventignore=<CR>
+endif
 
 " completion
 set complete=.,w,b,u,t,i,d,k,kspell
