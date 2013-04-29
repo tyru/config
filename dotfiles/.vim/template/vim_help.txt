@@ -34,6 +34,11 @@ INTRODUCTION						*<%filename_noext%>-introduction* {{{
 }}}
 ==============================================================================
 REQUIREMENTS						*<%filename_noext%>-requirements* {{{
+
+You must install the following plugin/libraries.
+
+* ...
+
 }}}
 ==============================================================================
 INTERFACE				*<%filename_noext%>-interface* {{{
