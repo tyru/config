@@ -3087,13 +3087,13 @@ endif "}}}
 if s:has_plugin('vim-ref') " {{{
     " 'K' for ':Ref'.
     MapAlterCommand ref         Ref
-    " MapAlterCommand alc         Ref -new alc    " See openbrowser.vim config
-    MapAlterCommand rfc         Ref -new rfc
-    MapAlterCommand man         Ref -new man
-    MapAlterCommand pdoc        Ref -new perldoc
-    MapAlterCommand cppref      Ref -new cppref
-    MapAlterCommand cpp         Ref -new cppref
-    MapAlterCommand py[doc]     Ref -new pydoc
+    " MapAlterCommand alc         Ref alc    " See openbrowser.vim config
+    MapAlterCommand rfc         Ref rfc
+    MapAlterCommand man         Ref man
+    MapAlterCommand pdoc        Ref perldoc
+    MapAlterCommand cppref      Ref cppref
+    MapAlterCommand cpp         Ref cppref
+    MapAlterCommand py[doc]     Ref pydoc
 
     Map [n] <orig>K K
 
