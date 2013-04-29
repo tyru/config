@@ -2580,7 +2580,7 @@ elseif s:anything == s:anything_ku && s:has_plugin('ku')
     Map [n] <anything>:        :<C-u>Ku cmd_mru/cmd<CR>
     Map [n] <anything>/        :<C-u>Ku cmd_mru/search<CR>
 elseif s:has_plugin('unite') " fallback, or you select this :)
-    command! -bar -nargs=* UniteKawaii Unite -prompt='-')/\  -no-split <args>
+    command! -bar -nargs=* UniteKawaii Unite -prompt='-')/\  -no-split -create <args>
     Map [n] <anything>f        :<C-u>UniteKawaii -buffer-name=files file buffer file_mru<CR>
     Map [n] <anything>F        :<C-u>UniteKawaii -buffer-name=files file_rec<CR>
     Map [n] <anything>p        :<C-u>UniteKawaii -buffer-name=files buffer_tab<CR>
