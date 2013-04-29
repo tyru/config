@@ -924,7 +924,10 @@ function! s:cmd_lookup_cd(args) "{{{
         call s:warn("No such directory: " . dir)
         return
     endif
-    return s:lookup_repo(dir)
+    let dir = s:lookup_repo(dir)
+    if dir !=# ''
+        cd `=dir`
+    endif
 endfunction "}}}
 function! s:is_root_project_dir(dir) "{{{
     let FP = s:Vital.System.Filepath
@@ -939,9 +942,9 @@ function! s:lookup_repo(dir) "{{{
     let parent = s:Vital.System.Filepath.dirname(a:dir)
     if a:dir ==# parent    " root
         call s:warn('Not found project directory.')
-        return
+        return ''
     elseif s:is_root_project_dir(a:dir)
-        cd `=a:dir`
+        return a:dir
     else
         return s:lookup_repo(parent)
     endif
