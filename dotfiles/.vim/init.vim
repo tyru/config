@@ -904,6 +904,8 @@ Map [n] gm :<C-u>make<CR>
 Map [n] <excmd>tl :<C-u>tabedit<CR>
 Map [n] <excmd>th :<C-u>tabedit<CR>:execute 'tabmove' (tabpagenr() isnot 1 ? tabpagenr() - 2 : '')<CR>
 
+Map [n] <C-s> :<C-u>browse saveas<CR>
+
 Map [n] ,cd       :<C-u>cd %:p:h<CR>
 " :LookupCD - chdir to root directory of project working tree {{{
 Map [n] cd :<C-u>LookupCD %:p:h<CR>
