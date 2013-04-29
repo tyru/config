@@ -464,12 +464,14 @@ function! s:get_cchar()
     endtry
 endfunction
 
-" gui
-set guioptions=agitrhpF
+" Must be set in .vimrc
+set guioptions+=p
+" These flags are set on FocusGained
+" because "cmd.exe start /min" doesn't work.
+" (always start up as foreground)
+MyAutocmd FocusGained * set guioptions=agitrhpF
 
-" GUI
-set guioptions+=a
-" CUI
+" Get along with X11 selection
 set clipboard+=autoselect
 
 " &migemo
