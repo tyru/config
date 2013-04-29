@@ -44,3 +44,6 @@
 (define skk-save-personal-dictionary
   (lambda ()
     (skk-lib-save-personal-dictionary skk-personal-dic-filename)))
+
+; suppress warning dialog when opening uim-pref-gtk.
+(define uim-pref-suppress-dot-uim-warning-dialog? #t)
