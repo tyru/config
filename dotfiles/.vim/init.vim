@@ -3423,8 +3423,8 @@ if s:has_plugin('capture') "{{{
     MapAlterCommand c[apture] Capture
 endif "}}}
 if s:has_plugin('instant-markdown-vim') "{{{
-    MyAutocmd FileType hatena let b:instant_markdown_path = '/html?type=hatena'
-    MyAutocmd FileType hatena InstantMarkdownStart
+    " MyAutocmd FileType hatena let b:instant_markdown_path = '/html?type=hatena'
+    " MyAutocmd FileType hatena InstantMarkdownStart
 endif "}}}
 if s:has_plugin('concealedyank.vim') && has('conceal') "{{{
     Map -remap [x] <operator>cy <Plug>(operator-concealedyank)
