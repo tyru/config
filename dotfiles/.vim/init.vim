@@ -1972,15 +1972,15 @@ command!
 MapAlterCommand ctags Ctags
 
 command!
-\   -bar
+\   -bar -nargs=*
 \   Ctags
-\   call s:cmd_ctags()
+\   call s:cmd_ctags(<q-args>)
 
-function! s:cmd_ctags() "{{{
+function! s:cmd_ctags(q_args) "{{{
     if !executable('ctags')
         return
     endif
-    execute '!ctags' (filereadable('.ctags') ? '' : '-R')
+    execute '!ctags' (filereadable('.ctags') ? '' : '-R') a:q_args
 endfunction "}}}
 " }}}
 " :WatchAutocmd {{{
