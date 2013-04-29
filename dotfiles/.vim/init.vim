@@ -2542,6 +2542,21 @@ if s:has_plugin('openbrowser') " {{{
     Map -remap [nx] gx <Plug>(openbrowser-smart-search)
     MapAlterCommand o[pen] OpenBrowserSmartSearch
     MapAlterCommand alc OpenBrowserSmartSearch -alc
+
+    " let g:openbrowser_open_commands = ['xdg-open', 'x-www-browser', 'firefox', 'w3m']
+    " let g:openbrowser_open_rules = {
+    " \   'xdg-open':      '{browser} {shellescape(uri)} &',
+    " \   'x-www-browser': '{browser} {shellescape(uri)} &',
+    " \   'firefox':       '{browser} {shellescape(uri)} &',
+    " \   'w3m':           '{browser} {shellescape(uri)} &',
+    " \}
+    " let g:openbrowser_open_commands = ['firefox']
+    " let g:openbrowser_open_rules = {
+    " \   'firefox':       '{browser} {shellescape(uri)} &',
+    " \   'irefox':       '{browser} {shellescape(uri)} &',
+    " \}
+
+    " let g:openbrowser_github_always_used_branch = 'master'
 endif " }}}
 if s:has_plugin('AutoDate') " {{{
     " let g:autodate_format = "%Y-%m-%d"
