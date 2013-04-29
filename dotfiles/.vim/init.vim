@@ -2878,6 +2878,10 @@ if s:has_plugin('vimshell') " {{{
         Map -buffer -remap -force [n] <C-z> <Plug>(vimshell_switch)
         Map -buffer -remap -force [i] <compl>r <Plug>(vimshell_history_complete_whole)
 
+        if s:has_plugin('concealedyank.vim') && has('conceal')
+            Map -buffer -remap [nxo] y <Plug>(operator-concealedyank)
+        endif
+
         " Misc.
         setlocal backspace-=eol
         setlocal updatetime=1000
