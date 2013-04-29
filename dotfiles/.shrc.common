@@ -127,10 +127,6 @@ function altscreen()
 }
 
 
-# perlbrew
-[ -f $HOME/local/perlbrew/etc/bashrc ] && source $HOME/local/perlbrew/etc/bashrc
-
-
 # Do not stop screen.
 # http://d.hatena.ne.jp/hogem/20090411/1239451878
 stty stop undef
