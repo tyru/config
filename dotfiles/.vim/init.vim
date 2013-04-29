@@ -636,15 +636,15 @@ augroup END " }}}
 "   MapLocalLeader ,
 "
 " MapOp:
-"   " Map [nvo] lhs rhs
+"   " Map [nxo] lhs rhs
 "   MapOp lhs rhs
 "
 " MapMotion:
-"   " Map [nvo] lhs rhs
+"   " Map [nxo] lhs rhs
 "   MapMotion lhs rhs
 "
 " MapObject:
-"   " Map [vo] lhs rhs
+"   " Map [xo] lhs rhs
 "   MapObject lhs rhs
 "
 " DisableMap:
@@ -671,15 +671,15 @@ augroup END " }}}
 
 " Set up general prefix keys. {{{
 
-DefMacroMap [nvo] orig q
+DefMacroMap [nxo] orig q
 DefMacroMap [ic] orig <C-g><C-o>
 
 Map [n] <orig>q q
 
-DefMacroMap [nvo] excmd <Space>
-DefMacroMap [nvo] operator ;
+DefMacroMap [nxo] excmd <Space>
+DefMacroMap [nxo] operator ;
 DefMacroMap [n] window <C-w>
-DefMacroMap [nvo] prompt ,t
+DefMacroMap [nxo] prompt ,t
 
 let g:mapleader = ';'
 Map [n] <Leader> <Nop>
@@ -697,17 +697,17 @@ DefMacroMap [i] compl <Tab>
 " operator {{{
 
 " Copy to clipboard, primary.
-Map [nvo] <operator>y     "+y
-Map [nvo] <operator>gy    "*y
-Map [nvo] <operator>d     "+d
-Map [nvo] <operator>gd    "*d
+Map [nxo] <operator>y     "+y
+Map [nxo] <operator>gy    "*y
+Map [nxo] <operator>d     "+d
+Map [nxo] <operator>gd    "*d
 
 
 " Do not destroy noname register.
-Map [nvo] x "_x
+Map [nxo] x "_x
 
 
-Map [nvo] <operator>e =
+Map [nxo] <operator>e =
 
 
 if s:has_plugin('operator-user')
@@ -719,44 +719,44 @@ if s:has_plugin('operator-user')
       normal! `[zt
     endfunction
 
-    Map -remap [nvo] <operator>adj <Plug>(operator-adjust)
+    Map -remap [nxo] <operator>adj <Plug>(operator-adjust)
     " }}}
     " operator-sort {{{
     call operator#user#define_ex_command('sort', 'sort')
-    Map -remap [nvo] <operator>s <Plug>(operator-sort)
+    Map -remap [nxo] <operator>s <Plug>(operator-sort)
     " }}}
     " operator-retab {{{
     call operator#user#define_ex_command('retab', 'retab')
-    Map -remap [nvo] <operator>t <Plug>(operator-retab)
+    Map -remap [nxo] <operator>t <Plug>(operator-retab)
     " }}}
     " operator-join {{{
     call operator#user#define_ex_command('join', 'join')
-    Map -remap [nvo] <operator>j <Plug>(operator-join)
+    Map -remap [nxo] <operator>j <Plug>(operator-join)
     " }}}
     " operator-uniq {{{
     call operator#user#define_ex_command('uniq', 'sort u')
-    Map -remap [nvo] <operator>u <Plug>(operator-uniq)
+    Map -remap [nxo] <operator>u <Plug>(operator-uniq)
     " }}}
     " operator-reverse-lines {{{
-    Map -remap [nvo] <operator>rl <Plug>(operator-reverse-lines)
+    Map -remap [nxo] <operator>rl <Plug>(operator-reverse-lines)
     " }}}
     " operator-reverse-text {{{
-    Map -remap [nvo] <operator>rw <Plug>(operator-reverse-text)
+    Map -remap [nxo] <operator>rw <Plug>(operator-reverse-text)
     " }}}
     " operator-narrow {{{
     call operator#user#define_ex_command('narrow', 'Narrow')
 
-    Map -remap [nvo] <operator>na <Plug>(operator-narrow)
-    Map [nvo]        <operator>nw :<C-u>Widen<CR>
+    Map -remap [nxo] <operator>na <Plug>(operator-narrow)
+    Map [nxo]        <operator>nw :<C-u>Widen<CR>
 
     let g:narrow_allow_overridingp = 1
     " }}}
     " operator-replace {{{
-    Map -remap [nvo] <operator>p  <Plug>(operator-replace)
-    " Map -remap [vo] p <Plug>(operator-replace)
+    Map -remap [nxo] <operator>p  <Plug>(operator-replace)
+    " Map -remap [xo] p <Plug>(operator-replace)
     " }}}
     " operator-camelize {{{
-    Map -remap [nvo] <operator>c <Plug>(operator-camelize-toggle)
+    Map -remap [nxo] <operator>c <Plug>(operator-camelize-toggle)
     let g:operator_camelize_all_uppercase_action = 'camelize'
     let g:operator_decamelize_all_uppercase_action = 'lowercase'
 
@@ -770,22 +770,22 @@ if s:has_plugin('operator-user')
     " let g:operator_camelize_detect_function = function('Camelized')
 
     " Test: mappings
-    " Map -remap [nvo] <operator>c <Plug>(operator-camelize)
-    " Map -remap [nvo] <operator>C <Plug>(operator-decamelize)
+    " Map -remap [nxo] <operator>c <Plug>(operator-camelize)
+    " Map -remap [nxo] <operator>C <Plug>(operator-decamelize)
 
 
     " See "keymappings" branch.
-    " Map -remap [nvo] <operator>c <Plug>(operator-camelize/camelize)
-    " Map -remap [nvo] <operator>C <Plug>(operator-decamelize/lowercase)
+    " Map -remap [nxo] <operator>c <Plug>(operator-camelize/camelize)
+    " Map -remap [nxo] <operator>C <Plug>(operator-decamelize/lowercase)
 
     " }}}
     " operator-blank-killer {{{
     call operator#user#define_ex_command('blank-killer', 's/\s\+$//')
-    Map -remap [nvo] <operator>bk <Plug>(operator-blank-killer)
+    Map -remap [nxo] <operator>bk <Plug>(operator-blank-killer)
     " }}}
     " operator-html-escape {{{
-    Map -remap [nvo] <operator>he <Plug>(operator-html-escape)
-    Map -remap [nvo] <operator>hu <Plug>(operator-html-unescape)
+    Map -remap [nxo] <operator>he <Plug>(operator-html-escape)
+    Map -remap [nxo] <operator>hu <Plug>(operator-html-unescape)
     " }}}
     " operator-zen2han, operator-han2zen {{{
     call operator#user#define('zen2han', 'Op_zen2han')
@@ -798,8 +798,8 @@ if s:has_plugin('operator-user')
         " TODO
     endfunction
 
-    Map -remap [nvo] <operator>zh <Plug>(operator-zen2han)
-    Map -remap [nvo] <operator>hz <Plug>(operator-han2zen)
+    Map -remap [nxo] <operator>zh <Plug>(operator-zen2han)
+    Map -remap [nxo] <operator>hz <Plug>(operator-han2zen)
     " }}}
     " operator-fillblank {{{
     " from daisuzu .vimrc:
@@ -820,42 +820,42 @@ if s:has_plugin('operator-user')
         return repeat(' ', exists('*strwidth') ? strwidth(a:char) : 1)
     endfunction
     call operator#user#define('fillblank', 'OperatorFillBlank')
-    Map -remap [nvo] <operator><Space> <Plug>(operator-fillblank)
+    Map -remap [nxo] <operator><Space> <Plug>(operator-fillblank)
     " }}}
 
 endif
 " }}}
 " motion {{{
-Map -expr [nvo] j v:count == 0 ? 'gj' : 'j'
-Map -expr [nvo] k v:count == 0 ? 'gk' : 'k'
+Map -expr [nxo] j v:count == 0 ? 'gj' : 'j'
+Map -expr [nxo] k v:count == 0 ? 'gk' : 'k'
 
-Map [nvo] <orig>j j
-Map [nvo] <orig>k k
+Map [nxo] <orig>j j
+Map [nxo] <orig>k k
 
 " FIXME: Does not work in visual mode.
 Map [n] ]k :<C-u>call search('^\S', 'Ws')<CR>
 Map [n] [k :<C-u>call search('^\S', 'Wsb')<CR>
 
-Map [nvo] gp %
+Map [nxo] gp %
 " }}}
 " textobj {{{
 let g:textobj_between_no_default_key_mappings = 1
-Map -remap [vo] ib <Plug>(textobj-between-i)
-Map -remap [vo] ab <Plug>(textobj-between-a)
+Map -remap [xo] ib <Plug>(textobj-between-i)
+Map -remap [xo] ab <Plug>(textobj-between-a)
 
 let g:textobj_entire_no_default_key_mappings = 1
-Map -remap [vo] i@ <Plug>(textobj-entire-i)
-Map -remap [vo] a@ <Plug>(textobj-entire-a)
+Map -remap [xo] i@ <Plug>(textobj-entire-i)
+Map -remap [xo] a@ <Plug>(textobj-entire-a)
 
-Map [vo] aa a>
-Map [vo] ia i>
-Map [vo] ar a]
-Map [vo] ir i]
+Map [xo] aa a>
+Map [xo] ia i>
+Map [xo] ar a]
+Map [xo] ir i]
 " }}}
 " }}}
 " nmap {{{
 
-DefMacroMap [nvo] fold z
+DefMacroMap [nxo] fold z
 
 " Open only current line's fold.
 Map [n] <fold><Space> zMzvzz
@@ -1309,9 +1309,9 @@ endfunction "}}}
 " }}}
 " vmap {{{
 
-" Map [v] <C-g> g<C-g>1gs
+" Map [x] <C-g> g<C-g>1gs
 
-Map -silent [v] y y:<C-u>call <SID>remove_trailing_spaces_blockwise()<CR>
+Map -silent [x] y y:<C-u>call <SID>remove_trailing_spaces_blockwise()<CR>
 function! s:remove_trailing_spaces_blockwise()
     let regname = v:register
     if getregtype(regname)[0] !=# "\<C-v>"
@@ -1325,8 +1325,8 @@ endfunction
 
 
 " http://labs.timedia.co.jp/2012/10/vim-more-useful-blockwise-insertion.html
-Map -expr [v] I <SID>force_blockwise_visual(<q-lhs>)
-Map -expr [v] A <SID>force_blockwise_visual(<q-lhs>)
+Map -expr [x] I <SID>force_blockwise_visual(<q-lhs>)
+Map -expr [x] A <SID>force_blockwise_visual(<q-lhs>)
 
 function! s:force_blockwise_visual(next_key)
     if mode() ==# 'v'
@@ -1483,7 +1483,7 @@ Map -expr [n] ? <SID>expr_with_options('?', {'&ignorecase': 1, '&hlsearch': 1})
 Map -expr [n] * <SID>expr_with_options('*', {'&ignorecase': 0, '&hlsearch': 1})
 Map -expr [n] # <SID>expr_with_options('#', {'&ignorecase': 0, '&hlsearch': 1})
 
-Map -expr [nv] : <SID>expr_with_options(':', {'&ignorecase': 1})
+Map -expr [nx] : <SID>expr_with_options(':', {'&ignorecase': 1})
 
 Map -expr [n] gd <SID>expr_with_options('gd', {'&hlsearch': 1})
 Map -expr [n] gD <SID>expr_with_options('gD', {'&hlsearch': 1})
@@ -1493,10 +1493,10 @@ Map -expr [i] <C-k> "\<C-g>u".(col('.') == col('$') ? '<C-o>gJ' : '<C-o>D')
 Map [c] <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 " }}}
 " Make searching directions consistent {{{
-  " 'zv' is harmful for Operator-pending mode and it should not be included.
-  " For example, 'cn' is expanded into 'cnzv' so 'zv' will be inserted.
-Map -expr [nv] n (<SID>search_forward_p() ? 'n' : 'Nzv').'zvzz'
-Map -expr [nv] N (<SID>search_forward_p() ? 'N' : 'n').'zvzz'
+" 'zv' is harmful for Operator-pending mode and it should not be included.
+" For example, 'cn' is expanded into 'cnzv' so 'zv' will be inserted.
+Map -expr [nx] n (<SID>search_forward_p() ? 'n' : 'Nzv').'zvzz'
+Map -expr [nx] N (<SID>search_forward_p() ? 'N' : 'n').'zvzz'
 Map -expr [o]  n <SID>search_forward_p() ? 'n' : 'N'
 Map -expr [o]  N <SID>search_forward_p() ? 'N' : 'n'
 
@@ -1536,11 +1536,11 @@ Map -force -expr [i] <C-a> <SID>back_between("\<Home>", "\<C-o>^", "\<End>")
 Map -force -expr [i] <C-e> <SID>advance_between("\<C-o>^", "\<End>")
 
 " motion
-Map -expr [nvo] H <SID>back_between('0', '^', '$')
-Map -expr [nvo] L <SID>advance_between('^', '$')
+Map -expr [nxo] H <SID>back_between('0', '^', '$')
+Map -expr [nxo] L <SID>advance_between('^', '$')
 
 " TODO
-" Map -expr [nvo] L <SID>advance_between('^', '$', '')    " <comment Go right edge of window.>
+" Map -expr [nxo] L <SID>advance_between('^', '$', '')    " <comment Go right edge of window.>
 
 " }}}
 " Disable unused keys. {{{
@@ -1673,13 +1673,14 @@ endfunction
 
 " TODO: Add frequently-used-commands to the top level of the menu.
 " like MS Windows Office 2007 Ribborn interface.
+" Back to normal mode if insert mode.
 
-" Do not adjust current scroll position (do not fire 'scrolloff') on single-click.
-Map -silent [n] <LeftMouse>   <Esc>:set eventignore=all<CR><LeftMouse>:set eventignore=<CR>
-" Double-click for searching the word under the cursor.
-Map [n]         <2-LeftMouse> g*
+Map -silent [i] <LeftMouse>   <Esc><LeftMouse>
+" Double-click for selecting the word under the cursor
+" as same as most editors.
+set selectmode=mouse
 " Single-click for searching the word selected in visual-mode.
-Map -remap [v]  <LeftMouse> <Plug>(visualstar-g*)
+Map -remap [x]  <LeftMouse> <Plug>(visualstar-g*)
 " Select lines with <S-LeftMouse>
 Map [n]         <S-LeftMouse> V
 
@@ -2443,7 +2444,7 @@ if s:has_plugin('restart') " {{{
 endif " }}}
 if s:has_plugin('openbrowser') " {{{
     let g:netrw_nogx = 1
-    Map -remap [nv] gx <Plug>(openbrowser-smart-search)
+    Map -remap [nx] gx <Plug>(openbrowser-smart-search)
     MapAlterCommand o[pen] OpenBrowserSmartSearch
     MapAlterCommand alc OpenBrowserSmartSearch -alc
 endif " }}}
@@ -2868,7 +2869,7 @@ if s:has_plugin('quickrun') " {{{
     let g:loaded_quicklaunch = 1
 
     let g:quickrun_no_default_key_mappings = 1
-    Map -remap [nvo] <Space>r <Plug>(quickrun)
+    Map -remap [nxo] <Space>r <Plug>(quickrun)
 
     if has('vim_starting')
         let g:quickrun_config = {}
@@ -3194,8 +3195,8 @@ endif " }}}
 if s:has_plugin('GraVit') " {{{
 
     " XXX: 2012-09-17 19:48: syntax/vim.vim wrong highlight...
-    " Map -remap [nvo] g/ <Plug>gravit->forward
-    " Map -remap [nvo] g? <Plug>gravit->backward
+    " Map -remap [nxo] g/ <Plug>gravit->forward
+    " Map -remap [nxo] g? <Plug>gravit->backward
 
     " highlight GraVitCurrentMatch term=underline cterm=underline gui=underline ctermfg=4 guifg=Purple
 
