@@ -276,9 +276,12 @@ if g:scrolloff ># 0
     Map -silent [n] <LeftMouse>   <Esc>:set eventignore=all<CR><LeftMouse>:set eventignore=<CR>
 endif
 
+" command-line
+set cmdheight=1
+set wildmenu
+
 " completion
 set complete=.,w,b,u,t,i,d,k,kspell
-set wildmenu
 set pumheight=20
 
 " tags
@@ -543,6 +546,22 @@ if has('gui_running')
     " Hide mouse pointer on insert mode.
     set mousehide
 endif
+
+set browsedir=current
+
+" Font {{{
+if has('win32')    " Windows
+    set guifont=M+2VM+IPAG_circle:h13
+    set printfont=M+2VM+IPAG_circle:h13
+elseif has('mac')    " Mac
+    set guifont=Osaka－等幅:h14
+    set printfont=Osaka－等幅:h14
+else    " *nix OS
+    set guifont=Monospace\ 12
+    set printfont=Monospace\ 12
+    set linespace=4
+endif
+" }}}
 
 " misc.
 set diffopt=filler,vertical
