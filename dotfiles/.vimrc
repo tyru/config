@@ -20,8 +20,9 @@ function! s:load_init_vim(vimrc)
     if exists('$GIT_DIR')
         return
     endif
-    " If on Windows && arguments were given
-    if s:is_win && argc()
+    " If starting gvim && arguments were given
+    " (assuming double-click on file explorer)
+    if has('gui_running') && argc()
         let running_vim_list = filter(
         \   split(serverlist(), '\n'),
         \   'v:val !=? v:servername')
