@@ -1,7 +1,7 @@
 
 " bootstrap for ~/.vim/init.vim
 
-let s:is_win = has('win16') || has('win32') || has('win64')
+let s:is_win = has('win16') || has('win32') || has('win64') || has('win95')
 if s:is_win
     let $MYVIMDIR = expand('~/vimfiles')
 else
