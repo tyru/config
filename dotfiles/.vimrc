@@ -20,26 +20,6 @@ function! s:load_init_vim(vimrc)
     if exists('$GIT_DIR')
         return
     endif
-    " If starting gvim && arguments were given
-    " (assuming double-click on file explorer)
-    if has('gui_running') && argc()
-        let running_vim_list = filter(
-        \   split(serverlist(), '\n'),
-        \   'v:val !=? v:servername')
-        " If one or more Vim instances are running
-        if !empty(running_vim_list)
-            " Open given files in running Vim and exit.
-            silent execute '!start gvim'
-            \   '--servername' running_vim_list[0]
-            \   '--remote-tab-silent' join(argv(), ' ')
-            qa!
-        else
-            " Can't find running Vim instances...
-            " open it without loading .vimrc
-            " (On Windows, it takes too much time to start Vim!)
-            return
-        endif
-    endif
 
     source `=a:vimrc`
 endfunction

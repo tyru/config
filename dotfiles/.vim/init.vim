@@ -142,6 +142,9 @@ command!
 " Initializing {{{
 
 if !exists('$VIMRC_DEBUG')
+    call rtputil#append('$MYVIMDIR/bundle/vim-singleton')
+    call singleton#enable()
+
     call rtputil#bundle()
 
     if !executable('git')
