@@ -475,7 +475,10 @@ set guioptions+=p
 " These flags are set on FocusGained
 " because "cmd.exe start /min" doesn't work.
 " (always start up as foreground)
-MyAutocmd FocusGained * set guioptions=agitrhpF
+augroup vimrc-guioptions
+    autocmd!
+    autocmd FocusGained * set guioptions=agitrhpF | autocmd! vimrc-guioptions
+augroup END
 
 " Get along with X11 selection
 set clipboard+=autoselect
