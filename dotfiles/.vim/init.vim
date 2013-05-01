@@ -1546,10 +1546,11 @@ Map [c] <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 " Make searching directions consistent {{{
 " 'zv' is harmful for Operator-pending mode and it should not be included.
 " For example, 'cn' is expanded into 'cnzv' so 'zv' will be inserted.
-Map -expr [nx] n (<SID>search_forward_p() ? 'n' : 'Nzv').'zvzz'
-Map -expr [nx] N (<SID>search_forward_p() ? 'N' : 'n').'zvzz'
-Map -expr [o]  n <SID>search_forward_p() ? 'n' : 'N'
-Map -expr [o]  N <SID>search_forward_p() ? 'N' : 'n'
+
+Map -expr [nx] <SID>(always_forward_n) (<SID>search_forward_p() ? 'n' : 'Nzv').'zvzz'
+Map -expr [nx] <SID>(always_forward_N) (<SID>search_forward_p() ? 'N' : 'n').'zvzz'
+Map -expr [o]  <SID>(always_forward_n) <SID>search_forward_p() ? 'n' : 'N'
+Map -expr [o]  <SID>(always_forward_N) <SID>search_forward_p() ? 'N' : 'n'
 
 function! s:search_forward_p()
     return exists('v:searchforward') ? v:searchforward : 1
@@ -3482,6 +3483,16 @@ if s:has_plugin('indent-guides') "{{{
 endif "}}}
 if s:has_plugin('foldCC') "{{{
     set foldtext=FoldCCtext()
+endif "}}}
+if s:has_plugin('vim-anzu') "{{{
+    Map -remap [nxo] n <SID>(always_forward_n)<Plug>(anzu-update-search-status-with-echo)
+    Map -remap [nxo] N <SID>(always_forward_N)<Plug>(anzu-update-search-status-with-echo)
+else
+    " FIXME: <SID>(always_forward_n) is not related to vim-anzu plugin.
+    "
+    " Mapping -> plugin specific mapping, misc. hacks
+    Map -remap [nxo] n <SID>(always_forward_n)
+    Map -remap [nxo] N <SID>(always_forward_N)
 endif "}}}
 
 " test
