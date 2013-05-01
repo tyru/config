@@ -160,6 +160,10 @@ if !exists('$VIMRC_DEBUG')
     if 1    " disable it temporarily...
         call rtputil#remove('sign-diff')
     endif
+
+    if s:is_win || !has('unix') || has('gui_running')
+        call rtputil#remove('vim-fakeclip')
+    endif
 else
     " TODO: Reduce dependency plugins.
 
@@ -487,9 +491,6 @@ augroup END
 set clipboard+=unnamed
 if has('unnamedplus')
     set clipboard+=unnamedplus
-endif
-if !s:is_win && has('unix') && !has('gui_running')
-    set clipboard+=exclude:.*
 endif
 
 " &migemo
@@ -3496,6 +3497,13 @@ else
     " Mapping -> plugin specific mapping, misc. hacks
     Map -remap [nxo] n <SID>(always_forward_n)
     Map -remap [nxo] N <SID>(always_forward_N)
+endif "}}}
+if s:has_plugin('vim-fakeclip') "{{{
+    " vim-fakeclip plugin is loaded only on the platform where
+    " 1. the X server exists
+    " 2. starting Vim of non-GUI version
+    set clipboard+=exclude:.*
+    let g:fakeclip_always_provide_clipboard_mappings = 1
 endif "}}}
 
 " test
