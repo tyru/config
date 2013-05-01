@@ -150,13 +150,16 @@ if !exists('$VIMRC_DEBUG')
     if !executable('git')
         call rtputil#remove('gist-vim')
     endif
+
     if !has('signs') ||
     \  !has('diff')  ||
     \  (!exists('*mkdir') && !executable('mkdir')) ||
     \  !executable('diff')
         call rtputil#remove('sign-diff')
     endif
-    call rtputil#remove('sign-diff')
+    if 1    " disable it temporarily...
+        call rtputil#remove('sign-diff')
+    endif
 else
     " TODO: Reduce dependency plugins.
 
