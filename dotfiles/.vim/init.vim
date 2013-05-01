@@ -480,8 +480,14 @@ augroup vimrc-guioptions
     autocmd FocusGained * set guioptions=agitrhpF | autocmd! vimrc-guioptions
 augroup END
 
-" Get along with X11 selection
-set clipboard+=autoselect
+" clipboard
+set clipboard+=unnamed
+if has('unnamedplus')
+    set clipboard+=unnamedplus
+endif
+if !s:is_win && has('unix') && !has('gui_running')
+    set clipboard+=exclude:.*
+endif
 
 " &migemo
 if has("migemo")
