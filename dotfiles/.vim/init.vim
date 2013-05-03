@@ -488,10 +488,15 @@ augroup vimrc-guioptions
 augroup END
 
 " clipboard
-set clipboard+=unnamed
-if has('unnamedplus')
-    set clipboard+=unnamedplus
-endif
+"
+" TODO: hmm... I want normal "y" operation to use unnamed register also...
+" (namely, I want to merge the registers, '"', '+', '*')
+" Are there another solutions but overwriting mappings 'y', 'd', 'c', etc.
+"
+" set clipboard+=unnamed
+" if has('unnamedplus')
+"     set clipboard+=unnamedplus
+" endif
 
 " &migemo
 if has("migemo")
