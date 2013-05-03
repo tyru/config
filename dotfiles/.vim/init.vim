@@ -978,6 +978,15 @@ Map -expr -silent [n] t '/.\ze\V'.<SID>getchar_safe()."\<CR>:nohlsearch\<CR>"
 Map -expr -silent [n] T '?\V'.<SID>getchar_safe().'\v\zs.'."\<CR>:nohlsearch\<CR>"
 
 
+" Map [n] <C-h> b
+" Map [n] <C-l> w
+" Map [n] <S-h> ge
+" Map [n] <S-l> e
+
+Map [n] <C-j> *
+Map [n] <C-k> #
+
+
 Map [n] ,cd       :<C-u>cd %:p:h<CR>
 " :LookupCD - chdir to root directory of project working tree {{{
 Map [n] cd :<C-u>LookupCD %:p:h<CR>
