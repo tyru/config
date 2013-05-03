@@ -1166,6 +1166,10 @@ function! s:winutil.get_winnr_list_like(expr) "{{{
     return ret
 endfunction "}}}
 
+function! s:winutil.has_window_like(expr) "{{{
+    return !empty(s:winutil.get_winnr_list_like(a:expr))
+endfunction "}}}
+
 function! s:winutil.close_first_like(expr) "{{{
     let winnr_list = s:winutil.get_winnr_list_like(a:expr)
     " Close current window if current matches a:expr.
@@ -1242,6 +1246,9 @@ call s:window.register('cmdwin', {'close': function('s:close_cmdwin_window'), 'd
 " help {{{
 function! s:close_help_window() "{{{
     return s:winutil.close_first_like('s:is_help_window(winnr)')
+endfunction "}}}
+function! s:has_help_window() "{{{
+    return s:winutil.has_window_like('s:is_help_window(winnr)')
 endfunction "}}}
 function! s:is_help_window(winnr) "{{{
     return getbufvar(winbufnr(a:winnr), '&buftype') ==# 'help'
