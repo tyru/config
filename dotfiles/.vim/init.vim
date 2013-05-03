@@ -3073,7 +3073,7 @@ if s:has_plugin('quickrun') " {{{
     let g:loaded_quicklaunch = 1
 
     let g:quickrun_no_default_key_mappings = 1
-    Map -remap [nxo] <Space>r <Plug>(quickrun)
+    Map -remap [nx] <Space>r <Plug>(quickrun)
 
     if has('vim_starting')
         let g:quickrun_config = {}
