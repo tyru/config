@@ -1156,21 +1156,18 @@ function! s:winutil.exists(winnr) "{{{
 endfunction "}}}
 
 
-function! s:winutil.get_winnr_like(expr) "{{{
+function! s:winutil.get_winnr_list_like(expr) "{{{
     let ret = []
-    let winnr = 1
-    while winnr <= winnr('$')
-        let bufnr = winbufnr(winnr)
+    for winnr in range(1, winnr('$'))
         if eval(a:expr)
             call add(ret, winnr)
         endif
-        let winnr = winnr + 1
-    endwhile
+    endfor
     return ret
 endfunction "}}}
 
 function! s:winutil.close_first_like(expr) "{{{
-    let winnr_list = s:winutil.get_winnr_like(a:expr)
+    let winnr_list = s:winutil.get_winnr_list_like(a:expr)
     " Close current window if current matches a:expr.
     let winnr_list = s:move_current_winnr_to_head(winnr_list)
     if empty(winnr_list)
@@ -1180,8 +1177,9 @@ function! s:winutil.close_first_like(expr) "{{{
     let prev_winnr = winnr()
     try
         for winnr in winnr_list
-            call s:winutil.close(winnr)
-            return 1    " closed.
+            if s:winutil.close(winnr)
+                return 1    " closed.
+            endif
         endfor
         return 0
     finally
