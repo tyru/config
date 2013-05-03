@@ -546,9 +546,7 @@ set mouse=a
 
 " For screen.
 if &term =~ "^screen"
-    augroup MyAutoCmd
-        autocmd VimLeave * :set mouse=
-    augroup END
+    MyAutocmd VimLeave * :set mouse=
 
     " workaround for freeze when using mouse on GNU screen.
     set ttymouse=xterm2
