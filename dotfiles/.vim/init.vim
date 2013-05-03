@@ -3185,6 +3185,14 @@ if s:has_plugin('vim-ref') " {{{
     MapAlterCommand py[doc]     Ref pydoc
 
     Map [n] <orig>K K
+    Map -remap [n] K <SID>(open-help-window)<Plug>(ref-keyword)
+
+    Map [n] <SID>(open-help-window) :<C-u>call <SID>open_help_window()<CR>
+    function! s:open_help_window()
+        if !s:has_help_window()
+            Help
+        endif
+    endfunction
 
     let g:ref_use_vimproc = 0
     let g:ref_open = 'SplitNicely'
