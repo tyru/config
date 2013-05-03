@@ -79,6 +79,32 @@ function! s:map_lines(str, expr)
     return join(map(split(a:str, '\n', 1), a:expr), "\n")
 endfunction
 
+" Like builtin getchar() but returns string always.
+" and do inputsave()/inputrestore() before/after getchar().
+function! s:getchar_safe(...)
+  let c = s:input_helper('getchar', a:000)
+  return type(c) == type("") ? c : nr2char(c)
+endfunction
+" Like builtin getchar() but
+" do inputsave()/inputrestore() before/after input().
+function! s:input_safe(...)
+    return s:input_helper('input', a:000)
+endfunction
+" Do inputsave()/inputrestore() before/after calling a:funcname.
+function! s:input_helper(funcname, args)
+    let success = 0
+    if inputsave() !=# success
+        throw 'inputsave() failed'
+    endif
+    try
+        return call(a:funcname, a:args)
+    finally
+        if inputrestore() !=# success
+            throw 'inputrestore() failed'
+        endif
+    endtry
+endfunction
+
 " }}}
 " Commands {{{
 augroup vimrc
@@ -945,6 +971,12 @@ Map [n] <excmd>tl :<C-u>tabedit<CR>
 Map [n] <excmd>th :<C-u>tabedit<CR>:execute 'tabmove' (tabpagenr() isnot 1 ? tabpagenr() - 2 : '')<CR>
 
 Map [n] <C-s> :<C-u>browse saveas<CR>
+
+Map -expr -silent [n] f '/\V'.<SID>getchar_safe()."\<CR>:nohlsearch\<CR>"
+Map -expr -silent [n] F '?\V'.<SID>getchar_safe()."\<CR>:nohlsearch\<CR>"
+Map -expr -silent [n] t '/.\ze\V'.<SID>getchar_safe()."\<CR>:nohlsearch\<CR>"
+Map -expr -silent [n] T '?\V'.<SID>getchar_safe().'\v\zs.'."\<CR>:nohlsearch\<CR>"
+
 
 Map [n] ,cd       :<C-u>cd %:p:h<CR>
 " :LookupCD - chdir to root directory of project working tree {{{
