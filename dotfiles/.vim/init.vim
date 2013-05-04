@@ -990,6 +990,10 @@ Map -expr -silent [n] T '?\V'.<SID>getchar_safe().'\v\zs.'."\<CR>:nohlsearch\<CR
 Map [n] <C-j> *
 Map [n] <C-k> #
 
+" NOTE: <S-Tab> is GUI only.
+Map [x] <Tab> >gv
+Map [x] <S-Tab> <gv
+
 
 Map [n] ,cd       :<C-u>cd %:p:h<CR>
 " :LookupCD - chdir to root directory of project working tree {{{
