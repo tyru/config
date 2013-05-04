@@ -994,6 +994,8 @@ Map [n] <C-k> #
 Map [x] <Tab> >gv
 Map [x] <S-Tab> <gv
 
+Map [o] gv :<C-u>normal! gv<CR>
+
 
 Map [n] ,cd       :<C-u>cd %:p:h<CR>
 " :LookupCD - chdir to root directory of project working tree {{{
