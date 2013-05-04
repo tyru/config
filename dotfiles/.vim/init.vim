@@ -3201,6 +3201,7 @@ if s:has_plugin('vim-ref') " {{{
     function! s:open_help_window()
         if !s:has_help_window()
             Help
+            wincmd w
         endif
     endfunction
 
