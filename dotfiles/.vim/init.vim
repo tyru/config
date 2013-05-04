@@ -503,15 +503,19 @@ function! s:get_cchar()
     endtry
 endfunction
 
-" Must be set in .vimrc
-set guioptions+=p
-" These flags are set on FocusGained
-" because "cmd.exe start /min" doesn't work.
-" (always start up as foreground)
-augroup vimrc-guioptions
-    autocmd!
-    autocmd FocusGained * set guioptions=agitrhpF | autocmd! vimrc-guioptions
-augroup END
+if has('vim_starting')
+    " Must be set in .vimrc
+    set guioptions+=p
+    " These flags are set on FocusGained
+    " because "cmd.exe start /min" doesn't work.
+    " (always start up as foreground)
+    augroup vimrc-guioptions
+        autocmd!
+        autocmd FocusGained * set guioptions=agitrhF | autocmd! vimrc-guioptions
+    augroup END
+else
+    set guioptions=agitrhpF
+endif
 
 " clipboard
 "
