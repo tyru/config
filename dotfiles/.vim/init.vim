@@ -1986,7 +1986,7 @@ command!
 " }}}
 " :GlobPath {{{
 command!
-\   -bar -nargs=1 -complete=file
+\   -bar -nargs=+ -complete=file
 \   GlobPath
 \   echo globpath(&rtp, <q-args>, 1)
 
