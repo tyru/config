@@ -600,8 +600,8 @@ set browsedir=current
 
 " Font {{{
 if has('win32')    " Windows
-    set guifont=M+2VM+IPAG_circle:h13
-    set printfont=M+2VM+IPAG_circle:h13
+    " set guifont=M+2VM+IPAG_circle:h13
+    " set printfont=M+2VM+IPAG_circle:h13
 elseif has('mac')    " Mac
     set guifont=Osaka－等幅:h14
     set printfont=Osaka－等幅:h14
