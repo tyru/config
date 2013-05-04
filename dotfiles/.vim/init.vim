@@ -82,8 +82,8 @@ endfunction
 " Like builtin getchar() but returns string always.
 " and do inputsave()/inputrestore() before/after getchar().
 function! s:getchar_safe(...)
-  let c = s:input_helper('getchar', a:000)
-  return type(c) == type("") ? c : nr2char(c)
+    let c = s:input_helper('getchar', a:000)
+    return type(c) == type("") ? c : nr2char(c)
 endfunction
 " Like builtin getchar() but
 " do inputsave()/inputrestore() before/after input().
