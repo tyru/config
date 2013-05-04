@@ -211,7 +211,7 @@ else
     call rtputil#append($MYVIMDIR.'/bundle/neocomplcache')
 endif
 
-let s:Vital = vital#of('vital')
+let s:Vital = vital#of('vimrc')
 call s:Vital.load('Data.List')
 call s:Vital.load('System.Filepath')
 
