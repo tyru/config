@@ -440,7 +440,7 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/vimtemplate.vim
 
-    " LoadPlugin $MYVIMDIR/bundle/vital.vim
+    LoadPlugin $MYVIMDIR/bundle/vital.vim
 
     LoadPlugin $MYVIMDIR/bundle/webapi-vim
 
