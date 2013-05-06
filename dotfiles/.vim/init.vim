@@ -1633,7 +1633,6 @@ Map -abbr -expr [ic] mb@   [^\x01-\x7e]
 
 MapAlterCommand th     tab help
 MapAlterCommand t      tabedit
-MapAlterCommand s      setlocal
 MapAlterCommand sf     setf
 MapAlterCommand hg     helpgrep
 MapAlterCommand ds     diffsplit
