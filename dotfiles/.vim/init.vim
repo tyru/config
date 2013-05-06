@@ -114,6 +114,41 @@ function! s:input_helper(funcname, args)
     endtry
 endfunction
 
+" s:rmdir() implementation {{{
+" TODO: import to vital.vim
+
+if exists("*rmdir")
+    function! s:rmdir(path)
+        return call('rmdir', [a:path] + a:000)
+    endfunction
+
+elseif has("unix")
+    function! s:rmdir(path)
+        let ret = system('/bin/rmdir ' . shellescape(a:path) . ' 2>&1')
+        if v:shell_error
+            throw substitute(iconv(ret, 'char', &encoding), '\n', '', 'g')
+        endif
+    endfunction
+
+elseif has("win32") || has("win95") || has("win64") || has("win16")
+    function! s:rmdir(path)
+        if &shell =~? "sh$"
+            let ret = system('/bin/rmdir ' . shellescape(a:path) . ' 2>&1')
+        endif
+        if v:shell_error
+            throw substitute(iconv(ret, 'char', &encoding), '\n', '', 'g')
+        endif
+    endfunction
+
+else
+    function! s:rmdir(path)
+        throw 'vital: System.File.rmdir(): your platform is not supported'
+    endfunction
+
+endif
+
+" }}}
+
 " }}}
 " Commands {{{
 augroup vimrc
@@ -347,8 +382,27 @@ if has('virtualedit')
 endif
 
 " swap
-set noswapfile
-set updatecount=0
+if 0
+    " TODO: Use swapfile.
+    let &directory = $MYVIMDIR.'/info/swap/'.v:servername
+    silent! call mkdir(&directory, 'p', 0700)
+    MyAutocmd VimLeave * call s:cleanup_swap_files()
+    function! s:cleanup_swap_files()
+        try
+            call s:rmdir(&directory)
+        catch
+            " TODO
+            " * Move remaining swap files to swap dir for recovery.
+            " * If there are swap files in swap dir for recovery,
+            "   Show recovery prompt at Vim startup.
+            " * Do recovery!
+        endtry
+    endfunction
+else
+    " No swapfile.
+    set noswapfile
+    set updatecount=0
+endif
 
 " backup
 set backup
@@ -648,7 +702,7 @@ endif
 Lazy colorscheme tyru | doautocmd ColorScheme
 
 " Open a file as read-only if swap exists
-MyAutocmd SwapExists * let v:swapchoice = 'o'
+" MyAutocmd SwapExists * let v:swapchoice = 'o'
 
 MyAutocmd QuickfixCmdPost * QuickFix
 
