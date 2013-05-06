@@ -2136,6 +2136,9 @@ command!
 " :Ctags {{{
 MapAlterCommand ctags Ctags
 
+Map -script [n] <C-]> <SID>(gen-tags-if-not-present)<C-]>
+Map [n] <SID>(gen-tags-if-not-present) :<C-u>if empty(tagfiles()) | Ctags | endif<CR>
+
 command!
 \   -bar -nargs=*
 \   Ctags
