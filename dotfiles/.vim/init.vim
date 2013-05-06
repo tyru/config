@@ -2846,9 +2846,9 @@ if s:has_plugin('unite') " {{{
     endfunction
 
 
-    " set enc=... {{{
+    " edit ++enc=... {{{
     let g:unite_source_menu_menus.enc = {
-    \   'description' : 'set enc=...',
+    \   'description' : 'edit ++enc=...',
     \   'candidates'  : {},
     \   'map': function('UniteSourceMenuMenusMap'),
     \}
