@@ -446,6 +446,10 @@ if !exists('$VIMRC_DEBUG')
 
     " LoadPlugin $MYVIMDIR/bundle/winmove.vim
 
+    if exists('g:chalice')
+        LoadPlugin $MYVIMDIR/bundle/chalice
+    endif
+
 else
     " TODO: Reduce dependency plugins.
 
@@ -3626,11 +3630,6 @@ if s:plugin_enabled('lingr') " {{{
     \]
     let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
     let g:lingr_vim_count_unread_at_current_room = 1
-endif " }}}
-if s:plugin_enabled('chalice') " {{{
-    if !exists('g:chalice')
-        call rtputil#remove('\<chalice\>')
-    endif
 endif " }}}
 if s:plugin_enabled('github') " {{{
     MapAlterCommand gh Github
