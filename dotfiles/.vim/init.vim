@@ -240,8 +240,6 @@ command!
 \   MapAlterCommand
 \   CAlterCommand <args> | AlterCommand <cmdwin> <args>
 
-
-call dutil#load()
 " }}}
 " Options {{{
 
