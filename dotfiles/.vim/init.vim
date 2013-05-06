@@ -251,8 +251,6 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/emap.vim
 
-    LoadPlugin $MYVIMDIR/bundle/eskk.vim
-
     LoadPlugin $MYVIMDIR/bundle/fileutils.vim
 
     LoadPlugin $MYVIMDIR/bundle/foldCC
@@ -318,7 +316,11 @@ if !exists('$VIMRC_DEBUG')
         LoadPlugin $MYVIMDIR/bundle/simpletap.vim
     endif
 
-    LoadPlugin $MYVIMDIR/bundle/skk.vim
+    if 1
+        LoadPlugin $MYVIMDIR/bundle/eskk.vim
+    else
+        LoadPlugin $MYVIMDIR/bundle/skk.vim
+    endif
 
     LoadPlugin $MYVIMDIR/bundle/skkdict.vim
 
@@ -2685,12 +2687,7 @@ if s:plugin_enabled('prompt') " {{{
 endif " }}}
 if s:plugin_enabled('skk') || s:plugin_enabled('eskk') " {{{
 
-    " Switch SKK plugin.
-    let [s:skk_plugin_skk, s:skk_plugin_eskk] = ['skk.vim', 'eskk']
-    let s:skk_plugin = s:skk_plugin_eskk
-
     " skkdict
-    call rtputil#append($MYVIMDIR.'/bundle/skkdict.vim')
     let s:skk_user_dict = '~/.skkdict/user-dict'
     let s:skk_user_dict_encoding = 'utf-8'
     let s:skk_system_dict = '~/.skkdict/system-dict'
@@ -2706,11 +2703,7 @@ if s:plugin_enabled('skk') || s:plugin_enabled('eskk') " {{{
     " endif
 
 endif " }}}
-if s:plugin_enabled('skk') && s:skk_plugin is s:skk_plugin_skk " {{{
-    let s:skk_plugin_loaded = 1
-
-    " disable eskk
-    call rtputil#remove('\<eskk.vim\>')
+if s:plugin_enabled('skk') " {{{
 
     " skkdict
     let skk_jisyo = s:skk_user_dict
@@ -2757,11 +2750,7 @@ if s:plugin_enabled('skk') && s:skk_plugin is s:skk_plugin_skk " {{{
     endif
 
 endif " }}}
-if s:plugin_enabled('eskk') && s:skk_plugin is s:skk_plugin_eskk " {{{
-    let s:skk_plugin_loaded = 1
-
-    " disable skk.vim
-    call rtputil#remove('\<skk.vim\>')
+if s:plugin_enabled('eskk') " {{{
 
     " skkdict
     if !exists('g:eskk#dictionary')
@@ -2904,11 +2893,6 @@ if s:plugin_enabled('eskk') && s:skk_plugin is s:skk_plugin_eskk " {{{
 
     endif
 endif " }}}
-" SKK plugin finalization "{{{
-if !exists('s:skk_plugin_loaded')
-    call s:warn("warning: Could not load '".s:skk_plugin."'.")
-endif
-" }}}
 if s:plugin_enabled('restart') " {{{
     command!
     \   -bar
