@@ -17,9 +17,9 @@ function! s:load_init_vim(vimrc)
     endif
     " Do not start debug-mode
     " when vim was invoked by 'git' command.
-    if exists('$GIT_DIR')
-        return
-    endif
+    " if exists('$GIT_DIR')
+    "     return
+    " endif
 
     source `=a:vimrc`
 endfunction
