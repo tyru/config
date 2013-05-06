@@ -50,6 +50,13 @@ function! s:has_plugin(name)
     \   || globpath(&rtp, 'autoload/' . tolower(suffix), 1) != ''
 endfunction
 
+" e.g.) s:plugin_enabled('eskk') ? 'yes' : 'no'
+function! s:plugin_enabled(name)
+    let nosuffix = a:name =~? '\.vim$' ? a:name[:-5] : a:name
+    let suffix   = a:name =~? '\.vim$' ? a:name      : a:name . '.vim'
+    return &rtp =~# '\c\<' . nosuffix . '\>'
+endfunction
+
 " e.g.)
 " echo s:fill_version('7.3.629')
 " echo s:fill_version('7.3')
@@ -211,64 +218,278 @@ command!
 " }}}
 " Initializing {{{
 
+let s:plugins = rtputil#new()
+call s:plugins.reset()
+
+command! -nargs=+ LoadPlugin
+\   call s:plugins.append(<q-args>)
+
 if !exists('$VIMRC_DEBUG')
-    call rtputil#append('$MYVIMDIR/bundle/vim-singleton')
+    LoadPlugin $MYVIMDIR/bundle/vim-singleton
+    call s:plugins.apply()
     call singleton#enable()
 
-    call rtputil#bundle()
-
-    if !executable('git')
-        call rtputil#remove('gist-vim')
+    if !s:is_win && has('unix')
+        LoadPlugin $MYVIMDIR/bundle/autochmodx.vim
     endif
 
-    if !has('signs') ||
-    \  !has('diff')  ||
-    \  (!exists('*mkdir') && !executable('mkdir')) ||
-    \  !executable('diff')
-        call rtputil#remove('sign-diff')
-    endif
-    if 1    " disable it temporarily...
-        call rtputil#remove('sign-diff')
+    LoadPlugin $MYVIMDIR/bundle/autodate.vim
+
+    LoadPlugin $MYVIMDIR/bundle/capture.vim
+
+    LoadPlugin $MYVIMDIR/bundle/caw.vim
+
+    LoadPlugin $MYVIMDIR/bundle/codingstyle.vim
+
+    LoadPlugin $MYVIMDIR/bundle/concealedyank.vim
+
+    LoadPlugin $MYVIMDIR/bundle/cpp-vim
+
+    LoadPlugin $MYVIMDIR/bundle/current-func-info.vim
+
+    LoadPlugin $MYVIMDIR/bundle/detect-coding-style.vim
+
+    LoadPlugin $MYVIMDIR/bundle/dutil.vim
+
+    LoadPlugin $MYVIMDIR/bundle/emap.vim
+
+    LoadPlugin $MYVIMDIR/bundle/eskk.vim
+
+    LoadPlugin $MYVIMDIR/bundle/fileutils.vim
+
+    LoadPlugin $MYVIMDIR/bundle/foldCC
+
+    LoadPlugin $MYVIMDIR/bundle/ftl-vim-syntax
+
+    if executable('git')
+        LoadPlugin $MYVIMDIR/bundle/gist-vim
     endif
 
-    if s:is_win || !has('unix') || has('gui_running')
-        call rtputil#remove('vim-fakeclip')
+    LoadPlugin $MYVIMDIR/bundle/grass.vim
+
+    LoadPlugin $MYVIMDIR/bundle/gravit.vim
+
+    LoadPlugin $MYVIMDIR/bundle/hatena-vim
+
+    LoadPlugin $MYVIMDIR/bundle/instant-markdown-vim
+
+    " LoadPlugin $MYVIMDIR/bundle/karma.vim
+
+    LoadPlugin $MYVIMDIR/bundle/kirikiri.vim
+
+    if exists('g:lingr')
+        LoadPlugin $MYVIMDIR/bundle/lingr-vim
     endif
+
+    " LoadPlugin $MYVIMDIR/bundle/multiprocessing.vim
+
+    LoadPlugin $MYVIMDIR/bundle/neocomplcache
+
+    LoadPlugin $MYVIMDIR/bundle/nextfile.vim
+
+    LoadPlugin $MYVIMDIR/bundle/ohmygrep.vim
+
+    LoadPlugin $MYVIMDIR/bundle/open-browser-github.vim
+
+    LoadPlugin $MYVIMDIR/bundle/open-browser.vim
+
+    LoadPlugin $MYVIMDIR/bundle/operator-camelize.vim
+
+    LoadPlugin $MYVIMDIR/bundle/operator-html-escape.vim
+
+    LoadPlugin $MYVIMDIR/bundle/operator-reverse.vim
+
+    LoadPlugin $MYVIMDIR/bundle/quickey.vim
+
+    LoadPlugin $MYVIMDIR/bundle/quickfixstatus
+
+    LoadPlugin $MYVIMDIR/bundle/ref-plugins
+
+    LoadPlugin $MYVIMDIR/bundle/restart.vim
+
+    LoadPlugin $MYVIMDIR/bundle/shabadou.vim
+
+    " if has('signs') &&
+    " \  has('diff')  &&
+    " \  (exists('*mkdir') || executable('mkdir')) &&
+    " \  executable('diff')
+    "     LoadPlugin $MYVIMDIR/bundle/sign-diff
+    " endif
+
+    if exists('$VPROVE_TESTING')
+        LoadPlugin $MYVIMDIR/bundle/simpletap.vim
+    endif
+
+    LoadPlugin $MYVIMDIR/bundle/skk.vim
+
+    LoadPlugin $MYVIMDIR/bundle/skkdict.vim
+
+    " LoadPlugin $MYVIMDIR/bundle/starter.vim
+
+    if !s:is_win && has('unix') && !has('gui_running')
+        LoadPlugin $MYVIMDIR/bundle/SudoEdit.vim
+    endif
+
+    LoadPlugin $MYVIMDIR/bundle/surround-config
+
+    LoadPlugin $MYVIMDIR/bundle/tjs.vim
+
+    LoadPlugin $MYVIMDIR/bundle/tyru
+
+    LoadPlugin $MYVIMDIR/bundle/undoclosewin.vim
+
+    LoadPlugin $MYVIMDIR/bundle/unite-help
+
+    LoadPlugin $MYVIMDIR/bundle/unite-outline
+
+    LoadPlugin $MYVIMDIR/bundle/unite-tag
+
+    LoadPlugin $MYVIMDIR/bundle/unite.vim
+
+    " LoadPlugin $MYVIMDIR/bundle/urilib.vim
+
+    " LoadPlugin $MYVIMDIR/bundle/vertR.vim
+
+    " LoadPlugin $MYVIMDIR/bundle/vice.vim
+
+    LoadPlugin $MYVIMDIR/bundle/vim-altercmd
+
+    LoadPlugin $MYVIMDIR/bundle/vim-anzu
+
+    " LoadPlugin $MYVIMDIR/bundle/vim-benchmark
+
+    if !s:is_win && has('unix') && !has('gui_running')
+        LoadPlugin $MYVIMDIR/bundle/vim-fakeclip
+    endif
+
+    LoadPlugin $MYVIMDIR/bundle/vim-ft-diff_fold
+
+    LoadPlugin $MYVIMDIR/bundle/vim-ft-markdown_fold
+
+    " LoadPlugin $MYVIMDIR/bundle/vim-ft-vim_fold
+
+    " LoadPlugin $MYVIMDIR/bundle/vim-github
+
+    LoadPlugin $MYVIMDIR/bundle/vim-hier
+
+    LoadPlugin $MYVIMDIR/bundle/vim-indent-guides
+
+    LoadPlugin $MYVIMDIR/bundle/vim-javascript
+
+    LoadPlugin $MYVIMDIR/bundle/vim-operator-replace
+
+    LoadPlugin $MYVIMDIR/bundle/vim-operator-user
+
+    " LoadPlugin $MYVIMDIR/bundle/vim-perlbrew
+
+    LoadPlugin $MYVIMDIR/bundle/vim-prettyprint
+
+    LoadPlugin $MYVIMDIR/bundle/vim-quickrun
+
+    LoadPlugin $MYVIMDIR/bundle/vim-ref
+
+    LoadPlugin $MYVIMDIR/bundle/vim-repeat
+
+    LoadPlugin $MYVIMDIR/bundle/vim-singleton
+
+    LoadPlugin $MYVIMDIR/bundle/vim-submode
+
+    LoadPlugin $MYVIMDIR/bundle/vim-surround
+
+    LoadPlugin $MYVIMDIR/bundle/vim-tabpagecd
+
+    LoadPlugin $MYVIMDIR/bundle/vim-textobj-between
+
+    LoadPlugin $MYVIMDIR/bundle/vim-textobj-entire
+
+    LoadPlugin $MYVIMDIR/bundle/vim-textobj-fold
+
+    LoadPlugin $MYVIMDIR/bundle/vim-textobj-function
+
+    LoadPlugin $MYVIMDIR/bundle/vim-textobj-function-javascript
+
+    LoadPlugin $MYVIMDIR/bundle/vim-textobj-function-perl
+
+    LoadPlugin $MYVIMDIR/bundle/vim-textobj-indent
+
+    LoadPlugin $MYVIMDIR/bundle/vim-textobj-jabraces
+
+    LoadPlugin $MYVIMDIR/bundle/vim-textobj-line
+
+    LoadPlugin $MYVIMDIR/bundle/vim-textobj-syntax
+
+    LoadPlugin $MYVIMDIR/bundle/vim-textobj-user
+
+    " LoadPlugin $MYVIMDIR/bundle/vim-unimpaired
+
+    LoadPlugin $MYVIMDIR/bundle/vim-unite-history
+
+    " LoadPlugin $MYVIMDIR/bundle/vim-vcs
+
+    LoadPlugin $MYVIMDIR/bundle/vim-visualstar
+
+    LoadPlugin $MYVIMDIR/bundle/vim-watchdogs
+
+    LoadPlugin $MYVIMDIR/bundle/vimdoc-ja
+
+    " LoadPlugin $MYVIMDIR/bundle/vimfiler
+
+    LoadPlugin $MYVIMDIR/bundle/vimproc
+
+    LoadPlugin $MYVIMDIR/bundle/vimshell
+
+    LoadPlugin $MYVIMDIR/bundle/vimtemplate.vim
+
+    " LoadPlugin $MYVIMDIR/bundle/vital.vim
+
+    LoadPlugin $MYVIMDIR/bundle/webapi-vim
+
+    " LoadPlugin $MYVIMDIR/bundle/winmove.vim
+
 else
     " TODO: Reduce dependency plugins.
 
     " Basic plugins
-    call rtputil#append($MYVIMDIR.'/bundle/tyru')
-    call rtputil#append($MYVIMDIR.'/bundle/emap.vim')
-    call rtputil#append($MYVIMDIR.'/bundle/vim-altercmd')
-    call rtputil#append($MYVIMDIR.'/bundle/detect-coding-style.vim')
-
-    call rtputil#append($MYVIMDIR.'/bundle/vital.vim')
+    LoadPlugin $MYVIMDIR/bundle/tyru
+    LoadPlugin $MYVIMDIR/bundle/emap.vim
+    LoadPlugin $MYVIMDIR/bundle/vim-altercmd
+    LoadPlugin $MYVIMDIR/bundle/detect-coding-style.vim
 
     " Useful plugins for debug
-    call rtputil#append($MYVIMDIR.'/bundle/dutil.vim')
-    call rtputil#append($MYVIMDIR.'/bundle/vim-prettyprint')
-    call rtputil#append($MYVIMDIR.'/bundle/restart.vim')
+    LoadPlugin $MYVIMDIR/bundle/dutil.vim
+    LoadPlugin $MYVIMDIR/bundle/vim-prettyprint
+    LoadPlugin $MYVIMDIR/bundle/restart.vim
 
     " Load plugins to debug
-    call rtputil#append($MYVIMDIR.'/bundle/eskk.vim')
-    call rtputil#append($MYVIMDIR.'/bundle/neocomplcache')
+    LoadPlugin $MYVIMDIR/bundle/eskk.vim
+    LoadPlugin $MYVIMDIR/bundle/neocomplcache
 endif
 
+" Change 'runtimepath'.
+call s:plugins.apply()
+
+
+" Load vimrc vital.
 let s:Vital = vital#of('vimrc')
 call s:Vital.load('Data.List')
 call s:Vital.load('System.Filepath')
+call s:Vital.load('System.File')
 
+
+" Generate helptags.
+" TODO: Execute once per a day.
 command! -bar -bang HelpTagsAll call rtputil#helptags(<bang>0)
 HelpTagsAll
 
 
+" Import :Map commands
 call emap#load('noprefix')    " Define :EmMap as :Map
 " call emap#set_sid_from_vimrc()
 call emap#set_sid(s:SID())
 " call emap#set_sid_from_sfile(expand('<sfile>'))
 
 
+" Define :MapAlterCommand commands
 call altercmd#load()
 command!
 \   -bar -nargs=+
@@ -519,7 +740,7 @@ function! s:statusline() "{{{
     endif
 
     if !get(g:, 'cfi_disable')
-    \   && s:has_plugin('current-func-info')
+    \   && s:plugin_enabled('current-func-info')
         let s .= '%( | %{cfi#format("%s()", "")}%)'
     endif
 
@@ -849,7 +1070,7 @@ Map [nxo] x "_x
 Map [nxo] <operator>e =
 
 
-if s:has_plugin('operator-user')
+if s:plugin_enabled('operator-user')
 
     " operator-adjust {{{
     call operator#user#define('adjust', 'Op_adjust_window_height')
@@ -2308,7 +2529,7 @@ endfunction
 " }}}
 " }}}
 " For Plugins {{{
-if s:has_plugin('nextfile') " {{{
+if s:plugin_enabled('nextfile') " {{{
     let g:nf_map_next     = ''
     let g:nf_map_previous = ''
     Map -remap [n] ,n <Plug>(nextfile-next)
@@ -2337,7 +2558,7 @@ if s:has_plugin('nextfile') " {{{
     let g:nf_open_command = 'silent edit'
 
 endif " }}}
-if s:has_plugin('starter') " {{{
+if s:plugin_enabled('starter') " {{{
 
     " TODO
     let g:loaded_starter = 1
@@ -2396,7 +2617,7 @@ if s:has_plugin('starter') " {{{
     " \]
 
 endif " }}}
-if s:has_plugin('vimtemplate') " {{{
+if s:plugin_enabled('vimtemplate') " {{{
     " TODO: starter.vim
     " let g:loaded_vimtemplate = 1
 
@@ -2425,13 +2646,13 @@ if s:has_plugin('vimtemplate') " {{{
     \   $MYVIMDIR . '/template/*'
     \   'setlocal nomodeline'
 endif " }}}
-if s:has_plugin('winmove') " {{{
+if s:plugin_enabled('winmove') " {{{
     let g:wm_move_down  = '<C-M-j>'
     let g:wm_move_up    = '<C-M-k>'
     let g:wm_move_left  = '<C-M-h>'
     let g:wm_move_right = '<C-M-l>'
 endif " }}}
-if s:has_plugin('sign-diff') " {{{
+if s:plugin_enabled('sign-diff') " {{{
     " let g:SD_debug = 1
     let g:SD_disable = 1
 
@@ -2439,7 +2660,7 @@ if s:has_plugin('sign-diff') " {{{
         Map -silent [n] <C-l> :SDUpdate<CR><C-l>
     endif
 endif " }}}
-if s:has_plugin('DumbBuf') " {{{
+if s:plugin_enabled('DumbBuf') " {{{
     let dumbbuf_hotkey = 'gb'
     " たまにQuickBuf.vimの名残で<Esc>を押してしまう
     let dumbbuf_mappings = {
@@ -2466,10 +2687,10 @@ if s:has_plugin('DumbBuf') " {{{
     "
     " let dumbbuf_verbose = 1
 endif " }}}
-if s:has_plugin('prompt') " {{{
+if s:plugin_enabled('prompt') " {{{
     let prompt_debug = 0
 endif " }}}
-if s:has_plugin('skk') || s:has_plugin('eskk') " {{{
+if s:plugin_enabled('skk') || s:plugin_enabled('eskk') " {{{
 
     " Switch SKK plugin.
     let [s:skk_plugin_skk, s:skk_plugin_eskk] = ['skk.vim', 'eskk']
@@ -2492,7 +2713,7 @@ if s:has_plugin('skk') || s:has_plugin('eskk') " {{{
     " endif
 
 endif " }}}
-if s:has_plugin('skk') && s:skk_plugin is s:skk_plugin_skk " {{{
+if s:plugin_enabled('skk') && s:skk_plugin is s:skk_plugin_skk " {{{
     let s:skk_plugin_loaded = 1
 
     " disable eskk
@@ -2543,7 +2764,7 @@ if s:has_plugin('skk') && s:skk_plugin is s:skk_plugin_skk " {{{
     endif
 
 endif " }}}
-if s:has_plugin('eskk') && s:skk_plugin is s:skk_plugin_eskk " {{{
+if s:plugin_enabled('eskk') && s:skk_plugin is s:skk_plugin_eskk " {{{
     let s:skk_plugin_loaded = 1
 
     " disable skk.vim
@@ -2695,7 +2916,7 @@ if !exists('s:skk_plugin_loaded')
     call s:warn("warning: Could not load '".s:skk_plugin."'.")
 endif
 " }}}
-if s:has_plugin('restart') " {{{
+if s:plugin_enabled('restart') " {{{
     command!
     \   -bar
     \   RestartWithSession
@@ -2706,7 +2927,7 @@ if s:has_plugin('restart') " {{{
     MapAlterCommand ers[tart] Restart
     MapAlterCommand rse[tart] Restart
 endif " }}}
-if s:has_plugin('openbrowser') " {{{
+if s:plugin_enabled('openbrowser') " {{{
     let g:netrw_nogx = 1
     Map -remap [nx] gx <Plug>(openbrowser-smart-search)
     MapAlterCommand o[pen] OpenBrowserSmartSearch
@@ -2727,7 +2948,7 @@ if s:has_plugin('openbrowser') " {{{
 
     " let g:openbrowser_github_always_used_branch = 'master'
 endif " }}}
-if s:has_plugin('AutoDate') " {{{
+if s:plugin_enabled('AutoDate') " {{{
     " let g:autodate_format = "%Y-%m-%d"
 endif " }}}
 " anything (ku,fuf,unite,etc.) {{{
@@ -2737,18 +2958,18 @@ DefMacroMap [n] anything s
 let [s:anything_fuf, s:anything_ku, s:anything_unite] = range(3)
 let s:anything = s:anything_unite
 
-if s:anything == s:anything_fuf && s:has_plugin('fuf')
+if s:anything == s:anything_fuf && s:plugin_enabled('fuf')
     Map [n] <anything>d        :<C-u>FufDir<CR>
     Map [n] <anything>f        :<C-u>FufFile<CR>
     Map [n] <anything>h        :<C-u>FufMruFile<CR>
     Map [n] <anything>r        :<C-u>FufRenewCache<CR>
-elseif s:anything == s:anything_ku && s:has_plugin('ku')
+elseif s:anything == s:anything_ku && s:plugin_enabled('ku')
     Map [n] <anything>f        :<C-u>Ku file<CR>
     Map [n] <anything>h        :<C-u>Ku file/mru<CR>
     Map [n] <anything>H        :<C-u>Ku history<CR>
     Map [n] <anything>:        :<C-u>Ku cmd_mru/cmd<CR>
     Map [n] <anything>/        :<C-u>Ku cmd_mru/search<CR>
-elseif s:has_plugin('unite') " fallback, or you select this :)
+elseif s:plugin_enabled('unite') " fallback, or you select this :)
     command! -bar -nargs=* UniteKawaii Unite -prompt='-')/\  -no-split -create <args>
     Map [n] <anything>f        :<C-u>UniteKawaii -buffer-name=files file buffer file_mru<CR>
     Map [n] <anything>F        :<C-u>UniteKawaii -buffer-name=files file_rec<CR>
@@ -2793,11 +3014,11 @@ function! s:register_anything_abbrev() "{{{
     endif
 
     " fuf
-    if s:has_plugin('fuf')
+    if s:plugin_enabled('fuf')
         let g:fuf_abbrevMap = abbrev
     endif
     " unite
-    if s:has_plugin('unite')
+    if s:plugin_enabled('unite')
         for [pat, subst_list] in items(abbrev)
             call unite#set_substitute_pattern('files', pat, subst_list)
         endfor
@@ -2807,10 +3028,10 @@ if !exists('s:anything_not_found')
     Lazy call s:register_anything_abbrev()
 endif
 
-if s:has_plugin('ku') " {{{
+if s:plugin_enabled('ku') " {{{
     MapAlterCommand ku Ku
 endif " }}}
-if s:has_plugin('fuf') " {{{
+if s:plugin_enabled('fuf') " {{{
     let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem', 'buffer', 'tag', 'taggedfile']
 
     let fuf_keyOpenTabpage = '<C-t>'
@@ -2821,7 +3042,7 @@ if s:has_plugin('fuf') " {{{
     let fuf_enumeratingLimit = 20
     let fuf_previewHeight = 0
 endif " }}}
-if s:has_plugin('unite') " {{{
+if s:plugin_enabled('unite') " {{{
     let g:unite_enable_start_insert = 1
     let g:unite_enable_ignore_case = 1
     let g:unite_enable_smart_case = 1
@@ -2942,7 +3163,7 @@ if s:has_plugin('unite') " {{{
     endfunction
 endif " }}}
 " }}}
-if s:has_plugin('Gtags') " {{{
+if s:plugin_enabled('Gtags') " {{{
     " <C-]> for gtags.
     function! s:JumpTags() "{{{
         if expand('%') == '' | return | endif
@@ -2970,7 +3191,7 @@ if s:has_plugin('Gtags') " {{{
     endfunction "}}}
     Map [n] <C-]>     :<C-u>call <SID>JumpTags()<CR>
 endif " }}}
-if s:has_plugin('vimshell') " {{{
+if s:plugin_enabled('vimshell') " {{{
     MapAlterCommand sh[ell] VimShell
 
     let g:vimshell_user_prompt = '"(" . getcwd() . ") --- (" . $USER . "@" . hostname() . ")"'
@@ -3047,7 +3268,7 @@ if s:has_plugin('vimshell') " {{{
         Map -buffer -remap -force [n] <C-z> <Plug>(vimshell_switch)
         Map -buffer -remap -force [i] <compl>r <Plug>(vimshell_history_complete_whole)
 
-        if s:has_plugin('concealedyank.vim') && has('conceal')
+        if s:plugin_enabled('concealedyank.vim') && has('conceal')
             Map -buffer -remap [nxo] y <Plug>(operator-concealedyank)
         endif
 
@@ -3149,7 +3370,7 @@ if s:has_plugin('vimshell') " {{{
         let $PATH = system(s:is_win ? 'echo %path%' : 'echo $PATH')
     endfunction "}}}
 endif " }}}
-if s:has_plugin('quickrun') " {{{
+if s:plugin_enabled('quickrun') " {{{
     let g:loaded_quicklaunch = 1
 
     let g:quickrun_no_default_key_mappings = 1
@@ -3178,7 +3399,7 @@ if s:has_plugin('quickrun') " {{{
         \}
     endif
 endif " }}}
-if s:has_plugin('submode') "{{{
+if s:plugin_enabled('submode') "{{{
 
     " Move GUI window.
     call submode#enter_with('guiwinmove', 'n', '', 'mgw')
@@ -3253,7 +3474,7 @@ if s:has_plugin('submode') "{{{
     call submode#map       ('scroll', 'n', '', 'a', ':let &l:scroll -= 3<CR>')
     call submode#map       ('scroll', 'n', '', 's', ':let &l:scroll += 3<CR>')
 endif "}}}
-if s:has_plugin('vim-ref') " {{{
+if s:plugin_enabled('vim-ref') " {{{
     " 'K' for ':Ref'.
     MapAlterCommand ref         Ref
     MapAlterCommand alc         Ref webdict alc
@@ -3301,7 +3522,7 @@ if s:has_plugin('vim-ref') " {{{
   endfunction
 
 endif " }}}
-if s:has_plugin('vimfiler') " {{{
+if s:plugin_enabled('vimfiler') " {{{
     let g:vimfiler_as_default_explorer = 1
     let g:vimfiler_safe_mode_by_default = 0
     let g:vimfiler_split_command = 'aboveleft split'
@@ -3328,19 +3549,15 @@ if s:has_plugin('vimfiler') " {{{
         Map -remap -buffer -force [n] <Space><Space> <Plug>(vimfiler_toggle_mark_current_line)
     endfunction "}}}
 endif " }}}
-if s:has_plugin('prettyprint') " {{{
+if s:plugin_enabled('prettyprint') " {{{
     MapAlterCommand pp PP
 
     let g:prettyprint_show_expression = 1
 endif " }}}
-if s:has_plugin('lingr') " {{{
+if s:plugin_enabled('lingr') " {{{
 
     " from thinca's .vimrc {{{
     " http://soralabo.net/s/vrcb/s/thinca
-
-    if !exists('g:lingr')
-        call rtputil#remove('\<lingr-vim\>')
-    endif
 
     if 0
         " Update GNU screen tab name.
@@ -3433,16 +3650,16 @@ if s:has_plugin('lingr') " {{{
     let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
     let g:lingr_vim_count_unread_at_current_room = 1
 endif " }}}
-if s:has_plugin('chalice') " {{{
+if s:plugin_enabled('chalice') " {{{
     if !exists('g:chalice')
         call rtputil#remove('\<chalice\>')
     endif
 endif " }}}
-if s:has_plugin('github') " {{{
+if s:plugin_enabled('github') " {{{
     MapAlterCommand gh Github
     MapAlterCommand ghi Github issues
 endif " }}}
-if s:has_plugin('neocomplcache') "{{{
+if s:plugin_enabled('neocomplcache') "{{{
     let g:neocomplcache_enable_at_startup = 1
     let g:neocomplcache_disable_caching_file_path_pattern = '.*'
     let g:neocomplcache_enable_ignore_case = 1
@@ -3452,24 +3669,24 @@ if s:has_plugin('neocomplcache') "{{{
 
     Map [n] <Leader>neo :<C-u>NeoComplCacheToggle<CR>
 endif "}}}
-if s:has_plugin('EasyGrep') " {{{
+if s:plugin_enabled('EasyGrep') " {{{
     let g:EasyGrepCommand = 2
     let g:EasyGrepInvertWholeWord = 1
 endif " }}}
-if s:has_plugin('gist-vim') "{{{
+if s:plugin_enabled('gist-vim') "{{{
     let g:gist_detect_filetype = 1
     let g:gist_open_browser_after_post = 1
     let g:gist_browser_command = ":OpenBrowser %URL%"
     let g:gist_update_on_write = 2
 endif "}}}
-if s:has_plugin('ohmygrep') " {{{
+if s:plugin_enabled('ohmygrep') " {{{
     MapAlterCommand gr[ep] OMGrep
     MapAlterCommand re[place] OMReplace
 
     Map -remap [n] <Space>gw <Plug>(omg-grep-cword)
     Map -remap [n] <Space>gW <Plug>(omg-grep-cWORD)
 endif " }}}
-if s:has_plugin('detect-coding-style') " {{{
+if s:plugin_enabled('detect-coding-style') " {{{
 
     MyAutocmd User dcs-initialized-styles call s:dcs_register_own_styles()
     function! s:dcs_register_own_styles()
@@ -3480,7 +3697,7 @@ if s:has_plugin('detect-coding-style') " {{{
     endfunction
 
 endif " }}}
-if s:has_plugin('autocmd-tabclose') " {{{
+if s:plugin_enabled('autocmd-tabclose') " {{{
     " :tabprevious on vimrc-tabclose
     function! s:tabclose_post()
         if tabpagenr() != 1
@@ -3490,10 +3707,10 @@ if s:has_plugin('autocmd-tabclose') " {{{
     endfunction
     MyAutocmd User tabclose-post call s:tabclose_post()
 endif " }}}
-if s:has_plugin('simpletap') " {{{
+if s:plugin_enabled('simpletap') " {{{
     let g:simpletap#open_command = 'botright vnew'
 endif " }}}
-if s:has_plugin('GraVit') " {{{
+if s:plugin_enabled('GraVit') " {{{
 
     " XXX: 2012-09-17 19:48: syntax/vim.vim wrong highlight...
     " Map -remap [nxo] g/ <Plug>gravit->forward
@@ -3502,7 +3719,7 @@ if s:has_plugin('GraVit') " {{{
     " highlight GraVitCurrentMatch term=underline cterm=underline gui=underline ctermfg=4 guifg=Purple
 
 endif " }}}
-if s:has_plugin('hatena.vim') " {{{
+if s:plugin_enabled('hatena.vim') " {{{
     let g:hatena_no_default_keymappings = 1
     let g:hatena_user = 'tyru'
     let g:hatena_entry_file = '~/Dropbox/memo/blogentry.txt'
@@ -3510,7 +3727,7 @@ if s:has_plugin('hatena.vim') " {{{
     let g:hatena_upload_on_write = 0
     let g:hatena_upload_on_write_bang = 1
 endif " }}}
-if s:has_plugin('fileutils') " {{{
+if s:plugin_enabled('fileutils') " {{{
     call fileutils#load('noprefix')
 
     MapAlterCommand rm Delete
@@ -3523,7 +3740,7 @@ if s:has_plugin('fileutils') " {{{
 
     MapAlterCommand mkc[d] Mkcd
 endif "}}}
-if s:has_plugin('watchdogs') " {{{
+if s:plugin_enabled('watchdogs') " {{{
     if has('vim_starting')
         call watchdogs#setup(g:quickrun_config)
     endif
@@ -3538,7 +3755,7 @@ if s:has_plugin('watchdogs') " {{{
     \   | let g:watchdogs_check_CursorHold_enable   = 0
     \   | echo 'disabled watchdogs auto-commands.'
 endif "}}}
-if s:has_plugin('vim-hier') " {{{
+if s:plugin_enabled('vim-hier') " {{{
     function! s:quickfix_is_target()
         " let buftype = getbufvar(expand('<abuf>'), '&buftype')
         let winnr = bufwinnr(expand('<abuf>'))
@@ -3591,7 +3808,7 @@ if s:has_plugin('vim-hier') " {{{
     endfor
     unlet s:tmp
 endif "}}}
-if s:has_plugin('accelerated-jk') " {{{
+if s:plugin_enabled('accelerated-jk') " {{{
     Map -remap [n] j <Plug>(accelerated_jk_gj)
     Map -remap [n] k <Plug>(accelerated_jk_gk)
     let g:accelerated_jk_deceleration_table = [
@@ -3605,17 +3822,17 @@ if s:has_plugin('accelerated-jk') " {{{
     \   [1000, 9999],
     \]
 endif "}}}
-if s:has_plugin('capture') "{{{
+if s:plugin_enabled('capture') "{{{
     MapAlterCommand c[apture] Capture
 endif "}}}
-if s:has_plugin('instant-markdown-vim') "{{{
+if s:plugin_enabled('instant-markdown-vim') "{{{
     " MyAutocmd FileType hatena let b:instant_markdown_path = '/html?type=hatena'
     " MyAutocmd FileType hatena InstantMarkdownStart
 endif "}}}
-if s:has_plugin('concealedyank.vim') && has('conceal') "{{{
+if s:plugin_enabled('concealedyank.vim') && has('conceal') "{{{
     Map -remap [x] <operator>cy <Plug>(operator-concealedyank)
 endif "}}}
-if s:has_plugin('syntax/vim.vim') "{{{
+if s:plugin_enabled('syntax/vim.vim') "{{{
     " augroup: a
     " function: f
     " lua: l
@@ -3626,17 +3843,17 @@ if s:has_plugin('syntax/vim.vim') "{{{
     " mzscheme: m
     let g:vimsyn_folding = 'af'
 endif "}}}
-if s:has_plugin('indent-guides') "{{{
+if s:plugin_enabled('indent-guides') "{{{
     let g:indent_guides_enable_on_vim_startup = 1
     let g:indent_guides_auto_colors = 0
     MyAutocmd ColorScheme * hi IndentGuidesOdd ctermbg=233
     MyAutocmd ColorScheme * hi IndentGuidesEven ctermbg=235
     let g:indent_guides_color_change_percent = 30
 endif "}}}
-if s:has_plugin('foldCC') "{{{
+if s:plugin_enabled('foldCC') "{{{
     set foldtext=FoldCCtext()
 endif "}}}
-if s:has_plugin('vim-anzu') "{{{
+if s:plugin_enabled('vim-anzu') "{{{
     Map -remap [nx] n <SID>(always-forward-n)<SID>(centering-display)<Plug>(anzu-update-search-status-with-echo)
     Map -remap [nx] N <SID>(always-forward-N)<SID>(centering-display)<Plug>(anzu-update-search-status-with-echo)
     Map -remap [o] n <SID>(always-forward-n)
@@ -3650,7 +3867,7 @@ else
     Map -remap [o] n <SID>(always-forward-n)
     Map -remap [o] N <SID>(always-forward-N)
 endif "}}}
-if s:has_plugin('vim-fakeclip') "{{{
+if s:plugin_enabled('vim-fakeclip') "{{{
     " vim-fakeclip plugin is loaded only on the platform where
     " 1. the X server exists
     " 2. starting Vim of non-GUI version
@@ -3662,7 +3879,7 @@ endif "}}}
 let g:loaded_tyru_event_test = 1
 
 " runtime
-if s:has_plugin('netrw') " {{{
+if s:plugin_enabled('netrw') " {{{
     function! s:filetype_netrw() "{{{
         Map -remap -buffer [n] h -
         Map -remap -buffer [n] l <CR>
@@ -3671,19 +3888,19 @@ if s:has_plugin('netrw') " {{{
 
     MyAutocmd FileType netrw call s:filetype_netrw()
 endif " }}}
-if s:has_plugin('indent/vim.vim') " {{{
+if s:plugin_enabled('indent/vim.vim') " {{{
     let g:vim_indent_cont = 0
 endif " }}}
-if s:has_plugin('changelog') " {{{
+if s:plugin_enabled('changelog') " {{{
     let changelog_username = "tyru"
 endif " }}}
-if s:has_plugin('syntax/sh.vim') " {{{
+if s:plugin_enabled('syntax/sh.vim') " {{{
     let g:is_bash = 1
 endif " }}}
-if s:has_plugin('syntax/scheme.vim') " {{{
+if s:plugin_enabled('syntax/scheme.vim') " {{{
     let g:is_gauche = 1
 endif " }}}
-if s:has_plugin('syntax/perl.vim') " {{{
+if s:plugin_enabled('syntax/perl.vim') " {{{
 
     " POD highlighting
     let g:perl_include_pod = 1
