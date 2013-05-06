@@ -3,6 +3,12 @@
 " See also: ~/.vimrc
 "
 
+" TODO
+" * Use vital functions
+" * Don't use `g:loaded_*` variables.
+"   Use rtputil#remove() not to load plugins.
+
+
 " let $VIMRC_DEBUG = 1
 " let $VIMRC_DISABLE_MYAUTOCMD = 1
 " let $VIMRC_DISABLE_VIMENTER = 1
