@@ -3,9 +3,6 @@
 " See also: ~/.vimrc
 "
 
-" TODO
-" * Use vital functions
-
 
 " let $VIMRC_DEBUG = 1
 " let $VIMRC_DISABLE_MYAUTOCMD = 1
@@ -55,21 +52,6 @@ function! s:plugin_enabled(name)
     return &rtp =~# '\c\<' . nosuffix . '\>'
 endfunction
 
-" e.g.)
-" echo s:fill_version('7.3.629')
-" echo s:fill_version('7.3')
-function! s:fill_version(str)
-    let m = matchlist(a:str, '\v'.'^(\d+)\.(\d{1,2})(\.\d+)?$')
-    if empty(m)
-        throw 'error: s:fill_version(): '
-        \   . 'version string format is invalid: '.a:str
-    endif
-    let ver = printf('%d%02d', m[1], m[2])
-    let patch = m[3] ==# '' ? '1' : m[3][1:]
-    return v:version ># ver
-    \   || (v:version is ver && has('patch'.patch))
-endfunction
-
 function! s:echomsg(hl, msg) "{{{
     execute 'echohl' a:hl
     try
@@ -89,70 +71,8 @@ function! s:splitmapjoin(str, pattern, expr, sep)
     return join(map(split(a:str, a:pattern, 1), a:expr), a:sep)
 endfunction
 function! s:map_lines(str, expr)
-    " return s:splitmapjoin(value, '\n', expr, "\n")
-    return join(map(split(a:str, '\n', 1), a:expr), "\n")
+    return s:splitmapjoin(a:str, '\n', a:expr, "\n")
 endfunction
-
-" Like builtin getchar() but returns string always.
-" and do inputsave()/inputrestore() before/after getchar().
-function! s:getchar_safe(...)
-    let c = s:input_helper('getchar', a:000)
-    return type(c) == type("") ? c : nr2char(c)
-endfunction
-" Like builtin getchar() but
-" do inputsave()/inputrestore() before/after input().
-function! s:input_safe(...)
-    return s:input_helper('input', a:000)
-endfunction
-" Do inputsave()/inputrestore() before/after calling a:funcname.
-function! s:input_helper(funcname, args)
-    let success = 0
-    if inputsave() !=# success
-        throw 'inputsave() failed'
-    endif
-    try
-        return call(a:funcname, a:args)
-    finally
-        if inputrestore() !=# success
-            throw 'inputrestore() failed'
-        endif
-    endtry
-endfunction
-
-" s:rmdir() implementation {{{
-" TODO: import to vital.vim
-
-if exists("*rmdir")
-    function! s:rmdir(path)
-        return call('rmdir', [a:path] + a:000)
-    endfunction
-
-elseif has("unix")
-    function! s:rmdir(path)
-        let ret = system('/bin/rmdir ' . shellescape(a:path) . ' 2>&1')
-        if v:shell_error
-            throw substitute(iconv(ret, 'char', &encoding), '\n', '', 'g')
-        endif
-    endfunction
-
-elseif has("win32") || has("win95") || has("win64") || has("win16")
-    function! s:rmdir(path)
-        if &shell =~? "sh$"
-            let ret = system('/bin/rmdir ' . shellescape(a:path) . ' 2>&1')
-        endif
-        if v:shell_error
-            throw substitute(iconv(ret, 'char', &encoding), '\n', '', 'g')
-        endif
-    endfunction
-
-else
-    function! s:rmdir(path)
-        throw 'vital: System.File.rmdir(): your platform is not supported'
-    endfunction
-
-endif
-
-" }}}
 
 " }}}
 " Commands {{{
@@ -475,9 +395,10 @@ call s:plugins.apply()
 
 " Load vimrc vital.
 let s:Vital = vital#of('vimrc')
-call s:Vital.load('Data.List')
-call s:Vital.load('System.Filepath')
-call s:Vital.load('System.File')
+let s:List = s:Vital.import('Data.List')
+let s:Filepath = s:Vital.import('System.Filepath')
+let s:File = s:Vital.import('System.File')
+let s:Compat = s:Vital.import('Vim.Compat')
 
 
 " Generate helptags.
@@ -523,8 +444,8 @@ set preserveindent
 
 " Follow 'tabstop' value.
 set tabstop=4
-let &shiftwidth = s:fill_version('7.3.629') ? 0 : &ts
-let &softtabstop = s:fill_version('7.3.693') ? -1 : &ts
+let &shiftwidth = s:Compat.has_version('7.3.629') ? 0 : &ts
+let &softtabstop = s:Compat.has_version('7.3.693') ? -1 : &ts
 
 " search
 set hlsearch
@@ -614,7 +535,7 @@ if 0
     MyAutocmd VimLeave * call s:cleanup_swap_files()
     function! s:cleanup_swap_files()
         try
-            call s:rmdir(&directory)
+            call s:File.rmdir(&directory)
         catch
             " TODO
             " * Move remaining swap files to swap dir for recovery.
@@ -846,7 +767,7 @@ set fillchars=stl:\ ,stlnc::,vert:\ ,fold:-,diff:-
 set whichwrap=b,s
 set backspace=indent,eol,start
 set formatoptions=mMcroqnl2
-if s:fill_version('7.3.541')
+if s:Compat.has_version('7.3.541')
     set formatoptions+=j
 endif
 
@@ -1262,10 +1183,15 @@ Map [n] <excmd>th :<C-u>tabedit<CR>:execute 'tabmove' (tabpagenr() isnot 1 ? tab
 
 Map [n] <C-s> :<C-u>browse saveas<CR>
 
-Map -expr -silent [n] f '/\V'.<SID>getchar_safe()."\<CR>:nohlsearch\<CR>"
-Map -expr -silent [n] F '?\V'.<SID>getchar_safe()."\<CR>:nohlsearch\<CR>"
-Map -expr -silent [n] t '/.\ze\V'.<SID>getchar_safe()."\<CR>:nohlsearch\<CR>"
-Map -expr -silent [n] T '?\V'.<SID>getchar_safe().'\v\zs.'."\<CR>:nohlsearch\<CR>"
+Map -expr -silent [n] f <SID>search_char('/\V%s'."\<CR>:nohlsearch\<CR>")
+Map -expr -silent [n] F <SID>search_char('?\V%s'."\<CR>:nohlsearch\<CR>")
+Map -expr -silent [n] t <SID>search_char('/.\ze\V%s'."\<CR>:nohlsearch\<CR>")
+Map -expr -silent [n] T <SID>search_char('?\V%s\v\zs.'."\<CR>:nohlsearch\<CR>")
+
+function! s:search_char(cmdfmt)
+    let char = s:Vital.getchar_safe()
+    return char ==# "\<Esc>" ? '' : printf(a:cmdfmt, char)
+endfunction
 
 
 " Map [n] <C-h> b
@@ -1307,16 +1233,15 @@ function! s:cmd_lookup_cd(args) "{{{
     endif
 endfunction "}}}
 function! s:is_root_project_dir(dir) "{{{
-    let FP = s:Vital.System.Filepath
     " .git may be a file when its repository is a submodule.
-    return isdirectory(FP.join(a:dir, '.git'))
-    \   || filereadable(FP.join(a:dir, '.git'))
-    \   || isdirectory(FP.join(a:dir, '.hg'))
+    return isdirectory(s:Filepath.join(a:dir, '.git'))
+    \   || filereadable(s:Filepath.join(a:dir, '.git'))
+    \   || isdirectory(s:Filepath.join(a:dir, '.hg'))
 endfunction "}}}
 function! s:lookup_repo(dir) "{{{
     " Assert isdirectory(a:dir)
 
-    let parent = s:Vital.System.Filepath.dirname(a:dir)
+    let parent = s:Filepath.dirname(a:dir)
     if a:dir ==# parent    " root
         call s:warn('Not found project directory.')
         return ''
@@ -2030,7 +1955,7 @@ function! s:quickfix_exists_window()
     return !!s:quickfix_get_winnr()
 endfunction
 function! s:quickfix_supported_quickfix_title()
-    return s:fill_version('7.3')
+    return s:Compat.has_version('7.3')
 endfunction
 function! s:quickfix_get_search_word()
     " NOTE: This function returns a string starting with "/"
@@ -2092,7 +2017,7 @@ let s:enc = 'utf-8'
 let &enc = s:enc
 let &fenc = s:enc
 let &termencoding = s:enc
-let &fileencodings = join(s:Vital.Data.List.uniq(
+let &fileencodings = join(s:List.uniq(
 \   [s:enc]
 \   + split(&fileencodings, ',')
 \   + ['iso-2022-jp', 'iso-2022-jp-3', 'cp932']
@@ -2128,7 +2053,7 @@ function! s:set_dict() "{{{
         endfor
     endfor
 
-    let &l:dictionary = join(s:Vital.Data.List.uniq(dicts), ',')
+    let &l:dictionary = join(s:List.uniq(dicts), ',')
 endfunction "}}}
 function! s:is_current_filetype(filetypes)
     if type(a:filetypes) isnot type([])
@@ -3666,8 +3591,8 @@ if s:plugin_enabled('detect-coding-style') " {{{
 
     MyAutocmd User dcs-initialized-styles call s:dcs_register_own_styles()
     function! s:dcs_register_own_styles()
-        " let shiftwidth = 'shiftwidth='.(s:fill_version('7.3.629') ? 0 : &sw)
-        " let softtabstop = 'softtabstop='.(s:fill_version('7.3.693') ? -1 : &sts)
+        " let shiftwidth = 'shiftwidth='.(s:Compat.has_version('7.3.629') ? 0 : &sw)
+        " let softtabstop = 'softtabstop='.(s:Compat.has_version('7.3.693') ? -1 : &sts)
         call dcs#register_style('My style', {'hook_excmd': 'setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4'})
         call dcs#register_style('Short indent', {'hook_excmd': 'setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2'})
     endfunction
