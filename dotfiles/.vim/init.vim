@@ -2043,7 +2043,14 @@ command!
 \   Has
 \   echo has(<q-args>)
 " }}}
-" :GlobPath {{{
+" :Glob, :GlobPath {{{
+command!
+\   -bar -nargs=+ -complete=file
+\   Glob
+\   echo glob(<q-args>, 1)
+
+MapAlterCommand gl[ob] Glob
+
 command!
 \   -bar -nargs=+ -complete=file
 \   GlobPath
