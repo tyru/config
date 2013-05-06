@@ -76,6 +76,9 @@ endfunction "}}}
 function! s:warn(msg) "{{{
     call s:echomsg('WarningMsg', a:msg)
 endfunction "}}}
+function! s:error(msg) "{{{
+    call s:echomsg('ErrorMsg', a:msg)
+endfunction "}}}
 
 function! s:splitmapjoin(str, pattern, expr, sep)
     return join(map(split(a:str, a:pattern, 1), a:expr), a:sep)
@@ -2083,6 +2086,7 @@ command!
 
 function! s:cmd_ctags(q_args) "{{{
     if !executable('ctags')
+        call s:error("Ctags: No 'ctags' command in PATH")
         return
     endif
     execute '!ctags' (filereadable('.ctags') ? '' : '-R') a:q_args
