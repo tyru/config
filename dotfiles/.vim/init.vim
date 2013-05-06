@@ -5,8 +5,6 @@
 
 " TODO
 " * Use vital functions
-" * Don't use `g:loaded_*` variables.
-"   Use rtputil#remove() not to load plugins.
 
 
 " let $VIMRC_DEBUG = 1
@@ -253,8 +251,6 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/emap.vim
 
-    LoadPlugin $MYVIMDIR/bundle/eskk.vim
-
     LoadPlugin $MYVIMDIR/bundle/fileutils.vim
 
     LoadPlugin $MYVIMDIR/bundle/foldCC
@@ -320,7 +316,11 @@ if !exists('$VIMRC_DEBUG')
         LoadPlugin $MYVIMDIR/bundle/simpletap.vim
     endif
 
-    LoadPlugin $MYVIMDIR/bundle/skk.vim
+    if 1
+        LoadPlugin $MYVIMDIR/bundle/eskk.vim
+    else
+        LoadPlugin $MYVIMDIR/bundle/skk.vim
+    endif
 
     LoadPlugin $MYVIMDIR/bundle/skkdict.vim
 
@@ -440,11 +440,15 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/vimtemplate.vim
 
-    " LoadPlugin $MYVIMDIR/bundle/vital.vim
+    LoadPlugin $MYVIMDIR/bundle/vital.vim
 
     LoadPlugin $MYVIMDIR/bundle/webapi-vim
 
     " LoadPlugin $MYVIMDIR/bundle/winmove.vim
+
+    if exists('g:chalice')
+        LoadPlugin $MYVIMDIR/bundle/chalice
+    endif
 
 else
     " TODO: Reduce dependency plugins.
@@ -2560,66 +2564,61 @@ if s:plugin_enabled('nextfile') " {{{
 endif " }}}
 if s:plugin_enabled('starter') " {{{
 
-    " TODO
-    let g:loaded_starter = 1
+    let g:starter_no_default_command = 1
+    nnoremap <silent> gt :<C-u>call starter#launch()<CR>
 
-    " let g:starter_no_default_command = 1
-    " nnoremap <silent> gt :<C-u>call starter#launch()<CR>
+    function! StarterAfterHookFile(path) "{{{
+        if !filereadable(a:path)
+            return
+        endif
 
-    " function! StarterAfterHookFile(path) "{{{
-    "     if !filereadable(a:path)
-    "         return
-    "     endif
+        " Open the file.
+        execute 'edit' a:path
 
-    "     " Open the file.
-    "     execute 'edit' a:path
+        " Set filetype.
+        let filetype = fnamemodify(a:path, ':e')
+        if filetype != ''
+        \   && globpath(&rtp, 'ftplugin/' . filetype . '.vim') != ''
+            execute 'setfiletype' filetype
+        endif
+    endfunction "}}}
+    function! s:system_list(args_list) "{{{
+        return system(join(
+        \   map(copy(a:args_list), 'shellescape(v:val)')))
+    endfunction "}}}
+    function! StarterAfterHookDir(path) "{{{
+        if !isdirectory(a:path)
+            return
+        endif
 
-    "     " Set filetype.
-    "     let filetype = fnamemodify(a:path, ':e')
-    "     if filetype != ''
-    "     \   && globpath(&rtp, 'ftplugin/' . filetype . '.vim') != ''
-    "         execute 'setfiletype' filetype
-    "     endif
-    " endfunction "}}}
-    " function! s:system_list(args_list) "{{{
-    "     return system(join(
-    "     \   map(copy(a:args_list), 'shellescape(v:val)')))
-    " endfunction "}}}
-    " function! StarterAfterHookDir(path) "{{{
-    "     if !isdirectory(a:path)
-    "         return
-    "     endif
-
-    "     if filereadable(a:path . '/setup')
-    "         call s:system_list(a:path . '/setup', [a:path])
-    "         call delete(a:path . '/setup')
-    "     endif
-    "     if filereadable(a:path . '/setup.sh')
-    "         call s:system_list('/bin/sh', [a:path . '/setup.sh', a:path])
-    "         call delete(a:path . '/setup.sh')
-    "     endif
-    "     if filereadable(a:path . '/setup.pl')
-    "         call s:system_list('perl', [a:path . '/setup.pl', a:path])
-    "         call delete(a:path . '/setup.pl')
-    "     endif
-    "     if filereadable(a:path . '/setup.py')
-    "         call s:system_list('python', [a:path . '/setup.py', a:path])
-    "         call delete(a:path . '/setup.py')
-    "     endif
-    "     if filereadable(a:path . '/setup.rb')
-    "         call s:system_list('ruby', [a:path . '/setup.rb', a:path])
-    "         call delete(a:path . '/setup.rb')
-    "     endif
-    " endfunction "}}}
-    " let g:starter#after_hook = [
-    " \   'StarterAfterHookFile',
-    " \   'StarterAfterHookDir',
-    " \]
+        if filereadable(a:path . '/setup')
+            call s:system_list(a:path . '/setup', [a:path])
+            call delete(a:path . '/setup')
+        endif
+        if filereadable(a:path . '/setup.sh')
+            call s:system_list('/bin/sh', [a:path . '/setup.sh', a:path])
+            call delete(a:path . '/setup.sh')
+        endif
+        if filereadable(a:path . '/setup.pl')
+            call s:system_list('perl', [a:path . '/setup.pl', a:path])
+            call delete(a:path . '/setup.pl')
+        endif
+        if filereadable(a:path . '/setup.py')
+            call s:system_list('python', [a:path . '/setup.py', a:path])
+            call delete(a:path . '/setup.py')
+        endif
+        if filereadable(a:path . '/setup.rb')
+            call s:system_list('ruby', [a:path . '/setup.rb', a:path])
+            call delete(a:path . '/setup.rb')
+        endif
+    endfunction "}}}
+    let g:starter#after_hook = [
+    \   'StarterAfterHookFile',
+    \   'StarterAfterHookDir',
+    \]
 
 endif " }}}
 if s:plugin_enabled('vimtemplate') " {{{
-    " TODO: starter.vim
-    " let g:loaded_vimtemplate = 1
 
     let g:vt_author = "tyru"
     let g:vt_email = "tyru.exe@gmail.com"
@@ -2692,12 +2691,7 @@ if s:plugin_enabled('prompt') " {{{
 endif " }}}
 if s:plugin_enabled('skk') || s:plugin_enabled('eskk') " {{{
 
-    " Switch SKK plugin.
-    let [s:skk_plugin_skk, s:skk_plugin_eskk] = ['skk.vim', 'eskk']
-    let s:skk_plugin = s:skk_plugin_eskk
-
     " skkdict
-    call rtputil#append($MYVIMDIR.'/bundle/skkdict.vim')
     let s:skk_user_dict = '~/.skkdict/user-dict'
     let s:skk_user_dict_encoding = 'utf-8'
     let s:skk_system_dict = '~/.skkdict/system-dict'
@@ -2713,11 +2707,7 @@ if s:plugin_enabled('skk') || s:plugin_enabled('eskk') " {{{
     " endif
 
 endif " }}}
-if s:plugin_enabled('skk') && s:skk_plugin is s:skk_plugin_skk " {{{
-    let s:skk_plugin_loaded = 1
-
-    " disable eskk
-    call rtputil#remove('\<eskk.vim\>')
+if s:plugin_enabled('skk') " {{{
 
     " skkdict
     let skk_jisyo = s:skk_user_dict
@@ -2764,11 +2754,7 @@ if s:plugin_enabled('skk') && s:skk_plugin is s:skk_plugin_skk " {{{
     endif
 
 endif " }}}
-if s:plugin_enabled('eskk') && s:skk_plugin is s:skk_plugin_eskk " {{{
-    let s:skk_plugin_loaded = 1
-
-    " disable skk.vim
-    call rtputil#remove('\<skk.vim\>')
+if s:plugin_enabled('eskk') " {{{
 
     " skkdict
     if !exists('g:eskk#dictionary')
@@ -2911,11 +2897,6 @@ if s:plugin_enabled('eskk') && s:skk_plugin is s:skk_plugin_eskk " {{{
 
     endif
 endif " }}}
-" SKK plugin finalization "{{{
-if !exists('s:skk_plugin_loaded')
-    call s:warn("warning: Could not load '".s:skk_plugin."'.")
-endif
-" }}}
 if s:plugin_enabled('restart') " {{{
     command!
     \   -bar
@@ -3649,11 +3630,6 @@ if s:plugin_enabled('lingr') " {{{
     \]
     let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
     let g:lingr_vim_count_unread_at_current_room = 1
-endif " }}}
-if s:plugin_enabled('chalice') " {{{
-    if !exists('g:chalice')
-        call rtputil#remove('\<chalice\>')
-    endif
 endif " }}}
 if s:plugin_enabled('github') " {{{
     MapAlterCommand gh Github
