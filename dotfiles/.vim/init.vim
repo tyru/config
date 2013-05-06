@@ -3493,18 +3493,6 @@ endif " }}}
 if s:has_plugin('simpletap') " {{{
     let g:simpletap#open_command = 'botright vnew'
 endif " }}}
-if s:has_plugin('ftplugin/vim_fold.vim') " {{{
-    augroup foldmethod-expr
-        autocmd!
-        autocmd InsertEnter * if &l:foldmethod ==# 'expr'
-        \                   |   let b:foldinfo = [&l:foldmethod, &l:foldexpr]
-        \                   |   setlocal foldmethod=manual foldexpr=0
-        \                   | endif
-        autocmd InsertLeave * if exists('b:foldmethod')
-        \                   |   let [&l:foldmethod, &l:foldexpr] = b:foldinfo
-        \                   | endif
-    augroup END
-endif " }}}
 if s:has_plugin('GraVit') " {{{
 
     " XXX: 2012-09-17 19:48: syntax/vim.vim wrong highlight...
