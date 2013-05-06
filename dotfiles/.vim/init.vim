@@ -1643,24 +1643,23 @@ MapAlterCommand qw     wq
 MapAlterCommand amp    map
 " }}}
 
+
+Map [nx] <SID>(centering-display) zvzz
+
 " Mappings with option value. {{{
-function! s:expr_with_options(cmd, opt) "{{{
-    for [name, value] in items(a:opt)
-        call setbufvar('%', name, value)
-    endfor
-    return a:cmd
-endfunction "}}}
 
-Map -expr [n] / <SID>expr_with_options('/', {'&ignorecase': 1, '&hlsearch': 1})
-Map -expr [n] ? <SID>expr_with_options('?', {'&ignorecase': 1, '&hlsearch': 1})
+Map -script [n] / :<C-u>setlocal ignorecase hlsearch<CR>/
+Map -script [n] ? :<C-u>setlocal ignorecase hlsearch<CR>?
 
-Map -expr [n] * <SID>expr_with_options('*', {'&ignorecase': 0, '&hlsearch': 1})
-Map -expr [n] # <SID>expr_with_options('#', {'&ignorecase': 0, '&hlsearch': 1})
+Map -script [n] * :<C-u>setlocal noignorecase hlsearch<CR>*<SID>(centering-display)
+Map -script [n] # :<C-u>setlocal noignorecase hlsearch<CR>#<SID>(centering-display)
 
-Map -expr [nx] : <SID>expr_with_options(':', {'&ignorecase': 1})
+Map -script [n] : :<C-u>setlocal hlsearch<CR>:
+Map -script [x] : :<C-u>setlocal hlsearch<CR>gv:
 
-Map -expr [n] gd <SID>expr_with_options('gd', {'&hlsearch': 1})
-Map -expr [n] gD <SID>expr_with_options('gD', {'&hlsearch': 1})
+Map -script [n] gd :<C-u>setlocal hlsearch<CR>gd<SID>(centering-display)
+Map -script [n] gD :<C-u>setlocal hlsearch<CR>gD<SID>(centering-display)
+
 " }}}
 " Emacs like kill-line. {{{
 Map -expr [i] <C-k> "\<C-g>u".(col('.') == col('$') ? '<C-o>gJ' : '<C-o>D')
