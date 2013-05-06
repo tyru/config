@@ -1669,10 +1669,10 @@ Map [c] <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 " 'zv' is harmful for Operator-pending mode and it should not be included.
 " For example, 'cn' is expanded into 'cnzv' so 'zv' will be inserted.
 
-Map -expr [nx] <SID>(always_forward_n) (<SID>search_forward_p() ? 'n' : 'Nzv').'zvzz'
-Map -expr [nx] <SID>(always_forward_N) (<SID>search_forward_p() ? 'N' : 'n').'zvzz'
-Map -expr [o]  <SID>(always_forward_n) <SID>search_forward_p() ? 'n' : 'N'
-Map -expr [o]  <SID>(always_forward_N) <SID>search_forward_p() ? 'N' : 'n'
+Map -expr [nx] <SID>(always-forward-n) (<SID>search_forward_p() ? 'n' : 'N')
+Map -expr [nx] <SID>(always-forward-N) (<SID>search_forward_p() ? 'N' : 'n')
+Map -expr [o]  <SID>(always-forward-n) <SID>search_forward_p() ? 'n' : 'N'
+Map -expr [o]  <SID>(always-forward-N) <SID>search_forward_p() ? 'N' : 'n'
 
 function! s:search_forward_p()
     return exists('v:searchforward') ? v:searchforward : 1
@@ -3619,14 +3619,18 @@ if s:has_plugin('foldCC') "{{{
     set foldtext=FoldCCtext()
 endif "}}}
 if s:has_plugin('vim-anzu') "{{{
-    Map -remap [nxo] n <SID>(always_forward_n)<Plug>(anzu-update-search-status-with-echo)
-    Map -remap [nxo] N <SID>(always_forward_N)<Plug>(anzu-update-search-status-with-echo)
+    Map -remap [nx] n <SID>(always-forward-n)<SID>(centering-display)<Plug>(anzu-update-search-status-with-echo)
+    Map -remap [nx] N <SID>(always-forward-N)<SID>(centering-display)<Plug>(anzu-update-search-status-with-echo)
+    Map -remap [o] n <SID>(always-forward-n)
+    Map -remap [o] N <SID>(always-forward-N)
 else
-    " FIXME: <SID>(always_forward_n) is not related to vim-anzu plugin.
+    " FIXME: <SID>(always-forward-n) is not related to vim-anzu plugin.
     "
     " Mapping -> plugin specific mapping, misc. hacks
-    Map -remap [nxo] n <SID>(always_forward_n)
-    Map -remap [nxo] N <SID>(always_forward_N)
+    Map -remap [nx] n <SID>(always-forward-n)<SID>(centering-display)
+    Map -remap [nx] N <SID>(always-forward-N)<SID>(centering-display)
+    Map -remap [o] n <SID>(always-forward-n)
+    Map -remap [o] N <SID>(always-forward-N)
 endif "}}}
 if s:has_plugin('vim-fakeclip') "{{{
     " vim-fakeclip plugin is loaded only on the platform where
