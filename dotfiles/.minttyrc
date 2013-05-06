@@ -1,0 +1,5 @@
+BoldAsFont=no
+FontHeight=12
+Font=MeiryoKe_Gothic
+Term=xterm-256color
+CursorType=block

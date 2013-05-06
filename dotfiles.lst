@@ -1,6 +1,5 @@
 .vim
 .vimrc
-.gvimrc
 .vimperator
 .vimperatorrc
 .bash_profile
@@ -33,3 +32,4 @@
 .fluxbox/menu
 .fluxbox/slitlist
 .fluxbox/startup
+.minttyrc
