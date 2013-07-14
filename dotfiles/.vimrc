@@ -1,5 +1,6 @@
+scriptencoding utf-8
 
-" bootstrap for ~/.vim/init.vim
+" bootstrap for ~/.vim/init.vim or ~/vimfiles/init.vim
 
 let s:is_win = has('win16') || has('win32') || has('win64') || has('win95')
 if s:is_win
@@ -7,8 +8,58 @@ if s:is_win
 else
     let $MYVIMDIR = expand('~/.vim')
 endif
-let s:vimrc = $MYVIMDIR . '/init.vim'
 
+function! s:echomsg(msg, hl)
+    execute 'echohl' a:hl
+    try
+        redraw
+        echomsg a:msg
+    finally
+        echohl None
+    endtry
+endfunction
+function! s:do_lazy_load(vimrc)
+    " colorscheme is 'default' here.
+    call s:echomsg('Loading ' . a:vimrc . ' ...', 'StatusLine')
+    let g:vim_starting = 1
+    let has_error = 0
+    try
+        call s:load_init_vim(a:vimrc)
+    catch
+        let has_error = 1
+    finally
+        unlet! g:vim_starting
+    "     call s:echomsg('Loading ' . a:vimrc . ' ... done'
+    "     \       . (has_error ? '(with errors)' : '') . '!',
+    "     \   'SpellBad')
+    endtry
+
+    " for 'set fenc=...' in init.vim
+    let &modified = 0
+
+    " Load additional plugins (according to |load-plugins|),
+    " it is not processed by Vim
+    " because we are not in |startup| phase.
+    " FIXME: Load only additional plugins (excluding already loaded scripts)
+    runtime! plugin/**/*.vim
+
+    " for 'autocmd VimEnter ...' in init.vim and/or plugins.
+    doautocmd VimEnter
+
+    if has_error
+        call StartDebugMode(a:vimrc)
+    endif
+endfunction
+function! s:do_load(vimrc)
+    let g:vim_starting = has('vim_starting')
+    try
+        call s:load_init_vim(a:vimrc)
+    catch
+        call StartDebugMode(a:vimrc)
+    finally
+        unlet! g:vim_starting
+    endtry
+endfunction
 function! s:load_init_vim(vimrc)
     " Use plain vim
     " when vim was invoked by 'sudo' command.
@@ -49,8 +100,7 @@ function! StartDebugMode(vimrc)
         \}])
 
         " Open .vimrc
-        let open = argc() is 0 ? 'edit' : 'tabedit'
-        silent execute open a:vimrc
+        silent execute 'tabedit' a:vimrc
 
         " Go to error line.
         execute ':' . lnum
@@ -59,11 +109,12 @@ function! StartDebugMode(vimrc)
     endif
 endfunction
 
-try
-    call s:load_init_vim(s:vimrc)
-
-    " init.vim was loaded with no errors.
-    let $MYVIMRC = s:vimrc
-catch
-    call StartDebugMode(s:vimrc)
-endtry
+let s:vimrc = $MYVIMDIR . '/init.vim'
+if 0
+    augroup vimrc-bootstrap
+        autocmd VimEnter * autocmd! vimrc-bootstrap
+        autocmd VimEnter * call s:do_lazy_load(s:vimrc)
+    augroup END
+else
+    call s:do_load(s:vimrc)
+endif
