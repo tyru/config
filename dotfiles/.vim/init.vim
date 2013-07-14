@@ -1,6 +1,7 @@
+scriptencoding utf-8
 " vim:set fen fdm=marker:
 "
-" See also: ~/.vimrc
+" See also: ~/.vimrc or ~/_vimrc
 "
 
 
@@ -9,22 +10,10 @@
 " let $VIMRC_DISABLE_VIMENTER = 1
 
 
-" Basic {{{
-scriptencoding utf-8
-
-syntax enable
-filetype plugin indent on
-
-language messages C
-language time C
-
-if filereadable(expand('~/.vimrc.local'))
-    execute 'source' expand('~/.vimrc.local')
-endif
-
+" Utilities {{{
+" Constants {{{
 let s:is_win = has('win16') || has('win32') || has('win64') || has('win95')
 " }}}
-" Utilities {{{
 " Function {{{
 
 function! s:SID() "{{{
@@ -110,7 +99,7 @@ function! s:cmd_lazy(q_args) "{{{
     if a:q_args == ''
         return
     endif
-    if has('vim_starting')
+    if exists('g:vim_starting')
         execute 'MyAutocmd VimEnter *'
         \       join([
         \           'try',
@@ -136,6 +125,7 @@ command!
 " }}}
 " Initializing {{{
 
+filetype off
 let s:plugins = rtputil#new()
 call s:plugins.reset()
 
@@ -310,8 +300,6 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/vim-repeat
 
-    LoadPlugin $MYVIMDIR/bundle/vim-singleton
-
     LoadPlugin $MYVIMDIR/bundle/vim-submode
 
     LoadPlugin $MYVIMDIR/bundle/vim-surround
@@ -370,6 +358,8 @@ if !exists('$VIMRC_DEBUG')
         LoadPlugin $MYVIMDIR/bundle/chalice
     endif
 
+    LoadPlugin $MYVIMDIR/bundle/vim-golang
+
 else
     " TODO: Reduce dependency plugins.
 
@@ -391,6 +381,8 @@ endif
 
 " Change 'runtimepath'.
 call s:plugins.apply()
+filetype plugin indent on
+syntax enable
 
 
 " Load vimrc vital.
@@ -420,6 +412,16 @@ command!
 \   -bar -nargs=+
 \   MapAlterCommand
 \   CAlterCommand <args> | AlterCommand <cmdwin> <args>
+
+" }}}
+" Basic {{{
+
+language messages C
+language time C
+
+if filereadable(expand('~/.vimrc.local'))
+    execute 'source' expand('~/.vimrc.local')
+endif
 
 " }}}
 " Options {{{
@@ -710,7 +712,7 @@ function! s:get_cchar()
     endtry
 endfunction
 
-if has('vim_starting')
+if exists('g:vim_starting')
     " Must be set in .vimrc
     set guioptions+=p
     " These flags are set on FocusGained
@@ -1181,7 +1183,14 @@ Map [n] gm :<C-u>make<CR>
 Map [n] <excmd>tl :<C-u>tabedit<CR>
 Map [n] <excmd>th :<C-u>tabedit<CR>:execute 'tabmove' (tabpagenr() isnot 1 ? tabpagenr() - 2 : '')<CR>
 
-Map [n] <C-s> :<C-u>browse saveas<CR>
+Map [n] <C-s> :<C-u>call <SID>gui_save()<CR>
+function! s:gui_save()
+    if bufname('%') ==# ''
+        browse confirm saveas
+    else
+        update
+    endif
+endfunction
 
 Map -expr -silent [n] f <SID>search_char('/\V%s'."\<CR>:nohlsearch\<CR>")
 Map -expr -silent [n] F <SID>search_char('?\V%s'."\<CR>:nohlsearch\<CR>")
@@ -2547,6 +2556,8 @@ if s:plugin_enabled('vimtemplate') " {{{
 
     let g:vt_author = "tyru"
     let g:vt_email = "tyru.exe@gmail.com"
+    let g:vt_email = "tyru.exe@gmail.com"
+    let vt_template_dir_path = $MYVIMDIR.'/template'
     let g:vt_files_metainfo = {
     \   'cppsrc-scratch.cpp': {'filetype': "cpp"},
     \   'cppsrc.cpp'    : {'filetype': "cpp"},
@@ -2711,7 +2722,7 @@ if s:plugin_enabled('eskk') " {{{
         let g:eskk#dictionary_save_count = 5
         let g:eskk#start_completion_length = 1
 
-        if has('vim_starting')
+        if exists('g:vim_starting')
             MyAutocmd User eskk-initialize-pre call s:eskk_initial_pre()
             function! s:eskk_initial_pre() "{{{
                 " User can be allowed to modify
@@ -2833,7 +2844,7 @@ if s:plugin_enabled('restart') " {{{
     MapAlterCommand ers[tart] Restart
     MapAlterCommand rse[tart] Restart
 endif " }}}
-if s:plugin_enabled('openbrowser') " {{{
+if s:plugin_enabled('open-browser') " {{{
     let g:netrw_nogx = 1
     Map -remap [nx] gx <Plug>(openbrowser-smart-search)
     MapAlterCommand o[pen] OpenBrowserSmartSearch
@@ -2853,6 +2864,8 @@ if s:plugin_enabled('openbrowser') " {{{
     " \}
 
     " let g:openbrowser_github_always_used_branch = 'master'
+
+    let g:openbrowser_open_filepath_in_vim = 0
 endif " }}}
 if s:plugin_enabled('AutoDate') " {{{
     " let g:autodate_format = "%Y-%m-%d"
@@ -3282,10 +3295,13 @@ if s:plugin_enabled('quickrun') " {{{
     let g:quickrun_no_default_key_mappings = 1
     Map -remap [nx] <Space>r <Plug>(quickrun)
 
-    if has('vim_starting')
+    if exists('g:vim_starting')
         let g:quickrun_config = {}
 
-        let g:quickrun_config['_'] = {'outputter/buffer/split': 'SplitNicely'}
+        let g:quickrun_config['_'] = {
+        \   'outputter/buffer/split': 'SplitNicely',
+        \   'outputter/buffer/close_on_empty': 1,
+        \}
 
         if executable('pandoc')
             let g:quickrun_config['markdown'] = {'command' : 'pandoc'}
@@ -3642,7 +3658,7 @@ if s:plugin_enabled('fileutils') " {{{
     MapAlterCommand mkc[d] Mkcd
 endif "}}}
 if s:plugin_enabled('watchdogs') " {{{
-    if has('vim_starting')
+    if exists('g:vim_starting')
         call watchdogs#setup(g:quickrun_config)
     endif
     let g:watchdogs_check_BufWritePost_enable = 1
@@ -3774,6 +3790,10 @@ if s:plugin_enabled('vim-fakeclip') "{{{
     " 2. starting Vim of non-GUI version
     set clipboard+=exclude:.*
     let g:fakeclip_always_provide_clipboard_mappings = 1
+endif "}}}
+if s:plugin_enabled('foldballoon') "{{{
+    set ballooneval
+    set balloonexpr=foldballoon#balloonexpr()
 endif "}}}
 
 " test
