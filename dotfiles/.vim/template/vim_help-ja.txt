@@ -20,13 +20,14 @@ License: License: NEW BSD LICENSE {{{
 目次						*<%filename_noext%>-contents*
 
 概要						|<%filename_noext%>-introduction|
-依存モジュール		|<%filename_noext%>-requirements|
+依存モジュール				|<%filename_noext%>-requirements|
 インターフェース			|<%filename_noext%>-interface|
   キーマッピング			|<%filename_noext%>-keymappings|
   グローバル変数			|<%filename_noext%>-variables|
   コマンド					|<%filename_noext%>-commands|
 TODO						|<%filename_noext%>-todo|
 Changelog					|<%filename_noext%>-changelog|
+Thanks						|<%filename_noext%>-thanks|
 
 
 ==============================================================================
@@ -77,6 +78,13 @@ Changelog						*<%filename_noext%>-changelog* {{{
 
 0.0.0:
 - Initial upload
+
+}}}
+==============================================================================
+Thanks						*<%filename_noext%>-thanks* {{{
+
+- xxx <xxx@yyy.zzz>
+- ...
 
 }}}
 ==============================================================================
