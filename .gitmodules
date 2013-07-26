@@ -1,312 +1,312 @@
 [submodule "dotfiles/.vim/bundle/caw.vim"]
 	path = dotfiles/.vim/bundle/caw.vim
-	url = git://github.com/tyru/caw.vim.git
+	url = https://github.com/tyru/caw.vim
 [submodule "dotfiles/.vim/bundle/eskk.vim"]
 	path = dotfiles/.vim/bundle/eskk.vim
-	url = git://github.com/tyru/eskk.vim.git
+	url = https://github.com/tyru/eskk.vim
 [submodule "dotfiles/.vim/bundle/nextfile.vim"]
 	path = dotfiles/.vim/bundle/nextfile.vim
-	url = git://github.com/tyru/nextfile.vim.git
+	url = https://github.com/tyru/nextfile.vim
 [submodule "dotfiles/.vim/bundle/restart.vim"]
 	path = dotfiles/.vim/bundle/restart.vim
-	url = git://github.com/tyru/restart.vim.git
+	url = https://github.com/tyru/restart.vim
 [submodule "dotfiles/.vim/bundle/sign-diff.vim"]
 	path = dotfiles/.vim/bundle/sign-diff.vim
-	url = git://github.com/tyru/sign-diff.vim.git
+	url = https://github.com/tyru/sign-diff.vim
 [submodule "dotfiles/.vim/bundle/simpletap.vim"]
 	path = dotfiles/.vim/bundle/simpletap.vim
-	url = git://github.com/tyru/simpletap.vim.git
+	url = https://github.com/tyru/simpletap.vim
 [submodule "dotfiles/.vim/bundle/skk.vim"]
 	path = dotfiles/.vim/bundle/skk.vim
-	url = git://github.com/tyru/skk.vim.git
+	url = https://github.com/tyru/skk.vim
 [submodule "dotfiles/.vim/bundle/vimtemplate.vim"]
 	path = dotfiles/.vim/bundle/vimtemplate.vim
-	url = git://github.com/tyru/vimtemplate.vim.git
+	url = https://github.com/tyru/vimtemplate.vim
 [submodule "dotfiles/.vim/bundle/winmove.vim"]
 	path = dotfiles/.vim/bundle/winmove.vim
-	url = git://github.com/tyru/winmove.vim.git
+	url = https://github.com/tyru/winmove.vim
 [submodule "dotfiles/.vim/bundle/emap.vim"]
 	path = dotfiles/.vim/bundle/emap.vim
-	url = git://github.com/tyru/emap.vim.git
+	url = https://github.com/tyru/emap.vim
 [submodule "dotfiles/.vim/bundle/operator-camelize.vim"]
 	path = dotfiles/.vim/bundle/operator-camelize.vim
-	url = git://github.com/tyru/operator-camelize.vim.git
+	url = https://github.com/tyru/operator-camelize.vim
 [submodule "dotfiles/.vim/bundle/vim-altercmd"]
 	path = dotfiles/.vim/bundle/vim-altercmd
-	url = git://github.com/tyru/vim-altercmd.git
+	url = https://github.com/tyru/vim-altercmd
 [submodule "dotfiles/.vim/bundle/vim-repeat"]
 	path = dotfiles/.vim/bundle/vim-repeat
-	url = git://github.com/kana/vim-repeat.git
+	url = https://github.com/kana/vim-repeat
 [submodule "dotfiles/.vim/bundle/vim-visualstar"]
 	path = dotfiles/.vim/bundle/vim-visualstar
-	url = git://github.com/thinca/vim-visualstar.git
+	url = https://github.com/thinca/vim-visualstar
 [submodule "dotfiles/.vim/bundle/gist-vim"]
 	path = dotfiles/.vim/bundle/gist-vim
-	url = git://github.com/mattn/gist-vim.git
+	url = https://github.com/mattn/gist-vim
 [submodule "dotfiles/.vim/bundle/vimproc"]
 	path = dotfiles/.vim/bundle/vimproc
-	url = git://github.com/Shougo/vimproc.git
+	url = https://github.com/Shougo/vimproc
 [submodule "dotfiles/.vim/bundle/vim-ref"]
 	path = dotfiles/.vim/bundle/vim-ref
-	url = git://github.com/thinca/vim-ref.git
+	url = https://github.com/thinca/vim-ref
 [submodule "dotfiles/.vim/bundle/vim-quickrun"]
 	path = dotfiles/.vim/bundle/vim-quickrun
-	url = git://github.com/thinca/vim-quickrun.git
+	url = https://github.com/thinca/vim-quickrun
 [submodule "dotfiles/.vim/bundle/vim-textobj-user"]
 	path = dotfiles/.vim/bundle/vim-textobj-user
-	url = git://github.com/kana/vim-textobj-user.git
+	url = https://github.com/kana/vim-textobj-user
 [submodule "dotfiles/.vim/bundle/vim-textobj-syntax"]
 	path = dotfiles/.vim/bundle/vim-textobj-syntax
-	url = git://github.com/kana/vim-textobj-syntax.git
+	url = https://github.com/kana/vim-textobj-syntax
 [submodule "dotfiles/.vim/bundle/vim-textobj-indent"]
 	path = dotfiles/.vim/bundle/vim-textobj-indent
-	url = git://github.com/kana/vim-textobj-indent.git
+	url = https://github.com/kana/vim-textobj-indent
 [submodule "dotfiles/.vim/bundle/vim-operator-user"]
 	path = dotfiles/.vim/bundle/vim-operator-user
-	url = git://github.com/kana/vim-operator-user.git
+	url = https://github.com/kana/vim-operator-user
 [submodule "dotfiles/.vim/bundle/vim-operator-replace"]
 	path = dotfiles/.vim/bundle/vim-operator-replace
-	url = git://github.com/kana/vim-operator-replace.git
+	url = https://github.com/kana/vim-operator-replace
 [submodule "dotfiles/.vim/bundle/vim-textobj-jabraces"]
 	path = dotfiles/.vim/bundle/vim-textobj-jabraces
-	url = git://github.com/kana/vim-textobj-jabraces.git
+	url = https://github.com/kana/vim-textobj-jabraces
 [submodule "dotfiles/.vim/bundle/vim-textobj-function"]
 	path = dotfiles/.vim/bundle/vim-textobj-function
-	url = git://github.com/kana/vim-textobj-function.git
+	url = https://github.com/kana/vim-textobj-function
 [submodule "dotfiles/.vim/bundle/vim-textobj-entire"]
 	path = dotfiles/.vim/bundle/vim-textobj-entire
-	url = git://github.com/kana/vim-textobj-entire.git
+	url = https://github.com/kana/vim-textobj-entire
 [submodule "dotfiles/.vim/bundle/vim-surround"]
 	path = dotfiles/.vim/bundle/vim-surround
-	url = git://github.com/kana/vim-surround.git
+	url = https://github.com/kana/vim-surround
 [submodule "dotfiles/.vim/bundle/vim-submode"]
 	path = dotfiles/.vim/bundle/vim-submode
-	url = git://github.com/kana/vim-submode.git
+	url = https://github.com/kana/vim-submode
 [submodule "dotfiles/.vim/bundle/vim-textobj-fold"]
 	path = dotfiles/.vim/bundle/vim-textobj-fold
-	url = git://github.com/kana/vim-textobj-fold.git
+	url = https://github.com/kana/vim-textobj-fold
 [submodule "dotfiles/.vim/bundle/vim-prettyprint"]
 	path = dotfiles/.vim/bundle/vim-prettyprint
-	url = git://github.com/thinca/vim-prettyprint.git
+	url = https://github.com/thinca/vim-prettyprint
 [submodule "dotfiles/.vim/bundle/vimfiler"]
 	path = dotfiles/.vim/bundle/vimfiler
-	url = git://github.com/Shougo/vimfiler.git
+	url = https://github.com/Shougo/vimfiler
 [submodule "dotfiles/.vim/bundle/vimshell"]
 	path = dotfiles/.vim/bundle/vimshell
-	url = git://github.com/Shougo/vimshell.git
+	url = https://github.com/Shougo/vimshell
 [submodule "dotfiles/.vim/bundle/lingr-vim"]
 	path = dotfiles/.vim/bundle/lingr-vim
-	url = git://github.com/tsukkee/lingr-vim.git
+	url = https://github.com/tsukkee/lingr-vim
 [submodule "dotfiles/.vim/bundle/neocomplcache"]
 	path = dotfiles/.vim/bundle/neocomplcache
-	url = git://github.com/Shougo/neocomplcache.git
+	url = https://github.com/Shougo/neocomplcache
 [submodule "dotfiles/.vim/bundle/vim-fakeclip"]
 	path = dotfiles/.vim/bundle/vim-fakeclip
-	url = git://github.com/tyru/vim-fakeclip.git
+	url = https://github.com/tyru/vim-fakeclip
 [submodule "dotfiles/.vim/bundle/open-browser.vim"]
 	path = dotfiles/.vim/bundle/open-browser.vim
-	url = git://github.com/tyru/open-browser.vim.git
+	url = https://github.com/tyru/open-browser.vim
 [submodule "dotfiles/.vim/bundle/urilib.vim"]
 	path = dotfiles/.vim/bundle/urilib.vim
-	url = git://github.com/tyru/urilib.vim.git
+	url = https://github.com/tyru/urilib.vim
 [submodule "dotfiles/.vim/bundle/vim-github"]
 	path = dotfiles/.vim/bundle/vim-github
-	url = git://github.com/thinca/vim-github.git
+	url = https://github.com/thinca/vim-github
 [submodule "dotfiles/.vim/bundle/undoclosewin.vim"]
 	path = dotfiles/.vim/bundle/undoclosewin.vim
-	url = git://github.com/tyru/undoclosewin.vim.git
+	url = https://github.com/tyru/undoclosewin.vim
 [submodule "dotfiles/.vim/bundle/quickey.vim"]
 	path = dotfiles/.vim/bundle/quickey.vim
-	url = git://github.com/tyru/quickey.vim.git
+	url = https://github.com/tyru/quickey.vim
 [submodule "dotfiles/.vim/bundle/current-func-info.vim"]
 	path = dotfiles/.vim/bundle/current-func-info.vim
-	url = git://github.com/tyru/current-func-info.vim.git
+	url = https://github.com/tyru/current-func-info.vim
 [submodule "dotfiles/.vim/bundle/ohmygrep.vim"]
 	path = dotfiles/.vim/bundle/ohmygrep.vim
-	url = git://github.com/tyru/ohmygrep.vim.git
+	url = https://github.com/tyru/ohmygrep.vim
 [submodule "dotfiles/.vim/bundle/dutil.vim"]
 	path = dotfiles/.vim/bundle/dutil.vim
-	url = git://github.com/tyru/dutil.vim.git
+	url = https://github.com/tyru/dutil.vim
 [submodule "dotfiles/.vim/bundle/kirikiri.vim"]
 	path = dotfiles/.vim/bundle/kirikiri.vim
-	url = git://github.com/tyru/kirikiri.vim.git
+	url = https://github.com/tyru/kirikiri.vim
 [submodule "dotfiles/.vim/bundle/vim-ft-diff_fold"]
 	path = dotfiles/.vim/bundle/vim-ft-diff_fold
-	url = git://github.com/thinca/vim-ft-diff_fold.git
+	url = https://github.com/thinca/vim-ft-diff_fold
 [submodule "dotfiles/.vim/bundle/vim-ft-markdown_fold"]
 	path = dotfiles/.vim/bundle/vim-ft-markdown_fold
-	url = git://github.com/thinca/vim-ft-markdown_fold.git
+	url = https://github.com/thinca/vim-ft-markdown_fold
 [submodule "dotfiles/.vim/bundle/tjs.vim"]
 	path = dotfiles/.vim/bundle/tjs.vim
-	url = git://github.com/tyru/tjs.vim.git
+	url = https://github.com/tyru/tjs.vim
 [submodule "dotfiles/.vim/bundle/unite.vim"]
 	path = dotfiles/.vim/bundle/unite.vim
-	url = git://github.com/Shougo/unite.vim.git
+	url = https://github.com/Shougo/unite.vim
 [submodule "dotfiles/.vim/bundle/detect-coding-style.vim"]
 	path = dotfiles/.vim/bundle/detect-coding-style.vim
-	url = git://github.com/tyru/detect-coding-style.vim.git
+	url = https://github.com/tyru/detect-coding-style.vim
 [submodule "dotfiles/.vim/bundle/multiprocessing.vim"]
 	path = dotfiles/.vim/bundle/multiprocessing.vim
-	url = git://github.com/tyru/multiprocessing.vim.git
+	url = https://github.com/tyru/multiprocessing.vim
 [submodule "dotfiles/.zsh/auto-fu.zsh"]
 	path = dotfiles/.zsh/auto-fu.zsh
-	url = git://github.com/hchbaw/auto-fu.zsh.git
+	url = https://github.com/hchbaw/auto-fu.zsh
 [submodule "dotfiles/.vimperator/vimpr"]
 	path = dotfiles/.vimperator/vimpr
-	url = git://github.com/vimpr/vimperator-plugins.git
+	url = https://github.com/vimpr/vimperator-plugins
 [submodule "dotfiles/.vim/bundle/grass.vim"]
 	path = dotfiles/.vim/bundle/grass.vim
-	url = git://github.com/tyru/grass.vim.git
+	url = https://github.com/tyru/grass.vim
 [submodule "dotfiles/.vim/bundle/unite-help"]
 	path = dotfiles/.vim/bundle/unite-help
-	url = git://github.com/tsukkee/unite-help.git
+	url = https://github.com/tsukkee/unite-help
 [submodule "dotfiles/.vim/bundle/unite-tag"]
 	path = dotfiles/.vim/bundle/unite-tag
-	url = git://github.com/tsukkee/unite-tag.git
+	url = https://github.com/tsukkee/unite-tag
 [submodule "dotfiles/.vim/bundle/vim-textobj-between"]
 	path = dotfiles/.vim/bundle/vim-textobj-between
-	url = git://github.com/thinca/vim-textobj-between.git
+	url = https://github.com/thinca/vim-textobj-between
 [submodule "dotfiles/.vim/bundle/vim-textobj-function-javascript"]
 	path = dotfiles/.vim/bundle/vim-textobj-function-javascript
-	url = git://github.com/thinca/vim-textobj-function-javascript.git
+	url = https://github.com/thinca/vim-textobj-function-javascript
 [submodule "dotfiles/.vim/bundle/vim-textobj-function-perl"]
 	path = dotfiles/.vim/bundle/vim-textobj-function-perl
-	url = git://github.com/thinca/vim-textobj-function-perl.git
+	url = https://github.com/thinca/vim-textobj-function-perl
 [submodule "dotfiles/.vim/bundle/starter.vim"]
 	path = dotfiles/.vim/bundle/starter.vim
-	url = git://github.com/tyru/starter.vim.git
+	url = https://github.com/tyru/starter.vim
 [submodule "dotfiles/.vim/bundle/unite-outline"]
 	path = dotfiles/.vim/bundle/unite-outline
-	url = git://github.com/h1mesuke/unite-outline.git
+	url = https://github.com/h1mesuke/unite-outline
 [submodule "dotfiles/.vim/bundle/webapi-vim"]
 	path = dotfiles/.vim/bundle/webapi-vim
-	url = git://github.com/mattn/webapi-vim.git
+	url = https://github.com/mattn/webapi-vim
 [submodule "dotfiles/.vim/bundle/skkdict.vim"]
 	path = dotfiles/.vim/bundle/skkdict.vim
-	url = git://github.com/tyru/skkdict.vim.git
+	url = https://github.com/tyru/skkdict.vim
 [submodule "dotfiles/.vim/macros/vim-rtputil"]
 	path = dotfiles/.vim/macros/vim-rtputil
-	url = git://github.com/thinca/vim-rtputil
+	url = https://github.com/thinca/vim-rtputil
 [submodule "dotfiles/.vim/bundle/karma.vim"]
 	path = dotfiles/.vim/bundle/karma.vim
-	url = git://github.com/vim-scripts/karma.vim.git
+	url = https://github.com/vim-scripts/karma.vim
 [submodule "dotfiles/.vim/bundle/vim-javascript"]
 	path = dotfiles/.vim/bundle/vim-javascript
-	url = git://github.com/pangloss/vim-javascript.git
+	url = https://github.com/pangloss/vim-javascript
 [submodule "dotfiles/.vim/macros/savemap.vim"]
 	path = dotfiles/.vim/macros/savemap.vim
-	url = git://github.com/tyru/savemap.vim.git
+	url = https://github.com/tyru/savemap.vim
 [submodule "dotfiles/.vim/macros/vice.vim"]
 	path = dotfiles/.vim/macros/vice.vim
-	url = git://github.com/tyru/vice.vim.git
+	url = https://github.com/tyru/vice.vim
 [submodule "dotfiles/.vim/bundle/vital.vim"]
 	path = dotfiles/.vim/bundle/vital.vim
-	url = git://github.com/vim-jp/vital.vim.git
+	url = https://github.com/vim-jp/vital.vim
 [submodule "dotfiles/.vim/bundle/vim-unite-history"]
 	path = dotfiles/.vim/bundle/vim-unite-history
-	url = git://github.com/thinca/vim-unite-history.git
+	url = https://github.com/thinca/vim-unite-history
 [submodule "dotfiles/.vim/bundle/vice.vim"]
 	path = dotfiles/.vim/bundle/vice.vim
-	url = git://github.com/tyru/vice.vim.git
+	url = https://github.com/tyru/vice.vim
 [submodule "dotfiles/.vim/bundle/ftl-vim-syntax"]
 	path = dotfiles/.vim/bundle/ftl-vim-syntax
-	url = git://github.com/chaquotay/ftl-vim-syntax.git
+	url = https://github.com/chaquotay/ftl-vim-syntax
 [submodule "dotfiles/.vim/bundle/vimdoc-ja"]
 	path = dotfiles/.vim/bundle/vimdoc-ja
-	url = git://github.com/vim-jp/vimdoc-ja.git
+	url = https://github.com/vim-jp/vimdoc-ja
 [submodule "dotfiles/.vim/bundle/vim-hier"]
 	path = dotfiles/.vim/bundle/vim-hier
-	url = git://github.com/jceb/vim-hier
+	url = https://github.com/jceb/vim-hier
 [submodule "dotfiles/.vim/bundle/gravit.vim"]
 	path = dotfiles/.vim/bundle/gravit.vim
-	url = git://github.com/tyru/gravit.vim.git
+	url = https://github.com/tyru/gravit.vim
 [submodule "dotfiles/.vim/bundle/SudoEdit.vim"]
 	path = dotfiles/.vim/bundle/SudoEdit.vim
-	url = git://github.com/vim-scripts/SudoEdit.vim.git
+	url = https://github.com/vim-scripts/SudoEdit.vim
 [submodule "dotfiles/.vim/bundle/hatena-vim"]
 	path = dotfiles/.vim/bundle/hatena-vim
-	url = git://github.com/motemen/hatena-vim.git
+	url = https://github.com/motemen/hatena-vim
 [submodule "dotfiles/.vim/bundle/vim-benchmark"]
 	path = dotfiles/.vim/bundle/vim-benchmark
-	url = git://github.com/h1mesuke/vim-benchmark.git
+	url = https://github.com/h1mesuke/vim-benchmark
 [submodule "dotfiles/.vim/bundle/vim-textobj-line"]
 	path = dotfiles/.vim/bundle/vim-textobj-line
-	url = git://github.com/kana/vim-textobj-line.git
+	url = https://github.com/kana/vim-textobj-line
 [submodule "dotfiles/.vim/bundle/cpp-vim"]
 	path = dotfiles/.vim/bundle/cpp-vim
-	url = git://github.com/vim-jp/cpp-vim.git
+	url = https://github.com/vim-jp/cpp-vim
 [submodule "dotfiles/.vim/bundle/unretab.vim"]
 	path = dotfiles/.vim/bundle/unretab.vim
-	url = git://github.com/tyru/unretab.vim.git
+	url = https://github.com/tyru/unretab.vim
 [submodule "dotfiles/.vim/bundle/shabadou.vim"]
 	path = dotfiles/.vim/bundle/shabadou.vim
-	url = git://github.com/osyo-manga/shabadou.vim.git
+	url = https://github.com/osyo-manga/shabadou.vim
 [submodule "dotfiles/.vim/bundle/vim-watchdogs"]
 	path = dotfiles/.vim/bundle/vim-watchdogs
-	url = git://github.com/osyo-manga/vim-watchdogs.git
+	url = https://github.com/osyo-manga/vim-watchdogs
 [submodule "dotfiles/.vim/bundle/fileutils.vim"]
 	path = dotfiles/.vim/bundle/fileutils.vim
-	url = git://github.com/tyru/fileutils.vim
+	url = https://github.com/tyru/fileutils.vim
 [submodule "dotfiles/.vim/bundle/vim-tabpagecd"]
 	path = dotfiles/.vim/bundle/vim-tabpagecd
-	url = git://github.com/kana/vim-tabpagecd
+	url = https://github.com/kana/vim-tabpagecd
 [submodule "dotfiles/.vim/bundle/quickfixstatus"]
 	path = dotfiles/.vim/bundle/quickfixstatus
-	url = git://github.com/dannyob/quickfixstatus
+	url = https://github.com/dannyob/quickfixstatus
 [submodule "dotfiles/.vim/bundle/autochmodx.vim"]
 	path = dotfiles/.vim/bundle/autochmodx.vim
-	url = git://github.com/tyru/autochmodx.vim
+	url = https://github.com/tyru/autochmodx.vim
 [submodule "dotfiles/.vim/bundle/vim-vcs"]
 	path = dotfiles/.vim/bundle/vim-vcs
-	url = git://github.com/Shougo/vim-vcs
+	url = https://github.com/Shougo/vim-vcs
 [submodule "dotfiles/.vim/bundle/instant-markdown-vim"]
 	path = dotfiles/.vim/bundle/instant-markdown-vim
-	url = git://github.com/teramako/instant-markdown-vim.git
+	url = https://github.com/teramako/instant-markdown-vim
 [submodule "dotfiles/.vim/bundle/vertR.vim"]
 	path = dotfiles/.vim/bundle/vertR.vim
-	url = git://github.com/tyru/vertR.vim.git
+	url = https://github.com/tyru/vertR.vim
 [submodule "dotfiles/.vim/bundle/capture.vim"]
 	path = dotfiles/.vim/bundle/capture.vim
-	url = git://github.com/tyru/capture.vim.git
+	url = https://github.com/tyru/capture.vim
 [submodule "dotfiles/.vimperator/vimperator-plugin-httpdjs"]
 	path = dotfiles/.vimperator/vimperator-plugin-httpdjs
-	url = git://github.com/teramako/vimperator-plugin-httpdjs.git
+	url = https://github.com/teramako/vimperator-plugin-httpdjs
 [submodule "dotfiles/.vim/bundle/vim-indent-guides"]
 	path = dotfiles/.vim/bundle/vim-indent-guides
-	url = git://github.com/nathanaelkane/vim-indent-guides.git
+	url = https://github.com/nathanaelkane/vim-indent-guides
 [submodule "dotfiles/.vim/bundle/concealedyank.vim"]
 	path = dotfiles/.vim/bundle/concealedyank.vim
-	url = git://github.com/chikatoike/concealedyank.vim.git
+	url = https://github.com/chikatoike/concealedyank.vim
 [submodule "dotfiles/.zsh/z"]
 	path = dotfiles/.zsh/z
-	url = git://github.com/rupa/z.git
+	url = https://github.com/rupa/z
 [submodule "dotfiles/.vim/bundle/vim-perlbrew"]
 	path = dotfiles/.vim/bundle/vim-perlbrew
-	url = git://github.com/telemachus/vim-perlbrew.git
+	url = https://github.com/telemachus/vim-perlbrew
 [submodule "dotfiles/.vim/bundle/operator-reverse.vim"]
 	path = dotfiles/.vim/bundle/operator-reverse.vim
-	url = git://github.com/tyru/operator-reverse.vim.git
+	url = https://github.com/tyru/operator-reverse.vim
 [submodule "dotfiles/.vim/bundle/operator-html-escape.vim"]
 	path = dotfiles/.vim/bundle/operator-html-escape.vim
-	url = git://github.com/tyru/operator-html-escape.vim.git
+	url = https://github.com/tyru/operator-html-escape.vim
 [submodule "dotfiles/.vim/bundle/foldCC"]
 	path = dotfiles/.vim/bundle/foldCC
-	url = git://github.com/LeafCage/foldCC.git
+	url = https://github.com/LeafCage/foldCC
 [submodule "dotfiles/.zsh/zsh-completions"]
 	path = dotfiles/.zsh/zsh-completions
-	url = git://github.com/zsh-users/zsh-completions.git
+	url = https://github.com/zsh-users/zsh-completions
 [submodule "dotfiles/.vim/bundle/open-browser-github.vim"]
 	path = dotfiles/.vim/bundle/open-browser-github.vim
-	url = git://github.com/tyru/open-browser-github.vim
+	url = https://github.com/tyru/open-browser-github.vim
 [submodule "dotfiles/.vim/bundle/codingstyle.vim"]
 	path = dotfiles/.vim/bundle/codingstyle.vim
-	url = git://github.com/tyru/codingstyle.vim
+	url = https://github.com/tyru/codingstyle.vim
 [submodule "dotfiles/.vim/bundle/vim-singleton"]
 	path = dotfiles/.vim/bundle/vim-singleton
-	url = git://github.com/thinca/vim-singleton
+	url = https://github.com/thinca/vim-singleton
 [submodule "dotfiles/.vim/bundle/vim-anzu"]
 	path = dotfiles/.vim/bundle/vim-anzu
-	url = git://github.com/osyo-manga/vim-anzu
+	url = https://github.com/osyo-manga/vim-anzu
 [submodule "dotfiles/.vim/bundle/vim-fontzoom"]
 	path = dotfiles/.vim/bundle/vim-fontzoom
-	url = git://github.com/thinca/vim-fontzoom
+	url = https://github.com/thinca/vim-fontzoom
