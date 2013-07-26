@@ -297,7 +297,7 @@
 	url = git://github.com/zsh-users/zsh-completions.git
 [submodule "dotfiles/.vim/bundle/open-browser-github.vim"]
 	path = dotfiles/.vim/bundle/open-browser-github.vim
-	url = git://github.com/tyru/open-browser-github.com
+	url = git://github.com/tyru/open-browser-github.vim
 [submodule "dotfiles/.vim/bundle/codingstyle.vim"]
 	path = dotfiles/.vim/bundle/codingstyle.vim
 	url = git://github.com/tyru/codingstyle.vim
