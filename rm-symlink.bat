@@ -11,7 +11,7 @@ for /f %%F in (dotfiles.lst) do (
 	set dstfile=%%F
 
 	rem ### Convert destination folder name (e.g., src:.vim dst:vimfiles)
-	for /f "tokens=1,2*" %%x in (dotfiles.lst.mingw) do (
+	for /f "tokens=1,2*" %%x in (dotfiles.lst.mswin) do (
 		if "%%x"=="%%F" (
 			set dstfile=%%y
 		)
