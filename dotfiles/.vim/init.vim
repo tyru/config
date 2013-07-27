@@ -2944,7 +2944,7 @@ function! s:register_anything_abbrev() "{{{
     " unite
     if s:plugin_enabled('unite')
         for [pat, subst_list] in items(abbrev)
-            call unite#set_substitute_pattern('files', pat, subst_list)
+            call unite#custom#substitute('files', pat, subst_list)
         endfor
     endif
 endfunction "}}}
