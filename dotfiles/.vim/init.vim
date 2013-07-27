@@ -1183,14 +1183,19 @@ Map [n] gm :<C-u>make<CR>
 Map [n] <excmd>tl :<C-u>tabedit<CR>
 Map [n] <excmd>th :<C-u>tabedit<CR>:execute 'tabmove' (tabpagenr() isnot 1 ? tabpagenr() - 2 : '')<CR>
 
-Map [n] <C-s> :<C-u>call <SID>gui_save()<CR>
-function! s:gui_save()
-    if bufname('%') ==# ''
-        browse confirm saveas
-    else
-        update
-    endif
-endfunction
+if has('gui_running')
+    Map -script [i] <C-s> <SID>(gui-save)<Esc>
+    Map -script [n] <C-s> <SID>(gui-save)
+    Map -script [i] <SID>(gui-save) <C-o><SID>(gui-save)
+    Map         [n] <SID>(gui-save) :<C-u>call <SID>gui_save()<CR>
+    function! s:gui_save()
+        if bufname('%') ==# ''
+            browse confirm saveas
+        else
+            update
+        endif
+    endfunction
+endif
 
 Map -expr -silent [n] f <SID>search_char('/\V%s'."\<CR>:nohlsearch\<CR>")
 Map -expr -silent [n] F <SID>search_char('?\V%s'."\<CR>:nohlsearch\<CR>")
