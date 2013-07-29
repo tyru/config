@@ -244,6 +244,7 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/tjs.vim
 
+    let g:loaded_tyru_event_test = 1
     LoadPlugin $MYVIMDIR/bundle/tyru
 
     LoadPlugin $MYVIMDIR/bundle/undoclosewin.vim
@@ -399,11 +400,11 @@ command! -bar -bang HelpTagsAll call rtputil#helptags(<bang>0)
 HelpTagsAll
 
 
-" Import :Map commands
-call emap#load('noprefix')    " Define :EmMap as :Map
+" Define :Map commands
+call emap#load('noprefix')
 " call emap#set_sid_from_vimrc()
-call emap#set_sid(s:SID())
-" call emap#set_sid_from_sfile(expand('<sfile>'))
+" call emap#set_sid(s:SID())
+call emap#set_sid_from_sfile(expand('<sfile>'))
 
 
 " Define :MapAlterCommand commands
@@ -2173,12 +2174,6 @@ function! s:cmd_echo_path(optname, ...) "{{{
     endfor
 endfunction "}}}
 " }}}
-" :AllMaps - Do show/map in all modes. {{{
-command!
-\   -nargs=* -complete=mapping
-\   AllMaps
-\   Capture map <args> | map! <args> | lmap <args>
-" }}}
 " :Expand {{{
 command!
 \   -bar -nargs=?
@@ -2910,6 +2905,7 @@ elseif s:plugin_enabled('unite') " fallback, or you select this :)
     Map [n] <anything>g        :<C-u>UniteKawaii grep<CR>
     Map [n] <anything>/        :<C-u>UniteKawaii line<CR>
     Map [n] <anything>:        :<C-u>UniteKawaii history/command<CR>
+    Map [n] <anything>j        :<C-u>UniteKawaii jump<CR>
 else
     let s:anything_not_found = 1
 endif
@@ -3799,6 +3795,9 @@ endif "}}}
 if s:plugin_enabled('foldballoon') "{{{
     set ballooneval
     set balloonexpr=foldballoon#balloonexpr()
+endif "}}}
+if s:plugin_enabled('vital.vim') "{{{
+    let g:vitalizer#vital_dir = 'C:/Users/takuya/Documents/GitHub/dotfiles/dotfiles/.vim/bundle/vital.vim'
 endif "}}}
 
 " test

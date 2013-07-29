@@ -47,7 +47,8 @@ function! s:do_lazy_load(vimrc)
     doautocmd VimEnter
 
     if has_error
-        call StartDebugMode(a:vimrc)
+        echoerr v:exception '@' v:throwpoint
+        " call StartDebugMode(a:vimrc)
     endif
 endfunction
 function! s:do_load(vimrc)
@@ -55,7 +56,8 @@ function! s:do_load(vimrc)
     try
         call s:load_init_vim(a:vimrc)
     catch
-        call StartDebugMode(a:vimrc)
+        echoerr v:exception '@' v:throwpoint
+        " call StartDebugMode(a:vimrc)
     finally
         unlet! g:vim_starting
     endtry
