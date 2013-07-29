@@ -42,6 +42,7 @@
 	sub = submodule
 	subadd = submodule add
 	subfor = submodule foreach
+	subup = submodule foreach "git pull"
 	view = log --pretty=oneline --abbrev-commit --graph --source --tags --branches
 	wh = whatchanged
 	zip = archive --format=zip
