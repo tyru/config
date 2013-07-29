@@ -310,3 +310,6 @@
 [submodule "dotfiles/.vim/bundle/vim-fontzoom"]
 	path = dotfiles/.vim/bundle/vim-fontzoom
 	url = https://github.com/thinca/vim-fontzoom
+[submodule "dotfiles/.vim/bundle/vim-airline"]
+	path = dotfiles/.vim/bundle/vim-airline
+	url = https://github.com/bling/vim-airline.git
