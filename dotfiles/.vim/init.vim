@@ -4023,6 +4023,7 @@ endif
 " }}}
 " End. {{{
 
+let $MYVIMRC = expand('<sfile>')
 
 set secure
 " }}}
