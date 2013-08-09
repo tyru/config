@@ -557,6 +557,7 @@ endif
 
 " backup
 set backup
+set backupcopy=yes
 set backupdir=$MYVIMDIR/backup
 silent! call mkdir(&backupdir, 'p')
 
