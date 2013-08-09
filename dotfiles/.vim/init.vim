@@ -337,7 +337,7 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/vim-visualstar
 
-    LoadPlugin $MYVIMDIR/bundle/vim-watchdogs
+    " LoadPlugin $MYVIMDIR/bundle/vim-watchdogs
 
     LoadPlugin $MYVIMDIR/bundle/vimdoc-ja
 
