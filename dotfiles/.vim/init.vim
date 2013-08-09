@@ -813,8 +813,16 @@ set browsedir=current
 
 " Font {{{
 if has('win32')    " Windows
-    " set guifont=M+2VM+IPAG_circle:h13
-    " set printfont=M+2VM+IPAG_circle:h13
+    if exists('+rop')
+        " If 'renderoptions' option exists,
+        try
+            " ... and if "Ricty_Diminished" font is installed,
+            " enable DirectWrite.
+            " set gfn=Anonymous_Pro:h12:cANSI
+            " set rop=type:directx
+        catch
+        endtry
+    endif
 elseif has('mac')    " Mac
     set guifont=Osaka－等幅:h14
     set printfont=Osaka－等幅:h14
