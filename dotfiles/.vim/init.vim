@@ -361,6 +361,8 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/vim-golang
 
+    LoadPlugin $MYVIMDIR/bundle/transbuffer.vim
+
 else
     " TODO: Reduce dependency plugins.
 

@@ -313,3 +313,6 @@
 [submodule "dotfiles/.vim/bundle/vim-airline"]
 	path = dotfiles/.vim/bundle/vim-airline
 	url = https://github.com/bling/vim-airline.git
+[submodule "dotfiles/.vim/bundle/transbuffer.vim"]
+	path = dotfiles/.vim/bundle/transbuffer.vim
+	url = https://github.com/tyru/transbuffer.vim
