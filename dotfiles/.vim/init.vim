@@ -189,7 +189,7 @@ if !exists('$VIMRC_DEBUG')
 
     " LoadPlugin $MYVIMDIR/bundle/multiprocessing.vim
 
-    LoadPlugin $MYVIMDIR/bundle/neocomplcache
+    LoadPlugin $MYVIMDIR/bundle/neocomplete.vim
 
     LoadPlugin $MYVIMDIR/bundle/nextfile.vim
 

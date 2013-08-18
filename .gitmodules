@@ -316,3 +316,6 @@
 [submodule "dotfiles/.vim/bundle/transbuffer.vim"]
 	path = dotfiles/.vim/bundle/transbuffer.vim
 	url = https://github.com/tyru/transbuffer.vim
+[submodule "dotfiles/.vim/bundle/neocomplete.vim"]
+	path = dotfiles/.vim/bundle/neocomplete.vim
+	url = https://github.com/Shougo/neocomplete.vim.git
