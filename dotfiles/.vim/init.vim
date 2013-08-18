@@ -1638,7 +1638,8 @@ endfunction
 " }}}
 " "Use one tabpage per project" project {{{
 " :SetTabName - Set tab's title {{{
-Map -silent [n] <C-t> :<C-u>SetTabName<CR>
+
+" Map -silent [n] <C-t> :<C-u>SetTabName<CR>
 command! -bar -nargs=* SetTabName call s:cmd_set_tab_name(<q-args>)
 function! s:cmd_set_tab_name(name) "{{{
     let old_title = exists('t:title') ? t:title : ''
