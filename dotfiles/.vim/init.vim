@@ -2213,20 +2213,18 @@ command!
 \   | unlet! s:id
 " }}}
 " :SplitNicely {{{
-" originally from kana's .vimrc
+" originally from kana's .vimrc, but now outragely different one :)
 " https://github.com/kana/config
 
-command! -bar -nargs=* SplitNicely
+command! -bar -nargs=+ SplitNicely
 \   call s:cmd_split_nicely(<q-args>)
 
 function! s:cmd_split_nicely(q_args)
     let winnum = winnr('$')
-    " FIXME: If already opened a window, it gets smaller!
+    let vertical = 0
     let save_winwidth = winwidth(0)
-    let cmd = a:q_args != '' ?
-    \           'belowright vertical '.a:q_args :
-    \           'belowright vsplit'
-    execute cmd
+    let save_winheight = winheight(0)
+    execute 'belowright' (vertical ? 'vertical' : '') a:q_args
     if winnr('$') is winnum
         " if no new window is opened
         return
@@ -2234,6 +2232,9 @@ function! s:cmd_split_nicely(q_args)
     " Adjust split window.
     if !&l:winfixwidth
         execute save_winwidth / 3 'wincmd |'
+    endif
+    if !&l:winfixheight
+        execute save_winheight / 2 'wincmd _'
     endif
     setlocal winfixwidth winfixheight
 endfunction
@@ -3393,7 +3394,7 @@ if s:plugin_enabled('vim-ref') " {{{
     endfunction
 
     let g:ref_use_vimproc = 1
-    let g:ref_open = 'SplitNicely'
+    let g:ref_open = 'SplitNicely split'
     if executable('perldocjp')
         let g:ref_perldoc_cmd = 'perldocjp'
     endif
