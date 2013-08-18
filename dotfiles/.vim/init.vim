@@ -24,9 +24,12 @@ function! s:SNR(map) "{{{
 endfunction "}}}
 
 " e.g.) s:has_plugin('eskk') ? 'yes' : 'no'
+"       s:has_plugin('indent/vim.vim') ? 'yes' : 'no'
 function! s:has_plugin(name)
     let nosuffix = a:name =~? '\.vim$' ? a:name[:-5] : a:name
+    let nosuffix = s:toslash(nosuffix)
     let suffix   = a:name =~? '\.vim$' ? a:name      : a:name . '.vim'
+    let suffix   = s:toslash(suffix)
     return &rtp =~# '\c\<' . nosuffix . '\>'
     \   || globpath(&rtp, suffix, 1) != ''
     \   || globpath(&rtp, nosuffix, 1) != ''
@@ -34,12 +37,9 @@ function! s:has_plugin(name)
     \   || globpath(&rtp, 'autoload/' . tolower(suffix), 1) != ''
 endfunction
 
-" e.g.) s:plugin_enabled('eskk') ? 'yes' : 'no'
-function! s:plugin_enabled(name)
-    let nosuffix = a:name =~? '\.vim$' ? a:name[:-5] : a:name
-    let suffix   = a:name =~? '\.vim$' ? a:name      : a:name . '.vim'
-    return &rtp =~# '\c\<' . nosuffix . '\>'
-endfunction
+function! s:toslash(path) "{{{
+    return substitute(a:path, '\', '/', 'g')
+endfunction "}}}
 
 function! s:echomsg(hl, msg) "{{{
     execute 'echohl' a:hl
@@ -167,11 +167,11 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/ftl-vim-syntax
 
-    if executable('git')
+    if executable('git') && executable('curl')
         LoadPlugin $MYVIMDIR/bundle/gist-vim
     endif
 
-    LoadPlugin $MYVIMDIR/bundle/grass.vim
+    " LoadPlugin $MYVIMDIR/bundle/grass.vim
 
     LoadPlugin $MYVIMDIR/bundle/gravit.vim
 
@@ -283,7 +283,7 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/vim-hier
 
-    LoadPlugin $MYVIMDIR/bundle/vim-indent-guides
+    " LoadPlugin $MYVIMDIR/bundle/vim-indent-guides
 
     LoadPlugin $MYVIMDIR/bundle/vim-javascript
 
@@ -311,7 +311,7 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/vim-textobj-entire
 
-    LoadPlugin $MYVIMDIR/bundle/vim-textobj-fold
+    " LoadPlugin $MYVIMDIR/bundle/vim-textobj-fold
 
     LoadPlugin $MYVIMDIR/bundle/vim-textobj-function
 
@@ -323,7 +323,7 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/vim-textobj-jabraces
 
-    LoadPlugin $MYVIMDIR/bundle/vim-textobj-line
+    " LoadPlugin $MYVIMDIR/bundle/vim-textobj-line
 
     LoadPlugin $MYVIMDIR/bundle/vim-textobj-syntax
 
@@ -671,7 +671,8 @@ function! s:statusline() "{{{
     endif
 
     if !get(g:, 'cfi_disable')
-    \   && s:plugin_enabled('current-func-info')
+    \   && s:has_plugin('current-func-info')
+    \   && cfi#supported_filetypes(&filetype)
         let s .= '%( | %{cfi#format("%s()", "")}%)'
     endif
 
@@ -848,6 +849,7 @@ set textwidth=0
 set colorcolumn=80
 set viminfo='50,h,f1,n$HOME/.viminfo
 set matchpairs+=<:>
+set number
 if has('multibyte')
     set showbreak=↪
 endif
@@ -1009,7 +1011,7 @@ Map [nxo] x "_x
 Map [nxo] <operator>e =
 
 
-if s:plugin_enabled('operator-user')
+if s:has_plugin('operator-user')
 
     " operator-adjust {{{
     call operator#user#define('adjust', 'Op_adjust_window_height')
@@ -1234,6 +1236,8 @@ Map [x] <S-Tab> <gv
 
 Map [o] gv :<C-u>normal! gv<CR>
 
+Map [nxo] H ^
+Map [nxo] L $
 
 Map [n] ,cd       :<C-u>cd %:p:h<CR>
 " :LookupCD - chdir to root directory of project working tree {{{
@@ -1817,7 +1821,6 @@ MapAlterCommand do     diffoff!
 
 " For typo.
 MapAlterCommand qw     wq
-MapAlterCommand amp    map
 " }}}
 
 
@@ -1847,9 +1850,9 @@ Map [c] <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 " For example, 'cn' is expanded into 'cnzv' so 'zv' will be inserted.
 
 Map -expr [nx] <SID>(always-forward-n) (<SID>search_forward_p() ? 'n' : 'N')
-Map -expr [nx] <SID>(always-forward-N) (<SID>search_forward_p() ? 'N' : 'n')
+Map -expr [nx] <SID>(always-backward-N) (<SID>search_forward_p() ? 'N' : 'n')
 Map -expr [o]  <SID>(always-forward-n) <SID>search_forward_p() ? 'n' : 'N'
-Map -expr [o]  <SID>(always-forward-N) <SID>search_forward_p() ? 'N' : 'n'
+Map -expr [o]  <SID>(always-backward-N) <SID>search_forward_p() ? 'N' : 'n'
 
 function! s:search_forward_p()
     return exists('v:searchforward') ? v:searchforward : 1
@@ -2441,7 +2444,7 @@ endfunction
 " }}}
 " }}}
 " For Plugins {{{
-if s:plugin_enabled('nextfile') " {{{
+if s:has_plugin('nextfile') " {{{
     let g:nf_map_next     = ''
     let g:nf_map_previous = ''
     Map -remap [n] ,n <Plug>(nextfile-next)
@@ -2470,7 +2473,7 @@ if s:plugin_enabled('nextfile') " {{{
     let g:nf_open_command = 'silent edit'
 
 endif " }}}
-if s:plugin_enabled('starter') " {{{
+if s:has_plugin('starter') " {{{
 
     let g:starter_no_default_command = 1
     nnoremap <silent> gt :<C-u>call starter#launch()<CR>
@@ -2526,7 +2529,7 @@ if s:plugin_enabled('starter') " {{{
     \]
 
 endif " }}}
-if s:plugin_enabled('vimtemplate') " {{{
+if s:has_plugin('vimtemplate') " {{{
 
     let g:vt_author = "tyru"
     let g:vt_email = "tyru.exe@gmail.com"
@@ -2555,13 +2558,13 @@ if s:plugin_enabled('vimtemplate') " {{{
     \   $MYVIMDIR . '/template/*'
     \   'setlocal nomodeline'
 endif " }}}
-if s:plugin_enabled('winmove') " {{{
+if s:has_plugin('winmove') " {{{
     let g:wm_move_down  = '<C-M-j>'
     let g:wm_move_up    = '<C-M-k>'
     let g:wm_move_left  = '<C-M-h>'
     let g:wm_move_right = '<C-M-l>'
 endif " }}}
-if s:plugin_enabled('sign-diff') " {{{
+if s:has_plugin('sign-diff') " {{{
     " let g:SD_debug = 1
     let g:SD_disable = 1
 
@@ -2569,7 +2572,7 @@ if s:plugin_enabled('sign-diff') " {{{
         Map -silent [n] <C-l> :SDUpdate<CR><C-l>
     endif
 endif " }}}
-if s:plugin_enabled('DumbBuf') " {{{
+if s:has_plugin('DumbBuf') " {{{
     let dumbbuf_hotkey = 'gb'
     " たまにQuickBuf.vimの名残で<Esc>を押してしまう
     let dumbbuf_mappings = {
@@ -2596,10 +2599,10 @@ if s:plugin_enabled('DumbBuf') " {{{
     "
     " let dumbbuf_verbose = 1
 endif " }}}
-if s:plugin_enabled('prompt') " {{{
+if s:has_plugin('prompt') " {{{
     let prompt_debug = 0
 endif " }}}
-if s:plugin_enabled('skk') || s:plugin_enabled('eskk') " {{{
+if s:has_plugin('skk') || s:has_plugin('eskk') " {{{
 
     " skkdict
     let s:skk_user_dict = '~/.skkdict/user-dict'
@@ -2617,7 +2620,7 @@ if s:plugin_enabled('skk') || s:plugin_enabled('eskk') " {{{
     " endif
 
 endif " }}}
-if s:plugin_enabled('skk') " {{{
+if s:has_plugin('skk') " {{{
 
     " skkdict
     let skk_jisyo = s:skk_user_dict
@@ -2664,7 +2667,7 @@ if s:plugin_enabled('skk') " {{{
     endif
 
 endif " }}}
-if s:plugin_enabled('eskk') " {{{
+if s:has_plugin('eskk') " {{{
 
     " skkdict
     if !exists('g:eskk#dictionary')
@@ -2807,7 +2810,7 @@ if s:plugin_enabled('eskk') " {{{
 
     endif
 endif " }}}
-if s:plugin_enabled('restart') " {{{
+if s:has_plugin('restart') " {{{
     command!
     \   -bar
     \   RestartWithSession
@@ -2818,7 +2821,7 @@ if s:plugin_enabled('restart') " {{{
     MapAlterCommand ers[tart] Restart
     MapAlterCommand rse[tart] Restart
 endif " }}}
-if s:plugin_enabled('open-browser') " {{{
+if s:has_plugin('open-browser') " {{{
     let g:netrw_nogx = 1
     Map -remap [nx] gx <Plug>(openbrowser-smart-search)
     MapAlterCommand o[pen] OpenBrowserSmartSearch
@@ -2841,7 +2844,7 @@ if s:plugin_enabled('open-browser') " {{{
 
     let g:openbrowser_open_filepath_in_vim = 0
 endif " }}}
-if s:plugin_enabled('AutoDate') " {{{
+if s:has_plugin('AutoDate') " {{{
     " let g:autodate_format = "%Y-%m-%d"
 endif " }}}
 " anything (ku,fuf,unite,etc.) {{{
@@ -2851,18 +2854,18 @@ DefMacroMap [n] anything s
 let [s:anything_fuf, s:anything_ku, s:anything_unite] = range(3)
 let s:anything = s:anything_unite
 
-if s:anything == s:anything_fuf && s:plugin_enabled('fuf')
+if s:anything == s:anything_fuf && s:has_plugin('fuf')
     Map [n] <anything>d        :<C-u>FufDir<CR>
     Map [n] <anything>f        :<C-u>FufFile<CR>
     Map [n] <anything>h        :<C-u>FufMruFile<CR>
     Map [n] <anything>r        :<C-u>FufRenewCache<CR>
-elseif s:anything == s:anything_ku && s:plugin_enabled('ku')
+elseif s:anything == s:anything_ku && s:has_plugin('ku')
     Map [n] <anything>f        :<C-u>Ku file<CR>
     Map [n] <anything>h        :<C-u>Ku file/mru<CR>
     Map [n] <anything>H        :<C-u>Ku history<CR>
     Map [n] <anything>:        :<C-u>Ku cmd_mru/cmd<CR>
     Map [n] <anything>/        :<C-u>Ku cmd_mru/search<CR>
-elseif s:plugin_enabled('unite') " fallback, or you select this :)
+elseif s:has_plugin('unite') " fallback, or you select this :)
     command! -bar -nargs=* UniteKawaii Unite -prompt='-')/\  -no-split -create <args>
     Map [n] <anything>f        :<C-u>UniteKawaii -buffer-name=files file buffer file_mru<CR>
     Map [n] <anything>F        :<C-u>UniteKawaii -buffer-name=files file_rec<CR>
@@ -2908,11 +2911,11 @@ function! s:register_anything_abbrev() "{{{
     endif
 
     " fuf
-    if s:plugin_enabled('fuf')
+    if s:has_plugin('fuf')
         let g:fuf_abbrevMap = abbrev
     endif
     " unite
-    if s:plugin_enabled('unite')
+    if s:has_plugin('unite')
         for [pat, subst_list] in items(abbrev)
             call unite#custom#substitute('files', pat, subst_list)
         endfor
@@ -2922,10 +2925,10 @@ if !exists('s:anything_not_found')
     Lazy call s:register_anything_abbrev()
 endif
 
-if s:plugin_enabled('ku') " {{{
+if s:has_plugin('ku') " {{{
     MapAlterCommand ku Ku
 endif " }}}
-if s:plugin_enabled('fuf') " {{{
+if s:has_plugin('fuf') " {{{
     let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem', 'buffer', 'tag', 'taggedfile']
 
     let fuf_keyOpenTabpage = '<C-t>'
@@ -2936,7 +2939,7 @@ if s:plugin_enabled('fuf') " {{{
     let fuf_enumeratingLimit = 20
     let fuf_previewHeight = 0
 endif " }}}
-if s:plugin_enabled('unite') " {{{
+if s:has_plugin('unite') " {{{
     let g:unite_enable_start_insert = 1
     let g:unite_enable_ignore_case = 1
     let g:unite_enable_smart_case = 1
@@ -3057,7 +3060,7 @@ if s:plugin_enabled('unite') " {{{
     endfunction
 endif " }}}
 " }}}
-if s:plugin_enabled('Gtags') " {{{
+if s:has_plugin('Gtags') " {{{
     " <C-]> for gtags.
     function! s:JumpTags() "{{{
         if expand('%') == '' | return | endif
@@ -3085,7 +3088,7 @@ if s:plugin_enabled('Gtags') " {{{
     endfunction "}}}
     Map [n] <C-]>     :<C-u>call <SID>JumpTags()<CR>
 endif " }}}
-if s:plugin_enabled('vimshell') " {{{
+if s:has_plugin('vimshell') " {{{
     MapAlterCommand sh[ell] VimShell
 
     let g:vimshell_user_prompt = '"(" . getcwd() . ") --- (" . $USER . "@" . hostname() . ")"'
@@ -3161,10 +3164,6 @@ if s:plugin_enabled('vimshell') " {{{
         Map -buffer -remap -force [i] <Tab><Tab> <Plug>(vimshell_command_complete)
         Map -buffer -remap -force [n] <C-z> <Plug>(vimshell_switch)
         Map -buffer -remap -force [i] <compl>r <Plug>(vimshell_history_complete_whole)
-
-        if s:plugin_enabled('concealedyank.vim') && has('conceal')
-            Map -buffer -remap [nxo] y <Plug>(operator-concealedyank)
-        endif
 
         " Misc.
         setlocal backspace-=eol
@@ -3264,7 +3263,7 @@ if s:plugin_enabled('vimshell') " {{{
         let $PATH = system(s:is_win ? 'echo %path%' : 'echo $PATH')
     endfunction "}}}
 endif " }}}
-if s:plugin_enabled('quickrun') " {{{
+if s:has_plugin('quickrun') " {{{
     let g:loaded_quicklaunch = 1
 
     let g:quickrun_no_default_key_mappings = 1
@@ -3296,7 +3295,7 @@ if s:plugin_enabled('quickrun') " {{{
         \}
     endif
 endif " }}}
-if s:plugin_enabled('submode') "{{{
+if s:has_plugin('submode') "{{{
 
     " Move GUI window.
     call submode#enter_with('guiwinmove', 'n', '', 'mgw')
@@ -3371,7 +3370,7 @@ if s:plugin_enabled('submode') "{{{
     call submode#map       ('scroll', 'n', '', 'a', ':let &l:scroll -= 3<CR>')
     call submode#map       ('scroll', 'n', '', 's', ':let &l:scroll += 3<CR>')
 endif "}}}
-if s:plugin_enabled('vim-ref') " {{{
+if s:has_plugin('vim-ref') " {{{
     " 'K' for ':Ref'.
     MapAlterCommand ref         Ref
     MapAlterCommand alc         Ref webdict alc
@@ -3419,7 +3418,7 @@ if s:plugin_enabled('vim-ref') " {{{
   endfunction
 
 endif " }}}
-if s:plugin_enabled('vimfiler') " {{{
+if s:has_plugin('vimfiler') " {{{
     let g:vimfiler_as_default_explorer = 1
     let g:vimfiler_safe_mode_by_default = 0
     let g:vimfiler_split_command = 'aboveleft split'
@@ -3446,12 +3445,12 @@ if s:plugin_enabled('vimfiler') " {{{
         Map -remap -buffer -force [n] <Space><Space> <Plug>(vimfiler_toggle_mark_current_line)
     endfunction "}}}
 endif " }}}
-if s:plugin_enabled('prettyprint') " {{{
+if s:has_plugin('prettyprint') " {{{
     MapAlterCommand pp PP
 
     let g:prettyprint_show_expression = 1
 endif " }}}
-if s:plugin_enabled('lingr') " {{{
+if s:has_plugin('lingr') " {{{
 
     " from thinca's .vimrc {{{
     " http://soralabo.net/s/vrcb/s/thinca
@@ -3547,11 +3546,11 @@ if s:plugin_enabled('lingr') " {{{
     let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
     let g:lingr_vim_count_unread_at_current_room = 1
 endif " }}}
-if s:plugin_enabled('github') " {{{
+if s:has_plugin('github') " {{{
     MapAlterCommand gh Github
     MapAlterCommand ghi Github issues
 endif " }}}
-if s:plugin_enabled('neocomplcache') "{{{
+if s:has_plugin('neocomplcache') "{{{
     let g:neocomplcache_enable_at_startup = 1
     let g:neocomplcache_disable_caching_file_path_pattern = '.*'
     let g:neocomplcache_enable_ignore_case = 1
@@ -3561,24 +3560,24 @@ if s:plugin_enabled('neocomplcache') "{{{
 
     Map [n] <Leader>neo :<C-u>NeoComplCacheToggle<CR>
 endif "}}}
-if s:plugin_enabled('EasyGrep') " {{{
+if s:has_plugin('EasyGrep') " {{{
     let g:EasyGrepCommand = 2
     let g:EasyGrepInvertWholeWord = 1
 endif " }}}
-if s:plugin_enabled('gist-vim') "{{{
+if s:has_plugin('gist-vim') "{{{
     let g:gist_detect_filetype = 1
     let g:gist_open_browser_after_post = 1
     let g:gist_browser_command = ":OpenBrowser %URL%"
     let g:gist_update_on_write = 2
 endif "}}}
-if s:plugin_enabled('ohmygrep') " {{{
+if s:has_plugin('ohmygrep') " {{{
     MapAlterCommand gr[ep] OMGrep
     MapAlterCommand re[place] OMReplace
 
     Map -remap [n] <Space>gw <Plug>(omg-grep-cword)
     Map -remap [n] <Space>gW <Plug>(omg-grep-cWORD)
 endif " }}}
-if s:plugin_enabled('detect-coding-style') " {{{
+if s:has_plugin('detect-coding-style') " {{{
 
     MyAutocmd User dcs-initialized-styles call s:dcs_register_own_styles()
     function! s:dcs_register_own_styles()
@@ -3589,7 +3588,7 @@ if s:plugin_enabled('detect-coding-style') " {{{
     endfunction
 
 endif " }}}
-if s:plugin_enabled('autocmd-tabclose') " {{{
+if s:has_plugin('autocmd-tabclose') " {{{
     " :tabprevious on vimrc-tabclose
     function! s:tabclose_post()
         if tabpagenr() != 1
@@ -3599,10 +3598,10 @@ if s:plugin_enabled('autocmd-tabclose') " {{{
     endfunction
     MyAutocmd User tabclose-post call s:tabclose_post()
 endif " }}}
-if s:plugin_enabled('simpletap') " {{{
+if s:has_plugin('simpletap') " {{{
     let g:simpletap#open_command = 'botright vnew'
 endif " }}}
-if s:plugin_enabled('GraVit') " {{{
+if s:has_plugin('GraVit') " {{{
 
     " XXX: 2012-09-17 19:48: syntax/vim.vim wrong highlight...
     " Map -remap [nxo] g/ <Plug>gravit->forward
@@ -3611,7 +3610,7 @@ if s:plugin_enabled('GraVit') " {{{
     " highlight GraVitCurrentMatch term=underline cterm=underline gui=underline ctermfg=4 guifg=Purple
 
 endif " }}}
-if s:plugin_enabled('hatena.vim') " {{{
+if s:has_plugin('hatena.vim') " {{{
     let g:hatena_no_default_keymappings = 1
     let g:hatena_user = 'tyru'
     let g:hatena_entry_file = '~/Dropbox/memo/blogentry.txt'
@@ -3619,7 +3618,7 @@ if s:plugin_enabled('hatena.vim') " {{{
     let g:hatena_upload_on_write = 0
     let g:hatena_upload_on_write_bang = 1
 endif " }}}
-if s:plugin_enabled('fileutils') " {{{
+if s:has_plugin('fileutils') " {{{
     call fileutils#load('noprefix')
 
     MapAlterCommand rm Delete
@@ -3632,7 +3631,7 @@ if s:plugin_enabled('fileutils') " {{{
 
     MapAlterCommand mkc[d] Mkcd
 endif "}}}
-if s:plugin_enabled('watchdogs') " {{{
+if s:has_plugin('watchdogs') " {{{
     if exists('g:vim_starting')
         call watchdogs#setup(g:quickrun_config)
     endif
@@ -3647,7 +3646,7 @@ if s:plugin_enabled('watchdogs') " {{{
     \   | let g:watchdogs_check_CursorHold_enable   = 0
     \   | echo 'disabled watchdogs auto-commands.'
 endif "}}}
-if s:plugin_enabled('vim-hier') " {{{
+if s:has_plugin('vim-hier') " {{{
     function! s:quickfix_is_target()
         " let buftype = getbufvar(expand('<abuf>'), '&buftype')
         let winnr = bufwinnr(expand('<abuf>'))
@@ -3700,7 +3699,7 @@ if s:plugin_enabled('vim-hier') " {{{
     endfor
     unlet s:tmp
 endif "}}}
-if s:plugin_enabled('accelerated-jk') " {{{
+if s:has_plugin('accelerated-jk') " {{{
     Map -remap [n] j <Plug>(accelerated_jk_gj)
     Map -remap [n] k <Plug>(accelerated_jk_gk)
     let g:accelerated_jk_deceleration_table = [
@@ -3714,17 +3713,19 @@ if s:plugin_enabled('accelerated-jk') " {{{
     \   [1000, 9999],
     \]
 endif "}}}
-if s:plugin_enabled('capture') "{{{
+if s:has_plugin('capture') "{{{
     MapAlterCommand c[apture] Capture
 endif "}}}
-if s:plugin_enabled('instant-markdown-vim') "{{{
+if s:has_plugin('instant-markdown-vim') "{{{
     " MyAutocmd FileType hatena let b:instant_markdown_path = '/html?type=hatena'
     " MyAutocmd FileType hatena InstantMarkdownStart
 endif "}}}
-if s:plugin_enabled('concealedyank.vim') && has('conceal') "{{{
+if s:has_plugin('concealedyank.vim') && has('conceal') "{{{
     Map -remap [x] <operator>cy <Plug>(operator-concealedyank)
+    " concealedyank.vim does not support operator yet.
+    " Map -remap [no] y <Plug>(operator-concealedyank)
 endif "}}}
-if s:plugin_enabled('syntax/vim.vim') "{{{
+if s:has_plugin('syntax/vim.vim') "{{{
     " augroup: a
     " function: f
     " lua: l
@@ -3735,50 +3736,112 @@ if s:plugin_enabled('syntax/vim.vim') "{{{
     " mzscheme: m
     let g:vimsyn_folding = 'af'
 endif "}}}
-if s:plugin_enabled('indent-guides') "{{{
+if s:has_plugin('indent-guides') "{{{
     let g:indent_guides_enable_on_vim_startup = 1
     let g:indent_guides_auto_colors = 0
-    MyAutocmd ColorScheme * hi IndentGuidesOdd ctermbg=233
-    MyAutocmd ColorScheme * hi IndentGuidesEven ctermbg=235
+    MyAutocmd VimEnter,ColorScheme * hi IndentGuidesOdd guibg=Gray
+    MyAutocmd VimEnter,ColorScheme * hi IndentGuidesEven guibg=White
     let g:indent_guides_color_change_percent = 30
 endif "}}}
-if s:plugin_enabled('foldCC') "{{{
+if s:has_plugin('foldCC') "{{{
     set foldtext=FoldCCtext()
 endif "}}}
-if s:plugin_enabled('vim-anzu') "{{{
+if s:has_plugin('vim-anzu') "{{{
     Map -remap [nx] n <SID>(always-forward-n)<SID>(centering-display)<Plug>(anzu-update-search-status-with-echo)
-    Map -remap [nx] N <SID>(always-forward-N)<SID>(centering-display)<Plug>(anzu-update-search-status-with-echo)
+    Map -remap [nx] N <SID>(always-backward-N)<SID>(centering-display)<Plug>(anzu-update-search-status-with-echo)
     Map -remap [o] n <SID>(always-forward-n)
-    Map -remap [o] N <SID>(always-forward-N)
+    Map -remap [o] N <SID>(always-backward-N)
 else
     " FIXME: <SID>(always-forward-n) is not related to vim-anzu plugin.
     "
     " Mapping -> plugin specific mapping, misc. hacks
     Map -remap [nx] n <SID>(always-forward-n)<SID>(centering-display)
-    Map -remap [nx] N <SID>(always-forward-N)<SID>(centering-display)
+    Map -remap [nx] N <SID>(always-backward-N)<SID>(centering-display)
     Map -remap [o] n <SID>(always-forward-n)
-    Map -remap [o] N <SID>(always-forward-N)
+    Map -remap [o] N <SID>(always-backward-N)
 endif "}}}
-if s:plugin_enabled('vim-fakeclip') "{{{
+if s:has_plugin('vim-fakeclip') "{{{
     " vim-fakeclip plugin is loaded only on the platform where
     " 1. the X server exists
     " 2. starting Vim of non-GUI version
     set clipboard+=exclude:.*
     let g:fakeclip_always_provide_clipboard_mappings = 1
 endif "}}}
-if s:plugin_enabled('foldballoon') "{{{
+if s:has_plugin('foldballoon') "{{{
     set ballooneval
     set balloonexpr=foldballoon#balloonexpr()
 endif "}}}
-if s:plugin_enabled('vital.vim') "{{{
+if s:has_plugin('vital.vim') "{{{
     let g:vitalizer#vital_dir = 'C:/Users/takuya/Documents/GitHub/dotfiles/dotfiles/.vim/bundle/vital.vim'
+endif "}}}
+if s:has_plugin('vim-tabpagecd') "{{{
+
+    let s:disable_open_in_project_tab = 1
+    if !s:disable_open_in_project_tab
+        Lazy  if exists('g:loaded_tabpagecd')
+        \   |     execute 'MyAutocmd BufReadPost * call s:open_in_project_tab()'
+        \   | endif
+    endif
+
+    " * g:hoge_open_cmd みたいな変数に ":ProjBuffer split"
+    "   みたいに指定して管理下に置く
+    " * 好きな位置に開ける。ウインドウグループというものを定義して、
+    "   ウインドウグループに指定したバッファのウインドウが開かれていたらそこに開くなどできる
+    " * 開くコマンドは1つだけでいい。開く位置はウインドウマネージャに任せればいい
+    " * strategy: tiling, zen(mode)?, ide
+    function! s:open_in_project_tab()
+        if &buftype !=# '' || &bufhidden !=# ''
+            return
+        endif
+        if tabpagenr('$') is 1
+            return
+        endif
+        let curtabnr = tabpagenr()
+        let lasttabnr = tabpagenr('$')
+        for tabnr in range(1, lasttabnr)
+            if tabnr is curtabnr
+                continue
+            endif
+            let afile = s:normalize_path(expand('<afile>'))
+            let cwd = s:normalize_path(gettabvar(tabnr, 'cwd'))
+            if stridx(afile, cwd) isnot -1
+                let bufnr = bufnr('%')
+                setlocal bufhidden=hide
+                try
+                    close
+                    if lasttabnr isnot tabpagenr('$')
+                    \   && tabnr ># tabpagenr()
+                        let tabnr -= 1
+                    endif
+                    execute 'tabnext' tabnr
+                    execute 'SplitNicely sbuffer' bufnr
+                finally
+                    setlocal bufhidden=
+                endtry
+                break
+            endif
+        endfor
+    endfunction
+
+    function! s:normalize_path(filepath)
+        let p = a:filepath
+        let p = fnamemodify(p, ':p')
+        let p = substitute(p, '\', '/', 'g')
+        let p = substitute(p, '/\{2,}', '/', 'g')
+        return tolower(p)
+    endfunction
+endif "}}}
+if s:has_plugin('emap.vim') "{{{
+    MapAlterCommand map Map
+    MapAlterCommand amp Map
+    MapAlterCommand mpa Map
 endif "}}}
 
 " test
 let g:loaded_tyru_event_test = 1
 
 " runtime
-if s:plugin_enabled('netrw') " {{{
+if s:has_plugin('netrw') " {{{
     function! s:filetype_netrw() "{{{
         Map -remap -buffer [n] h -
         Map -remap -buffer [n] l <CR>
@@ -3787,19 +3850,19 @@ if s:plugin_enabled('netrw') " {{{
 
     MyAutocmd FileType netrw call s:filetype_netrw()
 endif " }}}
-if s:plugin_enabled('indent/vim.vim') " {{{
+if s:has_plugin('indent/vim.vim') " {{{
     let g:vim_indent_cont = 0
 endif " }}}
-if s:plugin_enabled('changelog') " {{{
+if s:has_plugin('changelog') " {{{
     let changelog_username = "tyru"
 endif " }}}
-if s:plugin_enabled('syntax/sh.vim') " {{{
+if s:has_plugin('syntax/sh.vim') " {{{
     let g:is_bash = 1
 endif " }}}
-if s:plugin_enabled('syntax/scheme.vim') " {{{
+if s:has_plugin('syntax/scheme.vim') " {{{
     let g:is_gauche = 1
 endif " }}}
-if s:plugin_enabled('syntax/perl.vim') " {{{
+if s:has_plugin('syntax/perl.vim') " {{{
 
     " POD highlighting
     let g:perl_include_pod = 1
