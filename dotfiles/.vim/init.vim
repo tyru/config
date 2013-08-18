@@ -1854,45 +1854,6 @@ function! s:search_forward_p()
     return exists('v:searchforward') ? v:searchforward : 1
 endfunction
 " }}}
-" Walk between columns at 0, ^, $, window's right edge(virtualedit). {{{
-
-function! s:back_between(zero, tilde, dollar) "{{{
-    let curcol = col('.')
-    let tilde_col = match(getline('.'), '\S') + 1
-
-    if curcol > col('$')        " $ ~
-        return a:dollar
-    elseif curcol > tilde_col   " ^ ~ $
-        return a:tilde
-    else                        " 0 ~ ^
-        return a:zero
-    endif
-endfunction "}}}
-function! s:advance_between(tilde, dollar) "{{{
-    let curcol = col('.')
-    let tilde_col = match(getline('.'), '\S') + 1
-
-    if curcol < tilde_col      " 0 ~ ^
-        return a:tilde
-    elseif curcol < col('$')   " ^ ~ $
-        return a:dollar
-    else                       " $ ~
-        return a:dollar    " back
-    endif
-endfunction "}}}
-
-" imap
-Map -force -expr [i] <C-a> <SID>back_between("\<Home>", "\<C-o>^", "\<End>")
-Map -force -expr [i] <C-e> <SID>advance_between("\<C-o>^", "\<End>")
-
-" motion
-Map -expr [nxo] H <SID>back_between('0', '^', '$')
-Map -expr [nxo] L <SID>advance_between('^', '$')
-
-" TODO
-" Map -expr [nxo] L <SID>advance_between('^', '$', '')    " <comment Go right edge of window.>
-
-" }}}
 " Disable unused keys. {{{
 Map [n] <F1> <Nop>
 Map [n] <C-F1> <Nop>
