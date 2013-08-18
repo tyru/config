@@ -76,12 +76,14 @@ https://github.com/tyru/<%filename%>/issues
 ==============================================================================
 CHANGELOG						*<%filename_noext%>-changelog* {{{
 
-0.0.0:
+x.y.z:
 - Initial upload
 
 }}}
 ==============================================================================
 Thanks						*<%filename_noext%>-thanks* {{{
+
+Waiting for your contribution :)
 
 - xxx <xxx@yyy.zzz>
 - ...
