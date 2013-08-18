@@ -319,3 +319,6 @@
 [submodule "dotfiles/.vim/bundle/neocomplete.vim"]
 	path = dotfiles/.vim/bundle/neocomplete.vim
 	url = https://github.com/Shougo/neocomplete.vim.git
+[submodule "dotfiles/.vim/bundle/autodate.vim"]
+	path = dotfiles/.vim/bundle/autodate.vim
+	url = https://github.com/vim-scripts/autodate.vim.git
