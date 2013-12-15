@@ -322,3 +322,9 @@
 [submodule "dotfiles/.vim/bundle/autodate.vim"]
 	path = dotfiles/.vim/bundle/autodate.vim
 	url = https://github.com/vim-scripts/autodate.vim.git
+[submodule "dotfiles/.vim/bundle/autodirmake.vim"]
+	path = dotfiles/.vim/bundle/autodirmake.vim
+	url = https://github.com/mopp/autodirmake.vim
+[submodule "dotfiles/.vim/bundle/vim-quickrun-markdown-gfm"]
+	path = dotfiles/.vim/bundle/vim-quickrun-markdown-gfm
+	url = https://github.com/superbrothers/vim-quickrun-markdown-gfm.git

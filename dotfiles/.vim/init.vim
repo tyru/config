@@ -165,7 +165,7 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/foldCC
 
-    LoadPlugin $MYVIMDIR/bundle/ftl-vim-syntax
+    " LoadPlugin $MYVIMDIR/bundle/ftl-vim-syntax
 
     if executable('git') && executable('curl')
         LoadPlugin $MYVIMDIR/bundle/gist-vim
@@ -173,15 +173,17 @@ if !exists('$VIMRC_DEBUG')
 
     " LoadPlugin $MYVIMDIR/bundle/grass.vim
 
-    LoadPlugin $MYVIMDIR/bundle/gravit.vim
+    " LoadPlugin $MYVIMDIR/bundle/gravit.vim
 
-    LoadPlugin $MYVIMDIR/bundle/hatena-vim
+    " LoadPlugin $MYVIMDIR/bundle/hatena-vim
 
-    LoadPlugin $MYVIMDIR/bundle/instant-markdown-vim
+    " LoadPlugin $MYVIMDIR/bundle/instant-markdown-vim
 
     " LoadPlugin $MYVIMDIR/bundle/karma.vim
 
-    LoadPlugin $MYVIMDIR/bundle/kirikiri.vim
+    " LoadPlugin $MYVIMDIR/bundle/kirikiri.vim
+
+    " LoadPlugin $MYVIMDIR/bundle/tjs.vim
 
     if exists('g:lingr')
         LoadPlugin $MYVIMDIR/bundle/lingr-vim
@@ -206,8 +208,6 @@ if !exists('$VIMRC_DEBUG')
     LoadPlugin $MYVIMDIR/bundle/operator-reverse.vim
 
     LoadPlugin $MYVIMDIR/bundle/quickey.vim
-
-    LoadPlugin $MYVIMDIR/bundle/quickfixstatus
 
     LoadPlugin $MYVIMDIR/bundle/ref-plugins
 
@@ -242,7 +242,7 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/surround-config
 
-    LoadPlugin $MYVIMDIR/bundle/tjs.vim
+    " LoadPlugin $MYVIMDIR/bundle/tjs.vim
 
     let g:loaded_tyru_event_test = 1
     LoadPlugin $MYVIMDIR/bundle/tyru
@@ -267,8 +267,6 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/vim-anzu
 
-    " LoadPlugin $MYVIMDIR/bundle/vim-benchmark
-
     if !s:is_win && has('unix') && !has('gui_running')
         LoadPlugin $MYVIMDIR/bundle/vim-fakeclip
     endif
@@ -277,13 +275,7 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/vim-ft-markdown_fold
 
-    " LoadPlugin $MYVIMDIR/bundle/vim-ft-vim_fold
-
-    " LoadPlugin $MYVIMDIR/bundle/vim-github
-
     LoadPlugin $MYVIMDIR/bundle/vim-hier
-
-    " LoadPlugin $MYVIMDIR/bundle/vim-indent-guides
 
     LoadPlugin $MYVIMDIR/bundle/vim-javascript
 
@@ -311,8 +303,6 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/vim-textobj-entire
 
-    " LoadPlugin $MYVIMDIR/bundle/vim-textobj-fold
-
     LoadPlugin $MYVIMDIR/bundle/vim-textobj-function
 
     LoadPlugin $MYVIMDIR/bundle/vim-textobj-function-javascript
@@ -322,8 +312,6 @@ if !exists('$VIMRC_DEBUG')
     LoadPlugin $MYVIMDIR/bundle/vim-textobj-indent
 
     LoadPlugin $MYVIMDIR/bundle/vim-textobj-jabraces
-
-    " LoadPlugin $MYVIMDIR/bundle/vim-textobj-line
 
     LoadPlugin $MYVIMDIR/bundle/vim-textobj-syntax
 
@@ -341,7 +329,7 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/vimdoc-ja
 
-    " LoadPlugin $MYVIMDIR/bundle/vimfiler
+    LoadPlugin $MYVIMDIR/bundle/vimfiler
 
     LoadPlugin $MYVIMDIR/bundle/vimproc
 
@@ -361,7 +349,9 @@ if !exists('$VIMRC_DEBUG')
 
     LoadPlugin $MYVIMDIR/bundle/vim-golang
 
-    LoadPlugin $MYVIMDIR/bundle/transbuffer.vim
+    " LoadPlugin $MYVIMDIR/bundle/transbuffer.vim
+
+    " LoadPlugin $MYVIMDIR/bundle/excel.vim
 
 else
     " TODO: Reduce dependency plugins.
