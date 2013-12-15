@@ -657,6 +657,7 @@ set guitablabel=%!SandboxCallOptionFn('guitablabel')
 
 " statusline
 set laststatus=2
+let s:has_cfi = s:has_plugin('current-func-info')
 function! s:statusline() "{{{
     let s = '%f%([%M%R%H%W]%)%(, %{&ft}%), %{&fenc}/%{&ff}'
     let s .= '%('
@@ -670,9 +671,7 @@ function! s:statusline() "{{{
         let s .= ' %{SkkGetModeStr()}'
     endif
 
-    if !get(g:, 'cfi_disable')
-    \   && s:has_plugin('current-func-info')
-    \   && cfi#supported_filetypes(&filetype)
+    if !get(g:, 'cfi_disable') && s:has_cfi
         let s .= '%( | %{cfi#format("%s()", "")}%)'
     endif
 
