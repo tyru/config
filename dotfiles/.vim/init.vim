@@ -1831,17 +1831,25 @@ Map [nx] <SID>(centering-display) zvzz
 
 " Mappings with option value. {{{
 
-Map -script [n] / :<C-u>setlocal ignorecase hlsearch<CR>/
-Map -script [n] ? :<C-u>setlocal ignorecase hlsearch<CR>?
+" Use s:do_excmd() and <expr> mapping to make <C-o> work.
+function! s:do_excmd(excmds, ret)
+    for cmd in a:excmds
+        execute cmd
+    endfor
+    return a:ret
+endfunction
 
-Map -script [n] * :<C-u>setlocal noignorecase hlsearch<CR>*<SID>(centering-display)
-Map -script [n] # :<C-u>setlocal noignorecase hlsearch<CR>#<SID>(centering-display)
+Map -expr [n] / <SID>do_excmd(['setlocal ignorecase hlsearch'], '/')
+Map -expr [n] ? <SID>do_excmd(['setlocal ignorecase hlsearch'], '?')
 
-Map -script [n] : :<C-u>setlocal hlsearch<CR>:
-Map -script [x] : :<C-u>setlocal hlsearch<CR>gv:
+Map -script -expr [n] * <SID>do_excmd(['setlocal noignorecase hlsearch'], '*<SID>(centering-display)')
+Map -script -expr [n] # <SID>do_excmd(['setlocal noignorecase hlsearch'], '#<SID>(centering-display)')
 
-Map -script [n] gd :<C-u>setlocal hlsearch<CR>gd<SID>(centering-display)
-Map -script [n] gD :<C-u>setlocal hlsearch<CR>gD<SID>(centering-display)
+Map -expr [n] : <SID>do_excmd(['setlocal hlsearch'], ':')
+Map -expr [x] : <SID>do_excmd(['setlocal hlsearch'], ':')
+
+Map -script -expr [n] gd <SID>do_excmd(['setlocal hlsearch'], 'gd<SID>(centering-display)')
+Map -script -expr [n] gD <SID>do_excmd(['setlocal hlsearch'], 'gD<SID>(centering-display)')
 
 " }}}
 " Emacs like kill-line. {{{
