@@ -1709,8 +1709,8 @@ if 0
         \       a:quote
     endfunction
 
-    noremap! <expr> " <SID>eclipse_like_autoclose('"')
-    noremap! <expr> ' <SID>eclipse_like_autoclose("'")
+    Map -expr [ic] " <SID>eclipse_like_autoclose('"')
+    Map -expr [ic] ' <SID>eclipse_like_autoclose("'")
 
 endif
 
