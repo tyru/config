@@ -2684,7 +2684,9 @@ if s:has_plugin('eskk') " {{{
         \}
     endif
 
-    let g:eskk#debug = 1
+    let g:eskk#log_cmdline_level = 4
+    let g:eskk#log_file_level = 4
+
     if 1    " for debugging default behavior.
         let g:eskk#egg_like_newline = 1
         let g:eskk#egg_like_newline_completion = 1
@@ -2712,7 +2714,7 @@ if s:has_plugin('eskk') " {{{
 
                 " rom_to_hira
                 let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
-                call t.add_map('~', '〜')
+                call t.add_map('~', '～')
                 call t.add_map('vc', '©')
                 call t.add_map('vr', '®')
                 call t.add_map('vh', '☜')
@@ -2735,13 +2737,14 @@ if s:has_plugin('eskk') " {{{
                 endif
                 call t.add_map('wyi', 'ゐ', '')
                 call t.add_map('wye', 'ゑ', '')
+                call t.add_map('&', '＆', '')
 
                 call eskk#register_mode_table('hira', t)
 
 
                 " rom_to_kata
                 let t = eskk#table#new('rom_to_kata*', 'rom_to_kata')
-                call t.add_map('~', '〜')
+                call t.add_map('~', '～')
                 call t.add_map('vc', '©')
                 call t.add_map('vr', '®')
                 call t.add_map('vh', '☜')
@@ -2764,6 +2767,7 @@ if s:has_plugin('eskk') " {{{
                 endif
                 call t.add_map('wyi', 'ヰ', '')
                 call t.add_map('wye', 'ヱ', '')
+                call t.add_map('&', '＆', '')
 
                 call eskk#register_mode_table('kata', t)
             endfunction "}}}
