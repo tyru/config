@@ -353,6 +353,8 @@ if !exists('$VIMRC_DEBUG')
 
     " LoadPlugin $MYVIMDIR/bundle/excel.vim
 
+    LoadPlugin $MYVIMDIR/bundle/autodirmake.vim
+
 else
     " TODO: Reduce dependency plugins.
 
@@ -895,20 +897,6 @@ function! s:write_check_typo(file)
     endif
 endfunction
 " }}}
-
-" Automatic mkdir when :edit nonexistent-file {{{
-" http://vim-users.jp/2011/02/hack202/
-augroup vimrc-auto-mkdir
-    autocmd!
-    autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
-    function! s:auto_mkdir(dir, force)
-        if !isdirectory(a:dir)
-        \   && (a:force
-        \       || input("'" . a:dir . "' does not exist. Create? [y/N]") =~? '^y\%[es]$')
-            call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
-        endif
-    endfunction
-augroup END " }}}
 
 " }}}
 " Mappings and/or Abbreviations {{{
