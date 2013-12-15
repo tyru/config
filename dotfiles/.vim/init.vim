@@ -789,6 +789,10 @@ if has('conceal')
     set concealcursor=nvic
 endif
 
+if version >=# 704
+    set regexpengine=2
+endif
+
 " http://vim-users.jp/2009/12/hack107/
 " Enable mouse support.
 set mouse=a
