@@ -379,7 +379,7 @@ else
 
     " Load plugins to debug
     LoadPlugin $MYVIMDIR/bundle/eskk.vim
-    LoadPlugin $MYVIMDIR/bundle/neocomplcache
+    LoadPlugin $MYVIMDIR/bundle/neocomplete
 endif
 
 " Change 'runtimepath'.
@@ -1779,10 +1779,6 @@ endfunction "}}}
 " call submode#map       ('c', 'i', '', 'k', '<C-p>')
 
 
-Map -expr [i] <C-y> neocomplcache#close_popup()
-Map -expr [i] <CR>  pumvisible() ? neocomplcache#close_popup() . "\<CR>" : "\<CR>"
-Map -remap [is] <C-t> <Plug>(neocomplcache_snippets_expand)
-
 " }}}
 " }}}
 " cmap {{{
@@ -3171,15 +3167,15 @@ if s:has_plugin('vimshell') " {{{
         setlocal nowrap
 
         if 0
-            if !exists(':NeoComplCacheDisable')
-                NeoComplCacheEnable
+            if !exists(':NeoCompleteDisable')
+                NeoCompleteEnable
             endif
-            NeoComplCacheAutoCompletionLength 1
-            NeoComplCacheUnlock
+            NeoCompleteAutoCompletionLength 1
+            NeoCompleteUnlock
             augroup vimrc-vimshell-settings
                 autocmd!
-                autocmd TabEnter <buffer> NeoComplCacheUnlock
-                autocmd TabLeave <buffer> NeoComplCacheLock
+                autocmd TabEnter <buffer> NeoCompleteUnlock
+                autocmd TabLeave <buffer> NeoCompleteLock
             augroup END
         endif
     endfunction "}}}
@@ -3550,15 +3546,19 @@ if s:has_plugin('github') " {{{
     MapAlterCommand gh Github
     MapAlterCommand ghi Github issues
 endif " }}}
-if s:has_plugin('neocomplcache') "{{{
-    let g:neocomplcache_enable_at_startup = 1
-    let g:neocomplcache_disable_caching_file_path_pattern = '.*'
-    let g:neocomplcache_enable_ignore_case = 1
-    let g:neocomplcache_enable_underbar_completion = 1
-    let g:neocomplcache_enable_camel_case_completion = 1
-    let g:neocomplcache_auto_completion_start_length = 3
+if s:has_plugin('neocomplete') "{{{
+    let g:neocomplete_enable_at_startup = 1
+    let g:neocomplete_disable_caching_file_path_pattern = '.*'
+    let g:neocomplete_enable_ignore_case = 1
+    let g:neocomplete_enable_underbar_completion = 1
+    let g:neocomplete_enable_camel_case_completion = 1
+    let g:neocomplete_auto_completion_start_length = 3
 
-    Map [n] <Leader>neo :<C-u>NeoComplCacheToggle<CR>
+    Map [n] <Leader>neo :<C-u>NeoCompleteToggle<CR>
+
+    Map -expr [i] <C-y> neocomplete#close_popup()
+    Map -expr [i] <CR>  pumvisible() ? neocomplete#close_popup() . "\<CR>" : "\<CR>"
+    Map -remap [is] <C-t> <Plug>(neocomplete_snippets_expand)
 endif "}}}
 if s:has_plugin('EasyGrep') " {{{
     let g:EasyGrepCommand = 2
