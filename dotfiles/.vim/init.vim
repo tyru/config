@@ -2956,6 +2956,13 @@ if s:has_plugin('unite') " {{{
     let g:unite_source_file_mru_ignore_pattern =
     \   '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\|COMMIT_EDITMSG'
 
+    " matcher {{{
+    " if has('migemo') || executable('cmigemo')
+    "     call unite#custom#source('file,buffer,file_mru', 'matchers', 'matcher_migemo')
+    " endif
+    " }}}
+
+
     " unite-source-menu {{{
 
     let g:unite_source_menu_menus = {}
