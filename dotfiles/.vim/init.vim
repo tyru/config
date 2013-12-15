@@ -3656,57 +3656,34 @@ if s:has_plugin('watchdogs') " {{{
     \   | echo 'disabled watchdogs auto-commands.'
 endif "}}}
 if s:has_plugin('vim-hier') " {{{
-    function! s:quickfix_is_target()
-        " let buftype = getbufvar(expand('<abuf>'), '&buftype')
-        let winnr = bufwinnr(expand('<abuf>'))
-        let buftype = getwinvar(winnr, '&buftype')
-        " Dump [winnr, buftype]
-        return buftype ==# 'quickfix'
-    endfunction
     function! s:stop_hier_on_quickfix_close()
         if !exists(':HierStop')
             return
         endif
-        if s:quickfix_is_target() || !s:quickfix_exists_window()
-            HierStop
+        if !s:quickfix_exists_window()
+            let winnr = winnr()
+            windo HierStop
+            execute winnr 'wincmd w'
         endif
     endfunction
     function! s:start_hier_on_quickfix_open()
         if !exists(':HierStart')
             return
         endif
-        if s:quickfix_is_target() || s:quickfix_exists_window()
-            HierStart
+        if s:quickfix_exists_window()
+            let winnr = winnr()
+            windo HierStart
+            execute winnr 'wincmd w'
         endif
     endfunction
-    MyAutocmd BufWinLeave,BufDelete,BufUnload,BufWipeout *
+    MyAutocmd WinEnter *
     \   call s:stop_hier_on_quickfix_close()
     MyAutocmd QuickFixCmdPost *
     \   call s:start_hier_on_quickfix_open()
-
-
-    function! s:check_auto_commands(evname)
-        " disable
-        if 1 | return | endif
-
-        echom a:evname.': <afile> = '.expand('<afile>').', <abuf> = '.expand('<abuf>').', <amatch> = '.expand('<amatch>')
-        Dump bufexists(expand('<abuf>'))
-        let winnr = s:quickfix_get_winnr()
-        Dump [getbufvar(expand('<abuf>'), '&buftype'), winnr, getwinvar(winnr, '&buftype')]
-        let quickfix_is_target = s:quickfix_is_target()
-        let quickfix_exists_window = s:quickfix_exists_window()
-        Dump [quickfix_is_target, quickfix_exists_window]
-    endfunction
-
-    for s:tmp in [
-    \   'BufWinLeave',
-    \   'BufUnload',
-    \   'BufDelete',
-    \   'BufWipeout',
-    \]
-        execute 'MyAutocmd '.s:tmp.' * call s:check_auto_commands('.string(s:tmp).')'
-    endfor
-    unlet s:tmp
+    MyAutocmd WinEnter *
+    \     if &filetype ==# 'qf'
+    \   |   call s:start_hier_on_quickfix_open()
+    \   | endif
 endif "}}}
 if s:has_plugin('accelerated-jk') " {{{
     Map -remap [n] j <Plug>(accelerated_jk_gj)
