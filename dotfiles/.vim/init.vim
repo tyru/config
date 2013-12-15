@@ -1725,6 +1725,10 @@ if 0
 
 endif
 
+" Excel-like keymapping ;)
+Map [ic] <M-;> <C-r>=strftime('%Y/%m/%d')<CR>
+Map [ic] <M-:> <C-r>=strftime('%H:%M')<CR>
+
 " }}}
 " imap {{{
 
