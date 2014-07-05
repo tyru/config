@@ -21,14 +21,14 @@ endfunction
 function! s:do_lazy_load(vimrc)
     " colorscheme is 'default' here.
     call s:echomsg('Loading ' . a:vimrc . ' ...', 'StatusLine')
-    let g:vim_starting = 1
+    let s:vim_starting = 1
     let has_error = 0
     try
         call s:load_init_vim(a:vimrc)
     catch
         let has_error = 1
     finally
-        unlet! g:vim_starting
+        let s:vim_starting = 0
     "     call s:echomsg('Loading ' . a:vimrc . ' ... done'
     "     \       . (has_error ? '(with errors)' : '') . '!',
     "     \   'SpellBad')
@@ -113,10 +113,16 @@ endfunction
 
 let s:vimrc = $MYVIMDIR . '/init.vim'
 if 0
+    function! s:vim_starting()
+        return s:vim_starting
+    endfunction
     augroup vimrc-bootstrap
         autocmd VimEnter * autocmd! vimrc-bootstrap
         autocmd VimEnter * call s:do_lazy_load(s:vimrc)
     augroup END
 else
+    function! s:vim_starting()
+        return has('vim_starting')
+    endfunction
     call s:do_load(s:vimrc)
 endif
