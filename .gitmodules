@@ -220,3 +220,6 @@
 [submodule "dotfiles/.vim/bundle/vim-flavored-markdown"]
 	path = dotfiles/.vim/bundle/vim-flavored-markdown
 	url = https://github.com/jtratner/vim-flavored-markdown.git
+[submodule "dotfiles/.vim/bundle/neomru.vim"]
+	path = dotfiles/.vim/bundle/neomru.vim
+	url = https://github.com/Shougo/neomru.vim

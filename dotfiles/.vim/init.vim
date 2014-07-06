@@ -230,8 +230,6 @@ if !exists('$VIMRC_DEBUG')
 
     LoadLater '$MYVIMDIR/bundle/operator-html-escape.vim'
 
-    LoadLater '$MYVIMDIR/bundle/operator-reverse.vim'
-
     LoadLater '$MYVIMDIR/bundle/quickey.vim'
 
     LoadLater '$MYVIMDIR/bundle/ref-plugins'
@@ -332,18 +330,11 @@ if !exists('$VIMRC_DEBUG')
 
     LoadLater '$MYVIMDIR/bundle/webapi-vim'
 
-    if exists('g:chalice')
-        LoadLater '$MYVIMDIR/bundle/chalice'
-    endif
-
-    LoadLater '$MYVIMDIR/bundle/vim-golang'
-
     LoadLater '$MYVIMDIR/bundle/autodirmake.vim'
 
-    LoadLater '$MYVIMDIR/bundle/vim-vimlparser'
-    LoadLater '$MYVIMDIR/bundle/translua-vim'
-
     LoadLater '$MYVIMDIR/bundle/vim-flavored-markdown'
+
+    LoadLater '$MYVIMDIR/bundle/neomru.vim'
 
 else
     " TODO: Reduce dependency plugins.
