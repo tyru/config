@@ -853,8 +853,9 @@ set colorcolumn=80
 set viminfo='50,h,f1,n$HOME/.viminfo
 set matchpairs+=<:>
 set number
-if has('multibyte')
-    set showbreak=↪
+set showbreak=...
+if has('path_extra')
+    set path+=.;
 endif
 " }}}
 " Encoding {{{
