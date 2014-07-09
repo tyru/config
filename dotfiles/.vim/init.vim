@@ -26,8 +26,8 @@ set guioptions+=M
 let did_install_default_menus = 1
 let did_install_syntax_menu = 1
 
-    filetype plugin indent on
-    syntax enable
+filetype plugin indent on
+syntax enable
 
 set guioptions-=M
 
@@ -337,7 +337,6 @@ if !exists('$VIMRC_DEBUG')
     LoadLater '$MYVIMDIR/bundle/neomru.vim'
 
     LoadLater '$MYVIMDIR/bundle/go-vim'
-
 else
     " TODO: Reduce dependency plugins.
 
@@ -358,11 +357,14 @@ else
     " LoadLater '$MYVIMDIR/bundle/neocomplete'
 endif
 
-delcommand LoadLater
-delcommand LoadNow
 
+filetype off
 " Change 'runtimepath'.
 call s:plugins.apply()
+filetype plugin indent on
+
+delcommand LoadLater
+delcommand LoadNow
 unlet s:plugins
 
 
