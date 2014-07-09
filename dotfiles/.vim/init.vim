@@ -336,6 +336,8 @@ if !exists('$VIMRC_DEBUG')
 
     LoadLater '$MYVIMDIR/bundle/neomru.vim'
 
+    LoadLater '$MYVIMDIR/bundle/go-vim'
+
 else
     " TODO: Reduce dependency plugins.
 

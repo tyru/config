@@ -223,3 +223,6 @@
 [submodule "dotfiles/.vim/bundle/neomru.vim"]
 	path = dotfiles/.vim/bundle/neomru.vim
 	url = https://github.com/Shougo/neomru.vim
+[submodule "dotfiles/.vim/bundle/go-vim"]
+	path = dotfiles/.vim/bundle/go-vim
+	url = https://github.com/vim-jp/go-vim.git
