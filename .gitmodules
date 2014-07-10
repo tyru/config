@@ -226,3 +226,6 @@
 [submodule "dotfiles/.vim/bundle/go-vim"]
 	path = dotfiles/.vim/bundle/go-vim
 	url = https://github.com/vim-jp/go-vim.git
+[submodule "dotfiles/.vim/bundle/typescript-vim"]
+	path = dotfiles/.vim/bundle/typescript-vim
+	url = https://github.com/leafgarland/typescript-vim.git
