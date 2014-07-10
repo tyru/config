@@ -2897,8 +2897,10 @@ if s:has_plugin('open-browser') " {{{
     " let g:openbrowser_github_always_used_branch = 'master'
 
     let g:openbrowser_open_filepath_in_vim = 0
-    let g:openbrowser_use_vimproc = 0
+    " let g:openbrowser_use_vimproc = 0
     let g:openbrowser_force_foreground_after_open = 1
+
+    command! OpenBrowserCurrent execute "OpenBrowser" "file:///" . expand('%:p:gs?\\?/?')
 endif " }}}
 if s:has_plugin('AutoDate') " {{{
     " let g:autodate_format = "%Y-%m-%d"
