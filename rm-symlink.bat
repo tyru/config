@@ -3,7 +3,7 @@
 cd %~dp0
 if not errorlevel 0 goto err_chdir
 
-if not defined home set home=%USERPROFILE%
+if not defined HOME set HOME=%USERPROFILE%
 
 setlocal enabledelayedexpansion
 for /f %%F in (dotfiles.lst) do (
@@ -16,8 +16,14 @@ for /f %%F in (dotfiles.lst) do (
 			set dstfile=%%y
 		)
 	)
-	set src=!CD!\dotfiles\!srcfile:/=\!
-	set dst=!home!\!dstfile:/=\!
+	set srcfile=dot!srcfile!
+	set srcfile=!srcfile:/=\!
+
+	set dstfile=!dstfile!
+	set dstfile=!dstfile:/=\!
+
+	set src=!CD!\dotfiles\!srcfile!
+	set dst=!HOME!\!dstfile!
 
 	if exist "!dst!" (
 		if exist "!src!\" (

@@ -1,35 +1,36 @@
-.vim
-.vimrc
-.vimperator
-.vimperatorrc
-.bash_profile
-.bashrc
-.screenrc
-.inputrc
-.zshrc
-.zshenv
-.zsh
-.skel
-.module-starter
-.w3m/keymap
-.Xmodmap
-.shrc.common
-.shrc.cygwin
-.shrc.start-screen
-.env.common
-.tmux.conf
-.tmux
-.uim
-.uim.d/customs
-.muttrc
-.hgrc
-.earthquake/config
-.gitconfig
-.gitignore.base
-.Xresources
-.fluxbox/init
-.fluxbox/keys
-.fluxbox/menu
-.fluxbox/slitlist
-.fluxbox/startup
-.minttyrc
+.Xmodmap	.Xmodmap
+.Xresources	.Xresources
+.bash_profile	.bash_profile
+.bashrc	.bashrc
+.earthquake/config	.earthquake/config
+.env.common	.env.common
+.fluxbox/init	.fluxbox/init
+.fluxbox/keys	.fluxbox/keys
+.fluxbox/menu	.fluxbox/menu
+.fluxbox/slitlist	.fluxbox/slitlist
+.fluxbox/startup	.fluxbox/startup
+.gitconfig	.gitconfig
+.gitignore.base	.gitignore.base
+.hgrc	.hgrc
+.inputrc	.inputrc
+.minttyrc	.minttyrc
+.module-starter	.module-starter
+.muttrc	.muttrc
+.screenrc	.screenrc
+.shrc.common	.shrc.common
+.shrc.cygwin	.shrc.cygwin
+.shrc.start-screen	.shrc.start-screen
+.skel	.skel
+.skk	.skk
+.tmux	.tmux
+.tmux.conf	.tmux.conf
+.uim	.uim
+.uim.d/customs	.uim.d/customs
+.vim	.vim
+.vimperator	.vimperator
+.vimperatorrc	.vimperatorrc
+.vimrc	.vimrc
+.w3m/keymap	.w3m/keymap
+.zsh	.zsh
+.zshenv	.zshenv
+.zshrc	.zshrc
