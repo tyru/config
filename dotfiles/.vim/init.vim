@@ -3826,7 +3826,7 @@ if s:has_plugin('foldballoon') "{{{
     set balloonexpr=foldballoon#balloonexpr()
 endif "}}}
 if s:has_plugin('vital.vim') "{{{
-    let g:vitalizer#vital_dir = 'C:/Users/takuya/Documents/GitHub/dotfiles/dotfiles/.vim/bundle/vital.vim'
+    let g:vitalizer#vital_dir = 'C:/config/dotfiles/dotfiles/.vim/bundle/vital.vim'
 endif "}}}
 if s:has_plugin('vim-tabpagecd') "{{{
 
