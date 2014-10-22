@@ -113,7 +113,7 @@ endfunction
 
 let s:vimrc = $MYVIMDIR . '/init.vim'
 if 0
-    function! s:vim_starting()
+    function! VimStarting()
         return s:vim_starting
     endfunction
     augroup vimrc-bootstrap
@@ -121,7 +121,7 @@ if 0
         autocmd VimEnter * call s:do_lazy_load(s:vimrc)
     augroup END
 else
-    function! s:vim_starting()
+    function! VimStarting()
         return has('vim_starting')
     endfunction
     call s:do_load(s:vimrc)
