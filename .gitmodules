@@ -100,9 +100,6 @@
 [submodule "dotfiles/.vim/bundle/ohmygrep.vim"]
 	path = dotfiles/.vim/bundle/ohmygrep.vim
 	url = https://github.com/tyru/ohmygrep.vim
-[submodule "dotfiles/.vim/bundle/dutil.vim"]
-	path = dotfiles/.vim/bundle/dutil.vim
-	url = https://github.com/tyru/dutil.vim
 [submodule "dotfiles/.vim/bundle/vim-ft-diff_fold"]
 	path = dotfiles/.vim/bundle/vim-ft-diff_fold
 	url = https://github.com/thinca/vim-ft-diff_fold
@@ -142,9 +139,6 @@
 [submodule "dotfiles/.vim/bundle/vital.vim"]
 	path = dotfiles/.vim/bundle/vital.vim
 	url = https://github.com/vim-jp/vital.vim
-[submodule "dotfiles/.vim/bundle/vim-unite-history"]
-	path = dotfiles/.vim/bundle/vim-unite-history
-	url = https://github.com/thinca/vim-unite-history
 [submodule "dotfiles/.vim/bundle/ftl-vim-syntax"]
 	path = dotfiles/.vim/bundle/ftl-vim-syntax
 	url = https://github.com/chaquotay/ftl-vim-syntax
@@ -229,3 +223,18 @@
 [submodule "dotfiles/.vim/bundle/typescript-vim"]
 	path = dotfiles/.vim/bundle/typescript-vim
 	url = https://github.com/leafgarland/typescript-vim.git
+[submodule "dotfiles/.vim/bundle/committia.vim"]
+	path = dotfiles/.vim/bundle/committia.vim
+	url = https://github.com/rhysd/committia.vim
+[submodule "dotfiles/.vim/bundle/vim-vimlint"]
+	path = dotfiles/.vim/bundle/vim-vimlint
+	url = https://github.com/syngan/vim-vimlint
+[submodule "dotfiles/.vim/bundle/vim-brightest"]
+	path = dotfiles/.vim/bundle/vim-brightest
+	url = https://github.com/osyo-manga/vim-brightest
+[submodule "dotfiles/.vim/bundle/chdir-proj-root.vim"]
+	path = dotfiles/.vim/bundle/chdir-proj-root.vim
+	url = https://github.com/tyru/chdir-proj-root.vim
+[submodule "dotfiles/.vim/bundle/sonictemplate-vim"]
+	path = dotfiles/.vim/bundle/sonictemplate-vim
+	url = https://github.com/mattn/sonictemplate-vim
