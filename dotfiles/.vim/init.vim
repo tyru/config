@@ -8,23 +8,33 @@ scriptencoding utf-8
 " let $VIMRC_DEBUG = 1
 " let $VIMRC_DISABLE_MYAUTOCMD = 1
 " let $VIMRC_DISABLE_VIMENTER = 1
+" let $VIMRC_LOAD_NO_PLUGINS = 1
 
 " 0: vimproc disabled
 " 1: vimproc enabled
 " 2: plugin default(auto)
-let s:USE_VIMPROC = 2
-let s:FORCE_LANG_C = 0
-let s:LOAD_MENU = 1
+if !exists('$VIMRC_USE_VIMPROC')
+    let $VIMRC_USE_VIMPROC = 1
+endif
+if !exists('$VIMRC_FORCE_LANG_C')
+    let $VIMRC_FORCE_LANG_C = 0
+endif
+if !exists('$VIMRC_LOAD_MENU')
+    let $VIMRC_LOAD_MENU = 1
+endif
 
 
 " Basic {{{
 
-if s:FORCE_LANG_C
+" Reset all options
+set all&
+
+if $VIMRC_FORCE_LANG_C
     language messages C
     language time C
 endif
 
-if s:LOAD_MENU
+if $VIMRC_LOAD_MENU
     " Load current locale and &encoding menu.
     set guioptions+=m
 else
@@ -42,16 +52,19 @@ endif
 
 " }}}
 " Utilities {{{
+
 " Constants {{{
 let s:is_win = has('win16') || has('win32') || has('win64') || has('win95')
 " }}}
+
 " Function {{{
 
 function! s:SID() "{{{
     return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
 endfunction "}}}
+let s:SNR_PREFIX = '<SNR>' . s:SID() . '_'
 function! s:SNR(map) "{{{
-    return printf("<SNR>%d_%s", s:SID(), a:map)
+    return s:SNR_PREFIX . a:map
 endfunction "}}}
 
 " e.g.) s:has_plugin('eskk') ? 'yes' : 'no'
@@ -94,7 +107,65 @@ function! s:map_lines(str, expr)
     return s:splitmapjoin(a:str, '\n', a:expr, "\n")
 endfunction
 
+
+" Quickfix utility functions {{{
+function! s:quickfix_get_winnr()
+    " quickfix window is usually at bottom,
+    " thus reverse-lookup.
+    for winnr in reverse(range(1, winnr('$')))
+        if getwinvar(winnr, '&buftype') ==# 'quickfix'
+            return winnr
+        endif
+    endfor
+    return 0
+endfunction
+function! s:quickfix_exists_window()
+    return !!s:quickfix_get_winnr()
+endfunction
+function! s:quickfix_supported_quickfix_title()
+    return s:Compat.has_version('7.3')
+endfunction
+function! s:quickfix_get_search_word()
+    " NOTE: This function returns a string starting with "/"
+    " if previous search word is found.
+    " This function can't use an empty string
+    " as a failure return value, because ":vimgrep /" also returns an empty string.
+
+    " w:quickfix_title only works 7.3 or later.
+    if !s:quickfix_supported_quickfix_title()
+        return ''
+    endif
+
+    let qf_winnr = s:quickfix_get_winnr()
+    if !qf_winnr
+        copen
+    endif
+
+    try
+        let qf_title = getwinvar(qf_winnr, 'quickfix_title')
+        if qf_title ==# ''
+            return ''
+        endif
+
+        " NOTE: Supported only :vim[grep] command.
+        let rx = '^:\s*\<vim\%[grep]\>\s*\(/.*\)'
+        let m = matchlist(qf_title, rx)
+        if empty(m)
+            return ''
+        endif
+
+        return m[1]
+    finally
+        if !qf_winnr
+            cclose
+        endif
+    endtry
+endfunction
+
 " }}}
+
+" }}}
+
 " Commands {{{
 augroup vimrc
     autocmd!
@@ -112,7 +183,7 @@ command!
 command! -bang -nargs=* VimrcAutocmd autocmd<bang> vimrc <args>
 
 if exists('$VIMRC_DISABLE_MYAUTOCMD')
-    Nop MyAutoCmd
+    Nop VimrcAutocmd
 endif
 
 
@@ -145,16 +216,51 @@ function! s:cmd_lazy(q_args) "{{{
 endfunction "}}}
 
 " }}}
-" }}}
-" Load plugins {{{
 
+" Export variables/functions {{{
+
+let g:VIMRC = {
+\   'is_win' : s:is_win,
+\   'quickfix_exists_window' : function(s:SNR('quickfix_exists_window')),
+\}
+
+" }}}
+
+" }}}
+" Encoding {{{
+let s:enc = 'utf-8'
+
+let &enc = s:enc
+let &fenc = s:enc
+let &termencoding = s:enc
+let s:fencs = [s:enc] + split(&fileencodings, ',') + ['iso-2022-jp', 'iso-2022-jp-3', 'cp932']
+let &fileencodings = join(filter(s:fencs, 'count(s:fencs, v:val) == 1'), ',')
+
+unlet s:fencs
+unlet s:enc
+
+set fileformats=unix,dos,mac
+if exists('&ambiwidth')
+    set ambiwidth=double
+endif
+
+" }}}
+" Plugins {{{
+
+" ... {{{
 let s:bundleconfig = {}
 let s:plugins = rtputil#new()
 call s:plugins.reset()
 
 function! s:cmd_rtp_load(args, now)
     let path = a:args[0]
-    let nosufname = matchstr(path, '[^/\\]\{-1,}\ze\(\c\.vim\)\?$')
+    if !isdirectory(expand(path))
+        call s:error(path . ": no such a bundle directory")
+        return
+    endif
+    let nosufname = substitute(path, '.*[/\\]', '', '')
+    let nosufname = substitute(nosufname, '\c[.-]vim$', '', '')
+    let nosufname = substitute(nosufname, '\c^vim[.-]', '', '')
     let config = {
     \   'path': path, 'name': nosufname,
     \   'depend': [], 'done': 0
@@ -181,9 +287,25 @@ command! -nargs=+ LoadLater
 command! -nargs=+ LoadNow
 \     call s:cmd_rtp_load([<args>], 1)
 
+" }}}
+
+" Load fundamental plugins {{{
+" TODO: Reduce dependency plugins.
+LoadLater '$MYVIMDIR/bundle/tyru'
+LoadLater '$MYVIMDIR/bundle/emap.vim'
+LoadLater '$MYVIMDIR/bundle/vim-altercmd'
+" }}}
+
+if !exists('$VIMRC_LOAD_NO_PLUGINS')
+" Load plugins unless $VIMRC_LOAD_NO_PLUGINS is defined {{{
+
+" Load plugins {{{
 if !exists('$VIMRC_DEBUG')
+
+    " If vim is already up, send it given files by arguments
     LoadNow '$MYVIMDIR/bundle/vim-singleton'
     call singleton#enable()
+
 
     if !s:is_win && has('unix')
         LoadLater '$MYVIMDIR/bundle/autochmodx.vim'
@@ -195,15 +317,13 @@ if !exists('$VIMRC_DEBUG')
 
     LoadLater '$MYVIMDIR/bundle/caw.vim'
 
-    LoadLater '$MYVIMDIR/bundle/codingstyle.vim'
-
     LoadLater '$MYVIMDIR/bundle/detect-coding-style.vim'
+
+    LoadLater '$MYVIMDIR/bundle/codingstyle.vim'
 
     LoadLater '$MYVIMDIR/bundle/cpp-vim'
 
-    LoadLater '$MYVIMDIR/bundle/current-func-info.vim'
-
-    LoadLater '$MYVIMDIR/bundle/emap.vim'
+    " LoadLater '$MYVIMDIR/bundle/current-func-info.vim'
 
     LoadLater '$MYVIMDIR/bundle/fileutils.vim'
 
@@ -252,31 +372,25 @@ if !exists('$VIMRC_DEBUG')
         LoadLater '$MYVIMDIR/bundle/simpletap.vim'
     endif
 
-    " LoadLater '$MYVIMDIR/bundle/skkdict.vim'
+    LoadLater '$MYVIMDIR/bundle/skkdict.vim'
 
-    " if 1
-    "     LoadLater '$MYVIMDIR/bundle/eskk.vim', {'depend': 'skkdict'}
-    " else
-    "     LoadLater '$MYVIMDIR/bundle/skk.vim', {'depend': 'skkdict'}
-    " endif
-
-    LoadLater '$MYVIMDIR/bundle/vixim.vim'
-    LoadLater '$MYVIMDIR/bundle/vixim-skk.vim', {'depend': 'vixim'}
-
-    LoadLater '$MYVIMDIR/bundle/talign.vim'
+    if 0
+        let s:SKK = 'eskk'
+        LoadLater '$MYVIMDIR/bundle/eskk.vim', {'depend': 'skkdict'}
+    elseif 1
+        let s:SKK = 'skkvim'
+        LoadLater '$MYVIMDIR/bundle/skk.vim', {'depend': 'skkdict'}
+    elseif 0
+        let s:SKK = 'vixim'
+        LoadLater '$MYVIMDIR/bundle/vixim.vim'
+        LoadLater '$MYVIMDIR/bundle/vixim-skk.vim', {'depend': 'vixim'}
+    endif
 
     if !s:is_win && has('unix') && !has('gui_running')
         LoadLater '$MYVIMDIR/bundle/SudoEdit.vim'
     endif
 
-    LoadLater '$MYVIMDIR/bundle/surround-config'
-
-    let g:loaded_tyru_event_test = 1
-    LoadLater '$MYVIMDIR/bundle/tyru'
-
     LoadLater '$MYVIMDIR/bundle/unite.vim'
-
-    LoadLater '$MYVIMDIR/bundle/vim-altercmd'
 
     if !s:is_win && has('unix') && !has('gui_running')
         LoadLater '$MYVIMDIR/bundle/vim-fakeclip'
@@ -318,8 +432,6 @@ if !exists('$VIMRC_DEBUG')
 
     LoadLater '$MYVIMDIR/bundle/vim-textobj-jabraces'
 
-    LoadLater '$MYVIMDIR/bundle/vim-textobj-syntax'
-
     LoadLater '$MYVIMDIR/bundle/vim-textobj-user'
 
     LoadLater '$MYVIMDIR/bundle/vim-visualstar'
@@ -328,9 +440,9 @@ if !exists('$VIMRC_DEBUG')
 
     LoadLater '$MYVIMDIR/bundle/vimproc'
 
-    " LoadLater '$MYVIMDIR/bundle/vimtemplate.vim'
+    LoadLater '$MYVIMDIR/bundle/vimtemplate.vim'
 
-    LoadLater '$MYVIMDIR/bundle/sonictemplate-vim'
+    " LoadLater '$MYVIMDIR/bundle/sonictemplate-vim'
 
     LoadLater '$MYVIMDIR/bundle/vital.vim'
 
@@ -350,18 +462,16 @@ if !exists('$VIMRC_DEBUG')
 
     LoadLater '$MYVIMDIR/bundle/vim-vimlint'
 
-    LoadLater '$MYVIMDIR/bundle/chdir-proj-root.vim'
+    LoadLater '$MYVIMDIR/bundle/vim-rooter'
 
     LoadLater '$MYVIMDIR/bundle/vim-brightest'
+
+    if executable('ag')
+        LoadLater '$MYVIMDIR/bundle/ag.vim'
+    endif
+
+    LoadLater '$MYVIMDIR/bundle/vim-rails'
 else
-    " TODO: Reduce dependency plugins.
-
-    " Basic plugins
-    LoadLater '$MYVIMDIR/bundle/tyru'
-    LoadLater '$MYVIMDIR/bundle/emap.vim'
-    LoadLater '$MYVIMDIR/bundle/vim-altercmd'
-    LoadLater '$MYVIMDIR/bundle/detect-coding-style.vim'
-
     " Useful plugins for debug
     LoadLater '$MYVIMDIR/bundle/dutil.vim'
     LoadLater '$MYVIMDIR/bundle/vim-prettyprint'
@@ -373,67 +483,22 @@ else
     " LoadLater '$MYVIMDIR/bundle/neocomplete'
 endif
 
+" }}}
 
+" }}}
+endif
+
+" Change 'runtimepath' {{{
 filetype off
-" Change 'runtimepath'.
 call s:plugins.apply()
 filetype plugin indent on
 
 delcommand LoadLater
 delcommand LoadNow
 unlet s:plugins
+" }}}
 
-
-
-" Load plugin-specific config.
-" TODO: Load order
-" TODO: Dependency
-function! s:bc_load()
-    for name in keys(s:bundleconfig)
-        let config = s:bundleconfig[name]
-        if config.done
-            continue
-        endif
-        for dependant in config.depend
-            if has_key(s:bundleconfig, dependant)
-                call s:bc_do_load(s:bundleconfig[dependant])
-            else
-                call s:error(name . ' requires ' . dependant .
-                \   ' but you didn''t require ' . dependant . '!')
-            endif
-        endfor
-    endfor
-endfunction
-function! s:bc_do_load(config)
-    try
-        " execute 'runtime! bundleconfig/' . a:config.name . '/**/*.vim'
-        execute 'runtime! bundleconfig/' . a:config.name . '.vim'
-    catch
-        call s:error('--- ' . a:config.path . ' ---')
-        call s:error(v:exception)
-        call s:error('--- ' . a:config.path . ' ---')
-    endtry
-    let a:config.done = 1
-endfunction
-
-call s:bc_load()
-unlet s:bundleconfig
-
-
-" Load vimrc vital.
-let s:Vital = vital#of('vimrc')
-let s:Prelude = s:Vital.import('Prelude')
-let s:List = s:Vital.import('Data.List')
-let s:Filepath = s:Vital.import('System.Filepath')
-let s:File = s:Vital.import('System.File')
-let s:Compat = s:Vital.import('Vim.Compat')
-
-
-" Generate helptags.
-" TODO: Execute once per a day.
-command! -bar -bang HelpTagsAll call rtputil#helptags(<bang>0)
-HelpTagsAll
-
+" Import emap.vim & altercmd.vim commands {{{
 
 " Define :Map commands
 call emap#load('noprefix')
@@ -450,13 +515,88 @@ command!
 \   CAlterCommand <args> | AlterCommand <cmdwin> <args>
 
 " }}}
-" Options {{{
 
-" Reset all options except 'runtimepath'.
-let s:tmp = &runtimepath
-set all&
-let &runtimepath = s:tmp
-unlet s:tmp
+" Load plugin-specific config (bundleconfig). {{{
+
+function! s:bc_load()
+    let g:config = s:bundleconfig
+    for name in s:get_ordering_keys(s:bundleconfig)
+        let config = s:bundleconfig[name]
+        if config.done
+            continue
+        endif
+        let has_dependants = empty(
+        \   filter(copy(config.depend), '!has_key(s:bundleconfig, v:val)'))
+        if !has_dependants
+            call s:error(name . ' requires ' . dependant .
+            \   ' but you didn''t require ' . dependant . '!')
+            continue
+        endif
+        for dependant in config.depend
+            call s:bc_do_load(s:bundleconfig[dependant])
+        endfor
+        call s:bc_do_load(config)
+    endfor
+endfunction
+function! s:get_ordering_keys(bundleconfig)
+    " Load in order?
+    return keys(a:bundleconfig)
+endfunction
+function! s:bc_do_load(config)
+    try
+        execute 'runtime! bundleconfig/' . a:config.name . '/**/*.vim'
+        execute 'runtime! bundleconfig/' . a:config.name . '*.vim'
+        " execute 'runtime! bundleconfig/' . a:config.name . '.vim'
+    catch
+        call s:error('--- ' . a:config.path . ' ---')
+        call s:error(v:exception)
+        call s:error('--- ' . a:config.path . ' ---')
+    endtry
+    let a:config.done = 1
+endfunction
+
+call s:bc_load()
+unlet s:bundleconfig
+
+" }}}
+
+" Open bundleconfig file. {{{
+
+command! -nargs=+ -complete=customlist,CompleteEditBundleConfig
+\   EditBundleConfig
+\   drop $MYVIMDIR/bundleconfig/<args>
+
+function! CompleteEditBundleConfig(A, L, P)
+    let dirs = glob('$MYVIMDIR/bundleconfig/*', 1, 1)
+    call map(dirs, 'substitute(v:val, ".*[/\\\\]", "", "")')
+    return dirs
+endfunction
+
+" }}}
+
+" Load vimrc vital. {{{
+
+let s:Vital = vital#of('vimrc')
+let s:Prelude = s:Vital.import('Prelude')
+let s:List = s:Vital.import('Data.List')
+let s:Filepath = s:Vital.import('System.Filepath')
+let s:File = s:Vital.import('System.File')
+let s:Compat = s:Vital.import('Vim.Compat')
+" let s:Mapping = ...   " is used by tyru#util#undo_ftplugin_helper
+unlet s:Vital
+
+" }}}
+
+" Generate helptags. {{{
+
+" TODO: Execute once per a day.
+command! -bar -bang HelpTagsAll call rtputil#helptags(<bang>0)
+HelpTagsAll
+
+" }}}
+
+" }}}
+" Options {{{
 
 " indent
 set autoindent
@@ -481,7 +621,9 @@ set smartcase
 
 " listchars
 set list
-set listchars=tab:>.,extends:>,precedes:<,eol:↵
+" Assumption: Trailing spaces are already highlighted and noticeable.
+" set listchars=tab:>.,extends:>,precedes:<,eol:$
+set listchars=tab:>.,extends:>,precedes:<
 
 " scroll
 set scroll=5
@@ -531,6 +673,7 @@ endif
 set mouse=a
 set mousefocus
 set mousehide
+set mousemodel=popup
 
 " command-line
 set cmdheight=1
@@ -559,7 +702,7 @@ if has('virtualedit')
     set virtualedit=all
 endif
 
-" swap
+" Swapfile
 if 0
     " TODO: Use swapfile.
     let &directory = $MYVIMDIR.'/info/swap/'.v:servername
@@ -576,6 +719,9 @@ if 0
             " * Do recovery!
         endtry
     endfunction
+
+    " Open a file as read-only if swap exists
+    " VimrcAutocmd SwapExists * let v:swapchoice = 'o'
 else
     " No swapfile.
     set noswapfile
@@ -845,9 +991,15 @@ if has('gui_running')
         set guifont=Osaka－等幅:h14
         set printfont=Osaka－等幅:h14
     else    " *nix OS
-        set guifont=Monospace\ 12
-        set printfont=Monospace\ 12
-        set linespace=4
+        try
+            set guifont=Monospace\ 12
+            set printfont=Monospace\ 12
+            set linespace=0
+        catch
+            set guifont=Monospace\ 12
+            set printfont=Monospace\ 12
+            set linespace=4
+        endtry
     endif
 endif
 " }}}
@@ -875,95 +1027,25 @@ if has('path_extra')
     set path+=.;
 endif
 " }}}
-" Encoding {{{
-let s:enc = 'utf-8'
-let &enc = s:enc
-let &fenc = s:enc
-let &termencoding = s:enc
-let &fileencodings = join(s:List.uniq(
-\   [s:enc]
-\   + split(&fileencodings, ',')
-\   + ['iso-2022-jp', 'iso-2022-jp-3', 'cp932']
-\), ',')
-unlet s:enc
+" ColorScheme {{{
 
-set fileformats=unix,dos,mac
-if exists('&ambiwidth')
-    set ambiwidth=double
-endif
-
-" }}}
-" Autocmd {{{
-
-" colorscheme
 " NOTE: On MS Windows, setting colorscheme in .vimrc does not work.
 " Because :Lazy is necessary.
 " FIXME: `:Lazy colorscheme tyru` does not throw ColorScheme event,
 " what the fxck?
 Lazy colorscheme tyru | doautocmd ColorScheme
 
-" Open a file as read-only if swap exists
-" VimrcAutocmd SwapExists * let v:swapchoice = 'o'
+" }}}
+" Quickfix {{{
 
 VimrcAutocmd QuickfixCmdPost * QuickFix
 
-
-" Set syntaxes
-VimrcAutocmd BufNewFile,BufRead *.as setlocal syntax=actionscript
-VimrcAutocmd BufNewFile,BufRead _vimperatorrc,.vimperatorrc setlocal syntax=vimperator
-VimrcAutocmd BufNewFile,BufRead *.avs setlocal syntax=avs
-
-" Aliases
-" http://vim-users.jp/2010/04/hack138/
-VimrcAutocmd FileType mkd setlocal filetype=markdown
-VimrcAutocmd FileType js setlocal filetype=javascript
-VimrcAutocmd FileType c++ setlocal filetype=cpp
-VimrcAutocmd FileType py setlocal filetype=python
-VimrcAutocmd FileType pl setlocal filetype=perl
-VimrcAutocmd FileType rb setlocal filetype=ruby
-VimrcAutocmd FileType scm setlocal filetype=scheme
-
-" Checking typo. {{{
-VimrcAutocmd BufWriteCmd *[,*] call s:write_check_typo(expand('<afile>'))
-function! s:write_check_typo(file)
-    let writecmd = 'write'.(v:cmdbang ? '!' : '').' '.a:file
-    if exists('b:write_check_typo_nocheck')
-        execute writecmd
-        return
-    endif
-    let prompt = "possible typo: really want to write to '" . a:file . "'?(y/n):"
-    let input = input(prompt)
-    if input ==# 'YES'
-        execute writecmd
-        let b:write_check_typo_nocheck = 1
-    elseif input =~? '^y\(es\)\=$'
-        execute writecmd
-    endif
+" quickfix buffer-local mappings
+VimrcAutocmd FileType qf call s:quickfix_settings()
+function! s:quickfix_settings()
+    " Map -buffer -force [n] j j<CR>:silent! normal! zo<CR><C-w><C-w>
+    " Map -buffer -force [n] k k<CR>:silent! normal! zo<CR><C-w><C-w>
 endfunction
-" }}}
-
-" Localize search options. {{{
-VimrcAutocmd WinLeave *
-\     let t:vimrc_pattern = @/
-\   | let t:vimrc_hlsearch = &hlsearch
-VimrcAutocmd WinEnter *
-\     let @/ = get(t:, 'vimrc_pattern', @/)
-\   | let &l:hlsearch = get(t:, 'vimrc_hlsearch', &l:hlsearch)
-" }}}
-
-" Jump to the last known cursor position {{{
-" This setting was from $VIM/vimrc_example.vim
-
-" When editing a file, always jump to the last known cursor position.
-" Don't do it when the position is invalid or when inside an event handler
-" (happens when dropping a file on gvim).
-" Also don't do it when the mark is in the first line, that is the default
-" position when opening a file.
-autocmd BufReadPost *
-\ if line("'\"") > 1 && line("'\"") <= line("$") |
-\   exe "normal! g`\"" |
-\ endif
-" }}}
 
 " }}}
 " Mappings, Abbreviations {{{
@@ -1039,8 +1121,7 @@ Map [n] ,, ,
 let g:maplocalleader = '\'
 Map [n] <LocalLeader> <Nop>
 
-" DefMacroMap [i] compl <Tab>
-DefMacroMap [i] <C-g> <Tab>
+DefMacroMap [i] compl <C-g><C-g><C-g><C-g><C-g>
 " }}}
 
 " map {{{
@@ -1059,124 +1140,6 @@ Map [nxo] x "_x
 
 Map [nxo] <operator>e =
 
-
-if s:has_plugin('operator-user')
-
-    " operator-adjust {{{
-    call operator#user#define('adjust', 'Op_adjust_window_height')
-    function! Op_adjust_window_height(motion_wiseness)
-        execute (line("']") - line("'[") + 1) 'wincmd' '_'
-        normal! `[zt
-    endfunction
-
-    Map -remap [nxo] <operator>adj <Plug>(operator-adjust)
-    " }}}
-    " operator-sort {{{
-    call operator#user#define_ex_command('sort', 'sort')
-    Map -remap [nxo] <operator>s <Plug>(operator-sort)
-    " }}}
-    " operator-retab {{{
-    call operator#user#define_ex_command('retab', 'retab')
-    Map -remap [nxo] <operator>t <Plug>(operator-retab)
-    " }}}
-    " operator-join {{{
-    call operator#user#define_ex_command('join', 'join')
-    Map -remap [nxo] <operator>j <Plug>(operator-join)
-    " }}}
-    " operator-uniq {{{
-    call operator#user#define_ex_command('uniq', 'sort u')
-    Map -remap [nxo] <operator>u <Plug>(operator-uniq)
-    " }}}
-    " operator-reverse {{{
-    if s:has_plugin('operator-reverse')
-        Map -remap [nxo] <operator>rl <Plug>(operator-reverse-lines)
-        Map -remap [nxo] <operator>rw <Plug>(operator-reverse-text)
-    endif
-    " }}}
-    " operator-narrow {{{
-    call operator#user#define_ex_command('narrow', 'Narrow')
-
-    Map -remap [nxo] <operator>na <Plug>(operator-narrow)
-    Map [nxo]        <operator>nw :<C-u>Widen<CR>
-
-    let g:narrow_allow_overridingp = 1
-    " }}}
-    " operator-replace {{{
-    if s:has_plugin('operator-replace')
-        Map -remap [nxo] <operator>p  <Plug>(operator-replace)
-        " Map -remap [xo] p <Plug>(operator-replace)
-    endif
-    " }}}
-    " operator-camelize {{{
-    if s:has_plugin('operator-camelize')
-        Map -remap [nxo] <operator>c <Plug>(operator-camelize-toggle)
-        let g:operator_camelize_all_uppercase_action = 'camelize'
-        let g:operator_decamelize_all_uppercase_action = 'lowercase'
-
-
-        " Test: g:operator_camelize_detect_function
-        " function! Camelized(word)
-        "     return 0
-        " endfunction
-        " let g:operator_camelize_detect_function = 'Camelized'
-        " E704: Funcref variable name must start with a capital: g:operator_camelize_detect_function
-        " let g:operator_camelize_detect_function = function('Camelized')
-
-        " Test: mappings
-        " Map -remap [nxo] <operator>c <Plug>(operator-camelize)
-        " Map -remap [nxo] <operator>C <Plug>(operator-decamelize)
-
-
-        " See "keymappings" branch.
-        " Map -remap [nxo] <operator>c <Plug>(operator-camelize/camelize)
-        " Map -remap [nxo] <operator>C <Plug>(operator-decamelize/lowercase)
-    endif
-    " }}}
-    " operator-blank-killer {{{
-    call operator#user#define_ex_command('blank-killer', 's/\s\+$//')
-    Map -remap [nxo] <operator>bk <Plug>(operator-blank-killer)
-    " }}}
-    " operator-html-escape {{{
-    Map -remap [nxo] <operator>he <Plug>(operator-html-escape)
-    Map -remap [nxo] <operator>hu <Plug>(operator-html-unescape)
-    " }}}
-    " operator-zen2han, operator-han2zen {{{
-    call operator#user#define('zen2han', 'Op_zen2han')
-    function! Op_zen2han(motion_wiseness)
-        " TODO
-    endfunction
-
-    call operator#user#define('han2zen', 'Op_han2zen')
-    function! Op_han2zen(motion_wiseness)
-        " TODO
-    endfunction
-
-    Map -remap [nxo] <operator>zh <Plug>(operator-zen2han)
-    Map -remap [nxo] <operator>hz <Plug>(operator-han2zen)
-    " }}}
-    " operator-fillblank {{{
-    " from daisuzu .vimrc:
-    "   http://vim-jp.org/reading-vimrc/archive/023.html
-    "   http://lingr.com/room/vim/archives/2012/12/08#message-13176343
-    "   https://raw.github.com/daisuzu/dotvim/master/.vimrc
-
-    function! OperatorFillBlank(motion_wise)
-        let v = operator#user#visual_command_from_wise_name(a:motion_wise)
-        execute 'normal! `['.v.'`]"xy'
-        let text = getreg('x', 1)
-        let text = s:map_lines(text,
-        \   'substitute(v:val, ".", "\\=s:charwidthwise_r(submatch(0))", "g")')
-        call setreg('x', text, v)
-        normal! gv"xp
-    endfunction
-    function! s:charwidthwise_r(char)
-        return repeat(' ', exists('*strwidth') ? strwidth(a:char) : 1)
-    endfunction
-    call operator#user#define('fillblank', 'OperatorFillBlank')
-    Map -remap [nxo] <operator><Space> <Plug>(operator-fillblank)
-    " }}}
-
-endif
 " }}}
 " motion {{{
 Map -expr [nxo] j v:count == 0 ? 'gj' : 'j'
@@ -1290,7 +1253,17 @@ Map [n] ,cd       :<C-u>cd %:p:h<CR>
 " Execute most used command quickly {{{
 Map [n] <excmd>ee     :<C-u>edit<CR>
 Map [n] <excmd>w      :<C-u>update<CR>
-Map [n] <excmd>q      :<C-u>quit<CR>
+Map -silent [n] <excmd>q      :<C-u>call <SID>vim_never_die_close()<CR>
+
+function! s:vim_never_die_close()
+    try
+        close
+    catch
+        if !&modified
+            bwipeout!
+        endif
+    endtry
+endfunction
 " }}}
 " Edit/Apply .vimrc quickly {{{
 Map [n] <excmd>ev     :<C-u>edit $MYVIMRC<CR>
@@ -1318,11 +1291,11 @@ Map [n] <excmd>/ q/
 Map [n] <excmd>? q?
 " }}}
 " Moving tabs {{{
-Map [n] <Left>    :<C-u>execute 'tabmove' (tabpagenr() == 1 ? tabpagenr('$') : tabpagenr() - 2)<CR>
-Map [n] <Right>   :<C-u>execute 'tabmove' (tabpagenr() == tabpagenr('$') ? 0 : tabpagenr())<CR>
+Map -silent [n] <Left>    :<C-u>execute 'tabmove' (tabpagenr() == 1 ? tabpagenr('$') : tabpagenr() - 2)<CR>
+Map -silent [n] <Right>   :<C-u>execute 'tabmove' (tabpagenr() == tabpagenr('$') ? 0 : tabpagenr())<CR>
 " NOTE: Mappings <S-Left>, <S-Right> work only in gVim
-Map [n] <S-Left>  :<C-u>execute 'tabmove' 0<CR>
-Map [n] <S-Right> :<C-u>execute 'tabmove' tabpagenr('$')<CR>
+Map -silent [n] <S-Left>  :<C-u>execute 'tabmove' 0<CR>
+Map -silent [n] <S-Right> :<C-u>execute 'tabmove' tabpagenr('$')<CR>
 " }}}
 " Toggle options {{{
 function! s:toggle_option(option_name) "{{{
@@ -1619,13 +1592,6 @@ Map -silent [n] <C-p> gT
 " Move all windows of current group beyond next group. {{{
 " TODO
 " }}}
-" quickfix buffer-local mappings {{{
-VimrcAutocmd FileType qf call s:quickfix_settings()
-function! s:quickfix_settings()
-    " Map -buffer -force [n] j j<CR>:silent! normal! zo<CR><C-w><C-w>
-    " Map -buffer -force [n] k k<CR>:silent! normal! zo<CR><C-w><C-w>
-endfunction
-" }}}
 " "Use one tabpage per project" project {{{
 " :SetTabName - Set tab's title {{{
 
@@ -1678,10 +1644,6 @@ function! s:force_blockwise_visual(next_key)
         return a:next_key
     endif
 endfunction
-
-
-Map [x] > >gv
-Map [x] < <gv
 
 
 " Space key to indent (inspired by sakura editor)
@@ -1874,6 +1836,13 @@ Map -expr [o]  <SID>(always-backward-N) <SID>search_forward_p() ? 'N' : 'n'
 function! s:search_forward_p()
     return exists('v:searchforward') ? v:searchforward : 1
 endfunction
+
+    " Mapping -> plugin specific mapping, misc. hacks
+    Map -remap [nx] n <SID>(always-forward-n)<SID>(centering-display)
+    Map -remap [nx] N <SID>(always-backward-N)<SID>(centering-display)
+    Map -remap [o] n <SID>(always-forward-n)
+    Map -remap [o] N <SID>(always-backward-N)
+
 " }}}
 " Disable unused keys. {{{
 Map [n] <F1> <Nop>
@@ -1894,6 +1863,7 @@ Map -script [ic] <C-]>     <C-]><bs-ctrl-]>
 " Add current line to quickfix. {{{
 command! -bar -range QFAddLine <line1>,<line2>call s:quickfix_add_range()
 
+" ... {{{
 
 function! s:quickfix_add_range() range
     for lnum in range(a:firstline, a:lastline)
@@ -1928,8 +1898,12 @@ function! s:quickfix_add_line_set_col(lnum, qf)
     endif
 endfunction
 " }}}
+
+" }}}
 " :QFSearchAgain {{{
 command! -bar QFSearchAgain call s:qf_search_again()
+
+" ... {{{
 function! s:qf_search_again()
     let qf_winnr = s:quickfix_get_winnr()
     if !qf_winnr
@@ -1948,59 +1922,6 @@ function! s:qf_search_again()
 endfunction
 " }}}
 
-" Quickfix utility functions {{{
-function! s:quickfix_get_winnr()
-    " quickfix window is usually at bottom,
-    " thus reverse-lookup.
-    for winnr in reverse(range(1, winnr('$')))
-        if getwinvar(winnr, '&buftype') ==# 'quickfix'
-            return winnr
-        endif
-    endfor
-    return 0
-endfunction
-function! s:quickfix_exists_window()
-    return !!s:quickfix_get_winnr()
-endfunction
-function! s:quickfix_supported_quickfix_title()
-    return s:Compat.has_version('7.3')
-endfunction
-function! s:quickfix_get_search_word()
-    " NOTE: This function returns a string starting with "/"
-    " if previous search word is found.
-    " This function can't use an empty string
-    " as a failure return value, because ":vimgrep /" also returns an empty string.
-
-    " w:quickfix_title only works 7.3 or later.
-    if !s:quickfix_supported_quickfix_title()
-        return ''
-    endif
-
-    let qf_winnr = s:quickfix_get_winnr()
-    if !qf_winnr
-        copen
-    endif
-
-    try
-        let qf_title = getwinvar(qf_winnr, 'quickfix_title')
-        if qf_title ==# ''
-            return ''
-        endif
-
-        " NOTE: Supported only :vim[grep] command.
-        let rx = '^:\s*\<vim\%[grep]\>\s*\(/.*\)'
-        let m = matchlist(qf_title, rx)
-        if empty(m)
-            return ''
-        endif
-
-        return m[1]
-    finally
-        if !qf_winnr
-            cclose
-        endif
-    endtry
-endfunction
 " }}}
 
 " Mouse {{{
@@ -2028,11 +1949,13 @@ nnoremenu <silent> PopUp.すぐやることリスト :tab drop ~/Dropbox/memo/to
 nnoremenu <silent> PopUp.ファイルパスをコピー :let [@", @+, @*] = repeat([expand('%:p')], 3)<CR>
 
 " }}}
+" FileType & Syntax {{{
+
 " FileType {{{
+
 function! s:current_filetypes() "{{{
     return split(&l:filetype, '\.')
 endfunction "}}}
-
 function! s:set_dict() "{{{
     let filetype_vs_dictionary = {
     \   'c': ['c', 'cpp'],
@@ -2053,7 +1976,7 @@ function! s:set_dict() "{{{
 
     let &l:dictionary = join(s:List.uniq(dicts), ',')
 endfunction "}}}
-function! s:is_current_filetype(filetypes)
+function! s:is_current_filetype(filetypes) "{{{
     if type(a:filetypes) isnot type([])
         return s:is_current_filetype([a:filetypes])
     endif
@@ -2064,7 +1987,7 @@ function! s:is_current_filetype(filetypes)
         endif
     endfor
     return 0
-endfunction
+endfunction "}}}
 function! s:set_tab_width() "{{{
     if s:is_current_filetype(
     \   ['css', 'xml', 'html', 'smarty', 'htmldjango',
@@ -2100,6 +2023,15 @@ function! s:load_filetype() "{{{
 endfunction "}}}
 
 VimrcAutocmd FileType * call s:load_filetype()
+
+" }}}
+
+" Syntax {{{
+VimrcAutocmd BufNewFile,BufRead *.as setlocal syntax=actionscript
+VimrcAutocmd BufNewFile,BufRead _vimperatorrc,.vimperatorrc setlocal syntax=vimperator
+VimrcAutocmd BufNewFile,BufRead *.avs setlocal syntax=avs
+" }}}
+
 " }}}
 " Commands {{{
 " :DiffOrig {{{
@@ -2236,10 +2168,9 @@ command! -bar -bang -nargs=+ SplitNicely
 
 function! s:cmd_split_nicely(q_args, bang)
     let winnum = winnr('$')
-    let vertical = 0
     let save_winwidth = winwidth(0)
     let save_winheight = winheight(0)
-    execute 'belowright' (vertical ? 'vertical' : '') a:q_args
+    execute 'belowright vertical' a:q_args
     if winnr('$') is winnum
         " if no new window is opened
         return
@@ -2370,7 +2301,7 @@ endfunction
 " :Kwbd {{{
 " http://nanasi.jp/articles/vim/kwbd_vim.html
 command! -bar Kwbd execute "enew | bw ".bufnr("%")
-MapAlterCommand c[lose] Kwbd
+MapAlterCommand clo[se] Kwbd
 " }}}
 " :ScrollbindEnable, :ScrollbindDisable, :ScrollbindToggle {{{
 
@@ -2440,164 +2371,6 @@ command! -bar EditLast split #
 " }}}
 " }}}
 " For Plugins {{{
-if s:has_plugin('nextfile') " {{{
-    let g:nf_map_next     = ''
-    let g:nf_map_previous = ''
-    Map -remap [n] ,n <Plug>(nextfile-next)
-    Map -remap [n] ,p <Plug>(nextfile-previous)
-
-    let g:nf_include_dotfiles = 1    " don't skip dotfiles
-    let g:nf_ignore_ext = ['o', 'obj', 'exe', 'bin']
-
-
-    function! NFLoopMsg(file_to_open)
-        redraw
-        call s:warn('open a file from the start...')
-        " Always open a next/previous file...
-        return 1
-    endfunction
-    function! NFLoopPrompt(file_to_open)
-        return input('open a file from the start? [y/n]:') =~? 'y\%[es]'
-    endfunction
-
-    " g:nf_loop_hook_fn only works when g:nf_loop_files is true.
-    let g:nf_loop_files = 1
-    " Call this function when wrap around.
-    " let g:nf_loop_hook_fn = 'NFLoopPrompt'
-    let g:nf_loop_hook_fn = 'NFLoopMsg'
-    " To avoid |hit-enter| for NFLoopMsg().
-    let g:nf_open_command = 'silent edit'
-
-endif " }}}
-if s:has_plugin('starter') " {{{
-
-    let g:starter_no_default_command = 1
-    nnoremap <silent> gt :<C-u>call starter#launch()<CR>
-
-    function! StarterAfterHookFile(path) "{{{
-        if !filereadable(a:path)
-            return
-        endif
-
-        " Open the file.
-        execute 'edit' a:path
-
-        " Set filetype.
-        let filetype = fnamemodify(a:path, ':e')
-        if filetype != ''
-        \   && globpath(&rtp, 'ftplugin/' . filetype . '.vim') != ''
-            execute 'setfiletype' filetype
-        endif
-    endfunction "}}}
-    function! s:system_list(args_list) "{{{
-        return system(join(
-        \   map(copy(a:args_list), 'shellescape(v:val)')))
-    endfunction "}}}
-    function! StarterAfterHookDir(path) "{{{
-        if !isdirectory(a:path)
-            return
-        endif
-
-        if filereadable(a:path . '/setup')
-            call s:system_list(a:path . '/setup', [a:path])
-            call delete(a:path . '/setup')
-        endif
-        if filereadable(a:path . '/setup.sh')
-            call s:system_list('/bin/sh', [a:path . '/setup.sh', a:path])
-            call delete(a:path . '/setup.sh')
-        endif
-        if filereadable(a:path . '/setup.pl')
-            call s:system_list('perl', [a:path . '/setup.pl', a:path])
-            call delete(a:path . '/setup.pl')
-        endif
-        if filereadable(a:path . '/setup.py')
-            call s:system_list('python', [a:path . '/setup.py', a:path])
-            call delete(a:path . '/setup.py')
-        endif
-        if filereadable(a:path . '/setup.rb')
-            call s:system_list('ruby', [a:path . '/setup.rb', a:path])
-            call delete(a:path . '/setup.rb')
-        endif
-    endfunction "}}}
-    let g:starter#after_hook = [
-    \   'StarterAfterHookFile',
-    \   'StarterAfterHookDir',
-    \]
-
-endif " }}}
-if s:has_plugin('vimtemplate') " {{{
-
-    let g:vt_author = "tyru"
-    let g:vt_email = "tyru.exe@gmail.com"
-    let g:vt_email = "tyru.exe@gmail.com"
-    let vt_template_dir_path = $MYVIMDIR.'/template'
-    let g:vt_files_metainfo = {
-    \   'cppsrc-scratch.cpp': {'filetype': "cpp"},
-    \   'cppsrc.cpp'    : {'filetype': "cpp"},
-    \   'csharp.cs'     : {'filetype': "cs"},
-    \   'csrc.c'        : {'filetype': "c"},
-    \   'header.h'      : {'filetype': "c"},
-    \   'hina.html'     : {'filetype': "html"},
-    \   'javasrc.java'  : {'filetype': "java"},
-    \   'perl.pl'       : {'filetype': "perl"},
-    \   'perlmodule.pm' : {'filetype': "perl"},
-    \   'python.py'     : {'filetype': "python"},
-    \   'scala.scala'   : {'filetype': "scala"},
-    \   'scheme.scm'    : {'filetype': "scheme"},
-    \   'vimscript.vim' : {'filetype': "vim"}
-    \}
-
-    let g:vt_open_command = 'botright 7new'
-    " Disable &modeline when opened template file.
-    execute
-    \   'VimrcAutocmd BufReadPre'
-    \   $MYVIMDIR . '/template/*'
-    \   'setlocal nomodeline'
-endif " }}}
-if s:has_plugin('winmove') " {{{
-    let g:wm_move_down  = '<C-M-j>'
-    let g:wm_move_up    = '<C-M-k>'
-    let g:wm_move_left  = '<C-M-h>'
-    let g:wm_move_right = '<C-M-l>'
-endif " }}}
-if s:has_plugin('sign-diff') " {{{
-    " let g:SD_debug = 1
-    let g:SD_disable = 1
-
-    if !g:SD_disable
-        Map -silent [n] <C-l> :SDUpdate<CR><C-l>
-    endif
-endif " }}}
-if s:has_plugin('DumbBuf') " {{{
-    let dumbbuf_hotkey = 'gb'
-    " たまにQuickBuf.vimの名残で<Esc>を押してしまう
-    let dumbbuf_mappings = {
-    \'n': {
-    \'<Esc>': {'alias_to': 'q'},
-    \}
-    \}
-    let dumbbuf_wrap_cursor = 0
-    let dumbbuf_remove_marked_when_close = 1
-    " let dumbbuf_shown_type = 'project'
-    " let dumbbuf_close_when_exec = 1
-
-
-    " DumbBuf nmap s    split #<bufnr>
-    " DumbBuf nmap g    sbuffer <bufnr>
-    " call dumbbuf#map('n', '', 0, 'g', ':sbuffer %d')
-
-    " let dumbbuf_cursor_pos = 'keep'
-
-    " For (compatibility) test
-    "
-    " let dumbbuf_shown_type = 'foobar'
-    " let dumbbuf_listed_buffer_name = "*foo bar*"
-    "
-    " let dumbbuf_verbose = 1
-endif " }}}
-if s:has_plugin('prompt') " {{{
-    let prompt_debug = 0
-endif " }}}
 if s:has_plugin('skk') || s:has_plugin('eskk') " {{{
 
     " skkdict
@@ -2606,14 +2379,14 @@ if s:has_plugin('skk') || s:has_plugin('eskk') " {{{
     let s:skk_system_dict = '~/.skkdict/system-dict'
     let s:skk_system_dict_encoding = 'euc-jp'
 
-    " Disable this settings because now I do not use skk.vim and eskk together.
-    " if 1
-    "     " Map <C-j> to eskk, Map <C-g><C-j> to skk.vim
-    "     let skk_control_j_key = '<C-g><C-j>'
-    " else
-    "     " Map <C-j> to skk.vim, Map <C-g><C-j> to eskk
-    "     Map -remap [ic] <C-g><C-j> <Plug>(eskk:toggle)
-    " endif
+    " Use skk.vim and eskk together.
+    if s:SKK == 'eskk'
+        " Map <C-j> to eskk, Map <C-g><C-j> to skk.vim
+        let skk_control_j_key = '<C-g><C-j>'
+    elseif s:SKK == 'skkvim'
+        " Map <C-j> to skk.vim, Map <C-g><C-j> to eskk
+        Map -remap [ic] <C-g><C-j> <Plug>(eskk:toggle)
+    endif
 
 endif " }}}
 if s:has_plugin('skk') " {{{
@@ -2816,801 +2589,6 @@ if s:has_plugin('vixim') "{{{
     endif
 
 endif "}}}
-if s:has_plugin('restart') " {{{
-    " command!
-    " \   -bar
-    " \   RestartWithSession
-    " \   let g:restart_sessionoptions = 'folds,help,resize,tabpages,winpos,winsize'
-    " \   | Restart
-
-    let g:restart_sessionoptions = 'folds,help,resize,tabpages,winpos,winsize'
-
-    MapAlterCommand res[tart] Restart
-    MapAlterCommand ers[tart] Restart
-    MapAlterCommand rse[tart] Restart
-endif " }}}
-if s:has_plugin('open-browser-github') " {{{
-    " let g:openbrowser_github_always_used_branch = 'master'
-    let g:openbrowser_github_always_use_commit_hash = 1
-endif "}}}
-if s:has_plugin('open-browser') " {{{
-    let g:netrw_nogx = 1
-    Map -remap [nx] gx <Plug>(openbrowser-smart-search)
-    MapAlterCommand o[pen] OpenBrowserSmartSearch
-    " MapAlterCommand alc OpenBrowserSmartSearch -alc
-
-    " let g:openbrowser_open_commands = ['xdg-open', 'x-www-browser', 'firefox', 'w3m']
-    " let g:openbrowser_open_rules = {
-    " \   'xdg-open':      '{browser} {shellescape(uri)} &',
-    " \   'x-www-browser': '{browser} {shellescape(uri)} &',
-    " \   'firefox':       '{browser} {shellescape(uri)} &',
-    " \   'w3m':           '{browser} {shellescape(uri)} &',
-    " \}
-    " let g:openbrowser_open_commands = ['firefox']
-    " let g:openbrowser_open_rules = {
-    " \   'firefox':       '{browser} {shellescape(uri)} &',
-    " \   'irefox':       '{browser} {shellescape(uri)} &',
-    " \}
-
-    let g:openbrowser_open_filepath_in_vim = 0
-    if s:USE_VIMPROC !=# 2
-        let g:openbrowser_use_vimproc = s:USE_VIMPROC
-    endif
-    let g:openbrowser_force_foreground_after_open = 1
-
-    command! OpenBrowserCurrent execute "OpenBrowser" "file:///" . expand('%:p:gs?\\?/?')
-endif " }}}
-if s:has_plugin('AutoDate') " {{{
-    " let g:autodate_format = "%Y-%m-%d"
-endif " }}}
-" anything (ku,fuf,unite,etc.) {{{
-DefMacroMap [n] anything s
-
-" Which anything do you like?
-let [s:anything_fuf, s:anything_ku, s:anything_unite] = range(3)
-let s:anything = s:anything_unite
-
-if s:anything == s:anything_fuf && s:has_plugin('fuf')
-    Map [n] <anything>d        :<C-u>FufDir<CR>
-    Map [n] <anything>f        :<C-u>FufFile<CR>
-    Map [n] <anything>h        :<C-u>FufMruFile<CR>
-    Map [n] <anything>r        :<C-u>FufRenewCache<CR>
-elseif s:anything == s:anything_ku && s:has_plugin('ku')
-    Map [n] <anything>f        :<C-u>Ku file<CR>
-    Map [n] <anything>h        :<C-u>Ku file/mru<CR>
-    Map [n] <anything>H        :<C-u>Ku history<CR>
-    Map [n] <anything>:        :<C-u>Ku cmd_mru/cmd<CR>
-    Map [n] <anything>/        :<C-u>Ku cmd_mru/search<CR>
-elseif s:has_plugin('unite') " fallback, or you select this :)
-    MapAlterCommand        u[nite]     Unite -prompt='-')/\  -no-split -create <args>
-    command! -bar -nargs=* CustomUnite Unite -prompt='-')/\  -no-split -create <args>
-    Map [n] <anything>f        :<C-u>CustomUnite -buffer-name=files file buffer file_mru<CR>
-    Map [n] <anything>F        :<C-u>CustomUnite -buffer-name=files file_rec<CR>
-    Map [n] <anything>p        :<C-u>CustomUnite -buffer-name=files buffer_tab<CR>
-    Map [n] <anything>h        :<C-u>CustomUnite -buffer-name=files file_mru<CR>
-    Map [n] <anything>t        :<C-u>CustomUnite -immediately tab:no-current<CR>
-    Map [n] <anything>w        :<C-u>CustomUnite -immediately window:no-current<CR>
-    " Map [n] <anything>T        :<C-u>CustomUnite tag<CR>
-    " Map [n] <anything>H        :<C-u>CustomUnite help<CR>
-    Map [n] <anything>b        :<C-u>CustomUnite buffer<CR>
-    " Map [n] <anything>o        :<C-u>CustomUnite outline<CR>
-    Map [n] <anything>r        :<C-u>CustomUnite -input=ref/ source<CR>
-    Map [n] <anything>s        :<C-u>CustomUnite source<CR>
-    Map [n] <anything>g        :<C-u>CustomUnite grep<CR>
-    Map [n] <anything>/        :<C-u>CustomUnite line<CR>
-    " Map [n] <anything>:        :<C-u>CustomUnite history/command<CR>
-    Map [n] <anything>j        :<C-u>CustomUnite jump<CR>
-else
-    let s:anything_not_found = 1
-endif
-
-
-" abbrev
-function! s:register_anything_abbrev() "{{{
-    let abbrev = {
-    \   '^r@': [$VIMRUNTIME . '/'],
-    \   '^p@': map(split(&runtimepath, ','), 'v:val . "/plugin/"'),
-    \   '^h@': ['~/'],
-    \   '^v@': [$MYVIMDIR . '/'],
-    \   '^g@': ['~/git/'],
-    \   '^d@': ['~/git/dotfiles/'],
-    \   '^m@': ['~/Dropbox/memo/'],
-    \   '^s@': ['~/scratch/'],
-    \}
-
-    if s:is_win
-        call extend(abbrev, {
-        \   '^m@' : ['~/Dropbox/memo/'],
-        \   '^de@' : ['C:' . substitute($HOMEPATH, '\', '/', 'g') . '/デスクトップ/'],
-        \   '^cy@' : [exists('$CYGHOME') ? $CYGHOME . '/' : 'C:/cygwin/home/'. $USERNAME .'/'],
-        \   '^ms@' : [exists('$MSYSHOME') ? $MSYSHOME . '/' : 'C:/msys/home/'. $USERNAME .'/'],
-        \})
-    endif
-
-    " fuf
-    if s:has_plugin('fuf')
-        let g:fuf_abbrevMap = abbrev
-    endif
-    " unite
-    if s:has_plugin('unite')
-        for [pat, subst_list] in items(abbrev)
-            call unite#custom#substitute('files', pat, subst_list)
-        endfor
-    endif
-endfunction "}}}
-if !exists('s:anything_not_found')
-    Lazy call s:register_anything_abbrev()
-endif
-
-if s:has_plugin('ku') " {{{
-    MapAlterCommand ku Ku
-endif " }}}
-if s:has_plugin('fuf') " {{{
-    let g:fuf_modesDisable = ['mrucmd', 'bookmark', 'givenfile', 'givendir', 'givencmd', 'callbackfile', 'callbackitem', 'buffer', 'tag', 'taggedfile']
-
-    let fuf_keyOpenTabpage = '<C-t>'
-    let fuf_keyNextMode    = '<C-l>'
-    let fuf_keyPrevMode    = '<C-h>'
-    let fuf_keyOpenSplit   = '<C-s>'
-    let fuf_keyOpenVsplit  = '<C-v>'
-    let fuf_enumeratingLimit = 20
-    let fuf_previewHeight = 0
-endif " }}}
-if s:has_plugin('unite') " {{{
-    let g:unite_enable_start_insert = 1
-    let g:unite_enable_ignore_case = 1
-    let g:unite_enable_smart_case = 1
-    let g:unite_enable_split_vertically = 0
-    let g:unite_split_rule =
-    \   g:unite_enable_split_vertically ?
-    \       'topleft' : 'rightbelow'
-    let g:unite_update_time = 50
-    let g:unite_source_file_mru_ignore_pattern =
-    \   '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\|COMMIT_EDITMSG'
-
-    " matcher {{{
-    " if has('migemo') || executable('cmigemo')
-    "     call unite#custom#source('file,buffer,file_mru', 'matchers', 'matcher_migemo')
-    " endif
-    " }}}
-
-
-    " unite-source-menu {{{
-
-    let g:unite_source_menu_menus = {}
-
-    function! UniteSourceMenuMenusMap(key, value)
-        return {
-        \   'word' : a:key,
-        \   'kind' : 'command',
-        \   'action__command' : a:value,
-        \}
-    endfunction
-
-
-    " edit ++enc=... {{{
-    let g:unite_source_menu_menus.enc = {
-    \   'description' : 'edit ++enc=...',
-    \   'candidates'  : {},
-    \   'map': function('UniteSourceMenuMenusMap'),
-    \}
-    for s:tmp in [
-    \           'latin1',
-    \           'cp932',
-    \           'shift-jis',
-    \           'iso-2022-jp',
-    \           'euc-jp',
-    \           'utf-8',
-    \           'ucs-bom'
-    \       ]
-        call extend(g:unite_source_menu_menus.enc.candidates,
-        \           {s:tmp : 'edit ++enc='.s:tmp},
-        \           'error')
-    endfor
-    unlet s:tmp
-
-    Map -silent [n] <prompt>a  :<C-u>Unite menu:enc<CR>
-    " }}}
-    " set fenc=... {{{
-    let g:unite_source_menu_menus.fenc = {
-    \   'description' : 'set fenc=...',
-    \   'candidates'  : {},
-    \   'map': function('UniteSourceMenuMenusMap'),
-    \}
-    for s:tmp in [
-    \           'latin1',
-    \           'cp932',
-    \           'shift-jis',
-    \           'iso-2022-jp',
-    \           'euc-jp',
-    \           'utf-8',
-    \           'ucs-bom'
-    \       ]
-        call extend(g:unite_source_menu_menus.fenc.candidates,
-        \           {s:tmp : 'set fenc='.s:tmp},
-        \           'error')
-    endfor
-    unlet s:tmp
-
-    Map -silent [n] <prompt>s  :<C-u>Unite menu:fenc<CR>
-    " }}}
-    " set ff=... {{{
-    let g:unite_source_menu_menus.ff = {
-    \   'description' : 'set ff=...',
-    \   'candidates'  : {},
-    \   'map': function('UniteSourceMenuMenusMap'),
-    \}
-    for s:tmp in ['dos', 'unix', 'mac']
-        call extend(g:unite_source_menu_menus.ff.candidates,
-        \           {s:tmp : 'set ff='.s:tmp},
-        \           'error')
-    endfor
-    unlet s:tmp
-
-    Map -silent [n] <prompt>d  :<C-u>Unite menu:ff<CR>
-    " }}}
-
-    " }}}
-
-
-
-    VimrcAutocmd FileType unite call s:unite_settings()
-
-    let g:unite_winheight = 5    " default winheight.
-    let g:unite_winwidth  = 10    " default winwidth.
-    function! s:unite_settings() "{{{
-        Map -remap -buffer -force [n] <Space><Space> <Plug>(unite_toggle_mark_current_candidate)
-
-        " Map -remap -buffer -force [i] <C-n> <SID>(expand_unite_window)<Plug>(unite_select_next_line)
-        " Map -remap -buffer -force [i] <C-p> <SID>(expand_unite_window)<Plug>(unite_select_previous_line)
-    endfunction "}}}
-
-    " Expand current unite window width/height 2/3
-    Map -remap [i] <SID>(expand_unite_window) <Plug>(unite_insert_leave)<SID>(expand_unite_window_fn)<Plug>(unite_insert_enter)
-
-    Map -silent [n] <SID>(expand_unite_window_fn) :<C-u>call <SID>unite_resize_window(&columns / 3 * 2, &lines / 3 * 2)<CR>
-    function! s:unite_resize_window(width, height)
-        if winnr('$') is 1
-            return
-        elseif g:unite_enable_split_vertically
-            execute 'vertical resize' a:width
-        else
-            execute 'resize' a:height
-        endif
-
-        Map -remap -buffer [i] <C-n> <Plug>(unite_select_next_line)
-        Map -remap -buffer [i] <C-p> <Plug>(unite_select_previous_line)
-    endfunction
-endif " }}}
-" }}}
-if s:has_plugin('Gtags') " {{{
-    " <C-]> for gtags.
-    function! s:JumpTags() "{{{
-        if expand('%') == '' | return | endif
-
-        if !exists(':GtagsCursor')
-            echo "gtags.vim is not installed. do default <C-]>..."
-            sleep 2
-            " unmap this function.
-            " use plain <C-]> next time.
-            Map! [n] <C-]>
-            execute "normal! \<C-]>"
-            return
-        endif
-
-        let gtags = expand('%:h') . '/GTAGS'
-        if filereadable(gtags)
-            " use gtags if found GTAGS.
-            lcd %:p:h
-            GtagsCursor
-            lcd -
-        else
-            " or use ctags.
-            execute "normal! \<C-]>"
-        endif
-    endfunction "}}}
-    Map [n] <C-]>     :<C-u>call <SID>JumpTags()<CR>
-endif " }}}
-if s:has_plugin('vimshell') " {{{
-    MapAlterCommand sh[ell] VimShell
-
-    let g:vimshell_user_prompt = '"(" . getcwd() . ") --- (" . $USER . "@" . hostname() . ")"'
-    let g:vimshell_prompt = '$ '
-    let g:vimshell_right_prompt = 'vcs#info("(%s)-[%b]", "(%s)-[%b|%a]")'
-    let g:vimshell_ignore_case = 1
-    let g:vimshell_smart_case = 1
-
-    VimrcAutocmd FileType vimshell call s:vimshell_settings()
-    function! s:vimshell_settings() "{{{
-        call s:build_env_path()
-
-        " No -bar
-        command!
-        \   -buffer -nargs=+
-        \   VimShellAlterCommand
-        \   call vimshell#altercmd#define(
-        \       tyru#util#parse_one_arg_from_q_args(<q-args>)[0],
-        \       tyru#util#eat_n_args_from_q_args(<q-args>, 1)
-        \   )
-
-        " Alias
-        VimShellAlterCommand vi vim
-        VimShellAlterCommand df df -h
-        VimShellAlterCommand diff diff --unified
-        VimShellAlterCommand du du -h
-        VimShellAlterCommand free free -m -l -t
-        VimShellAlterCommand j jobs -l
-        VimShellAlterCommand jobs jobs -l
-        VimShellAlterCommand ll ls -lh
-        VimShellAlterCommand l ll
-        VimShellAlterCommand la ls -A
-        " VimShellAlterCommand less less -r
-        VimShellAlterCommand sc screen
-        VimShellAlterCommand whi which
-        VimShellAlterCommand whe where
-        VimShellAlterCommand go gopen
-
-        " VimShellAlterCommand l. ls -d .*
-        call vimshell#set_alias('l.', 'ls -d .*')
-
-        " Abbrev
-        inoreabbrev <buffer> l@ <Bar> less
-        inoreabbrev <buffer> g@ <Bar> grep
-        inoreabbrev <buffer> p@ <Bar> perl
-        inoreabbrev <buffer> s@ <Bar> sort
-        inoreabbrev <buffer> u@ <Bar> sort -u
-        inoreabbrev <buffer> c@ <Bar> xsel --input --clipboard
-        inoreabbrev <buffer> x@ <Bar> xargs --no-run-if-empty
-        inoreabbrev <buffer> n@ >/dev/null 2>/dev/null
-        inoreabbrev <buffer> e@ 2>&1
-        inoreabbrev <buffer> h@ --help 2>&1 <Bar> less
-        inoreabbrev <buffer> H@ --help 2>&1
-
-        if executable('perldocjp')
-            VimShellAlterCommand perldoc perldocjp
-        endif
-
-        let less_sh = s:Prelude.globpath(&rtp, 'macros/less.sh')
-        if !empty(less_sh)
-            call vimshell#altercmd#define('vless', less_sh[0])
-        endif
-
-        " Hook
-        call vimshell#hook#set('chpwd', [s:SNR('vimshell_chpwd_ls')])
-        call vimshell#hook#set('preexec', [s:SNR('vimshell_preexec')])
-        " call vimshell#hook#set('preexec', [s:SNR('vimshell_preexec_less')])
-
-        " Add/Remove some mappings.
-        Map! -buffer [n] <C-n>
-        Map! -buffer [n] <C-p>
-        Map! -buffer [i] <Tab>
-        Map -buffer -remap -force [i] <Tab><Tab> <Plug>(vimshell_command_complete)
-        Map -buffer -remap -force [n] <C-z> <Plug>(vimshell_switch)
-        Map -buffer -remap -force [i] <compl>r <Plug>(vimshell_history_complete_whole)
-
-        " Misc.
-        setlocal backspace-=eol
-        setlocal updatetime=1000
-        setlocal nowrap
-
-        if 0
-            if !exists(':NeoCompleteDisable')
-                NeoCompleteEnable
-            endif
-            NeoCompleteAutoCompletionLength 1
-            NeoCompleteUnlock
-            augroup vimrc-vimshell-settings
-                autocmd!
-                autocmd TabEnter <buffer> NeoCompleteUnlock
-                autocmd TabLeave <buffer> NeoCompleteLock
-            augroup END
-        endif
-    endfunction "}}}
-
-    function! s:vimshell_chpwd_ls(args, context) "{{{
-        call vimshell#execute('ls')
-    endfunction "}}}
-
-    let s:PREEXEC_IEXE = [
-    \   'termtter',
-    \   'sudo',
-    \   ['git', 'add', '-p'],
-    \   ['git', 'log'],
-    \   ['git', 'lp'],
-    \   ['git', 'view'],
-    \   ['git', 'blame'],
-    \   ['git', 'help'],
-    \   'earthquake',
-    \]
-    let s:PREEXEC_LESS = [
-    \   ['git', 'log'],
-    \   ['git', 'view'],
-    \]
-    function! s:vimshell_preexec(cmdline, context) "{{{
-        let args = vimproc#parser#split_args(a:cmdline)
-        if empty(args)
-            return a:cmdline
-        endif
-
-        " Prepend "iexe".
-        if args[0] ==# 'iexe'
-            return a:cmdline
-        elseif s:vimshell_preexec_match(args, s:PREEXEC_IEXE)
-            return 'iexe '.a:cmdline
-        endif
-
-        " Prepend "less".
-        if args[0] ==# 'less'
-            return a:cmdline
-        elseif s:vimshell_preexec_match(args, s:PREEXEC_LESS)
-            return 'less '.a:cmdline
-        endif
-
-        " TODO: Detect args[1] is correct git command.
-        " Avoid error like "git ls ..."
-        " This also avoids "git git ..." :-)
-        " if len(args) >= 2 &&
-        " \   args[0] ==# 'git' && executable(args[1])
-        "     return join(args[1:], ' ')
-        " endif
-
-        " TODO: Implement a feature like zsh correct
-
-        " No rewrite.
-        return a:cmdline
-    endfunction "}}}
-    function! s:vimshell_preexec_match(args, patlist)
-        if empty(a:args)
-            return 0
-        endif
-        for i in a:patlist
-            let list_match = type(i) == type([]) && i ==# a:args[:len(i)-1]
-            let string_match = type(i) == type("") && a:args[0] ==# i
-            if list_match || string_match
-                return 1
-            endif
-            unlet i
-        endfor
-        return 0
-    endfunction
-
-    let s:has_built_path = 0
-    function! s:build_env_path() "{{{
-        if s:has_built_path
-            return
-        endif
-        let s:has_built_path = 1
-
-        " build $PATH if vim started w/o shell.
-        " XXX: :gui
-        let $PATH = system(s:is_win ? 'echo %path%' : 'echo $PATH')
-    endfunction "}}}
-endif " }}}
-if s:has_plugin('quickrun') " {{{
-    let g:loaded_quicklaunch = 1
-
-    let g:quickrun_no_default_key_mappings = 1
-    Map -remap [nx] <Space>r <Plug>(quickrun)
-
-    if VimStarting()
-        let g:quickrun_config = {}
-
-        let g:quickrun_config['_'] = {
-        \   'outputter/buffer/split': 'SplitNicely',
-        \   'outputter/buffer/close_on_empty': 1,
-        \}
-
-        let g:quickrun_config['lisp'] = {
-        \   'command': 'clisp',
-        \   'eval': 1,
-        \   'eval_template': '(print %s)',
-        \}
-
-        " http://d.hatena.ne.jp/osyo-manga/20121125/1353826182
-        let g:quickrun_config["cpp0x"] = {
-        \   "command" : "g++",
-        \   "cmdopt" : "--std=c++0x",
-        \   "type" : "cpp/g++",
-        \}
-    endif
-
-    MapAlterCommand qr QuickRun
-endif " }}}
-if s:has_plugin('submode') "{{{
-
-    " Move GUI window.
-    call submode#enter_with('guiwinmove', 'n', '', 'mgw')
-    call submode#leave_with('guiwinmove', 'n', '', '<Esc>')
-    call submode#map       ('guiwinmove', 'n', 'r', 'j', '<Plug>(winmove-down)')
-    call submode#map       ('guiwinmove', 'n', 'r', 'k', '<Plug>(winmove-up)')
-    call submode#map       ('guiwinmove', 'n', 'r', 'h', '<Plug>(winmove-left)')
-    call submode#map       ('guiwinmove', 'n', 'r', 'l', '<Plug>(winmove-right)')
-
-    " Change GUI window size.
-    call submode#enter_with('guiwinsize', 'n', '', 'mgs', '<Nop>')
-    call submode#leave_with('guiwinsize', 'n', '', '<Esc>')
-    call submode#map       ('guiwinsize', 'n', '', 'j', ':set lines+=1<CR>')
-    call submode#map       ('guiwinsize', 'n', '', 'k', ':set lines-=1<CR>')
-    call submode#map       ('guiwinsize', 'n', '', 'h', ':set columns-=5<CR>')
-    call submode#map       ('guiwinsize', 'n', '', 'l', ':set columns+=5<CR>')
-
-    " Change current window size.
-    call submode#enter_with('winsize', 'n', '', 'mws', ':<C-u>call VimrcSubmodeResizeWindow()<CR>')
-    call submode#leave_with('winsize', 'n', '', '<Esc>')
-
-    " TODO or FIXME: submode#leave_with() can't do that.
-    " call submode#leave_with('winsize', 'n', '', '<Esc>', ':<C-u>call VimrcSubmodeResizeWindowRestore()<CR>')
-
-    function! VimrcSubmodeResizeWindow()
-        let curwin = winnr()
-        wincmd j | let target1 = winnr() | exe curwin "wincmd w"
-        wincmd l | let target2 = winnr() | exe curwin "wincmd w"
-
-        execute printf("call submode#map ('winsize', 'n', 'r', 'j', '<C-w>%s')", curwin == target1 ? "-" : "+")
-        execute printf("call submode#map ('winsize', 'n', 'r', 'k', '<C-w>%s')", curwin == target1 ? "+" : "-")
-        execute printf("call submode#map ('winsize', 'n', 'r', 'h', '<C-w>%s')", curwin == target2 ? ">" : "<")
-        execute printf("call submode#map ('winsize', 'n', 'r', 'l', '<C-w>%s')", curwin == target2 ? "<" : ">")
-    endfunction
-    " function! VimrcSubmodeResizeWindowRestore()
-    "     if exists('s:submode_save_lazyredraw')
-    "         let &l:lazyredraw = s:submode_save_lazyredraw
-    "         unlet s:submode_save_lazyredraw
-    "     endif
-    " endfunction
-
-    " undo/redo
-    call submode#enter_with('undo/redo', 'n', '', 'g-', 'g-')
-    call submode#enter_with('undo/redo', 'n', '', 'g+', 'g+')
-    call submode#leave_with('undo/redo', 'n', '', '<Esc>')
-    call submode#map       ('undo/redo', 'n', '', '-', 'g-')
-    call submode#map       ('undo/redo', 'n', '', '+', 'g+')
-
-    " Tab walker.
-    call submode#enter_with('tabwalker', 'n', '', 'mt', '<Nop>')
-    call submode#leave_with('tabwalker', 'n', '', '<Esc>')
-    call submode#map       ('tabwalker', 'n', '', 'h', 'gT')
-    call submode#map       ('tabwalker', 'n', '', 'l', 'gt')
-    call submode#map       ('tabwalker', 'n', '', 'H', ':execute "tabmove" tabpagenr() - 2<CR>')
-    call submode#map       ('tabwalker', 'n', '', 'L', ':execute "tabmove" tabpagenr()<CR>')
-
-    " FIXME: Weird character is showed.
-    " call submode#enter_with('indent/dedent', 'i', '', '<C-q>', '<C-d>')
-    " call submode#enter_with('indent/dedent', 'i', '', '<C-t>', '<C-t>')
-    " call submode#leave_with('indent/dedent', 'i', '', '<Esc>')
-    " call submode#map       ('indent/dedent', 'i', '', 'h', '<C-d>')
-    " call submode#map       ('indent/dedent', 'i', '', 'l', '<C-t>')
-
-    " Scroll by j and k.
-    " TODO Stash &scroll value.
-    " TODO Make utility function to generate current shortest <SID> map.
-    call submode#enter_with('scroll', 'n', '', 'gj', '<C-d>')
-    call submode#enter_with('scroll', 'n', '', 'gk', '<C-u>')
-    call submode#leave_with('scroll', 'n', '', '<Esc>')
-    call submode#map       ('scroll', 'n', '', 'j', '<C-d>')
-    call submode#map       ('scroll', 'n', '', 'k', '<C-u>')
-    call submode#map       ('scroll', 'n', '', 'a', ':let &l:scroll -= 3<CR>')
-    call submode#map       ('scroll', 'n', '', 's', ':let &l:scroll += 3<CR>')
-endif "}}}
-if s:has_plugin('vim-ref') " {{{
-    " 'K' for ':Ref'.
-    MapAlterCommand ref         Ref
-    MapAlterCommand alc         Ref webdict alc
-    MapAlterCommand rfc         Ref rfc
-    MapAlterCommand man         Ref man
-    MapAlterCommand pdoc        Ref perldoc
-    MapAlterCommand cppref      Ref cppref
-    MapAlterCommand cpp         Ref cppref
-    MapAlterCommand py[doc]     Ref pydoc
-
-    Map [n] <orig>K K
-    " Map -remap [n] K <SID>(open-help-window)<Plug>(ref-keyword)
-    Map -remap [n] K <Plug>(ref-keyword)
-
-    Map [n] <SID>(open-help-window) :<C-u>call <SID>open_help_window()<CR>
-    function! s:open_help_window()
-        if !s:has_help_window()
-            Help
-            wincmd w
-        endif
-    endfunction
-
-    if s:USE_VIMPROC !=# 2
-        let g:ref_use_vimproc = s:USE_VIMPROC
-    endif
-    let g:ref_open = 'SplitNicely split'
-    if executable('perldocjp')
-        let g:ref_perldoc_cmd = 'perldocjp'
-    endif
-
-    let g:ref_source_webdict_cmd = ['lynx', '-dump', '-nonumbers', '%s']
-    let g:ref_source_webdict_sites = {
-    \   'default': 'alc',
-    \
-    \   'alc': {
-    \       'url': 'http://eow.alc.co.jp/%s',
-    \       'keyword_encoding': 'utf-8',
-    \   },
-    \   'wikipedia': {
-    \       'url': 'http://ja.wikipedia.org/wiki/%s',
-    \   },
-    \ }
-  function! g:ref_source_webdict_sites.alc.filter(output)
-    return join(split(a:output, "\n")[38 :], "\n")
-  endfunction
-  function! g:ref_source_webdict_sites.wikipedia.filter(output)
-    return join(split(a:output, "\n")[6 :], "\n")
-  endfunction
-
-endif " }}}
-if s:has_plugin('vimfiler') " {{{
-    let g:vimfiler_as_default_explorer = 1
-    let g:vimfiler_safe_mode_by_default = 0
-    let g:vimfiler_split_command = 'aboveleft split'
-
-    VimrcAutocmd FileType vimfiler call s:vimfiler_settings()
-    function! s:vimfiler_settings() "{{{
-        Map -buffer -remap -force [n] L <Plug>(vimfiler_move_to_history_forward)
-        Map -buffer -remap -force [n] H <Plug>(vimfiler_move_to_history_back)
-        Map -buffer -remap -force [n] <C-o> <Plug>(vimfiler_move_to_history_back)
-        Map -buffer -remap -force [n] <C-i> <Plug>(vimfiler_move_to_history_forward)
-
-        " TODO
-        " Map! -buffer [n] N j k
-        Map! -buffer [n] N
-        Map! -buffer [n] j
-        Map! -buffer [n] k
-        Map! -buffer [n] ?
-
-        " dd as <Plug>(vimfiler_force_delete_file)
-        " because I want to use trash-put.
-        Map! -buffer [n] d
-        Map -remap -buffer -force [n] dd <Plug>(vimfiler_force_delete_file)
-
-        Map -remap -buffer -force [n] <Space><Space> <Plug>(vimfiler_toggle_mark_current_line)
-    endfunction "}}}
-endif " }}}
-if s:has_plugin('prettyprint') " {{{
-    MapAlterCommand pp PP
-
-    let g:prettyprint_show_expression = 1
-endif " }}}
-if s:has_plugin('lingr') " {{{
-
-    " from thinca's .vimrc {{{
-    " http://soralabo.net/s/vrcb/s/thinca
-
-    if 0
-        " Update GNU screen tab name.
-
-        augroup vimrc-plugin-lingr
-            autocmd!
-            autocmd User plugin-lingr-* call s:lingr_event(
-            \     matchstr(expand('<amatch>'), 'plugin-lingr-\zs\w*'))
-            autocmd FileType lingr-* call s:init_lingr(expand('<amatch>'))
-        augroup END
-
-        function! s:lingr_ctrl_l() "{{{
-            call lingr#mark_as_read_current_room()
-            call s:screen_auto_window_name()
-            redraw!
-        endfunction "}}}
-        function! s:init_lingr(ft) "{{{
-            if exists('s:screen_is_running')
-                Map -silent -buffer [n] <C-l> :<C-u>call <SID>lingr_ctrl_l()<CR>
-                let b:window_name = 'lingr'
-            endif
-        endfunction "}}}
-        function! s:lingr_event(event) "{{{
-            if a:event ==# 'message' && s:screen_is_running
-                execute printf('WindowName %s(%d)', 'lingr', lingr#unread_count())
-            endif
-        endfunction "}}}
-
-    endif    " Update GNU screen tab name.
-    " }}}
-
-
-
-    VimrcAutocmd FileType lingr-messages
-    \   call s:lingr_messages_mappings()
-    function! s:lingr_messages_mappings() "{{{
-        Map -remap -buffer [n] o <Plug>(lingr-messages-show-say-buffer)
-        Map -buffer [n] <C-g><C-n> gt
-        Map -buffer [n] <C-g><C-p> gT
-    endfunction "}}}
-
-    VimrcAutocmd FileType lingr-say
-    \   call s:lingr_say_mappings()
-    function! s:lingr_say_mappings() "{{{
-        Map -remap -buffer [n] <CR> <SID>(lingr-say-say)
-    endfunction "}}}
-
-    Map -silent [n] <SID>(lingr-say-say) :<C-u>call <SID>lingr_say_say()<CR>
-    function! s:lingr_say_say() "{{{
-        let all_lines = getline(1, '$')
-        let blank_line = '^\s*$'
-        call filter(all_lines, 'v:val =~# blank_line')
-        if empty(all_lines)    " has blank line(s).
-            let doit = 1
-        else
-            let doit = input('lingr-say buffer has one or more blank lines. say it?[y/n]:') =~? '^y\%[es]'
-        endif
-        if doit
-            execute "normal \<Plug>(lingr-say-say)"
-        endif
-    endfunction "}}}
-
-
-
-    let g:lingr_vim_user = 'tyru'
-
-    let g:lingr_vim_additional_rooms = [
-    \   'tyru',
-    \   'vim',
-    \   'emacs',
-    \   'editor',
-    \   'vim_users_en',
-    \   'vimperator',
-    \   'filer',
-    \   'completion',
-    \   'shell',
-    \   'git',
-    \   'termtter',
-    \   'lingr',
-    \   'ruby',
-    \   'few',
-    \   'gc',
-    \   'scala',
-    \   'lowlevel',
-    \   'lingr_vim',
-    \   'vimjolts',
-    \   'gentoo',
-    \   'LinuxKernel',
-    \]
-    let g:lingr_vim_rooms_buffer_height = len(g:lingr_vim_additional_rooms) + 3
-    let g:lingr_vim_count_unread_at_current_room = 1
-endif " }}}
-if s:has_plugin('github') " {{{
-    MapAlterCommand gh Github
-    MapAlterCommand ghi Github issues
-endif " }}}
-if s:has_plugin('neocomplete') "{{{
-    let g:neocomplete#enable_at_startup = 1
-    let g:neocomplete#disable_auto_complete = 1
-    let g:neocomplete#enable_ignore_case = 1
-    let g:neocomplete#enable_smart_case = 1
-    let g:neocomplete#auto_completion_start_length = 3
-    let g:neocomplete#max_list = 30
-
-    Map [n] <Leader>neo :<C-u>NeoCompleteToggle<CR>
-
-    " Map -expr [i] <C-y> neocomplete#close_popup()
-    " Map -expr [i] <CR>  pumvisible() ? neocomplete#close_popup() . "\<CR>" : "\<CR>"
-    " Map -remap [is] <C-t> <Plug>(neocomplete_snippets_expand)
-
-    highlight Pmenu ctermbg=8 guibg=#606060
-    highlight PmenuSel ctermbg=1 guifg=#dddd00 guibg=#1f82cd
-    highlight PmenuSbar ctermbg=0 guibg=#d6d6d6
-endif "}}}
-if s:has_plugin('EasyGrep') " {{{
-    let g:EasyGrepCommand = 2
-    let g:EasyGrepInvertWholeWord = 1
-endif " }}}
-if s:has_plugin('gist-vim') "{{{
-    let g:gist_detect_filetype = 1
-    let g:gist_open_browser_after_post = 1
-    let g:gist_browser_command = ":OpenBrowser %URL%"
-    let g:gist_update_on_write = 2
-endif "}}}
-if s:has_plugin('ohmygrep') " {{{
-    MapAlterCommand gr[ep] OMGrep
-    MapAlterCommand re[place] OMReplace
-
-    Map -remap [n] <Space>gw <Plug>(omg-grep-cword-word)
-    Map -remap [n] <Space>gW <Plug>(omg-grep-cWORD-word)
-    Map -remap [n] <C-g> <Plug>(omg-grep-cword-word)
-    Map -remap [v] <C-g> <Plug>(omg-grep-selected)
-endif " }}}
 if s:has_plugin('detect-coding-style') " {{{
 
     VimrcAutocmd User dcs-initialized-styles call s:dcs_register_own_styles()
@@ -3622,121 +2600,6 @@ if s:has_plugin('detect-coding-style') " {{{
     endfunction
 
 endif " }}}
-if s:has_plugin('autocmd-tabclose') " {{{
-    " :tabprevious on vimrc-tabclose
-    function! s:tabclose_post()
-        if tabpagenr() != 1
-            " XXX: Doing :tabprevious here cause Vim behavior strange
-            " Decho ':tabprevious'
-        endif
-    endfunction
-    VimrcAutocmd User tabclose-post call s:tabclose_post()
-endif " }}}
-if s:has_plugin('simpletap') " {{{
-    let g:simpletap#open_command = 'botright vnew'
-endif " }}}
-if s:has_plugin('GraVit') " {{{
-
-    " FIXME: 2012-09-17 19:48: syntax/vim.vim wrong highlight...
-    " Map -remap [nxo] g/ <Plug>gravit->forward
-    " Map -remap [nxo] g? <Plug>gravit->backward
-
-    " highlight GraVitCurrentMatch term=underline cterm=underline gui=underline ctermfg=4 guifg=Purple
-
-endif " }}}
-if s:has_plugin('hatena.vim') " {{{
-    let g:hatena_no_default_keymappings = 1
-    let g:hatena_user = 'tyru'
-    let g:hatena_entry_file = '~/Dropbox/memo/blogentry.txt'
-    " must type :w! to upload.
-    let g:hatena_upload_on_write = 0
-    let g:hatena_upload_on_write_bang = 1
-endif " }}}
-if s:has_plugin('fileutils') " {{{
-    call fileutils#load('noprefix')
-
-    MapAlterCommand rm Delete
-    MapAlterCommand del[ete] Delete
-    MapAlterCommand mv Rename
-    MapAlterCommand ren[ame] Rename
-    MapAlterCommand mkd[ir] Mkdir
-    MapAlterCommand mkc[d] Mkcd
-    MapAlterCommand co[py] Copy
-    MapAlterCommand cp     Copy
-
-    let g:fileutils_debug = 1
-endif "}}}
-if s:has_plugin('watchdogs') " {{{
-    if VimStarting()
-        call watchdogs#setup(g:quickrun_config)
-    endif
-    let g:watchdogs_check_BufWritePost_enable = 1
-
-    command! WatchdogsStart
-    \     let g:watchdogs_check_BufWritePost_enable = 1
-    \   | let g:watchdogs_check_CursorHold_enable   = 1
-    \   | echo 'enabled watchdogs auto-commands.'
-    command! WatchdogsStop
-    \     let g:watchdogs_check_BufWritePost_enable = 0
-    \   | let g:watchdogs_check_CursorHold_enable   = 0
-    \   | echo 'disabled watchdogs auto-commands.'
-endif "}}}
-if s:has_plugin('vim-hier') " {{{
-    function! s:stop_hier_on_quickfix_close()
-        if !exists(':HierStop')
-            return
-        endif
-        if !s:quickfix_exists_window()
-            let winnr = winnr()
-            windo HierStop
-            execute winnr 'wincmd w'
-        endif
-    endfunction
-    function! s:start_hier_on_quickfix_open()
-        if !exists(':HierStart')
-            return
-        endif
-        if s:quickfix_exists_window()
-            let winnr = winnr()
-            windo HierStart
-            execute winnr 'wincmd w'
-        endif
-    endfunction
-    VimrcAutocmd WinEnter *
-    \   call s:stop_hier_on_quickfix_close()
-    VimrcAutocmd QuickFixCmdPost *
-    \   call s:start_hier_on_quickfix_open()
-    VimrcAutocmd WinEnter *
-    \     if &filetype ==# 'qf'
-    \   |   call s:start_hier_on_quickfix_open()
-    \   | endif
-endif "}}}
-if s:has_plugin('accelerated-jk') " {{{
-    Map -remap [n] j <Plug>(accelerated_jk_gj)
-    Map -remap [n] k <Plug>(accelerated_jk_gk)
-    let g:accelerated_jk_deceleration_table = [
-    \   [200, 10],
-    \   [300, 15],
-    \   [500, 30],
-    \   [600, 40],
-    \   [700, 50],
-    \   [800, 60],
-    \   [900, 70],
-    \   [1000, 9999],
-    \]
-endif "}}}
-if s:has_plugin('capture') "{{{
-    MapAlterCommand c[apture] Capture
-endif "}}}
-if s:has_plugin('instant-markdown-vim') "{{{
-    " VimrcAutocmd FileType hatena let b:instant_markdown_path = '/html?type=hatena'
-    " VimrcAutocmd FileType hatena InstantMarkdownStart
-endif "}}}
-if s:has_plugin('concealedyank.vim') && has('conceal') "{{{
-    Map -remap [x] <operator>cy <Plug>(operator-concealedyank)
-    " concealedyank.vim does not support operator yet.
-    " Map -remap [no] y <Plug>(operator-concealedyank)
-endif "}}}
 if s:has_plugin('syntax/vim.vim') "{{{
     " augroup: a
     " function: f
@@ -3748,159 +2611,13 @@ if s:has_plugin('syntax/vim.vim') "{{{
     " mzscheme: m
     let g:vimsyn_folding = 'af'
 endif "}}}
-if s:has_plugin('indent-guides') "{{{
-    let g:indent_guides_enable_on_vim_startup = 1
-    let g:indent_guides_auto_colors = 0
-    VimrcAutocmd VimEnter,ColorScheme * hi IndentGuidesOdd guibg=Gray
-    VimrcAutocmd VimEnter,ColorScheme * hi IndentGuidesEven guibg=White
-    let g:indent_guides_color_change_percent = 30
-endif "}}}
-if s:has_plugin('foldCC') "{{{
-    set foldtext=FoldCCtext()
-endif "}}}
 if s:has_plugin('vim-anzu') "{{{
+    " TODO: Support <old-rhs> in rhs
+    " Map -remap [nx] n <old-rhs><Plug>(anzu-update-search-status-with-echo)
+    " Map -remap [nx] N <old-rhs><Plug>(anzu-update-search-status-with-echo)
     Map -remap [nx] n <SID>(always-forward-n)<SID>(centering-display)<Plug>(anzu-update-search-status-with-echo)
     Map -remap [nx] N <SID>(always-backward-N)<SID>(centering-display)<Plug>(anzu-update-search-status-with-echo)
-    Map -remap [o] n <SID>(always-forward-n)
-    Map -remap [o] N <SID>(always-backward-N)
-else
-    " FIXME: <SID>(always-forward-n) is not related to vim-anzu plugin.
-    "
-    " Mapping -> plugin specific mapping, misc. hacks
-    Map -remap [nx] n <SID>(always-forward-n)<SID>(centering-display)
-    Map -remap [nx] N <SID>(always-backward-N)<SID>(centering-display)
-    Map -remap [o] n <SID>(always-forward-n)
-    Map -remap [o] N <SID>(always-backward-N)
 endif "}}}
-if s:has_plugin('vim-fakeclip') "{{{
-    " vim-fakeclip plugin is loaded only on the platform where
-    " 1. the X server exists
-    " 2. starting Vim of non-GUI version
-    set clipboard+=exclude:.*
-    let g:fakeclip_always_provide_clipboard_mappings = 1
-endif "}}}
-if s:has_plugin('foldballoon') "{{{
-    set ballooneval
-    set balloonexpr=foldballoon#balloonexpr()
-endif "}}}
-if s:has_plugin('vital.vim') "{{{
-    let g:vitalizer#vital_dir = 'C:/config/dotfiles/dotfiles/.vim/bundle/vital.vim'
-endif "}}}
-if s:has_plugin('vim-tabpagecd') "{{{
-
-    let s:disable_open_in_project_tab = 1
-    if !s:disable_open_in_project_tab
-        Lazy  if exists('g:loaded_tabpagecd')
-        \   |     execute 'VimrcAutocmd BufReadPost * call s:open_in_project_tab()'
-        \   | endif
-    endif
-
-    " * g:hoge_open_cmd みたいな変数に ":ProjBuffer split"
-    "   みたいに指定して管理下に置く
-    " * 好きな位置に開ける。ウインドウグループというものを定義して、
-    "   ウインドウグループに指定したバッファのウインドウが開かれていたらそこに開くなどできる
-    " * 開くコマンドは1つだけでいい。開く位置はウインドウマネージャに任せればいい
-    " * strategy: tiling, zen(mode)?, ide
-    function! s:open_in_project_tab()
-        if &buftype !=# '' || &bufhidden !=# ''
-            return
-        endif
-        if tabpagenr('$') is 1
-            return
-        endif
-        let curtabnr = tabpagenr()
-        let lasttabnr = tabpagenr('$')
-        for tabnr in range(1, lasttabnr)
-            if tabnr is curtabnr
-                continue
-            endif
-            let afile = s:normalize_path(expand('<afile>'))
-            let cwd = s:normalize_path(gettabvar(tabnr, 'cwd'))
-            if stridx(afile, cwd) isnot -1
-                let bufnr = bufnr('%')
-                setlocal bufhidden=hide
-                try
-                    close
-                    if lasttabnr isnot tabpagenr('$')
-                    \   && tabnr ># tabpagenr()
-                        let tabnr -= 1
-                    endif
-                    execute 'tabnext' tabnr
-                    execute 'SplitNicely sbuffer' bufnr
-                finally
-                    setlocal bufhidden=
-                endtry
-                break
-            endif
-        endfor
-    endfunction
-
-    function! s:normalize_path(filepath)
-        let p = a:filepath
-        let p = fnamemodify(p, ':p')
-        let p = substitute(p, '\', '/', 'g')
-        let p = substitute(p, '/\{2,}', '/', 'g')
-        return tolower(p)
-    endfunction
-endif "}}}
-if s:has_plugin('emap.vim') "{{{
-    MapAlterCommand map Map
-    MapAlterCommand amp Map
-    MapAlterCommand mpa Map
-endif "}}}
-if s:has_plugin('vim-quickrun-markdown-gfm') "{{{
-    let g:quickrun_config = {
-    \   'markdown': {
-    \     'type': 'markdown/gfm',
-    \     'outputter': 'browser'
-    \   }
-    \}
-endif "}}}
-if s:has_plugin('autodirmake') "{{{
-    let g:autodirmake#msg_highlight = 'Question'
-    let g:autodirmake#char_prompt = 1
-endif "}}}
-if s:has_plugin('chdir-proj-root') "{{{
-    Map [n] <excmd>cd :<C-u>CPRLookupCD<CR>
-    let g:cpr_autochdir_to_proj = 1
-endif "}}}
-if s:has_plugin('brightest') "{{{
-    let g:brightest_on_cursor_hold = 1
-    let g:brightest#highlight = {
-    \   "group"    : "VimrcBrightest",
-    \}
-    Lazy highlight VimrcBrightest term=standout,underline ctermfg=1 guifg=salmon cterm=underline gui=underline
-
-    let g:brightest#pattern = '\k\+'
-
-    " https://github.com/osyo-manga/vim-brightest/pull/3
-    "
-    " runtime! plugin/brightest.vim
-    " BrightestDisable
-    " augroup vimrc-brightest
-    "     autocmd!
-    "     autocmd CursorHold * BrightestEnable | BrightestHighlight | BrightestDisable
-    " augroup END
-
-    let g:brightest#enable_filetypes = {
-    \   '_': 0,
-    \   'c': 1,
-    \   'cpp': 1,
-    \   'css': 1,
-    \   'go': 1,
-    \   'html': 1,
-    \   'javascript': 1,
-    \   'vim': 1,
-    \}
-endif "}}}
-if s:has_plugin('committia') "{{{
-    VimrcAutocmd BufNew __committia_diff__ setl foldopen
-endif "}}}
-
-
-
-" test
-let g:loaded_tyru_event_test = 1
 
 " runtime
 if s:has_plugin('netrw') " {{{
@@ -3978,6 +2695,40 @@ call s:delete_backup()
 " }}}
 " }}}
 " Misc. (bundled with kaoriya vim's .vimrc & etc.) {{{
+
+" Checking typo. {{{
+VimrcAutocmd BufWriteCmd *[,*] call s:write_check_typo(expand('<afile>'))
+function! s:write_check_typo(file)
+    let writecmd = 'write'.(v:cmdbang ? '!' : '').' '.a:file
+    if exists('b:write_check_typo_nocheck')
+        execute writecmd
+        return
+    endif
+    let prompt = "possible typo: really want to write to '" . a:file . "'?(y/n):"
+    let input = input(prompt)
+    if input ==# 'YES'
+        execute writecmd
+        let b:write_check_typo_nocheck = 1
+    elseif input =~? '^y\(es\)\=$'
+        execute writecmd
+    endif
+endfunction
+" }}}
+
+" Jump to the last known cursor position {{{
+" This setting was from $VIM/vimrc_example.vim
+
+" When editing a file, always jump to the last known cursor position.
+" Don't do it when the position is invalid or when inside an event handler
+" (happens when dropping a file on gvim).
+" Also don't do it when the mark is in the first line, that is the default
+" position when opening a file.
+VimrcAutocmd BufReadPost *
+\ if line("'\"") > 1 && line("'\"") <= line("$") |
+\   exe "normal! g`\"" |
+\ endif
+" }}}
+
 " About japanese input method {{{
 if has('multi_byte_ime') || has('xim')
     " Cursor color when IME is on.
@@ -3985,6 +2736,7 @@ if has('multi_byte_ime') || has('xim')
     set iminsert=0 imsearch=0
 endif
 " }}}
+
 " GNU Screen, Tmux {{{
 "
 " from thinca's .vimrc
@@ -4030,6 +2782,7 @@ if $WINDOW != '' || $TMUX != ''
     endif
 endif
 " }}}
+
 " own-highlight {{{
 " TODO: Plugin-ize
 
@@ -4083,11 +2836,13 @@ function! s:register_own_highlight()
 endfunction
 call s:register_own_highlight()
 " }}}
+
 " Make <M-Space> same as ordinal applications on MS Windows {{{
 if has('gui_running') && s:is_win
     nnoremap <M-Space> :<C-u>simalt ~<CR>
 endif
 " }}}
+
 " Use meta keys in console {{{
 if has('unix') && !has('gui_running')
   " Use meta keys in console.
@@ -4109,6 +2864,7 @@ if has('unix') && !has('gui_running')
   map! <NUL> <C-Space>
 endif
 " }}}
+
 " }}}
 " End. {{{
 
