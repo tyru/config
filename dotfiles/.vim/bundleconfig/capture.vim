@@ -1,0 +1,2 @@
+
+MapAlterCommand c[apture] Capture

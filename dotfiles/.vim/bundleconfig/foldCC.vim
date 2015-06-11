@@ -1,0 +1,2 @@
+
+set foldtext=FoldCCtext()

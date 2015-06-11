@@ -23,6 +23,7 @@ dotfiles/.vim/*
 !dotfiles/.vim/tutor
 !dotfiles/.vim/tools
 !dotfiles/.vim/bundle
+!dotfiles/.vim/bundleconfig
 
 !dotfiles/.vim/dict
 !dotfiles/.vim/template
