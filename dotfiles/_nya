@@ -1,6 +1,6 @@
 
 # http://upinetree.hatenablog.com/entry/2013/03/06/220800
-set HOME=$USERPROFILE
+#set HOME=$USERPROFILE
 set PATH+=C:/MinGW/bin
 set PATH+=C:/MinGW/msys/1.0/bin
 set PATH+=C:/MinGW/msys+7za+wget+svn+git+mercurial+cvs-rev13/bin
@@ -18,4 +18,4 @@ alias grep grep -ni --color
 alias setvc "cmdsource ""C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"" x86"
 alias setm64 "cmdsource ""C:\MinGW64\mingw-w64.bat"""
 
-source ~/_nya.d/escdot.lua
+#source ~/_nya.d/escdot.lua
