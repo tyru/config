@@ -614,16 +614,23 @@ unlet s:bundleconfig
 
 command! -nargs=+ -complete=customlist,CompleteEditBundleConfig
 \   EditBundleConfig
-\   drop `=expand('$MYVIMDIR/bundleconfig/<args>'.(<q-args> !~? '\.vim$' ? '.vim' : ''))`
+\   call s:cmd_editbundleconfig(<q-args>)
 
-function! CompleteEditBundleConfig(A, L, P)
+function! s:cmd_editbundleconfig(args)
+    let filename = expand(
+    \   '$MYVIMDIR/bundleconfig/' . a:args
+    \   . (a:args !~? '\.vim$' ? '.vim' : ''))
+    drop `=filename`
+endfunction
+
+function! CompleteEditBundleConfig(arglead, _l, _p)
     let dirs = glob('$MYVIMDIR/bundleconfig/*', 1, 1)
     call map(dirs, 'substitute(v:val, ".*[/\\\\]", "", "")')
-    if a:A !=# ''
+    if a:arglead !=# ''
         " wildcard -> regexp pattern
-        let pattern = a:A
+        let pattern = '^' . a:arglead
         let pattern = substitute(pattern, '\*', '.*', 'g')
-        let pattern = substitute(pattern, '\?', '.', 'g')
+        let pattern = substitute(pattern, '\\?', '.', 'g')
         call filter(dirs, 'v:val =~# pattern')
     endif
     return dirs
@@ -1066,7 +1073,7 @@ set matchpairs+=<:>
 set number
 set showbreak=...
 set confirm
-set updatetime=400
+set updatetime=500
 if has('path_extra')
     set path+=.;
 endif
