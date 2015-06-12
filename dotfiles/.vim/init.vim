@@ -29,6 +29,19 @@ endif
 " Reset all options
 set all&
 
+" Reset auto-commands
+augroup vimrc
+    autocmd!
+augroup END
+
+
+" TODO Clear mappings mapped only in vimrc, but plugin mappings.
+" mapclear
+" mapclear!
+" " mapclear!!!!
+" lmapclear
+
+
 if $VIMRC_FORCE_LANG_C
     language messages C
     language time C
@@ -53,8 +66,15 @@ endif
 " }}}
 " Utilities {{{
 
+" Export variables/functions {{{
+
+let g:VIMRC = {}
+
+" }}}
+
 " Constants {{{
 let s:is_win = has('win16') || has('win32') || has('win64') || has('win95')
+let g:VIMRC.is_win = s:is_win
 " }}}
 
 " Function {{{
@@ -162,15 +182,13 @@ function! s:quickfix_get_search_word()
     endtry
 endfunction
 
+let g:VIMRC.quickfix_exists_window = function(s:SNR('quickfix_exists_window'))
+
 " }}}
 
 " }}}
 
 " Commands {{{
-augroup vimrc
-    autocmd!
-augroup END
-
 
 command!
 \   -bar -nargs=1
@@ -217,15 +235,6 @@ endfunction "}}}
 
 " }}}
 
-" Export variables/functions {{{
-
-let g:VIMRC = {
-\   'is_win' : s:is_win,
-\   'quickfix_exists_window' : function(s:SNR('quickfix_exists_window')),
-\}
-
-" }}}
-
 " }}}
 " Encoding {{{
 let s:enc = 'utf-8'
@@ -245,7 +254,7 @@ if exists('&ambiwidth')
 endif
 
 " }}}
-" Plugins {{{
+" Load Plugins {{{
 
 " ... {{{
 let s:bundleconfig = {}
@@ -471,6 +480,8 @@ if !exists('$VIMRC_DEBUG')
     endif
 
     LoadLater '$MYVIMDIR/bundle/vim-rails'
+
+    LoadLater '$MYVIMDIR/bundle/vim-anzu'
 else
     " Useful plugins for debug
     LoadLater '$MYVIMDIR/bundle/dutil.vim'
@@ -513,6 +524,45 @@ command!
 \   -bar -nargs=+
 \   MapAlterCommand
 \   CAlterCommand <args> | AlterCommand <cmdwin> <args>
+
+" }}}
+
+" Set up general prefix keys. {{{
+
+DefMacroMap [nxo] orig q
+DefMacroMap [ic] orig <C-g><C-o>
+
+Map [n] <orig>q q
+
+DefMacroMap [nxo] excmd <Space>
+DefMacroMap [nxo] operator ;
+DefMacroMap [n] window <C-w>
+DefMacroMap [nxo] prompt ,t
+
+let g:mapleader = ';'
+Map [n] <Leader> <Nop>
+
+Map [n] ;; ;
+Map [n] ,, ,
+
+let g:maplocalleader = '\'
+Map [n] <LocalLeader> <Nop>
+
+DefMacroMap [i] compl <C-g><C-g><C-g><C-g><C-g>
+" }}}
+
+" Load vimrc vital. {{{
+
+let s:Vital = vital#of('vimrc')
+let s:Prelude = s:Vital.import('Prelude')
+let s:List = s:Vital.import('Data.List')
+let s:Filepath = s:Vital.import('System.Filepath')
+let s:File = s:Vital.import('System.File')
+let s:Compat = s:Vital.import('Vim.Compat')
+" let s:Mapping = ...   " is used by tyru#util#undo_ftplugin_helper
+unlet s:Vital
+
+let g:VIMRC.Compat = s:Compat
 
 " }}}
 
@@ -564,26 +614,20 @@ unlet s:bundleconfig
 
 command! -nargs=+ -complete=customlist,CompleteEditBundleConfig
 \   EditBundleConfig
-\   drop $MYVIMDIR/bundleconfig/<args>
+\   drop `=expand('$MYVIMDIR/bundleconfig/<args>'.(<q-args> !~? '\.vim$' ? '.vim' : ''))`
 
 function! CompleteEditBundleConfig(A, L, P)
     let dirs = glob('$MYVIMDIR/bundleconfig/*', 1, 1)
     call map(dirs, 'substitute(v:val, ".*[/\\\\]", "", "")')
+    if a:A !=# ''
+        " wildcard -> regexp pattern
+        let pattern = a:A
+        let pattern = substitute(pattern, '\*', '.*', 'g')
+        let pattern = substitute(pattern, '\?', '.', 'g')
+        call filter(dirs, 'v:val =~# pattern')
+    endif
     return dirs
 endfunction
-
-" }}}
-
-" Load vimrc vital. {{{
-
-let s:Vital = vital#of('vimrc')
-let s:Prelude = s:Vital.import('Prelude')
-let s:List = s:Vital.import('Data.List')
-let s:Filepath = s:Vital.import('System.Filepath')
-let s:File = s:Vital.import('System.File')
-let s:Compat = s:Vital.import('Vim.Compat')
-" let s:Mapping = ...   " is used by tyru#util#undo_ftplugin_helper
-unlet s:Vital
 
 " }}}
 
@@ -1091,38 +1135,6 @@ endfunction
 "   MapCount [n] <C-n> gt
 
 
-
-" TODO Do not clear mappings set by plugins.
-" mapclear
-" mapclear!
-" " mapclear!!!!
-" lmapclear
-
-
-
-" Set up general prefix keys. {{{
-
-DefMacroMap [nxo] orig q
-DefMacroMap [ic] orig <C-g><C-o>
-
-Map [n] <orig>q q
-
-DefMacroMap [nxo] excmd <Space>
-DefMacroMap [nxo] operator ;
-DefMacroMap [n] window <C-w>
-DefMacroMap [nxo] prompt ,t
-
-let g:mapleader = ';'
-Map [n] <Leader> <Nop>
-
-Map [n] ;; ;
-Map [n] ,, ,
-
-let g:maplocalleader = '\'
-Map [n] <LocalLeader> <Nop>
-
-DefMacroMap [i] compl <C-g><C-g><C-g><C-g><C-g>
-" }}}
 
 " map {{{
 " operator {{{
@@ -1837,11 +1849,11 @@ function! s:search_forward_p()
     return exists('v:searchforward') ? v:searchforward : 1
 endfunction
 
-    " Mapping -> plugin specific mapping, misc. hacks
-    Map -remap [nx] n <SID>(always-forward-n)<SID>(centering-display)
-    Map -remap [nx] N <SID>(always-backward-N)<SID>(centering-display)
-    Map -remap [o] n <SID>(always-forward-n)
-    Map -remap [o] N <SID>(always-backward-N)
+" Mapping -> plugin specific mapping, misc. hacks
+Map -remap [nx] n <SID>(always-forward-n)<SID>(centering-display)
+Map -remap [nx] N <SID>(always-backward-N)<SID>(centering-display)
+Map -remap [o] n <SID>(always-forward-n)
+Map -remap [o] N <SID>(always-backward-N)
 
 " }}}
 " Disable unused keys. {{{
@@ -2176,13 +2188,14 @@ function! s:cmd_split_nicely(q_args, bang)
         return
     endif
     " Adjust split window.
+    if !&l:winfixwidth
+        execute save_winwidth / 3 'wincmd |'
+    endif
+    if !&l:winfixheight
+        execute save_winheight / 2 'wincmd _'
+    endif
+    " Fix width and height.
     if a:bang
-        if !&l:winfixwidth
-            execute save_winwidth / 3 'wincmd |'
-        endif
-        if !&l:winfixheight
-            execute save_winheight / 2 'wincmd _'
-        endif
         setlocal winfixwidth winfixheight
     endif
 endfunction
@@ -2370,7 +2383,7 @@ endfunction
 command! -bar EditLast split #
 " }}}
 " }}}
-" For Plugins {{{
+" Plugins Settings {{{
 if s:has_plugin('skk') || s:has_plugin('eskk') " {{{
 
     " skkdict
@@ -2589,17 +2602,8 @@ if s:has_plugin('vixim') "{{{
     endif
 
 endif "}}}
-if s:has_plugin('detect-coding-style') " {{{
 
-    VimrcAutocmd User dcs-initialized-styles call s:dcs_register_own_styles()
-    function! s:dcs_register_own_styles()
-        let shiftwidth = 'shiftwidth='.(s:Compat.has_version('7.3.629') ? 0 : &sw)
-        let softtabstop = 'softtabstop='.(s:Compat.has_version('7.3.693') ? -1 : &sts)
-        call dcs#register_style('My style', {'hook_excmd': 'setlocal expandtab tabstop=4 ' . shiftwidth . ' ' . softtabstop})
-        call dcs#register_style('Short indent', {'hook_excmd': 'setlocal expandtab tabstop=2 ' . shiftwidth . ' ' . softtabstop})
-    endfunction
-
-endif " }}}
+" runtime
 if s:has_plugin('syntax/vim.vim') "{{{
     " augroup: a
     " function: f
@@ -2611,15 +2615,6 @@ if s:has_plugin('syntax/vim.vim') "{{{
     " mzscheme: m
     let g:vimsyn_folding = 'af'
 endif "}}}
-if s:has_plugin('vim-anzu') "{{{
-    " TODO: Support <old-rhs> in rhs
-    " Map -remap [nx] n <old-rhs><Plug>(anzu-update-search-status-with-echo)
-    " Map -remap [nx] N <old-rhs><Plug>(anzu-update-search-status-with-echo)
-    Map -remap [nx] n <SID>(always-forward-n)<SID>(centering-display)<Plug>(anzu-update-search-status-with-echo)
-    Map -remap [nx] N <SID>(always-backward-N)<SID>(centering-display)<Plug>(anzu-update-search-status-with-echo)
-endif "}}}
-
-" runtime
 if s:has_plugin('netrw') " {{{
     function! s:filetype_netrw() "{{{
         Map -remap -buffer [n] h -

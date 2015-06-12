@@ -247,3 +247,6 @@
 [submodule "dotfiles/.vim/bundle/vim-rooter"]
 	path = dotfiles/.vim/bundle/vim-rooter
 	url = https://github.com/airblade/vim-rooter.git
+[submodule "dotfiles/.vim/bundle/vim-anzu"]
+	path = dotfiles/.vim/bundle/vim-anzu
+	url = https://github.com/osyo-manga/vim-anzu.git

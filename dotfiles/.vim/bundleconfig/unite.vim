@@ -47,7 +47,7 @@ function! s:register_anything_abbrev() "{{{
     endfor
 endfunction "}}}
 
-autocmd vimrc VimEnter call s:register_anything_abbrev()
+autocmd vimrc VimEnter * call s:register_anything_abbrev()
 
 
 let g:unite_enable_start_insert = 1
