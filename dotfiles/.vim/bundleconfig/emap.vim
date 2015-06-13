@@ -1,4 +1,7 @@
+let s:config = BundleConfigGet()
 
-MapAlterCommand map Map
-MapAlterCommand amp Map
-MapAlterCommand mpa Map
+function! s:config.config()
+    MapAlterCommand map Map
+    MapAlterCommand amp Map
+    MapAlterCommand mpa Map
+endfunction

@@ -1,2 +1,5 @@
+let s:config = BundleConfigGet()
 
-autocmd vimrc BufNew __committia_diff__ setl foldopen
+function! s:config.config()
+    autocmd vimrc BufNew __committia_diff__ setl foldopen
+endfunction

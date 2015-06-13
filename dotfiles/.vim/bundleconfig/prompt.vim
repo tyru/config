@@ -1,2 +1,5 @@
+let s:config = BundleConfigGet()
 
-let prompt_debug = 0
+function! s:config.config()
+    let prompt_debug = 0
+endfunction

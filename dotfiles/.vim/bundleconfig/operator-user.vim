@@ -1,63 +1,66 @@
 
-" operator-adjust {{{
-call operator#user#define('adjust', 'Op_adjust_window_height')
-function! Op_adjust_window_height(motion_wiseness)
-    execute (line("']") - line("'[") + 1) 'wincmd' '_'
-    normal! `[zt
-endfunction
+let s:config = BundleConfigGet()
 
-Map -remap [nxo] <operator>adj <Plug>(operator-adjust)
-" }}}
+function! s:config.config()
+    " operator-adjust {{{
+    call operator#user#define('adjust', 'Op_adjust_window_height')
+    function! Op_adjust_window_height(motion_wiseness)
+        execute (line("']") - line("'[") + 1) 'wincmd _'
+        normal! `[zt
+    endfunction
+
+    Map -remap [nxo] <operator>adj <Plug>(operator-adjust)
+    " }}}
 
 
-" operator-sort {{{
-call operator#user#define_ex_command('sort', 'sort')
-Map -remap [nxo] <operator>s <Plug>(operator-sort)
-" }}}
+    " operator-sort {{{
+    call operator#user#define_ex_command('sort', 'sort')
+    Map -remap [nxo] <operator>s <Plug>(operator-sort)
+    " }}}
 
-" operator-retab {{{
-call operator#user#define_ex_command('retab', 'retab')
-Map -remap [nxo] <operator>t <Plug>(operator-retab)
-" }}}
+    " operator-retab {{{
+    call operator#user#define_ex_command('retab', 'retab')
+    Map -remap [nxo] <operator>t <Plug>(operator-retab)
+    " }}}
 
-" operator-join {{{
-call operator#user#define_ex_command('join', 'join')
-Map -remap [nxo] <operator>j <Plug>(operator-join)
-" }}}
+    " operator-join {{{
+    call operator#user#define_ex_command('join', 'join')
+    Map -remap [nxo] <operator>j <Plug>(operator-join)
+    " }}}
 
-" operator-uniq {{{
-call operator#user#define_ex_command('uniq', 'sort u')
-Map -remap [nxo] <operator>u <Plug>(operator-uniq)
-" }}}
+    " operator-uniq {{{
+    call operator#user#define_ex_command('uniq', 'sort u')
+    Map -remap [nxo] <operator>u <Plug>(operator-uniq)
+    " }}}
 
-" operator-narrow {{{
-call operator#user#define_ex_command('narrow', 'Narrow')
+    " operator-narrow {{{
+    call operator#user#define_ex_command('narrow', 'Narrow')
 
-Map -remap [nxo] <operator>na <Plug>(operator-narrow)
-Map [nxo]        <operator>nw :<C-u>Widen<CR>
+    Map -remap [nxo] <operator>na <Plug>(operator-narrow)
+    Map [nxo]        <operator>nw :<C-u>Widen<CR>
 
-let g:narrow_allow_overridingp = 1
-" }}}
+    let g:narrow_allow_overridingp = 1
+    " }}}
 
-" operator-zen2han, operator-han2zen {{{
-call operator#user#define('zen2han', 'Op_zen2han')
-function! Op_zen2han(motion_wiseness)
-    " TODO
-endfunction
+    " operator-zen2han, operator-han2zen {{{
+    call operator#user#define('zen2han', 'Op_zen2han')
+    function! Op_zen2han(motion_wiseness)
+        " TODO
+    endfunction
 
-call operator#user#define('han2zen', 'Op_han2zen')
-function! Op_han2zen(motion_wiseness)
-    " TODO
-endfunction
+    call operator#user#define('han2zen', 'Op_han2zen')
+    function! Op_han2zen(motion_wiseness)
+        " TODO
+    endfunction
 
-Map -remap [nxo] <operator>zh <Plug>(operator-zen2han)
-Map -remap [nxo] <operator>hz <Plug>(operator-han2zen)
-" }}}
+    Map -remap [nxo] <operator>zh <Plug>(operator-zen2han)
+    Map -remap [nxo] <operator>hz <Plug>(operator-han2zen)
+    " }}}
 
-" operator-blank-killer {{{
-call operator#user#define_ex_command('blank-killer', 's/\s\+$//')
-Map -remap [nxo] <operator>bk <Plug>(operator-blank-killer)
-" }}}
+    " operator-blank-killer {{{
+    call operator#user#define_ex_command('blank-killer', 's/\s\+$//')
+    Map -remap [nxo] <operator>bk <Plug>(operator-blank-killer)
+    " }}}
 
     " operator-fillblank {{{
     " from daisuzu .vimrc:
@@ -80,3 +83,4 @@ Map -remap [nxo] <operator>bk <Plug>(operator-blank-killer)
     call operator#user#define('fillblank', 'OperatorFillBlank')
     Map -remap [nxo] <operator><Space> <Plug>(operator-fillblank)
     " }}}
+endfunction

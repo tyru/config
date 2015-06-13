@@ -74,7 +74,9 @@ let g:VIMRC = {}
 
 " Constants {{{
 let s:is_win = has('win16') || has('win32') || has('win64') || has('win95')
+let s:is_unix_terminal = !s:is_win && has('unix') && !has('gui_running')
 let g:VIMRC.is_win = s:is_win
+let g:VIMRC.is_unix_terminal = s:is_unix_terminal
 " }}}
 
 " Function {{{
@@ -256,45 +258,93 @@ endif
 " }}}
 " Load Plugins {{{
 
+" Load vim-rtputil {{{
+set rtp+=$MYVIMDIR/macros/vim-rtputil
+" }}}
+
 " ... {{{
+let s:loading_bundleconfig = {}
 let s:bundleconfig = {}
 let s:plugins = rtputil#new()
 call s:plugins.reset()
 
-function! s:cmd_rtp_load(args, now)
-    let path = a:args[0]
-    if !isdirectory(expand(path))
-        call s:error(path . ": no such a bundle directory")
-        return
-    endif
-    let nosufname = substitute(path, '.*[/\\]', '', '')
-    let nosufname = substitute(nosufname, '\c[.-]vim$', '', '')
-    let nosufname = substitute(nosufname, '\c^vim[.-]', '', '')
-    let config = {
-    \   'path': path, 'name': nosufname,
-    \   'depend': [], 'done': 0
-    \}
-    if len(a:args) > 1
-        if has_key(a:args[1], 'depend')
-            let config.depend += type(a:args[1].depend) is type([]) ?
-            \   a:args[1].depend : [a:args[1].depend]
+function! s:cmd_load_plugin(args, now)
+    for path in a:args
+        if !isdirectory(expand(path))
+            call s:error(path . ": no such a bundle directory")
+            return
         endif
-    endif
-    " To load $MYVIMDIR/bundleconfig/<name>.vim
-    let s:bundleconfig[nosufname] = config
-
-    call s:plugins.append(path)
-    if a:now
-        " Change 'runtimepath' immediately.
-        call rtputil#append(path)
-    endif
+        let nosufname = s:get_no_suffix_name(path)
+        let bcconf = {
+        \   'path': path, 'name': nosufname,
+        \   'done': 0, 'disabled': 0,
+        \   'userconf': {},
+        \}
+        " To load $MYVIMDIR/bundleconfig/<name>.vim
+        let s:bundleconfig[nosufname] = bcconf
+        if a:now
+            " Change 'runtimepath' immediately.
+            call rtputil#append(path)
+        else
+            " Change 'runtimepath' later.
+            call s:plugins.append(path)
+        endif
+    endfor
 endfunction
 
+function! s:cmd_disable_plugin(args)
+    let path = a:args[0]
+    let nosufname = s:get_no_suffix_name(path)
+    " To load $MYVIMDIR/bundleconfig/<name>.vim
+    if has_key(s:bundleconfig, nosufname)
+        unlet s:bundleconfig[nosufname]
+    endif
+    " Change 'runtimepath' later.
+    call s:plugins.remove(path)
+endfunction
+
+function! s:get_no_suffix_name(path)
+    let nosufname = substitute(a:path, '.*[/\\]', '', '')
+    let nosufname = substitute(nosufname, '\c[.-]vim$', '', '')
+    let nosufname = substitute(nosufname, '\c^vim[.-]', '', '')
+    return nosufname
+endfunction
+
+command! -nargs=0 LoadBundles
+\     call s:cmd_load_plugin(glob('$MYVIMDIR/bundle/*', 1, 1), 0)
+
 command! -nargs=+ LoadLater
-\     call s:cmd_rtp_load([<args>], 0)
+\     call s:cmd_load_plugin([<args>], 0)
 
 command! -nargs=+ LoadNow
-\     call s:cmd_rtp_load([<args>], 1)
+\     call s:cmd_load_plugin([<args>], 1)
+
+command! -nargs=+ DisablePlugin
+\     call s:cmd_disable_plugin([<args>])
+
+function! BundleConfigGet()
+    if empty(s:loading_bundleconfig)
+        call s:error("'BundleConfigGet()' is only allowed in bundleconfig file.")
+        return {}
+    endif
+    let name = s:loading_bundleconfig.name
+    let s:bundleconfig[name].userconf = deepcopy(s:BundleUserConfig)
+    return s:bundleconfig[name].userconf
+endfunction
+
+let s:BundleUserConfig = {}
+function! s:BundleUserConfig.config()
+endfunction
+function! s:BundleUserConfig.depends()
+    return []
+endfunction
+function! s:BundleUserConfig.depends_commands()
+    return []
+endfunction
+function! s:BundleUserConfig.recommends()
+    return []
+endfunction
+
 
 " }}}
 
@@ -315,173 +365,13 @@ if !exists('$VIMRC_DEBUG')
     LoadNow '$MYVIMDIR/bundle/vim-singleton'
     call singleton#enable()
 
-
-    if !s:is_win && has('unix')
-        LoadLater '$MYVIMDIR/bundle/autochmodx.vim'
-    endif
-
-    LoadLater '$MYVIMDIR/bundle/autodate.vim'
-
-    LoadLater '$MYVIMDIR/bundle/capture.vim'
-
-    LoadLater '$MYVIMDIR/bundle/caw.vim'
-
-    LoadLater '$MYVIMDIR/bundle/detect-coding-style.vim'
-
-    LoadLater '$MYVIMDIR/bundle/codingstyle.vim'
-
-    LoadLater '$MYVIMDIR/bundle/cpp-vim'
-
-    " LoadLater '$MYVIMDIR/bundle/current-func-info.vim'
-
-    LoadLater '$MYVIMDIR/bundle/fileutils.vim'
-
-    LoadLater '$MYVIMDIR/bundle/foldCC'
-
-    " LoadLater '$MYVIMDIR/bundle/ftl-vim-syntax'
-
-    if executable('git') && executable('curl')
-        LoadLater '$MYVIMDIR/bundle/gist-vim'
-    endif
-
-    " LoadLater '$MYVIMDIR/bundle/hatena-vim'
-
-    if exists('g:lingr')
-        LoadLater '$MYVIMDIR/bundle/lingr-vim'
-    endif
-
-    LoadLater '$MYVIMDIR/bundle/neocomplete.vim'
-
-    LoadLater '$MYVIMDIR/bundle/nextfile.vim'
-
-    LoadLater '$MYVIMDIR/bundle/ohmygrep.vim'
-
-    LoadLater '$MYVIMDIR/bundle/open-browser-github.vim'
-
-    LoadLater '$MYVIMDIR/bundle/open-browser.vim'
-
-    LoadLater '$MYVIMDIR/bundle/operator-html-escape.vim'
-
-    LoadLater '$MYVIMDIR/bundle/quickey.vim'
-
-    LoadLater '$MYVIMDIR/bundle/ref-plugins'
-
-    LoadLater '$MYVIMDIR/bundle/restart.vim'
-
-    LoadLater '$MYVIMDIR/bundle/shabadou.vim'
-
-    " if has('signs') &&
-    " \  has('diff')  &&
-    " \  (exists('*mkdir') || executable('mkdir')) &&
-    " \  executable('diff')
-    "     LoadLater '$MYVIMDIR/bundle/sign-diff'
-    " endif
-
-    if exists('$VPROVE_TESTING')
-        LoadLater '$MYVIMDIR/bundle/simpletap.vim'
-    endif
-
-    LoadLater '$MYVIMDIR/bundle/skkdict.vim'
-
-    if 0
-        let s:SKK = 'eskk'
-        LoadLater '$MYVIMDIR/bundle/eskk.vim', {'depend': 'skkdict'}
-    elseif 1
-        let s:SKK = 'skkvim'
-        LoadLater '$MYVIMDIR/bundle/skk.vim', {'depend': 'skkdict'}
-    elseif 0
-        let s:SKK = 'vixim'
-        LoadLater '$MYVIMDIR/bundle/vixim.vim'
-        LoadLater '$MYVIMDIR/bundle/vixim-skk.vim', {'depend': 'vixim'}
-    endif
-
-    if !s:is_win && has('unix') && !has('gui_running')
-        LoadLater '$MYVIMDIR/bundle/SudoEdit.vim'
-    endif
-
-    LoadLater '$MYVIMDIR/bundle/unite.vim'
-
-    if !s:is_win && has('unix') && !has('gui_running')
-        LoadLater '$MYVIMDIR/bundle/vim-fakeclip'
-    endif
-
-    LoadLater '$MYVIMDIR/bundle/vim-ft-diff_fold'
-
-    LoadLater '$MYVIMDIR/bundle/vim-ft-markdown_fold'
-
-    LoadLater '$MYVIMDIR/bundle/vim-hier'
-
-    LoadLater '$MYVIMDIR/bundle/vim-javascript'
-
-    LoadLater '$MYVIMDIR/bundle/vim-operator-user'
-
-    LoadLater '$MYVIMDIR/bundle/vim-prettyprint'
-
-    LoadLater '$MYVIMDIR/bundle/vim-quickrun'
-
-    LoadLater '$MYVIMDIR/bundle/vim-ref'
-
-    LoadLater '$MYVIMDIR/bundle/vim-repeat'
-
-    LoadLater '$MYVIMDIR/bundle/vim-submode'
-
-    LoadLater '$MYVIMDIR/bundle/vim-surround'
-
-    LoadLater '$MYVIMDIR/bundle/vim-tabpagecd'
-
-    LoadLater '$MYVIMDIR/bundle/vim-textobj-entire'
-
-    LoadLater '$MYVIMDIR/bundle/vim-textobj-function'
-
-    LoadLater '$MYVIMDIR/bundle/vim-textobj-function-javascript'
-
-    LoadLater '$MYVIMDIR/bundle/vim-textobj-function-perl'
-
-    LoadLater '$MYVIMDIR/bundle/vim-textobj-indent'
-
-    LoadLater '$MYVIMDIR/bundle/vim-textobj-jabraces'
-
-    LoadLater '$MYVIMDIR/bundle/vim-textobj-user'
-
-    LoadLater '$MYVIMDIR/bundle/vim-visualstar'
-
-    LoadLater '$MYVIMDIR/bundle/vimdoc-ja'
-
-    LoadLater '$MYVIMDIR/bundle/vimproc'
-
-    LoadLater '$MYVIMDIR/bundle/vimtemplate.vim'
-
-    " LoadLater '$MYVIMDIR/bundle/sonictemplate-vim'
-
-    LoadLater '$MYVIMDIR/bundle/vital.vim'
-
-    LoadLater '$MYVIMDIR/bundle/webapi-vim'
-
-    LoadLater '$MYVIMDIR/bundle/autodirmake.vim'
-
-    LoadLater '$MYVIMDIR/bundle/vim-flavored-markdown'
-
-    LoadLater '$MYVIMDIR/bundle/neomru.vim'
-
-    LoadLater '$MYVIMDIR/bundle/go-vim'
-
-    LoadLater '$MYVIMDIR/bundle/typescript-vim'
-
-    LoadLater '$MYVIMDIR/bundle/committia.vim'
-
-    LoadLater '$MYVIMDIR/bundle/vim-vimlint'
-
-    LoadLater '$MYVIMDIR/bundle/vim-rooter'
-
-    LoadLater '$MYVIMDIR/bundle/vim-brightest'
-
-    if executable('ag')
-        LoadLater '$MYVIMDIR/bundle/ag.vim'
-    endif
-
-    LoadLater '$MYVIMDIR/bundle/vim-rails'
-
-    LoadLater '$MYVIMDIR/bundle/vim-anzu'
+    LoadBundles
+
+    " Disable unused skk plugin.
+    " DisablePlugin 'eskk'
+    DisablePlugin 'skk'
+    DisablePlugin 'vixim'
+    DisablePlugin 'vixim-skk'
 else
     " Useful plugins for debug
     LoadLater '$MYVIMDIR/bundle/dutil.vim'
@@ -503,10 +393,6 @@ endif
 filetype off
 call s:plugins.apply()
 filetype plugin indent on
-
-delcommand LoadLater
-delcommand LoadNow
-unlet s:plugins
 " }}}
 
 " Import emap.vim & altercmd.vim commands {{{
@@ -569,40 +455,98 @@ let g:VIMRC.Compat = s:Compat
 " Load plugin-specific config (bundleconfig). {{{
 
 function! s:bc_load()
-    let g:config = s:bundleconfig
+    for bcconf in values(s:bundleconfig)
+        call s:bc_do_source(bcconf)
+    endfor
     for name in s:get_ordering_keys(s:bundleconfig)
-        let config = s:bundleconfig[name]
-        if config.done
+        let bcconf = s:bundleconfig[name]
+        if bcconf.done
             continue
         endif
-        let has_dependants = empty(
-        \   filter(copy(config.depend), '!has_key(s:bundleconfig, v:val)'))
-        if !has_dependants
-            call s:error(name . ' requires ' . dependant .
-            \   ' but you didn''t require ' . dependant . '!')
-            continue
-        endif
-        for dependant in config.depend
-            call s:bc_do_load(s:bundleconfig[dependant])
-        endfor
-        call s:bc_do_load(config)
+        call s:bc_do_load(bcconf)
     endfor
 endfunction
 function! s:get_ordering_keys(bundleconfig)
     " Load in order?
     return keys(a:bundleconfig)
 endfunction
-function! s:bc_do_load(config)
+function! s:bc_do_source(bcconf)
+    let s:loading_bundleconfig = a:bcconf
     try
-        execute 'runtime! bundleconfig/' . a:config.name . '/**/*.vim'
-        execute 'runtime! bundleconfig/' . a:config.name . '*.vim'
-        " execute 'runtime! bundleconfig/' . a:config.name . '.vim'
+        execute 'runtime! bundleconfig/' . a:bcconf.name . '/**/*.vim'
+        execute 'runtime! bundleconfig/' . a:bcconf.name . '*.vim'
+
+        if has_key(a:bcconf.userconf, 'enable_if')
+            let a:bcconf.disabled = !a:bcconf.userconf.enable_if()
+        endif
+        if has_key(a:bcconf.userconf, 'disable_if')
+            let a:bcconf.disabled = a:bcconf.userconf.disable_if()
+        endif
+        if has_key(a:bcconf.userconf, 'depends_commands')
+            let commands = a:bcconf.userconf.depends_commands()
+            for cmd in type(commands) is type([]) ?
+            \               commands : [commands]
+                if !executable(cmd)
+                    call s:error("[bundleconfig] " .
+                    \            "'" . a:bcconf.name . "' requires " .
+                    \            "command '" . cmd . "' but not in your PATH!")
+                    let a:bcconf.disabled = 1
+                    continue
+                endif
+            endfor
+        endif
     catch
-        call s:error('--- ' . a:config.path . ' ---')
-        call s:error(v:exception)
-        call s:error('--- ' . a:config.path . ' ---')
+        call s:error('--- Sourcing ' . a:bcconf.path . ' ... ---')
+        for msg in split(v:exception, '\n')
+            call s:error(msg)
+        endfor
+        for msg in split(v:throwpoint, '\n')
+            call s:error(msg)
+        endfor
+        call s:error('--- Sourcing ' . a:bcconf.path . ' ... ---')
+    finally
+        let s:loading_bundleconfig = {}
     endtry
-    let a:config.done = 1
+endfunction
+function! s:bc_do_load(bcconf)
+    if a:bcconf.disabled
+        return 0
+    endif
+    try
+        if has_key(a:bcconf.userconf, 'depends')
+            let depfail = []
+            let depends = a:bcconf.userconf.depends()
+            for depname in type(depends) is type([]) ? depends : [depends]
+                if !s:bc_do_load(s:bundleconfig[depname])
+                    let depfail += [depname]
+                endif
+            endfor
+            if !empty(depfail)
+                call s:error("Stop loading '" . a:bcconf.name . "' " .
+                \            "due to load failed/disabled depending " .
+                \            "plugin(s) [" . join(depfail, ', ') . "]")
+                return 0
+            endif
+        endif
+        if has_key(a:bcconf.userconf, 'config')
+            let s:loading_bundleconfig = a:bcconf
+            call a:bcconf.userconf.config()
+        endif
+    catch
+        call s:error('--- Loading ' . a:bcconf.path . ' ... ---')
+        for msg in split(v:exception, '\n')
+            call s:error(msg)
+        endfor
+        for msg in split(v:throwpoint, '\n')
+            call s:error(msg)
+        endfor
+        call s:error('--- Loading ' . a:bcconf.path . ' ... ---')
+        return 0
+    finally
+        let s:loading_bundleconfig = {}
+    endtry
+    let a:bcconf.done = 1
+    return 1
 endfunction
 
 call s:bc_load()
@@ -644,6 +588,13 @@ endfunction
 command! -bar -bang HelpTagsAll call rtputil#helptags(<bang>0)
 HelpTagsAll
 
+" }}}
+
+" ... {{{
+delcommand LoadLater
+delcommand LoadNow
+delcommand DisablePlugin
+unlet s:plugins
 " }}}
 
 " }}}
@@ -2394,17 +2345,19 @@ command! -bar EditLast split #
 if s:has_plugin('skk') || s:has_plugin('eskk') " {{{
 
     " skkdict
-    let s:skk_user_dict = '~/.skkdict/user-dict'
-    let s:skk_user_dict_encoding = 'utf-8'
-    let s:skk_system_dict = '~/.skkdict/system-dict'
-    let s:skk_system_dict_encoding = 'euc-jp'
+    let g:bc_skk_user_dict = '~/.skkdict/user-dict'
+    let g:bc_skk_user_dict_encoding = 'utf-8'
+    let g:bc_skk_system_dict = '~/.skkdict/system-dict'
+    let g:bc_skk_system_dict_encoding = 'euc-jp'
 
     " Use skk.vim and eskk together.
     if s:SKK == 'eskk'
         " Map <C-j> to eskk, Map <C-g><C-j> to skk.vim
+        " Map -remap [ic] <C-j> <Plug>(eskk:toggle)    " default
         let skk_control_j_key = '<C-g><C-j>'
     elseif s:SKK == 'skkvim'
-        " Map <C-j> to skk.vim, Map <C-g><C-j> to eskk
+        " Map <C-j> to skk.vim, Map <C-g><C-j> to eskk    " default
+        " let skk_control_j_key = '<C-j>'
         Map -remap [ic] <C-g><C-j> <Plug>(eskk:toggle)
     endif
 

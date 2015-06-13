@@ -250,3 +250,9 @@
 [submodule "dotfiles/.vim/bundle/vim-anzu"]
 	path = dotfiles/.vim/bundle/vim-anzu
 	url = https://github.com/osyo-manga/vim-anzu.git
+[submodule "dotfiles/.vim/bundle/neosnippet.vim"]
+	path = dotfiles/.vim/bundle/neosnippet.vim
+	url = https://github.com/Shougo/neosnippet.vim.git
+[submodule "dotfiles/.vim/bundle/neosnippet-snippets"]
+	path = dotfiles/.vim/bundle/neosnippet-snippets
+	url = https://github.com/Shougo/neosnippet-snippets.git

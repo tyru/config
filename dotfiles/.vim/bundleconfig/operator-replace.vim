@@ -1,3 +1,6 @@
+let s:config = BundleConfigGet()
 
-Map -remap [nxo] <operator>p  <Plug>(operator-replace)
-" Map -remap [xo] p <Plug>(operator-replace)
+function! s:config.config()
+    Map -remap [nxo] <operator>p  <Plug>(operator-replace)
+    " Map -remap [xo] p <Plug>(operator-replace)
+endfunction

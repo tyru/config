@@ -1,4 +1,7 @@
+let s:config = BundleConfigGet()
 
-MapAlterCommand pp PP
+function! s:config.config()
+    MapAlterCommand pp PP
 
-let g:prettyprint_show_expression = 1
+    let g:prettyprint_show_expression = 1
+endfunction

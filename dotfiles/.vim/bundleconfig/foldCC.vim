@@ -1,2 +1,5 @@
+let s:config = BundleConfigGet()
 
-set foldtext=FoldCCtext()
+function! s:config.config()
+    set foldtext=FoldCCtext()
+endfunction
