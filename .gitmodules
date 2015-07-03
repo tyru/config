@@ -19,9 +19,6 @@
 [submodule "dotfiles/.vim/bundle/skk.vim"]
 	path = dotfiles/.vim/bundle/skk.vim
 	url = https://github.com/tyru/skk.vim
-[submodule "dotfiles/.vim/bundle/vimtemplate.vim"]
-	path = dotfiles/.vim/bundle/vimtemplate.vim
-	url = https://github.com/tyru/vimtemplate.vim
 [submodule "dotfiles/.vim/bundle/emap.vim"]
 	path = dotfiles/.vim/bundle/emap.vim
 	url = https://github.com/tyru/emap.vim
