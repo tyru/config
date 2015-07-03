@@ -30,6 +30,9 @@ function! s:config.config()
     if executable('perldocjp')
         let g:ref_perldoc_cmd = 'perldocjp'
     endif
+    let g:ref_noenter = 1
+
+    " webdict source {{{
 
     let g:ref_source_webdict_cmd = ['lynx', '-dump', '-nonumbers', '%s']
     let g:ref_source_webdict_sites = {
@@ -50,5 +53,7 @@ function! s:config.config()
     function! g:ref_source_webdict_sites.wikipedia.filter(output)
         return join(split(a:output, "\n")[6 :], "\n")
     endfunction
+
+    " }}}
 
 endfunction

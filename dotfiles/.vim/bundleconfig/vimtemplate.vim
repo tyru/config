@@ -4,7 +4,7 @@ function! s:config.config()
     let g:vt_author = "tyru"
     let g:vt_email = "tyru.exe@gmail.com"
     let g:vt_email = "tyru.exe@gmail.com"
-    let vt_template_dir_path = $MYVIMDIR.'/template'
+    let g:vt_template_dir_path = $MYVIMDIR.'/template'
     let g:vt_files_metainfo = {
     \   'cppsrc-scratch.cpp': {'filetype': "cpp"},
     \   'cppsrc.cpp'    : {'filetype': "cpp"},

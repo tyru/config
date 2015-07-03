@@ -1,8 +1,10 @@
-scriptencoding utf-8
+" Don't set scriptencoding before 'encoding' option is set!
+" scriptencoding utf-8
+
 " vim:set et fen fdm=marker:
-"
+
 " See also: ~/.vimrc or ~/_vimrc
-"
+
 
 
 " let $VIMRC_DEBUG = 1
@@ -249,6 +251,8 @@ let &fileencodings = join(filter(s:fencs, 'count(s:fencs, v:val) == 1'), ',')
 
 unlet s:fencs
 unlet s:enc
+
+scriptencoding utf-8
 
 set fileformats=unix,dos,mac
 if exists('&ambiwidth')
@@ -1036,18 +1040,6 @@ endif
 " FIXME: `:Lazy colorscheme tyru` does not throw ColorScheme event,
 " what the fxck?
 Lazy colorscheme tyru | doautocmd ColorScheme
-
-" }}}
-" Quickfix {{{
-
-VimrcAutocmd QuickfixCmdPost * QuickFix
-
-" quickfix buffer-local mappings
-VimrcAutocmd FileType qf call s:quickfix_settings()
-function! s:quickfix_settings()
-    " Map -buffer -force [n] j j<CR>:silent! normal! zo<CR><C-w><C-w>
-    " Map -buffer -force [n] k k<CR>:silent! normal! zo<CR><C-w><C-w>
-endfunction
 
 " }}}
 " Mappings, Abbreviations {{{
@@ -2116,6 +2108,8 @@ command!
 \   if !empty(getqflist()) | cwindow <args> | endif
 
 MapAlterCommand qf QuickFix
+
+VimrcAutocmd QuickfixCmdPost * QuickFix
 " }}}
 " :SynNames {{{
 " :help synstack()
@@ -2137,19 +2131,20 @@ command! -bar -bang -nargs=+ SplitNicely
 \   call s:cmd_split_nicely(<q-args>, <bang>0)
 
 function! s:cmd_split_nicely(q_args, bang)
+    let vertical = 1
     let winnum = winnr('$')
     let save_winwidth = winwidth(0)
     let save_winheight = winheight(0)
-    execute 'belowright vertical' a:q_args
+    execute 'belowright' (vertical ? 'vertical' : '') a:q_args
     if winnr('$') is winnum
         " if no new window is opened
         return
     endif
     " Adjust split window.
-    if !&l:winfixwidth
+    if vertical && !&l:winfixwidth
         execute save_winwidth / 3 'wincmd |'
     endif
-    if !&l:winfixheight
+    if !vertical && !&l:winfixheight
         execute save_winheight / 2 'wincmd _'
     endif
     " Fix width and height.

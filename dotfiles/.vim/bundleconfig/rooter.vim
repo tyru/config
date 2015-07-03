@@ -1,7 +1,8 @@
 let s:config = BundleConfigGet()
 
 function! s:config.config()
-    "Map [n] <excmd>cd :<C-u>CPRLookupCD<CR>
+    Map [n] <excmd>cd :<C-u>Rooter<CR>
+
     let g:rooter_disable_map = 1
     let g:rooter_manual_only = 1
     " let g:rooter_use_lcd = 1

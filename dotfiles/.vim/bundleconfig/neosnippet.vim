@@ -1,3 +1,11 @@
+let s:config = BundleConfigGet()
 
-Map -remap [is] <C-t>      <Plug>(neosnippet_expand_or_jump)
-Map -remap [x]  <C-t>      <Plug>(neosnippet_expand_target)
+function! s:config.config()
+    " SuperTab like snippets' behavior.
+    Map -remap -expr [i] <Tab> neosnippet#expandable_or_jumpable() ?
+    \ "\<Plug>(neosnippet_expand_or_jump)"
+    \: pumvisible() ? "\<C-n>" : "\<Tab>"
+    Map -remap -expr [s] <Tab> neosnippet#expandable_or_jumpable() ?
+    \ "\<Plug>(neosnippet_expand_or_jump)"
+    \: "\<Tab>"
+endfunction
