@@ -253,6 +253,6 @@
 [submodule "dotfiles/.vim/bundle/neosnippet-snippets"]
 	path = dotfiles/.vim/bundle/neosnippet-snippets
 	url = https://github.com/Shougo/neosnippet-snippets.git
-[submodule "dotfiles/.vim/bundle/qfsavehist.vim"]
-	path = dotfiles/.vim/bundle/qfsavehist.vim
-	url = https://github.com/tyru/qfsavehist.vim
+[submodule "dotfiles/.vim/bundle/qfhist.vim"]
+	path = dotfiles/.vim/bundle/qfhist.vim
+	url = https://github.com/tyru/qfhist.vim
