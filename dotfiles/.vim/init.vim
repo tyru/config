@@ -59,7 +59,6 @@ else
 endif
 
 filetype plugin indent on
-syntax enable
 
 if filereadable(expand('~/.vimrc.local'))
     execute 'source' expand('~/.vimrc.local')
@@ -625,11 +624,12 @@ set hlsearch
 set incsearch
 set smartcase
 
-" listchars
+" Aesthetic options
 set list
 " Assumption: Trailing spaces are already highlighted and noticeable.
 " set listchars=tab:>.,extends:>,precedes:<,eol:$
 set listchars=tab:>.,extends:>,precedes:<
+set display=lastline
 
 " scroll
 set scroll=5
@@ -1012,7 +1012,6 @@ endif
 
 " misc.
 set diffopt=filler,vertical
-set helplang=ja,en
 set history=50
 set keywordprg=
 " set lazyredraw
@@ -1913,6 +1912,10 @@ nnoremenu <silent> PopUp.ファイルパスをコピー :let [@", @+, @*] = repe
 " }}}
 " FileType & Syntax {{{
 
+" Must be after 'runtimepath' setting!
+" http://rbtnn.hateblo.jp/entry/2014/11/30/174749
+syntax enable
+
 " FileType {{{
 
 function! s:current_filetypes() "{{{
@@ -2098,18 +2101,6 @@ command!
 \   echo globpath(&rtp, <q-args>, 1)
 
 MapAlterCommand gp GlobPath
-" }}}
-" :QuickFix - Wrapper for favorite quickfix opening command {{{
-" Select prefered command from cwindow, copen, and so on.
-
-command!
-\   -bar -nargs=?
-\   QuickFix
-\   if !empty(getqflist()) | cwindow <args> | endif
-
-MapAlterCommand qf QuickFix
-
-VimrcAutocmd QuickfixCmdPost * QuickFix
 " }}}
 " :SynNames {{{
 " :help synstack()
@@ -2335,6 +2326,10 @@ endfunction
 " :EditLast (like Firefox's Ctrl-Shift-T) {{{
 command! -bar EditLast split #
 " }}}
+" }}}
+" Quickfix {{{
+VimrcAutocmd QuickfixCmdPost [l]*  lopen
+VimrcAutocmd QuickfixCmdPost [^l]* copen
 " }}}
 " Plugins Settings {{{
 if s:has_plugin('skk') || s:has_plugin('eskk') " {{{
