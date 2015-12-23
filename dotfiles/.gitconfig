@@ -47,6 +47,9 @@
 	wh = whatchanged
 	zip = archive --format=zip
 	shortrev = rev-parse --short
+	# https://gist.github.com/gnarf/5406589
+	pr = "!f() { git fetch -fu ${2:-origin} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
+	pr-clean = "!git for-each-ref refs/heads/pr/* --format=\"%(refname)\" | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done"
 [color]
 	branch = auto
 	diff = auto

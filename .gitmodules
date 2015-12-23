@@ -256,3 +256,9 @@
 [submodule "dotfiles/.vim/bundle/qfhist.vim"]
 	path = dotfiles/.vim/bundle/qfhist.vim
 	url = https://github.com/tyru/qfhist.vim
+[submodule "dotfiles/.vim/bundle/vim-go"]
+	path = dotfiles/.vim/bundle/vim-go
+	url = https://github.com/fatih/vim-go
+[submodule "dotfiles/.vim/bundle/vim-textobj-function-go"]
+	path = dotfiles/.vim/bundle/vim-textobj-function-go
+	url = https://github.com/kamichidu/vim-textobj-function-go

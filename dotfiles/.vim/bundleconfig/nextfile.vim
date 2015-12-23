@@ -12,7 +12,9 @@ function! s:config.config()
 
     function! NFLoopMsg(file_to_open)
         redraw
-        call s:warn('open a file from the start...')
+        echohl WarningMsg
+        echomsg 'open a file from the start...'
+        echohl None
         " Always open a next/previous file...
         return 1
     endfunction

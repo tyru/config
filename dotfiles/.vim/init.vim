@@ -296,14 +296,14 @@ function! s:cmd_load_plugin(args, now)
 endfunction
 
 function! s:cmd_disable_plugin(args)
-    let path = a:args[0]
-    let nosufname = s:get_no_suffix_name(path)
+    let pattern = a:args[0]
+    let nosufname = s:get_no_suffix_name(pattern)
     " To load $MYVIMDIR/bundleconfig/<name>.vim
     if has_key(s:bundleconfig, nosufname)
         unlet s:bundleconfig[nosufname]
     endif
     " Change 'runtimepath' later.
-    call s:plugins.remove(path)
+    call s:plugins.remove('\<' . pattern . '\>')
 endfunction
 
 function! s:get_no_suffix_name(path)
@@ -366,6 +366,14 @@ if !exists('$VIMRC_DEBUG')
 
     " If vim is already up, send it given files by arguments
     LoadNow '$MYVIMDIR/bundle/vim-singleton'
+    " PKGBUILDやinstall.sh
+    " let g:singleton#entrust_pattern = {
+    " \   'yaourt' : '^/tmp/yaourt-tmp-[^/]\+/',
+    " \   'git' : 'GGGGGGGGGGGGGGGGGGGGG',
+    " \}
+    " let g:singleton#entrust_pattern = {
+    " \   'yaourt' : '^/tmp/yaourt-tmp-[^/]\+/.\+/PKGBUILD$',
+    " \}
     call singleton#enable()
 
     LoadBundles
@@ -1884,6 +1892,14 @@ endfunction
 " }}}
 
 " }}}
+" Map CUA-like keybindings to Alt key {{{
+Map [x] <M-x> "+d
+Map [x] <M-c> "+y
+Map [nx] <M-v> "+p
+Map [n] <M-a> ggVG
+Map [n] <M-t> :<C-u>tabedit<CR>
+Map [n] <M-w> :<C-u>tabclose<CR>
+" }}}
 
 " Mouse {{{
 
@@ -2332,20 +2348,22 @@ VimrcAutocmd QuickfixCmdPost [l]*  lopen
 VimrcAutocmd QuickfixCmdPost [^l]* copen
 " }}}
 " Plugins Settings {{{
-if s:has_plugin('skk') || s:has_plugin('eskk') " {{{
+let s:HAS_SKK_VIM  = s:has_plugin('skk')
+let s:HAS_ESKK_VIM = s:has_plugin('eskk')
+if s:HAS_SKK_VIM || s:HAS_ESKK_VIM " {{{
 
     " skkdict
-    let g:bc_skk_user_dict = '~/.skkdict/user-dict'
-    let g:bc_skk_user_dict_encoding = 'utf-8'
-    let g:bc_skk_system_dict = '~/.skkdict/system-dict'
-    let g:bc_skk_system_dict_encoding = 'euc-jp'
+    let s:skk_user_dict = '~/.skkdict/user-dict'
+    let s:skk_user_dict_encoding = 'utf-8'
+    let s:skk_system_dict = '~/.skkdict/system-dict'
+    let s:skk_system_dict_encoding = 'euc-jp'
 
     " Use skk.vim and eskk together.
-    if s:SKK == 'eskk'
+    if s:HAS_ESKK_VIM
         " Map <C-j> to eskk, Map <C-g><C-j> to skk.vim
         " Map -remap [ic] <C-j> <Plug>(eskk:toggle)    " default
         let skk_control_j_key = '<C-g><C-j>'
-    elseif s:SKK == 'skkvim'
+    elseif s:HAS_SKK_VIM
         " Map <C-j> to skk.vim, Map <C-g><C-j> to eskk    " default
         " let skk_control_j_key = '<C-j>'
         Map -remap [ic] <C-g><C-j> <Plug>(eskk:toggle)
@@ -2415,10 +2433,10 @@ if s:has_plugin('eskk') " {{{
         \}
     endif
 
-    let g:eskk#server = {
-    \   'host': 'localhost',
-    \   'port': 55100,
-    \}
+    " let g:eskk#server = {
+    " \   'host': 'localhost',
+    " \   'port': 55100,
+    " \}
 
     let g:eskk#log_cmdline_level = 2
     let g:eskk#log_file_level = 4

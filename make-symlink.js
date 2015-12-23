@@ -39,7 +39,7 @@ function getDotfilesList() {
 }
 function linkToHome(filelist) {
 	var HOME = SH.ExpandEnvironmentStrings("%HOME%");
-	if (HOME === '') {
+	if (HOME === '%HOME%') {
 		HOME = SH.ExpandEnvironmentStrings("%USERPROFILE%");
 	}
 
