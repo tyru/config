@@ -262,3 +262,6 @@
 [submodule "dotfiles/.vim/bundle/vim-textobj-function-go"]
 	path = dotfiles/.vim/bundle/vim-textobj-function-go
 	url = https://github.com/kamichidu/vim-textobj-function-go
+[submodule "dotfiles/.vim/bundle/vim-themis"]
+	path = dotfiles/.vim/bundle/vim-themis
+	url = https://github.com/thinca/vim-themis
