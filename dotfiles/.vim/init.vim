@@ -381,8 +381,6 @@ if !exists('$VIMRC_DEBUG')
     " Disable unused skk plugin.
     " DisablePlugin 'eskk'
     DisablePlugin 'skk'
-    DisablePlugin 'vixim'
-    DisablePlugin 'vixim-skk'
 else
     " Useful plugins for debug
     LoadLater '$MYVIMDIR/bundle/dutil.vim'
