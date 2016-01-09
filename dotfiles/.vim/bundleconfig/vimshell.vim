@@ -172,7 +172,8 @@ function! s:config.config()
 
         " build $PATH if vim started w/o shell.
         " XXX: :gui
-        let $PATH = system(g:VIMRC.is_win ? 'echo %path%' : 'echo $PATH')
+        let is_win = has('win16') || has('win32') || has('win64') || has('win95')
+        let $PATH = system(is_win ? 'echo %path%' : 'echo $PATH')
     endfunction
 endfunction
 

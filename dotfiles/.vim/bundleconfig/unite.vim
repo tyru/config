@@ -36,7 +36,7 @@ function! s:config.config()
         \   '^s@': ['~/scratch/'],
         \}
 
-        if g:VIMRC.is_win
+        if has('win16') || has('win32') || has('win64') || has('win95')
             call extend(abbrev, {
             \   '^m@' : ['~/Dropbox/memo/'],
             \   '^de@' : ['C:' . substitute($HOMEPATH, '\', '/', 'g') . '/デスクトップ/'],

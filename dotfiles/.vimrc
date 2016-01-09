@@ -6,7 +6,8 @@
 " See also: ~/.vimrc or ~/_vimrc
 
 
-if has('win16') || has('win32') || has('win64') || has('win95')
+let s:is_win = has('win16') || has('win32') || has('win64') || has('win95')
+if s:is_win
     let $MYVIMDIR = expand('~/vimfiles')
 else
     let $MYVIMDIR = expand('~/.vim')
@@ -72,19 +73,6 @@ endif
 " }}}
 " Utilities {{{
 
-" Export variables/functions {{{
-
-let g:VIMRC = {}
-
-" }}}
-
-" Constants {{{
-let s:is_win = has('win16') || has('win32') || has('win64') || has('win95')
-let s:is_unix_terminal = !s:is_win && has('unix') && !has('gui_running')
-let g:VIMRC.is_win = s:is_win
-let g:VIMRC.is_unix_terminal = s:is_unix_terminal
-" }}}
-
 " Function {{{
 
 function! s:SID() "{{{
@@ -93,24 +81,6 @@ endfunction "}}}
 let s:SNR_PREFIX = '<SNR>' . s:SID() . '_'
 function! s:SNR(map) "{{{
     return s:SNR_PREFIX . a:map
-endfunction "}}}
-
-" e.g.) s:has_plugin('eskk') ? 'yes' : 'no'
-"       s:has_plugin('indent/vim.vim') ? 'yes' : 'no'
-function! s:has_plugin(name)
-    let nosuffix = a:name =~? '\.vim$' ? a:name[:-5] : a:name
-    let nosuffix = s:toslash(nosuffix)
-    let suffix   = a:name =~? '\.vim$' ? a:name      : a:name . '.vim'
-    let suffix   = s:toslash(suffix)
-    return &rtp =~# '\c\<' . nosuffix . '\>'
-    \   || globpath(&rtp, suffix, 1) != ''
-    \   || globpath(&rtp, nosuffix, 1) != ''
-    \   || globpath(&rtp, 'autoload/' . suffix, 1) != ''
-    \   || globpath(&rtp, 'autoload/' . tolower(suffix), 1) != ''
-endfunction
-
-function! s:toslash(path) "{{{
-    return substitute(a:path, '\', '/', 'g')
 endfunction "}}}
 
 function! s:echomsg(hl, msg) "{{{
@@ -151,7 +121,7 @@ function! s:quickfix_exists_window()
     return !!s:quickfix_get_winnr()
 endfunction
 function! s:quickfix_supported_quickfix_title()
-    return s:Compat.has_version('7.3')
+    return v:version >=# 703
 endfunction
 function! s:quickfix_get_search_word()
     " NOTE: This function returns a string starting with "/"
@@ -189,8 +159,6 @@ function! s:quickfix_get_search_word()
         endif
     endtry
 endfunction
-
-let g:VIMRC.quickfix_exists_window = function(s:SNR('quickfix_exists_window'))
 
 " }}}
 
@@ -314,7 +282,6 @@ call vivacious#bundleconfig#load()
 call singleton#enable()
 
 " Generate helptags for plugins in 'runtimepath'.
-" TODO: Execute once per a day.
 call vivacious#helptags()
 
 " Load vimrc vital. {{{
@@ -324,10 +291,7 @@ let s:Prelude = s:Vital.import('Prelude')
 let s:List = s:Vital.import('Data.List')
 let s:Filepath = s:Vital.import('System.Filepath')
 let s:File = s:Vital.import('System.File')
-let s:Compat = s:Vital.import('Vim.Compat')
 unlet s:Vital
-
-let g:VIMRC.Compat = s:Compat
 
 " }}}
 
@@ -347,8 +311,10 @@ endif
 
 " Follow 'tabstop' value.
 set tabstop=4
-let &shiftwidth = s:Compat.has_version('7.3.629') ? 0 : &ts
-let &softtabstop = s:Compat.has_version('7.3.693') ? -1 : &ts
+" 7.3.629 or later
+set shiftwidth=0
+" 7.3.693 or later
+set softtabstop=-1
 
 " search
 set hlsearch
@@ -653,16 +619,14 @@ set t_te=
 set notimeout
 
 " fillchars
-" TODO Change the color of inactive statusline.
 set fillchars=stl:\ ,stlnc::,vert:\ ,fold:-,diff:-
 
 " cursor behavior in insertmode
 set whichwrap=b,s
 set backspace=indent,eol,start
 set formatoptions=mMcroqnl2
-if s:Compat.has_version('7.3.541')
-    set formatoptions+=j
-endif
+" 7.3.541 or later
+set formatoptions+=j
 
 " undo-persistence
 if has('persistent_undo')
@@ -745,8 +709,7 @@ endif
 
 " NOTE: On MS Windows, setting colorscheme in .vimrc does not work.
 " Thus :Lazy is necessary.
-" FIXME: `:Lazy colorscheme tyru` does not throw ColorScheme event,
-" what the fxck?
+" NOTE: `:Lazy colorscheme tyru` does not throw ColorScheme event, what the fxck?
 Lazy colorscheme no_quarter | doautocmd ColorScheme
 
 " }}}
@@ -898,11 +861,6 @@ function! s:search_char(cmdfmt)
 endfunction
 
 
-" Map [n] <C-h> b
-" Map [n] <C-l> w
-" Map [n] <S-h> ge
-" Map [n] <S-l> e
-
 " NOTE: <S-Tab> is GUI only.
 Map [x] <Tab> >gv
 Map [x] <S-Tab> <gv
@@ -914,11 +872,6 @@ Map [nxo] L $
 
 " See also chdir-proj-root.vim settings.
 Map [n] ,cd       :<C-u>cd %:p:h<CR>
-
-" TODO: Smart 'zd': Delete empty line {{{
-" }}}
-" TODO: Smart '{', '}': Treat folds as one non-empty line. {{{
-" }}}
 
 " Execute most used command quickly {{{
 Map [n] <excmd>ee     :<C-u>edit<CR>
@@ -1075,7 +1028,6 @@ function! s:winutil.close_first_like(expr) "{{{
     endtry
 endfunction "}}}
 
-" TODO Simplify
 function! s:move_current_winnr_to_head(winnr_list) "{{{
     let winnr = winnr()
     if index(a:winnr_list, winnr) is -1
@@ -1258,9 +1210,6 @@ Map -silent [n] <Space>p <C-w>W
 " Moving between tabs {{{
 Map -silent [n] <C-n> gt
 Map -silent [n] <C-p> gT
-" }}}
-" Move all windows of current group beyond next group. {{{
-" TODO
 " }}}
 " "Use one tabpage per project" project {{{
 " :SetTabName - Set tab's title {{{
@@ -1604,10 +1553,6 @@ Map [n] <M-w> :<C-u>tabclose<CR>
 
 " Mouse {{{
 
-" TODO: Add frequently-used-commands to the top level of the menu.
-" like MS Windows Office 2007 Ribborn interface.
-" Back to normal mode if insert mode.
-
 Map -silent [i] <LeftMouse>   <Esc><LeftMouse>
 " Double-click for selecting the word under the cursor
 " as same as most editors.
@@ -1675,9 +1620,9 @@ function! s:set_tab_width() "{{{
     \   ['css', 'xml', 'html', 'smarty', 'htmldjango',
     \    'lisp', 'scheme', 'yaml', 'python', 'markdown']
     \)
-        setlocal tabstop=2 shiftwidth=2 softtabstop=2
+        setlocal tabstop=2
     else
-        setlocal tabstop=4 shiftwidth=4 softtabstop=4
+        setlocal tabstop=4
     endif
 endfunction "}}}
 function! s:set_compiler() "{{{
@@ -1697,6 +1642,10 @@ endfunction "}}}
 function! s:load_filetype() "{{{
     if &omnifunc == ""
         setlocal omnifunc=syntaxcomplete#Complete
+    endif
+    if &formatoptions !~# 'j'
+        " 7.3.541 or later
+        set formatoptions+=j
     endif
 
     call s:set_dict()
@@ -1725,39 +1674,12 @@ VimrcAutocmd BufNewFile,BufRead *.avs setlocal syntax=avs
 command! -bar DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
 \ | wincmd p | diffthis
 " }}}
-" :MTest {{{
-" convert Perl's regex to Vim's regex
-
-" No -bar
-command!
-\   -nargs=+
-\   MTest
-\   call s:MTest(<q-args>)
-
-function! s:MTest(args) "{{{
-    let org_search = @/
-    let org_hlsearch = &hlsearch
-
-    try
-        silent execute "M" . a:args
-        let @" = @/
-    catch
-        return
-    finally
-        let @/ = org_search
-        let &hlsearch = org_hlsearch
-    endtry
-
-    echo @"
-endfunction "}}}
-" }}}
 " :EchoPath - Show path-like option in a readable way {{{
 
 MapAlterCommand epa EchoPath
 MapAlterCommand rtp EchoPath<Space>&rtp
 
 
-" TODO Add -complete=option
 command!
 \   -bar -nargs=+ -complete=expression
 \   EchoPath
@@ -1949,29 +1871,6 @@ function! s:cmd_watch_autocmd(event)
     echomsg 'Added watch for '.a:event.' event.'
 endfunction
 " }}}
-" :Alias {{{
-
-" TODO
-" - |:command-bang|
-" - |:command-bar|
-" - |:command-register|
-" - |:command-buffer|
-" - |:command-complete|
-" - etc.
-
-command!
-\   -nargs=+ -bar
-\   Alias
-\   call s:cmd_alias('<bang>', [<f-args>], <q-args>)
-
-function! s:cmd_alias(bang, args, q_args)
-    if len(a:args) is 1 && a:args[0] =~# '^[A-Z][A-Za-z0-9]*$'
-        execute 'command '.a:args[0]
-    elseif len(a:args) is 2
-        execute 'command! -bang -nargs=* '.a:args[0].' '.a:args[1].a:bang.' '.a:q_args
-    endif
-endfunction
-" }}}
 " :Kwbd {{{
 " http://nanasi.jp/articles/vim/kwbd_vim.html
 command! -bar Kwbd execute "enew | bw ".bufnr("%")
@@ -2040,239 +1939,32 @@ function! s:no_scrollbind(key)
 endfunction
 
 " }}}
-" :EditLast (like Firefox's Ctrl-Shift-T) {{{
-command! -bar EditLast split #
-" }}}
 " }}}
 " Quickfix {{{
 VimrcAutocmd QuickfixCmdPost [l]*  lopen
 VimrcAutocmd QuickfixCmdPost [^l]* copen
 " }}}
-" Plugins Settings {{{
-let s:HAS_SKK_VIM  = s:has_plugin('skk')
-let s:HAS_ESKK_VIM = s:has_plugin('eskk')
-if s:HAS_SKK_VIM || s:HAS_ESKK_VIM " {{{
+" Plugins {{{
 
-    " skkdict
-    let s:skk_user_dict = '~/.skkdict/user-dict'
-    let s:skk_user_dict_encoding = 'utf-8'
-    let s:skk_system_dict = '~/.skkdict/system-dict'
-    let s:skk_system_dict_encoding = 'euc-jp'
+" e.g.) s:has_plugin('eskk') ? 'yes' : 'no'
+"       s:has_plugin('indent/vim.vim') ? 'yes' : 'no'
+function! s:has_plugin(name)
+    let nosuffix = a:name =~? '\.vim$' ? a:name[:-5] : a:name
+    let nosuffix = s:toslash(nosuffix)
+    let suffix   = a:name =~? '\.vim$' ? a:name      : a:name . '.vim'
+    let suffix   = s:toslash(suffix)
+    return &rtp =~# '\c\<' . nosuffix . '\>'
+    \   || globpath(&rtp, suffix, 1) != ''
+    \   || globpath(&rtp, nosuffix, 1) != ''
+    \   || globpath(&rtp, 'autoload/' . suffix, 1) != ''
+    \   || globpath(&rtp, 'autoload/' . tolower(suffix), 1) != ''
+endfunction
 
-    " Use skk.vim and eskk together.
-    if s:HAS_ESKK_VIM
-        " Map <C-j> to eskk, Map <C-g><C-j> to skk.vim
-        " Map -remap [ic] <C-j> <Plug>(eskk:toggle)    " default
-        let skk_control_j_key = '<C-g><C-j>'
-    elseif s:HAS_SKK_VIM
-        " Map <C-j> to skk.vim, Map <C-g><C-j> to eskk    " default
-        " let skk_control_j_key = '<C-j>'
-        Map -remap [ic] <C-g><C-j> <Plug>(eskk:toggle)
-    endif
+function! s:toslash(path) "{{{
+    return substitute(a:path, '\', '/', 'g')
+endfunction "}}}
 
-endif " }}}
-if s:has_plugin('skk') " {{{
-
-    " skkdict
-    let skk_jisyo = s:skk_user_dict
-    let skk_jisyo_encoding = s:skk_user_dict_encoding
-    let skk_large_jisyo = s:skk_system_dict
-    let skk_large_jisyo_encoding = s:skk_system_dict_encoding
-
-    " let skk_control_j_key = ''
-    " Map -remap [lic] <C-j> <Plug>(skk-enable-im)
-
-    let skk_manual_save_jisyo_keys = ''
-
-    let skk_egg_like_newline = 1
-    let skk_auto_save_jisyo = 1
-    let skk_imdisable_state = -1
-    let skk_keep_state = 0
-    let skk_show_candidates_count = 2
-    let skk_show_annotation = 0
-    let skk_sticky_key = ';'
-    let skk_use_color_cursor = 1
-    let skk_remap_lang_mode = 0
-
-
-    if 0
-        " g:skk_enable_hook test {{{
-        " Do not map `<Plug>(skk-toggle-im)`.
-        let skk_control_j_key = ''
-
-        " `<C-j><C-e>` to enable, `<C-j><C-d>` to disable.
-        Map -remap [ic] <C-j><C-e> <Plug>(skk-enable-im)
-        Map -remap [ic] <C-j><C-d> <Nop>
-        function! MySkkMap()
-            lunmap <buffer> <C-j>
-            lmap <buffer> <C-j><C-d> <Plug>(skk-disable-im)
-        endfunction
-        function! HelloWorld()
-            echomsg 'Hello.'
-        endfunction
-        function! Hogera()
-            echomsg 'hogera'
-        endfunction
-        let skk_enable_hook = 'MySkkMap,HelloWorld,Hogera'
-        " }}}
-    endif
-
-endif " }}}
-if s:has_plugin('eskk') " {{{
-
-    " skkdict
-    if !exists('g:eskk#dictionary')
-        let g:eskk#dictionary = {
-        \   'path': s:skk_user_dict,
-        \   'encoding': s:skk_user_dict_encoding,
-        \}
-    endif
-    if !exists('g:eskk#large_dictionary')
-        let g:eskk#large_dictionary = {
-        \   'path': s:skk_system_dict,
-        \   'encoding': s:skk_system_dict_encoding,
-        \}
-    endif
-
-    " let g:eskk#server = {
-    " \   'host': 'localhost',
-    " \   'port': 55100,
-    " \}
-
-    let g:eskk#log_cmdline_level = 2
-    let g:eskk#log_file_level = 4
-
-    if 1    " for debugging default behavior.
-        let g:eskk#egg_like_newline = 1
-        let g:eskk#egg_like_newline_completion = 1
-        let g:eskk#show_candidates_count = 2
-        let g:eskk#show_annotation = 1
-        let g:eskk#rom_input_style = 'msime'
-        let g:eskk#keep_state = 0
-        let g:eskk#keep_state_beyond_buffer = 0
-        " let g:eskk#marker_henkan = '$'
-        " let g:eskk#marker_okuri = '*'
-        " let g:eskk#marker_henkan_select = '@'
-        " let g:eskk#marker_jisyo_touroku = '?'
-        let g:eskk#dictionary_save_count = 5
-        let g:eskk#start_completion_length = 1
-
-        if has('vim_starting')
-            VimrcAutocmd User eskk-initialize-pre call s:eskk_initial_pre()
-            function! s:eskk_initial_pre() "{{{
-                " User can be allowed to modify
-                " eskk global variables (`g:eskk#...`)
-                " until `User eskk-initialize-pre` event.
-                " So user can do something heavy process here.
-                " (I'm a paranoia, eskk#table#new() is not so heavy.
-                " But it loads autoload/vice.vim recursively)
-
-                let hira = eskk#table#new('rom_to_hira*', 'rom_to_hira')
-                let kata = eskk#table#new('rom_to_kata*', 'rom_to_kata')
-
-                for t in [hira, kata]
-                    call t.add_map('~', '～')
-                    call t.add_map('vc', '©')
-                    call t.add_map('vr', '®')
-                    call t.add_map('vh', '☜')
-                    call t.add_map('vj', '☟')
-                    call t.add_map('vk', '☝')
-                    call t.add_map('vl', '☞')
-                    call t.add_map('z ', '　')
-                    " Input hankaku characters.
-                    call t.add_map('(', '(')
-                    call t.add_map(')', ')')
-                    " It is better to register the word "Exposé" than to register this map :)
-                    call t.add_map('qe', 'é')
-                    if g:eskk#rom_input_style ==# 'skk'
-                        call t.add_map('zw', 'w', 'z')
-                    endif
-                endfor
-
-                call hira.add_map('jva', 'ゔぁ')
-                call hira.add_map('jvi', 'ゔぃ')
-                call hira.add_map('jvu', 'ゔ')
-                call hira.add_map('jve', 'ゔぇ')
-                call hira.add_map('jvo', 'ゔぉ')
-                call hira.add_map('wyi', 'ゐ', '')
-                call hira.add_map('wye', 'ゑ', '')
-                call hira.add_map('&', '＆', '')
-                call eskk#register_mode_table('hira', hira)
-
-                " call kata.add_map('jva', 'ヴァ')
-                " call kata.add_map('jvi', 'ヴィ')
-                " call kata.add_map('jvu', 'ヴ')
-                " call kata.add_map('jve', 'ヴェ')
-                " call kata.add_map('jvo', 'ヴォ')
-                call kata.add_map('wyi', 'ヰ', '')
-                call kata.add_map('wye', 'ヱ', '')
-                call kata.add_map('&', '＆', '')
-                call eskk#register_mode_table('kata', kata)
-            endfunction "}}}
-        endif
-
-        " Debug
-        command! -bar          EskkDumpBuftable PP! eskk#get_buftable().dump()
-        command! -bar -nargs=1 EskkDumpTable    PP! eskk#table#<args>#load()
-        " EskkMap lhs rhs
-        " EskkMap -silent lhs2 rhs
-        " EskkMap lhs2 foo
-        " EskkMap -expr lhs3 {'foo': 'hoge'}.foo
-        " EskkMap -noremap lhs4 rhs
-
-        " by @_atton
-        " Map -remap [icl] <C-j> <Plug>(eskk:enable)
-
-        " by @hinagishi
-        " VimrcAutocmd User eskk-initialize-pre call s:eskk_initial_pre()
-        " function! s:eskk_initial_pre() "{{{
-        "     let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
-        "     call t.add_map(',', ', ')
-        "     call t.add_map('.', '.')
-        "     call eskk#register_mode_table('hira', t)
-        "     let t = eskk#table#new('rom_to_kata*', 'rom_to_kata')
-        "     call t.add_map(',', ', ')
-        "     call t.add_map('.', '.')
-        "     call eskk#register_mode_table('kata', t)
-        " endfunction "}}}
-
-        " VimrcAutocmd User eskk-initialize-post call s:eskk_initial_post()
-        function! s:eskk_initial_post() "{{{
-            " Disable "qkatakana", but ";katakanaq" works.
-            " NOTE: This makes some eskk tests fail!
-            " EskkMap -type=mode:hira:toggle-kata <Nop>
-
-            map! <C-j> <Plug>(eskk:enable)
-            EskkMap <C-j> <Nop>
-
-            EskkMap U <Plug>(eskk:undo-kakutei)
-
-            EskkMap jj <Esc>
-            EskkMap -force jj hoge
-        endfunction "}}}
-
-    endif
-endif " }}}
-if s:has_plugin('vixim') "{{{
-    let g:vixim#debug = 1
-
-    " skkdict
-    if !exists('g:vixim#engine#skk#user_dict')
-        let g:vixim#engine#skk#user_dict = {
-        \   'path': s:skk_user_dict,
-        \   'encoding': s:skk_user_dict_encoding,
-        \}
-    endif
-    if !exists('g:vixim#engine#skk#large_dict')
-        let g:vixim#engine#skk#large_dict = {
-        \   'path': s:skk_system_dict,
-        \   'encoding': s:skk_system_dict_encoding,
-        \}
-    endif
-
-endif "}}}
-
-" runtime
+" Plugins in default runtime dir
 if s:has_plugin('syntax/vim.vim') "{{{
     " augroup: a
     " function: f
@@ -2318,7 +2010,7 @@ endif " }}}
 " }}}
 " Backup {{{
 " TODO Rotate backup files like writebackupversioncontrol.vim
-" (I didn't use it, though)
+" (I have not ever used it, though)
 
 " Delete old files in &backupdir {{{
 function! s:delete_backup()
@@ -2454,8 +2146,8 @@ augroup own-highlight
     autocmd!
 augroup END
 
-function! s:register_highlight(hi, hiarg, pat)
-    execute 'highlight' a:hiarg
+function! s:register_highlight(hi, hirhs, pat)
+    execute 'highlight' a:hi a:hirhs
     call s:add_pattern(a:hi, a:pat)
 endfunction
 function! s:add_pattern(hi, pat)
@@ -2477,19 +2169,19 @@ function! s:register_own_highlight()
     " I found that I'm very nervous about whitespaces.
     " so I'd better think about this.
     " This settings just notice its presence.
-    for [hi, hiarg, pat] in [
+    for [hi, hirhs, pat] in [
     \   ['IdeographicSpace',
-    \    'IdeographicSpace term=underline cterm=underline gui=underline ctermfg=4 guifg=Cyan',
+    \    'term=underline cterm=underline gui=underline ctermfg=4 guifg=Cyan',
     \    '　'],
     \   ['WhitespaceEOL',
-    \    'WhitespaceEOL term=underline cterm=underline gui=underline ctermfg=4 guifg=Cyan',
+    \    'term=underline cterm=underline gui=underline ctermfg=4 guifg=Cyan',
     \    ' \+$'],
     \]
         " TODO: filetype
         execute
         \   'autocmd own-highlight Colorscheme *'
         \   'call s:register_highlight('
-        \       string(hi) ',' string(hiarg) ',' string(pat)
+        \       string(hi) ',' string(hirhs) ',' string(pat)
         \   ')'
         execute
         \   'autocmd own-highlight VimEnter,WinEnter *'
@@ -2531,8 +2223,6 @@ endif
 
 " }}}
 " End. {{{
-
-let $MYVIMRC = expand('<sfile>')
 
 set secure
 " }}}

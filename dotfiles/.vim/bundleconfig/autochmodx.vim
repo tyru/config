@@ -1,5 +1,6 @@
 let s:config = vivacious#bundleconfig#new()
 
 function! s:config.disable_if()
-    return g:VIMRC.is_win || !has('unix')
+    let is_win = has('win16') || has('win32') || has('win64') || has('win95')
+    return is_win || !has('unix')
 endfunction
