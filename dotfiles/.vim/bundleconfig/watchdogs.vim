@@ -1,7 +1,7 @@
 let s:config = vivacious#bundleconfig#new()
 
 function! s:config.config()
-    if VimStarting()
+    if has('vim_starting')
         call watchdogs#setup(g:quickrun_config)
     endif
     let g:watchdogs_check_BufWritePost_enable = 1

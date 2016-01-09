@@ -1,12 +1,10 @@
 let s:config = vivacious#bundleconfig#new()
 
 function! s:config.config()
-    let g:loaded_quicklaunch = 1
-
     let g:quickrun_no_default_key_mappings = 1
     Map -remap [nx] <Space>r <Plug>(quickrun)
 
-    if VimStarting()
+    if has('vim_starting')
         let g:quickrun_config = {}
 
         let g:quickrun_config['_'] = {
