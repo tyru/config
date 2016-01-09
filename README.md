@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/tyru/dotfiles.svg?branch=master)](https://travis-ci.org/tyru/dotfiles)
+
+
 このリポジトリには他の方の書いたスクリプトやVimプラグインなどが含まれています。
 一応本人の情報は載せてあるのですが
 (例えばライセンスが書かれていれば何もせず
