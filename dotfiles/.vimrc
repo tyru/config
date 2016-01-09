@@ -252,6 +252,9 @@ endif
 
 set rtp+=$MYVIMDIR/bundle/vivacious.vim
 
+" Fetch managed plugins from remote.
+call vivacious#fetch_all()
+
 " Add managed plugins to 'runtimepath'.
 " (It won't load disabled plugins)
 filetype off
