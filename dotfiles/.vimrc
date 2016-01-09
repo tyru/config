@@ -358,6 +358,8 @@ set list
 " set listchars=tab:>.,extends:>,precedes:<,eol:$
 set listchars=tab:>.,extends:>,precedes:<
 set display=lastline
+set t_Co=256
+set cursorline
 
 " scroll
 set scroll=5
@@ -762,10 +764,10 @@ endif
 " ColorScheme {{{
 
 " NOTE: On MS Windows, setting colorscheme in .vimrc does not work.
-" Because :Lazy is necessary.
+" Thus :Lazy is necessary.
 " FIXME: `:Lazy colorscheme tyru` does not throw ColorScheme event,
 " what the fxck?
-Lazy colorscheme tyru | doautocmd ColorScheme
+Lazy colorscheme no_quarter | doautocmd ColorScheme
 
 " }}}
 " Mappings, Abbreviations {{{
