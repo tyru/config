@@ -469,15 +469,6 @@ set backupcopy=yes
 set backupdir=$MYVIMDIR/backup
 silent! call mkdir(&backupdir, 'p')
 
-function! SandboxCallOptionFn(option_name) "{{{
-    try
-        return s:{a:option_name}()
-    catch
-        call setbufvar('%', '&' . a:option_name, '')
-        return ''
-    endtry
-endfunction "}}}
-
 " title
 set title
 let &titlestring = '%{getcwd()}'
@@ -494,16 +485,19 @@ function! MyTabLabel(tabnr) "{{{
     endif
 
     let buflist = tabpagebuflist(a:tabnr)
-    let bufname = bufname(buflist[tabpagewinnr(a:tabnr) - 1])
-    let bufname = fnamemodify(bufname, ':t')
-    " let bufname = pathshorten(bufname)
+    let bufname = ''
     let modified = 0
-    for bufnr in buflist
-        if getbufvar(bufnr, '&modified')
-            let modified = 1
-            break
-        endif
-    endfor
+    if type(buflist) ==# 3
+        let bufname = bufname(buflist[tabpagewinnr(a:tabnr) - 1])
+        let bufname = fnamemodify(bufname, ':t')
+        " let bufname = pathshorten(bufname)
+        for bufnr in buflist
+            if getbufvar(bufnr, '&modified')
+                let modified = 1
+                break
+            endif
+        endfor
+    endif
 
     if bufname == ''
         let label = '[No Name]'
@@ -539,32 +533,15 @@ function! s:tabline() "{{{
 
     return s
 endfunction "}}}
-set tabline=%!SandboxCallOptionFn('tabline')
+let &tabline = s:tabline()
 
-function! s:guitablabel() "{{{
-    return MyTabLabel(v:lnum)
-endfunction "}}}
-set guitablabel=%!SandboxCallOptionFn('guitablabel')
+let &guitablabel = '%{MyTabLabel(v:lnum)}'
 
 " statusline
 set laststatus=2
-let s:has_cfi = s:has_plugin('current-func-info')
 function! s:statusline() "{{{
     let s = '%f%([%M%R%H%W]%)%(, %{&ft}%), %{&fenc}/%{&ff}'
     let s .= '%('
-
-    if exists('g:loaded_eskk')    " eskk.vim
-        " postpone the load of autoload/eskk.vim
-        if exists('g:loaded_autoload_eskk')
-            let s .= ' %{eskk#statusline("IM:%s", "IM:off")}'
-        endif
-    elseif exists('g:skk_loaded')    " skk.vim
-        let s .= ' %{SkkGetModeStr()}'
-    endif
-
-    if !get(g:, 'cfi_disable') && s:has_cfi
-        let s .= '%( | %{cfi#format("%s()", "")}%)'
-    endif
 
     " NOTE: calling GetCCharAndHex() destroys also unnamed register. it may be the problem of Vim.
     " let s .= '%( | [%{GetCCharAndHex()}]%)'
@@ -575,7 +552,7 @@ function! s:statusline() "{{{
 
     return s
 endfunction "}}}
-set statusline=%!SandboxCallOptionFn('statusline')
+let &statusline = s:statusline()
 
 function! GetDocumentPosition()
     return float2nr(str2float(line('.')) / str2float(line('$')) * 100) . "%"
