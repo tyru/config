@@ -4,5 +4,5 @@ script:
   - ln -s dotfiles/.vim $HOME/.vim
   - ln -s dotfiles/.vimrc $HOME/.vimrc
   - git submodule update --init
-  - vim -c "VivaciousFetch" -c quit
+  - vim -c "VivaciousFetchAll" -c quit
   - vim -c "redir => out | mes | redir END | if match(split(out, '\n')[1:], '\S') >= 0 | cquit | endif" -c quit
