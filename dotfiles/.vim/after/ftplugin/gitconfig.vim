@@ -3,12 +3,7 @@ scriptencoding utf-8
 let s:save_cpo = &cpo
 set cpo&vim
 
-
-let s:opt = tyru#util#undo_ftplugin_helper#new()
-
-call s:opt.set('et')
-
-let b:undo_ftplugin = s:opt.make_undo_ftplugin()
-
+setlocal expandtab
+let b:undo_ftplugin = 'setlocal expandtab<'
 
 let &cpo = s:save_cpo

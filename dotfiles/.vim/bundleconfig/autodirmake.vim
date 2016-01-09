@@ -1,4 +1,4 @@
-let s:config = BundleConfigGet()
+let s:config = vivacious#bundleconfig#new()
 
 function! s:config.config()
     let g:autodirmake#msg_highlight = 'Question'

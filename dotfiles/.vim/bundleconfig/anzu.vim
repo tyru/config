@@ -1,4 +1,4 @@
-let s:config = BundleConfigGet()
+let s:config = vivacious#bundleconfig#new()
 
 function! s:config.config()
     autocmd vimrc VimEnter * Map -remap -force [nx] n <old-rhs><Plug>(anzu-update-search-status-with-echo)

@@ -1,4 +1,4 @@
-" let s:config = BundleConfigGet()
+" let s:config = vivacious#bundleconfig#new()
 "
 " function! s:config.config()
 "     " FIXME: 2012-09-17 19:48: syntax/vim.vim wrong highlight...

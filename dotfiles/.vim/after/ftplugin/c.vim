@@ -1,37 +1,32 @@
 " vim:foldmethod=marker:fen:
 scriptencoding utf-8
-
 let s:save_cpo = &cpo
 set cpo&vim
-
 
 if globpath(&rtp, 'autoload/tyru/util.vim') == ''
     finish
 endif
 
-let s:opt = tyru#util#undo_ftplugin_helper#new()
-
 " Do not search from header
-call s:opt.restore_option('complete')
 setlocal complete-=i
 setlocal complete-=d
 
-
-call s:opt.append('path', '/usr/local/include')
-
-" set path+=/usr/include/c++/*
-let s:_ = split(glob('/usr/include/c++/*', 1), '\n')
-if !empty(s:_)
-    let &path .= ',' . s:_[-1]    " Include only the latest version.
+if isdirectory('/usr/local/include')
+    setlocal path^=/usr/local/include
 endif
-unlet s:_
+if isdirectory('/usr/include/c++/')
+    " Include only the latest version in '/usr/include/c++/'.
+    let s:latest = get(glob('/usr/include/c++/*', 1, 1), -1, '')
+    if s:latest !=# ''
+        let &path .= ',' . s:latest[-1]
+    endif
+    unlet s:latest
+endif
 
+setlocal foldmethod=syntax
+let g:c_no_curly_error_fold = 1
+let g:c_no_comment_fold = 1
 
-call s:opt.set('foldmethod', 'syntax')
-call s:opt.let('g:c_no_curly_error_fold', 1)
-call s:opt.let('g:c_no_comment_fold', 1)
-
-let b:undo_ftplugin = s:opt.make_undo_ftplugin()
-
+let b:undo_ftplugin = 'setlocal complete< foldmethod<'
 
 let &cpo = s:save_cpo

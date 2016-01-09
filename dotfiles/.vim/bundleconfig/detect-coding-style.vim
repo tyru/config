@@ -1,4 +1,4 @@
-let s:config = BundleConfigGet()
+let s:config = vivacious#bundleconfig#new()
 
 function! s:config.config()
     autocmd vimrc User dcs-initialized-styles call s:dcs_register_own_styles()

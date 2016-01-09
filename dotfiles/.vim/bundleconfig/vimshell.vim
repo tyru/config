@@ -1,4 +1,4 @@
-let s:config = BundleConfigGet()
+let s:config = vivacious#bundleconfig#new()
 
 function! s:config.config()
     MapAlterCommand sh[ell] VimShell
@@ -10,7 +10,7 @@ function! s:config.config()
     let g:vimshell_smart_case = 1
 
     autocmd vimrc FileType vimshell call s:vimshell_settings()
-    function! s:vimshell_settings() "{{{
+    function! s:vimshell_settings()
         call s:build_env_path()
 
         " No -bar
@@ -18,8 +18,8 @@ function! s:config.config()
         \   -buffer -nargs=+
         \   VimShellAlterCommand
         \   call vimshell#altercmd#define(
-        \       tyru#util#parse_one_arg_from_q_args(<q-args>)[0],
-        \       tyru#util#eat_n_args_from_q_args(<q-args>, 1)
+        \       s:parse_one_arg_from_q_args(<q-args>)[0],
+        \       s:eat_n_args_from_q_args(<q-args>, 1)
         \   )
 
         " Alias
@@ -94,11 +94,11 @@ function! s:config.config()
                 autocmd TabLeave <buffer> NeoCompleteLock
             augroup END
         endif
-    endfunction "}}}
+    endfunction
 
-    function! s:vimshell_chpwd_ls(args, context) "{{{
+    function! s:vimshell_chpwd_ls(args, context)
         call vimshell#execute('ls')
-    endfunction "}}}
+    endfunction
 
     let s:PREEXEC_IEXE = [
     \   'termtter',
@@ -115,7 +115,7 @@ function! s:config.config()
     \   ['git', 'log'],
     \   ['git', 'view'],
     \]
-    function! s:vimshell_preexec(cmdline, context) "{{{
+    function! s:vimshell_preexec(cmdline, context)
         let args = vimproc#parser#split_args(a:cmdline)
         if empty(args)
             return a:cmdline
@@ -147,7 +147,7 @@ function! s:config.config()
 
         " No rewrite.
         return a:cmdline
-    endfunction "}}}
+    endfunction
     function! s:vimshell_preexec_match(args, patlist)
         if empty(a:args)
             return 0
@@ -164,7 +164,7 @@ function! s:config.config()
     endfunction
 
     let s:has_built_path = 0
-    function! s:build_env_path() "{{{
+    function! s:build_env_path()
         if s:has_built_path
             return
         endif
@@ -173,5 +173,33 @@ function! s:config.config()
         " build $PATH if vim started w/o shell.
         " XXX: :gui
         let $PATH = system(g:VIMRC.is_win ? 'echo %path%' : 'echo $PATH')
-    endfunction "}}}
+    endfunction
 endfunction
+
+function! s:skip_white(q_args)
+    return substitute(a:q_args, '^\s*', '', '')
+endfunction
+
+function! s:parse_pattern(str, pat)
+    let str = a:str
+    " TODO: Use matchlist() for capturing group \1, \2, ...
+    " and specify which group to use with arguments.
+    let head = matchstr(str, a:pat)
+    let rest = strpart(str, strlen(head))
+    return [head, rest]
+endfunction
+
+function! s:parse_one_arg_from_q_args(q_args)
+    let q_args = s:skip_white(a:q_args)
+    return s:parse_pattern(q_args, '^.\{-}[^\\]\ze\([ \t]\|$\)')
+endfunction
+
+function! s:eat_n_args_from_q_args(q_args, n)
+    let rest = a:q_args
+    for _ in range(1, a:n)
+        let rest = s:parse_one_arg_from_q_args(rest)[1]
+    endfor
+    let rest = s:skip_white(rest)    " for next arguments.
+    return rest
+endfunction
+

@@ -6,16 +6,10 @@
 " See also: ~/.vimrc or ~/_vimrc
 
 
-
-" let $VIMRC_DEBUG = 1
-" let $VIMRC_DISABLE_MYAUTOCMD = 1
-" let $VIMRC_DISABLE_VIMENTER = 1
-" let $VIMRC_LOAD_NO_PLUGINS = 1
-
-" 0: vimproc disabled
-" 1: vimproc enabled
-" 2: plugin default(auto)
 if !exists('$VIMRC_USE_VIMPROC')
+    " 0: vimproc disabled
+    " 1: vimproc enabled
+    " 2: each plugin default(auto)
     let $VIMRC_USE_VIMPROC = 1
 endif
 if !exists('$VIMRC_FORCE_LANG_C')
@@ -193,30 +187,14 @@ let g:VIMRC.quickfix_exists_window = function(s:SNR('quickfix_exists_window'))
 
 " Commands {{{
 
-command!
-\   -bar -nargs=1
-\   Nop
-\   command! -bar -bang -nargs=* <args> :
-
-
-
 " :autocmd is listed in |:bar|
 command! -bang -nargs=* VimrcAutocmd autocmd<bang> vimrc <args>
-
-if exists('$VIMRC_DISABLE_MYAUTOCMD')
-    Nop VimrcAutocmd
-endif
-
 
 
 command!
 \   -nargs=+
 \   Lazy
 \   call s:cmd_lazy(<q-args>)
-
-if exists('$VIMRC_DISABLE_VIMENTER')
-    Nop Lazy
-endif
 
 function! s:cmd_lazy(q_args) "{{{
     if a:q_args == ''
@@ -261,150 +239,17 @@ endif
 " }}}
 " Load Plugins {{{
 
-" Load vim-rtputil {{{
-set rtp+=$MYVIMDIR/macros/vim-rtputil
-" }}}
+set rtp+=$MYVIMDIR/bundle/vivacious.vim
 
-" ... {{{
-let s:loading_bundleconfig = {}
-let s:bundleconfig = {}
-let s:plugins = rtputil#new()
-call s:plugins.reset()
-
-function! s:cmd_load_plugin(args, now)
-    for path in a:args
-        if !isdirectory(expand(path))
-            call s:error(path . ": no such a bundle directory")
-            return
-        endif
-        let nosufname = s:get_no_suffix_name(path)
-        let bcconf = {
-        \   'path': path, 'name': nosufname,
-        \   'done': 0, 'disabled': 0,
-        \   'userconf': {},
-        \}
-        " To load $MYVIMDIR/bundleconfig/<name>.vim
-        let s:bundleconfig[nosufname] = bcconf
-        if a:now
-            " Change 'runtimepath' immediately.
-            call rtputil#append(path)
-        else
-            " Change 'runtimepath' later.
-            call s:plugins.append(path)
-        endif
-    endfor
-endfunction
-
-function! s:cmd_disable_plugin(args)
-    let pattern = a:args[0]
-    let nosufname = s:get_no_suffix_name(pattern)
-    " To load $MYVIMDIR/bundleconfig/<name>.vim
-    if has_key(s:bundleconfig, nosufname)
-        unlet s:bundleconfig[nosufname]
-    endif
-    " Change 'runtimepath' later.
-    call s:plugins.remove('\<' . pattern . '\>')
-endfunction
-
-function! s:get_no_suffix_name(path)
-    let nosufname = substitute(a:path, '.*[/\\]', '', '')
-    let nosufname = substitute(nosufname, '\c[.-]vim$', '', '')
-    let nosufname = substitute(nosufname, '\c^vim[.-]', '', '')
-    return nosufname
-endfunction
-
-command! -nargs=0 LoadBundles
-\     call s:cmd_load_plugin(glob('$MYVIMDIR/bundle/*', 1, 1), 0)
-
-command! -nargs=+ LoadLater
-\     call s:cmd_load_plugin([<args>], 0)
-
-command! -nargs=+ LoadNow
-\     call s:cmd_load_plugin([<args>], 1)
-
-command! -nargs=+ DisablePlugin
-\     call s:cmd_disable_plugin([<args>])
-
-function! BundleConfigGet()
-    if empty(s:loading_bundleconfig)
-        call s:error("'BundleConfigGet()' is only allowed in bundleconfig file.")
-        return {}
-    endif
-    let name = s:loading_bundleconfig.name
-    let s:bundleconfig[name].userconf = deepcopy(s:BundleUserConfig)
-    return s:bundleconfig[name].userconf
-endfunction
-
-let s:BundleUserConfig = {}
-function! s:BundleUserConfig.config()
-endfunction
-function! s:BundleUserConfig.depends()
-    return []
-endfunction
-function! s:BundleUserConfig.depends_commands()
-    return []
-endfunction
-function! s:BundleUserConfig.recommends()
-    return []
-endfunction
-
-
-" }}}
-
-" Load fundamental plugins {{{
-" TODO: Reduce dependency plugins.
-LoadLater '$MYVIMDIR/bundle/tyru'
-LoadLater '$MYVIMDIR/bundle/emap.vim'
-LoadLater '$MYVIMDIR/bundle/vim-altercmd'
-" }}}
-
-if !exists('$VIMRC_LOAD_NO_PLUGINS')
-" Load plugins unless $VIMRC_LOAD_NO_PLUGINS is defined {{{
-
-" Load plugins {{{
-if !exists('$VIMRC_DEBUG')
-
-    " If vim is already up, send it given files by arguments
-    LoadNow '$MYVIMDIR/bundle/vim-singleton'
-    " PKGBUILDやinstall.sh
-    " let g:singleton#entrust_pattern = {
-    " \   'yaourt' : '^/tmp/yaourt-tmp-[^/]\+/',
-    " \   'git' : 'GGGGGGGGGGGGGGGGGGGGG',
-    " \}
-    " let g:singleton#entrust_pattern = {
-    " \   'yaourt' : '^/tmp/yaourt-tmp-[^/]\+/.\+/PKGBUILD$',
-    " \}
-    call singleton#enable()
-
-    LoadBundles
-
-    " Disable unused skk plugin.
-    " DisablePlugin 'eskk'
-    DisablePlugin 'skk'
-else
-    " Useful plugins for debug
-    LoadLater '$MYVIMDIR/bundle/dutil.vim'
-    LoadLater '$MYVIMDIR/bundle/vim-prettyprint'
-    LoadLater '$MYVIMDIR/bundle/restart.vim'
-
-    " Load plugins to debug
-    " LoadLater '$MYVIMDIR/bundle/open-browser.vim'
-    " LoadLater '$MYVIMDIR/bundle/eskk.vim'
-    " LoadLater '$MYVIMDIR/bundle/neocomplete'
-endif
-
-" }}}
-
-" }}}
-endif
-
-" Change 'runtimepath' {{{
+" Add managed plugins to 'runtimepath'.
+" (It won't load disabled plugins)
 filetype off
-call s:plugins.apply()
+call vivacious#load_plugins()
 filetype plugin indent on
-" }}}
 
 " Import emap.vim & altercmd.vim commands {{{
+" I use those commands also in bundleconfig.
+" So define those commands before loading bundleconfig.
 
 " Define :Map commands
 call emap#load('noprefix')
@@ -420,7 +265,6 @@ command!
 \   MapAlterCommand
 \   CAlterCommand <args> | AlterCommand <cmdwin> <args>
 
-" }}}
 
 " Set up general prefix keys. {{{
 
@@ -446,6 +290,19 @@ Map [n] <LocalLeader> <Nop>
 DefMacroMap [i] compl <C-g><C-g><C-g><C-g><C-g>
 " }}}
 
+" }}}
+
+" Load all bundle configs in '~/.vim/bundleconfig/*.vim' (if you prefer).
+" This function loads plugin list from 'runtimepath'.
+call vivacious#bundleconfig#load()
+
+" TODO: Load only vim-singleton and call it before 'vivacious#load_plugins()'.
+call singleton#enable()
+
+" Generate helptags for plugins in 'runtimepath'.
+" TODO: Execute once per a day.
+call vivacious#helptags()
+
 " Load vimrc vital. {{{
 
 let s:Vital = vital#of('vimrc')
@@ -454,156 +311,10 @@ let s:List = s:Vital.import('Data.List')
 let s:Filepath = s:Vital.import('System.Filepath')
 let s:File = s:Vital.import('System.File')
 let s:Compat = s:Vital.import('Vim.Compat')
-" let s:Mapping = ...   " is used by tyru#util#undo_ftplugin_helper
 unlet s:Vital
 
 let g:VIMRC.Compat = s:Compat
 
-" }}}
-
-" Load plugin-specific config (bundleconfig). {{{
-
-function! s:bc_load()
-    for bcconf in values(s:bundleconfig)
-        call s:bc_do_source(bcconf)
-    endfor
-    for name in s:get_ordering_keys(s:bundleconfig)
-        let bcconf = s:bundleconfig[name]
-        if bcconf.done
-            continue
-        endif
-        call s:bc_do_load(bcconf)
-    endfor
-endfunction
-function! s:get_ordering_keys(bundleconfig)
-    " Load in order?
-    return keys(a:bundleconfig)
-endfunction
-function! s:bc_do_source(bcconf)
-    let s:loading_bundleconfig = a:bcconf
-    try
-        execute 'runtime! bundleconfig/' . a:bcconf.name . '/**/*.vim'
-        execute 'runtime! bundleconfig/' . a:bcconf.name . '*.vim'
-
-        if has_key(a:bcconf.userconf, 'enable_if')
-            let a:bcconf.disabled = !a:bcconf.userconf.enable_if()
-        endif
-        if has_key(a:bcconf.userconf, 'disable_if')
-            let a:bcconf.disabled = a:bcconf.userconf.disable_if()
-        endif
-        if has_key(a:bcconf.userconf, 'depends_commands')
-            let commands = a:bcconf.userconf.depends_commands()
-            for cmd in type(commands) is type([]) ?
-            \               commands : [commands]
-                if !executable(cmd)
-                    call s:error("[bundleconfig] " .
-                    \            "'" . a:bcconf.name . "' requires " .
-                    \            "command '" . cmd . "' but not in your PATH!")
-                    let a:bcconf.disabled = 1
-                    continue
-                endif
-            endfor
-        endif
-    catch
-        call s:error('--- Sourcing ' . a:bcconf.path . ' ... ---')
-        for msg in split(v:exception, '\n')
-            call s:error(msg)
-        endfor
-        for msg in split(v:throwpoint, '\n')
-            call s:error(msg)
-        endfor
-        call s:error('--- Sourcing ' . a:bcconf.path . ' ... ---')
-    finally
-        let s:loading_bundleconfig = {}
-    endtry
-endfunction
-function! s:bc_do_load(bcconf)
-    if a:bcconf.disabled
-        return 0
-    endif
-    try
-        if has_key(a:bcconf.userconf, 'depends')
-            let depfail = []
-            let depends = a:bcconf.userconf.depends()
-            for depname in type(depends) is type([]) ? depends : [depends]
-                if !s:bc_do_load(s:bundleconfig[depname])
-                    let depfail += [depname]
-                endif
-            endfor
-            if !empty(depfail)
-                call s:error("Stop loading '" . a:bcconf.name . "' " .
-                \            "due to load failed/disabled depending " .
-                \            "plugin(s) [" . join(depfail, ', ') . "]")
-                return 0
-            endif
-        endif
-        if has_key(a:bcconf.userconf, 'config')
-            let s:loading_bundleconfig = a:bcconf
-            call a:bcconf.userconf.config()
-        endif
-    catch
-        call s:error('--- Loading ' . a:bcconf.path . ' ... ---')
-        for msg in split(v:exception, '\n')
-            call s:error(msg)
-        endfor
-        for msg in split(v:throwpoint, '\n')
-            call s:error(msg)
-        endfor
-        call s:error('--- Loading ' . a:bcconf.path . ' ... ---')
-        return 0
-    finally
-        let s:loading_bundleconfig = {}
-    endtry
-    let a:bcconf.done = 1
-    return 1
-endfunction
-
-call s:bc_load()
-unlet s:bundleconfig
-
-" }}}
-
-" Open bundleconfig file. {{{
-
-command! -nargs=+ -complete=customlist,CompleteEditBundleConfig
-\   EditBundleConfig
-\   call s:cmd_editbundleconfig(<q-args>)
-
-function! s:cmd_editbundleconfig(args)
-    let filename = expand(
-    \   '$MYVIMDIR/bundleconfig/' . a:args
-    \   . (a:args !~? '\.vim$' ? '.vim' : ''))
-    drop `=filename`
-endfunction
-
-function! CompleteEditBundleConfig(arglead, _l, _p)
-    let dirs = glob('$MYVIMDIR/bundleconfig/*', 1, 1)
-    call map(dirs, 'substitute(v:val, ".*[/\\\\]", "", "")')
-    if a:arglead !=# ''
-        " wildcard -> regexp pattern
-        let pattern = '^' . a:arglead
-        let pattern = substitute(pattern, '\*', '.*', 'g')
-        let pattern = substitute(pattern, '\\?', '.', 'g')
-        call filter(dirs, 'v:val =~# pattern')
-    endif
-    return dirs
-endfunction
-
-" }}}
-
-" Generate helptags. {{{
-
-" TODO: Execute once per a day.
-command! -bar -bang HelpTagsAll call rtputil#helptags(<bang>0)
-HelpTagsAll
-
-" }}}
-
-" ... {{{
-delcommand LoadLater
-delcommand LoadNow
-delcommand DisablePlugin
-unlet s:plugins
 " }}}
 
 " }}}
@@ -683,9 +394,8 @@ endif
 
 " mouse
 set mouse=a
-set mousefocus
 set mousehide
-set mousemodel=popup
+set mousemodel=popup_setpos
 
 " command-line
 set cmdheight=1

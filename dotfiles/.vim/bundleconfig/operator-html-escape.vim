@@ -1,4 +1,4 @@
-let s:config = BundleConfigGet()
+let s:config = vivacious#bundleconfig#new()
 
 function! s:config.config()
     Map -remap [nxo] <operator>he <Plug>(operator-html-escape)

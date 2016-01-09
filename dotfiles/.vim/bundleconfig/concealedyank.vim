@@ -1,4 +1,4 @@
-let s:config = BundleConfigGet()
+let s:config = vivacious#bundleconfig#new()
 
 function! s:config.config()
     Map -remap [x] <operator>cy <Plug>(operator-concealedyank)
