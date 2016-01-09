@@ -6,6 +6,7 @@ dotfiles/.vim/.vimbackup_deleted
 dotfiles/.emacs.d/info/
 
 dotfiles/.vim/*
+!dotfiles/.vim/Vivacious.lock
 !dotfiles/.vim/after
 !dotfiles/.vim/autoload
 !dotfiles/.vim/colors
@@ -22,6 +23,7 @@ dotfiles/.vim/*
 !dotfiles/.vim/syntax
 !dotfiles/.vim/tutor
 !dotfiles/.vim/tools
+dotfiles/.vim/bundle/*
 !dotfiles/.vim/bundle/ref-plugins/
 !dotfiles/.vim/bundle/surround-config/
 !dotfiles/.vim/bundleconfig
