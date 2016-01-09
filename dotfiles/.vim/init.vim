@@ -1682,9 +1682,9 @@ function! s:set_tab_width() "{{{
     \   ['css', 'xml', 'html', 'smarty', 'htmldjango',
     \    'lisp', 'scheme', 'yaml', 'python', 'markdown']
     \)
-        CodingStyle Short indent
+        setlocal tabstop=2 shiftwidth=2 softtabstop=2
     else
-        CodingStyle My style
+        setlocal tabstop=4 shiftwidth=4 softtabstop=4
     endif
 endfunction "}}}
 function! s:set_compiler() "{{{

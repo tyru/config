@@ -22,7 +22,8 @@ dotfiles/.vim/*
 !dotfiles/.vim/syntax
 !dotfiles/.vim/tutor
 !dotfiles/.vim/tools
-!dotfiles/.vim/bundle
+!dotfiles/.vim/bundle/ref-plugins/
+!dotfiles/.vim/bundle/surround-config/
 !dotfiles/.vim/bundleconfig
 
 !dotfiles/.vim/dict
