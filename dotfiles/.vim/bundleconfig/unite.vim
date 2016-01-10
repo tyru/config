@@ -2,6 +2,7 @@ let s:config = vivacious#bundleconfig#new()
 
 function! s:config.config()
     DefMacroMap [n] anything s
+    DefMacroMap [nxo] prompt ,t
 
     MapAlterCommand        u[nite]     Unite -prompt='-')/\  -no-split -create <args>
     command! -bar -nargs=* CustomUnite Unite -prompt='-')/\  -no-split -create <args>

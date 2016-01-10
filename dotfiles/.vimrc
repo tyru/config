@@ -98,13 +98,6 @@ function! s:error(msg) "{{{
     call s:echomsg('ErrorMsg', a:msg)
 endfunction "}}}
 
-function! s:splitmapjoin(str, pattern, expr, sep)
-    return join(map(split(a:str, a:pattern, 1), a:expr), a:sep)
-endfunction
-function! s:map_lines(str, expr)
-    return s:splitmapjoin(a:str, '\n', a:expr, "\n")
-endfunction
-
 
 " Quickfix utility functions {{{
 function! s:quickfix_get_winnr()
@@ -180,14 +173,7 @@ function! s:cmd_lazy(q_args) "{{{
         return
     endif
     if has('vim_starting')
-        execute 'VimrcAutocmd VimEnter *'
-        \       join([
-        \           'try',
-        \               'execute '.string(a:q_args),
-        \           'catch',
-        \               'call StartDebugMode(' . string(expand('<sfile>:p')) . ')',
-        \           'endtry',
-        \       ], " | ")
+        execute 'VimrcAutocmd VimEnter *' a:q_args
     else
         execute a:q_args
     endif
@@ -250,15 +236,12 @@ command!
 
 " Set up general prefix keys. {{{
 
-DefMacroMap [nxo] orig q
-DefMacroMap [ic] orig <C-g><C-o>
-
-Map [n] <orig>q q
+DefMacroMap [nxo] orig <C-q>
+Map [n] <orig><orig> <orig>
+DefMacroMap [ic] orig <C-g><C-q>
 
 DefMacroMap [nxo] excmd <Space>
 DefMacroMap [nxo] operator ;
-DefMacroMap [n] window <C-w>
-DefMacroMap [nxo] prompt ,t
 
 let g:mapleader = ';'
 Map [n] <Leader> <Nop>
@@ -269,7 +252,6 @@ Map [n] ,, ,
 let g:maplocalleader = '\'
 Map [n] <LocalLeader> <Nop>
 
-DefMacroMap [i] compl <C-g><C-g><C-g><C-g><C-g>
 " }}}
 
 " }}}
@@ -300,7 +282,7 @@ unlet s:Vital
 
 " indent
 set autoindent
-set noexpandtab
+set expandtab
 set smarttab
 set shiftround
 set copyindent
@@ -332,47 +314,8 @@ set cursorline
 
 " scroll
 set scroll=5
-" set scrolloff=15
-" set scrolloff=9999
 set scrolloff=0
-" let g:scrolloff = 15    " see below
-
-let g:scrolloff = 0
-if g:scrolloff ># 0
-    " Hack for <LeftMouse> not to adjust ('scrolloff') when single-clicking.
-    " Implement 'scrolloff' by auto-command to control the fire.
-    " cf. http://vim-users.jp/2011/04/hack213/
-    VimrcAutocmd CursorMoved * call s:reinventing_scrolloff()
-    let s:last_lnum = -1
-    function! s:reinventing_scrolloff()
-        if g:scrolloff ==# 0 || s:last_lnum > 0 && line('.') ==# s:last_lnum
-            return
-        endif
-        let s:last_lnum = line('.')
-        let winline     = winline()
-        let winheight   = winheight(0)
-        let middle      = winheight / 2
-        let upside      = (winheight / winline) >= 2
-        " If upside is true, add winlines to above the cursor.
-        " If upside is false, add winlines to under the cursor.
-        if upside
-            let up_num = g:scrolloff - winline + 1
-            let up_num = winline + up_num > middle ? middle - winline : up_num
-            if up_num > 0
-                execute 'normal!' up_num."\<C-y>"
-            endif
-        else
-            let down_num = g:scrolloff - (winheight - winline)
-            let down_num = winline - down_num < middle ? winline - middle : down_num
-            if down_num > 0
-                execute 'normal!' down_num."\<C-e>"
-            endif
-        endif
-    endfunction
-
-    " Do not adjust current scroll position (do not fire 'scrolloff') on single-click.
-    Map -silent [n] <LeftMouse>   <Esc>:set eventignore=all<CR><LeftMouse>:set eventignore=<CR>
-endif
+" set scrolloff=9999
 
 " mouse
 set mouse=a
@@ -382,6 +325,7 @@ set mousemodel=popup_setpos
 " command-line
 set cmdheight=1
 set wildmenu
+set wildmode=longest,list
 
 " completion
 set complete=.,w,b,u,t,i,d,k,kspell
@@ -395,12 +339,6 @@ endif
 set showfulltag
 set notagbsearch
 
-" cscope
-if 0
-    set cscopetag
-    set cscopeverbose
-endif
-
 " virtualedit
 if has('virtualedit')
     set virtualedit=all
@@ -408,22 +346,8 @@ endif
 
 " Swapfile
 if 0
-    " TODO: Use swapfile.
-    let &directory = $MYVIMDIR.'/info/swap/'.v:servername
-    silent! call mkdir(&directory, 'p', 0700)
-    VimrcAutocmd VimLeave * call s:cleanup_swap_files()
-    function! s:cleanup_swap_files()
-        try
-            call s:File.rmdir(&directory)
-        catch
-            " TODO
-            " * Move remaining swap files to swap dir for recovery.
-            " * If there are swap files in swap dir for recovery,
-            "   Show recovery prompt at Vim startup.
-            " * Do recovery!
-        endtry
-    endfunction
-
+    " Use swapfile.
+    set swapfile
     " Open a file as read-only if swap exists
     " VimrcAutocmd SwapExists * let v:swapchoice = 'o'
 else
@@ -715,7 +639,6 @@ Lazy colorscheme no_quarter | doautocmd ColorScheme
 " }}}
 " Mappings, Abbreviations {{{
 
-
 " TODO
 "
 " MapOriginal:
@@ -756,28 +679,29 @@ Lazy colorscheme no_quarter | doautocmd ColorScheme
 "   MapCount [n] <C-n> gt
 
 
-
 " map {{{
 " operator {{{
 
-" Copy to clipboard, primary.
+" Copy to clipboard or primary.
 Map [nxo] <operator>y     "+y
-Map [nxo] <operator>gy    "*y
-Map [nxo] <operator>d     "+d
-Map [nxo] <operator>gd    "*d
-
+Map [nxo] <operator>Y     "*y
 
 " Do not destroy noname register.
 Map [nxo] x "_x
 
-
 Map [nxo] <operator>e =
 
 " }}}
+" textobj {{{
+
+Map [o] gv :<C-u>normal! gv<CR>
+
+" }}}
 " motion {{{
+" If [count] was specified, use 'j'.
+" Otherwise, use 'gj'.
 Map -expr [nxo] j v:count == 0 ? 'gj' : 'j'
 Map -expr [nxo] k v:count == 0 ? 'gk' : 'k'
-
 Map [nxo] <orig>j j
 Map [nxo] <orig>k k
 
@@ -786,20 +710,7 @@ Map [n] ]k :<C-u>call search('^\S', 'Ws')<CR>
 Map [n] [k :<C-u>call search('^\S', 'Wsb')<CR>
 
 Map [nxo] gp %
-" }}}
-" textobj {{{
-let g:textobj_between_no_default_key_mappings = 1
-Map -remap [xo] ib <Plug>(textobj-between-i)
-Map -remap [xo] ab <Plug>(textobj-between-a)
 
-let g:textobj_entire_no_default_key_mappings = 1
-Map -remap [xo] i@ <Plug>(textobj-entire-i)
-Map -remap [xo] a@ <Plug>(textobj-entire-a)
-
-Map [xo] aa a>
-Map [xo] ia i>
-Map [xo] ar a]
-Map [xo] ir i]
 " }}}
 " }}}
 " nmap {{{
@@ -820,10 +731,6 @@ if has('virtualedit')
     Map       [n] <orig>i i
     Map       [n] <orig>a a
 endif
-
-" http://vim-users.jp/2009/08/hack57/
-Map [n] d<CR> :<C-u>call append(line('.'), '')<CR>j
-Map [n] c<CR> :<C-u>call append(line('.'), '')<CR>jI
 
 Map [n] <excmd>me :<C-u>messages<CR>
 Map [n] <excmd>di :<C-u>display<CR>
@@ -861,20 +768,20 @@ function! s:search_char(cmdfmt)
 endfunction
 
 
-" NOTE: <S-Tab> is GUI only.
-Map [x] <Tab> >gv
-Map [x] <S-Tab> <gv
-
-Map [o] gv :<C-u>normal! gv<CR>
-
 Map [nxo] H ^
 Map [nxo] L $
 
-" See also chdir-proj-root.vim settings.
+" See also rooter.vim settings.
 Map [n] ,cd       :<C-u>cd %:p:h<CR>
 
+" 'Y' to yank till the end of line.
+Map [n] Y    y$
+
+" Moving tabs
+Map -silent [n] <Left>    :<C-u>-tabmove<CR>
+Map -silent [n] <Right>   :<C-u>+tabmove<CR>
+
 " Execute most used command quickly {{{
-Map [n] <excmd>ee     :<C-u>edit<CR>
 Map [n] <excmd>w      :<C-u>update<CR>
 Map -silent [n] <excmd>q      :<C-u>call <SID>vim_never_die_close()<CR>
 
@@ -899,11 +806,9 @@ endif
 " Cmdwin {{{
 set cedit=<C-z>
 function! s:cmdwin_enter()
-    Map -buffer -force       [ni] <C-z>         <C-c>
-    Map -buffer              [n]  <Esc> :<C-u>quit<CR>
-    Map -buffer -force       [n]  <window>k        :<C-u>quit<CR>
-    Map -buffer -force       [n]  <window><C-k>    :<C-u>quit<CR>
-    Map -buffer -force -expr [i]  <BS>       col('.') == 1 ? "\<Esc>:quit\<CR>" : "\<BS>"
+    Map -buffer -silent [n]  <Esc>         :<C-u>quit<CR>
+    Map -buffer -silent [n]  <C-w>k        :<C-u>quit<CR>
+    Map -buffer -silent [n]  <C-w><C-k>    :<C-u>quit<CR>
 
     startinsert!
 endfunction
@@ -912,13 +817,6 @@ VimrcAutocmd CmdwinEnter * call s:cmdwin_enter()
 Map [n] <excmd>: q:
 Map [n] <excmd>/ q/
 Map [n] <excmd>? q?
-" }}}
-" Moving tabs {{{
-Map -silent [n] <Left>    :<C-u>execute 'tabmove' (tabpagenr() == 1 ? tabpagenr('$') : tabpagenr() - 2)<CR>
-Map -silent [n] <Right>   :<C-u>execute 'tabmove' (tabpagenr() == tabpagenr('$') ? 0 : tabpagenr())<CR>
-" NOTE: Mappings <S-Left>, <S-Right> work only in gVim
-Map -silent [n] <S-Left>  :<C-u>execute 'tabmove' 0<CR>
-Map -silent [n] <S-Right> :<C-u>execute 'tabmove' tabpagenr('$')<CR>
 " }}}
 " Toggle options {{{
 function! s:toggle_option(option_name) "{{{
@@ -934,7 +832,7 @@ function! s:advance_state(state, elem) "{{{
     return a:state[index(a:state, curidx + 1) isnot -1 ? curidx + 1 : 0]
 endfunction "}}}
 
-function! s:advance_option_state(state, optname) "{{{
+function! s:toggle_option_list(state, optname) "{{{
     let varname = '&' . a:optname
     call setbufvar(
     \   '%',
@@ -955,27 +853,37 @@ function! s:toggle_winfix()
     endif
 endfunction
 
-Map [n] <excmd>oh :<C-u>call <SID>toggle_option('hlsearch')<CR>
-Map [n] <excmd>oi :<C-u>call <SID>toggle_option('ignorecase')<CR>
-Map [n] <excmd>op :<C-u>call <SID>toggle_option('paste')<CR>
-Map [n] <excmd>ow :<C-u>call <SID>toggle_option('wrap')<CR>
-Map [n] <excmd>oe :<C-u>call <SID>toggle_option('expandtab')<CR>
-Map [n] <excmd>ol :<C-u>call <SID>toggle_option('list')<CR>
-Map [n] <excmd>on :<C-u>call <SID>toggle_option('number')<CR>
-Map [n] <excmd>om :<C-u>call <SID>toggle_option('modeline')<CR>
-Map [n] <excmd>ofc :<C-u>call <SID>advance_option_state(['', 'all'], 'foldclose')<CR>
-Map [n] <excmd>ofm :<C-u>call <SID>advance_option_state(['manual', 'marker', 'indent'], 'foldmethod')<CR>
+Map [n] <excmd>oh  :<C-u>call <SID>toggle_option('hlsearch')<CR>
+Map [n] <excmd>oi  :<C-u>call <SID>toggle_option('ignorecase')<CR>
+Map [n] <excmd>op  :<C-u>call <SID>toggle_option('paste')<CR>
+Map [n] <excmd>ow  :<C-u>call <SID>toggle_option('wrap')<CR>
+Map [n] <excmd>oe  :<C-u>call <SID>toggle_option('expandtab')<CR>
+Map [n] <excmd>ol  :<C-u>call <SID>toggle_option('list')<CR>
+Map [n] <excmd>on  :<C-u>call <SID>toggle_option('number')<CR>
+Map [n] <excmd>om  :<C-u>call <SID>toggle_option('modeline')<CR>
+Map [n] <excmd>ofc :<C-u>call <SID>toggle_option_list(['', 'all'], 'foldclose')<CR>
+Map [n] <excmd>ofm :<C-u>call <SID>toggle_option_list(['manual', 'marker', 'indent'], 'foldmethod')<CR>
 Map [n] <excmd>ofw :<C-u>call <SID>toggle_winfix()<CR>
 
 " }}}
 " Close help/quickfix window {{{
 
-" s:winutil {{{
-unlet! s:winutil
-let s:winutil = {}
+" s:window {{{
+let s:window = {'_group_order': [], '_groups': {}}
 
-function! s:winutil.close(winnr) "{{{
-    if s:winutil.exists(a:winnr)
+function! s:window.register(group_name, functions) "{{{
+    call add(s:window._group_order, a:group_name)
+    let s:window._groups[a:group_name] = a:functions
+endfunction "}}}
+
+function! s:window.get_all_groups() "{{{
+    return map(copy(s:window._group_order),
+    \         'deepcopy(s:window._groups[v:val])')
+endfunction "}}}
+
+
+function! s:window.close(winnr) "{{{
+    if winbufnr(a:winnr) !=# -1
         execute a:winnr . 'wincmd w'
         execute 'wincmd c'
         return 1
@@ -984,12 +892,8 @@ function! s:winutil.close(winnr) "{{{
     endif
 endfunction "}}}
 
-function! s:winutil.exists(winnr) "{{{
-    return winbufnr(a:winnr) !=# -1
-endfunction "}}}
 
-
-function! s:winutil.get_winnr_list_like(expr) "{{{
+function! s:window.get_winnr_list_like(expr) "{{{
     let ret = []
     for winnr in range(1, winnr('$'))
         if eval(a:expr)
@@ -999,12 +903,8 @@ function! s:winutil.get_winnr_list_like(expr) "{{{
     return ret
 endfunction "}}}
 
-function! s:winutil.has_window_like(expr) "{{{
-    return !empty(s:winutil.get_winnr_list_like(a:expr))
-endfunction "}}}
-
-function! s:winutil.close_first_like(expr) "{{{
-    let winnr_list = s:winutil.get_winnr_list_like(a:expr)
+function! s:window.close_first_like(expr) "{{{
+    let winnr_list = s:window.get_winnr_list_like(a:expr)
     " Close current window if current matches a:expr.
     let winnr_list = s:move_current_winnr_to_head(winnr_list)
     if empty(winnr_list)
@@ -1014,7 +914,7 @@ function! s:winutil.close_first_like(expr) "{{{
     let prev_winnr = winnr()
     try
         for winnr in winnr_list
-            if s:winutil.close(winnr)
+            if s:window.close(winnr)
                 return 1    " closed.
             endif
         endfor
@@ -1036,51 +936,11 @@ function! s:move_current_winnr_to_head(winnr_list) "{{{
     return [winnr] + filter(a:winnr_list, 'v:val isnot winnr')
 endfunction "}}}
 
-lockvar 1 s:winutil
-" }}}
-
-" s:window {{{
-unlet! s:window
-let s:window = {'_group_order': [], '_groups': {}}
-
-function! s:window.register(group_name, functions) "{{{
-    call add(s:window._group_order, a:group_name)
-    let s:window._groups[a:group_name] = a:functions
-endfunction "}}}
-
-function! s:window.get_all_groups() "{{{
-    return map(copy(s:window._group_order), 'deepcopy(s:window._groups[v:val])')
-endfunction "}}}
-
-lockvar 1 s:window
-" }}}
-
-" cmdwin {{{
-let s:in_cmdwin = 0
-VimrcAutocmd CmdwinEnter * let s:in_cmdwin = 1
-VimrcAutocmd CmdwinLeave * let s:in_cmdwin = 0
-
-function! s:close_cmdwin_window() "{{{
-    if s:in_cmdwin
-        quit
-        return 1
-    else
-        return 0
-    endif
-endfunction "}}}
-function! s:is_cmdwin_window(winnr) "{{{
-    return s:in_cmdwin
-endfunction "}}}
-
-call s:window.register('cmdwin', {'close': function('s:close_cmdwin_window'), 'detect': function('s:is_cmdwin_window')})
 " }}}
 
 " help {{{
 function! s:close_help_window() "{{{
-    return s:winutil.close_first_like('s:is_help_window(winnr)')
-endfunction "}}}
-function! s:has_help_window() "{{{
-    return s:winutil.has_window_like('s:is_help_window(winnr)')
+    return s:window.close_first_like('s:is_help_window(winnr)')
 endfunction "}}}
 function! s:is_help_window(winnr) "{{{
     return getbufvar(winbufnr(a:winnr), '&buftype') ==# 'help'
@@ -1092,7 +952,7 @@ call s:window.register('help', {'close': function('s:close_help_window'), 'detec
 " quickfix {{{
 function! s:close_quickfix_window() "{{{
     " cclose
-    return s:winutil.close_first_like('s:is_quickfix_window(winnr)')
+    return s:window.close_first_like('s:is_quickfix_window(winnr)')
 endfunction "}}}
 function! s:is_quickfix_window(winnr) "{{{
     return getbufvar(winbufnr(a:winnr), '&buftype') ==# 'quickfix'
@@ -1101,31 +961,9 @@ endfunction "}}}
 call s:window.register('quickfix', {'close': function('s:close_quickfix_window'), 'detect': function('s:is_quickfix_window')})
 " }}}
 
-" ref {{{
-function! s:close_ref_window() "{{{
-    return s:winutil.close_first_like('s:is_ref_window(winnr)')
-endfunction "}}}
-function! s:is_ref_window(winnr) "{{{
-    return getbufvar(winbufnr(a:winnr), '&filetype') ==# 'ref'
-endfunction "}}}
-
-call s:window.register('ref', {'close': function('s:close_ref_window'), 'detect': function('s:is_ref_window')})
-" }}}
-
-" quickrun {{{
-function! s:close_quickrun_window() "{{{
-    return s:winutil.close_first_like('s:is_quickrun_window(winnr)')
-endfunction "}}}
-function! s:is_quickrun_window(winnr) "{{{
-    return getbufvar(winbufnr(a:winnr), '&filetype') ==# 'quickrun'
-endfunction "}}}
-
-call s:window.register('quickrun', {'close': function('s:close_quickrun_window'), 'detect': function('s:is_quickrun_window')})
-" }}}
-
 " unlisted {{{
 function! s:close_unlisted_window() "{{{
-    return s:winutil.close_first_like('s:is_unlisted_window(winnr)')
+    return s:window.close_first_like('s:is_unlisted_window(winnr)')
 endfunction "}}}
 function! s:is_unlisted_window(winnr) "{{{
     return !getbufvar(winbufnr(a:winnr), '&buflisted')
@@ -1133,7 +971,6 @@ endfunction "}}}
 
 call s:window.register('unlisted', {'close': function('s:close_unlisted_window'), 'detect': function('s:is_unlisted_window')})
 " }}}
-
 
 function! s:close_certain_window() "{{{
     let curwinnr = winnr()
@@ -1156,19 +993,12 @@ function! s:close_certain_window() "{{{
 endfunction "}}}
 
 
-Map -silent [n] <excmd>c: :<C-u>call <SID>close_cmdwin_window()<CR>
 Map -silent [n] <excmd>ch :<C-u>call <SID>close_help_window()<CR>
-Map -silent [n] <excmd>cQ :<C-u>call <SID>close_quickfix_window()<CR>
-Map -silent [n] <excmd>cr :<C-u>call <SID>close_ref_window()<CR>
-Map -silent [n] <excmd>cq :<C-u>call <SID>close_quickrun_window()<CR>
-Map -silent [n] <excmd>cb :<C-u>call <SID>close_unlisted_window()<CR>
+Map -silent [n] <excmd>cq :<C-u>call <SID>close_quickfix_window()<CR>
+Map -silent [n] <excmd>cu :<C-u>call <SID>close_unlisted_window()<CR>
 
+" Close first matching window in above windows.
 Map -silent [n] <excmd>cc :<C-u>call <SID>close_certain_window()<CR>
-" }}}
-" 'Y' to yank till the end of line. {{{
-Map [n] Y    y$
-Map [n] ;Y   "+y$
-Map [n] ,Y   "*y$
 " }}}
 " Back to col '$' when current col is right of col '$'. {{{
 "
@@ -1177,35 +1007,34 @@ Map [n] ,Y   "*y$
 " 2. do not insert " " before inserted text
 " when characterwise and getregtype(v:register) ==# 'v'.
 
-function! s:virtualedit_enabled()
-    return has('virtualedit')
-    \   && &virtualedit =~# '\<all\>\|\<onemore\>'
+function! s:paste_characterwise_nicely()
+    let reg = '"' . v:register
+    let virtualedit_enabled =
+    \   has('virtualedit') && &virtualedit =~# '\<all\>\|\<onemore\>'
+    let move_to_last_col =
+    \   (virtualedit_enabled && col('.') >= col('$'))
+    \   ? '$' : ''
+    let paste =
+    \   reg . (getline('.') ==# '' ? 'P' : 'p')
+    return getregtype(v:register) ==# 'v' ?
+    \   move_to_last_col . paste :
+    \   reg . 'p'
 endfunction
 
-if s:virtualedit_enabled()
-    function! s:paste_characterwise_nicely()
-        let reg = '"' . v:register
-        let move_to_last_col =
-        \   (s:virtualedit_enabled()
-        \       && col('.') >= col('$'))
-        \   ? '$' : ''
-        let paste =
-        \   reg . (getline('.') ==# '' ? 'P' : 'p')
-        return getregtype(v:register) ==# 'v' ?
-        \   move_to_last_col . paste :
-        \   reg . 'p'
-    endfunction
-
-    Map -expr [n] p <SID>paste_characterwise_nicely()
-endif
+Map -expr [n] p <SID>paste_characterwise_nicely()
 " }}}
-" <Space>[hjkl] for <C-w>[hjkl] {{{
+" <Space>[hjkl] for <C-w>[hjkl], <Space><Space>[hjkl] for <C-w>[HJKL] {{{
 Map -silent [n] <Space>j <C-w>j
 Map -silent [n] <Space>k <C-w>k
 Map -silent [n] <Space>h <C-w>h
 Map -silent [n] <Space>l <C-w>l
 Map -silent [n] <Space>n <C-w>w
 Map -silent [n] <Space>p <C-w>W
+
+Map -silent [n] <Space><Space>j <C-w>J
+Map -silent [n] <Space><Space>k <C-w>K
+Map -silent [n] <Space><Space>h <C-w>H
+Map -silent [n] <Space><Space>l <C-w>L
 " }}}
 " Moving between tabs {{{
 Map -silent [n] <C-n> gt
@@ -1235,9 +1064,8 @@ endfunction "}}}
 " }}}
 " vmap {{{
 
-" Map [x] <C-g> g<C-g>1gs
-
 Map -silent [x] y y:<C-u>call <SID>remove_trailing_spaces_blockwise()<CR>
+
 function! s:remove_trailing_spaces_blockwise()
     let regname = v:register
     if getregtype(regname)[0] !=# "\<C-v>"
@@ -1247,6 +1075,10 @@ function! s:remove_trailing_spaces_blockwise()
     let expr = 'substitute(v:val, '.string('\v\s+$').', "", "")'
     let value = s:map_lines(value, expr)
     call setreg(regname, value, "\<C-v>")
+endfunction
+
+function! s:map_lines(str, expr)
+    return join(map(split(a:str, '\n', 1), a:expr), "\n")
 endfunction
 
 
@@ -1265,7 +1097,12 @@ function! s:force_blockwise_visual(next_key)
 endfunction
 
 
-" Space key to indent (inspired by sakura editor)
+" Tab key indent
+" NOTE: <S-Tab> is GUI only.
+Map [x] <Tab> >gv
+Map [x] <S-Tab> <gv
+
+" Space key indent (inspired by sakura editor)
 Map [x] <Space><Space> <Esc>:call <SID>space_indent(0)<CR>gv
 Map [x] <Space><BS> <Esc>:call <SID>space_indent(1)<CR>gv
 Map -remap [x] <Space><S-Space> <Space><BS>
@@ -1286,36 +1123,12 @@ Map [ic] <C-a> <Home>
 Map [ic] <C-e> <End>
 Map [i] <C-d> <Del>
 Map -expr [c] <C-d> getcmdpos()-1<len(getcmdline()) ? "\<Del>" : ""
-
-if 0
-
-    function! s:eclipse_like_autoclose(quote)
-        if mode() !~# '^\(i\|R\|Rv\|c\|cv\|ce\)$'
-            return a:quote
-        endif
-        return
-        \   col('.') <=# 1 || col('.') >=# col('$') ?
-        \       a:quote.a:quote."\<Left>" :
-        \   getline('.')[col('.') - 1] ==# a:quote ?
-        \       "\<Right>" :
-        \   getline('.')[col('.') - 2] ==# a:quote ?
-        \       a:quote.a:quote."\<Left>" :
-        \       a:quote
-    endfunction
-
-    Map -expr [ic] " <SID>eclipse_like_autoclose('"')
-    Map -expr [ic] ' <SID>eclipse_like_autoclose("'")
-
-endif
-
-" Excel-like keymapping ;)
-Map [ic] <M-;> <C-r>=strftime('%Y/%m/%d')<CR>
-Map [ic] <M-:> <C-r>=strftime('%H:%M')<CR>
+" Emacs like kill-line.
+Map -expr [i] <C-k> "\<C-g>u".(col('.') == col('$') ? '<C-o>gJ' : '<C-o>D')
+Map [c] <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 
 " }}}
 " imap {{{
-
-Map [i] <C-l> <Tab>
 
 " shift left (indent)
 Map [i] <C-q>   <C-d>
@@ -1325,49 +1138,20 @@ Map [i] <C-q>   <C-d>
 Map [i] <C-w> <C-g>u<C-w>
 Map -force [i] <C-u> <C-g>u<C-u>
 
-Map [i] <S-CR> <C-o>O
-Map [i] <C-CR> <C-o>o
-
 " completion {{{
 
-Map [i] <compl><Tab> <C-n>
+DefMacroMap [i] compl <C-l>
 
-" Map [i] <compl>n <C-x><C-n>
-" Map [i] <compl>p <C-x><C-p>
-Map [i] <compl>n <C-n>
-Map [i] <compl>p <C-p>
-
-Map [i] <compl>] <C-x><C-]>
-Map [i] <compl>d <C-x><C-d>
-Map [i] <compl>f <C-x><C-f>
-Map [i] <compl>i <C-x><C-i>
-Map [i] <compl>k <C-x><C-k>
-Map [i] <compl>l <C-x><C-l>
-" Map [i] <compl>s <C-x><C-s>
-" Map [i] <compl>t <C-x><C-t>
-
-Map -expr [i] <compl>o <SID>omni_or_user_func()
-
-function! s:omni_or_user_func() "{{{
-    if &omnifunc != ''
-        return "\<C-x>\<C-o>"
-    elseif &completefunc != ''
-        return "\<C-x>\<C-u>"
-    else
-        return "\<C-n>"
-    endif
-endfunction "}}}
-
-
-" Map [i] <compl>j <C-n>
-" Map [i] <compl>k <C-p>
-" TODO
-" call submode#enter_with('c', 'i', '', emap#compile_map('i', '<compl>j'), '<C-n>')
-" call submode#enter_with('c', 'i', '', emap#compile_map('i', '<compl>k'), '<C-p>')
-" call submode#leave_with('c', 'i', '', '<CR>')
-" call submode#map       ('c', 'i', '', 'j', '<C-n>')
-" call submode#map       ('c', 'i', '', 'k', '<C-p>')
-
+Map [i] <compl><C-n> <C-x><C-n>
+Map [i] <compl><C-p> <C-x><C-p>
+Map [i] <compl><C-]> <C-x><C-]>
+Map [i] <compl><C-d> <C-x><C-d>
+Map [i] <compl><C-f> <C-x><C-f>
+Map [i] <compl><C-i> <C-x><C-i>
+Map [i] <compl><C-k> <C-x><C-k>
+Map [i] <compl><C-l> <C-x><C-l>
+Map [i] <compl><C-s> <C-x><C-s>
+Map [i] <compl><C-t> <C-x><C-t>
 
 " }}}
 " }}}
@@ -1377,20 +1161,12 @@ if &wildmenu
     Map -force [c] <C-b> <Space><BS><Left>
 endif
 
-" paste register
-Map [c] <C-r><C-u>  <C-r>+
-Map [c] <C-r><C-i>  <C-r>*
-Map [c] <C-r><C-o>  <C-r>"
-
 Map [c] <C-n> <Down>
 Map [c] <C-p> <Up>
 
-Map [c] <C-l> <C-d>
-
-" Escape /,? {{{
+" Escape /,?
 Map -expr [c] /  getcmdtype() == '/' ? '\/' : '/'
 Map -expr [c] ?  getcmdtype() == '?' ? '\?' : '?'
-" }}}
 " }}}
 " abbr {{{
 Map -abbr -expr [i]  date@ strftime('%Y/%m/%d')
@@ -1418,30 +1194,18 @@ Map [nx] <SID>(centering-display) zvzz
 
 " Mappings with option value. {{{
 
-" Use s:do_excmd() and <expr> mapping to make <C-o> work.
-function! s:do_excmd(excmds, ret)
-    for cmd in a:excmds
-        execute cmd
-    endfor
-    return a:ret
-endfunction
+Map [n] / :<C-u>setlocal ignorecase hlsearch<CR>/
+Map [n] ? :<C-u>setlocal ignorecase hlsearch<CR>?
 
-Map -expr [n] / <SID>do_excmd(['setlocal ignorecase hlsearch'], '/')
-Map -expr [n] ? <SID>do_excmd(['setlocal ignorecase hlsearch'], '?')
+Map -script [n] * :<C-u>setlocal noignorecase hlsearch<CR>*<SID>(centering-display)
+Map -script [n] # :<C-u>setlocal noignorecase hlsearch<CR>#<SID>(centering-display)
 
-Map -script -expr [n] * <SID>do_excmd(['setlocal noignorecase hlsearch'], '*<SID>(centering-display)')
-Map -script -expr [n] # <SID>do_excmd(['setlocal noignorecase hlsearch'], '#<SID>(centering-display)')
+Map [n] : :<C-u>setlocal hlsearch<CR>:
+Map [x] : :<C-u>setlocal hlsearch<CR>gv:
 
-Map -expr [n] : <SID>do_excmd(['setlocal hlsearch'], ':')
-Map -expr [x] : <SID>do_excmd(['setlocal hlsearch'], ':')
+Map -script [n] gd :<C-u>setlocal hlsearch<CR>gd<SID>(centering-display)
+Map -script [n] gD :<C-u>setlocal hlsearch<CR>gD<SID>(centering-display)
 
-Map -script -expr [n] gd <SID>do_excmd(['setlocal hlsearch'], 'gd<SID>(centering-display)')
-Map -script -expr [n] gD <SID>do_excmd(['setlocal hlsearch'], 'gD<SID>(centering-display)')
-
-" }}}
-" Emacs like kill-line. {{{
-Map -expr [i] <C-k> "\<C-g>u".(col('.') == col('$') ? '<C-o>gJ' : '<C-o>D')
-Map [c] <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 " }}}
 " Make searching directions consistent {{{
 " 'zv' is harmful for Operator-pending mode and it should not be included.
@@ -1471,15 +1235,8 @@ Map [n] ZZ <Nop>
 Map [n] ZQ <Nop>
 Map [n] U  <Nop>
 " }}}
-" Expand abbreviation {{{
-" http://gist.github.com/347852
-" http://gist.github.com/350207
-
-DefMap [i] -expr bs-ctrl-] getline('.')[col('.') - 2]    ==# "\<C-]>" ? "\<BS>" : ''
-DefMap [c] -expr bs-ctrl-] getcmdline()[getcmdpos() - 2] ==# "\<C-]>" ? "\<BS>" : ''
-Map -script [ic] <C-]>     <C-]><bs-ctrl-]>
-" }}}
 " Add current line to quickfix. {{{
+" quickfix as bookmark list.
 command! -bar -range QFAddLine <line1>,<line2>call s:quickfix_add_range()
 
 " ... {{{
@@ -1519,30 +1276,8 @@ endfunction
 " }}}
 
 " }}}
-" :QFSearchAgain {{{
-command! -bar QFSearchAgain call s:qf_search_again()
-
-" ... {{{
-function! s:qf_search_again()
-    let qf_winnr = s:quickfix_get_winnr()
-    if !qf_winnr
-        copen
-    endif
-    let search_word = s:quickfix_get_search_word()
-    if search_word !=# ''
-        let @/ = search_word[1:]
-        setlocal hlsearch
-        try
-            execute 'normal!' "/\<CR>"
-        catch
-            call s:error(v:exception)
-        endtry
-    endif
-endfunction
-" }}}
-
-" }}}
 " Map CUA-like keybindings to Alt key {{{
+" I like MacVim's command key :)
 Map [x] <M-x> "+d
 Map [x] <M-c> "+y
 Map [nx] <M-v> "+p
@@ -1944,28 +1679,10 @@ endfunction
 VimrcAutocmd QuickfixCmdPost [l]*  lopen
 VimrcAutocmd QuickfixCmdPost [^l]* copen
 " }}}
-" Plugins {{{
+" Runtime plugin config {{{
+" Configuration for plugins in default runtime dir.
 
-" e.g.) s:has_plugin('eskk') ? 'yes' : 'no'
-"       s:has_plugin('indent/vim.vim') ? 'yes' : 'no'
-function! s:has_plugin(name)
-    let nosuffix = a:name =~? '\.vim$' ? a:name[:-5] : a:name
-    let nosuffix = s:toslash(nosuffix)
-    let suffix   = a:name =~? '\.vim$' ? a:name      : a:name . '.vim'
-    let suffix   = s:toslash(suffix)
-    return &rtp =~# '\c\<' . nosuffix . '\>'
-    \   || globpath(&rtp, suffix, 1) != ''
-    \   || globpath(&rtp, nosuffix, 1) != ''
-    \   || globpath(&rtp, 'autoload/' . suffix, 1) != ''
-    \   || globpath(&rtp, 'autoload/' . tolower(suffix), 1) != ''
-endfunction
-
-function! s:toslash(path) "{{{
-    return substitute(a:path, '\', '/', 'g')
-endfunction "}}}
-
-" Plugins in default runtime dir
-if s:has_plugin('syntax/vim.vim') "{{{
+" syntax/vim.vim {{{
     " augroup: a
     " function: f
     " lua: l
@@ -1975,68 +1692,45 @@ if s:has_plugin('syntax/vim.vim') "{{{
     " tcl: t
     " mzscheme: m
     let g:vimsyn_folding = 'af'
-endif "}}}
-if s:has_plugin('netrw') " {{{
-    function! s:filetype_netrw() "{{{
-        Map -remap -buffer [n] h -
-        Map -remap -buffer [n] l <CR>
-        Map -remap -buffer [n] e <CR>
-    endfunction "}}}
-
-    VimrcAutocmd FileType netrw call s:filetype_netrw()
-endif " }}}
-if s:has_plugin('indent/vim.vim') " {{{
+"}}}
+" indent/vim.vim {{{
     let g:vim_indent_cont = 0
-endif " }}}
-if s:has_plugin('changelog') " {{{
+" }}}
+" changelog.vim {{{
     let changelog_username = "tyru"
-endif " }}}
-if s:has_plugin('syntax/sh.vim') " {{{
+" }}}
+" syntax/sh.vim {{{
     let g:is_bash = 1
-endif " }}}
-if s:has_plugin('syntax/scheme.vim') " {{{
+" }}}
+" syntax/scheme.vim {{{
     let g:is_gauche = 1
-endif " }}}
-if s:has_plugin('syntax/perl.vim') " {{{
-
+" }}}
+" syntax/perl.vim {{{
     " POD highlighting
     let g:perl_include_pod = 1
     " Fold only sub, __END__, <<HEREDOC
     let g:perl_fold = 1
     let g:perl_nofold_packages = 1
-
-endif " }}}
+" }}}
 
 " }}}
 " Backup {{{
 " TODO Rotate backup files like writebackupversioncontrol.vim
 " (I have not ever used it, though)
 
-" Delete old files in &backupdir {{{
+" Delete old files in &backupdir
 function! s:delete_backup()
-    if s:is_win
-        if exists('$TMP')
-            let stamp_file = $TMP . '/.vimbackup_deleted'
-        elseif exists('$TEMP')
-            let stamp_file = $TEMP . '/.vimbackup_deleted'
-        else
-            return
-        endif
-    else
-        let stamp_file = expand('~/.vimbackup_deleted')
-    endif
-
+    let stamp_file = expand('$MYVIMDIR/info/backup_deleted_ts.txt')
     if !filereadable(stamp_file)
         call writefile([localtime()], stamp_file)
         return
     endif
 
+    " Delete old files older than 30 days.
     let [line] = readfile(stamp_file)
-    let one_day_sec = 60 * 60 * 24    " Won't delete old files many times within one day.
-
-    if localtime() - str2nr(line) > one_day_sec
+    let thirty_days_sec = 60 * 60 * 24 * 30
+    if localtime() - str2nr(line) > thirty_days_sec
         let backup_files = split(expand(&backupdir . '/*'), "\n")
-        let thirty_days_sec = one_day_sec * 30
         call filter(backup_files, 'localtime() - getftime(v:val) > thirty_days_sec')
         for i in backup_files
             if delete(i) != 0
@@ -2046,9 +1740,8 @@ function! s:delete_backup()
         call writefile([localtime()], stamp_file)
     endif
 endfunction
-
 call s:delete_backup()
-" }}}
+
 " }}}
 " Misc. (bundled with kaoriya vim's .vimrc & etc.) {{{
 
@@ -2091,106 +1784,6 @@ if has('multi_byte_ime') || has('xim')
     highlight CursorIM guibg=Purple guifg=NONE
     set iminsert=0 imsearch=0
 endif
-" }}}
-
-" GNU Screen, Tmux {{{
-"
-" from thinca's .vimrc
-" http://soralabo.net/s/vrcb/s/thinca
-
-if $WINDOW != '' || $TMUX != ''
-    let s:screen_is_running = 1
-
-    " Use a mouse in screen.
-    if has('mouse')
-        set ttymouse=xterm2
-    endif
-
-    function! s:screen_set_window_name(name)
-        let esc = "\<ESC>"
-        silent! execute '!echo -n "' . esc . 'k' . escape(a:name, '%#!')
-        \ . esc . '\\"'
-        redraw!
-    endfunction
-    command! -bar -nargs=? WindowName call s:screen_set_window_name(<q-args>)
-
-    function! s:screen_auto_window_name()
-        let varname = 'window_name'
-        for scope in [w:, b:, t:, g:]
-            if has_key(scope, varname)
-                call s:screen_set_window_name(scope[varname])
-                return
-            endif
-        endfor
-        if bufname('%') !~ '^\[A-Za-z0-9\]*:/'
-            call s:screen_set_window_name('vim:' . expand('%:t'))
-        endif
-    endfunction
-    if 0
-        augroup vimrc-screen
-            autocmd!
-            autocmd VimEnter * call s:screen_set_window_name(0 < argc() ?
-            \ 'vim:' . fnamemodify(argv(0), ':t') : 'vim')
-            autocmd BufEnter,BufFilePost * call s:screen_auto_window_name()
-            autocmd VimLeave * call s:screen_set_window_name(len($SHELL) ?
-            \ fnamemodify($SHELL, ':t') : 'shell')
-        augroup END
-    endif
-endif
-" }}}
-
-" own-highlight {{{
-" TODO: Plugin-ize
-
-augroup own-highlight
-    autocmd!
-augroup END
-
-function! s:register_highlight(hi, hirhs, pat)
-    execute 'highlight' a:hi a:hirhs
-    call s:add_pattern(a:hi, a:pat)
-endfunction
-function! s:add_pattern(hi, pat)
-    " matchadd() will throw an error
-    " when a:hi is not defined.
-    if !hlexists(a:hi)
-        return
-    endif
-    if !exists('w:did_pattern')
-        let w:did_pattern = {}
-    endif
-    if !has_key(w:did_pattern, a:hi)
-        call matchadd(a:hi, a:pat)
-        let w:did_pattern[a:hi] = 1
-    endif
-endfunction
-
-function! s:register_own_highlight()
-    " I found that I'm very nervous about whitespaces.
-    " so I'd better think about this.
-    " This settings just notice its presence.
-    for [hi, hirhs, pat] in [
-    \   ['IdeographicSpace',
-    \    'term=underline cterm=underline gui=underline ctermfg=4 guifg=Cyan',
-    \    '　'],
-    \   ['WhitespaceEOL',
-    \    'term=underline cterm=underline gui=underline ctermfg=4 guifg=Cyan',
-    \    ' \+$'],
-    \]
-        " TODO: filetype
-        execute
-        \   'autocmd own-highlight Colorscheme *'
-        \   'call s:register_highlight('
-        \       string(hi) ',' string(hirhs) ',' string(pat)
-        \   ')'
-        execute
-        \   'autocmd own-highlight VimEnter,WinEnter *'
-        \   'call s:add_pattern('
-        \       string(hi) ',' string(pat)
-        \   ')'
-    endfor
-endfunction
-call s:register_own_highlight()
 " }}}
 
 " Make <M-Space> same as ordinal applications on MS Windows {{{
