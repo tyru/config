@@ -6,14 +6,12 @@
 	user = tyru
 [core]
 	excludesfile = ~/.gitignore.base
-	editor = vim
 [user]
 	name = tyru
 	email = tyru.exe@gmail.com
 [alias]
 	ar = archive
 	br = branch
-	cancel = !git commit -a -m 'Temporary commit for cancel' && git reset --hard HEAD~
 	ci = commit -v
 	cia = commit -v --all
 	ciam = commit -v --amend

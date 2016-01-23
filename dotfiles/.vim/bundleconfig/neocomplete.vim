@@ -13,8 +13,4 @@ function! s:config.config()
     " Map -expr [i] <C-y> neocomplete#close_popup()
     " Map -expr [i] <CR>  pumvisible() ? neocomplete#close_popup() . "\<CR>" : "\<CR>"
     " Map -remap [is] <C-t> <Plug>(neocomplete_snippets_expand)
-
-    highlight Pmenu ctermbg=8 guibg=#606060
-    highlight PmenuSel ctermbg=1 guifg=#dddd00 guibg=#1f82cd
-    highlight PmenuSbar ctermbg=0 guibg=#d6d6d6
 endfunction

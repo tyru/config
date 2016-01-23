@@ -3,10 +3,6 @@ scriptencoding utf-8
 let s:save_cpo = &cpo
 set cpo&vim
 
-if globpath(&rtp, 'autoload/tyru/util.vim') == ''
-    finish
-endif
-
 " Do not search from header
 setlocal complete-=i
 setlocal complete-=d

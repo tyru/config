@@ -7,8 +7,12 @@ let s:trailingwhitespace = vivacious#bundleconfig#new()
 
 " Configuration for trailing-whitespace.
 function! s:trailingwhitespace.config()
-    highlight ExtraWhitespace cterm=underline gui=underline ctermfg=4 guifg=Cyan
-    autocmd ColorScheme * highlight ExtraWhitespace cterm=underline gui=underline ctermfg=4 guifg=Cyan
+    " TODO:
+    " * Clear highlight temporarily (':hi clear ExtraWhitespace' is enough?)
+    " * Overwrite default highlight defined by trailing-whitespace.vim properly.
+    let hicmd = 'highlight ExtraWhitespace cterm=underline ctermfg=4 gui=underline guifg=Cyan'
+    execute hicmd
+    execute 'autocmd ColorScheme *' hicmd
 endfunction
 
 " Plugin dependencies for trailing-whitespace.

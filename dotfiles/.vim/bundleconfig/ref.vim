@@ -12,21 +12,16 @@ function! s:config.config()
     MapAlterCommand py[doc]     Ref pydoc
 
     Map [n] <orig>K K
-    " Map -remap [n] K <SID>(open-help-window)<Plug>(ref-keyword)
     Map -remap [n] K <Plug>(ref-keyword)
-
-    Map [n] <SID>(open-help-window) :<C-u>call <SID>open_help_window()<CR>
-    function! s:open_help_window()
-        if !s:has_help_window()
-            Help
-            wincmd w
-        endif
-    endfunction
+    augroup bundleconfig-ref
+        autocmd!
+        autocmd FileType vim Map -buffer [n] K K
+    augroup END
 
     if $VIMRC_USE_VIMPROC !=# 2
         let g:ref_use_vimproc = $VIMRC_USE_VIMPROC
     endif
-    let g:ref_open = 'SplitNicely split'
+    let g:ref_open = 'SplitNicely vsplit'
     if executable('perldocjp')
         let g:ref_perldoc_cmd = 'perldocjp'
     endif

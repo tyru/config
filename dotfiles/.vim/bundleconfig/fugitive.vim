@@ -7,6 +7,16 @@ let s:fugitive = vivacious#bundleconfig#new()
 
 " Configuration for fugitive.
 function! s:fugitive.config()
+    MapAlterCommand gad[d]       Git add
+    MapAlterCommand gam[end]     Gcommit -v --amend
+    MapAlterCommand gch[eckout]  Git checkout
+    MapAlterCommand gco[mmit]    Gcommit -v
+    MapAlterCommand gd[iff]      Gdiff
+    MapAlterCommand gi[t]        Git
+    MapAlterCommand gst[atus]    Gstatus
+    " :help fugitive-revision
+    MapAlterCommand gsh[ow]      Gsplit HEAD^{}
+
     augroup vimrc-fugitive
         autocmd!
         autocmd VimEnter *

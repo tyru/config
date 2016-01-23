@@ -1,27 +1,27 @@
 let s:config = vivacious#bundleconfig#new()
 
 function! s:config.config()
-    DefMacroMap [n] anything s
+    DefMacroMap [n] unite s
     DefMacroMap [nxo] prompt ,t
 
     MapAlterCommand        u[nite]     Unite -prompt='-')/\  -no-split -create <args>
     command! -bar -nargs=* CustomUnite Unite -prompt='-')/\  -no-split -create <args>
-    Map [n] <anything>f        :<C-u>CustomUnite -buffer-name=files file buffer file_mru<CR>
-    Map [n] <anything>F        :<C-u>CustomUnite -buffer-name=files file_rec<CR>
-    Map [n] <anything>p        :<C-u>CustomUnite -buffer-name=files buffer_tab<CR>
-    Map [n] <anything>h        :<C-u>CustomUnite -buffer-name=files file_mru<CR>
-    Map [n] <anything>t        :<C-u>CustomUnite -immediately tab:no-current<CR>
-    Map [n] <anything>w        :<C-u>CustomUnite -immediately window:no-current<CR>
-    " Map [n] <anything>T        :<C-u>CustomUnite tag<CR>
-    " Map [n] <anything>H        :<C-u>CustomUnite help<CR>
-    Map [n] <anything>b        :<C-u>CustomUnite buffer<CR>
-    " Map [n] <anything>o        :<C-u>CustomUnite outline<CR>
-    Map [n] <anything>r        :<C-u>CustomUnite -input=ref/ source<CR>
-    Map [n] <anything>s        :<C-u>CustomUnite source<CR>
-    Map [n] <anything>g        :<C-u>CustomUnite grep<CR>
-    Map [n] <anything>/        :<C-u>CustomUnite line<CR>
-    " Map [n] <anything>:        :<C-u>CustomUnite history/command<CR>
-    Map [n] <anything>j        :<C-u>CustomUnite jump<CR>
+    Map [n] <unite>f        :<C-u>CustomUnite -buffer-name=files file buffer file_mru<CR>
+    Map [n] <unite>F        :<C-u>CustomUnite -buffer-name=files file_rec<CR>
+    Map [n] <unite>p        :<C-u>CustomUnite -buffer-name=files buffer_tab<CR>
+    Map [n] <unite>h        :<C-u>CustomUnite -buffer-name=files file_mru<CR>
+    Map [n] <unite>t        :<C-u>CustomUnite -immediately tab:no-current<CR>
+    Map [n] <unite>w        :<C-u>CustomUnite -immediately window:no-current<CR>
+    " Map [n] <unite>T        :<C-u>CustomUnite tag<CR>
+    " Map [n] <unite>H        :<C-u>CustomUnite help<CR>
+    Map [n] <unite>b        :<C-u>CustomUnite buffer<CR>
+    " Map [n] <unite>o        :<C-u>CustomUnite outline<CR>
+    Map [n] <unite>r        :<C-u>CustomUnite -input=ref/ source<CR>
+    Map [n] <unite>s        :<C-u>CustomUnite source<CR>
+    Map [n] <unite>g        :<C-u>CustomUnite grep<CR>
+    Map [n] <unite>/        :<C-u>CustomUnite line<CR>
+    " Map [n] <unite>:        :<C-u>CustomUnite history/command<CR>
+    Map [n] <unite>j        :<C-u>CustomUnite jump<CR>
 
 
     " abbrev
@@ -57,13 +57,6 @@ function! s:config.config()
     let g:unite_enable_start_insert = 1
     let g:unite_enable_ignore_case = 1
     let g:unite_enable_smart_case = 1
-    let g:unite_enable_split_vertically = 0
-    let g:unite_split_rule =
-    \   g:unite_enable_split_vertically ?
-    \       'topleft' : 'rightbelow'
-    let g:unite_update_time = 50
-    let g:unite_source_file_mru_ignore_pattern =
-    \   '^/tmp/.*\|^/var/tmp/.*\|\.tmp$\|COMMIT_EDITMSG'
 
     " matcher {{{
     " if has('migemo') || executable('cmigemo')
