@@ -1,4 +1,4 @@
-let s:config = vivacious#bundleconfig#new()
+let s:config = vivo#bundleconfig#new()
 
 function! s:config.config()
     Map -remap -expr [i] <Tab> neosnippet#expandable_or_jumpable() ?

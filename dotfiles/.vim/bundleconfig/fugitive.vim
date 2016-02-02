@@ -3,7 +3,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let s:fugitive = vivacious#bundleconfig#new()
+let s:fugitive = vivo#bundleconfig#new()
 
 " Configuration for fugitive.
 function! s:fugitive.config()
@@ -31,7 +31,7 @@ function! s:fugitive.depends()
 endfunction
 
 " Recommended plugin dependencies for fugitive.
-" If the plugins are not installed, vivacious shows recommended plugins.
+" If the plugins are not installed, vivo shows recommended plugins.
 function! s:fugitive.recommends()
     return []
 endfunction
@@ -43,7 +43,7 @@ function! s:fugitive.depends_commands()
 endfunction
 
 " Recommended external commands dependencies for fugitive.
-" If the plugins are not installed, vivacious shows recommended commands.
+" If the plugins are not installed, vivo shows recommended commands.
 function! s:fugitive.recommends_commands()
     return []
 endfunction

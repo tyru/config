@@ -1,4 +1,4 @@
-let s:eskk = vivacious#bundleconfig#new()
+let s:eskk = vivo#bundleconfig#new()
 
 function! s:eskk.config()
     augroup vimrc-eskk-vimenter

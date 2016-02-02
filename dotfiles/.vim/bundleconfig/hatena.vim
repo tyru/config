@@ -1,4 +1,4 @@
-let s:config = vivacious#bundleconfig#new()
+let s:config = vivo#bundleconfig#new()
 
 function! s:config.config()
     let g:hatena_no_default_keymappings = 1

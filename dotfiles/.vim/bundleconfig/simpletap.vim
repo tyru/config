@@ -1,4 +1,4 @@
-let s:config = vivacious#bundleconfig#new()
+let s:config = vivo#bundleconfig#new()
 
 function! s:config.disable_if()
     return !exists('$VPROVE_TESTING')

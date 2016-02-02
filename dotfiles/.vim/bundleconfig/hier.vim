@@ -1,4 +1,4 @@
-let s:config = vivacious#bundleconfig#new()
+let s:config = vivo#bundleconfig#new()
 
 function! s:config.config()
     function! s:stop_hier_on_quickfix_close()

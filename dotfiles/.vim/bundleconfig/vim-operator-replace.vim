@@ -3,7 +3,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let s:vimoperatorreplace = vivacious#bundleconfig#new()
+let s:vimoperatorreplace = vivo#bundleconfig#new()
 
 " Configuration for vim-operator-replace.
 function! s:vimoperatorreplace.config()
@@ -16,7 +16,7 @@ function! s:vimoperatorreplace.depends()
 endfunction
 
 " Recommended plugin dependencies for vim-operator-replace.
-" If the plugins are not installed, vivacious shows recommended plugins.
+" If the plugins are not installed, vivo shows recommended plugins.
 function! s:vimoperatorreplace.recommends()
     return []
 endfunction
@@ -28,7 +28,7 @@ function! s:vimoperatorreplace.depends_commands()
 endfunction
 
 " Recommended external commands dependencies for vim-operator-replace.
-" If the plugins are not installed, vivacious shows recommended commands.
+" If the plugins are not installed, vivo shows recommended commands.
 function! s:vimoperatorreplace.recommends_commands()
     return []
 endfunction

@@ -1,5 +1,5 @@
 
-let s:config = vivacious#bundleconfig#new()
+let s:config = vivo#bundleconfig#new()
 
 function! s:config.config()
     Map -remap [n] j <Plug>(accelerated_jk_gj)

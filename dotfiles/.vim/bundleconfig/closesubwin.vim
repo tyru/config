@@ -3,7 +3,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let s:closesubwin = vivacious#bundleconfig#new()
+let s:closesubwin = vivo#bundleconfig#new()
 
 " Configuration for closesubwin.
 function! s:closesubwin.config()
@@ -20,7 +20,7 @@ function! s:closesubwin.depends()
 endfunction
 
 " Recommended plugin dependencies for closesubwin.
-" If the plugins are not installed, vivacious shows recommended plugins.
+" If the plugins are not installed, vivo shows recommended plugins.
 function! s:closesubwin.recommends()
     return []
 endfunction
@@ -32,7 +32,7 @@ function! s:closesubwin.depends_commands()
 endfunction
 
 " Recommended external commands dependencies for closesubwin.
-" If the plugins are not installed, vivacious shows recommended commands.
+" If the plugins are not installed, vivo shows recommended commands.
 function! s:closesubwin.recommends_commands()
     return []
 endfunction

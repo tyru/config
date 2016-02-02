@@ -3,42 +3,42 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let s:vivacious = vivacious#bundleconfig#new()
+let s:vivo = vivo#bundleconfig#new()
 
-" Configuration for vivacious.
-function! s:vivacious.config()
-    MapAlterCommand ed[itbundle] VivaciousEditBundleConfig
-    MapAlterCommand in[stall] VivaciousInstall
-    MapAlterCommand re[move] VivaciousRemove
-    MapAlterCommand pu[rge] VivaciousPurge
-    MapAlterCommand li[st] VivaciousList
-    MapAlterCommand fe[tchall] VivaciousFetchAll
-    MapAlterCommand up[date] VivaciousUpdate
-    " MapAlterCommand ma[nage] VivaciousManage
-    MapAlterCommand en[able] VivaciousEnable
-    MapAlterCommand di[sable] VivaciousDisable
+" Configuration for vivo.
+function! s:vivo.config()
+    MapAlterCommand ed[itbundle] VivoEditBundleConfig
+    MapAlterCommand in[stall] VivoInstall
+    MapAlterCommand re[move] VivoRemove
+    MapAlterCommand pu[rge] VivoPurge
+    MapAlterCommand li[st] VivoList
+    MapAlterCommand fe[tchall] VivoFetchAll
+    MapAlterCommand up[date] VivoUpdate
+    " MapAlterCommand ma[nage] VivoManage
+    MapAlterCommand en[able] VivoEnable
+    MapAlterCommand di[sable] VivoDisable
 endfunction
 
-" Plugin dependencies for vivacious.
-function! s:vivacious.depends()
+" Plugin dependencies for vivo.
+function! s:vivo.depends()
     return []
 endfunction
 
-" Recommended plugin dependencies for vivacious.
-" If the plugins are not installed, vivacious shows recommended plugins.
-function! s:vivacious.recommends()
+" Recommended plugin dependencies for vivo.
+" If the plugins are not installed, vivo shows recommended plugins.
+function! s:vivo.recommends()
     return []
 endfunction
 
-" External commands dependencies for vivacious.
+" External commands dependencies for vivo.
 " (e.g.: curl)
-function! s:vivacious.depends_commands()
+function! s:vivo.depends_commands()
     return []
 endfunction
 
-" Recommended external commands dependencies for vivacious.
-" If the plugins are not installed, vivacious shows recommended commands.
-function! s:vivacious.recommends_commands()
+" Recommended external commands dependencies for vivo.
+" If the plugins are not installed, vivo shows recommended commands.
+function! s:vivo.recommends_commands()
     return []
 endfunction
 

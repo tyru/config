@@ -3,7 +3,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let s:previm = vivacious#bundleconfig#new()
+let s:previm = vivo#bundleconfig#new()
 
 " Configuration for previm.
 function! s:previm.config()
@@ -20,7 +20,7 @@ function! s:previm.depends()
 endfunction
 
 " Recommended plugin dependencies for previm.
-" If the plugins are not installed, vivacious shows recommended plugins.
+" If the plugins are not installed, vivo shows recommended plugins.
 function! s:previm.recommends()
     return []
 endfunction
@@ -32,7 +32,7 @@ function! s:previm.depends_commands()
 endfunction
 
 " Recommended external commands dependencies for previm.
-" If the plugins are not installed, vivacious shows recommended commands.
+" If the plugins are not installed, vivo shows recommended commands.
 function! s:previm.recommends_commands()
     return []
 endfunction

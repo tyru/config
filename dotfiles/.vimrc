@@ -207,12 +207,12 @@ endif
 set rtp+=$MYVIMDIR/bundle/vivacious.vim
 
 " Fetch managed plugins from remote.
-call vivacious#fetch_all()
+call vivo#fetch_all()
 
 " Add managed plugins to 'runtimepath'.
 " (It won't load disabled plugins)
 filetype off
-call vivacious#load_plugins()
+call vivo#load_plugins()
 filetype plugin indent on
 
 " Import emap.vim & altercmd.vim commands {{{
@@ -258,15 +258,15 @@ Map [n] <LocalLeader> <Nop>
 
 " Load all bundle configs in '~/.vim/bundleconfig/*.vim' (if you prefer).
 " This function loads plugin list from 'runtimepath'.
-call vivacious#bundleconfig#load()
+call vivo#bundleconfig#load()
 
-" TODO: Load only vim-singleton and call it before 'vivacious#load_plugins()'.
-if vivacious#loaded_plugin('vim-singleton')
+" TODO: Load only vim-singleton and call it before 'vivo#load_plugins()'.
+if vivo#loaded_plugin('vim-singleton')
     call singleton#enable()
 endif
 
 " Generate helptags for plugins in 'runtimepath'.
-call vivacious#helptags()
+call vivo#helptags()
 
 " Load vimrc vital. {{{
 
@@ -291,6 +291,8 @@ set copyindent
 set preserveindent
 if exists('+breakindent')
     set breakindent
+    " set breakindentopt=sbr
+    set showbreak=...
 endif
 
 " Follow 'tabstop' value.
@@ -308,8 +310,8 @@ set smartcase
 " Aesthetic options
 set list
 " Assumption: Trailing spaces are already highlighted and noticeable.
-" set listchars=tab:>.,extends:>,precedes:<,eol:$
-set listchars=tab:>.,extends:>,precedes:<
+" set listchars=tab:>.,extends:>,precedes:<,trail:-,eol:$
+set listchars=tab:>.,extends:>,precedes:<,trail:-
 set display=lastline
 set t_Co=256
 set cursorline
@@ -624,7 +626,6 @@ set colorcolumn=80
 set viminfo='50,h,f1,n$HOME/.viminfo
 set matchpairs+=<:>
 set number
-set showbreak=...
 set confirm
 set updatetime=500
 if has('path_extra')

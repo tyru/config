@@ -3,7 +3,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let s:currentfuncinfo = vivacious#bundleconfig#new()
+let s:currentfuncinfo = vivo#bundleconfig#new()
 
 " Configuration for current-func-info.
 function! s:currentfuncinfo.config()
@@ -21,7 +21,7 @@ function! s:currentfuncinfo.depends()
 endfunction
 
 " Recommended plugin dependencies for current-func-info.
-" If the plugins are not installed, vivacious shows recommended plugins.
+" If the plugins are not installed, vivo shows recommended plugins.
 function! s:currentfuncinfo.recommends()
     return []
 endfunction
@@ -33,7 +33,7 @@ function! s:currentfuncinfo.depends_commands()
 endfunction
 
 " Recommended external commands dependencies for current-func-info.
-" If the plugins are not installed, vivacious shows recommended commands.
+" If the plugins are not installed, vivo shows recommended commands.
 function! s:currentfuncinfo.recommends_commands()
     return []
 endfunction

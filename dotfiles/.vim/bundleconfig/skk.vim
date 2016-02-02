@@ -1,4 +1,4 @@
-let s:skk = vivacious#bundleconfig#new()
+let s:skk = vivo#bundleconfig#new()
 
 function! s:skk.config()
     augroup vimrc-skk

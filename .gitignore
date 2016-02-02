@@ -6,7 +6,7 @@ dotfiles/.vim/.vimbackup_deleted
 dotfiles/.emacs.d/info/
 
 dotfiles/.vim/*
-!dotfiles/.vim/Vivacious.lock
+!dotfiles/.vim/Vivo.lock
 !dotfiles/.vim/after
 !dotfiles/.vim/autoload
 !dotfiles/.vim/colors

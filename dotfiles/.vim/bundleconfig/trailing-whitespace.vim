@@ -3,16 +3,16 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let s:trailingwhitespace = vivacious#bundleconfig#new()
+let s:trailingwhitespace = vivo#bundleconfig#new()
 
 " Configuration for trailing-whitespace.
 function! s:trailingwhitespace.config()
     " TODO:
     " * Clear highlight temporarily (':hi clear ExtraWhitespace' is enough?)
     " * Overwrite default highlight defined by trailing-whitespace.vim properly.
-    let hicmd = 'highlight ExtraWhitespace cterm=underline ctermfg=4 gui=underline guifg=Cyan'
-    execute hicmd
-    execute 'autocmd ColorScheme *' hicmd
+    " let hicmd = 'highlight ExtraWhitespace cterm=underline ctermfg=4 gui=underline guifg=Cyan'
+    " execute hicmd
+    " execute 'autocmd ColorScheme *' hicmd
 endfunction
 
 " Plugin dependencies for trailing-whitespace.
@@ -21,7 +21,7 @@ function! s:trailingwhitespace.depends()
 endfunction
 
 " Recommended plugin dependencies for trailing-whitespace.
-" If the plugins are not installed, vivacious shows recommended plugins.
+" If the plugins are not installed, vivo shows recommended plugins.
 function! s:trailingwhitespace.recommends()
     return []
 endfunction
@@ -33,7 +33,7 @@ function! s:trailingwhitespace.depends_commands()
 endfunction
 
 " Recommended external commands dependencies for trailing-whitespace.
-" If the plugins are not installed, vivacious shows recommended commands.
+" If the plugins are not installed, vivo shows recommended commands.
 function! s:trailingwhitespace.recommends_commands()
     return []
 endfunction

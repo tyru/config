@@ -3,7 +3,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let s:textobjentire = vivacious#bundleconfig#new()
+let s:textobjentire = vivo#bundleconfig#new()
 
 " Configuration for textobj-entire.
 function! s:textobjentire.config()
@@ -18,7 +18,7 @@ function! s:textobjentire.depends()
 endfunction
 
 " Recommended plugin dependencies for textobj-entire.
-" If the plugins are not installed, vivacious shows recommended plugins.
+" If the plugins are not installed, vivo shows recommended plugins.
 function! s:textobjentire.recommends()
     return []
 endfunction
@@ -30,7 +30,7 @@ function! s:textobjentire.depends_commands()
 endfunction
 
 " Recommended external commands dependencies for textobj-entire.
-" If the plugins are not installed, vivacious shows recommended commands.
+" If the plugins are not installed, vivo shows recommended commands.
 function! s:textobjentire.recommends_commands()
     return []
 endfunction

@@ -1,4 +1,4 @@
-let s:config = vivacious#bundleconfig#new()
+let s:config = vivo#bundleconfig#new()
 
 function! s:config.config()
     Map -remap [nxo] <operator>rl <Plug>(operator-reverse-lines)

@@ -1,4 +1,4 @@
-let s:config = vivacious#bundleconfig#new()
+let s:config = vivo#bundleconfig#new()
 
 function! s:config.disable_if()
     let is_win = has('win16') || has('win32') || has('win64') || has('win95')
