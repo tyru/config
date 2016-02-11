@@ -80,9 +80,7 @@ active:1	version:1832bac55d3a96048d3f010d69b90f4671b805fc	dir:bundle/markdown-co
 active:1	version:de42c8a325fa964f0e3031fe0c029e7437195106	dir:bundle/vim-markdown	name:vim-markdown	remote:origin	type:git	url:https://github.com/tpope/vim-markdown	branch:master
 active:1	version:1d9ef6ef40b4de6ce2c973b3e8dc1d521ddcb274	dir:bundle/vim-singleton	name:vim-singleton	remote:origin	type:git	url:https://github.com/thinca/vim-singleton	branch:master
 active:0	version:d2f1f5ba91fc144b8611c7bba35cea4066e88297	dir:bundle/vmock	name:vmock	remote:origin	type:git	url:https://github.com/kannokanno/vmock	branch:master
-active:1	version:fb33b709a1e488b6bfc97164bd8cfe363960c3b6	dir:bundle/share-cmdline-history.vim	name:share-cmdline-history.vim	remote:origin	type:git	url:https://github.com/tyru/share-cmdline-history.vim	branch:master
-active:1	version:f891db9796038f1e5c922f92b988b55b37458f4c	dir:bundle/vimfiler	name:vimfiler	remote:origin	type:git	url:https://github.com/Shougo/vimfiler	branch:master
 active:1	version:aa075b9b56839e1adb08421d2e9837f90e59acad	dir:bundle/vimproc	name:vimproc	remote:origin	type:git	url:https://github.com/Shougo/vimproc	branch:master
-active:0	version:9a4742777777f686f692a66017196cb3a952b7a1	dir:bundle/vim-trailing-whitespace	name:vim-trailing-whitespace	remote:origin	type:git	url:https://github.com/bronson/vim-trailing-whitespace	branch:master
 active:1	version:3c9acd215202fc215af0060c5b2715cdc18a910d	dir:bundle/neobundle.vim	name:neobundle.vim	remote:origin	type:git	url:https://github.com/Shougo/neobundle.vim	branch:master
 active:1	version:ca01a8efa8de2a3112d0eeb121ac55bebc3b147e	dir:bundle/vim-grammarous	name:vim-grammarous	remote:origin	type:git	url:https://github.com/rhysd/vim-grammarous	branch:master
+active:1	version:ff85972ccf3706bba0e2856108ccd972a2d55e2a	dir:bundle/vim-liquid	name:vim-liquid	remote:origin	type:git	url:https://github.com/tpope/vim-liquid	branch:master

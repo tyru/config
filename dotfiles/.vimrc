@@ -715,6 +715,16 @@ Map [n] [k :<C-u>call search('^\S', 'Wsb')<CR>
 Map [nxo] gp %
 
 " }}}
+
+Map [nxo] H ^
+Map [nxo] L $
+
+" http://itchyny.hatenablog.com/entry/2016/02/02/210000
+Map -expr [nxo] <C-b> max([winheight(0) - 2, 1]) . "\<C-u>" . (line('.') < 1         + winheight(0) ? 'H' : 'L')
+Map -expr [nxo] <C-f> max([winheight(0) - 2, 1]) . "\<C-d>" . (line('.') > line('$') - winheight(0) ? 'L' : 'H')
+Map -expr [nxo] <C-y> (line('w0') <= 1         ? 'k' : "\<C-y>")
+Map -expr [nxo] <C-e> (line('w$') >= line('$') ? 'j' : "\<C-e>")
+
 " }}}
 " nmap {{{
 
@@ -770,9 +780,6 @@ function! s:search_char(cmdfmt)
     return char ==# "\<Esc>" ? '' : printf(a:cmdfmt, char)
 endfunction
 
-
-Map [nxo] H ^
-Map [nxo] L $
 
 " See also rooter.vim settings.
 Map [n] ,cd       :<C-u>cd %:p:h<CR>
