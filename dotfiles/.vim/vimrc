@@ -349,11 +349,13 @@ if has('virtualedit')
 endif
 
 " Swapfile
-if 0
+if 1
     " Use swapfile.
     set swapfile
+    set directory=$MYVIMDIR/info/swap//
+    silent! call mkdir(substitute(&directory, '//$', '', ''), 'p')
     " Open a file as read-only if swap exists
-    " VimrcAutocmd SwapExists * let v:swapchoice = 'o'
+    VimrcAutocmd SwapExists * let v:swapchoice = 'o'
 else
     " No swapfile.
     set noswapfile
@@ -363,7 +365,7 @@ endif
 " backup (:help backup-table)
 set backup
 set backupcopy=yes
-set backupdir=$MYVIMDIR/backup
+set backupdir=$MYVIMDIR/info/backup
 silent! call mkdir(&backupdir, 'p')
 
 " title
