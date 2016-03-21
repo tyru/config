@@ -212,12 +212,14 @@ call vivo#fetch_all()
 " Add managed plugins to 'runtimepath'.
 " (It won't load disabled plugins)
 filetype off
-call vivo#load_plugins()
+
+call vivo#rtp_append_plugins()
+" call vivo#rtp_append_pack()
 filetype plugin indent on
 
 " Import emap.vim & altercmd.vim commands {{{
-" I use those commands also in bundleconfig.
-" So define those commands before loading bundleconfig.
+" I use those commands also in plugconf.
+" So define those commands before loading plugconf.
 
 " Define :Map commands
 call emap#load('noprefix')
@@ -256,11 +258,11 @@ Map [n] <LocalLeader> <Nop>
 
 " }}}
 
-" Load all bundle configs in '~/.vim/bundleconfig/*.vim' (if you prefer).
+" Load all bundle configs in '~/.vim/vivo/plugconf/*.vim' (if you prefer).
 " This function loads plugin list from 'runtimepath'.
-call vivo#bundleconfig#load()
+call vivo#plugconf#load()
 
-" TODO: Load only vim-singleton and call it before 'vivo#load_plugins()'.
+" TODO: Load only vim-singleton and call it before 'vivo#rtp_append_*()'.
 if vivo#loaded_plugin('vim-singleton')
     call singleton#enable()
 endif
