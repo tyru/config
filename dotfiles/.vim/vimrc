@@ -1401,8 +1401,16 @@ command!
 " :Ctags {{{
 MapAlterCommand ctags Ctags
 
-Map -script [n] <C-]> <SID>(gen-tags-if-not-present)<C-]>
-Map [n] <SID>(gen-tags-if-not-present) :<C-u>if empty(tagfiles()) | Ctags | endif<CR>
+Map -expr [n] <C-]> <SID>tagjump()
+
+function! s:tagjump() abort
+    try
+        execute "normal! \<C-]>"
+    catch
+        Ctags
+        execute "normal! \<C-]>"
+    endtry
+endfunction
 
 command!
 \   -bar -nargs=*
