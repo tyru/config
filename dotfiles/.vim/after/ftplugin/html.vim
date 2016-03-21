@@ -6,6 +6,11 @@ set cpo&vim
 setlocal includeexpr=substitute(v:fname,'^\\/','','')
 setlocal path+=;/
 
-let b:undo_ftplugin = 'setlocal includeexpr< path<'
+if exists('b:undo_ftplugin')
+  let b:undo_ftplugin .= ' | '
+else
+  let b:undo_ftplugin = ''
+endif
+let b:undo_ftplugin .= 'setlocal includeexpr< path<'
 
 let &cpo = s:save_cpo

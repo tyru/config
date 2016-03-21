@@ -31,7 +31,12 @@ call SurroundRegister('b', 'qs', "q/\r/")
 call SurroundRegister('b', 'qq', "qq/\r/")
 call SurroundRegister('b', 'qw', "qw/\r/")
 
-let b:undo_ftplugin = 'setlocal path< complete< makeprg< matchpairs< | '
+if exists('b:undo_ftplugin')
+  let b:undo_ftplugin .= ' | '
+else
+  let b:undo_ftplugin = ''
+endif
+let b:undo_ftplugin .= 'setlocal path< complete< makeprg< matchpairs< | '
 \                   . 'nunmap <buffer> ]] | '
 \                   . 'nunmap <buffer> [[ | '
 \                   . 'nunmap <buffer> ][ | '

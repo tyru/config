@@ -12,6 +12,7 @@ noremap <silent> <buffer> <expr>
 
 noremap <buffer> p  <CR>zz<C-w>p
 
+" Global option?
 let s:opt_wraparound = 0
 
 setlocal statusline+=\ %L
@@ -21,6 +22,7 @@ nnoremap <silent> <buffer> x :call <SID>del_entry()<CR>
 vnoremap <silent> <buffer> d :call <SID>del_entry()<CR>
 vnoremap <silent> <buffer> x :call <SID>del_entry()<CR>
 nnoremap <silent> <buffer> u :<C-u>call <SID>undo_entry()<CR>
+nnoremap <silent> <buffer> yy :<C-u>call <SID>yank_entry()<CR>
 
 
 if exists('*s:undo_entry')
@@ -34,6 +36,7 @@ function! s:undo_entry()
   endif
 endfunction
 
+" TODO: location-list
 function! s:del_entry() range
   let qf = getqflist()
   let history = get(w:, 'qf_history', [])
@@ -42,6 +45,15 @@ function! s:del_entry() range
   unlet! qf[a:firstline - 1 : a:lastline - 1]
   call setqflist(qf, 'r')
   execute a:firstline
+endfunction
+
+function! s:yank_entry() abort range
+  let list = s:getcurlist()
+  let content = join(
+  \   map(list[a:firstline - 1 : a:lastline - 1], 'v:val.text'), "\n"
+  \)
+  let options = (a:firstline ==# a:lastline ? "v" : "V")
+  call setreg(v:register, content, options)
 endfunction
 
 function! s:modulo(n, m)
@@ -58,12 +70,18 @@ function! s:wraparound(n, max, motion) abort
   endif
 endfunction
 
-function! s:jk(motion)
+function! s:getcurlist() abort
   let max = line('$')
   let list = getloclist(0)
   if empty(list) || len(list) != max
     let list = getqflist()
   endif
+  return list
+endfunction
+
+function! s:jk(motion)
+  let max = line('$')
+  let list = s:getcurlist()
   let cur = line('.') - 1
   let pos = cur + a:motion
   let pos = s:wraparound(cur + a:motion, max, a:motion)
@@ -81,11 +99,7 @@ function! s:jk(motion)
 endfunction
 
 function! s:gg(gotop)
-  let max = line('$')
-  let list = getloclist(0)
-  if empty(list) || len(list) != max
-    let list = getqflist()
-  endif
+  let list = s:getcurlist()
   let cur = line('.') - 1
   let pos = a:gotop ? 0 : line('$') - 1
   let m = 0 < a:gotop ? 1 : -1

@@ -23,6 +23,11 @@ setlocal foldmethod=syntax
 let g:c_no_curly_error_fold = 1
 let g:c_no_comment_fold = 1
 
-let b:undo_ftplugin = 'setlocal complete< foldmethod<'
+if exists('b:undo_ftplugin')
+  let b:undo_ftplugin .= ' | '
+else
+  let b:undo_ftplugin = ''
+endif
+let b:undo_ftplugin .= 'setlocal complete< foldmethod<'
 
 let &cpo = s:save_cpo

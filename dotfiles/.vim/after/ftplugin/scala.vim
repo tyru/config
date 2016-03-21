@@ -14,7 +14,12 @@ setlocal commentstring=//%s
 setlocal formatoptions-=t formatoptions+=croql
 setlocal makeprg=
 
-let b:undo_ftplugin = 'setlocal includeexpr< suffixesadd< suffixes< '
+if exists('b:undo_ftplugin')
+  let b:undo_ftplugin .= ' | '
+else
+  let b:undo_ftplugin = ''
+endif
+let b:undo_ftplugin .= 'setlocal includeexpr< suffixesadd< suffixes< '
 \                   . 'comments< commentstring< formatoptions< makeprg<'
 
 let &cpo = s:save_cpo

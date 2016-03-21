@@ -10,6 +10,11 @@ setlocal complete=.,t,k,kspell
 inoremap <buffer> <Tab><Tab> <C-o>mz<C-o>=ip<C-o>'z
 nnoremap <buffer> <Tab><Tab> mz=ip'z
 
-let b:undo_ftplugin = 'setlocal lisp< cindent< complete<'
+if exists('b:undo_ftplugin')
+  let b:undo_ftplugin .= ' | '
+else
+  let b:undo_ftplugin = ''
+endif
+let b:undo_ftplugin .= 'setlocal lisp< cindent< complete<'
 
 let &cpo = s:save_cpo
