@@ -13,6 +13,6 @@
 [submodule "dotfiles/.zsh/zsh-completions"]
 	path = dotfiles/.zsh/zsh-completions
 	url = https://github.com/zsh-users/zsh-completions
-[submodule "dotfiles/.vim/bundle/vivacious.vim"]
-	path = dotfiles/.vim/bundle/vivacious.vim
-	url = https://github.com/tyru/vivacious.vim
+[submodule "dotfiles/.vim/bundle/vivo.vim"]
+	path = dotfiles/.vim/bundle/vivo.vim
+	url = https://github.com/tyru/vivo.vim

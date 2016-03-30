@@ -59,7 +59,6 @@ active:1	version:79eb95aa4dd24a818799f770c346cd995f06dd10	dir:bundle/vim-themis	
 active:1	version:a18cd0e7a03311ac709595c1d261ed44b45c9098	dir:bundle/vim-visualstar	name:vim-visualstar	remote:origin	type:git	url:https://github.com/thinca/vim-visualstar	branch:master
 active:1	version:199cc37c8ddddd153cbc1a747f7fc15d64cd9f65	dir:bundle/vimdoc-ja	name:vimdoc-ja	remote:origin	type:git	url:https://github.com/vim-jp/vimdoc-ja	branch:master
 active:1	version:c90955aa94561dd54d68cd963f41f78c215da944	dir:bundle/vital.vim	name:vital.vim	remote:origin	type:git	url:https://github.com/vim-jp/vital.vim	branch:web/uri/implement-todo
-active:1	version:45630dfb84ffc4d0f87054b6cd7cf6ca610da29e	dir:bundle/vivacious.vim	name:vivacious.vim	remote:origin	type:git	url:https://github.com/tyru/vivacious.vim.git	branch:master
 active:1	version:dfc60635e610f9200646a84d11887af9e3d50b10	dir:bundle/webapi-vim	name:webapi-vim	remote:origin	type:git	url:https://github.com/mattn/webapi-vim	branch:master
 active:1	version:b130f24277e3c6a5afa3984921516b0a83b31d28	dir:bundle/previm	name:previm	remote:origin	type:git	url:https://github.com/kannokanno/previm	branch:master
 active:1	version:8ec90adc65257115227e8e724a7509efd920b3f6	dir:bundle/quickey.vim	name:quickey.vim	remote:origin	type:git	url:https://github.com/tyru/quickey.vim	branch:master

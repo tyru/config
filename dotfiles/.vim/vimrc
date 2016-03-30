@@ -204,7 +204,7 @@ endif
 " }}}
 " Load Plugins {{{
 
-set rtp+=$MYVIMDIR/bundle/vivacious.vim
+set rtp+=$MYVIMDIR/bundle/vivo.vim
 
 " Fetch managed plugins from remote.
 call vivo#fetch_all()

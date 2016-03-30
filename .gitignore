@@ -26,6 +26,7 @@ dotfiles/.vim/*
 !dotfiles/.vim/bundle
 dotfiles/.vim/bundle/*
 # Do not ignore these directories
+!dotfiles/.vim/bundle/vivo.vim
 !dotfiles/.vim/bundle/ref-plugins
 !dotfiles/.vim/bundle/surround-config
 
