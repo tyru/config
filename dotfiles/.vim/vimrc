@@ -822,13 +822,14 @@ else
 endif
 " }}}
 " Cmdwin {{{
-set cedit=<C-z>
+set cedit=<C-l>
 function! s:cmdwin_enter()
     Map -buffer -silent [n]  <Esc>         :<C-u>quit<CR>
     Map -buffer -silent [n]  <C-w>k        :<C-u>quit<CR>
     Map -buffer -silent [n]  <C-w><C-k>    :<C-u>quit<CR>
 
     startinsert!
+    setlocal nonumber
 endfunction
 VimrcAutocmd CmdwinEnter * call s:cmdwin_enter()
 
@@ -1409,7 +1410,7 @@ command!
 " :Ctags {{{
 MapAlterCommand ctags Ctags
 
-Map -expr [n] <C-]> <SID>tagjump()
+Map [n] <C-]> :<C-u>call <SID>tagjump()<CR>
 
 function! s:tagjump() abort
     try
@@ -1544,10 +1545,16 @@ function! s:no_scrollbind(key)
 endfunction
 
 " }}}
+" :ResetHelpBuffer {{{
+command! -bar ResetHelpBuffer
+\   setlocal noro modifiable buftype= list noet
+" }}}
 " }}}
 " Quickfix {{{
-VimrcAutocmd QuickfixCmdPost [l]*  lopen
-VimrcAutocmd QuickfixCmdPost [^l]* copen
+VimrcAutocmd QuickfixCmdPost [l]*
+\   execute (!empty(getqflist()) ? 'lopen' : 'lclose')
+VimrcAutocmd QuickfixCmdPost [^l]*
+\   execute (!empty(getqflist()) ? 'copen' : 'cclose')
 " }}}
 " Runtime plugin config {{{
 " Configuration for plugins in default runtime dir.
