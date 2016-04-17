@@ -38,7 +38,7 @@ function! s:config.config()
                             let tabnr -= 1
                         endif
                         execute 'tabnext' tabnr
-                        execute 'SplitNicely sbuffer' bufnr
+                        execute 'sbuffer' bufnr
                     finally
                         setlocal bufhidden=
                     endtry

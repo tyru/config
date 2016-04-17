@@ -8,7 +8,6 @@ function! s:config.config()
         let g:quickrun_config = {}
 
         let g:quickrun_config['_'] = {
-        \   'outputter/buffer/split': 'SplitNicely',
         \   'outputter/buffer/close_on_empty': 1,
         \}
 

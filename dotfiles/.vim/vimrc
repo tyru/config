@@ -55,10 +55,7 @@ if $VIMRC_FORCE_LANG_C
     language time C
 endif
 
-if $VIMRC_LOAD_MENU
-    " Load current locale and &encoding menu.
-    set guioptions+=m
-else
+if !$VIMRC_LOAD_MENU
     set guioptions+=M
     let g:did_install_default_menus = 1
     let g:did_install_syntax_menu = 1
@@ -71,123 +68,11 @@ if filereadable(expand('~/.vimrc.local'))
 endif
 
 " }}}
-" Utilities {{{
-
-" Function {{{
-
-function! s:SID() "{{{
-    return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
-endfunction "}}}
-let s:SNR_PREFIX = '<SNR>' . s:SID() . '_'
-function! s:SNR(map) "{{{
-    return s:SNR_PREFIX . a:map
-endfunction "}}}
-
-function! s:echomsg(hl, msg) "{{{
-    execute 'echohl' a:hl
-    try
-        echomsg a:msg
-    finally
-        echohl None
-    endtry
-endfunction "}}}
-function! s:warn(msg) "{{{
-    call s:echomsg('WarningMsg', a:msg)
-endfunction "}}}
-function! s:error(msg) "{{{
-    call s:echomsg('ErrorMsg', a:msg)
-endfunction "}}}
-
-
-" Quickfix utility functions {{{
-function! s:quickfix_get_winnr()
-    " quickfix window is usually at bottom,
-    " thus reverse-lookup.
-    for winnr in reverse(range(1, winnr('$')))
-        if getwinvar(winnr, '&buftype') ==# 'quickfix'
-            return winnr
-        endif
-    endfor
-    return 0
-endfunction
-function! s:quickfix_exists_window()
-    return !!s:quickfix_get_winnr()
-endfunction
-function! s:quickfix_supported_quickfix_title()
-    return v:version >=# 703
-endfunction
-function! s:quickfix_get_search_word()
-    " NOTE: This function returns a string starting with "/"
-    " if previous search word is found.
-    " This function can't use an empty string
-    " as a failure return value, because ":vimgrep /" also returns an empty string.
-
-    " w:quickfix_title only works 7.3 or later.
-    if !s:quickfix_supported_quickfix_title()
-        return ''
-    endif
-
-    let qf_winnr = s:quickfix_get_winnr()
-    if !qf_winnr
-        copen
-    endif
-
-    try
-        let qf_title = getwinvar(qf_winnr, 'quickfix_title')
-        if qf_title ==# ''
-            return ''
-        endif
-
-        " NOTE: Supported only :vim[grep] command.
-        let rx = '^:\s*\<vim\%[grep]\>\s*\(/.*\)'
-        let m = matchlist(qf_title, rx)
-        if empty(m)
-            return ''
-        endif
-
-        return m[1]
-    finally
-        if !qf_winnr
-            cclose
-        endif
-    endtry
-endfunction
-
-" }}}
-
-" }}}
-
-" Commands {{{
-
-" :autocmd is listed in |:bar|
-command! -bang -nargs=* VimrcAutocmd autocmd<bang> vimrc <args>
-
-
-command!
-\   -nargs=+
-\   Lazy
-\   call s:cmd_lazy(<q-args>)
-
-function! s:cmd_lazy(q_args) "{{{
-    if a:q_args == ''
-        return
-    endif
-    if has('vim_starting')
-        execute 'VimrcAutocmd VimEnter *' a:q_args
-    else
-        execute a:q_args
-    endif
-endfunction "}}}
-
-" }}}
-
-" }}}
 " Encoding {{{
 let s:enc = 'utf-8'
 
 let &enc = s:enc
 let &fenc = s:enc
-let &termencoding = s:enc
 let s:fencs = [s:enc] + split(&fileencodings, ',') + ['iso-2022-jp', 'iso-2022-jp-3', 'cp932']
 let &fileencodings = join(filter(s:fencs, 'count(s:fencs, v:val) == 1'), ',')
 
@@ -210,9 +95,8 @@ set rtp+=$MYVIMDIR/bundle/vivo.vim
 call vivo#fetch_all()
 
 " Add managed plugins to 'runtimepath'.
-" (It won't load disabled plugins)
+" (It won't add disabled plugins)
 filetype off
-
 call vivo#rtp_append_plugins()
 " call vivo#rtp_append_pack()
 filetype plugin indent on
@@ -221,19 +105,21 @@ filetype plugin indent on
 " I use those commands also in plugconf.
 " So define those commands before loading plugconf.
 
-" Define :Map commands
+" Define :Map commands (TODO: remove emap dependency)
 call emap#load('noprefix')
-" call emap#set_sid_from_vimrc()
-" call emap#set_sid(s:SID())
 call emap#set_sid_from_sfile(expand('<sfile>'))
 
 
 " Define :MapAlterCommand commands
-call altercmd#load()
-command!
-\   -bar -nargs=+
-\   MapAlterCommand
-\   CAlterCommand <args> | AlterCommand <cmdwin> <args>
+if globpath(&rtp, 'autoload/altercmd.vim') !=# ''
+    call altercmd#load()
+    command!
+    \   -bar -nargs=+
+    \   MapAlterCommand
+    \   CAlterCommand <args> | AlterCommand <cmdwin> <args>
+else
+    command! -nargs=* MapAlterCommand :
+endif
 
 
 " Set up general prefix keys. {{{
@@ -258,8 +144,8 @@ Map [n] <LocalLeader> <Nop>
 
 " }}}
 
-" Load all bundle configs in '~/.vim/vivo/plugconf/*.vim' (if you prefer).
-" This function loads plugin list from 'runtimepath'.
+" Load all plugin configs from '~/.vim/vivo/plugconf/*.vim'
+" (if you prefer writing configs in separated files from vimrc).
 call vivo#plugconf#load()
 
 " TODO: Load only vim-singleton and call it before 'vivo#rtp_append_*()'.
@@ -270,24 +156,15 @@ endif
 " Generate helptags for plugins in 'runtimepath'.
 call vivo#helptags()
 
-" Load vimrc vital. {{{
-
-let s:Vital = vital#of('vimrc')
-let s:Prelude = s:Vital.import('Prelude')
-let s:List = s:Vital.import('Data.List')
-let s:Filepath = s:Vital.import('System.Filepath')
-let s:File = s:Vital.import('System.File')
-unlet s:Vital
-
-" }}}
-
 " }}}
 " Options {{{
 
 " indent
+set tabstop=4
+set shiftwidth=4
+set softtabstop=-1
 set autoindent
 set expandtab
-set smarttab
 set shiftround
 set copyindent
 set preserveindent
@@ -296,13 +173,6 @@ if exists('+breakindent')
     " set breakindentopt=sbr
     set showbreak=...
 endif
-
-" Follow 'tabstop' value.
-set tabstop=4
-" 7.3.629 or later
-set shiftwidth=0
-" 7.3.693 or later
-set softtabstop=-1
 
 " search
 set hlsearch
@@ -316,17 +186,6 @@ set list
 set listchars=tab:>.,extends:>,precedes:<,trail:-
 set display=lastline
 set t_Co=256
-set cursorline
-
-" scroll
-set scroll=5
-set scrolloff=0
-" set scrolloff=9999
-
-" mouse
-set mouse=a
-set mousehide
-set mousemodel=popup_setpos
 
 " command-line
 set cmdheight=1
@@ -341,13 +200,7 @@ set pumheight=20
 if has('path_extra')
     set tags+=.;
     set tags+=tags;
-endif
-set showfulltag
-set notagbsearch
-
-" virtualedit
-if has('virtualedit')
-    set virtualedit=all
+    set path+=.;
 endif
 
 " Swapfile
@@ -357,25 +210,16 @@ if 1
     set directory=$MYVIMDIR/info/swap//
     silent! call mkdir(substitute(&directory, '//$', '', ''), 'p')
     " Open a file as read-only if swap exists
-    VimrcAutocmd SwapExists * let v:swapchoice = 'o'
+    autocmd vimrc SwapExists * let v:swapchoice = 'o'
 else
     " No swapfile.
     set noswapfile
     set updatecount=0
 endif
 
-" backup (:help backup-table)
-set backup
-set backupcopy=yes
-set backupdir=$MYVIMDIR/info/backup
-silent! call mkdir(&backupdir, 'p')
-
 " title
 set title
 let &titlestring = '%{getcwd()}'
-
-" tab
-set showtabline=2
 
 function! MyTabLabel(tabnr) "{{{
     if exists('*gettabvar')
@@ -407,6 +251,7 @@ function! MyTabLabel(tabnr) "{{{
     endif
     return label . (modified ? '[+]' : '')
 endfunction "}}}
+" FIXME: Doesn't work with two or more than tabpages in CUI mode.
 function! s:tabline() "{{{
     let s = ''
     for i in range(tabpagenr('$'))
@@ -441,13 +286,10 @@ let &guitablabel = '%{MyTabLabel(v:lnum)}'
 " statusline
 set laststatus=2
 function! s:statusline() "{{{
-    let s = '%f%([%M%R%H%W]%)%(, %{&ft}%), %{&fenc}/%{&ff}'
+    let s = '[%f]%( [%M%R%H%W]%)%( [%{&ft}]%) %{&fenc}/%{&ff}'
     let s .= '%('
 
-    " NOTE: calling GetCCharAndHex() destroys also unnamed register. it may be the problem of Vim.
-    " let s .= '%( | [%{GetCCharAndHex()}]%)'
-
-    let s .= '%( | %{GetDocumentPosition()}%)'
+    let s .= '%( %{GetDocumentPosition()}%)'
 
     let s .= '%)'
 
@@ -457,32 +299,6 @@ let &statusline = s:statusline()
 
 function! GetDocumentPosition()
     return float2nr(str2float(line('.')) / str2float(line('$')) * 100) . "%"
-endfunction
-
-function! GetCCharAndHex()
-    if mode() !=# 'n'
-        return ''
-    endif
-    if foldclosed(line('.')) isnot -1
-        return ''
-    endif
-    let cchar = s:get_cchar()
-    return cchar ==# '' ? '' : cchar . ":" . "0x".char2nr(cchar)
-endfunction
-function! s:get_cchar()
-    let reg     = getreg('z', 1)
-    let regtype = getregtype('z')
-    try
-        if col('.') ==# col('$') || virtcol('.') > virtcol('$')
-            return ''
-        endif
-        normal! "zyl
-        return @z
-    catch
-        return ''
-    finally
-        call setreg('z', reg, regtype)
-    endtry
 endfunction
 
 " 'guioptions' flags are set on FocusGained
@@ -505,7 +321,7 @@ AutocmdWhenVimStarting set guioptions-=a
 AutocmdWhenVimStarting set guioptions+=A
 " Include 'e': tabline
 " Otherwise  : guitablabel
-" AutocmdWhenVimStarting set guioptions-=e
+AutocmdWhenVimStarting set guioptions-=e
 AutocmdWhenVimStarting set guioptions+=h
 AutocmdWhenVimStarting set guioptions+=m
 AutocmdWhenVimStarting set guioptions-=L
@@ -515,22 +331,6 @@ AutocmdWhenVimStartingEnd
 delcommand AutocmdWhenVimStarting
 delcommand AutocmdWhenVimStartingEnd
 
-" clipboard
-"
-" TODO: hmm... I want normal "y" operation to use unnamed register also...
-" (namely, I want to merge the registers, '"', '+', '*')
-" Are there another solutions but overwriting mappings 'y', 'd', 'c', etc.
-"
-" set clipboard+=unnamed
-" if has('unnamedplus')
-"     set clipboard+=unnamedplus
-" endif
-
-" &migemo
-if has("migemo")
-    set migemo
-endif
-
 " convert "\\" to "/" on win32 like environment
 if exists('+shellslash')
     set shellslash
@@ -538,9 +338,7 @@ endif
 
 " visual bell
 set novisualbell
-Lazy set t_vb=
-
-" set debug=beep
+autocmd vimrc VimEnter * set t_vb=
 
 " restore screen
 set norestorescreen
@@ -549,9 +347,6 @@ set t_te=
 
 " timeout
 set notimeout
-
-" fillchars
-set fillchars=stl:\ ,stlnc::,vert:\ ,fold:-,diff:-
 
 " cursor behavior in insertmode
 set whichwrap=b,s
@@ -569,18 +364,6 @@ endif
 
 if has('conceal')
     set concealcursor=nvic
-endif
-
-if version >=# 704
-    set regexpengine=2
-endif
-
-" For screen.
-if &term =~ "^screen"
-    VimrcAutocmd VimLeave * :set mouse=
-
-    " workaround for freeze when using mouse on GNU screen.
-    set ttymouse=xterm2
 endif
 
 " jvgrep
@@ -620,75 +403,27 @@ endif
 " }}}
 
 " misc.
-set diffopt=filler,vertical
-set history=50
 set keywordprg=
-" set lazyredraw
-set nojoinspaces
-set showcmd
-set nrformats=hex
-set shortmess=aI
-set switchbuf=useopen,usetab
-set textwidth=78
-set colorcolumn=80
-set viminfo='50,h,f1,n$HOME/.viminfo
+set diffopt+=vertical
+set history=1000
+set nrformats-=octal
+set shortmess+=aI
+" set switchbuf=useopen,usetab
+set textwidth=80
 set matchpairs+=<:>
 set number
-set confirm
-set updatetime=500
-if has('path_extra')
-    set path+=.;
-endif
+
 " }}}
 " ColorScheme {{{
 
-" NOTE: On MS Windows, setting colorscheme in .vimrc does not work.
-" Thus :Lazy is necessary.
-" NOTE: `:Lazy colorscheme tyru` does not throw ColorScheme event, what the fxck?
-Lazy colorscheme no_quarter | doautocmd ColorScheme
+set bg=dark
+colorscheme evening
+
+" too annoying
+highlight ColorColumn ctermfg=12 guifg=Red ctermbg=NONE guibg=NONE
 
 " }}}
 " Mappings, Abbreviations {{{
-
-" TODO
-"
-" MapOriginal:
-"   MapOriginal j
-"   MapOriginal k
-"
-" MapPrefix:
-"   MapPrefix [n] prefix_name rhs
-"
-" MapLeader:
-"   MapLeader ;
-"
-" MapLocalLeader:
-"   MapLocalLeader ,
-"
-" MapOp:
-"   " Map [nxo] lhs rhs
-"   MapOp lhs rhs
-"
-" MapMotion:
-"   " Map [nxo] lhs rhs
-"   MapMotion lhs rhs
-"
-" MapObject:
-"   " Map [xo] lhs rhs
-"   MapObject lhs rhs
-"
-" DisableMap:
-"   " Map [n] $ <Nop>
-"   " Map [n] % <Nop>
-"   " .
-"   " .
-"   " .
-"   DisableMap [n] $ % & ' ( ) ^
-"
-" MapCount:
-"   " Map -expr [n] <C-n> v:count1 . 'gt'
-"   MapCount [n] <C-n> gt
-
 
 " map {{{
 " operator {{{
@@ -751,6 +486,30 @@ if has('virtualedit')
     Map -expr [n] a col('$') is col('.') ? 'A' : 'a'
     Map       [n] <orig>i i
     Map       [n] <orig>a a
+
+    " Back to col '$' when current col is right of col '$'. {{{
+    "
+    " 1. move to the last col
+    " when over the last col ('virtualedit') and getregtype(v:register) ==# 'v'.
+    " 2. do not insert " " before inserted text
+    " when characterwise and getregtype(v:register) ==# 'v'.
+
+    function! s:paste_characterwise_nicely()
+    let reg = '"' . v:register
+    let virtualedit_enabled =
+    \   has('virtualedit') && &virtualedit =~# '\<all\>\|\<onemore\>'
+    let move_to_last_col =
+    \   (virtualedit_enabled && col('.') >= col('$'))
+    \   ? '$' : ''
+    let paste =
+    \   reg . (getline('.') ==# '' ? 'P' : 'p')
+    return getregtype(v:register) ==# 'v' ?
+    \   move_to_last_col . paste :
+    \   reg . 'p'
+    endfunction
+
+    Map -expr [n] p <SID>paste_characterwise_nicely()
+    " }}}
 endif
 
 Map [n] <excmd>me :<C-u>messages<CR>
@@ -778,16 +537,6 @@ if has('gui_running')
     endfunction
 endif
 
-Map -expr -silent [n] f <SID>search_char('/\V%s'."\<CR>:nohlsearch\<CR>")
-Map -expr -silent [n] F <SID>search_char('?\V%s'."\<CR>:nohlsearch\<CR>")
-Map -expr -silent [n] t <SID>search_char('/.\ze\V%s'."\<CR>:nohlsearch\<CR>")
-Map -expr -silent [n] T <SID>search_char('?\V%s\v\zs.'."\<CR>:nohlsearch\<CR>")
-
-function! s:search_char(cmdfmt)
-    let char = s:Prelude.getchar_safe()
-    return char ==# "\<Esc>" ? '' : printf(a:cmdfmt, char)
-endfunction
-
 
 " See also rooter.vim settings.
 Map [n] ,cd       :<C-u>cd %:p:h<CR>
@@ -813,38 +562,20 @@ function! s:vim_never_die_close()
     endtry
 endfunction
 " }}}
-" Edit/Apply .vimrc quickly {{{
+
+" Edit/Apply .vimrc quickly
 Map [n] <excmd>ev     :<C-u>edit $MYVIMRC<CR>
-if has('gui_running')
-    Map [n] <excmd>sv     :<C-u>source $MYVIMRC<CR>:source $MYGVIMRC<CR>
-else
-    Map [n] <excmd>sv     :<C-u>source $MYVIMRC<CR>
-endif
-" }}}
+
 " Cmdwin {{{
 set cedit=<C-l>
 function! s:cmdwin_enter()
-    Map -buffer -silent [n]  <Esc>         :<C-u>quit<CR>
-    Map -buffer -silent [n]  <C-w>k        :<C-u>quit<CR>
-    Map -buffer -silent [n]  <C-w><C-k>    :<C-u>quit<CR>
-
     startinsert!
     setlocal nonumber
 endfunction
-VimrcAutocmd CmdwinEnter * call s:cmdwin_enter()
+autocmd vimrc CmdwinEnter * call s:cmdwin_enter()
 
-Map [n] <excmd>: q:
-Map [n] <excmd>/ q/
-Map [n] <excmd>? q?
 " }}}
 " Toggle options {{{
-function! s:toggle_option(option_name) "{{{
-    if exists('&' . a:option_name)
-        execute 'setlocal' a:option_name . '!'
-        execute 'setlocal' a:option_name . '?'
-    endif
-endfunction "}}}
-
 function! s:advance_state(states, elem) "{{{
     let curidx = index(a:states, a:elem)
     let curidx = (curidx is -1 ? 0 : curidx)
@@ -873,55 +604,28 @@ function! s:toggle_winfix()
     endif
 endfunction
 
-Map [n] <excmd>oh  :<C-u>call <SID>toggle_option('hlsearch')<CR>
-Map [n] <excmd>oi  :<C-u>call <SID>toggle_option('ignorecase')<CR>
-Map [n] <excmd>op  :<C-u>call <SID>toggle_option('paste')<CR>
-Map [n] <excmd>ow  :<C-u>call <SID>toggle_option('wrap')<CR>
-Map [n] <excmd>oe  :<C-u>call <SID>toggle_option('expandtab')<CR>
-Map [n] <excmd>ol  :<C-u>call <SID>toggle_option('list')<CR>
-Map [n] <excmd>on  :<C-u>call <SID>toggle_option('number')<CR>
-Map [n] <excmd>om  :<C-u>call <SID>toggle_option('modeline')<CR>
-Map [n] <excmd>ot  :<C-u>call <SID>toggle_option_list([2, 4, 8], 'tabstop')<CR>
+Map [n] <excmd>oh  :<C-u>setlocal hlsearch! hlsearch?<CR>
+Map [n] <excmd>oi  :<C-u>setlocal ignorecase! ignorecase?<CR>
+Map [n] <excmd>op  :<C-u>setlocal paste! paste?<CR>
+Map [n] <excmd>ow  :<C-u>setlocal wrap! wrap?<CR>
+Map [n] <excmd>oe  :<C-u>setlocal expandtab! expandtab?<CR>
+Map [n] <excmd>ol  :<C-u>setlocal list! list?<CR>
+Map [n] <excmd>on  :<C-u>setlocal number! number?<CR>
+Map [n] <excmd>om  :<C-u>setlocal modeline! modeline?<CR>
+Map [n] <excmd>ot  :<C-u>execute 'silent call <SID>toggle_option_list([2, 4, 8], "tabstop")' <Bar>
+\                       let &l:shiftwidth = &l:tabstop <Bar>
+\                       redraw <Bar>
+\                       echo 'tabstop=' . &tabstop . ' shiftwidth=' . &shiftwidth<CR>
 Map [n] <excmd>ofc :<C-u>call <SID>toggle_option_list(['', 'all'], 'foldclose')<CR>
 Map [n] <excmd>ofm :<C-u>call <SID>toggle_option_list(['manual', 'marker', 'indent'], 'foldmethod')<CR>
 Map [n] <excmd>ofw :<C-u>call <SID>toggle_winfix()<CR>
 
 " }}}
-" Back to col '$' when current col is right of col '$'. {{{
-"
-" 1. move to the last col
-" when over the last col ('virtualedit') and getregtype(v:register) ==# 'v'.
-" 2. do not insert " " before inserted text
-" when characterwise and getregtype(v:register) ==# 'v'.
-
-function! s:paste_characterwise_nicely()
-    let reg = '"' . v:register
-    let virtualedit_enabled =
-    \   has('virtualedit') && &virtualedit =~# '\<all\>\|\<onemore\>'
-    let move_to_last_col =
-    \   (virtualedit_enabled && col('.') >= col('$'))
-    \   ? '$' : ''
-    let paste =
-    \   reg . (getline('.') ==# '' ? 'P' : 'p')
-    return getregtype(v:register) ==# 'v' ?
-    \   move_to_last_col . paste :
-    \   reg . 'p'
-endfunction
-
-Map -expr [n] p <SID>paste_characterwise_nicely()
-" }}}
-" <Space>[hjkl] for <C-w>[hjkl], <Space><Space>[hjkl] for <C-w>[HJKL] {{{
+" <Space>[hjkl] for <C-w>[hjkl] {{{
 Map -silent [n] <Space>j <C-w>j
 Map -silent [n] <Space>k <C-w>k
 Map -silent [n] <Space>h <C-w>h
 Map -silent [n] <Space>l <C-w>l
-Map -silent [n] <Space>n <C-w>w
-Map -silent [n] <Space>p <C-w>W
-
-Map -silent [n] <Space><Space>j <C-w>J
-Map -silent [n] <Space><Space>k <C-w>K
-Map -silent [n] <Space><Space>h <C-w>H
-Map -silent [n] <Space><Space>l <C-w>L
 " }}}
 " Moving between tabs {{{
 Map -silent [n] <C-n> gt
@@ -942,7 +646,7 @@ function! s:cmd_set_tab_name(name) "{{{
         let t:title = a:name
     endif
     if t:title !=# old_title
-        " :redraw does not update tabline.
+        " Adding ! will update tabline too.
         redraw!
     endif
 endfunction "}}}
@@ -1002,9 +706,6 @@ Map [c] <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 " }}}
 " imap {{{
 
-" shift left (indent)
-Map [i] <C-q>   <C-d>
-
 " make <C-w> and <C-u> undoable.
 " NOTE: <C-u> may be already mapped by $VIMRUNTIME/vimrc_example.vim
 Map [i] <C-w> <C-g>u<C-w>
@@ -1036,18 +737,10 @@ endif
 Map [c] <C-n> <Down>
 Map [c] <C-p> <Up>
 
-" Escape /,?
-Map -expr [c] /  getcmdtype() == '/' ? '\/' : '/'
-Map -expr [c] ?  getcmdtype() == '?' ? '\?' : '?'
 " }}}
 " abbr {{{
-Map -abbr -expr [i]  date@ strftime('%Y/%m/%d')
-Map -abbr -expr [i]  time@ strftime("%H:%M")
-Map -abbr -expr [i]  dt@   strftime("%Y/%m/%d %H:%M")
-Map -abbr -expr [ic] mb@   [^\x01-\x7e]
-
 MapAlterCommand th     tab help
-MapAlterCommand t      tabedit
+" MapAlterCommand t      tabedit
 MapAlterCommand sf     setf
 MapAlterCommand hg     helpgrep
 MapAlterCommand ds     diffsplit
@@ -1058,135 +751,25 @@ MapAlterCommand qw     wq
 " }}}
 
 
+" Centering display position after certain commands {{{
+
 Map [nx] <SID>(centering-display) zvzz
 
-" Mappings with option value. {{{
+Map -script [n] * *<SID>(centering-display)
+Map -script [n] # #<SID>(centering-display)
 
-Map [n] / :<C-u>setlocal ignorecase hlsearch<CR>/
-Map [n] ? :<C-u>setlocal ignorecase hlsearch<CR>?
+Map -script [n] gd gd<SID>(centering-display)
+Map -script [n] gD gD<SID>(centering-display)
 
-Map -script [n] * :<C-u>setlocal noignorecase hlsearch<CR>*<SID>(centering-display)
-Map -script [n] # :<C-u>setlocal noignorecase hlsearch<CR>#<SID>(centering-display)
-
-" TODO: Won't work
-" DefMap -silent [n] pre-: :<C-u>setlocal hlsearch<CR>
-" DefMap -silent [x] pre-: :<C-u>setlocal hlsearch<CR>gv
-" Map [nx] : <pre-:>:
-
-Map -silent [n] <SID>(pre-:) :<C-u>setlocal ignorecase hlsearch<CR>
-Map -silent [x] <SID>(pre-:) :<C-u>setlocal ignorecase hlsearch<CR>gv
-Map -expr   [n] <SID>(count) (v:count ==# 0 ? '' : v:count)
-Map -script -expr [n] : '<SID>(pre-:)' . (v:count ==# 0 ? '' : v:count) . ':'
-Map -script [x] : <SID>(pre-:)gv:
-
-Map -script [n] gd :<C-u>setlocal hlsearch<CR>gd<SID>(centering-display)
-Map -script [n] gD :<C-u>setlocal hlsearch<CR>gD<SID>(centering-display)
+Map -remap [nx] n n<SID>(centering-display)
+Map -remap [nx] N N<SID>(centering-display)
 
 " }}}
-" Make searching directions consistent {{{
-" 'zv' is harmful for Operator-pending mode and it should not be included.
-" For example, 'cn' is expanded into 'cnzv' so 'zv' will be inserted.
-
-Map -expr [nx] <SID>(always-forward-n) (<SID>search_forward_p() ? 'n' : 'N')
-Map -expr [nx] <SID>(always-backward-N) (<SID>search_forward_p() ? 'N' : 'n')
-Map -expr [o]  <SID>(always-forward-n) <SID>search_forward_p() ? 'n' : 'N'
-Map -expr [o]  <SID>(always-backward-N) <SID>search_forward_p() ? 'N' : 'n'
-
-function! s:search_forward_p()
-    return exists('v:searchforward') ? v:searchforward : 1
-endfunction
-
-" Mapping -> plugin specific mapping, misc. hacks
-Map -remap [nx] n <SID>(always-forward-n)<SID>(centering-display)
-Map -remap [nx] N <SID>(always-backward-N)<SID>(centering-display)
-Map -remap [o] n <SID>(always-forward-n)
-Map -remap [o] N <SID>(always-backward-N)
-
-" }}}
-" Disable unused keys. {{{
-Map [n] <F1> <Nop>
-Map [n] <C-F1> <Nop>
-Map [n] <S-F1> <Nop>
-Map [n] ZZ <Nop>
-Map [n] ZQ <Nop>
-Map [n] U  <Nop>
-" }}}
-" Add current line to quickfix. {{{
-" quickfix as bookmark list.
-command! -bar -range QFAddLine <line1>,<line2>call s:quickfix_add_range()
-
-" ... {{{
-
-function! s:quickfix_add_range() range
-    for lnum in range(a:firstline, a:lastline)
-        call s:quickfix_add_line(lnum)
-    endfor
-endfunction
-
-function! s:quickfix_add_line(lnum)
-    let lnum = a:lnum =~# '^\d\+$' ? a:lnum : line(a:lnum)
-    let qf = {
-    \   'bufnr': bufnr('%'),
-    \   'lnum': lnum,
-    \   'text': getline(lnum),
-    \}
-    if s:quickfix_supported_quickfix_title()
-        " Set 'qf.col' and 'qf.vcol'.
-        call s:quickfix_add_line_set_col(lnum, qf)
-    endif
-    call setqflist([qf], 'a')
-endfunction
-function! s:quickfix_add_line_set_col(lnum, qf)
-    let lnum = a:lnum
-    let qf = a:qf
-
-    let search_word = s:quickfix_get_search_word()
-    if search_word !=# ''
-        let idx = match(getline(lnum), search_word[1:])
-        if idx isnot -1
-            let qf.col = idx + 1
-            let qf.vcol = 0
-        endif
-    endif
-endfunction
-" }}}
-
-" }}}
-" Map CUA-like keybindings to Alt key {{{
-" I like MacVim's command key :)
-Map [x] <M-x> "+d
-Map [x] <M-c> "+y
-Map [nx] <M-v> "+p
-Map [n] <M-a> ggVG
-Map [n] <M-t> :<C-u>tabedit<CR>
-Map [n] <M-w> :<C-u>tabclose<CR>
-" }}}
-
-" Mouse {{{
-
-Map -silent [i] <LeftMouse>   <Esc><LeftMouse>
-" Double-click for selecting the word under the cursor
-" as same as most editors.
-set selectmode=mouse
-" Single-click for searching the word selected in visual-mode.
-Map -remap [x]  <LeftMouse> <Plug>(visualstar-g*)
-" Select lines with <S-LeftMouse>
-Map [n]         <S-LeftMouse> V
-
-" }}}
-" }}}
-" Menus {{{
-
-nnoremenu          PopUp.-VimrcSep- :
-nmenu     <silent> PopUp.最近開いたファイル sf
-nnoremenu <silent> PopUp.すぐやることリスト :tab drop ~/Dropbox/memo/todo/すぐやること.txt<CR>
-nnoremenu <silent> PopUp.ファイルパスをコピー :let [@", @+, @*] = repeat([expand('%:p')], 3)<CR>
 
 " }}}
 " FileType & Syntax {{{
 
 " Must be after 'runtimepath' setting!
-" http://rbtnn.hateblo.jp/entry/2014/11/30/174749
 syntax enable
 
 " FileType {{{
@@ -1202,17 +785,22 @@ function! s:set_dict() "{{{
     \   'scala': ['scala', 'java'],
     \}
 
+    let dupcheck = {}
     let dicts = []
     for ft in s:current_filetypes()
         for ft in get(filetype_vs_dictionary, ft, [ft])
+            if has_key(dupcheck, ft)
+                continue
+            endif
+            let dupcheck[ft] = 1
             let dict_path = $MYVIMDIR . '/dict/' . ft . '.dict'
             if filereadable(dict_path)
-                call add(dicts, dict_path)
+                let dicts += [dict_path]
             endif
         endfor
     endfor
 
-    let &l:dictionary = join(s:List.uniq(dicts), ',')
+    let &l:dictionary = join(dicts, ',')
 endfunction "}}}
 function! s:set_compiler() "{{{
     let filetype_vs_compiler = {
@@ -1241,51 +829,12 @@ function! s:load_filetype() "{{{
     call s:set_compiler()
 endfunction "}}}
 
-VimrcAutocmd FileType * call s:load_filetype()
+autocmd vimrc FileType * call s:load_filetype()
 
-" }}}
-
-" Syntax {{{
-VimrcAutocmd BufNewFile,BufRead *.as setlocal syntax=actionscript
-VimrcAutocmd BufNewFile,BufRead _vimperatorrc,.vimperatorrc setlocal syntax=vimperator
-VimrcAutocmd BufNewFile,BufRead *.avs setlocal syntax=avs
 " }}}
 
 " }}}
 " Commands {{{
-" :DiffOrig {{{
-" from vimrc_example.vim
-"
-" Convenient command to see the difference between the current buffer and the
-" file it was loaded from, thus the changes you made.
-" Only define it when not defined already.
-command! -bar DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
-\ | wincmd p | diffthis
-" }}}
-" :Pwd - Copy working dir to clipboard {{{
-MapAlterCommand pwd Pwd
-
-command! -bar -nargs=0 Pwd pwd | let [@+, @*] = [getcwd(), getcwd()]
-" }}}
-" :EchoPath - Show path-like option in a readable way {{{
-
-MapAlterCommand epa EchoPath
-MapAlterCommand rtp EchoPath<Space>&rtp
-
-
-command!
-\   -bar -nargs=+ -complete=expression
-\   EchoPath
-\   call s:cmd_echo_path(<f-args>)
-
-function! s:cmd_echo_path(optname, ...) "{{{
-    let delim = a:0 != 0 ? a:1 : ','
-    let val = eval(a:optname)
-    for i in split(val, delim)
-        echo i
-    endfor
-endfunction "}}}
-" }}}
 " :Expand {{{
 command!
 \   -bar -nargs=?
@@ -1310,14 +859,6 @@ function! s:cmd_expand(args) "{{{
 endfunction "}}}
 
 MapAlterCommand ep Expand
-" }}}
-" :Has {{{
-MapAlterCommand has Has
-
-command!
-\   -bar -nargs=1 -complete=customlist,feature_list_excomplete#complete
-\   Has
-\   echo has(<q-args>)
 " }}}
 " :Glob, :GlobPath {{{
 command!
@@ -1346,67 +887,6 @@ command!
 \   | endfor
 \   | unlet! s:id
 " }}}
-" :SplitNicely {{{
-" originally from kana's .vimrc, but now outragely different one :)
-" https://github.com/kana/config
-
-command! -bar -bang -nargs=+ SplitNicely
-\   call s:cmd_split_nicely(<q-args>, <bang>0)
-
-function! s:cmd_split_nicely(q_args, bang)
-    let vertical = 1
-    let winnum = winnr('$')
-    let save_winwidth = winwidth(0)
-    let save_winheight = winheight(0)
-    execute 'belowright' (vertical ? 'vertical' : '') a:q_args
-    if winnr('$') is winnum
-        " if no new window is opened
-        return
-    endif
-    " Adjust split window.
-    if vertical && !&l:winfixwidth
-        execute save_winwidth / 3 'wincmd |'
-    endif
-    if !vertical && !&l:winfixheight
-        execute save_winheight / 2 'wincmd _'
-    endif
-    " Fix width and height.
-    if a:bang
-        setlocal winfixwidth winfixheight
-    endif
-endfunction
-
-" }}}
-" :Help {{{
-MapAlterCommand h[elp]     Help
-
-" No -bar
-command!
-\   -bang -nargs=* -complete=help
-\   Help
-\   SplitNicely help<bang> <args>
-
-" FIXME: "K" uses ":help" ('keywordprg') by default
-" TODO: Create a framework plugin which provides a customization for ":help" ?
-
-" }}}
-" :NonSortUniq {{{
-"
-" http://lingr.com/room/vim/archives/2010/11/18#message-1023619
-" > :let d={}|g/./let l=getline('.')|if has_key(d,l)|d|else|let d[l]=1
-
-command!
-\   -bar
-\   NonSortUniq
-\   let d={}|g/./let l=getline('.')|if has_key(d,l)|d|el|let d[l]=1
-
-" E147: Cannot do :global recursive
-" command!
-" \   -bar
-" \   NonSortUniq
-" \   g/./let l=getline('.')|g/./if l==getline('.')|d
-
-" }}}
 " :Ctags {{{
 MapAlterCommand ctags Ctags
 
@@ -1428,7 +908,9 @@ command!
 
 function! s:cmd_ctags(q_args) "{{{
     if !executable('ctags')
-        call s:error("Ctags: No 'ctags' command in PATH")
+        echohl ErrorMsg
+        echomsg "Ctags: No 'ctags' command in PATH"
+        echohl None
         return
     endif
     execute '!ctags' (filereadable('.ctags') ? '' : '-R') a:q_args
@@ -1449,11 +931,15 @@ let s:watching_events = {}
 
 function! s:cmd_unwatch_autocmd(event)
     if !exists('#'.a:event)
-        call s:error("Invalid event name: ".a:event)
+        echohl ErrorMsg
+        echomsg "Invalid event name: ".a:event
+        echohl None
         return
     endif
     if !has_key(s:watching_events, a:event)
-        call s:error("Not watching ".a:event." event yet...")
+        echohl ErrorMsg
+        echomsg "Not watching ".a:event." event yet..."
+        echohl None
         return
     endif
 
@@ -1462,7 +948,9 @@ function! s:cmd_unwatch_autocmd(event)
 endfunction
 function! s:cmd_watch_autocmd(event)
     if !exists('#'.a:event)
-        call s:error("Invalid event name: ".a:event)
+        echohl ErrorMsg
+        echomsg "Invalid event name: ".a:event
+        echohl None
         return
     endif
     if has_key(s:watching_events, a:event)
@@ -1471,8 +959,9 @@ function! s:cmd_watch_autocmd(event)
     endif
 
     execute 'autocmd watch-autocmd' a:event '*'
-    \       'call s:echomsg("MoreMsg", '
-    \                      '"Executing '.string(a:event).' event...")'
+    \       'echohl MoreMsg |'
+    \       'echomsg "Executing '''.a:event.''' event..." |'
+    \       'echohl None'
     let s:watching_events[a:event] = 1
     echomsg 'Added watch for' a:event 'event.'
 endfunction
@@ -1480,7 +969,6 @@ endfunction
 " :Kwbd {{{
 " http://nanasi.jp/articles/vim/kwbd_vim.html
 command! -bar Kwbd execute "enew | bw ".bufnr("%")
-MapAlterCommand clo[se] Kwbd
 " }}}
 " :ScrollbindEnable, :ScrollbindDisable, :ScrollbindToggle {{{
 
@@ -1551,10 +1039,109 @@ command! -bar ResetHelpBuffer
 " }}}
 " }}}
 " Quickfix {{{
-VimrcAutocmd QuickfixCmdPost [l]*
+autocmd vimrc QuickfixCmdPost [l]*
 \   execute (!empty(getqflist()) ? 'lopen' : 'lclose')
-VimrcAutocmd QuickfixCmdPost [^l]*
+autocmd vimrc QuickfixCmdPost [^l]*
 \   execute (!empty(getqflist()) ? 'copen' : 'cclose')
+
+" Add current line to quickfix. {{{
+" quickfix as bookmark list.
+command! -bar -range QFAddLine <line1>,<line2>call s:quickfix_add_range()
+
+" ... {{{
+
+function! s:quickfix_add_range() range
+    for lnum in range(a:firstline, a:lastline)
+        call s:quickfix_add_line(lnum)
+    endfor
+endfunction
+
+function! s:quickfix_add_line(lnum)
+    let lnum = a:lnum =~# '^\d\+$' ? a:lnum : line(a:lnum)
+    let qf = {
+    \   'bufnr': bufnr('%'),
+    \   'lnum': lnum,
+    \   'text': getline(lnum),
+    \}
+    if s:quickfix_supported_quickfix_title()
+        " Set 'qf.col' and 'qf.vcol'.
+        call s:quickfix_add_line_set_col(lnum, qf)
+    endif
+    call setqflist([qf], 'a')
+endfunction
+function! s:quickfix_add_line_set_col(lnum, qf)
+    let lnum = a:lnum
+    let qf = a:qf
+
+    let search_word = s:quickfix_get_search_word()
+    if search_word !=# ''
+        let idx = match(getline(lnum), search_word[1:])
+        if idx isnot -1
+            let qf.col = idx + 1
+            let qf.vcol = 0
+        endif
+    endif
+endfunction
+" }}}
+
+" Quickfix utility functions {{{
+function! s:quickfix_get_winnr()
+    " quickfix window is usually at bottom,
+    " thus reverse-lookup.
+    for winnr in reverse(range(1, winnr('$')))
+        if getwinvar(winnr, '&buftype') ==# 'quickfix'
+            return winnr
+        endif
+    endfor
+    return 0
+endfunction
+function! s:quickfix_exists_window()
+    return !!s:quickfix_get_winnr()
+endfunction
+function! s:quickfix_supported_quickfix_title()
+    return v:version >=# 703
+endfunction
+function! s:quickfix_get_search_word()
+    " NOTE: This function returns a string starting with "/"
+    " if previous search word is found.
+    " This function can't use an empty string
+    " as a failure return value, because ":vimgrep /" also returns an empty string.
+
+    " w:quickfix_title only works 7.3 or later.
+    if !s:quickfix_supported_quickfix_title()
+        return ''
+    endif
+
+    let qf_winnr = s:quickfix_get_winnr()
+    if !qf_winnr
+        copen
+    endif
+
+    try
+        let qf_title = getwinvar(qf_winnr, 'quickfix_title')
+        if qf_title ==# ''
+            return ''
+        endif
+
+        " NOTE: Supported only :vim[grep] command.
+        let rx = '^:\s*\<vim\%[grep]\>\s*\(/.*\)'
+        let m = matchlist(qf_title, rx)
+        if empty(m)
+            return ''
+        endif
+
+        return m[1]
+    finally
+        if !qf_winnr
+            cclose
+        endif
+    endtry
+endfunction
+
+" }}}
+
+" }}}
+
 " }}}
 " Runtime plugin config {{{
 " Configuration for plugins in default runtime dir.
@@ -1573,51 +1160,9 @@ VimrcAutocmd QuickfixCmdPost [^l]*
 " indent/vim.vim {{{
     let g:vim_indent_cont = 0
 " }}}
-" changelog.vim {{{
-    let g:changelog_username = "tyru"
-" }}}
 " syntax/sh.vim {{{
     let g:is_bash = 1
 " }}}
-" syntax/scheme.vim {{{
-    let g:is_gauche = 1
-" }}}
-" syntax/perl.vim {{{
-    " POD highlighting
-    let g:perl_include_pod = 1
-    " Fold only sub, __END__, <<HEREDOC
-    let g:perl_fold = 1
-    let g:perl_nofold_packages = 1
-" }}}
-
-" }}}
-" Backup {{{
-" TODO Rotate backup files like writebackupversioncontrol.vim
-" (I have not ever used it, though)
-
-" Delete old files in &backupdir
-function! s:delete_backup()
-    let stamp_file = expand('$MYVIMDIR/info/backup_deleted_ts.txt')
-    if !filereadable(stamp_file)
-        call writefile([localtime()], stamp_file)
-        return
-    endif
-
-    " Delete old files older than 30 days.
-    let [line] = readfile(stamp_file)
-    let thirty_days_sec = 60 * 60 * 24 * 30
-    if localtime() - str2nr(line) > thirty_days_sec
-        let backup_files = split(expand(&backupdir . '/*'), "\n")
-        call filter(backup_files, 'localtime() - getftime(v:val) > thirty_days_sec')
-        for i in backup_files
-            if delete(i) != 0
-                call s:warn("can't delete " . i)
-            endif
-        endfor
-        call writefile([localtime()], stamp_file)
-    endif
-endfunction
-call s:delete_backup()
 
 " }}}
 " Misc. (bundled with kaoriya vim's .vimrc & etc.) {{{

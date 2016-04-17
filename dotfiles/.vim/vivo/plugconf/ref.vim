@@ -21,7 +21,7 @@ function! s:config.config()
     if $VIMRC_USE_VIMPROC !=# 2
         let g:ref_use_vimproc = $VIMRC_USE_VIMPROC
     endif
-    let g:ref_open = 'SplitNicely vsplit'
+    let g:ref_open = 'vsplit'
     if executable('perldocjp')
         let g:ref_perldoc_cmd = 'perldocjp'
     endif

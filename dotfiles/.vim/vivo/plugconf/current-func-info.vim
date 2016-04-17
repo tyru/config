@@ -13,6 +13,15 @@ function! s:currentfuncinfo.config()
         \   let &statusline .= '%( | %{cfi#format("%s()", "")}%)' |
         \   autocmd! vimrc-cfi
     augroup END
+
+    let g:cfi_javascript_show = {
+    \   'assignment': 0,
+    \   'variable_name': 0,
+    \   'function_type': 0,
+    \   'function_name': 1,
+    \   'function_arguments': 1,
+    \   'function_body': 0,
+    \}
 endfunction
 
 " Plugin dependencies for current-func-info.
