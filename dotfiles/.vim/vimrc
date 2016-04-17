@@ -42,14 +42,6 @@ augroup vimrc
     autocmd!
 augroup END
 
-
-" TODO Clear mappings mapped only in vimrc, but plugin mappings.
-" mapclear
-" mapclear!
-" " mapclear!!!!
-" lmapclear
-
-
 if $VIMRC_FORCE_LANG_C
     language messages C
     language time C
@@ -495,17 +487,17 @@ if has('virtualedit')
     " when characterwise and getregtype(v:register) ==# 'v'.
 
     function! s:paste_characterwise_nicely()
-    let reg = '"' . v:register
-    let virtualedit_enabled =
-    \   has('virtualedit') && &virtualedit =~# '\<all\>\|\<onemore\>'
-    let move_to_last_col =
-    \   (virtualedit_enabled && col('.') >= col('$'))
-    \   ? '$' : ''
-    let paste =
-    \   reg . (getline('.') ==# '' ? 'P' : 'p')
-    return getregtype(v:register) ==# 'v' ?
-    \   move_to_last_col . paste :
-    \   reg . 'p'
+        let reg = '"' . v:register
+        let virtualedit_enabled =
+        \   has('virtualedit') && &virtualedit =~# '\<all\>\|\<onemore\>'
+        let move_to_last_col =
+        \   (virtualedit_enabled && col('.') >= col('$'))
+        \   ? '$' : ''
+        let paste =
+        \   reg . (getline('.') ==# '' ? 'P' : 'p')
+        return getregtype(v:register) ==# 'v' ?
+        \   move_to_last_col . paste :
+        \   reg . 'p'
     endfunction
 
     Map -expr [n] p <SID>paste_characterwise_nicely()
