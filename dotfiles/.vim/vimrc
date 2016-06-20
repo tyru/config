@@ -151,7 +151,7 @@ Map [n] <LocalLeader> <Nop>
 call vivo#plugconf#load()
 
 " TODO: Load only vim-singleton and call it before 'vivo#rtp_append_*()'.
-if vivo#loaded_plugin('vim-singleton')
+if has('clientserver') && vivo#loaded_plugin('vim-singleton')
     call singleton#enable()
 endif
 
@@ -162,8 +162,8 @@ call vivo#helptags()
 " Options {{{
 
 " indent
-set tabstop=4
-set shiftwidth=4
+set tabstop=2
+set shiftwidth=2
 set softtabstop=-1
 set autoindent
 set expandtab
@@ -180,6 +180,7 @@ endif
 set hlsearch
 set incsearch
 set smartcase
+set ignorecase
 
 " Aesthetic options
 set list
@@ -188,6 +189,8 @@ set list
 set listchars=tab:>.,extends:>,precedes:<,trail:-
 set display=lastline
 set t_Co=256
+set number
+set showcmd
 
 " command-line
 set cmdheight=1
@@ -281,7 +284,7 @@ function! s:tabline() "{{{
 
     return s
 endfunction "}}}
-let &tabline = s:tabline()
+" let &tabline = s:tabline()
 
 let &guitablabel = '%{MyTabLabel(v:lnum)}'
 
@@ -310,8 +313,8 @@ augroup vimrc-guioptions
     autocmd!
 augroup END
 if has('vim_starting')
-    command! -nargs=* AutocmdWhenVimStarting    autocmd vimrc-guioptions FocusGained * <args>
-    command! -nargs=* AutocmdWhenVimStartingEnd autocmd vimrc-guioptions FocusGained * autocmd! vimrc-guioptions
+    command! -nargs=* AutocmdWhenVimStarting    autocmd FocusGained vimrc-guioptions * <args>
+    command! -nargs=* AutocmdWhenVimStartingEnd autocmd FocusGained vimrc-guioptions * autocmd! vimrc-guioptions
 else
     command! -nargs=* AutocmdWhenVimStarting    <args>
     command! -nargs=* AutocmdWhenVimStartingEnd :
@@ -413,7 +416,6 @@ set shortmess+=aI
 " set switchbuf=useopen,usetab
 set textwidth=80
 set matchpairs+=<:>
-set number
 
 " }}}
 " ColorScheme {{{
@@ -446,12 +448,6 @@ Map [o] gv :<C-u>normal! gv<CR>
 
 " }}}
 " motion {{{
-" If [count] was specified, use 'j'.
-" Otherwise, use 'gj'.
-Map -expr [nxo] j v:count == 0 ? 'gj' : 'j'
-Map -expr [nxo] k v:count == 0 ? 'gk' : 'k'
-Map [nxo] <orig>j j
-Map [nxo] <orig>k k
 
 " FIXME: Does not work in visual mode.
 Map [n] ]k :<C-u>call search('^\S', 'Ws')<CR>

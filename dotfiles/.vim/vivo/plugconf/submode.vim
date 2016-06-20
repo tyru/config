@@ -55,22 +55,4 @@ function! s:config.config()
     call submode#map       ('tabwalker', 'n', '', 'l', 'gt')
     call submode#map       ('tabwalker', 'n', '', 'H', ':execute "tabmove" tabpagenr() - 2<CR>')
     call submode#map       ('tabwalker', 'n', '', 'L', ':execute "tabmove" tabpagenr()<CR>')
-
-    " FIXME: Weird character is showed.
-    " call submode#enter_with('indent/dedent', 'i', '', '<C-q>', '<C-d>')
-    " call submode#enter_with('indent/dedent', 'i', '', '<C-t>', '<C-t>')
-    " call submode#leave_with('indent/dedent', 'i', '', '<Esc>')
-    " call submode#map       ('indent/dedent', 'i', '', 'h', '<C-d>')
-    " call submode#map       ('indent/dedent', 'i', '', 'l', '<C-t>')
-
-    " Scroll by j and k.
-    " TODO Stash &scroll value.
-    " TODO Make utility function to generate current shortest <SID> map.
-    call submode#enter_with('scroll', 'n', '', 'gj', '<C-d>')
-    call submode#enter_with('scroll', 'n', '', 'gk', '<C-u>')
-    call submode#leave_with('scroll', 'n', '', '<Esc>')
-    call submode#map       ('scroll', 'n', '', 'j', '<C-d>')
-    call submode#map       ('scroll', 'n', '', 'k', '<C-u>')
-    call submode#map       ('scroll', 'n', '', 'a', ':let &l:scroll -= 3<CR>')
-    call submode#map       ('scroll', 'n', '', 's', ':let &l:scroll += 3<CR>')
 endfunction
