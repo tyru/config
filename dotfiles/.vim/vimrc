@@ -7,6 +7,7 @@
 
 
 let s:is_win = has('win16') || has('win32') || has('win64') || has('win95')
+let s:is_msys = has('win32unix') && !has('gui_running')
 if s:is_win
     let $MYVIMDIR = expand('~/vimfiles')
 else
@@ -32,6 +33,15 @@ if !exists('$VIMRC_LOAD_MENU')
 endif
 
 
+" $PATH {{{
+
+if s:is_win || s:is_msys
+  let $PATH = join([$PATH,
+  \ 'C:/msys64/usr/bin'
+  \], (s:is_win ? ';' : ':'))
+endif
+
+" }}}
 " Basic {{{
 
 " Reset all options
@@ -1186,6 +1196,15 @@ augroup vimrc-diff-autocommands
   \     diffoff                               |
   \ endif
 augroup END
+" }}}
+
+" Block cursor in MSYS2 console {{{
+if s:is_msys
+    let &t_ti.="\e[1 q"
+    let &t_SI.="\e[5 q"
+    let &t_EI.="\e[1 q"
+    let &t_te.="\e[0 q"
+endif
 " }}}
 
 " }}}
