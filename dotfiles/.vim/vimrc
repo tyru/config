@@ -94,7 +94,10 @@ endif
 set rtp+=$MYVIMDIR/bundle/vivo.vim
 
 " Fetch managed plugins from remote.
+" TODO: vivo should show the messages
+" echo 'Fetching plugins...'
 call vivo#fetch_all()
+" echom 'Fetching plugins...Done.'
 
 " Add managed plugins to 'runtimepath'.
 " (It won't add disabled plugins)
