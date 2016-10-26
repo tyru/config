@@ -33,15 +33,6 @@ if !exists('$VIMRC_LOAD_MENU')
 endif
 
 
-" $PATH {{{
-
-if s:is_win || s:is_msys
-  let $PATH = join([$PATH,
-  \ 'C:/msys64/usr/bin'
-  \], (s:is_win ? ';' : ':'))
-endif
-
-" }}}
 " Basic {{{
 
 " Reset all options
@@ -65,8 +56,8 @@ endif
 
 filetype plugin indent on
 
-if filereadable(expand('~/.vimrc.local'))
-    execute 'source' expand('~/.vimrc.local')
+if filereadable(expand('$MYVIMDIR/vimrc.local'))
+    execute 'source' expand('$MYVIMDIR/vimrc.local')
 endif
 
 " }}}
