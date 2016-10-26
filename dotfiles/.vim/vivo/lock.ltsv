@@ -11,7 +11,6 @@ active:1	version:2ec28751775ee4f33cdcd6fe5bb93af1573dc6fd	dir:bundle/open-browse
 active:1	version:9a52df9f8b381276e732cf1394e6bd07fc083a56	dir:bundle/caw.vim	name:caw.vim	remote:origin	type:git	url:https://github.com/tyru/caw.vim	branch:master
 active:1	version:e8e5b191b16d9903a933382a19d33a13be1c5257	dir:bundle/current-func-info.vim	name:current-func-info.vim	remote:origin	type:git	url:https://github.com/tyru/current-func-info.vim	branch:master
 active:1	version:422eca71a0c17e543a1aaa6713b903502d7a0354	dir:bundle/unite.vim	name:unite.vim	remote:origin	type:git	url:https://github.com/Shougo/unite.vim	branch:master
-active:1	version:bab3124e3ff52dc70d30fd741ba0b8d718cae4d9	dir:bundle/neomru.vim	name:neomru.vim	remote:origin	type:git	url:https://github.com/Shougo/neomru.vim	branch:master
 active:1	version:1977757ec425408d5dc1dfaa9c0ccb67a5c437bb	dir:bundle/neocomplete.vim	name:neocomplete.vim	remote:origin	type:git	url:https://github.com/Shougo/neocomplete.vim.git	branch:master
 active:1	version:a444952e7bfc1443815dde9ab72a2e2b843e5d20	dir:bundle/neosnippet-snippets	name:neosnippet-snippets	remote:origin	type:git	url:https://github.com/Shougo/neosnippet-snippets.git	branch:master
 active:1	version:da9806f8253a9f889f3a800dd78d8ce3389685d4	dir:bundle/neosnippet.vim	name:neosnippet.vim	remote:origin	type:git	url:https://github.com/Shougo/neosnippet.vim.git	branch:master
@@ -29,3 +28,6 @@ active:1	version:aa075b9b56839e1adb08421d2e9837f90e59acad	dir:bundle/vimproc	nam
 active:1	version:8ec90adc65257115227e8e724a7509efd920b3f6	dir:bundle/quickey.vim	name:quickey.vim	remote:origin	type:git	url:https://github.com/tyru/quickey.vim	branch:master
 active:1	version:88f6e5c42b6c532eabcd5e8c3738c3acc3dce7b5	dir:bundle/vim-lastplace	name:vim-lastplace	remote:origin	type:git	url:https://github.com/dietsche/vim-lastplace	branch:master
 active:1	version:55bb439e5834515e7def35484f9ed08738fb9dc5	dir:bundle/stoptypofile.vim	name:stoptypofile.vim	remote:origin	type:git	url:git@github.com:tyru/stoptypofile.vim.git	branch:master
+active:1	version:e990b81b1db919b2b32ba973e3c4310a2612c0f2	dir:bundle\eskk.vim	name:eskk.vim	remote:origin	type:git	url:https://github.com/tyru/eskk.vim	branch:master
+active:1	version:02a77be704a1df823d2a5aff6da9650eb098e994	dir:bundle\jobby.vim	name:jobby.vim	remote:origin	type:git	url:https://github.com/tyru/jobby.vim	branch:master
+active:1	version:b42c5e6c0a8b784f0dc57f66b44be909ef38c208	dir:bundle\oldfilesearch.vim	name:oldfilesearch.vim	remote:origin	type:git	url:https://github.com/pavoljuhas/oldfilesearch.vim.git	branch:master
