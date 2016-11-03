@@ -1197,6 +1197,142 @@ if s:is_msys
 endif
 " }}}
 
+" winsize submode {{{
+
+if 0
+  " submode.vim compatible interface
+  call stateman#enter_with('winsize', 'n', '', '<C-w>>', '<C-w>>')
+  call stateman#enter_with('winsize', 'n', '', '<C-w><', '<C-w><')
+  call stateman#enter_with('winsize', 'n', '', '<C-w>+', '<C-w>-')
+  call stateman#enter_with('winsize', 'n', '', '<C-w>-', '<C-w>+')
+  call stateman#map('winsize', 'n', '', '>', '<C-w>>')
+  call stateman#map('winsize', 'n', '', '<', '<C-w><')
+  call stateman#map('winsize', 'n', '', '+', '<C-w>-')
+  call stateman#map('winsize', 'n', '', '-', '<C-w>+')
+
+  " Builder interface
+  let s:winsize = stateman#builder('winsize')
+  call s:winsize.enter_with().mode('n').lhs('<C-w>>').rhs('<C-w>>').exec()
+  call s:winsize.enter_with().mode('n').lhs('<C-w><').rhs('<C-w><').exec()
+  call s:winsize.enter_with().mode('n').lhs('<C-w>+').rhs('<C-w>+').exec()
+  call s:winsize.enter_with().mode('n').lhs('<C-w>-').rhs('<C-w>-').exec()
+
+  " More fluent builder interface
+  call s:winsize.enter_with()
+      \.mode('n').lhs('<C-w>>').rhs('<C-w>>').exec()
+      \.mode('n').lhs('<C-w><').rhs('<C-w><').exec()
+      \.mode('n').lhs('<C-w>+').rhs('<C-w>+').exec()
+      \.mode('n').lhs('<C-w>-').rhs('<C-w>-').exec()
+
+  " 'prototype object' is returned by EnterWith.exec() so .exec() finds:
+  " * a left mapping is a normal mode mapping even without ".mode('n')"
+  " * a left mapping's timeout option is off even without ".timeout(0)"
+  call s:winsize.map({'prototype': {'mode': 'n', 'timeout': 0}})
+      \.lhs('>').rhs('<C-w>>').exec()
+      \.lhs('<').rhs('<C-w><').exec()
+      \.lhs('+').rhs('<C-w>+').exec()
+      \.lhs('-').rhs('<C-w>-').exec()
+endif
+
+" * stateman#current() : String
+" * stateman#restore_options() : Unit
+" * stateman#enter_with() : Unit
+" * stateman#leave_with() : Unit
+" * stateman#map() : Unit
+" * stateman#unmap() : Unit
+" * stateman#builder() : Builder
+"
+" * Vital.Mapping.State#enter_with() : Unit
+" * Vital.Mapping.State#leave_with() : Unit
+" * Vital.Mapping.State#map() : Unit
+" * Vital.Mapping.State#unmap() : Unit
+" * Vital.Mapping.State#builder() : Builder
+"
+" * Builder.enter_with() : EnterWith
+"     EnterWith is a MapInfo
+" * Builder.leave_with() : LeaveWith
+"     LeaveWith is a MapInfo
+" * Builder.map() : Mapper
+"     Mapper is a MapInfo
+" * Builder.unmap() : Unmapper
+"     Unmapper is a MapInfo
+"
+" * MapInfo.mode(String) : MapInfo
+" * MapInfo.option(String) : MapInfo
+" * MapInfo.lhs(String) : MapInfo
+" * MapInfo.rhs(String) : MapInfo
+" * MapInfo.exec() : MapInfo
+"
+" * MapInfo.timeout(Bool) : MapInfo
+" * MapInfo.timeoutlen(Number) : MapInfo
+" * MapInfo.showmode(Bool) : MapInfo
+" * MapInfo.inherit(Bool) : MapInfo
+" * MapInfo.keep_leaving_key(Bool) : MapInfo
+" * MapInfo.keyseqs_to_leave(List) : MapInfo
+" * MapInfo.always_show_submode(Bool) : MapInfo
+
+nnoremap <script> <C-w>> <SID>(winsize-init)<SID>(winsize-mode)>
+nnoremap <script> <C-w>< <SID>(winsize-init)<SID>(winsize-mode)<
+nnoremap <script> <C-w>+ <SID>(winsize-init)<SID>(winsize-mode)+
+nnoremap <script> <C-w>- <SID>(winsize-init)<SID>(winsize-mode)-
+nnoremap <script> <SID>(winsize-mode)> <C-w>><SID>(winsize-prompt)<SID>(winsize-mode)
+nnoremap <script> <SID>(winsize-mode)< <C-w><<SID>(winsize-prompt)<SID>(winsize-mode)
+nnoremap <script> <SID>(winsize-mode)+ <C-w>+<SID>(winsize-prompt)<SID>(winsize-mode)
+nnoremap <script> <SID>(winsize-mode)- <C-w>-<SID>(winsize-prompt)<SID>(winsize-mode)
+
+" 初期化処理
+nnoremap <silent> <SID>(winsize-init) :<C-u>call <SID>winsize_init()<CR>
+
+" 終了処理
+" <Esc> を明示的に押された場合のみサブモードを終了
+nnoremap <silent> <SID>(winsize-mode)<Esc> :<C-u>call <SID>winsize_finalize()<CR>
+
+" フォールバック：サブモードで定義していないマッピングが押された場合の処理
+nnoremap <silent> <SID>(winsize-mode)      :<C-u>call <SID>winsize_fallback()<CR>
+
+" プロンプトをコマンドラインに表示
+nnoremap <silent> <SID>(winsize-prompt) :<C-u>call <SID>winsize_prompt()<CR>
+
+function! s:winsize_prompt() abort
+  redraw
+  echohl ModeMsg
+  echo '-- Submode: winsize --'
+  echohl None
+endfunction
+
+" winsize サブモードではタイムアウトなしに設定することにする
+function! s:winsize_init() abort
+  let s:winsize_options = {}
+  let s:winsize_options.timeout = &timeout
+  let &timeout = 0
+  " let s:winsize_options.timeoutlen = &timeoutlen
+  " let &timeoutlen = ...
+endfunction
+
+function! s:winsize_finalize() abort
+  " サブモードで定義されていないマッピングが押された場合はサブモードを抜けた後に実行しない
+  call getchar(0)
+  if exists('s:winsize_options')
+    let &timeout = get(s:winsize_options, 'timeout', &timeout)
+    " let &timeoutlen = get(s:winsize_options, 'timeoutlen', &timeoutlen)
+  endif
+  " プロンプトをクリア
+  echo ' '
+  redraw
+endfunction
+
+" サブモードで定義していないマッピングが押されたら
+" ノーマルモードのマッピングを実行した後サブモードに戻ってくる
+function! s:winsize_fallback() abort
+  call feedkeys("\<SNR>" . s:SID() . "_(winsize-mode)", 'm')
+endfunction
+
+function! s:SID() abort
+  return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
+endfunction
+
+" }}}
+
 " }}}
 " End. {{{
 
