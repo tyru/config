@@ -97,14 +97,10 @@ call vivo#rtp_append_plugins()
 " call vivo#rtp_append_pack()
 filetype plugin indent on
 
-" Import emap.vim & altercmd.vim commands {{{
-" I use those commands also in plugconf.
-" So define those commands before loading plugconf.
-
-" Define :Map commands (TODO: remove emap dependency)
-call emap#load('noprefix')
-call emap#set_sid_from_sfile(expand('<sfile>'))
-
+" Import altercmd.vim commands {{{
+" The following commands are used also in plugconf.
+" If altercmd.vim is not in runtimepath, :MapAlterCommand
+" does not do anything.
 
 " Define :MapAlterCommand commands
 if globpath(&rtp, 'autoload/altercmd.vim') !=# ''
@@ -120,21 +116,22 @@ endif
 
 " Set up general prefix keys. {{{
 
-DefMacroMap [nxo] orig <C-q>
-Map [n] <orig><orig> <orig>
-DefMacroMap [ic] orig <C-g><C-q>
+nmap <Space> <SID>(excmd)
+xmap <Space> <SID>(excmd)
+omap <Space> <SID>(excmd)
 
-DefMacroMap [nxo] excmd <Space>
-DefMacroMap [nxo] operator ;
+nmap ; <SID>(operator)
+xmap ; <SID>(operator)
+omap ; <SID>(operator)
 
 let g:mapleader = ';'
-Map [n] <Leader> <Nop>
+nnoremap <Leader> <Nop>
 
-Map [n] ;; ;
-Map [n] ,, ,
+nnoremap ;; ;
+nnoremap ,, ,
 
 let g:maplocalleader = '\'
-Map [n] <LocalLeader> <Nop>
+nnoremap <LocalLeader> <Nop>
 
 " }}}
 
@@ -250,35 +247,6 @@ function! MyTabLabel(tabnr) "{{{
     endif
     return label . (modified ? '[+]' : '')
 endfunction "}}}
-" FIXME: Doesn't work with two or more than tabpages in CUI mode.
-function! s:tabline() "{{{
-    let s = ''
-    for i in range(tabpagenr('$'))
-        " select the highlighting
-        if i + 1 == tabpagenr()
-            let s .= '%#TabLineSel#'
-        else
-            let s .= '%#TabLine#'
-        endif
-
-        " set the tab page number (for mouse clicks)
-        let s .= '%' . (i + 1) . 'T'
-
-        " the label is made by MyTabLabel()
-        let s .= ' %{MyTabLabel(' . (i + 1) . ')} '
-    endfor
-
-    " after the last tab fill with TabLineFill and reset tab page nr
-    let s .= '%#TabLineFill#%T'
-
-    " right-align the label to close the current tab page
-    if tabpagenr('$') > 1
-        let s .= '%=%#TabLine#%999XX'
-    endif
-
-    return s
-endfunction "}}}
-" let &tabline = s:tabline()
 
 let &guitablabel = '%{MyTabLabel(v:lnum)}'
 
@@ -427,122 +395,148 @@ highlight ColorColumn ctermfg=12 guifg=Red ctermbg=NONE guibg=NONE
 " operator {{{
 
 " Copy to clipboard or primary.
-Map [nxo] <operator>y     "+y
-Map [nxo] <operator>Y     "*y
+nnoremap <SID>(operator)y "+y
+xnoremap <SID>(operator)y "+y
+onoremap <SID>(operator)y "+y
+nnoremap <SID>(operator)Y "*y
+xnoremap <SID>(operator)Y "*y
+onoremap <SID>(operator)Y "*y
 
 " Do not destroy noname register.
-Map [nxo] x "_x
+nnoremap x "_x
+xnoremap x "_x
+onoremap x "_x
 
-Map [nxo] <operator>e =
+nnoremap <SID>(operator)e =
+xnoremap <SID>(operator)e =
+onoremap <SID>(operator)e =
 
 " }}}
 " textobj {{{
 
-Map [o] gv :<C-u>normal! gv<CR>
+onoremap gv :<C-u>normal! gv<CR>
 
 " }}}
 " motion {{{
 
 " FIXME: Does not work in visual mode.
-Map [n] ]k :<C-u>call search('^\S', 'Ws')<CR>
-Map [n] [k :<C-u>call search('^\S', 'Wsb')<CR>
+nnoremap ]k :<C-u>call search('^\S', 'Ws')<CR>
+nnoremap [k :<C-u>call search('^\S', 'Wsb')<CR>
 
-Map [nxo] gp %
+nnoremap gp %
+xnoremap gp %
+onoremap gp %
 
 " }}}
 
-Map [nxo] H ^
-Map [nxo] L $
+nnoremap H ^
+xnoremap H ^
+onoremap H ^
+nnoremap L $
+xnoremap L $
+onoremap L $
 
 " http://itchyny.hatenablog.com/entry/2016/02/02/210000
-Map -expr [nxo] <C-b> max([winheight(0) - 2, 1]) . "\<C-u>" . (line('.') < 1         + winheight(0) ? 'H' : 'L')
-Map -expr [nxo] <C-f> max([winheight(0) - 2, 1]) . "\<C-d>" . (line('.') > line('$') - winheight(0) ? 'L' : 'H')
-Map -expr [nxo] <C-y> (line('w0') <= 1         ? 'k' : "\<C-y>")
-Map -expr [nxo] <C-e> (line('w$') >= line('$') ? 'j' : "\<C-e>")
+nnoremap <expr> <C-b> max([winheight(0) - 2, 1]) . "\<C-u>" . (line('.') < 1         + winheight(0) ? 'H' : 'L')
+xnoremap <expr> <C-b> max([winheight(0) - 2, 1]) . "\<C-u>" . (line('.') < 1         + winheight(0) ? 'H' : 'L')
+onoremap <expr> <C-b> max([winheight(0) - 2, 1]) . "\<C-u>" . (line('.') < 1         + winheight(0) ? 'H' : 'L')
+
+nnoremap <expr> <C-f> max([winheight(0) - 2, 1]) . "\<C-d>" . (line('.') > line('$') - winheight(0) ? 'L' : 'H')
+xnoremap <expr> <C-f> max([winheight(0) - 2, 1]) . "\<C-d>" . (line('.') > line('$') - winheight(0) ? 'L' : 'H')
+onoremap <expr> <C-f> max([winheight(0) - 2, 1]) . "\<C-d>" . (line('.') > line('$') - winheight(0) ? 'L' : 'H')
+
+nnoremap <expr> <C-y> (line('w0') <= 1         ? 'k' : "\<C-y>")
+xnoremap <expr> <C-y> (line('w0') <= 1         ? 'k' : "\<C-y>")
+onoremap <expr> <C-y> (line('w0') <= 1         ? 'k' : "\<C-y>")
+
+nnoremap <expr> <C-e> (line('w$') >= line('$') ? 'j' : "\<C-e>")
+xnoremap <expr> <C-e> (line('w$') >= line('$') ? 'j' : "\<C-e>")
+onoremap <expr> <C-e> (line('w$') >= line('$') ? 'j' : "\<C-e>")
 
 " }}}
 " nmap {{{
 
-DefMacroMap [nxo] fold z
+nmap z <SID>(fold)
+xmap z <SID>(fold)
+omap z <SID>(fold)
 
 " Open only current line's fold.
-Map [n] <fold><Space> zMzvzz
+nnoremap <SID>(fold)<Space> zMzvzz
 
 " Folding mappings easy to remember.
-Map [n] <fold>l zo
-Map [n] <fold>h zc
+nnoremap <SID>(fold)l zo
+nnoremap <SID>(fold)h zc
 
 " +virtualedit
 if has('virtualedit')
-    Map -expr [n] i col('$') is col('.') ? 'A' : 'i'
-    Map -expr [n] a col('$') is col('.') ? 'A' : 'a'
-    Map       [n] <orig>i i
-    Map       [n] <orig>a a
+  nnoremap <expr> i col('$') is col('.') ? 'A' : 'i'
+  nnoremap <expr> a col('$') is col('.') ? 'A' : 'a'
 
-    " Back to col '$' when current col is right of col '$'. {{{
-    "
-    " 1. move to the last col
-    " when over the last col ('virtualedit') and getregtype(v:register) ==# 'v'.
-    " 2. do not insert " " before inserted text
-    " when characterwise and getregtype(v:register) ==# 'v'.
+  " Back to col '$' when current col is right of col '$'. {{{
+  "
+  " 1. move to the last col
+  " when over the last col ('virtualedit') and getregtype(v:register) ==# 'v'.
+  " 2. do not insert " " before inserted text
+  " when characterwise and getregtype(v:register) ==# 'v'.
 
-    function! s:paste_characterwise_nicely()
-        let reg = '"' . v:register
-        let virtualedit_enabled =
-        \   has('virtualedit') && &virtualedit =~# '\<all\>\|\<onemore\>'
-        let move_to_last_col =
-        \   (virtualedit_enabled && col('.') >= col('$'))
-        \   ? '$' : ''
-        let paste =
-        \   reg . (getline('.') ==# '' ? 'P' : 'p')
-        return getregtype(v:register) ==# 'v' ?
-        \   move_to_last_col . paste :
-        \   reg . 'p'
-    endfunction
+  function! s:paste_characterwise_nicely()
+    let reg = '"' . v:register
+    let virtualedit_enabled =
+    \   has('virtualedit') && &virtualedit =~# '\<all\>\|\<onemore\>'
+    let move_to_last_col =
+    \   (virtualedit_enabled && col('.') >= col('$'))
+    \   ? '$' : ''
+    let paste =
+    \   reg . (getline('.') ==# '' ? 'P' : 'p')
+    return getregtype(v:register) ==# 'v' ?
+    \   move_to_last_col . paste :
+    \   reg . 'p'
+  endfunction
 
-    Map -expr [n] p <SID>paste_characterwise_nicely()
-    " }}}
+  nnoremap <expr> p <SID>paste_characterwise_nicely()
+  " }}}
 endif
 
-Map [n] <excmd>me :<C-u>messages<CR>
-Map [n] <excmd>di :<C-u>display<CR>
+nnoremap <SID>(excmd)me :<C-u>messages<CR>
+nnoremap <SID>(excmd)di :<C-u>display<CR>
 
-Map [n] gl :<C-u>cnext<CR>
-Map [n] gh :<C-u>cNext<CR>
+nnoremap gl :<C-u>cnext<CR>
+nnoremap gh :<C-u>cNext<CR>
 
-Map [n] <excmd>ct :<C-u>tabclose<CR>
+nnoremap <SID>(excmd)ct :<C-u>tabclose<CR>
 
-Map [n] <excmd>tl :<C-u>tabedit<CR>
-Map [n] <excmd>th :<C-u>tabedit<CR>:execute 'tabmove' (tabpagenr() isnot 1 ? tabpagenr() - 2 : '')<CR>
+nnoremap <SID>(excmd)tl :<C-u>tabedit<CR>
+nnoremap <SID>(excmd)th :<C-u>tabedit<CR>:execute 'tabmove' (tabpagenr() isnot 1 ? tabpagenr() - 2 : '')<CR>
 
 if has('gui_running')
-    Map -script [i] <C-s> <SID>(gui-save)<Esc>
-    Map -script [n] <C-s> <SID>(gui-save)
-    Map -script [i] <SID>(gui-save) <C-o><SID>(gui-save)
-    Map         [n] <SID>(gui-save) :<C-u>call <SID>gui_save()<CR>
-    function! s:gui_save()
-        if bufname('%') ==# ''
-            browse confirm saveas
-        else
-            update
-        endif
-    endfunction
+  inoremap <script> <C-s> <SID>(gui-save)<Esc>
+  nnoremap <script> <C-s> <SID>(gui-save)
+  inoremap <script> <SID>(gui-save) <C-o><SID>(gui-save)
+  nnoremap          <SID>(gui-save) :<C-u>call <SID>gui_save()<CR>
+
+  function! s:gui_save()
+    if bufname('%') ==# ''
+      browse confirm saveas
+    else
+      update
+    endif
+  endfunction
 endif
 
 
 " See also rooter.vim settings.
-Map [n] ,cd       :<C-u>cd %:p:h<CR>
+nnoremap ,cd       :<C-u>cd %:p:h<CR>
 
 " 'Y' to yank till the end of line.
-Map [n] Y    y$
+nnoremap Y    y$
 
 " Moving tabs
-Map -silent [n] <Left>    :<C-u>-tabmove<CR>
-Map -silent [n] <Right>   :<C-u>+tabmove<CR>
+nnoremap <silent> <Left>    :<C-u>-tabmove<CR>
+nnoremap <silent> <Right>   :<C-u>+tabmove<CR>
 
 " Execute most used command quickly {{{
-Map [n] <excmd>w      :<C-u>update<CR>
-Map -silent [n] <excmd>q      :<C-u>call <SID>vim_never_die_close()<CR>
+nnoremap <SID>(excmd)w      :<C-u>update<CR>
+nnoremap <silent> <SID>(excmd)q      :<C-u>call <SID>vim_never_die_close()<CR>
 
 function! s:vim_never_die_close()
     try
@@ -556,7 +550,7 @@ endfunction
 " }}}
 
 " Edit/Apply .vimrc quickly
-Map [n] <excmd>ev     :<C-u>edit $MYVIMRC<CR>
+nnoremap <SID>(excmd)ev     :<C-u>edit $MYVIMRC<CR>
 
 " Cmdwin {{{
 set cedit=<C-l>
@@ -596,37 +590,37 @@ function! s:toggle_winfix()
     endif
 endfunction
 
-Map [n] <excmd>oh  :<C-u>setlocal hlsearch! hlsearch?<CR>
-Map [n] <excmd>oi  :<C-u>setlocal ignorecase! ignorecase?<CR>
-Map [n] <excmd>op  :<C-u>setlocal paste! paste?<CR>
-Map [n] <excmd>ow  :<C-u>setlocal wrap! wrap?<CR>
-Map [n] <excmd>oe  :<C-u>setlocal expandtab! expandtab?<CR>
-Map [n] <excmd>ol  :<C-u>setlocal list! list?<CR>
-Map [n] <excmd>on  :<C-u>setlocal number! number?<CR>
-Map [n] <excmd>om  :<C-u>setlocal modeline! modeline?<CR>
-Map [n] <excmd>ot  :<C-u>execute 'silent call <SID>toggle_option_list([2, 4, 8], "tabstop")' <Bar>
+nnoremap <SID>(excmd)oh  :<C-u>setlocal hlsearch! hlsearch?<CR>
+nnoremap <SID>(excmd)oi  :<C-u>setlocal ignorecase! ignorecase?<CR>
+nnoremap <SID>(excmd)op  :<C-u>setlocal paste! paste?<CR>
+nnoremap <SID>(excmd)ow  :<C-u>setlocal wrap! wrap?<CR>
+nnoremap <SID>(excmd)oe  :<C-u>setlocal expandtab! expandtab?<CR>
+nnoremap <SID>(excmd)ol  :<C-u>setlocal list! list?<CR>
+nnoremap <SID>(excmd)on  :<C-u>setlocal number! number?<CR>
+nnoremap <SID>(excmd)om  :<C-u>setlocal modeline! modeline?<CR>
+nnoremap <SID>(excmd)ot  :<C-u>execute 'silent call <SID>toggle_option_list([2, 4, 8], "tabstop")' <Bar>
 \                       let &l:shiftwidth = &l:tabstop <Bar>
 \                       redraw <Bar>
 \                       echo 'tabstop=' . &tabstop . ' shiftwidth=' . &shiftwidth<CR>
-Map [n] <excmd>ofc :<C-u>call <SID>toggle_option_list(['', 'all'], 'foldclose')<CR>
-Map [n] <excmd>ofm :<C-u>call <SID>toggle_option_list(['manual', 'marker', 'indent'], 'foldmethod')<CR>
-Map [n] <excmd>ofw :<C-u>call <SID>toggle_winfix()<CR>
+nnoremap <SID>(excmd)ofc :<C-u>call <SID>toggle_option_list(['', 'all'], 'foldclose')<CR>
+nnoremap <SID>(excmd)ofm :<C-u>call <SID>toggle_option_list(['manual', 'marker', 'indent'], 'foldmethod')<CR>
+nnoremap <SID>(excmd)ofw :<C-u>call <SID>toggle_winfix()<CR>
 
 " }}}
 " <Space>[hjkl] for <C-w>[hjkl] {{{
-Map -silent [n] <Space>j <C-w>j
-Map -silent [n] <Space>k <C-w>k
-Map -silent [n] <Space>h <C-w>h
-Map -silent [n] <Space>l <C-w>l
+nnoremap <silent> <Space>j <C-w>j
+nnoremap <silent> <Space>k <C-w>k
+nnoremap <silent> <Space>h <C-w>h
+nnoremap <silent> <Space>l <C-w>l
 " }}}
 " Moving between tabs {{{
-Map -silent [n] <C-n> gt
-Map -silent [n] <C-p> gT
+nnoremap <silent> <C-n> gt
+nnoremap <silent> <C-p> gT
 " }}}
 " "Use one tabpage per project" project {{{
 " :SetTabName - Set tab's title {{{
 
-Map -silent [n] g<C-t> :<C-u>SetTabName<CR>
+nnoremap <silent> g<C-t> :<C-u>SetTabName<CR>
 command! -bar -nargs=* SetTabName call s:cmd_set_tab_name(<q-args>)
 function! s:cmd_set_tab_name(name) "{{{
     let old_title = exists('t:title') ? t:title : ''
@@ -647,7 +641,7 @@ endfunction "}}}
 " }}}
 " vmap {{{
 
-Map -silent [x] y y:<C-u>call <SID>remove_trailing_spaces_blockwise()<CR>
+xnoremap <silent> y y:<C-u>call <SID>remove_trailing_spaces_blockwise()<CR>
 
 function! s:remove_trailing_spaces_blockwise()
     let regname = v:register
@@ -667,13 +661,13 @@ endfunction
 
 " Tab key indent
 " NOTE: <S-Tab> is GUI only.
-Map [x] <Tab> >gv
-Map [x] <S-Tab> <gv
+xnoremap <Tab> >gv
+xnoremap <S-Tab> <gv
 
 " Space key indent (inspired by sakura editor)
-Map [x] <Space><Space> <Esc>:call <SID>space_indent(0)<CR>gv
-Map [x] <Space><BS> <Esc>:call <SID>space_indent(1)<CR>gv
-Map -remap [x] <Space><S-Space> <Space><BS>
+xnoremap <Space><Space> <Esc>:call <SID>space_indent(0)<CR>gv
+xnoremap <Space><BS> <Esc>:call <SID>space_indent(1)<CR>gv
+xmap <Space><S-Space> <Space><BS>
 
 function! s:space_indent(leftward)
     let save = [&l:expandtab, &l:shiftwidth]
@@ -684,50 +678,53 @@ endfunction
 
 " }}}
 " map! {{{
-Map [ic] <C-f> <Right>
-Map -expr [i] <C-b> col('.') ==# 1 ? "\<C-o>k\<End>" : "\<Left>"
-Map [c] <C-b> <Left>
-Map [ic] <C-a> <Home>
-Map [ic] <C-e> <End>
-Map [i] <C-d> <Del>
-Map -expr [c] <C-d> getcmdpos()-1<len(getcmdline()) ? "\<Del>" : ""
+inoremap <C-f> <Right>
+cnoremap <C-f> <Right>
+inoremap <expr> <C-b> col('.') ==# 1 ? "\<C-o>k\<End>" : "\<Left>"
+cnoremap <C-b> <Left>
+inoremap <C-a> <Home>
+cnoremap <C-a> <Home>
+inoremap <C-e> <End>
+cnoremap <C-e> <End>
+inoremap <C-d> <Del>
+cnoremap <expr> <C-d> getcmdpos()-1<len(getcmdline()) ? "\<Del>" : ""
 " Emacs like kill-line.
-Map -expr [i] <C-k> "\<C-g>u".(col('.') == col('$') ? '<C-o>gJ' : '<C-o>D')
-Map [c] <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
+inoremap <expr> <C-k> "\<C-g>u".(col('.') == col('$') ? '<C-o>gJ' : '<C-o>D')
+cnoremap        <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 
 " }}}
 " imap {{{
 
 " make <C-w> and <C-u> undoable.
 " NOTE: <C-u> may be already mapped by $VIMRUNTIME/vimrc_example.vim
-Map [i] <C-w> <C-g>u<C-w>
-Map -force [i] <C-u> <C-g>u<C-u>
+inoremap <C-w> <C-g>u<C-w>
+inoremap <C-u> <C-g>u<C-u>
 
 " completion {{{
 
-DefMacroMap [i] compl <C-l>
+imap <C-l> <SID>(compl)
 
-Map [i] <compl><C-n> <C-x><C-n>
-Map [i] <compl><C-p> <C-x><C-p>
-Map [i] <compl><C-]> <C-x><C-]>
-Map [i] <compl><C-d> <C-x><C-d>
-Map [i] <compl><C-f> <C-x><C-f>
-Map [i] <compl><C-i> <C-x><C-i>
-Map [i] <compl><C-k> <C-x><C-k>
-Map [i] <compl><C-l> <C-x><C-l>
-Map [i] <compl><C-s> <C-x><C-s>
-Map [i] <compl><C-t> <C-x><C-t>
+inoremap <SID>(compl)<C-n> <C-x><C-n>
+inoremap <SID>(compl)<C-p> <C-x><C-p>
+inoremap <SID>(compl)<C-]> <C-x><C-]>
+inoremap <SID>(compl)<C-d> <C-x><C-d>
+inoremap <SID>(compl)<C-f> <C-x><C-f>
+inoremap <SID>(compl)<C-i> <C-x><C-i>
+inoremap <SID>(compl)<C-k> <C-x><C-k>
+inoremap <SID>(compl)<C-l> <C-x><C-l>
+inoremap <SID>(compl)<C-s> <C-x><C-s>
+inoremap <SID>(compl)<C-t> <C-x><C-t>
 
 " }}}
 " }}}
 " cmap {{{
 if &wildmenu
-    Map -force [c] <C-f> <Space><BS><Right>
-    Map -force [c] <C-b> <Space><BS><Left>
+    cnoremap <C-f> <Space><BS><Right>
+    cnoremap <C-b> <Space><BS><Left>
 endif
 
-Map [c] <C-n> <Down>
-Map [c] <C-p> <Up>
+cnoremap <C-n> <Down>
+cnoremap <C-p> <Up>
 
 " }}}
 " abbr {{{
@@ -745,16 +742,19 @@ MapAlterCommand qw     wq
 
 " Centering display position after certain commands {{{
 
-Map [nx] <SID>(centering-display) zvzz
+nnoremap <SID>(centering-display) zvzz
+xnoremap <SID>(centering-display) zvzz
 
-Map -script [n] * *<SID>(centering-display)
-Map -script [n] # #<SID>(centering-display)
+nnoremap <script> * *<SID>(centering-display)
+nnoremap <script> # #<SID>(centering-display)
 
-Map -script [n] gd gd<SID>(centering-display)
-Map -script [n] gD gD<SID>(centering-display)
+nnoremap <script> gd gd<SID>(centering-display)
+nnoremap <script> gD gD<SID>(centering-display)
 
-Map -remap [nx] n n<SID>(centering-display)
-Map -remap [nx] N N<SID>(centering-display)
+nmap n n<SID>(centering-display)
+xmap n n<SID>(centering-display)
+nmap N N<SID>(centering-display)
+xmap N N<SID>(centering-display)
 
 " }}}
 
@@ -882,7 +882,7 @@ command!
 " :Ctags {{{
 MapAlterCommand ctags Ctags
 
-Map [n] <C-]> :<C-u>call <SID>tagjump()<CR>
+nnoremap <C-]> :<C-u>call <SID>tagjump()<CR>
 
 function! s:tagjump() abort
     try
@@ -995,10 +995,10 @@ function! s:scrollbind_specific_mappings(enable)
     if a:enable
         " Check either buffer-local those mappings are mapped already or not.
         if get(maparg('<C-e>', 'n', 0, 1), 'buffer', 0)
-            Map -buffer [n] <C-e> :<C-u>call <SID>no_scrollbind('<C-e>')<CR>
+            nnoremap <buffer> <C-e> :<C-u>call <SID>no_scrollbind('<C-e>')<CR>
         endif
         if get(maparg('<C-y>', 'n', 0, 1), 'buffer', 0)
-            Map -buffer [n] <C-y> :<C-u>call <SID>no_scrollbind('<C-y>')<CR>
+            nnoremap <buffer> <C-y> :<C-u>call <SID>no_scrollbind('<C-y>')<CR>
         endif
     else
         " Check either those mappings are above one or not.
@@ -1169,7 +1169,7 @@ endif
 
 " Make <M-Space> same as ordinal applications on MS Windows {{{
 if has('gui_running') && s:is_win
-    Map [n] <M-Space> :<C-u>simalt ~<CR>
+    nnoremap <M-Space> :<C-u>simalt ~<CR>
 endif
 " }}}
 
