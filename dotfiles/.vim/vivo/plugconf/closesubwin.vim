@@ -7,11 +7,11 @@ let s:closesubwin = vivo#plugconf#new()
 
 " Configuration for closesubwin.
 function! s:closesubwin.config()
-    Map -remap [n] <excmd>ch <Plug>(closesubwin-close-help)
-    Map -remap [n] <excmd>cq <Plug>(closesubwin-close-quickfix)
-    Map -remap [n] <excmd>cu <Plug>(closesubwin-close-unlisted)
+    nmap <Plug>(vimrc:prefix:excmd)ch <Plug>(closesubwin-close-help)
+    nmap <Plug>(vimrc:prefix:excmd)cq <Plug>(closesubwin-close-quickfix)
+    nmap <Plug>(vimrc:prefix:excmd)cu <Plug>(closesubwin-close-unlisted)
     " Close first matching window in above windows.
-    Map -remap [n] <excmd>cc <Plug>(closesubwin-close-sub)
+    nmap <Plug>(vimrc:prefix:excmd)cc <Plug>(closesubwin-close-sub)
 endfunction
 
 " Plugin dependencies for closesubwin.

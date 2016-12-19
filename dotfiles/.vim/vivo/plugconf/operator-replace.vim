@@ -1,6 +1,7 @@
 let s:config = vivo#plugconf#new()
 
 function! s:config.config()
-    Map -remap [nxo] <operator>p  <Plug>(operator-replace)
-    " Map -remap [xo] p <Plug>(operator-replace)
+  nmap <Plug>(vimrc:prefix:operator)p <Plug>(operator-replace)
+  xmap <Plug>(vimrc:prefix:operator)p <Plug>(operator-replace)
+  omap <Plug>(vimrc:prefix:operator)p <Plug>(operator-replace)
 endfunction

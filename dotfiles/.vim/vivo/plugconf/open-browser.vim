@@ -2,9 +2,13 @@ let s:config = vivo#plugconf#new()
 
 function! s:config.config()
     let g:netrw_nogx = 1
-    Map -remap [nx] gx <Plug>(openbrowser-smart-search)
-    Map -remap [nx] goo <Plug>(openbrowser-open)
-    Map -remap [nx] gos <Plug>(openbrowser-search)
+    nmap gx <Plug>(openbrowser-smart-search)
+    xmap gx <Plug>(openbrowser-smart-search)
+    nmap goo <Plug>(openbrowser-open)
+    xmap goo <Plug>(openbrowser-open)
+    nmap gos <Plug>(openbrowser-search)
+    xmap gos <Plug>(openbrowser-search)
+
     MapAlterCommand o[pen] OpenBrowserSmartSearch
     " MapAlterCommand alc OpenBrowserSmartSearch -alc
 

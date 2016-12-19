@@ -1,13 +1,14 @@
 let s:config = vivo#plugconf#new()
 
 function! s:config.config()
-    DefMacroMap [n] anything s
+  nnoremap s <SID>(anything)
+  nnoremap <SID>(anything) <Nop>
 
-    Map [n] <anything>f        :<C-u>Ku file<CR>
-    Map [n] <anything>h        :<C-u>Ku file/mru<CR>
-    Map [n] <anything>H        :<C-u>Ku history<CR>
-    Map [n] <anything>:        :<C-u>Ku cmd_mru/cmd<CR>
-    Map [n] <anything>/        :<C-u>Ku cmd_mru/search<CR>
+  nmap <SID>(anything)f :<C-u>Ku file<CR>
+  nmap <SID>(anything)h :<C-u>Ku file/mru<CR>
+  nmap <SID>(anything)H :<C-u>Ku history<CR>
+  nmap <SID>(anything): :<C-u>Ku cmd_mru/cmd<CR>
+  nmap <SID>(anything)/ :<C-u>Ku cmd_mru/search<CR>
 
-    MapAlterCommand ku Ku
+  MapAlterCommand ku Ku
 endfunction

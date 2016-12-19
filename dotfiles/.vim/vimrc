@@ -5,6 +5,9 @@
 
 " See also: ~/.vimrc or ~/_vimrc
 
+if filereadable(expand('$VIMRUNTIME/defaults.vim'))
+  source $VIMRUNTIME/defaults.vim
+endif
 
 let s:is_win = has('win16') || has('win32') || has('win64') || has('win95')
 let s:is_msys = has('win32unix') && !has('gui_running')
@@ -116,13 +119,21 @@ endif
 
 " Set up general prefix keys. {{{
 
-nmap <Space> <SID>(excmd)
-xmap <Space> <SID>(excmd)
-omap <Space> <SID>(excmd)
+nmap <Space> <Plug>(vimrc:prefix:excmd)
+xmap <Space> <Plug>(vimrc:prefix:excmd)
+omap <Space> <Plug>(vimrc:prefix:excmd)
+" fallback
+nnoremap <Plug>(vimrc:prefix:excmd) <Space>
+xnoremap <Plug>(vimrc:prefix:excmd) <Space>
+onoremap <Plug>(vimrc:prefix:excmd) <Space>
 
-nmap ; <SID>(operator)
-xmap ; <SID>(operator)
-omap ; <SID>(operator)
+nmap ; <Plug>(vimrc:prefix:operator)
+xmap ; <Plug>(vimrc:prefix:operator)
+omap ; <Plug>(vimrc:prefix:operator)
+" fallback
+nnoremap <Plug>(vimrc:prefix:operator) ;
+xnoremap <Plug>(vimrc:prefix:operator) ;
+onoremap <Plug>(vimrc:prefix:operator) ;
 
 let g:mapleader = ';'
 nnoremap <Leader> <Nop>
@@ -163,8 +174,8 @@ set copyindent
 set preserveindent
 if exists('+breakindent')
     set breakindent
-    " set breakindentopt=sbr
-    set showbreak=...
+    set breakindentopt=sbr
+    set showbreak=<
 endif
 
 " search
@@ -256,17 +267,13 @@ function! s:statusline() "{{{
     let s = '[%f]%( [%M%R%H%W]%)%( [%{&ft}]%) %{&fenc}/%{&ff}'
     let s .= '%('
 
-    let s .= '%( %{GetDocumentPosition()}%)'
+    let s .= '%( %{line(".")}/%{line("$")}%)'
 
     let s .= '%)'
 
     return s
 endfunction "}}}
 let &statusline = s:statusline()
-
-function! GetDocumentPosition()
-    return float2nr(str2float(line('.')) / str2float(line('$')) * 100) . "%"
-endfunction
 
 " 'guioptions' flags are set on FocusGained
 " because "cmd.exe start /min" doesn't work.
@@ -395,21 +402,21 @@ highlight ColorColumn ctermfg=12 guifg=Red ctermbg=NONE guibg=NONE
 " operator {{{
 
 " Copy to clipboard or primary.
-nnoremap <SID>(operator)y "+y
-xnoremap <SID>(operator)y "+y
-onoremap <SID>(operator)y "+y
-nnoremap <SID>(operator)Y "*y
-xnoremap <SID>(operator)Y "*y
-onoremap <SID>(operator)Y "*y
+nnoremap <Plug>(vimrc:prefix:operator)y "+y
+xnoremap <Plug>(vimrc:prefix:operator)y "+y
+onoremap <Plug>(vimrc:prefix:operator)y "+y
+nnoremap <Plug>(vimrc:prefix:operator)Y "*y
+xnoremap <Plug>(vimrc:prefix:operator)Y "*y
+onoremap <Plug>(vimrc:prefix:operator)Y "*y
 
 " Do not destroy noname register.
 nnoremap x "_x
 xnoremap x "_x
 onoremap x "_x
 
-nnoremap <SID>(operator)e =
-xnoremap <SID>(operator)e =
-onoremap <SID>(operator)e =
+nnoremap <Plug>(vimrc:prefix:operator)e =
+xnoremap <Plug>(vimrc:prefix:operator)e =
+onoremap <Plug>(vimrc:prefix:operator)e =
 
 " }}}
 " textobj {{{
@@ -456,16 +463,20 @@ onoremap <expr> <C-e> (line('w$') >= line('$') ? 'j' : "\<C-e>")
 " }}}
 " nmap {{{
 
-nmap z <SID>(fold)
-xmap z <SID>(fold)
-omap z <SID>(fold)
+nmap z <Plug>(vimrc:prefix:fold)
+xmap z <Plug>(vimrc:prefix:fold)
+omap z <Plug>(vimrc:prefix:fold)
+" fallback
+nnoremap <Plug>(vimrc:prefix:fold) z
+xnoremap <Plug>(vimrc:prefix:fold) z
+onoremap <Plug>(vimrc:prefix:fold) z
 
 " Open only current line's fold.
-nnoremap <SID>(fold)<Space> zMzvzz
+nnoremap <Plug>(vimrc:prefix:fold)<Space> zMzvzz
 
 " Folding mappings easy to remember.
-nnoremap <SID>(fold)l zo
-nnoremap <SID>(fold)h zc
+nnoremap <Plug>(vimrc:prefix:fold)l zo
+nnoremap <Plug>(vimrc:prefix:fold)h zc
 
 " +virtualedit
 if has('virtualedit')
@@ -497,16 +508,16 @@ if has('virtualedit')
   " }}}
 endif
 
-nnoremap <SID>(excmd)me :<C-u>messages<CR>
-nnoremap <SID>(excmd)di :<C-u>display<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)me :<C-u>messages<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)di :<C-u>display<CR>
 
 nnoremap gl :<C-u>cnext<CR>
 nnoremap gh :<C-u>cNext<CR>
 
-nnoremap <SID>(excmd)ct :<C-u>tabclose<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)ct :<C-u>tabclose<CR>
 
-nnoremap <SID>(excmd)tl :<C-u>tabedit<CR>
-nnoremap <SID>(excmd)th :<C-u>tabedit<CR>:execute 'tabmove' (tabpagenr() isnot 1 ? tabpagenr() - 2 : '')<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)tl :<C-u>tabedit<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)th :<C-u>tabedit<CR>:execute 'tabmove' (tabpagenr() isnot 1 ? tabpagenr() - 2 : '')<CR>
 
 if has('gui_running')
   inoremap <script> <C-s> <SID>(gui-save)<Esc>
@@ -535,8 +546,8 @@ nnoremap <silent> <Left>    :<C-u>-tabmove<CR>
 nnoremap <silent> <Right>   :<C-u>+tabmove<CR>
 
 " Execute most used command quickly {{{
-nnoremap <SID>(excmd)w      :<C-u>update<CR>
-nnoremap <silent> <SID>(excmd)q      :<C-u>call <SID>vim_never_die_close()<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)w      :<C-u>update<CR>
+nnoremap <silent> <Plug>(vimrc:prefix:excmd)q      :<C-u>call <SID>vim_never_die_close()<CR>
 
 function! s:vim_never_die_close()
     try
@@ -550,7 +561,7 @@ endfunction
 " }}}
 
 " Edit/Apply .vimrc quickly
-nnoremap <SID>(excmd)ev     :<C-u>edit $MYVIMRC<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)ev     :<C-u>edit $MYVIMRC<CR>
 
 " Cmdwin {{{
 set cedit=<C-l>
@@ -590,21 +601,21 @@ function! s:toggle_winfix()
     endif
 endfunction
 
-nnoremap <SID>(excmd)oh  :<C-u>setlocal hlsearch! hlsearch?<CR>
-nnoremap <SID>(excmd)oi  :<C-u>setlocal ignorecase! ignorecase?<CR>
-nnoremap <SID>(excmd)op  :<C-u>setlocal paste! paste?<CR>
-nnoremap <SID>(excmd)ow  :<C-u>setlocal wrap! wrap?<CR>
-nnoremap <SID>(excmd)oe  :<C-u>setlocal expandtab! expandtab?<CR>
-nnoremap <SID>(excmd)ol  :<C-u>setlocal list! list?<CR>
-nnoremap <SID>(excmd)on  :<C-u>setlocal number! number?<CR>
-nnoremap <SID>(excmd)om  :<C-u>setlocal modeline! modeline?<CR>
-nnoremap <SID>(excmd)ot  :<C-u>execute 'silent call <SID>toggle_option_list([2, 4, 8], "tabstop")' <Bar>
+nnoremap <Plug>(vimrc:prefix:excmd)oh  :<C-u>setlocal hlsearch! hlsearch?<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)oi  :<C-u>setlocal ignorecase! ignorecase?<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)op  :<C-u>setlocal paste! paste?<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)ow  :<C-u>setlocal wrap! wrap?<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)oe  :<C-u>setlocal expandtab! expandtab?<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)ol  :<C-u>setlocal list! list?<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)on  :<C-u>setlocal number! number?<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)om  :<C-u>setlocal modeline! modeline?<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)ot  :<C-u>execute 'silent call <SID>toggle_option_list([2, 4, 8], "tabstop")' <Bar>
 \                       let &l:shiftwidth = &l:tabstop <Bar>
 \                       redraw <Bar>
 \                       echo 'tabstop=' . &tabstop . ' shiftwidth=' . &shiftwidth<CR>
-nnoremap <SID>(excmd)ofc :<C-u>call <SID>toggle_option_list(['', 'all'], 'foldclose')<CR>
-nnoremap <SID>(excmd)ofm :<C-u>call <SID>toggle_option_list(['manual', 'marker', 'indent'], 'foldmethod')<CR>
-nnoremap <SID>(excmd)ofw :<C-u>call <SID>toggle_winfix()<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)ofc :<C-u>call <SID>toggle_option_list(['', 'all'], 'foldclose')<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)ofm :<C-u>call <SID>toggle_option_list(['manual', 'marker', 'indent'], 'foldmethod')<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)ofw :<C-u>call <SID>toggle_winfix()<CR>
 
 " }}}
 " <Space>[hjkl] for <C-w>[hjkl] {{{
@@ -702,18 +713,20 @@ inoremap <C-u> <C-g>u<C-u>
 
 " completion {{{
 
-imap <C-l> <SID>(compl)
+imap <C-l> <Plug>(vimrc:prefix:compl)
+" fallback
+inoremap <Plug>(vimrc:prefix:compl) <C-l>
 
-inoremap <SID>(compl)<C-n> <C-x><C-n>
-inoremap <SID>(compl)<C-p> <C-x><C-p>
-inoremap <SID>(compl)<C-]> <C-x><C-]>
-inoremap <SID>(compl)<C-d> <C-x><C-d>
-inoremap <SID>(compl)<C-f> <C-x><C-f>
-inoremap <SID>(compl)<C-i> <C-x><C-i>
-inoremap <SID>(compl)<C-k> <C-x><C-k>
-inoremap <SID>(compl)<C-l> <C-x><C-l>
-inoremap <SID>(compl)<C-s> <C-x><C-s>
-inoremap <SID>(compl)<C-t> <C-x><C-t>
+inoremap <Plug>(vimrc:prefix:compl)<C-n> <C-x><C-n>
+inoremap <Plug>(vimrc:prefix:compl)<C-p> <C-x><C-p>
+inoremap <Plug>(vimrc:prefix:compl)<C-]> <C-x><C-]>
+inoremap <Plug>(vimrc:prefix:compl)<C-d> <C-x><C-d>
+inoremap <Plug>(vimrc:prefix:compl)<C-f> <C-x><C-f>
+inoremap <Plug>(vimrc:prefix:compl)<C-i> <C-x><C-i>
+inoremap <Plug>(vimrc:prefix:compl)<C-k> <C-x><C-k>
+inoremap <Plug>(vimrc:prefix:compl)<C-l> <C-x><C-l>
+inoremap <Plug>(vimrc:prefix:compl)<C-s> <C-x><C-s>
+inoremap <Plug>(vimrc:prefix:compl)<C-t> <C-x><C-t>
 
 " }}}
 " }}}
@@ -1197,139 +1210,28 @@ if s:is_msys
 endif
 " }}}
 
-" winsize submode {{{
+" Use vsplit mode {{{
+" http://qiita.com/kefir_/items/c725731d33de4d8fb096
 
-if 0
-  " submode.vim compatible interface
-  call stateman#enter_with('winsize', 'n', '', '<C-w>>', '<C-w>>')
-  call stateman#enter_with('winsize', 'n', '', '<C-w><', '<C-w><')
-  call stateman#enter_with('winsize', 'n', '', '<C-w>+', '<C-w>-')
-  call stateman#enter_with('winsize', 'n', '', '<C-w>-', '<C-w>+')
-  call stateman#map('winsize', 'n', '', '>', '<C-w>>')
-  call stateman#map('winsize', 'n', '', '<', '<C-w><')
-  call stateman#map('winsize', 'n', '', '+', '<C-w>-')
-  call stateman#map('winsize', 'n', '', '-', '<C-w>+')
+if has("vim_starting") && !has('gui_running') && has('vertsplit')
+  function! EnableVsplitMode()
+    " enable origin mode and left/right margins
+    let &t_CS = "y"
+    let &t_ti = &t_ti . "\e[?6;69h"
+    let &t_te = "\e[?6;69l\e[999H" . &t_te
+    let &t_CV = "\e[%i%p1%d;%p2%ds"
+    call writefile([ "\e[?6;69h" ], "/dev/tty", "a")
+  endfunction
 
-  " Builder interface
-  let s:winsize = stateman#builder('winsize')
-  call s:winsize.enter_with().mode('n').lhs('<C-w>>').rhs('<C-w>>').exec()
-  call s:winsize.enter_with().mode('n').lhs('<C-w><').rhs('<C-w><').exec()
-  call s:winsize.enter_with().mode('n').lhs('<C-w>+').rhs('<C-w>+').exec()
-  call s:winsize.enter_with().mode('n').lhs('<C-w>-').rhs('<C-w>-').exec()
+  " old vim does not ignore CPR
+  map <special> <Esc>[3;9R <Nop>
 
-  " More fluent builder interface
-  call s:winsize.enter_with()
-      \.mode('n').lhs('<C-w>>').rhs('<C-w>>').exec()
-      \.mode('n').lhs('<C-w><').rhs('<C-w><').exec()
-      \.mode('n').lhs('<C-w>+').rhs('<C-w>+').exec()
-      \.mode('n').lhs('<C-w>-').rhs('<C-w>-').exec()
-
-  " 'prototype object' is returned by EnterWith.exec() so .exec() finds:
-  " * a left mapping is a normal mode mapping even without ".mode('n')"
-  " * a left mapping's timeout option is off even without ".timeout(0)"
-  call s:winsize.map({'prototype': {'mode': 'n', 'timeout': 0}})
-      \.lhs('>').rhs('<C-w>>').exec()
-      \.lhs('<').rhs('<C-w><').exec()
-      \.lhs('+').rhs('<C-w>+').exec()
-      \.lhs('-').rhs('<C-w>-').exec()
+  " new vim can't handle CPR with direct mapping
+  " map <expr> [3;3R EnableVsplitMode()
+  set t_F9=[3;3R
+  map <expr> <t_F9> EnableVsplitMode()
+  let &t_RV .= "\e[?6;69h\e[1;3s\e[3;9H\e[6n\e[0;0s\e[?6;69l"
 endif
-
-" * stateman#current() : String
-" * stateman#restore_options() : Unit
-" * stateman#enter_with() : Unit
-" * stateman#leave_with() : Unit
-" * stateman#map() : Unit
-" * stateman#unmap() : Unit
-" * stateman#builder() : Builder
-"
-" * Vital.Mapping.State#enter_with() : Unit
-" * Vital.Mapping.State#leave_with() : Unit
-" * Vital.Mapping.State#map() : Unit
-" * Vital.Mapping.State#unmap() : Unit
-" * Vital.Mapping.State#builder() : Builder
-"
-" * Builder.enter_with() : EnterWith
-"     EnterWith is a MapInfo
-" * Builder.leave_with() : LeaveWith
-"     LeaveWith is a MapInfo
-" * Builder.map() : Mapper
-"     Mapper is a MapInfo
-" * Builder.unmap() : Unmapper
-"     Unmapper is a MapInfo
-"
-" * MapInfo.mode(String) : MapInfo
-" * MapInfo.option(String) : MapInfo
-" * MapInfo.lhs(String) : MapInfo
-" * MapInfo.rhs(String) : MapInfo
-" * MapInfo.exec() : MapInfo
-"
-" * MapInfo.timeout(Bool) : MapInfo
-" * MapInfo.timeoutlen(Number) : MapInfo
-" * MapInfo.showmode(Bool) : MapInfo
-" * MapInfo.inherit(Bool) : MapInfo
-" * MapInfo.keep_leaving_key(Bool) : MapInfo
-" * MapInfo.keyseqs_to_leave(List) : MapInfo
-" * MapInfo.always_show_submode(Bool) : MapInfo
-
-nnoremap <script> <C-w>> <SID>(winsize-init)<SID>(winsize-mode)>
-nnoremap <script> <C-w>< <SID>(winsize-init)<SID>(winsize-mode)<
-nnoremap <script> <C-w>+ <SID>(winsize-init)<SID>(winsize-mode)+
-nnoremap <script> <C-w>- <SID>(winsize-init)<SID>(winsize-mode)-
-nnoremap <script> <SID>(winsize-mode)> <C-w>><SID>(winsize-prompt)<SID>(winsize-mode)
-nnoremap <script> <SID>(winsize-mode)< <C-w><<SID>(winsize-prompt)<SID>(winsize-mode)
-nnoremap <script> <SID>(winsize-mode)+ <C-w>+<SID>(winsize-prompt)<SID>(winsize-mode)
-nnoremap <script> <SID>(winsize-mode)- <C-w>-<SID>(winsize-prompt)<SID>(winsize-mode)
-
-" 初期化処理
-nnoremap <silent> <SID>(winsize-init) :<C-u>call <SID>winsize_init()<CR>
-
-" 終了処理
-" <Esc> を明示的に押された場合のみサブモードを終了
-nnoremap <silent> <SID>(winsize-mode)<Esc> :<C-u>call <SID>winsize_finalize()<CR>
-
-" フォールバック：サブモードで定義していないマッピングが押された場合の処理
-nnoremap <silent> <SID>(winsize-mode)      :<C-u>call <SID>winsize_fallback()<CR>
-
-" プロンプトをコマンドラインに表示
-nnoremap <silent> <SID>(winsize-prompt) :<C-u>call <SID>winsize_prompt()<CR>
-
-function! s:winsize_prompt() abort
-  redraw
-  echohl ModeMsg
-  echo '-- Submode: winsize --'
-  echohl None
-endfunction
-
-" winsize サブモードではタイムアウトなしに設定することにする
-function! s:winsize_init() abort
-  let s:winsize_options = {}
-  let s:winsize_options.timeout = &timeout
-  let &timeout = 0
-  " let s:winsize_options.timeoutlen = &timeoutlen
-  " let &timeoutlen = ...
-endfunction
-
-function! s:winsize_finalize() abort
-  " サブモードで定義されていないマッピングが押された場合はサブモードを抜けた後に実行しない
-  call getchar(0)
-  if exists('s:winsize_options')
-    let &timeout = get(s:winsize_options, 'timeout', &timeout)
-    " let &timeoutlen = get(s:winsize_options, 'timeoutlen', &timeoutlen)
-  endif
-  " プロンプトをクリア
-  echo ' '
-  redraw
-endfunction
-
-" サブモードで定義していないマッピングが押されたら
-" ノーマルモードのマッピングを実行した後サブモードに戻ってくる
-function! s:winsize_fallback() abort
-  call feedkeys("\<SNR>" . s:SID() . "_(winsize-mode)", 'm')
-endfunction
-
-function! s:SID() abort
-  return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
-endfunction
 
 " }}}
 

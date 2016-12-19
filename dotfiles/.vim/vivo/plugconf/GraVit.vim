@@ -1,9 +1,12 @@
 " let s:config = vivo#plugconf#new()
 "
 " function! s:config.config()
-"     " FIXME: 2012-09-17 19:48: syntax/vim.vim wrong highlight...
-"     Map -remap [nxo] g/ <Plug>gravit->forward
-"     Map -remap [nxo] g? <Plug>gravit->backward
+"   nmap g/ <Plug>gravit->forward
+"   xmap g/ <Plug>gravit->forward
+"   omap g/ <Plug>gravit->forward
+"   nmap g? <Plug>gravit->backward
+"   xmap g? <Plug>gravit->backward
+"   omap g? <Plug>gravit->backward
 "
-"     highlight GraVitCurrentMatch term=underline cterm=underline gui=underline ctermfg=4 guifg=Purple
+"   highlight GraVitCurrentMatch term=underline cterm=underline gui=underline ctermfg=4 guifg=Purple
 " endfunction

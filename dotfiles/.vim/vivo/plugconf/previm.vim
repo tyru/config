@@ -10,7 +10,7 @@ function! s:previm.config()
     augroup vimrc-previm
         autocmd!
         autocmd FileType *{mkd,markdown,rst,textile}*
-        \       Map -buffer [n] <LocalLeader>p PrevimOpen
+        \       nnoremap <buffer> <LocalLeader>p PrevimOpen
     augroup END
 endfunction
 

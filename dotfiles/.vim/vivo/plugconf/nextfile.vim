@@ -3,8 +3,8 @@ let s:config = vivo#plugconf#new()
 function! s:config.config()
   let g:nf_map_next     = ''
   let g:nf_map_previous = ''
-  Map -remap [n] ,n <Plug>(nextfile-next)
-  Map -remap [n] ,p <Plug>(nextfile-previous)
+  nmap ,n <Plug>(nextfile-next)
+  nmap ,p <Plug>(nextfile-previous)
 
   let g:nf_include_dotfiles = 1    " don't skip dotfiles
   let g:nf_ignore_ext = ['o', 'obj', 'exe', 'bin']

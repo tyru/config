@@ -70,12 +70,12 @@ function! s:config.config()
         " call vimshell#hook#set('preexec', [s:SNR('vimshell_preexec_less')])
 
         " Add/Remove some mappings.
-        Map! -buffer [n] <C-n>
-        Map! -buffer [n] <C-p>
-        Map! -buffer [i] <Tab>
-        Map -buffer -remap -force [i] <Tab><Tab> <Plug>(vimshell_command_complete)
-        Map -buffer -remap -force [n] <C-z> <Plug>(vimshell_switch)
-        Map -buffer -remap -force [i] <compl>r <Plug>(vimshell_history_complete_whole)
+        nunmap <buffer> <C-n>
+        nunmap <buffer> <C-p>
+        iunmap <buffer> <Tab>
+        imap <buffer> <Tab><Tab> <Plug>(vimshell_command_complete)
+        nmap <buffer> <C-z> <Plug>(vimshell_switch)
+        imap <buffer> <compl>r <Plug>(vimshell_history_complete_whole)
 
         " Misc.
         setlocal backspace-=eol

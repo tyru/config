@@ -8,8 +8,10 @@ let s:textobjentire = vivo#plugconf#new()
 " Configuration for textobj-entire.
 function! s:textobjentire.config()
     let g:textobj_entire_no_default_key_mappings = 1
-    Map -remap [xo] i@ <Plug>(textobj-entire-i)
-    Map -remap [xo] a@ <Plug>(textobj-entire-a)
+    xmap i@ <Plug>(textobj-entire-i)
+    omap i@ <Plug>(textobj-entire-i)
+    xmap a@ <Plug>(textobj-entire-a)
+    omap a@ <Plug>(textobj-entire-a)
 endfunction
 
 " Plugin dependencies for textobj-entire.

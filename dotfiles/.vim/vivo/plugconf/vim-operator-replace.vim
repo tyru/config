@@ -7,7 +7,9 @@ let s:vimoperatorreplace = vivo#plugconf#new()
 
 " Configuration for vim-operator-replace.
 function! s:vimoperatorreplace.config()
-    Map -remap [nxo] <operator>r <Plug>(operator-replace)
+  nmap <Plug>(vimrc:prefix:operator)r <Plug>(operator-replace)
+  xmap <Plug>(vimrc:prefix:operator)r <Plug>(operator-replace)
+  omap <Plug>(vimrc:prefix:operator)r <Plug>(operator-replace)
 endfunction
 
 " Plugin dependencies for vim-operator-replace.

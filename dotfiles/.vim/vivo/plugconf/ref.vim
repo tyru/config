@@ -11,11 +11,11 @@ function! s:config.config()
     MapAlterCommand cpp         Ref cppref
     MapAlterCommand py[doc]     Ref pydoc
 
-    Map [n] <orig>K K
-    Map -remap [n] K <Plug>(ref-keyword)
+    nnoremap gK K
+    nmap K <Plug>(ref-keyword)
     augroup bundleconfig-ref
         autocmd!
-        autocmd FileType vim Map -buffer [n] K K
+        autocmd FileType vim nnoremap <buffer> K K
     augroup END
 
     if $VIMRC_USE_VIMPROC !=# 2

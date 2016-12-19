@@ -8,9 +8,10 @@ function! s:config.config()
     let g:neocomplete#auto_completion_start_length = 3
     let g:neocomplete#max_list = 30
 
-    Map [n] <Leader>neo :<C-u>NeoCompleteToggle<CR>
+    nnoremap <Leader>neo :<C-u>NeoCompleteToggle<CR>
 
-    " Map -expr [i] <C-y> neocomplete#close_popup()
-    " Map -expr [i] <CR>  pumvisible() ? neocomplete#close_popup() . "\<CR>" : "\<CR>"
-    " Map -remap [is] <C-t> <Plug>(neocomplete_snippets_expand)
+    inoremap <expr> <C-y> neocomplete#close_popup()
+    inoremap <expr> <CR> pumvisible() ? neocomplete#close_popup() . "\<CR>" : "\<CR>"
+    imap <C-t> <Plug>(neocomplete_snippets_expand)
+    smap <C-t> <Plug>(neocomplete_snippets_expand)
 endfunction

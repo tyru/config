@@ -1,27 +1,29 @@
 let s:config = vivo#plugconf#new()
 
 function! s:config.config()
-    DefMacroMap [n] unite s
-    DefMacroMap [nxo] prompt ,t
+    nmap s <SID>(unite)
+    nmap ,t <SID>(prompt)
+    xmap ,t <SID>(prompt)
+    omap ,t <SID>(prompt)
 
     MapAlterCommand        u[nite]     Unite -prompt='-')/\  -no-split -create <args>
     command! -bar -nargs=* CustomUnite Unite -prompt='-')/\  -no-split -create <args>
-    Map [n] <unite>f        :<C-u>CustomUnite -buffer-name=files file buffer file_mru<CR>
-    Map [n] <unite>F        :<C-u>CustomUnite -buffer-name=files file_rec<CR>
-    Map [n] <unite>p        :<C-u>CustomUnite -buffer-name=files buffer_tab<CR>
-    Map [n] <unite>h        :<C-u>CustomUnite -buffer-name=files file_mru<CR>
-    Map [n] <unite>t        :<C-u>CustomUnite -immediately tab:no-current<CR>
-    Map [n] <unite>w        :<C-u>CustomUnite -immediately window:no-current<CR>
-    " Map [n] <unite>T        :<C-u>CustomUnite tag<CR>
-    " Map [n] <unite>H        :<C-u>CustomUnite help<CR>
-    Map [n] <unite>b        :<C-u>CustomUnite buffer<CR>
-    " Map [n] <unite>o        :<C-u>CustomUnite outline<CR>
-    Map [n] <unite>r        :<C-u>CustomUnite -input=ref/ source<CR>
-    Map [n] <unite>s        :<C-u>CustomUnite source<CR>
-    Map [n] <unite>g        :<C-u>CustomUnite grep<CR>
-    Map [n] <unite>/        :<C-u>CustomUnite line<CR>
-    " Map [n] <unite>:        :<C-u>CustomUnite history/command<CR>
-    Map [n] <unite>j        :<C-u>CustomUnite jump<CR>
+    nnoremap <SID>(unite)f        :<C-u>CustomUnite -buffer-name=files file buffer<CR>
+    nnoremap <SID>(unite)F        :<C-u>CustomUnite -buffer-name=files file_rec<CR>
+    nnoremap <SID>(unite)p        :<C-u>CustomUnite -buffer-name=files buffer_tab<CR>
+    nnoremap <SID>(unite)h        :<C-u>CustomUnite -buffer-name=files file_mru<CR>
+    nnoremap <SID>(unite)t        :<C-u>CustomUnite -immediately tab:no-current<CR>
+    nnoremap <SID>(unite)w        :<C-u>CustomUnite -immediately window:no-current<CR>
+    " nnoremap <SID>(unite)T        :<C-u>CustomUnite tag<CR>
+    " nnoremap <SID>(unite)H        :<C-u>CustomUnite help<CR>
+    nnoremap <SID>(unite)b        :<C-u>CustomUnite buffer<CR>
+    " nnoremap <SID>(unite)o        :<C-u>CustomUnite outline<CR>
+    nnoremap <SID>(unite)r        :<C-u>CustomUnite -input=ref/ source<CR>
+    nnoremap <SID>(unite)s        :<C-u>CustomUnite source<CR>
+    nnoremap <SID>(unite)g        :<C-u>CustomUnite grep<CR>
+    nnoremap <SID>(unite)/        :<C-u>CustomUnite line<CR>
+    " nnoremap <SID>(unite):        :<C-u>CustomUnite history/command<CR>
+    nnoremap <SID>(unite)j        :<C-u>CustomUnite jump<CR>
 
 
     " abbrev
@@ -99,7 +101,7 @@ function! s:config.config()
     endfor
     unlet s:tmp
 
-    Map -silent [n] <prompt>a  :<C-u>Unite menu:enc<CR>
+    nnoremap <silent> <SID>(prompt)a  :<C-u>Unite menu:enc<CR>
     " }}}
     " set fenc=... {{{
     let g:unite_source_menu_menus.fenc = {
@@ -122,7 +124,7 @@ function! s:config.config()
     endfor
     unlet s:tmp
 
-    Map -silent [n] <prompt>s  :<C-u>Unite menu:fenc<CR>
+    nnoremap <silent> <SID>(prompt)s  :<C-u>Unite menu:fenc<CR>
     " }}}
     " set ff=... {{{
     let g:unite_source_menu_menus.ff = {
@@ -137,7 +139,7 @@ function! s:config.config()
     endfor
     unlet s:tmp
 
-    Map -silent [n] <prompt>d  :<C-u>Unite menu:ff<CR>
+    nnoremap <silent> <SID>(prompt)d  :<C-u>Unite menu:ff<CR>
     " }}}
 
     " }}}
@@ -149,16 +151,16 @@ function! s:config.config()
     let g:unite_winheight = 5    " default winheight.
     let g:unite_winwidth  = 10    " default winwidth.
     function! s:unite_settings() "{{{
-        Map -remap -buffer -force [n] <Space><Space> <Plug>(unite_toggle_mark_current_candidate)
+        nmap <buffer> <Space><Space> <Plug>(unite_toggle_mark_current_candidate)
 
-        " Map -remap -buffer -force [i] <C-n> <SID>(expand_unite_window)<Plug>(unite_select_next_line)
-        " Map -remap -buffer -force [i] <C-p> <SID>(expand_unite_window)<Plug>(unite_select_previous_line)
+        imap <buffer> <C-n> <SID>(expand_unite_window)<Plug>(unite_select_next_line)
+        imap <buffer> <C-p> <SID>(expand_unite_window)<Plug>(unite_select_previous_line)
     endfunction "}}}
 
     " Expand current unite window width/height 2/3
-    Map -remap [i] <SID>(expand_unite_window) <Plug>(unite_insert_leave)<SID>(expand_unite_window_fn)<Plug>(unite_insert_enter)
+    imap <SID>(expand_unite_window) <Plug>(unite_insert_leave)<SID>(expand_unite_window_fn)<Plug>(unite_insert_enter)
 
-    Map -silent [n] <SID>(expand_unite_window_fn) :<C-u>call <SID>unite_resize_window(&columns / 3 * 2, &lines / 3 * 2)<CR>
+    nnoremap <silent> <SID>(expand_unite_window_fn) :<C-u>call <SID>unite_resize_window(&columns / 3 * 2, &lines / 3 * 2)<CR>
     function! s:unite_resize_window(width, height)
         if winnr('$') is 1
             return
@@ -168,7 +170,7 @@ function! s:config.config()
             execute 'resize' a:height
         endif
 
-        Map -remap -buffer [i] <C-n> <Plug>(unite_select_next_line)
-        Map -remap -buffer [i] <C-p> <Plug>(unite_select_previous_line)
+        imap <buffer> <C-n> <Plug>(unite_select_next_line)
+        imap <buffer> <C-p> <Plug>(unite_select_previous_line)
     endfunction
 endfunction

@@ -2,8 +2,8 @@
 let s:config = vivo#plugconf#new()
 
 function! s:config.config()
-    Map -remap [n] j <Plug>(accelerated_jk_gj)
-    Map -remap [n] k <Plug>(accelerated_jk_gk)
+    nmap j <Plug>(accelerated_jk_gj)
+    nmap k <Plug>(accelerated_jk_gk)
     let g:accelerated_jk_deceleration_table = [
     \   [200, 10],
     \   [300, 15],

@@ -3,11 +3,9 @@ active:0	version:e25473061bdca0aa7ca2fa17968dd0eff82eaff6	dir:bundle/vim-vimlint
 active:0	version:8235a27309929c9eefe89b86027f3c8059e77872	dir:bundle/vim-vimlparser	name:vim-vimlparser	remote:origin	type:git	url:https://github.com/ynkdir/vim-vimlparser	branch:master
 active:0	version:d2f1f5ba91fc144b8611c7bba35cea4066e88297	dir:bundle/vmock	name:vmock	remote:origin	type:git	url:https://github.com/kannokanno/vmock	branch:master
 active:0	version:6da31781a30c8a6de416c684704e515945e5aacc	dir:bundle/vim-themis	name:vim-themis	remote:origin	type:git	url:https://github.com/thinca/vim-themis	branch:master
-active:1	version:f874dbdd8a5945a4dd7310c43dffba5f1820a8fa	dir:bundle/emap.vim	name:emap.vim	remote:origin	type:git	url:https://github.com/tyru/emap.vim	branch:master
 active:1	version:2b7b39014b49950fa833346c9ed42dab3bb72be8	dir:bundle/autodirmake.vim	name:autodirmake.vim	remote:origin	type:git	url:https://github.com/mopp/autodirmake.vim	branch:master
 active:1	version:bd62d8bfe7b23bc574e08b8632729491d0970951	dir:bundle/capture.vim	name:capture.vim	remote:origin	type:git	url:https://github.com/tyru/capture.vim	branch:master
 active:1	version:8312733b08330191358af14832d9959f19739eda	dir:bundle/open-browser-github.vim	name:open-browser-github.vim	remote:origin	type:git	url:https://github.com/tyru/open-browser-github.vim	branch:master
-active:1	version:2ec28751775ee4f33cdcd6fe5bb93af1573dc6fd	dir:bundle/open-browser.vim	name:open-browser.vim	remote:origin	type:git	url:https://github.com/tyru/open-browser.vim	branch:master
 active:1	version:9a52df9f8b381276e732cf1394e6bd07fc083a56	dir:bundle/caw.vim	name:caw.vim	remote:origin	type:git	url:https://github.com/tyru/caw.vim	branch:master
 active:1	version:e8e5b191b16d9903a933382a19d33a13be1c5257	dir:bundle/current-func-info.vim	name:current-func-info.vim	remote:origin	type:git	url:https://github.com/tyru/current-func-info.vim	branch:master
 active:1	version:422eca71a0c17e543a1aaa6713b903502d7a0354	dir:bundle/unite.vim	name:unite.vim	remote:origin	type:git	url:https://github.com/Shougo/unite.vim	branch:master
@@ -31,3 +29,10 @@ active:1	version:55bb439e5834515e7def35484f9ed08738fb9dc5	dir:bundle/stoptypofil
 active:1	version:e990b81b1db919b2b32ba973e3c4310a2612c0f2	dir:bundle\eskk.vim	name:eskk.vim	remote:origin	type:git	url:https://github.com/tyru/eskk.vim	branch:master
 active:1	version:02a77be704a1df823d2a5aff6da9650eb098e994	dir:bundle\jobby.vim	name:jobby.vim	remote:origin	type:git	url:https://github.com/tyru/jobby.vim	branch:master
 active:1	version:b42c5e6c0a8b784f0dc57f66b44be909ef38c208	dir:bundle\oldfilesearch.vim	name:oldfilesearch.vim	remote:origin	type:git	url:https://github.com/pavoljuhas/oldfilesearch.vim.git	branch:master
+active:0	version:fatal: Not a git repository: /home/tyru/.vim/bundle/emap.vim/../../../../.git/modules/dotfiles/.vim/bundle/emap.vim	dir:bundle/emap.vim	name:emap.vim	remote:origin	type:git	url:https://github.com/tyru/emap.vim	branch:master
+active:1	version:fatal: Not a git repository: ../../../../.git/modules/dotfiles/.vim/bundle/open-browser.vim	dir:bundle\open-browser.vim	name:open-browser.vim	remote:origin	type:git	url:https://github.com/tyru/open-browser.vim	branch:master
+active:1	version:c4c368c835b91c012b011dde613a914c0e167fd0	dir:bundle/vim-quickrun	name:vim-quickrun	remote:origin	type:git	url:https://github.com/thinca/vim-quickrun	branch:master
+active:1	version:83a07bacccab20c56352dc30c60737feae22fd53	dir:bundle/karakuri.vim	name:karakuri.vim	remote:origin	type:git	url:https://github.com/tyru/karakuri.vim	branch:master
+active:1	version:30fffadf6e1e5df88ffc428d13bc8bd280d503c4	dir:bundle/deoplete.nvim	name:deoplete.nvim	remote:origin	type:git	url:https://github.com/Shougo/deoplete.nvim	branch:master
+active:1	version:237f2a15e84064f6f31474147cd9f62a921e0d03	dir:bundle/winmove.vim	name:winmove.vim	remote:origin	type:git	url:https://github.com/tyru/winmove.vim	branch:master
+active:1	version:8279f6c56dc30ca54892e60c9ab1f7fd6767fb73	dir:bundle/autofmt	name:autofmt	remote:origin	type:git	url:https://github.com/vim-jp/autofmt	branch:master
