@@ -217,7 +217,7 @@ if 1
   set directory=$MYVIMDIR/info/swap//
   silent! call mkdir(substitute(&directory, '//$', '', ''), 'p')
   " Open a file as read-only if swap exists
-  autocmd vimrc SwapExists * let v:swapchoice = 'o'
+  " autocmd vimrc SwapExists * let v:swapchoice = 'o'
 else
   " No swapfile.
   set noswapfile
@@ -1041,6 +1041,20 @@ endfunction
 " :ResetHelpBuffer {{{
 command! -bar ResetHelpBuffer
 \   setlocal noro modifiable buftype= list noet
+" }}}
+" GitGrep {{{
+command! -nargs=+ GitGrep call s:git_grep(<q-args>, 0)
+command! -nargs=+ LGitGrep call s:git_grep(<q-args>, 1)
+
+function! s:git_grep(args, local) abort
+  setlocal grepprg=git\ grep\ -I\ --line-number
+  try
+    execute (a:local ? 'l' : '') . 'grep' a:args
+  finally
+    setlocal grepprg<
+  endtry
+endfunction
+
 " }}}
 " }}}
 " Quickfix {{{

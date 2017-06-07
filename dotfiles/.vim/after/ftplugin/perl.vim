@@ -23,14 +23,6 @@ nnoremap <buffer> [[    :<C-u>call search('^\s*sub .* {$', 'bsW')<CR>
 nnoremap <buffer> ][    :<C-u>call search('^}$', 'sw')<CR>
 nnoremap <buffer> []    :<C-u>call search('^}$', 'bsw')<CR>
 
-call SurroundRegister('b', 'qs', "q(\r)")
-call SurroundRegister('b', 'qq', "qq(\r)")
-call SurroundRegister('b', 'qw', "qw(\r)")
-
-call SurroundRegister('b', 'qs', "q/\r/")
-call SurroundRegister('b', 'qq', "qq/\r/")
-call SurroundRegister('b', 'qw', "qw/\r/")
-
 if exists('b:undo_ftplugin')
   let b:undo_ftplugin .= ' | '
 else

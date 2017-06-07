@@ -18,5 +18,5 @@ function! s:config.config()
     endif
     " let g:openbrowser_force_foreground_after_open = 1
 
-    command! OpenBrowserCurrent execute "OpenBrowser" "file:///" . expand('%:p:gs?\\?/?')
+    command! OpenBrowserCurrent execute "OpenBrowser" "file://" . expand('%:p:gs?\\?/?')
 endfunction
