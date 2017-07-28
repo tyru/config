@@ -100,23 +100,6 @@ call vivo#rtp_append_plugins()
 " call vivo#rtp_append_pack()
 filetype plugin indent on
 
-" Import altercmd.vim commands {{{
-" The following commands are used also in plugconf.
-" If altercmd.vim is not in runtimepath, :MapAlterCommand
-" does not do anything.
-
-" Define :MapAlterCommand commands
-if globpath(&rtp, 'autoload/altercmd.vim') !=# ''
-  call altercmd#load()
-  command!
-  \   -bar -nargs=+
-  \   MapAlterCommand
-  \   CAlterCommand <args> | AlterCommand <cmdwin> <args>
-else
-  command! -nargs=* MapAlterCommand :
-endif
-
-
 " Set up general prefix keys. {{{
 
 nmap <Space> <Plug>(vimrc:prefix:excmd)
@@ -146,8 +129,6 @@ nnoremap <LocalLeader> <Nop>
 
 " }}}
 
-" }}}
-
 " Load all plugin configs from '~/.vim/vivo/plugconf/*.vim'
 " (if you prefer writing configs in separated files from vimrc).
 call vivo#plugconf#load()
@@ -158,7 +139,7 @@ if has('clientserver') && vivo#loaded_plugin('vim-singleton')
 endif
 
 " Generate helptags for plugins in 'runtimepath'.
-call vivo#helptags()
+autocmd vimrc VimEnter * call vivo#helptags()
 
 " }}}
 " Options {{{
@@ -191,7 +172,7 @@ set list
 set listchars=tab:>.,extends:>,precedes:<,trail:-
 set display=lastline
 set t_Co=256
-set number
+set nonumber
 set showcmd
 
 " command-line
@@ -390,7 +371,9 @@ set matchpairs+=<:>
 " ColorScheme {{{
 
 set bg=dark
-colorscheme evening
+" colorscheme evening
+" colorscheme molokai
+colorscheme default
 
 " too annoying
 highlight ColorColumn ctermfg=12 guifg=Red ctermbg=NONE guibg=NONE
@@ -562,6 +545,17 @@ endfunction
 
 " Edit/Apply .vimrc quickly
 nnoremap <Plug>(vimrc:prefix:excmd)ev     :<C-u>edit $MYVIMRC<CR>
+
+nnoremap <C-]> :<C-u>call <SID>tagjump()<CR>
+
+function! s:tagjump() abort
+  try
+    execute "normal! \<C-]>"
+  catch
+    Ctags
+    execute "normal! \<C-]>"
+  endtry
+endfunction
 
 " Cmdwin {{{
 set cedit=<C-l>
@@ -740,17 +734,6 @@ cnoremap <C-n> <Down>
 cnoremap <C-p> <Up>
 
 " }}}
-" abbr {{{
-MapAlterCommand th     tab help
-" MapAlterCommand t      tabedit
-MapAlterCommand sf     setf
-MapAlterCommand hg     helpgrep
-MapAlterCommand ds     diffsplit
-MapAlterCommand do     diffoff!
-
-" For typo.
-MapAlterCommand qw     wq
-" }}}
 
 
 " Centering display position after certain commands {{{
@@ -779,48 +762,6 @@ syntax enable
 
 " FileType {{{
 
-function! s:current_filetypes() "{{{
-  return split(&l:filetype, '\.')
-endfunction "}}}
-function! s:set_dict() "{{{
-  let filetype_vs_dictionary = {
-  \   'c': ['c', 'cpp'],
-  \   'cpp': ['c', 'cpp'],
-  \   'html': ['html', 'css', 'scss', 'javascript', 'smarty', 'htmldjango'],
-  \   'scala': ['scala', 'java'],
-  \}
-
-  let dupcheck = {}
-  let dicts = []
-  for ft in s:current_filetypes()
-    for ft in get(filetype_vs_dictionary, ft, [ft])
-      if has_key(dupcheck, ft)
-        continue
-      endif
-      let dupcheck[ft] = 1
-      let dict_path = $MYVIMDIR . '/dict/' . ft . '.dict'
-      if filereadable(dict_path)
-        let dicts += [dict_path]
-      endif
-    endfor
-  endfor
-
-  let &l:dictionary = join(dicts, ',')
-endfunction "}}}
-function! s:set_compiler() "{{{
-  let filetype_vs_compiler = {
-  \   'c': 'gcc',
-  \   'cpp': 'gcc',
-  \   'html': 'tidy',
-  \   'java': 'javac',
-  \}
-  try
-    for ft in s:current_filetypes()
-      execute 'compiler' get(filetype_vs_compiler, ft, ft)
-    endfor
-  catch /E666:/    " compiler not supported: ...
-  endtry
-endfunction "}}}
 function! s:load_filetype() "{{{
   if &omnifunc == ""
     setlocal omnifunc=syntaxcomplete#Complete
@@ -829,9 +770,6 @@ function! s:load_filetype() "{{{
     " 7.3.541 or later
     set formatoptions+=j
   endif
-
-  call s:set_dict()
-  call s:set_compiler()
 endfunction "}}}
 
 autocmd vimrc FileType * call s:load_filetype()
@@ -840,330 +778,42 @@ autocmd vimrc FileType * call s:load_filetype()
 
 " }}}
 " Commands {{{
-" :Expand {{{
-command!
-\   -bar -nargs=?
-\   Expand
-\   call s:cmd_expand(<q-args>)
+command! -bar -nargs=? Expand call vimrc#cmd_expand#call(<q-args>)
 
-function! s:cmd_expand(args) "{{{
-  if a:args != ''
-    let str = expand(a:args)
-  else
-    if getbufvar('%', '&buftype') == ''
-      let str = expand('%:p')
-    else
-      let str = expand('%')
-    endif
-  endif
-  if s:is_win
-    let str = tr(str, '/', '\')
-  endif
-  echo str
-  let [@", @+, @*] = [str, str, str]
-endfunction "}}}
+command! -bar -nargs=+ -complete=file Glob echo glob(<q-args>, 1)
+command! -bar -nargs=+ -complete=file GlobPath echo globpath(&rtp, <q-args>, 1)
 
-MapAlterCommand ep Expand
-" }}}
-" :Glob, :GlobPath {{{
-command!
-\   -bar -nargs=+ -complete=file
-\   Glob
-\   echo glob(<q-args>, 1)
+command! -bar SynNames call vimrc#cmd_synnames#call()
 
-MapAlterCommand gl[ob] Glob
-
-command!
-\   -bar -nargs=+ -complete=file
-\   GlobPath
-\   echo globpath(&rtp, <q-args>, 1)
-
-MapAlterCommand gp GlobPath
-" }}}
-" :SynNames {{{
-" :help synstack()
-
-command!
-\   -bar
-\   SynNames
-\
-\     for s:id in synstack(line("."), col("."))
-\   |     echo printf('%s (%s)', synIDattr(s:id, "name"), synIDattr(synIDtrans(s:id), "name"))
-\   | endfor
-\   | unlet! s:id
-" }}}
-" :Ctags {{{
-MapAlterCommand ctags Ctags
-
-nnoremap <C-]> :<C-u>call <SID>tagjump()<CR>
-
-function! s:tagjump() abort
-  try
-    execute "normal! \<C-]>"
-  catch
-    Ctags
-    execute "normal! \<C-]>"
-  endtry
-endfunction
-
-command!
-\   -bar -nargs=*
-\   Ctags
-\   call s:cmd_ctags(<q-args>)
-
-function! s:cmd_ctags(q_args) "{{{
-  if !executable('ctags')
-    echohl ErrorMsg
-    echomsg "Ctags: No 'ctags' command in PATH"
-    echohl None
-    return
-  endif
-  execute '!ctags' (filereadable('.ctags') ? '' : '-R') a:q_args
-endfunction "}}}
-" }}}
-" :WatchAutocmd {{{
-
-" Create watch-autocmd augroup.
-augroup watch-autocmd
-  autocmd!
-augroup END
+command! -bar -nargs=* Ctags call vimrc#cmd_ctags#call(<q-args>)
 
 command! -bar -bang -nargs=1 -complete=event WatchAutocmd
-\   call s:cmd_{<bang>0 ? "un" : ""}watch_autocmd(<q-args>)
+\   call vimrc#cmd_watch_autocmd#call(<q-args>, <bang>0)
 
-
-let s:watching_events = {}
-
-function! s:cmd_unwatch_autocmd(event)
-  if !exists('#'.a:event)
-    echohl ErrorMsg
-    echomsg "Invalid event name: ".a:event
-    echohl None
-    return
-  endif
-  if !has_key(s:watching_events, a:event)
-    echohl ErrorMsg
-    echomsg "Not watching ".a:event." event yet..."
-    echohl None
-    return
-  endif
-
-  unlet s:watching_events[a:event]
-  echomsg 'Removed watch for '.a:event.' event.'
-endfunction
-function! s:cmd_watch_autocmd(event)
-  if !exists('#'.a:event)
-    echohl ErrorMsg
-    echomsg "Invalid event name: ".a:event
-    echohl None
-    return
-  endif
-  if has_key(s:watching_events, a:event)
-    echomsg "Already watching ".a:event." event."
-    return
-  endif
-
-  execute 'autocmd watch-autocmd' a:event '*'
-  \       'echohl MoreMsg |'
-  \       'echomsg "Executing '''.a:event.''' event..." |'
-  \       'echohl None'
-  let s:watching_events[a:event] = 1
-  echomsg 'Added watch for' a:event 'event.'
-endfunction
-" }}}
-" :Kwbd {{{
 " http://nanasi.jp/articles/vim/kwbd_vim.html
-command! -bar Kwbd execute "enew | bw ".bufnr("%")
-" }}}
-" :ScrollbindEnable, :ScrollbindDisable, :ScrollbindToggle {{{
+command! -bar Kwbd execute 'enew | bw' bufnr("%")
 
 " Enable/Disable 'scrollbind', 'cursorbind' options.
-command! -bar ScrollbindEnable  call s:cmd_scrollbind(1)
-command! -bar ScrollbindDisable call s:cmd_scrollbind(0)
-command! -bar ScrollbindToggle  call s:cmd_scrollbind_toggle()
+command! -bar ScrollbindEnable  call vimrc#cmd_scrollbind#enable()
+command! -bar ScrollbindDisable call vimrc#cmd_scrollbind#disable()
+command! -bar ScrollbindToggle  call vimrc#cmd_scrollbind#toggle()
 
-function! s:cmd_scrollbind_toggle()
-  if get(t:, 'vimrc_scrollbind', 0)
-    ScrollbindDisable
-  else
-    ScrollbindEnable
-  endif
-endfunction
-
-function! s:cmd_scrollbind(enable)
-  let winnr = winnr()
-  try
-    call s:scrollbind_specific_mappings(a:enable)
-    windo let &l:scrollbind = a:enable
-    if exists('+cursorbind')
-      windo let &l:cursorbind = a:enable
-    endif
-    let t:vimrc_scrollbind = a:enable
-  finally
-    execute winnr . 'wincmd w'
-  endtry
-endfunction
-
-function! s:scrollbind_specific_mappings(enable)
-  if a:enable
-    " Check either buffer-local those mappings are mapped already or not.
-    if get(maparg('<C-e>', 'n', 0, 1), 'buffer', 0)
-      nnoremap <buffer> <C-e> :<C-u>call <SID>no_scrollbind('<C-e>')<CR>
-    endif
-    if get(maparg('<C-y>', 'n', 0, 1), 'buffer', 0)
-      nnoremap <buffer> <C-y> :<C-u>call <SID>no_scrollbind('<C-y>')<CR>
-    endif
-  else
-    " Check either those mappings are above one or not.
-    let map = maparg('<C-e>', 'n', 0, 1)
-    if get(map, 'buffer', 0)
-    \   || get(map, 'rhs', '') =~# 'no_scrollbind('
-      nunmap <buffer> <C-e>
-    endif
-    let map = maparg('<C-y>', 'n', 0, 1)
-    if get(map, 'buffer', 0)
-    \   || get(map, 'rhs', '') =~# 'no_scrollbind('
-      nunmap <buffer> <C-y>
-    endif
-  endif
-endfunction
-
-function! s:no_scrollbind(key)
-  let scrollbind = &l:scrollbind
-  try
-    execute 'normal!' a:key
-  finally
-    let &l:scrollbind = scrollbind
-  endtry
-endfunction
-
-" }}}
-" :ResetHelpBuffer {{{
 command! -bar ResetHelpBuffer
 \   setlocal noro modifiable buftype= list noet
-" }}}
-" GitGrep {{{
-command! -nargs=+ GitGrep call s:git_grep(<q-args>, 0)
-command! -nargs=+ LGitGrep call s:git_grep(<q-args>, 1)
 
-function! s:git_grep(args, local) abort
-  setlocal grepprg=git\ grep\ -I\ --line-number
-  try
-    execute (a:local ? 'l' : '') . 'grep' a:args
-  finally
-    setlocal grepprg<
-  endtry
-endfunction
+command! -nargs=+ GitGrep call vimrc#cmd_git_grep#call(<q-args>, 0)
+command! -nargs=+ LGitGrep call vimrc#cmd_git_grep#call(<q-args>, 1)
 
-" }}}
+" Add current line to quickfix (Use quickfix as bookmark list)
+command! -bar -range QFAddLine <line1>,<line2>call vimrc#cmd_qfaddline#add()
+
 " }}}
 " Quickfix {{{
-autocmd vimrc QuickfixCmdPost [l]*
-\   execute (!empty(getqflist()) ? 'lopen' : 'lclose')
-autocmd vimrc QuickfixCmdPost [^l]*
-\   execute (!empty(getqflist()) ? 'copen' : 'cclose')
-
-" Add current line to quickfix. {{{
-" quickfix as bookmark list.
-command! -bar -range QFAddLine <line1>,<line2>call s:quickfix_add_range()
-
-" ... {{{
-
-function! s:quickfix_add_range() range
-  for lnum in range(a:firstline, a:lastline)
-    call s:quickfix_add_line(lnum)
-  endfor
-endfunction
-
-function! s:quickfix_add_line(lnum)
-  let lnum = a:lnum =~# '^\d\+$' ? a:lnum : line(a:lnum)
-  let qf = {
-  \   'bufnr': bufnr('%'),
-  \   'lnum': lnum,
-  \   'text': getline(lnum),
-  \}
-  if s:quickfix_supported_quickfix_title()
-    " Set 'qf.col' and 'qf.vcol'.
-    call s:quickfix_add_line_set_col(lnum, qf)
-  endif
-  call setqflist([qf], 'a')
-endfunction
-function! s:quickfix_add_line_set_col(lnum, qf)
-  let lnum = a:lnum
-  let qf = a:qf
-
-  let search_word = s:quickfix_get_search_word()
-  if search_word !=# ''
-    let idx = match(getline(lnum), search_word[1:])
-    if idx isnot -1
-      let qf.col = idx + 1
-      let qf.vcol = 0
-    endif
-  endif
-endfunction
-" }}}
-
-" Quickfix utility functions {{{
-function! s:quickfix_get_winnr()
-  " quickfix window is usually at bottom,
-  " thus reverse-lookup.
-  for winnr in reverse(range(1, winnr('$')))
-    if getwinvar(winnr, '&buftype') ==# 'quickfix'
-      return winnr
-    endif
-  endfor
-  return 0
-endfunction
-function! s:quickfix_exists_window()
-  return !!s:quickfix_get_winnr()
-endfunction
-function! s:quickfix_supported_quickfix_title()
-  return v:version >=# 703
-endfunction
-function! s:quickfix_get_search_word()
-  " NOTE: This function returns a string starting with "/"
-  " if previous search word is found.
-  " This function can't use an empty string
-  " as a failure return value, because ":vimgrep /" also returns an empty string.
-
-  " w:quickfix_title only works 7.3 or later.
-  if !s:quickfix_supported_quickfix_title()
-    return ''
-  endif
-
-  let qf_winnr = s:quickfix_get_winnr()
-  if !qf_winnr
-    copen
-  endif
-
-  try
-    let qf_title = getwinvar(qf_winnr, 'quickfix_title')
-    if qf_title ==# ''
-      return ''
-    endif
-
-    " NOTE: Supported only :vim[grep] command.
-    let rx = '^:\s*\<vim\%[grep]\>\s*\(/.*\)'
-    let m = matchlist(qf_title, rx)
-    if empty(m)
-      return ''
-    endif
-
-    return m[1]
-  finally
-    if !qf_winnr
-      cclose
-    endif
-  endtry
-endfunction
+autocmd vimrc QuickfixCmdPost [l]*  call vimrc#quickfix_cmdpost#call(1)
+autocmd vimrc QuickfixCmdPost [^l]* call vimrc#quickfix_cmdpost#call(0)
 
 " }}}
-
-" }}}
-
-" }}}
-" Runtime plugin config {{{
-" Configuration for plugins in default runtime dir.
+" Configurations for Vim runtime plugins {{{
 
 " syntax/vim.vim {{{
 " augroup: a

@@ -9,9 +9,6 @@ function! s:config.config()
     nmap gos <Plug>(openbrowser-search)
     xmap gos <Plug>(openbrowser-search)
 
-    MapAlterCommand o[pen] OpenBrowserSmartSearch
-    " MapAlterCommand alc OpenBrowserSmartSearch -alc
-
     " let g:openbrowser_open_filepath_in_vim = 0
     if $VIMRC_USE_VIMPROC !=# 2
         let g:openbrowser_use_vimproc = $VIMRC_USE_VIMPROC

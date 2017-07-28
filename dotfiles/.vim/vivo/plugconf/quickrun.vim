@@ -25,6 +25,4 @@ function! s:config.config()
         \   "type" : "cpp/g++",
         \}
     endif
-
-    MapAlterCommand qr QuickRun
 endfunction
