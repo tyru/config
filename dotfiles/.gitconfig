@@ -6,6 +6,7 @@
 	user = tyru
 [core]
 	excludesfile = ~/.gitignore.base
+	editor = vim
 [user]
 	name = tyru
 	email = tyru.exe@gmail.com

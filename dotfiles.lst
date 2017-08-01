@@ -1,6 +1,5 @@
 .Xmodmap	.Xmodmap
 .Xresources	.Xresources
-.bash_profile	.bash_profile
 .bashrc	.bashrc
 .earthquake/config	.earthquake/config
 .env.common	.env.common
@@ -29,7 +28,6 @@
 .vim	.vim
 .vimperator	.vimperator
 .vimperatorrc	.vimperatorrc
-.vimrc	.vimrc
 .w3m/keymap	.w3m/keymap
 .zsh	.zsh
 .zshenv	.zshenv
