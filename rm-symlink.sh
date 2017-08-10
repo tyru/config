@@ -2,5 +2,5 @@
 
 cwd=`pwd`
 for i in `cat dotfiles.lst`; do
-	rm -f ~/$i
+	[ -L "$HOME/$i" ] && rm -f "$HOME/$i"
 done

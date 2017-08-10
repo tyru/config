@@ -38,9 +38,9 @@ for line in `cat dotfiles.lst`; do
 	from=`get_from "$line"`
 	to=`get_to "$line"`
 	mkdir -p `dirname "$HOME/$to"`
-	if ln -T -s "`pwd`/dotfiles/$from" "$HOME/$to"; then
-		echo "created $HOME/$to"
+	if [ ! -e "$HOME/$to" ]; then
+		ln -T -s "`pwd`/dotfiles/$from" "$HOME/$to" && echo "created: $HOME/$to"
 	else
-		echo "error: Could not create $HOME/$to"
+		echo "skip: $HOME/$to"
 	fi
 done
