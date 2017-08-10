@@ -32,3 +32,4 @@ active:0	version:891aa3ad42497efba72ece83eeb6792c7164fd18	dir:bundle/vim-themis	
 active:0	version:a51b89fd03c60b6d42a5ceaccf272e1805cb16d6	dir:bundle/vim-uglifier.vim	name:vim-uglifier.vim	remote:origin	type:git	url:https://github.com/tyru/vim-uglifier.vim	branch:master
 active:0	version:2e4459ba5614c9cf77d07b34608aee7df16bf827	dir:bundle/vim-vimlparser	name:vim-vimlparser	remote:origin	type:git	url:https://github.com/ynkdir/vim-vimlparser	branch:master
 active:0	version:fef1779d3ff32d04ae99ba5ea3706ae670b50527	dir:bundle/karakuri.vim	name:karakuri.vim	remote:origin	type:git	url:https://github.com/tyru/karakuri.vim	branch:master
+active:1	version:dfd860471f777ec15779c33ab4917e27b21217e2	dir:bundle/vim-go	name:vim-go	remote:origin	type:git	url:https://github.com/fatih/vim-go.git	branch:master
