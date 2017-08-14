@@ -899,6 +899,48 @@ endif
 
 " }}}
 
+" Become Terminal-Job/Terminal-Normal mode when leaving/entering terminal window {{{
+
+" t:force_term_job_state:
+" * 0: init
+" * 1: prepare firing
+" * 2: firing
+" * 3: finalizing
+
+function! s:ftjm_winleave() abort
+  if &buftype ==# 'terminal' && get(t:, 'force_term_job_state', 0) ==# 0
+    let t:force_term_job_state = 1
+    let t:force_term_job_bufnr = bufnr('')
+  elseif &buftype ==# 'terminal' && get(t:, 'force_term_job_state', 0) ==# 3
+    unlet t:force_term_job_state t:force_term_job_bufnr
+  endif
+endfunction
+
+" FIXME: terminal window (1) -> terminal window (2)
+function! s:ftjm_winenter() abort
+  if &buftype ==# 'terminal' && get(t:, 'force_term_job_state', 0) ==# 0
+    " Force terminal window to be terminal-normal mode when entering terminal window
+    if term_getstatus(bufnr('')) !~# 'normal'
+      call feedkeys("\<C-w>N", 'n')
+    endif
+  elseif &buftype !=# 'terminal' && get(t:, 'force_term_job_state', 0) ==# 1
+    " Force terminal window to be terminal-job mode when leaving terminal window
+    let t:force_term_job_state = 2
+    call feedkeys("\<C-w>\<C-w>" .
+    \             (term_getstatus(t:force_term_job_bufnr) !~# 'normal' ? "\<C-w>N" : '') .
+    \             "GA\<C-w>:let t:force_term_job_state = 3\<CR>" .
+    \             "\<C-w>\<C-w>\<C-l>", 'n')
+  endif
+endfunction
+
+augroup vimrc-force-terminal-job-mode
+  autocmd!
+  autocmd WinLeave * call s:ftjm_winleave()
+  autocmd WinEnter * call s:ftjm_winenter()
+augroup END
+
+" }}}
+
 " }}}
 " End. {{{
 
