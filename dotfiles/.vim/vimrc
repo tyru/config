@@ -857,7 +857,7 @@ augroup vimrc-diff-autocommands
   autocmd!
 
   " Turn off diff mode automatically
-  autocmd WinEnter *
+  autocmd vimrc WinEnter *
   \ if (winnr('$') == 1) &&
   \    (getbufvar(winbufnr(0), '&diff')) == 1 |
   \     diffoff                               |
