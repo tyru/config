@@ -780,7 +780,7 @@ autocmd vimrc FileType * call s:load_filetype()
 " Commands {{{
 
 command! DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
-		\ | wincmd p | diffthis
+    \ | wincmd p | diffthis
 
 command! -bar -nargs=? Expand call vimrc#cmd_expand#call(<q-args>)
 
@@ -906,10 +906,10 @@ endif
 
 " }}}
 
-" Become Terminal-Job/Terminal-Normal mode when leaving/entering terminal window {{{
+" Enter Terminal-Job/Terminal-Normal mode on WinLeave/WinEnter {{{
 
 " Enter Terminal-Job mode when leaving terminal window
-function! s:ftjm_winleave() abort
+function! s:term_winleave() abort
   if &buftype ==# 'terminal' &&
   \   term_getstatus(bufnr('')) =~# 'normal'
     set eventignore=all
@@ -918,19 +918,20 @@ function! s:ftjm_winleave() abort
 endfunction
 
 " Enter Terminal-Normal mode when entering terminal window
-" FIXME: https://github.com/vim/vim/issues/1989
-function! s:ftjm_winenter() abort
+"
+" NOTE: segfault problem was fixed by 8.0.0968
+" https://github.com/vim/vim/issues/1989
+function! s:term_winenter() abort
   if &buftype ==# 'terminal' &&
   \   term_getstatus(bufnr('')) !~# 'normal'
-    call term_wait(bufnr(''), 1000)
     call feedkeys("\<C-w>N", 'n')
   endif
 endfunction
 
 augroup vimrc-force-terminal-job-mode
   autocmd!
-  autocmd WinLeave * call s:ftjm_winleave()
-  " autocmd WinEnter * call s:ftjm_winenter()
+  autocmd WinLeave * call s:term_winleave()
+  autocmd WinEnter * call s:term_winenter()
 augroup END
 
 " }}}
