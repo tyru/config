@@ -735,6 +735,23 @@ cnoremap <C-p> <Up>
 
 " }}}
 
+" Terminal {{{
+
+function! s:terminal_tab_mappings() abort
+  nnoremap <buffer> <C-w><C-n> <C-w>:tabNext<CR>
+  nnoremap <buffer> <C-w><C-p> <C-w>:tabprevious<CR>
+  inoremap <buffer> <C-w><C-n> <C-w>:tabNext<CR>
+  inoremap <buffer> <C-w><C-p> <C-w>:tabprevious<CR>
+endfunction
+
+" TODO: tnoremap
+" augroup terminal-tab-mappings
+"   autocmd!
+"   autocmd BufEnter * if &buftype ==# 'terminal' | call s:terminal_tab_mappings() | endif
+" augroup END
+
+" }}}
+
 
 " Centering display position after certain commands {{{
 
@@ -930,8 +947,8 @@ endfunction
 
 augroup vimrc-force-terminal-job-mode
   autocmd!
-  autocmd WinLeave * call s:term_winleave()
-  autocmd WinEnter * call s:term_winenter()
+  " autocmd WinLeave * call s:term_winleave()
+  " autocmd WinEnter * call s:term_winenter()
 augroup END
 
 " }}}

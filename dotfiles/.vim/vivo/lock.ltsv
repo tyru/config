@@ -1,6 +1,5 @@
 version:1
 active:0	version:e25473061bdca0aa7ca2fa17968dd0eff82eaff6	dir:bundle/vim-vimlint	name:vim-vimlint	remote:origin	type:git	url:https://github.com/syngan/vim-vimlint	branch:master
-active:0	version:d2f1f5ba91fc144b8611c7bba35cea4066e88297	dir:bundle/vmock	name:vmock	remote:origin	type:git	url:https://github.com/kannokanno/vmock	branch:master
 active:1	version:2b7b39014b49950fa833346c9ed42dab3bb72be8	dir:bundle/autodirmake.vim	name:autodirmake.vim	remote:origin	type:git	url:https://github.com/mopp/autodirmake.vim	branch:master
 active:1	version:bd62d8bfe7b23bc574e08b8632729491d0970951	dir:bundle/capture.vim	name:capture.vim	remote:origin	type:git	url:https://github.com/tyru/capture.vim	branch:master
 active:1	version:8312733b08330191358af14832d9959f19739eda	dir:bundle/open-browser-github.vim	name:open-browser-github.vim	remote:origin	type:git	url:https://github.com/tyru/open-browser-github.vim	branch:master
@@ -33,3 +32,5 @@ active:0	version:a51b89fd03c60b6d42a5ceaccf272e1805cb16d6	dir:bundle/vim-uglifie
 active:0	version:2e4459ba5614c9cf77d07b34608aee7df16bf827	dir:bundle/vim-vimlparser	name:vim-vimlparser	remote:origin	type:git	url:https://github.com/ynkdir/vim-vimlparser	branch:master
 active:0	version:fef1779d3ff32d04ae99ba5ea3706ae670b50527	dir:bundle/karakuri.vim	name:karakuri.vim	remote:origin	type:git	url:https://github.com/tyru/karakuri.vim	branch:master
 active:1	version:dfd860471f777ec15779c33ab4917e27b21217e2	dir:bundle/vim-go	name:vim-go	remote:origin	type:git	url:https://github.com/fatih/vim-go.git	branch:master
+active:0	version:1cb3b84af8dcc32e87aa0983beb51586cd9e8b00	dir:bundle/vmock	name:vmock	remote:origin	type:git	url:https://github.com/kannokanno/vmock	branch:master
+active:0	version:568f5a27627274fad4891e8307838ca55b468117	dir:bundle/vim-vue	name:vim-vue	remote:origin	type:git	url:https://github.com/posva/vim-vue	branch:master
