@@ -22,22 +22,17 @@ dotfiles/.vim/*
 !dotfiles/.vim/syntax
 !dotfiles/.vim/tutor
 !dotfiles/.vim/tools
-
 !dotfiles/.vim/bundle
-dotfiles/.vim/bundle/*
-# Do not ignore these directories
-!dotfiles/.vim/bundle/vivo.vim
-!dotfiles/.vim/bundle/ref-plugins
-!dotfiles/.vim/bundle/surround-config
-
-# Ignore only 'pack' directory
-!dotfiles/.vim/vivo
-dotfiles/.vim/vivo/pack
 
 !dotfiles/.vim/dict
 !dotfiles/.vim/template
 
 dotfiles/.vim/.VimballRecord
+
+# volt
+dotfiles/volt/bin/
+dotfiles/volt/repos/
+dotfiles/volt/tmp/
 
 # Vimperator
 dotfiles/.vimperator/*/
