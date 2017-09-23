@@ -1,4 +1,5 @@
 version:1
+active:1	version:e25473061bdca0aa7ca2fa17968dd0eff82eaff6	dir:bundle/vim-volt	name:vim-volt	remote:origin	type:git	url:https://github.com/vim-volt/vim-volt	branch:master
 active:0	version:e25473061bdca0aa7ca2fa17968dd0eff82eaff6	dir:bundle/vim-vimlint	name:vim-vimlint	remote:origin	type:git	url:https://github.com/syngan/vim-vimlint	branch:master
 active:1	version:2b7b39014b49950fa833346c9ed42dab3bb72be8	dir:bundle/autodirmake.vim	name:autodirmake.vim	remote:origin	type:git	url:https://github.com/mopp/autodirmake.vim	branch:master
 active:1	version:bd62d8bfe7b23bc574e08b8632729491d0970951	dir:bundle/capture.vim	name:capture.vim	remote:origin	type:git	url:https://github.com/tyru/capture.vim	branch:master

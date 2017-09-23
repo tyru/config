@@ -735,31 +735,26 @@ cnoremap <C-p> <Up>
 
 " }}}
 
-" Terminal {{{
-
-function! s:terminal_tab_mappings() abort
-  nnoremap <buffer> <C-w><C-n> <C-w>:tabNext<CR>
-  nnoremap <buffer> <C-w><C-p> <C-w>:tabprevious<CR>
-  inoremap <buffer> <C-w><C-n> <C-w>:tabNext<CR>
-  inoremap <buffer> <C-w><C-p> <C-w>:tabprevious<CR>
-endfunction
-
-" TODO: tnoremap
-" augroup terminal-tab-mappings
-"   autocmd!
-"   autocmd BufEnter * if &buftype ==# 'terminal' | call s:terminal_tab_mappings() | endif
-" augroup END
-
-" }}}
-
 
 " Centering display position after certain commands {{{
 
 nnoremap <SID>(centering-display) zvzz
 xnoremap <SID>(centering-display) zvzz
 
-nnoremap <script> * *<SID>(centering-display)
-nnoremap <script> # #<SID>(centering-display)
+" Make *, gn command consistent
+" https://github.com/vim-jp/issues/issues/1094
+function! s:star_smartcase(forward) abort
+  let search = (a:forward ? '/' : '?')
+  let cw = expand('<cword>')
+  let case = (&smartcase && cw =~# '[A-Z]' ? '\C' : '')
+  return search . case . '\<' . cw . '\>' . "\<CR>"
+endfunction
+
+nnoremap <expr> <SID>(smart-*) <SID>star_smartcase(1)
+nnoremap <expr> <SID>(smart-#) <SID>star_smartcase(0)
+
+nmap * <SID>(smart-*)<SID>(centering-display)
+nmap # <SID>(smart-#)<SID>(centering-display)
 
 nnoremap <script> gd gd<SID>(centering-display)
 nnoremap <script> gD gD<SID>(centering-display)
@@ -972,6 +967,15 @@ autocmd BufReadPost *
 
 if &guioptions =~# 'M'
   let &guioptions = substitute(&guioptions, '[mT]', '', 'g')
+endif
+" }}}
+
+" Change cursor shape in terminal {{{
+" https://qiita.com/Linda_pp/items/9e0c94eb82b18071db34
+if has('vim_starting')
+    let &t_SI .= "\e[6 q"
+    let &t_EI .= "\e[2 q"
+    let &t_SR .= "\e[4 q"
 endif
 " }}}
 
