@@ -55,7 +55,8 @@ if !$VIMRC_LOAD_MENU
   let g:did_install_syntax_menu = 1
 endif
 
-" filetype plugin indent on
+filetype off
+filetype plugin indent on
 
 if filereadable(expand('$MYVIMDIR/vimrc.local'))
   execute 'source' expand('$MYVIMDIR/vimrc.local')
@@ -83,36 +84,7 @@ endif
 " }}}
 " Load Plugins {{{
 
-" Set up general prefix keys. {{{
-
-nmap <Space> <Plug>(vimrc:prefix:excmd)
-xmap <Space> <Plug>(vimrc:prefix:excmd)
-omap <Space> <Plug>(vimrc:prefix:excmd)
-" fallback
-nnoremap <Plug>(vimrc:prefix:excmd) <Space>
-xnoremap <Plug>(vimrc:prefix:excmd) <Space>
-onoremap <Plug>(vimrc:prefix:excmd) <Space>
-
-nmap ; <Plug>(vimrc:prefix:operator)
-xmap ; <Plug>(vimrc:prefix:operator)
-omap ; <Plug>(vimrc:prefix:operator)
-" fallback
-nnoremap <Plug>(vimrc:prefix:operator) ;
-xnoremap <Plug>(vimrc:prefix:operator) ;
-onoremap <Plug>(vimrc:prefix:operator) ;
-
-let g:mapleader = ';'
-nnoremap <Leader> <Nop>
-
-nnoremap ;; ;
-nnoremap ,, ,
-
-let g:maplocalleader = '\'
-nnoremap <LocalLeader> <Nop>
-
-" }}}
-
-" TODO: Load only vim-singleton and call it before 'vivo#rtp_append_*()'.
+" TODO: Load only vim-singleton
 if has('clientserver') && volt#load('github.com/thinca/vim-singleton')
   call singleton#enable()
 endif
@@ -355,6 +327,35 @@ highlight ColorColumn ctermfg=12 guifg=Red ctermbg=NONE guibg=NONE
 
 " }}}
 " Mappings, Abbreviations {{{
+
+" Set up general prefix keys. {{{
+
+nmap <Space> <Plug>(vimrc:prefix:excmd)
+xmap <Space> <Plug>(vimrc:prefix:excmd)
+omap <Space> <Plug>(vimrc:prefix:excmd)
+" fallback
+nnoremap <Plug>(vimrc:prefix:excmd) <Space>
+xnoremap <Plug>(vimrc:prefix:excmd) <Space>
+onoremap <Plug>(vimrc:prefix:excmd) <Space>
+
+nmap ; <Plug>(vimrc:prefix:operator)
+xmap ; <Plug>(vimrc:prefix:operator)
+omap ; <Plug>(vimrc:prefix:operator)
+" fallback
+nnoremap <Plug>(vimrc:prefix:operator) ;
+xnoremap <Plug>(vimrc:prefix:operator) ;
+onoremap <Plug>(vimrc:prefix:operator) ;
+
+let g:mapleader = ';'
+nnoremap <Leader> <Nop>
+
+nnoremap ;; ;
+nnoremap ,, ,
+
+let g:maplocalleader = '\'
+nnoremap <LocalLeader> <Nop>
+
+" }}}
 
 " map {{{
 " operator {{{
