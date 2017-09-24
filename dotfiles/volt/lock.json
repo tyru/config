@@ -151,7 +151,6 @@
       "repos_path": [
         "github.com/vim-volt/vim-volt",
         "github.com/tyru/open-browser-github.vim",
-        "github.com/syngan/vim-vimlint",
         "github.com/tyru/capture.vim",
         "github.com/Shougo/neosnippet.vim",
         "github.com/Shougo/neosnippet-snippets",
@@ -171,10 +170,8 @@
         "github.com/kana/vim-operator-user",
         "github.com/thinca/vim-prettyprint",
         "github.com/thinca/vim-themis",
-        "github.com/ynkdir/vim-vimlparser",
         "github.com/tyru/karakuri.vim",
         "github.com/fatih/vim-go",
-        "github.com/kannokanno/vmock",
         "github.com/tyru/open-browser.vim",
         "github.com/tyru/caw.vim"
       ],
