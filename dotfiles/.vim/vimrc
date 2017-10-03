@@ -1,5 +1,0 @@
-" See ~/volt/rc/init.vim
-if isdirectory(expand('$HOME/volt/repos/github.com/vim-volt/vim-volt'))
-  set rtp+=$HOME/volt/repos/github.com/vim-volt/vim-volt
-  call volt#load()
-endif
