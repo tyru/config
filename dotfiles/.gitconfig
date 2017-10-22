@@ -57,8 +57,6 @@
 	ui = auto
 [rerere]
 	enabled = true
-[help]
-	autocorrect = -1
 [branch]
 	autosetuprebase = always
 [push]
