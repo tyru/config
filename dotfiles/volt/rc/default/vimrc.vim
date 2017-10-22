@@ -82,14 +82,6 @@ if exists('&ambiwidth')
 endif
 
 " }}}
-" Load Plugins {{{
-
-" TODO: Load only vim-singleton
-if has('clientserver') && volt#load('github.com/thinca/vim-singleton')
-  call singleton#enable()
-endif
-
-" }}}
 " Options {{{
 
 " indent
