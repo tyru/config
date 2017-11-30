@@ -19,7 +19,6 @@ if isdirectory('/usr/include/c++/')
     unlet s:latest
 endif
 
-setlocal foldmethod=syntax
 let g:c_no_curly_error_fold = 1
 let g:c_no_comment_fold = 1
 
@@ -30,6 +29,6 @@ if exists('b:undo_ftplugin')
 else
   let b:undo_ftplugin = ''
 endif
-let b:undo_ftplugin .= 'setlocal complete< foldmethod< dictionary<'
+let b:undo_ftplugin .= 'setlocal complete< dictionary<'
 
 let &cpo = s:save_cpo
