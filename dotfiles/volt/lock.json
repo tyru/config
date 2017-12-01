@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "trx_id": 106,
+  "trx_id": 110,
   "active_profile": "default",
   "repos": [
     {
@@ -108,12 +108,6 @@
     {
       "type": "git",
       "trx_id": 106,
-      "path": "github.com/kana/vim-operator-user",
-      "version": "c3dfd41c1ed516b4b901c97562e644de62c367aa"
-    },
-    {
-      "type": "git",
-      "trx_id": 106,
       "path": "github.com/thinca/vim-prettyprint",
       "version": "d6060d2b1ff1cff71714e126addd3b10883ade12"
     },
@@ -182,12 +176,6 @@
       "trx_id": 106,
       "path": "github.com/vim-jp/vim-vimlparser",
       "version": "83b0bbe5fa0df5c08b94593d63d0951427dd3378"
-    },
-    {
-      "type": "git",
-      "trx_id": 106,
-      "path": "github.com/tyru/dummy",
-      "version": "1f1ecef07d3158006731b060f57be84a968fe5c7"
     }
   ],
   "profiles": [
@@ -210,7 +198,6 @@
         "github.com/tyru/stoptypofile.vim",
         "github.com/thinca/vim-quickrun",
         "github.com/vim-jp/autofmt",
-        "github.com/kana/vim-operator-user",
         "github.com/thinca/vim-prettyprint",
         "github.com/thinca/vim-themis",
         "github.com/tyru/karakuri.vim",
@@ -221,7 +208,6 @@
         "github.com/tyru/open-browser.vim",
         "github.com/tyru/caw.vim",
         "github.com/posva/vim-vue",
-        "github.com/tyru/dummy",
         "github.com/vim-jp/vim-vimlparser"
       ],
       "use_vimrc": true,
