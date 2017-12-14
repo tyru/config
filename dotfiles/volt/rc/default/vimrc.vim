@@ -512,7 +512,15 @@ endfunction
 " }}}
 
 " Edit/Apply .vimrc quickly
-nnoremap <Plug>(vimrc:prefix:excmd)ev     :<C-u>edit $MYVIMRC<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)ev     :<C-u>call <SID>edit_vimrc()<CR>
+
+function! s:edit_vimrc() abort
+  if $VOLTPATH != ''
+    edit $VOLTPATH/rc/default/vimrc.vim
+  elseif $MYVIMRC != ''
+    edit $MYVIMRC
+  endif
+endfunction
 
 nnoremap <C-]> :<C-u>call <SID>tagjump()<CR>
 
@@ -800,6 +808,12 @@ if s:is_win && executable('bash')
   command! -bar Bash terminal C:/Windows/system32/bash.exe ~ -l
 else
   command! -bar Bash echoerr 'Cannot invoke bash.exe'
+endif
+
+if executable('/mnt/c/WINDOWS/System32/clip.exe')
+  command! -bar Clip !cat "%" | /mnt/c/WINDOWS/System32/clip.exe
+else
+  command! -bar Clip echoerr 'Cannot invoke clip.exe'
 endif
 
 " }}}
