@@ -5,24 +5,10 @@ dotfiles/.vim/.vimbackup_deleted
 *.elc
 dotfiles/.emacs.d/info/
 
-dotfiles/.vim/*
-!dotfiles/.vim/after
-!dotfiles/.vim/autoload
-!dotfiles/.vim/colors
-!dotfiles/.vim/compiler
-!dotfiles/.vim/doc
-!dotfiles/.vim/ftdetect
-!dotfiles/.vim/ftplugin
-!dotfiles/.vim/indent
-!dotfiles/.vim/keymap
-!dotfiles/.vim/lang
-!dotfiles/.vim/macros
-!dotfiles/.vim/plugin
-!dotfiles/.vim/spell
-!dotfiles/.vim/syntax
-!dotfiles/.vim/tutor
-!dotfiles/.vim/tools
-!dotfiles/.vim/bundle
+dotfiles/.vim/pack
+dotfiles/.vim/vimrc
+dotfiles/.vim/.netrwhist
+dotfiles/.vim/info/
 
 !dotfiles/.vim/dict
 !dotfiles/.vim/template
