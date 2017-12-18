@@ -31,7 +31,8 @@ dotfiles/.vim/.VimballRecord
 
 # volt
 dotfiles/volt/bin/
-dotfiles/volt/repos/
+dotfiles/volt/repos/*
+!dotfiles/volt/repos/localhost
 dotfiles/volt/tmp/
 
 # Vimperator

@@ -1,181 +1,187 @@
 {
   "version": 2,
-  "trx_id": 160,
+  "trx_id": 167,
   "current_profile_name": "default",
   "repos": [
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/vim-volt/vim-volt",
       "version": "cfa20b6d2c4cc94c16693c49870a2fc1abbef458"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/syngan/vim-vimlint",
       "version": "711e3476c32c11c780ea70711596263e7f66e395"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/tyru/capture.vim",
       "version": "6158526c1fef1e54e3456af5576ff961856b5a88"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/Shougo/neosnippet.vim",
       "version": "9ee1b4e059d4ffcc02312da13ee36315dacbffe4"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/Shougo/neosnippet-snippets",
       "version": "8dbb78599984140c50418d3dd23d0de4c8f13e74"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/tyru/nextfile.vim",
       "version": "3bef469967c950880a97c9bad38540d02e2f4a5e"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/tyru/closesubwin.vim",
       "version": "8c42579599d0ef6cdc302552d75e64612c55dab5"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/tyru/markdown-codehl-onthefly.vim",
       "version": "31bbb67bc8dc06e894b298729e0881f810ec6d3f"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/tpope/vim-markdown",
       "version": "8cd41796fdafb50977f7f3cd0338716b379f988b"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/kana/vim-textobj-indent",
       "version": "deb76867c302f933c8f21753806cbf2d8461b548"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/kana/vim-textobj-user",
       "version": "e231b65797b5765b3ee862d71077e9bd56f3ca3e"
     },
     {
       "type": "git",
-      "trx_id": 157,
+      "trx_id": 167,
       "path": "github.com/vim-jp/vimdoc-ja-working",
       "version": "6ceff7293b9aacea3a3f56c3f37b55762bf0a627"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/tyru/quickey.vim",
       "version": "8ec90adc65257115227e8e724a7509efd920b3f6"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/tyru/stoptypofile.vim",
       "version": "994ed74a00771bc06d98578874f2e7e80a258cd5"
     },
     {
       "type": "git",
-      "trx_id": 157,
+      "trx_id": 167,
       "path": "github.com/thinca/vim-quickrun",
-      "version": "1170ba086f8e27c123add196675ddab64a59ce70"
+      "version": "bb3d7653797bd14b1b243badf1e6205c33b78539"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/vim-jp/autofmt",
       "version": "99f2b50c00c48d2b585d56e30d77e87097b067cc"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/thinca/vim-prettyprint",
       "version": "d6060d2b1ff1cff71714e126addd3b10883ade12"
     },
     {
       "type": "git",
-      "trx_id": 157,
+      "trx_id": 167,
       "path": "github.com/thinca/vim-themis",
       "version": "9d1f275130e93f083c7c6e78dbe77eb15502e678"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/tyru/karakuri.vim",
       "version": "1cf67d0fee17a0685c5f1e34621c2756d88d737c"
     },
     {
       "type": "git",
-      "trx_id": 157,
+      "trx_id": 167,
       "path": "github.com/fatih/vim-go",
-      "version": "0c98bdf5327fe7f8b84673895842939be238ddcd"
+      "version": "f4b4ba13f95883cbb4f7c43b871a480932614e0f"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/kannokanno/vmock",
       "version": "f36ea546edc2fbb94fba49288de26d7fec6861de"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/tyru/eskk.vim",
       "version": "0f7c3b4a74f29377a6ef30e7fd89fb340a352dd3"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/Shougo/context_filetype.vim",
       "version": "6856503cd938d018c2d42277ee6ca896fd63f5a2"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/posva/vim-vue",
-      "version": "db295dbf134392d2328bf246f4bea9c3685573ad"
+      "version": "6518e738863f0acd190c7564a109be021cae1b56"
     },
     {
       "type": "git",
-      "trx_id": 157,
+      "trx_id": 167,
       "path": "github.com/vim-jp/vim-vimlparser",
       "version": "81691a7866a586227f26eb623e87f65418e5d666"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/tyru/open-browser.vim",
-      "version": "39e80649c739151673373bbaf3a56d126531467b"
+      "version": "ee8decb2b26020320128eecd7a96383d995c8804"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/tyru/open-browser-github.vim",
       "version": "da68ff743192d1196df2150043bd4ece6bee8f7a"
     },
     {
       "type": "git",
-      "trx_id": 156,
+      "trx_id": 167,
       "path": "github.com/tyru/caw.vim",
       "version": "d4a4a73e00226adcaa772aa556d5adbb5be04b6f"
     },
     {
       "type": "git",
-      "trx_id": 160,
+      "trx_id": 167,
       "path": "github.com/vim-jp/vital.vim",
-      "version": "982e0bf3a5c181c0fa9d37bab784412f941f6b80"
+      "version": "ef5ac271b315ea6f8bb8860878fb2e936d64913e"
+    },
+    {
+      "type": "static",
+      "trx_id": 162,
+      "path": "localhost/local/vimdir",
+      "version": ""
     }
   ],
   "profiles": [
@@ -208,7 +214,8 @@
         "github.com/tyru/open-browser.vim",
         "github.com/tyru/open-browser-github.vim",
         "github.com/tyru/caw.vim",
-        "github.com/vim-jp/vital.vim"
+        "github.com/vim-jp/vital.vim",
+        "localhost/local/vimdir"
       ],
       "use_vimrc": true,
       "use_gvimrc": true
