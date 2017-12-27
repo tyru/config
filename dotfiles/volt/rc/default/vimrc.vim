@@ -515,8 +515,8 @@ endfunction
 nnoremap <Plug>(vimrc:prefix:excmd)ev     :<C-u>call <SID>edit_vimrc()<CR>
 
 function! s:edit_vimrc() abort
-  if $VOLTPATH != ''
-    edit $VOLTPATH/rc/default/vimrc.vim
+  if filereadable(expand('~/volt/rc/default/vimrc.vim'))
+    edit ~/volt/rc/default/vimrc.vim
   elseif $MYVIMRC != ''
     edit $MYVIMRC
   endif
