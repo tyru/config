@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "trx_id": 167,
+  "trx_id": 170,
   "current_profile_name": "default",
   "repos": [
     {
@@ -178,10 +178,10 @@
       "version": "ef5ac271b315ea6f8bb8860878fb2e936d64913e"
     },
     {
-      "type": "static",
-      "trx_id": 162,
-      "path": "localhost/local/vimdir",
-      "version": ""
+      "type": "git",
+      "trx_id": 170,
+      "path": "github.com/tyru/homevim",
+      "version": "8233de784559bf44bfcecbf4dafd160db12f38eb"
     }
   ],
   "profiles": [
@@ -215,7 +215,7 @@
         "github.com/tyru/open-browser-github.vim",
         "github.com/tyru/caw.vim",
         "github.com/vim-jp/vital.vim",
-        "localhost/local/vimdir"
+        "github.com/tyru/homevim"
       ],
       "use_vimrc": true,
       "use_gvimrc": true
