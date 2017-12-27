@@ -13,3 +13,6 @@
 [submodule "dotfiles/.zsh/zsh-completions"]
 	path = dotfiles/.zsh/zsh-completions
 	url = https://github.com/zsh-users/zsh-completions
+[submodule "dotfiles/.vim"]
+	path = dotfiles/.vim
+	url = git@github.com:tyru/homevim.git
