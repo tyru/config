@@ -1,6 +1,0 @@
-set folder="~/mail/postfix"
-set mask="!^\\.[^.]"
-set mbox="~/mail/postfix"
-set record="+.Sent"
-set postponed="+.Drafts"
-set spoolfile="~/mail/postfix"

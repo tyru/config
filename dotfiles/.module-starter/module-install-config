@@ -1,4 +1,0 @@
-author:  tyru
-email:   tyru.exe@gmail.com
-builder: Module::Install
-template_dir: /home/takuya/.module-starter/Module-Install/

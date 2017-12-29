@@ -1,18 +1,3 @@
-[submodule "dotfiles/.zsh/auto-fu.zsh"]
-	path = dotfiles/.zsh/auto-fu.zsh
-	url = https://github.com/hchbaw/auto-fu.zsh
-[submodule "dotfiles/.vimperator/vimpr"]
-	path = dotfiles/.vimperator/vimpr
-	url = https://github.com/vimpr/vimperator-plugins
-[submodule "dotfiles/.vimperator/vimperator-plugin-httpdjs"]
-	path = dotfiles/.vimperator/vimperator-plugin-httpdjs
-	url = https://github.com/teramako/vimperator-plugin-httpdjs
-[submodule "dotfiles/.zsh/z"]
-	path = dotfiles/.zsh/z
-	url = https://github.com/rupa/z
-[submodule "dotfiles/.zsh/zsh-completions"]
-	path = dotfiles/.zsh/zsh-completions
-	url = https://github.com/zsh-users/zsh-completions
 [submodule "dotfiles/.vim"]
 	path = dotfiles/.vim
 	url = git@github.com:tyru/homevim.git

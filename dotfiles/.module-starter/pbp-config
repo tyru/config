@@ -1,5 +1,0 @@
-author:  tyru
-email:   tyru.exe@gmail.com
-builder: ExtUtils::MakeMaker Module::Build
-plugins: Module::Starter::PBP
-template_dir: /home/takuya/.module-starter/PBP/
