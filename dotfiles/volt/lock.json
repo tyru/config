@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "trx_id": 170,
+  "trx_id": 174,
   "current_profile_name": "default",
   "repos": [
     {
@@ -131,7 +131,7 @@
     },
     {
       "type": "git",
-      "trx_id": 167,
+      "trx_id": 173,
       "path": "github.com/tyru/eskk.vim",
       "version": "0f7c3b4a74f29377a6ef30e7fd89fb340a352dd3"
     },
@@ -182,6 +182,18 @@
       "trx_id": 170,
       "path": "github.com/tyru/homevim",
       "version": "8233de784559bf44bfcecbf4dafd160db12f38eb"
+    },
+    {
+      "type": "git",
+      "trx_id": 172,
+      "path": "github.com/hotwatermorning/auto-git-diff",
+      "version": "271a10c99f4cb1807769d724ea38293e5789502d"
+    },
+    {
+      "type": "git",
+      "trx_id": 174,
+      "path": "github.com/cespare/vim-toml",
+      "version": "b531aac0d45aaa373070c4cc30d7ead91960f5a7"
     }
   ],
   "profiles": [
@@ -215,7 +227,9 @@
         "github.com/tyru/open-browser-github.vim",
         "github.com/tyru/caw.vim",
         "github.com/vim-jp/vital.vim",
-        "github.com/tyru/homevim"
+        "github.com/tyru/homevim",
+        "github.com/hotwatermorning/auto-git-diff",
+        "github.com/cespare/vim-toml"
       ],
       "use_vimrc": true,
       "use_gvimrc": true
