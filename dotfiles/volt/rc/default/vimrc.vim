@@ -253,7 +253,7 @@ set formatoptions+=j
 " undo-persistence
 if has('persistent_undo')
   set undofile
-  let &undodir = $MYVIMDIR . '/info/undo'
+  set undodir=$MYVIMDIR/info/undo
   silent! call mkdir(&undodir, 'p')
 endif
 
