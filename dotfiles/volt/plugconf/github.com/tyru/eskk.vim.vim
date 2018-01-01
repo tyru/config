@@ -13,22 +13,17 @@ function! s:config()
   let skk_system_dict = '~/.skkdict/system-dict'
   let skk_system_dict_encoding = 'euc-jp'
 
-  if !exists('g:eskk#dictionary')
-    let g:eskk#dictionary = {
-    \   'path': skk_user_dict,
-    \   'encoding': skk_user_dict_encoding,
-    \}
-  endif
-  if !exists('g:eskk#large_dictionary')
-    let g:eskk#large_dictionary = {
-    \   'path': skk_system_dict,
-    \   'encoding': skk_system_dict_encoding,
-    \}
-  endif
-
+  let g:eskk#dictionary = {
+  \   'path': skk_user_dict,
+  \   'encoding': skk_user_dict_encoding,
+  \}
+  let g:eskk#large_dictionary = {
+  \   'path': skk_system_dict,
+  \   'encoding': skk_system_dict_encoding,
+  \}
   " let g:eskk#server = {
   " \   'host': 'localhost',
-  " \   'port': 55100,
+  " \   'port': 1178,
   " \}
 
   " let g:eskk#log_cmdline_level = 2
