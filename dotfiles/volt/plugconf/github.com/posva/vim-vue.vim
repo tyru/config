@@ -1,5 +1,5 @@
 
-function! s:load_on()
+function! s:loaded_on()
   return 'filetype=vue'
 endfunction
 

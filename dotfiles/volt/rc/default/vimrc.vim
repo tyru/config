@@ -816,6 +816,13 @@ else
   command! -bar Clip echoerr 'Cannot invoke clip.exe'
 endif
 
+command! -nargs=+ -complete=shellcmd ImportQF
+\   let s:save_mp = &makeprg
+\ | let &makeprg = <q-args>
+\ | make
+\ | let &makeprg = s:save_mp
+\ | unlet s:save_mp
+
 " }}}
 " Quickfix {{{
 autocmd vimrc QuickfixCmdPost [l]*  call vimrc#quickfix_cmdpost#call(1)

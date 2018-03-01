@@ -4,8 +4,8 @@ function! s:config()
   let g:openbrowser_github_always_use_commit_hash = 1
 endfunction
 
-function! s:load_on()
-  return 'excmd=OpenGithubFile,OpenGithubIssue,OpenGithubPullReq'
+function! s:loaded_on()
+  return 'excmd=OpenGithubFile,OpenGithubIssue,OpenGithubPullReq,OpenGithubProject'
 endfunction
 
 function! s:depends()
