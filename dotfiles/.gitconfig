@@ -61,3 +61,5 @@
 	autosetuprebase = always
 [push]
 	default = simple
+[rebase]
+	autosquash = true

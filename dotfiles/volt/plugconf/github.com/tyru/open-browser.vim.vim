@@ -16,3 +16,7 @@ function! s:config()
 
   command! OpenBrowserCurrent execute 'OpenBrowser' 'file://' . expand('%:p:gs?\\?/?')
 endfunction
+
+function! s:loaded_on()
+  return 'excmd=OpenBrowser,OpenBrowserSearch,OpenBrowserSmartSearch'
+endfunction

@@ -644,24 +644,6 @@ function! s:map_lines(str, expr)
   return join(map(split(a:str, '\n', 1), a:expr), "\n")
 endfunction
 
-
-" Tab key indent
-" NOTE: <S-Tab> is GUI only.
-xnoremap <Tab> >gv
-xnoremap <S-Tab> <gv
-
-" Space key indent (inspired by sakura editor)
-xnoremap <Space><Space> <Esc>:call <SID>space_indent(0)<CR>gv
-xnoremap <Space><BS> <Esc>:call <SID>space_indent(1)<CR>gv
-xmap <Space><S-Space> <Space><BS>
-
-function! s:space_indent(leftward)
-  let save = [&l:expandtab, &l:shiftwidth]
-  setlocal expandtab shiftwidth=1
-  execute 'normal!' (a:leftward ? 'gv<<' : 'gv>>')
-  let [&l:expandtab, &l:shiftwidth] = save
-endfunction
-
 " }}}
 " map! {{{
 inoremap <C-f> <Right>
