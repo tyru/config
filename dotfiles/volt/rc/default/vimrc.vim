@@ -113,7 +113,7 @@ set listchars=tab:>.,extends:>,precedes:<,trail:-
 set display=lastline
 set t_Co=256
 set nonumber
-set showcmd
+set noshowcmd
 
 " command-line
 set cmdheight=1
@@ -512,15 +512,7 @@ endfunction
 " }}}
 
 " Edit/Apply .vimrc quickly
-nnoremap <Plug>(vimrc:prefix:excmd)ev     :<C-u>call <SID>edit_vimrc()<CR>
-
-function! s:edit_vimrc() abort
-  if filereadable(expand('~/volt/rc/default/vimrc.vim'))
-    edit ~/volt/rc/default/vimrc.vim
-  elseif $MYVIMRC != ''
-    edit $MYVIMRC
-  endif
-endfunction
+nnoremap <Plug>(vimrc:prefix:excmd)ev     :<C-u>edit $MYVIMRC<CR>
 
 nnoremap <C-]> :<C-u>call <SID>tagjump()<CR>
 

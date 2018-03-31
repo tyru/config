@@ -1,8 +1,4 @@
 
-function! s:loaded_on()
-  return 'filetype=vue'
-endfunction
-
 function! s:config()
   nmap <Plug>(vimrc:prefix:excmd)ch <Plug>(closesubwin-close-help)
   nmap <Plug>(vimrc:prefix:excmd)cq <Plug>(closesubwin-close-quickfix)

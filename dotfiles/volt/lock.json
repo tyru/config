@@ -100,7 +100,7 @@
     {
       "type": "git",
       "path": "github.com/fatih/vim-go",
-      "version": "d2b0a234ffb5441a3488c78fe8e5f551ddbdd454"
+      "version": "64daedbf900bdf66c5989b5e428c43f25fa0f700"
     },
     {
       "type": "git",
@@ -180,7 +180,27 @@
     {
       "type": "git",
       "path": "github.com/tyru/nesk.vim",
-      "version": "69bf2e500634e81650ce709e3ed519faf2a49e22"
+      "version": "adf7888cfe2bea96d26b7525161755100d165456"
+    },
+    {
+      "type": "git",
+      "path": "github.com/w0rp/ale",
+      "version": "ec5750f57b6b98b46cf041f32bcc5d890f3e7e37"
+    },
+    {
+      "type": "git",
+      "path": "github.com/tyru/transbuffer.vim",
+      "version": "9232b6a9eec7356ce5b3e3dec8cc2443b17d16a9"
+    },
+    {
+      "type": "git",
+      "path": "github.com/Quramy/tsuquyomi",
+      "version": "94f10d312134fc59b53b2e821d3315320f694cf0"
+    },
+    {
+      "type": "git",
+      "path": "github.com/leafgarland/typescript-vim",
+      "version": "e25636b44211a4be7b089bfed7cf09aa7dd086f5"
     }
   ],
   "profiles": [
@@ -221,13 +241,11 @@
         "github.com/tyru/vital-sunaba",
         "github.com/syngan/vim-vimlint",
         "github.com/kana/vim-repeat",
-        "github.com/tyru/nesk.vim"
-      ]
-    },
-    {
-      "name": "ftdetect",
-      "repos_path": [
-        "github.com/posva/vim-vue"
+        "github.com/tyru/nesk.vim",
+        "github.com/w0rp/ale",
+        "github.com/tyru/transbuffer.vim",
+        "github.com/Quramy/tsuquyomi",
+        "github.com/leafgarland/typescript-vim"
       ]
     },
     {
@@ -235,16 +253,9 @@
       "repos_path": []
     },
     {
-      "name": "eskk",
+      "name": "test",
       "repos_path": [
-        "github.com/tyru/eskk.vim"
-      ]
-    },
-    {
-      "name": "ob",
-      "repos_path": [
-        "github.com/tyru/open-browser.vim",
-        "github.com/tyru/open-browser-github.vim"
+        "github.com/tyru/nesk.vim"
       ]
     }
   ]
