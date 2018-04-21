@@ -152,7 +152,7 @@ let &titlestring = '%{getcwd()}'
 function! MyTabLabel(tabnr) "{{{
   if exists('*gettabvar')
     let title = gettabvar(a:tabnr, 'title')
-    if title != ''
+    if title !=# ''
       return title
     endif
   endif
@@ -172,7 +172,7 @@ function! MyTabLabel(tabnr) "{{{
     endfor
   endif
 
-  if bufname == ''
+  if bufname ==# ''
     let label = '[No Name]'
   else
     let label = bufname
@@ -597,10 +597,10 @@ nnoremap <silent> g<C-t> :<C-u>SetTabName<CR>
 command! -bar -nargs=* SetTabName call s:cmd_set_tab_name(<q-args>)
 function! s:cmd_set_tab_name(name) "{{{
   let old_title = exists('t:title') ? t:title : ''
-  if a:name == ''
+  if a:name ==# ''
     " Hitting <Esc> returns empty string.
     let title = input('tab name?:', old_title)
-    let t:title = title != '' ? title : old_title
+    let t:title = title !=# '' ? title : old_title
   else
     let t:title = a:name
   endif
@@ -730,7 +730,7 @@ syntax enable
 " FileType {{{
 
 function! s:load_filetype() "{{{
-  if &omnifunc == ""
+  if &omnifunc ==# ''
     setlocal omnifunc=syntaxcomplete#Complete
   endif
   if &formatoptions !~# 'j'
@@ -859,14 +859,14 @@ endif
 " Use vsplit mode {{{
 " http://qiita.com/kefir_/items/c725731d33de4d8fb096
 
-if has("vim_starting") && !has('gui_running') && has('vertsplit')
+if has('vim_starting') && !has('gui_running') && has('vertsplit')
   function! EnableVsplitMode()
     " enable origin mode and left/right margins
-    let &t_CS = "y"
+    let &t_CS = 'y'
     let &t_ti = &t_ti . "\e[?6;69h"
     let &t_te = "\e[?6;69l\e[999H" . &t_te
     let &t_CV = "\e[%i%p1%d;%p2%ds"
-    call writefile([ "\e[?6;69h" ], "/dev/tty", "a")
+    call writefile([ "\e[?6;69h" ], '/dev/tty', 'a')
   endfunction
 
   " old vim does not ignore CPR
@@ -918,7 +918,7 @@ augroup END
 
 " From defaults.vim (:help defaults.vim)
 
-autocmd BufReadPost *
+autocmd vimrc BufReadPost *
   \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
   \ |   exe "normal! g`\""
   \ | endif
