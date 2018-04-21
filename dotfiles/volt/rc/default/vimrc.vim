@@ -792,21 +792,6 @@ else
   command! -bar Clip echoerr 'Cannot invoke clip.exe'
 endif
 
-command! -nargs=+ -complete=shellcmd ImportQF call s:import_qf(<q-args>, -1)
-command! -nargs=+ -complete=shellcmd LImportQF call s:import_qf(<q-args>, winnr())
-
-function! s:import_qf(shellcmd, winnr) abort
-  if a:winnr >=# 0
-    call setloclist(
-    \ a:winnr, [], 'r', {'lines': systemlist(a:shellcmd)}
-    \)
-  else
-    call setqflist(
-    \ [], 'r', {'lines': systemlist(a:shellcmd)}
-    \)
-  endif
-endfunction
-
 " }}}
 " Quickfix {{{
 autocmd vimrc QuickfixCmdPost [l]*  call vimrc#quickfix_cmdpost#call(1)
