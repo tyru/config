@@ -1,6 +1,11 @@
-function! s:config()
-  " let g:markdown_codehl_onthefly#additional_fenced_languages =
-  " \     markdown_codehl_onthefly#get_default_fenced_languages() + ['tyru=vim']
+function! s:on_load_pre()
+  " Plugin configuration like the code written in vimrc.
+  " This configuration is executed *before* a plugin is loaded.
+endfunction
+
+function! s:on_load_post()
+  " Plugin configuration like the code written in vimrc.
+  " This configuration is executed *after* a plugin is loaded.
 endfunction
 
 function! s:loaded_on()

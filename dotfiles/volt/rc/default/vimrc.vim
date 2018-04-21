@@ -784,18 +784,28 @@ else
   command! -bar Bash echoerr 'Cannot invoke bash.exe'
 endif
 
-if executable('/mnt/c/WINDOWS/System32/clip.exe')
+if executable('/mnt/c/Windows/System32/clip.exe')
+  command! -bar Clip !cat "%" | /mnt/c/Windows/System32/clip.exe
+elseif executable('/mnt/c/WINDOWS/System32/clip.exe')
   command! -bar Clip !cat "%" | /mnt/c/WINDOWS/System32/clip.exe
 else
   command! -bar Clip echoerr 'Cannot invoke clip.exe'
 endif
 
-command! -nargs=+ -complete=shellcmd ImportQF
-\   let s:save_mp = &makeprg
-\ | let &makeprg = <q-args>
-\ | make
-\ | let &makeprg = s:save_mp
-\ | unlet s:save_mp
+command! -nargs=+ -complete=shellcmd ImportQF call s:import_qf(<q-args>, -1)
+command! -nargs=+ -complete=shellcmd LImportQF call s:import_qf(<q-args>, winnr())
+
+function! s:import_qf(shellcmd, winnr) abort
+  if a:winnr >=# 0
+    call setloclist(
+    \ a:winnr, [], 'r', {'lines': systemlist(a:shellcmd)}
+    \)
+  else
+    call setqflist(
+    \ [], 'r', {'lines': systemlist(a:shellcmd)}
+    \)
+  endif
+endfunction
 
 " }}}
 " Quickfix {{{
