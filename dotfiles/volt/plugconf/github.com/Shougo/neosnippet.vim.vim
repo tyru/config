@@ -1,8 +1,8 @@
 function! s:on_load_pre()
   imap <expr> <Tab> neosnippet#expandable_or_jumpable() ?
-    \ "\<Plug>(neosnippet_expand_or_jump)" : "\<Tab>"
+    \ "\<Plug>(neosnippet_jump_or_expand)" : "\<Tab>"
   smap <expr> <Tab> neosnippet#expandable_or_jumpable() ?
-    \ "\<Plug>(neosnippet_expand_or_jump)" : "\<Tab>"
+    \ "\<Plug>(neosnippet_jump_or_expand)" : "\<Tab>"
 endfunction
 
 function! s:on_load_post()
