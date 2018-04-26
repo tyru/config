@@ -1,3 +1,5 @@
+" vim:et:sw=2:ts=2
+
 function! s:on_load_pre()
   let g:netrw_nogx = 1
   nmap gx <Plug>(openbrowser-smart-search)

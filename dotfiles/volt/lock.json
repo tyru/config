@@ -241,7 +241,6 @@
         "github.com/tyru/vital-sunaba",
         "github.com/syngan/vim-vimlint",
         "github.com/kana/vim-repeat",
-        "github.com/tyru/nesk.vim",
         "github.com/w0rp/ale",
         "github.com/tyru/transbuffer.vim",
         "github.com/Quramy/tsuquyomi",

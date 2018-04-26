@@ -1,3 +1,5 @@
+" vim:et:sw=2:ts=2
+
 function! s:on_load_pre()
   let g:ale_vim_vint_show_style_issues = 0
   let g:ale_lint_on_enter = 1

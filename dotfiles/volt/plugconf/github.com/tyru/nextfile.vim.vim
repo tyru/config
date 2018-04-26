@@ -1,4 +1,4 @@
-let s:var = 1
+" vim:et:sw=2:ts=2
 
 function! s:on_load_pre()
   let g:nf_ignore_ext = ['o', 'obj', 'exe', 'bin']

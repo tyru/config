@@ -1,3 +1,5 @@
+" vim:et:sw=2:ts=2
+
 function! s:on_load_pre()
     nmap <Plug>(vimrc:prefix:excmd)ch <Plug>(closesubwin-close-help)
     nmap <Plug>(vimrc:prefix:excmd)cq <Plug>(closesubwin-close-quickfix)

@@ -1,3 +1,5 @@
+" vim:et:sw=2:ts=2
+
 function! s:on_load_pre()
   " augroup vimrc-eskk-vimenter
   "   autocmd!

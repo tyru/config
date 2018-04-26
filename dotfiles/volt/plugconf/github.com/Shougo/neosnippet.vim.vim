@@ -1,3 +1,5 @@
+" vim:et:sw=2:ts=2
+
 function! s:on_load_pre()
   imap <expr> <Tab> neosnippet#expandable_or_jumpable() ?
     \ "\<Plug>(neosnippet_jump_or_expand)" : "\<Tab>"

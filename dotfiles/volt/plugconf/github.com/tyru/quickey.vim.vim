@@ -1,3 +1,5 @@
+" vim:et:sw=2:ts=2
+
 function! s:on_load_pre()
   let g:quickey_no_default_tabwinmerge_keymappings = 1
   let g:quickey_no_default_swap_window_keymappings = 1
