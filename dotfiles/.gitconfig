@@ -7,6 +7,7 @@
 [core]
 	excludesfile = ~/.gitignore.base
 	editor = vim
+	autocrlf = false
 [user]
 	name = tyru
 	email = tyru.exe@gmail.com
@@ -64,3 +65,5 @@
 [rebase]
 	autosquash = true
 	autostash = true
+[fetch]
+	prune = true
