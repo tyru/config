@@ -1,14 +1,6 @@
-" vim:et:sw=2:ts=2
-
 function! s:on_load_pre()
-  let g:ale_set_quickfix = 0
-  let g:ale_set_loclist = 0
-  let g:ale_vim_vint_show_style_issues = 0
-  let g:ale_lint_on_enter = 1
-  let g:ale_lint_on_filetype_changed = 1
-  let g:ale_lint_on_save = 1
-  let g:ale_lint_on_text_changed = 'never'
-  let g:ale_lint_on_insert_leave = 0
+  " Plugin configuration like the code written in vimrc.
+  " This configuration is executed *before* a plugin is loaded.
 endfunction
 
 function! s:on_load_post()

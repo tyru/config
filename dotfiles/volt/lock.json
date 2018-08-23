@@ -110,7 +110,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/eskk.vim",
-      "version": "066b94efcca6e4dc224fd624c123815771553423"
+      "version": "f5def32831fc97a04cb0141f576157f7b14416a6"
     },
     {
       "type": "git",
@@ -145,12 +145,12 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/vital.vim",
-      "version": "25af587b280ff5b3ef58dbdd336d789709be0953"
+      "version": "ccfe1e17859e824f0f1a13440ca2020929d531fd"
     },
     {
       "type": "git",
       "path": "github.com/tyru/homevim",
-      "version": "10b3ed770050b2dd70a2e061ea4184dfde298c55"
+      "version": "2bda99f55c80c600147a36eb77a06b0f2b4abb67"
     },
     {
       "type": "git",
@@ -185,7 +185,7 @@
     {
       "type": "git",
       "path": "github.com/w0rp/ale",
-      "version": "d8d13ef264340113b74a3310a203416f2916b2f5"
+      "version": "a366d325a7c69fa20a3ab69ff8359bcd37d1487a"
     },
     {
       "type": "git",
@@ -201,6 +201,16 @@
       "type": "git",
       "path": "github.com/leafgarland/typescript-vim",
       "version": "e25636b44211a4be7b089bfed7cf09aa7dd086f5"
+    },
+    {
+      "type": "git",
+      "path": "github.com/previm/previm",
+      "version": "6ab010bd5a76afcd3772559bc78e76edcd0107d0"
+    },
+    {
+      "type": "git",
+      "path": "github.com/thinca/vim-localrc",
+      "version": "e2cc8a661bb3f3215fddf58549913c5115f585bd"
     }
   ],
   "profiles": [
@@ -244,7 +254,9 @@
         "github.com/w0rp/ale",
         "github.com/tyru/transbuffer.vim",
         "github.com/Quramy/tsuquyomi",
-        "github.com/leafgarland/typescript-vim"
+        "github.com/leafgarland/typescript-vim",
+        "github.com/tyru/eskk.vim",
+        "github.com/thinca/vim-localrc"
       ]
     },
     {
@@ -254,7 +266,8 @@
     {
       "name": "test",
       "repos_path": [
-        "github.com/tyru/nesk.vim"
+        "github.com/w0rp/ale",
+        "github.com/thinca/vim-localrc"
       ]
     }
   ]

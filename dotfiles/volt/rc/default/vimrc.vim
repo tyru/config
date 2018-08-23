@@ -145,6 +145,15 @@ else
   set updatecount=0
 endif
 
+" Backup
+set backup
+if has('patch-8.1.0251')
+  set backupdir=$MYVIMDIR/info/backup//
+else
+  set backupdir=$MYVIMDIR/info/backup
+endif
+silent! call mkdir(substitute(&backupdir, '//$', '', ''), 'p')
+
 " title
 set title
 let &titlestring = '%{getcwd()}'
