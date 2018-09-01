@@ -35,6 +35,7 @@
 	s = show
 	sa = stash apply
 	sd = stash drop
+	shortrev = rev-parse --short
 	sl = stash list
 	sp = stash pop
 	ss = stash save
@@ -43,10 +44,10 @@
 	subadd = submodule add
 	subfor = submodule foreach
 	subup = submodule foreach "git pull"
+	todo = grep -n -E "\b(TODO|XXX|FIXME)\b"
 	view = log --pretty=oneline --abbrev-commit --graph --source --tags --branches
 	wh = whatchanged
 	zip = archive --format=zip
-	shortrev = rev-parse --short
 	# https://gist.github.com/gnarf/5406589
 	pr = "!f() { git fetch -fu ${2:-origin} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
 	pr-clean = "!git for-each-ref refs/heads/pr/* --format=\"%(refname)\" | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done"

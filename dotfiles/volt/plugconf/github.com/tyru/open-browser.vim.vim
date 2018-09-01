@@ -23,9 +23,9 @@ function! s:on_load_post()
   " This configuration is executed *after* a plugin is loaded.
 endfunction
 
-function! s:loaded_on()
-  return 'excmd=OpenBrowser,OpenBrowserSearch,OpenBrowserSmartSearch'
-endfunction
+" function! s:loaded_on()
+"   return 'excmd=OpenBrowser,OpenBrowserSearch,OpenBrowserSmartSearch'
+" endfunction
 
 function! s:depends()
   " Dependencies of this plugin.

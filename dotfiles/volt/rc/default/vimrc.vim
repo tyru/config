@@ -5,7 +5,7 @@
 
 " See also: ~/.vimrc or ~/_vimrc
 
-let s:is_win = has('win16') || has('win32') || has('win64') || has('win95')
+let s:is_win = has('win32')
 let s:is_msys = has('win32unix') && !has('gui_running')
 if s:is_win
   let $MYVIMDIR = expand('~/vimfiles')
