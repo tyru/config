@@ -7,6 +7,8 @@
 
 let s:is_win = has('win32')
 let s:is_msys = has('win32unix') && !has('gui_running')
+let s:is_wsl = has('unix') && isdirectory('/mnt/c/')
+
 if s:is_win
   let $MYVIMDIR = expand('~/vimfiles')
 else
@@ -787,18 +789,26 @@ command! -nargs=+ LGitGrep call vimrc#cmd_git_grep#call(<q-args>, 1)
 " Add current line to quickfix (Use quickfix as bookmark list)
 command! -bar -range QFAddLine <line1>,<line2>call vimrc#cmd_qfaddline#add()
 
-if s:is_win && executable('bash')
-  command! -bar Bash terminal C:/Windows/system32/bash.exe ~ -l
-else
-  command! -bar Bash echoerr 'Cannot invoke bash.exe'
-endif
+if s:is_wsl
+  command! -bar Clip call s:cmd_clip()
 
-if executable('/mnt/c/Windows/System32/clip.exe')
-  command! -bar Clip !cat "%" | /mnt/c/Windows/System32/clip.exe
-elseif executable('/mnt/c/WINDOWS/System32/clip.exe')
-  command! -bar Clip !cat "%" | /mnt/c/WINDOWS/System32/clip.exe
-else
-  command! -bar Clip echoerr 'Cannot invoke clip.exe'
+  function! s:cmd_clip() abort
+    let windir = s:windir()
+    if windir is# ''
+      echoerr 'windows directory not found'
+      return
+    endif
+    let clip = join([windir, 'System32', 'clip.exe'], '/')
+    let str = join(getline(1, '$'), "\n")
+    call system(clip, str)
+  endfunction
+
+  function! s:windir() abort
+    return get(filter([
+    \ '/mnt/c/Windows',
+    \ '/mnt/c/WINDOWS',
+    \], {_,p -> isdirectory(p)}), 0, '')
+  endfunction
 endif
 
 " }}}
