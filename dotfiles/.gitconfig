@@ -1,16 +1,12 @@
-# vim:noet:
-
-[include]
-	path = .gitconfig.secret
+[user]
+	name = tyru
+	email = tyru.exe@gmail.com
 [github]
 	user = tyru
 [core]
 	excludesfile = ~/.gitignore.base
 	editor = vim
 	autocrlf = false
-[user]
-	name = tyru
-	email = tyru.exe@gmail.com
 [alias]
 	ar = archive
 	br = branch
@@ -68,3 +64,5 @@
 	autostash = true
 [fetch]
 	prune = true
+[includeIf "gitdir:~/work/"]
+	path = ~/.gitconfig.work
