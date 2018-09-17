@@ -125,7 +125,7 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/vim-vimlparser",
-      "version": "e407a31597ef5ab119a3a1f0c92bdad66916b4c6"
+      "version": "1a1cc9621f5499b610f2548df554121a2c0ede1f"
     },
     {
       "type": "git",
@@ -140,7 +140,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/caw.vim",
-      "version": "e82ae00f3fc03289d4054b44f100025a1bc81939"
+      "version": "889846acfe803b9da8737e0e9b73af97d3cd836d"
     },
     {
       "type": "git",
@@ -150,7 +150,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/homevim",
-      "version": "d5aa6ab06b715070e23d892868f950fa585e0972"
+      "version": "db7c9c14ca3ef7408fd433ecc0950f3b5d239cf5"
     },
     {
       "type": "git",
