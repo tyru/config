@@ -1,0 +1,45 @@
+
+name=vim
+prefix=$HOME/local/$name
+enable_lua=true
+repos=$name
+# https://vim-jp.org/docs/build_linux.html
+depends=(git gettext libtinfo-dev libacl1-dev libgpm-dev build-essential)
+$enable_lua && depends=("${depends[@]}" lua5.3 liblua5.3-dev luajit libluajit-5.1)
+
+update() {
+  git --git-dir=$name/.git pull --quiet --rebase
+}
+
+build() {
+  cd $name || return $?
+
+  config_opts="--prefix=$prefix"
+  config_opts="$config_opts --with-features=huge"
+  config_opts="$config_opts --enable-multibyte"
+  config_opts="$config_opts --with-compiledby='tyru <tyru.exe@gmail.com>'"
+  #config_opts="$config_opts --enable-perlinterp"
+  #config_opts="$config_opts --enable-pythoninterp"
+  #config_opts="$config_opts --enable-rubyinterp"
+  $enable_lua && config_opts="$config_opts --enable-luainterp"
+  #config_opts="$config_opts --with-lua-prefix=/usr/local"
+  config_opts="$config_opts --with-luajit"
+  config_opts="$config_opts --enable-gui=gtk2"
+  config_opts="$config_opts --enable-fontset"
+  config_opts="$config_opts --enable-fail-if-missing"
+  config_opts="$config_opts --enable-gpm"
+  config_opts="$config_opts --enable-xim"
+  config_opts="$config_opts --enable-fontset"
+
+  [ -f ./configure ] || make --quiet configure
+  sh -c "./configure --quiet $config_opts"
+  if [ $? -ne 0 ]; then
+    make --quiet distclean
+    sh -c "./configure --quiet $config_opts" || return $?
+  fi
+  make --quiet
+}
+
+package() {
+  cd $name && rm -rf "$prefix" && make install
+}

@@ -1,0 +1,20 @@
+
+name=git
+prefix=$HOME/local/$name
+repos=$name
+# https://git-scm.com/book/ja/v2/%E4%BD%BF%E3%81%84%E5%A7%8B%E3%82%81%E3%82%8B-Git%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB
+depends=(libcurl4-gnutls-dev libexpat1-dev gettext libz-dev libssl-dev)
+
+update() {
+  git --git-dir=$name/.git pull --quiet --rebase
+}
+
+build() {
+  cd $name && make prefix=$prefix all man
+}
+
+package() {
+  cd $name &&
+    rm -rf "$prefix" &&
+    make prefix=$prefix install install-man
+}

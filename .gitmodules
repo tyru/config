@@ -1,3 +1,6 @@
-[submodule "dotfiles/.vim"]
-	path = dotfiles/.vim
-	url = git@github.com:tyru/homevim.git
+[submodule "src/vim/vim"]
+	path = src/vim/vim
+	url = https://github.com/vim/vim.git
+[submodule "src/git/git"]
+	path = src/git/git
+	url = https://github.com/git/git.git
