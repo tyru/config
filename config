@@ -102,10 +102,10 @@ get_hook_scripts() {
 
 cmd_make_symlinks() {
   local name
-  for name in `ls -A $DOTFILES_DIR/`; do
-    mkdir -p `dirname "$HOME/$name"`
+  for name in $(ls -A $DOTFILES_DIR/); do
+    mkdir -p $(dirname "$HOME/$name")
     if [ ! -e "$HOME/$name" ]; then
-      ln -T -s "`pwd`/$DOTFILES_DIR/$name" "$HOME/$name" && info "created: $HOME/$name"
+      ln -T -s "$(pwd)/$DOTFILES_DIR/$name" "$HOME/$name" && info "created: $HOME/$name"
     else
       info "skip: $HOME/$name"
     fi
@@ -114,7 +114,7 @@ cmd_make_symlinks() {
 
 cmd_rm_symlinks() {
   local name
-  for name in `ls -A $DOTFILES_DIR/`; do
+  for name in $(ls -A $DOTFILES_DIR/); do
     if [ -L "$HOME/$name" ]; then
       rm -f "$HOME/$name"
       info "removed: $HOME/$name"
@@ -156,7 +156,7 @@ EOM
 }
 
 main() {
-  cd `dirname $0` || exit $?
+  cd $(dirname $0) || exit $?
 
   # no arguments
   if [ $# -eq 0 ]; then
