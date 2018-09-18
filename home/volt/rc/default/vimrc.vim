@@ -790,16 +790,16 @@ command! -nargs=+ LGitGrep call vimrc#cmd_git_grep#call(<q-args>, 1)
 command! -bar -range QFAddLine <line1>,<line2>call vimrc#cmd_qfaddline#add()
 
 if s:is_wsl
-  command! -bar Clip call s:cmd_clip()
+  command! -bar -range=% Clip <line1>,<line2>call s:cmd_clip()
 
-  function! s:cmd_clip() abort
+  function! s:cmd_clip() range abort
     let windir = s:windir()
     if windir is# ''
       echoerr 'windows directory not found'
       return
     endif
     let clip = join([windir, 'System32', 'clip.exe'], '/')
-    let str = join(getline(1, '$'), "\n")
+    let str = join(getline(a:firstline, a:lastline), "\n")
     call system(clip, str)
   endfunction
 
