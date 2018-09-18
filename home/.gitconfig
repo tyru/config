@@ -64,5 +64,5 @@
 	autostash = true
 [fetch]
 	prune = true
-[includeIf "gitdir:~/work/"]
-	path = ~/.gitconfig.work
+[include]
+	path = ~/.gitconfig.secret
