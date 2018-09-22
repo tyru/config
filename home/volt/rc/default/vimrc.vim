@@ -436,10 +436,6 @@ onoremap <Plug>(vimrc:prefix:fold) z
 " Open only current line's fold.
 nnoremap <Plug>(vimrc:prefix:fold)<Space> zMzvzz
 
-" Folding mappings easy to remember.
-nnoremap <Plug>(vimrc:prefix:fold)l zo
-nnoremap <Plug>(vimrc:prefix:fold)h zc
-
 " +virtualedit
 if has('virtualedit')
   nnoremap <expr> i col('$') is col('.') ? 'A' : 'i'
@@ -470,17 +466,6 @@ if has('virtualedit')
   " }}}
 endif
 
-nnoremap <Plug>(vimrc:prefix:excmd)me :<C-u>messages<CR>
-nnoremap <Plug>(vimrc:prefix:excmd)di :<C-u>display<CR>
-
-nnoremap gl :<C-u>cnext<CR>
-nnoremap gh :<C-u>cNext<CR>
-
-nnoremap <Plug>(vimrc:prefix:excmd)ct :<C-u>tabclose<CR>
-
-nnoremap <Plug>(vimrc:prefix:excmd)tl :<C-u>tabedit<CR>
-nnoremap <Plug>(vimrc:prefix:excmd)th :<C-u>tabedit<CR>:execute 'tabmove' (tabpagenr() isnot 1 ? tabpagenr() - 2 : '')<CR>
-
 if has('gui_running')
   inoremap <script> <C-s> <SID>(gui-save)<Esc>
   nnoremap <script> <C-s> <SID>(gui-save)
@@ -497,7 +482,7 @@ if has('gui_running')
 endif
 
 
-" See also rooter.vim settings.
+" Set cwd to current file's directory
 nnoremap ,cd       :<C-u>cd %:p:h<CR>
 
 " 'Y' to yank till the end of line.
@@ -511,6 +496,7 @@ nnoremap <silent> <Right>   :<C-u>+tabmove<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)w      :<C-u>update<CR>
 nnoremap <silent> <Plug>(vimrc:prefix:excmd)q      :<C-u>call <SID>vim_never_die_close()<CR>
 
+" :bwipeout current buffer if it is the only window & tab
 function! s:vim_never_die_close()
   try
     close
@@ -524,17 +510,6 @@ endfunction
 
 " Edit/Apply .vimrc quickly
 nnoremap <Plug>(vimrc:prefix:excmd)ev     :<C-u>edit $MYVIMRC<CR>
-
-nnoremap <C-]> :<C-u>call <SID>tagjump()<CR>
-
-function! s:tagjump() abort
-  try
-    execute "normal! \<C-]>"
-  catch
-    Ctags
-    execute "normal! \<C-]>"
-  endtry
-endfunction
 
 " Cmdwin {{{
 set cedit=<C-l>
