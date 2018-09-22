@@ -675,6 +675,19 @@ cnoremap <C-n> <Down>
 cnoremap <C-p> <Up>
 
 " }}}
+" tmap {{{
+
+" Duplicate current lines to another plain buffer,
+" to see the output without stopping command I/O.
+" TODO save colors
+tnoremap <C-w>y <C-w>:call <SID>dup_term_buffer()<CR>
+function! s:dup_term_buffer() abort
+  let lines = getline(1, '$')
+  new
+  call setline('.', lines)
+endfunction
+
+" }}}
 
 
 " Centering display position after certain commands {{{
