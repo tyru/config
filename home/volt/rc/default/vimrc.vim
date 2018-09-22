@@ -679,12 +679,13 @@ cnoremap <C-p> <Up>
 
 " Duplicate current lines to another plain buffer,
 " to see the output without stopping command I/O.
-" TODO save colors
-tnoremap <C-w>y <C-w>:call <SID>dup_term_buffer()<CR>
-function! s:dup_term_buffer() abort
-  let lines = getline(1, '$')
-  new
-  call setline('.', lines)
+tnoremap <C-w>y <C-w>:<C-u>call <SID>dup_term_buf()<CR>
+function! s:dup_term_buf() abort
+  let file = tempname()
+  call term_dumpwrite('', file)
+  call term_dumpload(file)
+  setlocal nolist
+  call delete(file)
 endfunction
 
 " }}}
