@@ -806,13 +806,11 @@ endif
 
 " Enter Terminal-Job mode when leaving terminal window {{{1
 
-function! s:term_winleave() abort
-  if &buftype ==# 'terminal' && term_getstatus(bufnr('')) =~# '\<normal\>'
-    normal! GA
-  endif
-endfunction
-
-autocmd vimrc WinLeave * call s:term_winleave()
+autocmd vimrc TerminalOpen *
+\ autocmd vimrc WinLeave <buffer>
+\   if term_getstatus('') =~# '\<normal\>' |
+\     execute 'normal! GA'                 |
+\   endif
 
 " When editing a file, always jump to the last known cursor position {{{1
 "
