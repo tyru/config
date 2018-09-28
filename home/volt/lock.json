@@ -164,11 +164,6 @@
     },
     {
       "type": "git",
-      "path": "github.com/mmisono/viminesweeper",
-      "version": "37f5e10b4beffc9e943356cc6b80700820c652d1"
-    },
-    {
-      "type": "git",
       "path": "github.com/tyru/vital-sunaba",
       "version": "8e51ce43d9eece2faba5d611d74e32285b374cbb"
     },
@@ -189,11 +184,6 @@
     },
     {
       "type": "git",
-      "path": "github.com/tyru/transbuffer.vim",
-      "version": "9232b6a9eec7356ce5b3e3dec8cc2443b17d16a9"
-    },
-    {
-      "type": "git",
       "path": "github.com/Quramy/tsuquyomi",
       "version": "94f10d312134fc59b53b2e821d3315320f694cf0"
     },
@@ -211,6 +201,16 @@
       "type": "git",
       "path": "github.com/thinca/vim-localrc",
       "version": "e2cc8a661bb3f3215fddf58549913c5115f585bd"
+    },
+    {
+      "type": "git",
+      "path": "github.com/kana/vim-altr",
+      "version": "d5a9d857f3fdc0099ce6fac1add405a783952fa1"
+    },
+    {
+      "type": "git",
+      "path": "github.com/mattn/vim-sqlfmt",
+      "version": "db6365103e38d274efe7689a002646a4419ae821"
     }
   ],
   "profiles": [
@@ -246,17 +246,15 @@
         "github.com/tyru/homevim",
         "github.com/hotwatermorning/auto-git-diff",
         "github.com/cespare/vim-toml",
-        "github.com/kannokanno/vmock",
-        "github.com/mmisono/viminesweeper",
-        "github.com/tyru/vital-sunaba",
         "github.com/syngan/vim-vimlint",
         "github.com/kana/vim-repeat",
         "github.com/w0rp/ale",
-        "github.com/tyru/transbuffer.vim",
         "github.com/Quramy/tsuquyomi",
         "github.com/leafgarland/typescript-vim",
         "github.com/tyru/eskk.vim",
-        "github.com/thinca/vim-localrc"
+        "github.com/thinca/vim-localrc",
+        "github.com/kana/vim-altr",
+        "github.com/mattn/vim-sqlfmt"
       ]
     },
     {

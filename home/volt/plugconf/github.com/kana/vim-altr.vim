@@ -1,8 +1,6 @@
-" vim:et:sw=2:ts=2
-
 function! s:on_load_pre()
-  " Plugin configuration like the code written in vimrc.
-  " This configuration is executed *before* a plugin is loaded.
+  nmap sn <Plug>(altr-forward)
+  nmap sN <Plug>(altr-back)
 endfunction
 
 function! s:on_load_post()
@@ -22,7 +20,7 @@ function! s:loaded_on()
   " This function must contain 'return "<str>"' code.
   " (the argument of :return must be string literal)
 
-  return 'excmd=MineSweeper'
+  return 'start'
 endfunction
 
 function! s:depends()

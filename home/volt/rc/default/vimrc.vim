@@ -505,7 +505,7 @@ nnoremap <Plug>(vimrc:prefix:excmd)oe  :<C-u>setlocal expandtab! expandtab?<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)ol  :<C-u>setlocal list! list?<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)on  :<C-u>setlocal number! number?<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)om  :<C-u>setlocal modeline! modeline?<CR>
-nnoremap <Plug>(vimrc:prefix:excmd)ot  :<C-u>call <SID>toggle_option_list([2, 4, 8], "tabstop")'<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)ot  :<C-u>call <SID>toggle_option_list([2, 4, 8], "tabstop")<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)ofc :<C-u>call <SID>toggle_option_list(['', 'all'], 'foldclose')<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)ofm :<C-u>call <SID>toggle_option_list(['manual', 'marker', 'indent'], 'foldmethod')<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)ofw :<C-u>call <SID>toggle_winfix()<CR>
@@ -623,6 +623,7 @@ cnoremap <C-p> <Up>
 " to see the output without stopping command I/O.
 tnoremap <C-w>y <C-w>:<C-u>call <SID>dup_term_buf()<CR>
 
+" TODO dump also scrolled lines
 function! s:dup_term_buf() abort
   let file = tempname()
   call term_dumpwrite('', file)
@@ -671,6 +672,12 @@ function! s:on_filetype()
     setlocal omnifunc=syntaxcomplete#Complete
   endif
   set formatoptions+=j
+endfunction
+
+autocmd vimrc Syntax * call s:on_syntax()
+
+function! s:on_syntax() abort
+  call matchadd('TODO', '\<TODO\|FIXME\|XXX\|NOTE\>')
 endfunction
 
 " Commands {{{1
@@ -752,6 +759,9 @@ let g:vim_indent_cont = 0
 
 " syntax/sh.vim {{{2
 let g:is_bash = 1
+
+" syntax/prolog.vim {{{2
+let g:prolog_highlighting_no_keyword = 1
 
 " About japanese input method {{{1
 
