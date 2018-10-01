@@ -10,11 +10,11 @@ update() {
 }
 
 build() {
-  cd $name && make prefix=$prefix all man
+  cd $name && make --quiet prefix=$prefix all man
 }
 
 package() {
   cd $name &&
     rm -rf "$prefix" &&
-    make prefix=$prefix install install-man
+    make --quiet prefix=$prefix install install-man
 }

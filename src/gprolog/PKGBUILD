@@ -9,9 +9,9 @@ update() {
 }
 
 build() {
-  cd $name/src && autoconf && ./configure --prefix="$prefix" && make --quiet
+  cd $name/src && autoconf && ./configure --prefix="$prefix" --quiet && make --quiet
 }
 
 package() {
-  cd $name/src && rm -rf "$prefix" && make install-system install-examples install-links
+  cd $name/src && rm -rf "$prefix" && make --quiet install-system install-examples install-links
 }

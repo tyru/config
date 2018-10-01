@@ -41,5 +41,5 @@ build() {
 }
 
 package() {
-  cd $name && rm -rf "$prefix" && make install
+  cd $name && rm -rf "$prefix" && make --quiet install
 }
