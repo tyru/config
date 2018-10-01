@@ -14,7 +14,7 @@ debug() {
   [ $LOG_LEVEL -ge 2 ] && echo "$@"
 }
 
-cmd_all() {
+cmd_init() {
   cmd_make_symlinks
   cmd_upgrade_all
 }
@@ -129,7 +129,7 @@ Usage: config COMMAND ARGS
 
 COMMAND
 
-  all
+  init
     same as make-symlinks, upgrade-all
 
   upgrade-all
@@ -186,7 +186,7 @@ main() {
   local cmd=$1
   shift
   case "$cmd" in
-    all) cmd_all "$@" ;;
+    init) cmd_init "$@" ;;
     upgrade-all) cmd_upgrade_all ;;
     upgrade) cmd_upgrade "$@" ;;
     update) cmd_update "$@" ;;
