@@ -1,5 +1,6 @@
 #!/bin/bash
 set -u
+shopt -s nullglob
 
 SRC_DIR=src
 DOTFILES_DIR=home
@@ -19,8 +20,8 @@ cmd_all() {
 }
 
 cmd_upgrade_all() {
-  for pkg in $(ls $SRC_DIR/); do
-    cmd_upgrade "$pkg" || return $?
+  for pkg in $SRC_DIR/*; do
+    cmd_upgrade "$(basename "$pkg")" || return $?
   done
 }
 
@@ -57,7 +58,7 @@ do_run_action() {
   local action=$2
 
   # PKGBUILD
-  source $SRC_DIR/$pkg/PKGBUILD || return $?
+  source "$SRC_DIR/$pkg/PKGBUILD" || return $?
 
   # env.conf
   [ -f ./env.conf ] && source ./env.conf
@@ -87,7 +88,7 @@ run_hook() {
     hook=$hook \
     repos=${repos:-} \
     prefix=${prefix:-} \
-      bash $script || return $?
+      bash "$script" || return $?
   done
   debug "* End $hook hook: $action $pkg"
 }
@@ -103,7 +104,7 @@ get_hook_scripts() {
 cmd_make_symlinks() {
   local name
   for name in $(ls -A $DOTFILES_DIR/); do
-    mkdir -p $(dirname "$HOME/$name")
+    mkdir -p "$(dirname "$HOME/$name")"
     if [ ! -e "$HOME/$name" ]; then
       ln -T -s "$(pwd)/$DOTFILES_DIR/$name" "$HOME/$name" && info "created: $HOME/$name"
     else
@@ -156,7 +157,7 @@ EOM
 }
 
 main() {
-  cd $(dirname $0) || exit $?
+  cd "$(dirname "$0")" || exit $?
 
   # no arguments
   if [ $# -eq 0 ]; then
@@ -168,12 +169,12 @@ main() {
   while [ $# -ne 0 ]; do
     case "$1" in
       -h|--help) cmd_help; return 0 ;;
-      -q) LOG_LEVEL=$(expr $LOG_LEVEL - 1) ;;
-      -qq) LOG_LEVEL=$(expr $LOG_LEVEL - 2) ;;
-      -qqq) LOG_LEVEL=$(expr $LOG_LEVEL - 3) ;;
-      -v) LOG_LEVEL=$(expr $LOG_LEVEL + 1) ;;
-      -vv) LOG_LEVEL=$(expr $LOG_LEVEL + 2) ;;
-      -vvv) LOG_LEVEL=$(expr $LOG_LEVEL + 3) ;;
+      -q) LOG_LEVEL=$((LOG_LEVEL - 1)) ;;
+      -qq) LOG_LEVEL=$((LOG_LEVEL - 2)) ;;
+      -qqq) LOG_LEVEL=$((LOG_LEVEL - 3)) ;;
+      -v) LOG_LEVEL=$((LOG_LEVEL + 1)) ;;
+      -vv) LOG_LEVEL=$((LOG_LEVEL + 2)) ;;
+      -vvv) LOG_LEVEL=$((LOG_LEVEL + 3)) ;;
       --) shift; break ;;
       -*) echo "error: unknown option: $1" >&2; return 1 ;;
       *) break ;;
