@@ -1,0 +1,17 @@
+
+name=gprolog
+prefix=$HOME/local/$name
+repos=$name
+depends=(build-essential)
+
+update() {
+  git --git-dir=$name/.git pull --quiet --rebase
+}
+
+build() {
+  cd $name/src && autoconf && ./configure --prefix="$prefix" && make --quiet
+}
+
+package() {
+  cd $name/src && rm -rf "$prefix" && make install-system install-examples install-links
+}

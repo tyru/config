@@ -4,3 +4,6 @@
 [submodule "src/git/git"]
 	path = src/git/git
 	url = https://github.com/git/git.git
+[submodule "src/gprolog/gprolog"]
+	path = src/gprolog/gprolog
+	url = https://git.code.sf.net/p/gprolog/code
