@@ -81,6 +81,8 @@ do_run_action() {
 
   # post hook
   run_hook "$pkg" "$action" "post-$action"
+
+  return 0
 }
 
 run_hook() {
