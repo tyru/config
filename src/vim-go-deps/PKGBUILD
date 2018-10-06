@@ -3,7 +3,7 @@ name=vim-go-deps
 prefix=$HOME/local/$name
 repos=$name
 depends=()
-src_depends=(vim volt)
+src_depends=(gvm vim volt)
 
 update() {
   volt get -u fatih/vim-go
