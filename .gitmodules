@@ -7,3 +7,6 @@
 [submodule "src/gprolog/gprolog"]
 	path = src/gprolog/gprolog
 	url = https://git.code.sf.net/p/gprolog/code
+[submodule "src/gvm/gvm"]
+	path = src/gvm/gvm
+	url = https://github.com/moovweb/gvm.git

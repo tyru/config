@@ -1,0 +1,17 @@
+
+name=gvm
+prefix=$HOME/local/$name
+repos=$name
+depends=(curl git mercurial make binutils bison gcc build-essential)
+
+update() {
+  git --git-dir=$name/.git pull --quiet --rebase
+}
+
+build() {
+  :
+}
+
+package() {
+  cd $name && GVM_NO_UPDATE_PROFILE=true GVM_NO_GIT_BAK=true ./binscripts/gvm-installer
+}
