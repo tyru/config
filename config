@@ -15,8 +15,7 @@ debug() {
 }
 
 cmd_init() {
-  cmd_make_symlinks
-  cmd_upgrade_all
+  cmd_make_symlinks && cmd_upgrade_all
 }
 
 cmd_upgrade_all() {
@@ -27,9 +26,7 @@ cmd_upgrade_all() {
 
 cmd_upgrade() {
   local pkg=$1
-  cmd_update "$pkg"
-  cmd_build "$pkg"
-  cmd_package "$pkg"
+  cmd_update "$pkg" && cmd_build "$pkg" && cmd_package "$pkg"
 }
 
 cmd_update() {
