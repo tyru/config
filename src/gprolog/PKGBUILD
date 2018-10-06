@@ -3,6 +3,7 @@ name=gprolog
 prefix=$HOME/local/$name
 repos=$name
 depends=(build-essential)
+skip=true
 
 update() {
   git --git-dir=$name/.git pull --quiet --rebase

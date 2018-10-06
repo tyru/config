@@ -19,8 +19,19 @@ cmd_init() {
 }
 
 cmd_upgrade_all() {
+  filter_pkgs '[ "${skip:-}" != true ]' | while read -r pkg; do
+    cmd_upgrade "$pkg" || return $?
+  done
+}
+
+filter_pkgs() {
+  local expr=$1
+  local pkg
   for pkg in $SRC_DIR/*; do
-    cmd_upgrade "$(basename "$pkg")" || return $?
+    pkg=$(basename "$pkg")
+    if (source "$SRC_DIR/$pkg/PKGBUILD" && eval "$expr"); then
+      echo "$pkg"
+    fi
   done
 }
 
