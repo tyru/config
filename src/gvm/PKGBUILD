@@ -13,5 +13,9 @@ build() {
 }
 
 package() {
-  cd $name && GVM_NO_UPDATE_PROFILE=true GVM_NO_GIT_BAK=true ./binscripts/gvm-installer
+  cd $name && \
+    GIT_ROOT=$(pwd) \
+    GVM_NO_UPDATE_PROFILE=true \
+    GVM_NO_GIT_BAK=true \
+    ./binscripts/gvm-installer
 }

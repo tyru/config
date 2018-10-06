@@ -1,7 +1,5 @@
 
 name=volt
-prefix=$HOME/local/$name
-repos=$name
 depends=()
 src_depends=(gvm)
 
@@ -11,23 +9,55 @@ required_patch_version=1
 repo_url='github.com/vim-volt/volt'
 
 update() {
-  git --git-dir=$name/.git pull --quiet --rebase
+  :
 }
 
 build() {
-  check_go_cmd && go get -d $repo_url
+  install_go && go get -d $repo_url
+}
+
+package() {
+  install_go && go install $repo_url
+}
+
+install_go() {
+  if ! check_go_cmd || ! check_version; then
+    local major=$required_major_version
+    local minor=$required_minor_version
+    local patch=$required_patch_version
+    local go=go$major.$minor.$patch
+    if [[ -s "$HOME/.gvm/scripts/gvm" ]]; then
+      set +u
+      source "$HOME/.gvm/scripts/gvm"
+      gvm install $go
+      gvm use $go
+      set -u
+      echo
+      banner "Please run 'gvm use $go --default' in your shell."
+      echo
+    else
+      echo 'ERROR: gvm is not installed' >&2
+      return 1
+    fi
+  fi
+}
+
+banner() {
+  local str=$1
+  local width=$((${#str} + 6))
+  local line
+  line=$(perl -E 'print(q(!) x shift)' $width)
+  echo "$line"
+  echo "!! $str !!"
+  echo "$line"
 }
 
 check_go_cmd() {
-  if ! type go; then
+  if ! type go >/dev/null 2>&1; then
     echo "'go' command is not installed" >&2
     return 1
   fi
   return 0
-}
-
-package() {
-  check_version && go install $repo_url
 }
 
 check_version() {
@@ -37,7 +67,7 @@ check_version() {
   local minor=$required_minor_version
   local patch=$required_patch_version
   if ! perl -E "exit(\$ARGV[0] >= $major && \$ARGV[1] >= $minor && \$ARGV[2] >= $patch ? 0 : 1)" $vers; then
-    echo "go version is not 1.11.1 or higher" >&2
+    echo "go version is not $major.$minor.$patch or higher" >&2
     return 2
   fi
   return 0
