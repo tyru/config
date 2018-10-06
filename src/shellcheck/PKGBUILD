@@ -1,0 +1,14 @@
+name=shellcheck
+depends=(shellcheck)
+
+update() {
+  :
+}
+
+build() {
+  :
+}
+
+package() {
+  :
+}
