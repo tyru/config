@@ -1,8 +1,9 @@
 
 name=gvm
-prefix=$HOME/local/$name
 repos=$name
 depends=(curl git mercurial make binutils bison gcc build-essential)
+
+install_dir=$HOME/.gvm
 
 update() {
   git --git-dir=$name/.git pull --quiet --rebase
@@ -13,9 +14,33 @@ build() {
 }
 
 package() {
-  cd $name && \
-    GIT_ROOT=$(pwd) \
-    GVM_NO_UPDATE_PROFILE=true \
-    GVM_NO_GIT_BAK=true \
+  cd $name || return $?
+
+  # Skip if already installed.
+  # $install_dir contains $GOPATH and go runtime.
+  # Reinstalling would lose them.
+  [ -d "$install_dir/" ] && return 0
+
+  # Replace .git file by a directory temporarily
+  local dotgit
+  local gitdir
+  dotgit=$(cat .git)
+  gitdir=$(pwd)/$(awk '$0=$2' <.git)
+  if [ -d "$gitdir" ]; then
+    rm -f .git
+    cp -r "$gitdir" .git
+  else
+    echo "ERROR: directory '$gitdir' is not found" >&2
+    return 1
+  fi
+
+  # Install current directory to $install_dir
+  GIT_ROOT=$(pwd) \
+  GVM_NO_UPDATE_PROFILE=true \
+  GVM_NO_GIT_BAK=true \
     ./binscripts/gvm-installer
+
+  # Restore .git file
+  rm -rf .git
+  echo "$dotgit" >.git
 }
