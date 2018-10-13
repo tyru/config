@@ -18,6 +18,7 @@ build() {
 
 package() {
   install_go && go install $repo_url
+  volt get -l
 }
 
 install_go() {
@@ -29,8 +30,8 @@ install_go() {
     if [[ -s "$HOME/.gvm/scripts/gvm" ]]; then
       set +u
       source "$HOME/.gvm/scripts/gvm"
-      gvm install $go
-      gvm use $go
+      GO111MODULE=off gvm install $go
+      GO111MODULE=off gvm use $go
       set -u
       echo
       banner "Please run 'gvm use $go --default' in your shell."

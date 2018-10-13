@@ -1,7 +1,5 @@
 
 name=vim-go-deps
-prefix=$HOME/local/$name
-repos=$name
 depends=()
 src_depends=(gvm vim volt)
 

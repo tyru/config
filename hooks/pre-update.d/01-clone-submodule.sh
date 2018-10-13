@@ -5,7 +5,7 @@ cloned() {
 }
 
 # Clone submodule
-if ! cloned "$pkgdir/$repos"; then
+if [ "$pkgdir" ] && [ "$repos" ] && ! cloned "$pkgdir/$repos"; then
   git submodule update --init --recursive "$pkgdir/$repos"
   git --git-dir="$pkgdir/$repos/.git" checkout master
 fi
