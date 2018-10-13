@@ -497,6 +497,34 @@ function! s:toggle_winfix()
   endif
 endfunction
 
+function! s:toggle_terminal_modes()
+  let prevwinnr = winnr()
+  " -1: undefined, 0: terminal normal mode, 1: terminal job mode
+  " Change all terminal window's modes to this mode.
+  " It is determined by the first terminal window's mode.
+  let dest_mode = -1
+  try
+    for bufnr in tabpagebuflist()
+      if getbufvar(bufnr, '&buftype') isnot# 'terminal'
+        continue
+      endif
+      let is_normal = term_getstatus(bufnr) =~# '\<normal\>'
+      if dest_mode is# -1
+        let dest_mode = is_normal
+      endif
+      if is_normal && dest_mode is# 1
+        call win_gotoid(win_getid(bufwinnr(bufnr)))
+        normal! GA
+      elseif !is_normal && dest_mode is# 0
+        " XXX: `exe "normal! \<C-w>N"` cannot work in terminal window
+        call feedkeys("\<C-w>" . bufwinnr(bufnr) . "\<C-w>\<C-w>N", 'n')
+      endif
+    endfor
+  finally
+    call feedkeys("\<C-w>" . prevwinnr . "\<C-w>", 'n')
+  endtry
+endfunction
+
 nnoremap <Plug>(vimrc:prefix:excmd)oh  :<C-u>setlocal hlsearch! hlsearch?<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)oi  :<C-u>setlocal ignorecase! ignorecase?<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)op  :<C-u>setlocal paste! paste?<CR>
@@ -509,6 +537,7 @@ nnoremap <Plug>(vimrc:prefix:excmd)ot  :<C-u>call <SID>toggle_option_list([2, 4,
 nnoremap <Plug>(vimrc:prefix:excmd)ofc :<C-u>call <SID>toggle_option_list(['', 'all'], 'foldclose')<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)ofm :<C-u>call <SID>toggle_option_list(['manual', 'marker', 'indent'], 'foldmethod')<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)ofw :<C-u>call <SID>toggle_winfix()<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)oT  :<C-u>call <SID>toggle_terminal_modes()<CR>
 
 " <Space>[hjkl] for <C-w>[hjkl] {{{2
 
