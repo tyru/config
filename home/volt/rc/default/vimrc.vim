@@ -320,6 +320,7 @@ set shortmess+=aI
 " set switchbuf=useopen,usetab
 set textwidth=80
 set matchpairs+=<:>
+set nofixeol
 
 " Font {{{2
 if has('gui_running')
