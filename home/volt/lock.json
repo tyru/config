@@ -145,12 +145,12 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/vital.vim",
-      "version": "bc0bd9ae0d48bb12f3909056b311cb489bd9c494"
+      "version": "abbe6b91c3cd4e996b17a17042da2e63d475c9e4"
     },
     {
       "type": "git",
       "path": "github.com/tyru/homevim",
-      "version": "9322a60a06345dcdfbcaae014e77ce7c2b3092d9"
+      "version": "72a19b8768595bd5475452afb695b99f1cb19f25"
     },
     {
       "type": "git",
@@ -175,7 +175,7 @@
     {
       "type": "git",
       "path": "github.com/w0rp/ale",
-      "version": "ea49cc759f7254c03a3515371ffad23e6b326d07"
+      "version": "7dc79b66725c791af320d9f16fe91d1262666e39"
     },
     {
       "type": "git",
