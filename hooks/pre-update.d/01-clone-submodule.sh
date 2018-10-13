@@ -9,5 +9,5 @@ cloned() {
 
 # Clone submodule
 if ! cloned "$pkgdir/$repos"; then
-  git submodule update --init "$pkgdir/$repos"
+  git submodule update --init --recursive "$pkgdir/$repos"
 fi
