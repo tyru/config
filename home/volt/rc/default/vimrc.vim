@@ -793,6 +793,10 @@ let g:is_bash = 1
 " syntax/prolog.vim {{{2
 let g:prolog_highlighting_no_keyword = 1
 
+" add prologKeyword highlights for my own
+" syn keyword prologKeyword asserta
+" syn keyword prologKeyword assertz
+
 " About japanese input method {{{1
 
 " From kaoriya's vimrc
