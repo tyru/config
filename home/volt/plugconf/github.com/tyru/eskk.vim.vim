@@ -8,19 +8,13 @@ function! s:on_load_pre()
   "   \   autocmd! vimrc-eskk-vimenter
   " augroup END
 
-  " skkdict
-  let skk_user_dict = '~/.skkdict/user-dict'
-  let skk_user_dict_encoding = 'utf-8'
-  let skk_system_dict = '~/.skkdict/system-dict'
-  let skk_system_dict_encoding = 'euc-jp'
-
   let g:eskk#dictionary = {
-  \   'path': skk_user_dict,
-  \   'encoding': skk_user_dict_encoding,
+  \   'path': '~/.skkdict/user-dict',
+  \   'encoding': 'utf-8',
   \}
   let g:eskk#large_dictionary = {
-  \   'path': skk_system_dict,
-  \   'encoding': skk_system_dict_encoding,
+  \   'path': '~/.skkdict/system-dict',
+  \   'encoding': 'euc-jp',
   \}
   " let g:eskk#server = {
   " \   'host': 'localhost',
@@ -29,6 +23,21 @@ function! s:on_load_pre()
 
   " let g:eskk#log_cmdline_level = 2
   " let g:eskk#log_file_level = 4
+
+  autocmd User eskk-initialize-pre call s:eskk_initial_pre()
+  function! s:eskk_initial_pre()
+      let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
+      call t.add_map('~', '～')
+      call t.add_map('zc', '©')
+      call t.add_map('zr', '®')
+      call t.add_map('tm', '™')
+      call t.add_map('z ', '　')
+      for n in range(10)
+        call t.add_map(n . '.', n . '.')
+      endfor
+      call eskk#register_mode_table('hira', t)
+  endfunction
+
 endfunction
 
 function! s:on_load_post()
