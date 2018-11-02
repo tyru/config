@@ -526,6 +526,14 @@ function! s:toggle_terminal_modes()
   endtry
 endfunction
 
+function! s:toggle_diff() abort
+  if &diff
+    diffoff!
+  else
+    diffthis
+  endif
+endfunction
+
 nnoremap <Plug>(vimrc:prefix:excmd)oh  :<C-u>setlocal hlsearch! hlsearch?<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)oi  :<C-u>setlocal ignorecase! ignorecase?<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)op  :<C-u>setlocal paste! paste?<CR>
@@ -539,6 +547,7 @@ nnoremap <Plug>(vimrc:prefix:excmd)ofc :<C-u>call <SID>toggle_option_list(['', '
 nnoremap <Plug>(vimrc:prefix:excmd)ofm :<C-u>call <SID>toggle_option_list(['manual', 'marker', 'indent'], 'foldmethod')<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)ofw :<C-u>call <SID>toggle_winfix()<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)oT  :<C-u>call <SID>toggle_terminal_modes()<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)od  :<C-u>call <SID>toggle_diff()<CR>
 
 " <Space>[hjkl] for <C-w>[hjkl] {{{2
 
