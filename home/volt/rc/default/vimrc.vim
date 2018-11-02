@@ -228,7 +228,7 @@ let &guitablabel = '%{MyTabLabel(v:lnum)}'
 " statusline
 set laststatus=2
 function! s:statusline()
-  let s = '[%f]%( [%M%R%H%W]%)%( [%{&ft}]%) %{&fenc}/%{&ff}'
+  let s = '[%f]%( [%M%R%H%W]%)%( %{&diff?"[diff]":""}%)%( [%{&ft}]%) %{&fenc}/%{&ff}'
   let s .= '%('
 
   let s .= '%( %{line(".")}/%{line("$")}%)'
