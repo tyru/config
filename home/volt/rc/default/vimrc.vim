@@ -352,12 +352,14 @@ endif
 
 " ColorScheme {{{1
 
-colorscheme desert
-" colorscheme evening
-" colorscheme molokai
+try
+  colorscheme spring-night
+catch /E185/
+  colorscheme desert
+endtry
 
 " too annoying
-highlight ColorColumn ctermfg=12 guifg=Red ctermbg=NONE guibg=NONE
+" highlight ColorColumn ctermfg=12 guifg=Red ctermbg=NONE guibg=NONE
 
 " Mappings, Abbreviations {{{1
 
