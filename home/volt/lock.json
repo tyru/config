@@ -211,6 +211,11 @@
       "type": "git",
       "path": "github.com/rhysd/vim-color-spring-night",
       "version": "fba9c9b6c93fd28a0c4cb81943b006a93964212a"
+    },
+    {
+      "type": "git",
+      "path": "github.com/tyru/tabsidebar-boost.vim",
+      "version": "e3814c6ee106d08a18f6c069043fc0a037a46e0c"
     }
   ],
   "profiles": [
@@ -255,7 +260,8 @@
         "github.com/thinca/vim-localrc",
         "github.com/kana/vim-altr",
         "github.com/mattn/vim-sqlfmt",
-        "github.com/rhysd/vim-color-spring-night"
+        "github.com/rhysd/vim-color-spring-night",
+        "github.com/tyru/tabsidebar-boost.vim"
       ]
     },
     {

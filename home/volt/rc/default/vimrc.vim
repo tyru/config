@@ -239,6 +239,13 @@ function! s:statusline()
 endfunction
 let &statusline = s:statusline()
 
+if has('tabsidebar')
+  set showtabline=0
+  set showtabsidebar=2
+  set tabsidebarcolumns=20
+  set tabsidebarwrap
+endif
+
 " 'guioptions' flags are set on FocusGained
 " because "cmd.exe start /min" doesn't work.
 " (always start up as foreground)
