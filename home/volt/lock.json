@@ -60,7 +60,7 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/vimdoc-ja-working",
-      "version": "db38753f187798184a570646faa806ebb0d1c170"
+      "version": "3b5816d3c19563989cbda17dc2c8081293f7f38e"
     },
     {
       "type": "git",
@@ -75,7 +75,7 @@
     {
       "type": "git",
       "path": "github.com/thinca/vim-quickrun",
-      "version": "9dbda9dcdc8ef3150c414b9b1ea347b04b942665"
+      "version": "37e344df6df4213cf16b23cc612bf200f42a7af3"
     },
     {
       "type": "git",
@@ -100,7 +100,7 @@
     {
       "type": "git",
       "path": "github.com/fatih/vim-go",
-      "version": "d5ce080c25806d68189be641e19996898138f1a4"
+      "version": "8513febab5c698553acc7ac33f4185fb2da664d2"
     },
     {
       "type": "git",
@@ -140,7 +140,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/caw.vim",
-      "version": "2b88f9978b25892d918d8c7b564d3e05fc24656f"
+      "version": "e186d64b6f5f8c39c15eb07f0e2798ce05d25fe3"
     },
     {
       "type": "git",
@@ -150,7 +150,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/homevim",
-      "version": "403fadfcd5746edea6b3868ba5809c87c1c65de1"
+      "version": "e00ee1a63dcaf5ae1d5409a18b28a4fcc0e7eb55"
     },
     {
       "type": "git",
@@ -175,7 +175,7 @@
     {
       "type": "git",
       "path": "github.com/w0rp/ale",
-      "version": "4b841b55869e3ec5b02806f9b2fe962ffdca2750"
+      "version": "e4faf82cab34869c5ecdc097b9eb0209c9ad9318"
     },
     {
       "type": "git",
@@ -210,7 +210,7 @@
     {
       "type": "git",
       "path": "github.com/rhysd/vim-color-spring-night",
-      "version": "fba9c9b6c93fd28a0c4cb81943b006a93964212a"
+      "version": "7ea78804c32438f3b96e80e1405a43166cbff59d"
     },
     {
       "type": "git",
