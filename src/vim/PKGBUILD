@@ -3,16 +3,95 @@ name=vim
 prefix=$HOME/local/$name
 enable_lua=true
 repos=$name
+# {remote name}!{branch}!{url}
+repos_list=('origin!master!https://github.com/vim/vim' 'rbtnn!tabsidebar!https://github.com/rbtnn/vim')
+default='tyru!tyru!https://github.com/tyru/vim'
+base_branch='origin/master'
 # https://vim-jp.org/docs/build_linux.html
 depends=(git gettext libtinfo-dev libacl1-dev libgpm-dev build-essential)
 $enable_lua && depends=("${depends[@]}" lua5.3 liblua5.3-dev luajit libluajit-5.1)
 
 update() {
-  git --git-dir=$name/.git pull --quiet --rebase
+  if dirty_worktree $name/.git; then
+    echo "warning: $name: git worktree is dirty. update aborted." >&2
+    return 1
+  fi
+  cd "$name" || return $?
+
+  local name
+  local branch
+  local patch
+
+  # Add remotes and fetch
+  force_add_remote "$default"
+  for patch in "${repos_list[@]}"; do
+    force_add_remote "$patch"
+    name=$(get_name "$patch")
+    git fetch "$name"
+  done
+
+  # Checkout default branch
+  branch=$(get_branch "$default")
+  if ! exists_branch "$branch"; then
+    git checkout -b "$branch" "$base_branch"
+  fi
+  git checkout "$branch"
+
+  # Merge patches to default branch
+  for patch in "${repos_list[@]}"; do
+    name=$(get_name "$patch")
+    branch=$(get_branch "$patch")
+    git merge --no-ff --no-edit "$name/$branch"
+  done
+}
+
+get_name() {
+  echo "$1" | cut -d! -f1
+}
+
+get_branch() {
+  echo "$1" | cut -d! -f2
+}
+
+get_url() {
+  echo "$1" | cut -d! -f3
+}
+
+exists_branch() {
+  git branch | sed 's/^..//' | grep -q -F "$1"
+}
+
+# Add a remote if it does not exist.
+# If it exists, remove and add again.
+force_add_remote() {
+  local name
+  local url
+  name=$(get_name "$1")
+  url=$(get_url "$1")
+  if [ "$(git remote get-url "$name" 2>/dev/null)" != "$url" ]; then
+    git remote remove "$name" 2>/dev/null
+    git remote add "$name" "$url"
+  fi
+}
+
+dirty_worktree() {
+  [ "$(git --git-dir="$1" status --porcelain)" ]
+}
+
+current_branch() {
+  git branch | grep -E '^\*' | awk '$0=$2'
 }
 
 build() {
   cd $name || return $?
+
+  local branch
+  branch=$(get_branch "$default")
+  if [ "$(current_branch)" != "$branch" ]; then
+    echo "fatal: current branch is not '$branch' branch." >&2
+    echo "fatal: please run './config update vim' at first." >&2
+    return 1
+  fi
 
   config_opts="--prefix=$prefix"
   config_opts="$config_opts --with-features=huge"
