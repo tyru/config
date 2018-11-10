@@ -20,7 +20,7 @@
     {
       "type": "git",
       "path": "github.com/Shougo/neosnippet.vim",
-      "version": "32583e605ebe96bba805bdf0d526b951345c8b3e"
+      "version": "9f87934708db75cfafd3ec957c11cfe190281c5f"
     },
     {
       "type": "git",
@@ -215,7 +215,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/tabsidebar-boost.vim",
-      "version": "e3814c6ee106d08a18f6c069043fc0a037a46e0c"
+      "version": "13ed6778bf6551b1891ecbb11f8934008ba94542"
     }
   ],
   "profiles": [

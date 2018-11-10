@@ -6,7 +6,6 @@
 " See also: ~/.vimrc or ~/_vimrc
 
 let s:is_win = has('win32')
-let s:is_msys = has('win32unix') && !has('gui_running')
 let s:is_wsl = has('unix') && isdirectory('/mnt/c/')
 
 if s:is_win
@@ -63,7 +62,7 @@ endfunction
 
 let s:macros += ['Lazy']
 if has('vim_starting')
-  command! -nargs=* Lazy autocmd vimrc VimEnter <args>
+  command! -nargs=* Lazy autocmd vimrc VimEnter * <args>
 else
   command! -nargs=* Lazy <args>
 endif
@@ -283,7 +282,7 @@ endif
 
 " visual bell
 set novisualbell
-Lazy * set t_vb=
+Lazy set t_vb=
 
 " restore screen
 set norestorescreen
@@ -361,6 +360,8 @@ endif
 
 try
   colorscheme spring-night
+  " https://github.com/rhysd/vim-color-spring-night/issues/7
+  Lazy hi SignColumn term=NONE guibg=#ffffff ctermbg=255
 catch /E185/
   colorscheme desert
 endtry
@@ -836,7 +837,7 @@ autocmd vimrc WinEnter *
 \ endif
 
 " Block cursor in MSYS2 console {{{1
-if s:is_msys
+if !has('gui_running')
   let &t_ti.="\e[1 q"
   let &t_SI.="\e[5 q"
   let &t_EI.="\e[1 q"
