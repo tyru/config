@@ -460,8 +460,21 @@ nnoremap <Plug>(vimrc:prefix:excmd)cd   :<C-u>lcd %:h<CR>
 nnoremap Y    y$
 
 " Moving tabs
-nnoremap <silent> <Left>    :<C-u>-tabmove<CR>
-nnoremap <silent> <Right>   :<C-u>+tabmove<CR>
+if has('tabsidebar')
+  nnoremap <silent> <Up>      :<C-u>call <SID>tabmove(-v:count1)<CR>
+  nnoremap <silent> <Down>    :<C-u>call <SID>tabmove(+v:count1)<CR>
+else
+  nnoremap <silent> <Left>    :<C-u>call <SID>tabmove(-v:count1)<CR>
+  nnoremap <silent> <Right>   :<C-u>call <SID>tabmove(+v:count1)<CR>
+endif
+
+function! s:tabmove(n) abort
+  let last = tabpagenr('$')
+  let i = (tabpagenr() - 1 + a:n) % last
+  let i = i < 0 ? last + i : i
+  let tabnr = i ==# 0 || i + 2 ==# tabpagenr() ? i : i + 1
+  execute 'tabmove' tabnr
+endfunction
 
 " :update / :close
 nnoremap <Plug>(vimrc:prefix:excmd)w      :<C-u>update<CR>
