@@ -85,14 +85,6 @@ current_branch() {
 build() {
   cd "$name" || return $?
 
-  local branch
-  branch=$(get_branch "$default")
-  if [ "$(current_branch)" != "$branch" ]; then
-    echo "fatal: current branch is not '$branch' branch." >&2
-    echo "fatal: please run './config update vim' at first." >&2
-    return 1
-  fi
-
   config_opts="--prefix=$prefix"
   config_opts="$config_opts --with-features=huge"
   config_opts="$config_opts --enable-multibyte"
