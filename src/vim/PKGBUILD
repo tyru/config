@@ -4,7 +4,7 @@ prefix=$HOME/local/$name
 enable_lua=true
 repos=$name
 # {remote name}!{branch}!{url}
-repos_list=('origin!master!https://github.com/vim/vim' 'rbtnn!tabsidebar!https://github.com/rbtnn/vim')
+repos_list=('origin!master!https://github.com/vim/vim' 'rbtnn!clpum_and_tabsidebar!https://github.com/rbtnn/vim')
 default='tyru!tyru!https://github.com/tyru/vim'
 base_branch='origin/master'
 # https://vim-jp.org/docs/build_linux.html
