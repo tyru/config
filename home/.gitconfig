@@ -13,7 +13,7 @@
 	cont = rebase --continue
 	cp = cherry-pick
 	dish = diff --cached -M
-	fixup = commit --amend -C HEAD
+	amend = commit --amend -C HEAD
 	gene = log --graph --pretty='%C(yellow)%h%Creset %ai %an: %s%C(yellow)%d%Creset' --all
 	view = log --pretty=oneline --abbrev-commit --graph --source --tags --branches
 	last = log -p --reverse HEAD@{1}..
