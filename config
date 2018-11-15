@@ -18,6 +18,10 @@ cmd_init() {
   cmd_make_symlinks && cmd_upgrade_all
 }
 
+cmd_list() {
+  get_ordered_pkgs
+}
+
 cmd_upgrade_all() {
   get_ordered_pkgs | while read -r pkg; do
     cmd_upgrade "$pkg" || return $?
@@ -207,6 +211,7 @@ main() {
   shift
   case "$cmd" in
     init) cmd_init "$@" ;;
+    list) cmd_list "$@" ;;
     upgrade-all) cmd_upgrade_all ;;
     upgrade) cmd_upgrade "$@" ;;
     update) cmd_update "$@" ;;
