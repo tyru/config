@@ -117,52 +117,58 @@ endif
 
 " Options {{{1
 
-" indent
-set tabstop=2
-set shiftwidth=0
-set softtabstop=-1
 set autoindent
-set expandtab
-set shiftround
+set backspace=indent,eol,start
+set browsedir=current
+set complete=.,w,b,u,t,i,d,k,kspell
+set concealcursor=nvic
 set copyindent
+set diffopt+=vertical
+set display=lastline
+set expandtab
+set formatoptions+=j
+set formatoptions=mMcroqnl2
+set history=1000
+set hlsearch
+set ignorecase
+set incsearch
+set keywordprg=
+set list
+set matchpairs+=<:>
+set nofixeol
+set nonumber
+set noshowcmd
+set notimeout
+set nrformats-=octal
 set preserveindent
+set pumheight=20
+set shiftround
+set shiftwidth=0
+set shortmess+=aI
+set smartcase
+set softtabstop=-1
+set t_Co=256
+set tabstop=2
+set textwidth=80
+set whichwrap=b,s
+set wildmenu
+set wildmode=longest,list,full
+
 if exists('+breakindent')
   set breakindent
   set breakindentopt=sbr
   set showbreak=<
 endif
 
-" search
-set hlsearch
-set incsearch
-set smartcase
-set ignorecase
-
-" Aesthetic options
-set list
-" Assumption: Trailing spaces are already highlighted and noticeable.
-" set listchars=tab:>.,extends:>,precedes:<,trail:-,eol:$
-set listchars=tab:>.,extends:>,precedes:<,trail:-
-set display=lastline
-set t_Co=256
-set nonumber
-set noshowcmd
-
-" command-line
-set cmdheight=1
-set wildmenu
-set wildmode=longest,list,full
-
-" completion
-set complete=.,w,b,u,t,i,d,k,kspell
-set pumheight=20
-
-" tags
 if has('path_extra')
   set tags+=.;
   set tags+=tags;
   set path+=.;
 endif
+
+" Assumption: Trailing spaces are already highlighted and noticeable.
+" set listchars=tab:>.,extends:>,precedes:<,trail:-,eol:$
+set listchars=tab:>.,extends:>,precedes:<,trail:-
 
 " Swapfile
 if 1
@@ -180,16 +186,16 @@ endif
 
 " Backup
 set backup
-if has('patch-8.1.0251')
-  set backupdir=$MYVIMDIR/info/backup//
-else
-  set backupdir=$MYVIMDIR/info/backup
-endif
+set backupdir=$MYVIMDIR/info/backup//
 silent! call mkdir(substitute(&backupdir, '//$', '', ''), 'p')
 
-" title
+" Title
 set title
 let &titlestring = '%{getcwd()}'
+
+" guitablabel {{{
+
+let &guitablabel = '%{MyTabLabel(v:lnum)}'
 
 function! MyTabLabel(tabnr)
   if exists('*gettabvar')
@@ -222,28 +228,37 @@ function! MyTabLabel(tabnr)
   return label . (modified ? '[+]' : '')
 endfunction
 
-let &guitablabel = '%{MyTabLabel(v:lnum)}'
+" }}}
 
-" statusline
+" statusline {{{
+
 set laststatus=2
-function! s:statusline()
-  let s = '[%f]%( [%M%R%H%W]%)%( %{&diff?"[diff]":""}%)%( [%{&ft}]%) %{&fenc}/%{&ff}'
-  let s .= '%('
+let &statusline = '[%f]%( [%M%R%H%W]%)%( %{&diff?"[diff]":""}%)%( [%{&ft}]%) %{&fenc}/%{&ff}'
+\               . '%('
+\               . '%( %{line(".")}/%{line("$")}%)'
+\               . '%)'
 
-  let s .= '%( %{line(".")}/%{line("$")}%)'
+" }}}
 
-  let s .= '%)'
+" Unofficial patches {{{
 
-  return s
-endfunction
-let &statusline = s:statusline()
-
+" https://rbtnn.github.io/vim/
 if has('tabsidebar')
   set showtabline=0
   set showtabsidebar=2
   set tabsidebarcolumns=20
   set tabsidebarwrap
 endif
+
+" http://h-east.github.io/vim/
+if has('clpum')
+  set wildmode=popup
+  set wildmenu
+  set clpumheight=40
+  set clcompleteopt-=noinsert
+endif
+
+" }}}
 
 " 'guioptions' flags are set on FocusGained
 " because "cmd.exe start /min" doesn't work.
@@ -280,53 +295,26 @@ if exists('+shellslash')
   set shellslash
 endif
 
-" visual bell
+" Visual bell
 set novisualbell
-Lazy set t_vb=
+set t_vb=
 
-" restore screen
+" Restore screen
 set norestorescreen
 set t_ti=
 set t_te=
 
-" timeout
-set notimeout
-
-" cursor behavior in insertmode
-set whichwrap=b,s
-set backspace=indent,eol,start
-set formatoptions=mMcroqnl2
-" 7.3.541 or later
-set formatoptions+=j
-
-" undo-persistence
+" Undo persistence
 if has('persistent_undo')
   set undofile
   set undodir=$MYVIMDIR/info/undo
   silent! call mkdir(&undodir, 'p')
 endif
 
-if has('conceal')
-  set concealcursor=nvic
-endif
-
 " jvgrep
 if executable('jvgrep')
   set grepprg=jvgrep
 endif
-
-set browsedir=current
-
-" misc.
-set keywordprg=
-set diffopt+=vertical
-set history=1000
-set nrformats-=octal
-set shortmess+=aI
-" set switchbuf=useopen,usetab
-set textwidth=80
-set matchpairs+=<:>
-set nofixeol
 
 " Font {{{2
 if has('gui_running')
