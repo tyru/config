@@ -243,7 +243,8 @@ let &statusline = '[%f]%( [%M%R%H%W]%)%( %{&diff?"[diff]":""}%)%( [%{&ft}]%) %{&
 " Unofficial patches {{{
 
 " https://rbtnn.github.io/vim/
-if has('tabsidebar')
+" disable when running as git commit editor
+if has('tabsidebar') && !exists('$GIT_EXEC_PATH')
   set showtabline=0
   set showtabsidebar=2
   set tabsidebarcolumns=20
