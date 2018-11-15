@@ -14,6 +14,7 @@
 	cp = cherry-pick
 	dish = diff --cached -M
 	amend = commit --amend -C HEAD
+	amend-edit = commit -v --amend
 	gene = log --graph --pretty='%C(yellow)%h%Creset %ai %an: %s%C(yellow)%d%Creset' --all
 	view = log --pretty=oneline --abbrev-commit --graph --source --tags --branches
 	last = log -p --reverse HEAD@{1}..
