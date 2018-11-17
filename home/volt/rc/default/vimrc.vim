@@ -136,12 +136,13 @@ set keywordprg=
 set list
 set matchpairs+=<:>
 set nofixeol
-set nonumber
 set noshowcmd
 set notimeout
 set nrformats-=octal
+set number
 set preserveindent
 set pumheight=20
+set scrolloff=5
 set shiftround
 set shiftwidth=0
 set shortmess+=aI
@@ -153,12 +154,6 @@ set textwidth=80
 set whichwrap=b,s
 set wildmenu
 set wildmode=longest,list,full
-
-if exists('+breakindent')
-  set breakindent
-  set breakindentopt=sbr
-  set showbreak=<
-endif
 
 if has('path_extra')
   set tags+=.;
@@ -198,11 +193,9 @@ let &titlestring = '%{getcwd()}'
 let &guitablabel = '%{MyTabLabel(v:lnum)}'
 
 function! MyTabLabel(tabnr)
-  if exists('*gettabvar')
-    let title = gettabvar(a:tabnr, 'title')
-    if title !=# ''
-      return title
-    endif
+  let title = gettabvar(a:tabnr, 'title')
+  if title !=# ''
+    return title
   endif
 
   let buflist = tabpagebuflist(a:tabnr)
@@ -233,7 +226,7 @@ endfunction
 " statusline {{{
 
 set laststatus=2
-let &statusline = '[%f]%( [%M%R%H%W]%)%( %{&diff?"[diff]":""}%)%( [%{&ft}]%) %{&fenc}/%{&ff}'
+let &statusline = '%f%( [%M%R%H%W]%)%( %{&diff?"[diff]":""}%)%( [%{&ft}]%) %{&fenc}/%{&ff}'
 \               . '%('
 \               . '%( %{line(".")}/%{line("$")}%)'
 \               . '%)'
@@ -253,7 +246,7 @@ endif
 
 " http://h-east.github.io/vim/
 if has('clpum')
-  set wildmode=popup
+  set wildmode=longest,popup
   set wildmenu
   set clpumheight=40
   set clcompleteopt-=noinsert
@@ -326,7 +319,7 @@ if has('gui_running')
       " ... and if "Ricty_Diminished" font is installed,
       " enable DirectWrite.
       try
-        set gfn=Ricty_Diminished_Discord:h14:cSHIFTJIS
+        set guifont=Ricty_Diminished_Discord:h14:cSHIFTJIS
       catch | endtry
     endif
   elseif has('mac')    " Mac
@@ -471,6 +464,10 @@ nnoremap <silent> <Plug>(vimrc:prefix:excmd)q      :<C-u>close<CR>
 
 " Edit .vimrc
 nnoremap <Plug>(vimrc:prefix:excmd)ev     :<C-u>edit $MYVIMRC<CR>
+
+" Terminal {{{2
+
+tnoremap <C-w><Space> <C-w>N
 
 " Cmdwin {{{2
 set cedit=<C-l>
@@ -710,6 +707,11 @@ nmap n n<SID>(centering-display)
 xmap n n<SID>(centering-display)
 nmap N N<SID>(centering-display)
 xmap N N<SID>(centering-display)
+
+" Use gF (search line number after filename) {{{2
+
+nnoremap gf gF
+nnoremap <C-w>f <C-w>F
 
 " FileType & Syntax {{{1
 
