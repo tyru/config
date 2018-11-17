@@ -216,6 +216,11 @@
       "type": "git",
       "path": "github.com/tyru/tabsidebar-boost.vim",
       "version": "13ed6778bf6551b1891ecbb11f8934008ba94542"
+    },
+    {
+      "type": "git",
+      "path": "github.com/tyru/ws.vim",
+      "version": "86e9bb4dbd25c311aa4d10fe83f6ad650f9d1382"
     }
   ],
   "profiles": [
@@ -261,7 +266,8 @@
         "github.com/kana/vim-altr",
         "github.com/mattn/vim-sqlfmt",
         "github.com/rhysd/vim-color-spring-night",
-        "github.com/tyru/tabsidebar-boost.vim"
+        "github.com/tyru/tabsidebar-boost.vim",
+        "github.com/tyru/ws.vim"
       ]
     },
     {
