@@ -5,9 +5,10 @@ function! s:on_load_pre()
     return
   endif
 
-  nmap <Space><Space>  <Plug>(tabsidebar-boost-jump)
-  nmap <C-n>           <Plug>(tabsidebar-boost-next-window)
-  nmap <C-p>           <Plug>(tabsidebar-boost-previous-window)
+  nmap     <Space><Space>  <Plug>(tabsidebar-boost-jump)
+  nmap     <C-n>           <Plug>(tabsidebar-boost-next-window)
+  nmap     <C-p>           <Plug>(tabsidebar-boost-previous-window)
+  nnoremap <Space>t        :<C-u>TabSideBarBoostSetTitle<Space><C-r>=get(t:, 'tabsidebar_boost_title', '')<CR>
 
   let g:tabsidebar_boost#auto_adjust_tabsidebarcolumns = 1
 
