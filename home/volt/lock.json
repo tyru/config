@@ -94,11 +94,6 @@
     },
     {
       "type": "git",
-      "path": "github.com/tyru/karakuri.vim",
-      "version": "1cf67d0fee17a0685c5f1e34621c2756d88d737c"
-    },
-    {
-      "type": "git",
       "path": "github.com/fatih/vim-go",
       "version": "8513febab5c698553acc7ac33f4185fb2da664d2"
     },
@@ -199,28 +194,23 @@
     },
     {
       "type": "git",
-      "path": "github.com/kana/vim-altr",
-      "version": "d5a9d857f3fdc0099ce6fac1add405a783952fa1"
-    },
-    {
-      "type": "git",
-      "path": "github.com/mattn/vim-sqlfmt",
-      "version": "db6365103e38d274efe7689a002646a4419ae821"
-    },
-    {
-      "type": "git",
       "path": "github.com/rhysd/vim-color-spring-night",
       "version": "7ea78804c32438f3b96e80e1405a43166cbff59d"
     },
     {
       "type": "git",
       "path": "github.com/tyru/tabsidebar-boost.vim",
-      "version": "13ed6778bf6551b1891ecbb11f8934008ba94542"
+      "version": "369a536a932d9d3f5f3b44e806d6d2a09a3be315"
     },
     {
       "type": "git",
       "path": "github.com/tyru/ws.vim",
-      "version": "86e9bb4dbd25c311aa4d10fe83f6ad650f9d1382"
+      "version": "7495f3852a0bc0ddb00ed62f21d1e6485f821d9f"
+    },
+    {
+      "type": "git",
+      "path": "github.com/tyru/tapi-reg.vim",
+      "version": "ca5ae7daddc4634ad566f75c54df212f9ce87971"
     }
   ],
   "profiles": [
@@ -244,10 +234,8 @@
         "github.com/vim-jp/autofmt",
         "github.com/thinca/vim-prettyprint",
         "github.com/thinca/vim-themis",
-        "github.com/tyru/karakuri.vim",
         "github.com/fatih/vim-go",
         "github.com/Shougo/context_filetype.vim",
-        "github.com/posva/vim-vue",
         "github.com/vim-jp/vim-vimlparser",
         "github.com/tyru/open-browser.vim",
         "github.com/tyru/open-browser-github.vim",
@@ -259,15 +247,12 @@
         "github.com/syngan/vim-vimlint",
         "github.com/kana/vim-repeat",
         "github.com/w0rp/ale",
-        "github.com/Quramy/tsuquyomi",
-        "github.com/leafgarland/typescript-vim",
         "github.com/tyru/eskk.vim",
         "github.com/thinca/vim-localrc",
-        "github.com/kana/vim-altr",
-        "github.com/mattn/vim-sqlfmt",
         "github.com/rhysd/vim-color-spring-night",
         "github.com/tyru/tabsidebar-boost.vim",
-        "github.com/tyru/ws.vim"
+        "github.com/tyru/ws.vim",
+        "github.com/tyru/tapi-reg.vim"
       ]
     },
     {
@@ -279,6 +264,42 @@
       "repos_path": [
         "github.com/w0rp/ale",
         "github.com/thinca/vim-localrc"
+      ]
+    },
+    {
+      "name": "vue",
+      "repos_path": [
+        "github.com/posva/vim-vue"
+      ]
+    },
+    {
+      "name": "typescript",
+      "repos_path": [
+        "github.com/Quramy/tsuquyomi",
+        "github.com/leafgarland/typescript-vim"
+      ]
+    },
+    {
+      "name": "toml",
+      "repos_path": [
+        "github.com/cespare/vim-toml"
+      ]
+    },
+    {
+      "name": "golang",
+      "repos_path": [
+        "github.com/fatih/vim-go"
+      ]
+    },
+    {
+      "name": "sql",
+      "repos_path": []
+    },
+    {
+      "name": "markdown",
+      "repos_path": [
+        "github.com/tyru/markdown-codehl-onthefly.vim",
+        "github.com/tpope/vim-markdown"
       ]
     }
   ]
