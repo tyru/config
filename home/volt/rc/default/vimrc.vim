@@ -143,6 +143,7 @@ set number
 set preserveindent
 set pumheight=20
 set scrolloff=5
+set sessionoptions-=options
 set shiftround
 set shiftwidth=0
 set shortmess+=aI
