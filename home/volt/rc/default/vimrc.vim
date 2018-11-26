@@ -372,6 +372,8 @@ try
   colorscheme spring-night
   " https://github.com/rhysd/vim-color-spring-night/issues/7
   Lazy hi SignColumn term=NONE guibg=#ffffff ctermbg=255
+  " for diff
+  Lazy hi FoldColumn term=NONE guibg=#ffffff ctermbg=255
 catch /E185/
   colorscheme desert
 endtry
