@@ -55,12 +55,12 @@
     {
       "type": "git",
       "path": "github.com/kana/vim-textobj-user",
-      "version": "e231b65797b5765b3ee862d71077e9bd56f3ca3e"
+      "version": "074ce2575543f790290b189860597a3dcac1f79d"
     },
     {
       "type": "git",
       "path": "github.com/vim-jp/vimdoc-ja-working",
-      "version": "3b5816d3c19563989cbda17dc2c8081293f7f38e"
+      "version": "28698fba841659f1407d68fa0c5a6e2e4960532f"
     },
     {
       "type": "git",
@@ -75,7 +75,7 @@
     {
       "type": "git",
       "path": "github.com/thinca/vim-quickrun",
-      "version": "37e344df6df4213cf16b23cc612bf200f42a7af3"
+      "version": "875253cf98415de2aef411a50f35e2d7cb94aeac"
     },
     {
       "type": "git",
@@ -95,7 +95,7 @@
     {
       "type": "git",
       "path": "github.com/fatih/vim-go",
-      "version": "8513febab5c698553acc7ac33f4185fb2da664d2"
+      "version": "c9b5c0905466623f3d65366f4ac162fbeb92f8c7"
     },
     {
       "type": "git",
@@ -145,7 +145,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/homevim",
-      "version": "e00ee1a63dcaf5ae1d5409a18b28a4fcc0e7eb55"
+      "version": "96dbe448e7ff400690aba7848267d7139bdeee38"
     },
     {
       "type": "git",
@@ -155,7 +155,7 @@
     {
       "type": "git",
       "path": "github.com/cespare/vim-toml",
-      "version": "2069e7413d8eaab567fa320723c4af24bb437f3a"
+      "version": "06f6c1346be834c7c971d6d1d4f876e5699119bf"
     },
     {
       "type": "git",
@@ -170,7 +170,7 @@
     {
       "type": "git",
       "path": "github.com/w0rp/ale",
-      "version": "e4faf82cab34869c5ecdc097b9eb0209c9ad9318"
+      "version": "0a384a49d371838903d8401c5358ec60f3f4266d"
     },
     {
       "type": "git",
@@ -200,17 +200,17 @@
     {
       "type": "git",
       "path": "github.com/tyru/tabsidebar-boost.vim",
-      "version": "369a536a932d9d3f5f3b44e806d6d2a09a3be315"
-    },
-    {
-      "type": "git",
-      "path": "github.com/tyru/ws.vim",
-      "version": "7495f3852a0bc0ddb00ed62f21d1e6485f821d9f"
+      "version": "e60d7d030e96b8ca128cf8990cb1c0ea2894ae36"
     },
     {
       "type": "git",
       "path": "github.com/tyru/tapi-reg.vim",
-      "version": "ca5ae7daddc4634ad566f75c54df212f9ce87971"
+      "version": "2ffd60e891012b4c86cb8c0f2033eaeab0f1544d"
+    },
+    {
+      "type": "git",
+      "path": "github.com/tyru/searchcountbuf.vim",
+      "version": "a47a35393e03d1c3a18f50ed98efe0cb782cfcd5"
     }
   ],
   "profiles": [
@@ -251,8 +251,8 @@
         "github.com/thinca/vim-localrc",
         "github.com/rhysd/vim-color-spring-night",
         "github.com/tyru/tabsidebar-boost.vim",
-        "github.com/tyru/ws.vim",
-        "github.com/tyru/tapi-reg.vim"
+        "github.com/tyru/tapi-reg.vim",
+        "github.com/tyru/searchcountbuf.vim"
       ]
     },
     {
