@@ -210,7 +210,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/searchcountbuf.vim",
-      "version": "a47a35393e03d1c3a18f50ed98efe0cb782cfcd5"
+      "version": "d32e7dfd004483bb743868e976056b37ab5f0371"
     }
   ],
   "profiles": [
