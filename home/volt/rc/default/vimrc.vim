@@ -227,37 +227,9 @@ endfunction
 " statusline {{{
 
 set laststatus=2
-let &statusline = '%!StatusLine()'
-
-function! StatusLine() abort
-  if g:vimrc_statusline_searchcount >=# 0
-    let searchcount = printf(' (%d matches)', g:vimrc_statusline_searchcount)
-  else
-    let searchcount = ''
-  endif
-  return '%f%( [%M%R%H%W]%)%( [%{&ft}]%) %{&fenc}/%{&ff}'
-  \   .  '%('
-  \   .  '%( %{line(".")}/%{line("$")}%)'
-  \   .  '%)'
-  \   .  searchcount
-endfunction
-
-let g:vimrc_statusline_searchcount = -1
-
-" XXX @/ is not yet updated at CmdlineLeave
-" autocmd vimrc CmdlineLeave [/?] call s:update_search_count()
-autocmd vimrc CmdlineLeave [/?] call timer_start(0, {-> s:update_search_count()})
-autocmd vimrc OptionSet hlsearch call s:update_search_count()
-
-function! s:update_search_count() abort
-  if &hlsearch
-    let n = matchstr(execute('%s//&/gne', 'silent'), '\d\+')
-    let g:vimrc_statusline_searchcount = str2nr(n !=# '' ? n : '0')
-  else
-    let g:vimrc_statusline_searchcount = -1
-  endif
-  redrawstatus
-endfunction
+let &statusline = 
+\    '%f%( [%M%R%H%W]%)%( [%{&ft}]%) %{&fenc}/%{&ff}'
+\ .  '%( %{line(".")}/%{line("$")}%)'
 
 " }}}
 
