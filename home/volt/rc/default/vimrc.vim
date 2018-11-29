@@ -36,15 +36,15 @@ endif
 
 let s:macros = []
 
-" :Map {{{2
+" :BulkMap {{{2
 
-let s:macros += ['Map']
-command! -nargs=* Map call s:cmd_map(<q-args>)
+let s:macros += ['BulkMap']
+command! -nargs=* BulkMap call s:cmd_map(<q-args>)
 
 function! s:cmd_map(args) abort
   let m = matchlist(a:args, '^\(.*\)\[\([nvxsoiclt]\+\)\]\(.*\)$')
   if empty(m)
-    throw 'Map: invalid arguments: ' . a:args
+    throw 'BulkMap: invalid arguments: ' . a:args
   endif
   let [l, modes, r] = m[1:3]
   let l = substitute(l, '<noremap>', '', 'g')
@@ -385,9 +385,9 @@ endtry
 
 " General prefix keys {{{2
 
-Map [nxo] <Space> <Plug>(vimrc:prefix:excmd)
+BulkMap [nxo] <Space> <Plug>(vimrc:prefix:excmd)
 " fallback
-Map <noremap> [nxo] <Plug>(vimrc:prefix:excmd) <Space>
+BulkMap <noremap> [nxo] <Plug>(vimrc:prefix:excmd) <Space>
 
 let g:mapleader = '\'
 let g:maplocalleader = '\'
@@ -397,7 +397,7 @@ nnoremap <LocalLeader> <Nop>
 " Operators {{{2
 
 " Do not destroy noname register.
-Map <noremap> [nxo] x "_x
+BulkMap <noremap> [nxo] x "_x
 
 " Text-objects {{{2
 
@@ -408,29 +408,29 @@ onoremap gv :<C-u>normal! gv<CR>
 " Motions {{{2
 
 " Go to the next/previous line whose first character is not space.
-Map [nxo] [k <SID>(go-prev-first-non-blank)
-Map [nxo] ]k <SID>(go-next-first-non-blank)
-Map <noremap><expr> [nx] <SID>(go-prev-first-non-blank) <SID>first_non_blank('Wbn')
-Map <noremap><expr> [o]  <SID>(go-prev-first-non-blank) 'V' . <SID>first_non_blank('Wbn')
-Map <noremap><expr> [nx] <SID>(go-next-first-non-blank) <SID>first_non_blank('Wn')
-Map <noremap><expr> [o]  <SID>(go-next-first-non-blank) 'V' . <SID>first_non_blank('Wn')
+BulkMap [nxo] [k <SID>(go-prev-first-non-blank)
+BulkMap [nxo] ]k <SID>(go-next-first-non-blank)
+BulkMap <noremap><expr> [nx] <SID>(go-prev-first-non-blank) <SID>first_non_blank('Wbn')
+BulkMap <noremap><expr> [o]  <SID>(go-prev-first-non-blank) 'V' . <SID>first_non_blank('Wbn')
+BulkMap <noremap><expr> [nx] <SID>(go-next-first-non-blank) <SID>first_non_blank('Wn')
+BulkMap <noremap><expr> [o]  <SID>(go-next-first-non-blank) 'V' . <SID>first_non_blank('Wn')
 
 function! s:first_non_blank(flags) abort
   let lnum = search('^\S', a:flags)
   return lnum > 0 ? lnum . 'G' : ''
 endfunction
 
-Map <noremap> [nxo] gp %
+BulkMap <noremap> [nxo] gp %
 
 " }}}
 
 " Do not scroll over the last line
 " http://itchyny.hatenablog.com/entry/2016/02/02/210000
-Map <noremap><expr> [nxo] <C-f> max([winheight(0) - 2, 1]) . "\<C-d>" . (line('.') > line('$') - winheight(0) ? 'L' : 'H')
+BulkMap <noremap><expr> [nxo] <C-f> max([winheight(0) - 2, 1]) . "\<C-d>" . (line('.') > line('$') - winheight(0) ? 'L' : 'H')
 
 " At the first/last screen row, scroll also lines not screen view
-Map <noremap><expr> [nxo] <C-y> line('w0') <= 1         ? 'k' : "\<C-y>"
-Map <noremap><expr> [nxo] <C-e> line('w$') >= line('$') ? 'j' : "\<C-e>"
+BulkMap <noremap><expr> [nxo] <C-y> line('w0') <= 1         ? 'k' : "\<C-y>"
+BulkMap <noremap><expr> [nxo] <C-e> line('w$') >= line('$') ? 'j' : "\<C-e>"
 
 " Fold {{{2
 
@@ -594,13 +594,6 @@ nnoremap <silent> <Space>j <C-w>j
 nnoremap <silent> <Space>k <C-w>k
 nnoremap <silent> <Space>h <C-w>h
 nnoremap <silent> <Space>l <C-w>l
-
-" Moving between tabs {{{2
-
-nnoremap <silent> <C-n> gt
-nnoremap <silent> <C-p> gT
-tnoremap <silent> <C-w><C-n> <C-w>:<C-u>tabn<CR>
-tnoremap <silent> <C-w><C-p> <C-w>:<C-u>tabp<CR>
 
 " :SetTabName - Set tab's title {{{2
 
@@ -892,12 +885,12 @@ if has('vim_starting') && !has('gui_running') && has('vertsplit')
   endfunction
 
   " old vim does not ignore CPR
-  Map <special> [nxo] <Esc>[3;9R <Nop>
+  BulkMap <special> [nxo] <Esc>[3;9R <Nop>
 
   " new vim can't handle CPR with direct mapping
-  " Map <expr> [nxo] [3;3R <SID>EnableVsplitMode()
+  " BulkMap <expr> [nxo] [3;3R <SID>EnableVsplitMode()
   set t_F9=[3;3R
-  Map <expr><noremap> [nxo] <t_F9> <SID>EnableVsplitMode()
+  BulkMap <expr><noremap> [nxo] <t_F9> <SID>EnableVsplitMode()
   let &t_RV .= "\e[?6;69h\e[1;3s\e[3;9H\e[6n\e[0;0s\e[?6;69l"
 endif
 
