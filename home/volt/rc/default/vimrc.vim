@@ -194,11 +194,6 @@ let &titlestring = '%{getcwd()}'
 let &guitablabel = '%{MyTabLabel(v:lnum)}'
 
 function! MyTabLabel(tabnr)
-  let title = gettabvar(a:tabnr, 'title')
-  if title !=# ''
-    return title
-  endif
-
   let buflist = tabpagebuflist(a:tabnr)
   let bufname = ''
   let modified = 0
@@ -566,26 +561,6 @@ nnoremap <silent> <Space>j <C-w>j
 nnoremap <silent> <Space>k <C-w>k
 nnoremap <silent> <Space>h <C-w>h
 nnoremap <silent> <Space>l <C-w>l
-
-" :SetTabName - Set tab's title {{{2
-
-nnoremap <silent> g<C-t> :<C-u>SetTabName<CR>
-command! -bar -nargs=* SetTabName call s:cmd_set_tab_name(<q-args>)
-
-function! s:cmd_set_tab_name(name)
-  let old_title = exists('t:title') ? t:title : ''
-  if a:name ==# ''
-    " Hitting <Esc> returns empty string.
-    let title = input('tab name?:', old_title)
-    let t:title = title !=# '' ? title : old_title
-  else
-    let t:title = a:name
-  endif
-  if t:title !=# old_title
-    " Adding ! will update tabline too.
-    redraw!
-  endif
-endfunction
 
 " Make <M-Space> same as ordinal applications on MS Windows {{{2
 if has('gui_running') && s:is_win
