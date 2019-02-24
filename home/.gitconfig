@@ -43,3 +43,5 @@
 	prune = true
 [include]
 	path = ~/.gitconfig.secret
+[url "git@github.com:tyru/"]
+	insteadOf = https://github.com/tyru/
