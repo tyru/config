@@ -810,14 +810,6 @@ autocmd vimrc WinEnter *
 \     diffoff                               |
 \ endif
 
-" Block cursor in MSYS2 console {{{1
-if !has('gui_running')
-  let &t_ti.="\e[1 q"
-  let &t_SI.="\e[5 q"
-  let &t_EI.="\e[1 q"
-  let &t_te.="\e[0 q"
-endif
-
 " Use vsplit mode {{{1
 " http://qiita.com/kefir_/items/c725731d33de4d8fb096
 
@@ -864,10 +856,15 @@ endif
 
 " Change cursor shape in terminal {{{1
 " https://qiita.com/Linda_pp/items/9e0c94eb82b18071db34
+" https://ttssh2.osdn.jp/manual/ja/usage/tips/vim.html
+
 if has('vim_starting')
-    let &t_SI .= "\e[6 q"
-    let &t_EI .= "\e[2 q"
-    let &t_SR .= "\e[4 q"
+  " insert mode (bar)
+  let &t_SI .= "\e[5 q"
+  " replace mode (underline)
+  let &t_SR .= "\e[3 q"
+  " normal mode (block)
+  let &t_EI .= "\e[1 q"
 endif
 
 " End. {{{1
