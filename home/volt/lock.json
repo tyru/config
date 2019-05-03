@@ -10,7 +10,7 @@
     {
       "type": "git",
       "path": "github.com/syngan/vim-vimlint",
-      "version": "0d6c804d26971e0507ff5334d8c82bc9e97e6b61"
+      "version": "cec40c28f119a5f4b92ceb0b6aae525122a81244"
     },
     {
       "type": "git",
@@ -20,12 +20,12 @@
     {
       "type": "git",
       "path": "github.com/Shougo/neosnippet.vim",
-      "version": "9f87934708db75cfafd3ec957c11cfe190281c5f"
+      "version": "3d3362622ef10deedaea8e026054064bf62aeb33"
     },
     {
       "type": "git",
       "path": "github.com/Shougo/neosnippet-snippets",
-      "version": "ec928a971f32150119f0ab73d289ea82e2740ae0"
+      "version": "ed18d979d76709036f6c4f7a2bdbfb29b11e3e0e"
     },
     {
       "type": "git",
@@ -40,12 +40,12 @@
     {
       "type": "git",
       "path": "github.com/tyru/markdown-codehl-onthefly.vim",
-      "version": "d34ce3fe2011009eb8712e3ae3cae8a51d3fccd2"
+      "version": "4df7b02a9f88dc8413c29dc6fa992ed89f6a5f3d"
     },
     {
       "type": "git",
       "path": "github.com/tpope/vim-markdown",
-      "version": "e2d7fcd682a461a3951e8b5067cc8a0083e75e35"
+      "version": "57c58269a2ac89680e7b216c2bcfbb7df1ec5e69"
     },
     {
       "type": "git",
@@ -60,7 +60,7 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/vimdoc-ja-working",
-      "version": "28698fba841659f1407d68fa0c5a6e2e4960532f"
+      "version": "99c22a78e4c463a16eecc442c447cb927e4400e8"
     },
     {
       "type": "git",
@@ -75,7 +75,7 @@
     {
       "type": "git",
       "path": "github.com/thinca/vim-quickrun",
-      "version": "875253cf98415de2aef411a50f35e2d7cb94aeac"
+      "version": "ed236e0e3fa9d4c5c286581ee68b6fa7d976674b"
     },
     {
       "type": "git",
@@ -90,12 +90,12 @@
     {
       "type": "git",
       "path": "github.com/thinca/vim-themis",
-      "version": "691cd3912ba318dbd8d9fa0035fee629b424766d"
+      "version": "f95b4a888a91cc9373cf2f801658287ff984592f"
     },
     {
       "type": "git",
       "path": "github.com/fatih/vim-go",
-      "version": "c9b5c0905466623f3d65366f4ac162fbeb92f8c7"
+      "version": "2c1a85bbd04f40503bb7d1488d5d8eeb14836efb"
     },
     {
       "type": "git",
@@ -105,12 +105,12 @@
     {
       "type": "git",
       "path": "github.com/tyru/eskk.vim",
-      "version": "70b5c402fbb01d8fbda8a9b67872153d1c3770d9"
+      "version": "207d05cd50d126a84271aca7f02b3f839dab27c3"
     },
     {
       "type": "git",
       "path": "github.com/Shougo/context_filetype.vim",
-      "version": "5392e3f0f3ff82b7149818a5700680f4bbcfea45"
+      "version": "c3f806b4d06230607bc0a3bf619bf9c3ec1c9d95"
     },
     {
       "type": "git",
@@ -120,27 +120,12 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/vim-vimlparser",
-      "version": "11d2beed1fd41f5d8b565a04f388261cdbd096a4"
-    },
-    {
-      "type": "git",
-      "path": "github.com/tyru/open-browser.vim",
-      "version": "de4eeb085051e9b56dd5574eba7c7e72feb21246"
-    },
-    {
-      "type": "git",
-      "path": "github.com/tyru/open-browser-github.vim",
-      "version": "6f63e9c8b9482858af12c2dc60f6df2854e57f28"
-    },
-    {
-      "type": "git",
-      "path": "github.com/tyru/caw.vim",
-      "version": "e186d64b6f5f8c39c15eb07f0e2798ce05d25fe3"
+      "version": "8851f8ef66cadd304b268306b265859cd236a0d6"
     },
     {
       "type": "git",
       "path": "github.com/vim-jp/vital.vim",
-      "version": "9b584074f2d64bc538d635e21fb67f71a00b2b2a"
+      "version": "3bf594477df06f006a9de60012e7ae3d75479a14"
     },
     {
       "type": "git",
@@ -150,12 +135,12 @@
     {
       "type": "git",
       "path": "github.com/hotwatermorning/auto-git-diff",
-      "version": "271a10c99f4cb1807769d724ea38293e5789502d"
+      "version": "1be2fec036f747fe44ec7f0a3868af0b0980954f"
     },
     {
       "type": "git",
       "path": "github.com/cespare/vim-toml",
-      "version": "06f6c1346be834c7c971d6d1d4f876e5699119bf"
+      "version": "2295e612d936671048035dbc447f5400cbee60de"
     },
     {
       "type": "git",
@@ -170,7 +155,7 @@
     {
       "type": "git",
       "path": "github.com/w0rp/ale",
-      "version": "0a384a49d371838903d8401c5358ec60f3f4266d"
+      "version": "7f0954b89ef7c43e5fb7b6490665e9814c8205b2"
     },
     {
       "type": "git",
@@ -195,7 +180,7 @@
     {
       "type": "git",
       "path": "github.com/rhysd/vim-color-spring-night",
-      "version": "7ea78804c32438f3b96e80e1405a43166cbff59d"
+      "version": "c5ea559e587b7e6797b6b3ada7174ffd556da186"
     },
     {
       "type": "git",
@@ -205,7 +190,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/tapi-reg.vim",
-      "version": "2ffd60e891012b4c86cb8c0f2033eaeab0f1544d"
+      "version": "adbc1c4fc95ce2fd13ead6ed2170b59785370499"
     },
     {
       "type": "git",
@@ -237,9 +222,6 @@
         "github.com/fatih/vim-go",
         "github.com/Shougo/context_filetype.vim",
         "github.com/vim-jp/vim-vimlparser",
-        "github.com/tyru/open-browser.vim",
-        "github.com/tyru/open-browser-github.vim",
-        "github.com/tyru/caw.vim",
         "github.com/vim-jp/vital.vim",
         "github.com/tyru/homevim",
         "github.com/hotwatermorning/auto-git-diff",
@@ -251,8 +233,7 @@
         "github.com/thinca/vim-localrc",
         "github.com/rhysd/vim-color-spring-night",
         "github.com/tyru/tabsidebar-boost.vim",
-        "github.com/tyru/tapi-reg.vim",
-        "github.com/tyru/searchcountbuf.vim"
+        "github.com/tyru/tapi-reg.vim"
       ]
     },
     {
@@ -301,6 +282,10 @@
         "github.com/tyru/markdown-codehl-onthefly.vim",
         "github.com/tpope/vim-markdown"
       ]
+    },
+    {
+      "name": "vimrc-only",
+      "repos_path": []
     }
   ]
 }
