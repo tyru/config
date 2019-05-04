@@ -30,7 +30,7 @@
     {
       "type": "git",
       "path": "github.com/fatih/vim-go",
-      "version": "2c1a85bbd04f40503bb7d1488d5d8eeb14836efb"
+      "version": "e1ef9d54ced95c9329a9d8f0cb26219f7cc0b080"
     },
     {
       "type": "git",
@@ -114,6 +114,11 @@
     },
     {
       "type": "git",
+      "path": "github.com/tyru/caw.vim",
+      "version": "98805a60aef339e55e5b917fdb9f69c74e8d8340"
+    },
+    {
+      "type": "git",
       "path": "github.com/tyru/closesubwin.vim",
       "version": "8c42579599d0ef6cdc302552d75e64612c55dab5"
     },
@@ -151,16 +156,6 @@
       "type": "git",
       "path": "github.com/tyru/stoptypofile.vim",
       "version": "994ed74a00771bc06d98578874f2e7e80a258cd5"
-    },
-    {
-      "type": "git",
-      "path": "github.com/tyru/tabsidebar-boost.vim",
-      "version": "e60d7d030e96b8ca128cf8990cb1c0ea2894ae36"
-    },
-    {
-      "type": "git",
-      "path": "github.com/tyru/tapi-reg.vim",
-      "version": "adbc1c4fc95ce2fd13ead6ed2170b59785370499"
     },
     {
       "type": "git",
@@ -212,13 +207,13 @@
         "github.com/kana/vim-textobj-indent",
         "github.com/kana/vim-textobj-user",
         "github.com/rhysd/vim-color-spring-night",
-        "github.com/syngan/vim-vimlint",
         "github.com/thinca/vim-localrc",
         "github.com/thinca/vim-prettyprint",
         "github.com/thinca/vim-quickrun",
         "github.com/thinca/vim-themis",
         "github.com/tpope/vim-markdown",
         "github.com/tyru/capture.vim",
+        "github.com/tyru/caw.vim",
         "github.com/tyru/closesubwin.vim",
         "github.com/tyru/eskk.vim",
         "github.com/tyru/homevim",
@@ -226,8 +221,6 @@
         "github.com/tyru/nextfile.vim",
         "github.com/tyru/quickey.vim",
         "github.com/tyru/stoptypofile.vim",
-        "github.com/tyru/tabsidebar-boost.vim",
-        "github.com/tyru/tapi-reg.vim",
         "github.com/vim-jp/autofmt",
         "github.com/vim-jp/vim-vimlparser",
         "github.com/vim-jp/vimdoc-ja-working",
