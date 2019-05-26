@@ -148,6 +148,7 @@ set sessionoptions-=options
 set shiftround
 set shiftwidth=0
 set shortmess+=aI
+set shortmess-=S
 set smartcase
 set softtabstop=-1
 set t_Co=256
