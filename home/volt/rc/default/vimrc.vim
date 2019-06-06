@@ -761,6 +761,8 @@ if s:is_wsl
   endfunction
 endif
 
+command! -bar EmojiTest tabedit https://unicode.org/Public/emoji/12.0/emoji-test.txt
+
 " Quickfix {{{1
 autocmd vimrc QuickfixCmdPost [l]*  call vimrc#quickfix_cmdpost#call(1)
 autocmd vimrc QuickfixCmdPost [^l]* call vimrc#quickfix_cmdpost#call(0)

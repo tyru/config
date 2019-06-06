@@ -64,6 +64,11 @@
     },
     {
       "type": "git",
+      "path": "github.com/natebosch/vim-lsc",
+      "version": "a29bf109afcf8e0b7517ca73c233579660e51d06"
+    },
+    {
+      "type": "git",
       "path": "github.com/posva/vim-vue",
       "version": "720ca48e0207f2aca331b9d949ce9d4ff5702737"
     },
@@ -144,6 +149,21 @@
     },
     {
       "type": "git",
+      "path": "github.com/tyru/open-browser-github.vim",
+      "version": "6f63e9c8b9482858af12c2dc60f6df2854e57f28"
+    },
+    {
+      "type": "git",
+      "path": "github.com/tyru/open-browser.vim",
+      "version": "b900ff9d39bb36891704bd0fe76737ee3a7ac2b9"
+    },
+    {
+      "type": "git",
+      "path": "github.com/tyru/qfpopup.vim",
+      "version": "fa496773d96c16655c19f49147913c2ffc392c5b"
+    },
+    {
+      "type": "git",
       "path": "github.com/tyru/quickey.vim",
       "version": "8ec90adc65257115227e8e724a7509efd920b3f6"
     },
@@ -156,6 +176,11 @@
       "type": "git",
       "path": "github.com/tyru/stoptypofile.vim",
       "version": "994ed74a00771bc06d98578874f2e7e80a258cd5"
+    },
+    {
+      "type": "git",
+      "path": "github.com/tyru/tabsidebar-boost.vim",
+      "version": "e60d7d030e96b8ca128cf8990cb1c0ea2894ae36"
     },
     {
       "type": "git",
@@ -180,7 +205,7 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/vital.vim",
-      "version": "3bf594477df06f006a9de60012e7ae3d75479a14"
+      "version": "002cfe52a83253c2fb40c0a8f9d7e79146a61e7c"
     },
     {
       "type": "git",
@@ -201,11 +226,11 @@
         "github.com/Shougo/neosnippet-snippets",
         "github.com/Shougo/neosnippet.vim",
         "github.com/cespare/vim-toml",
-        "github.com/fatih/vim-go",
         "github.com/hotwatermorning/auto-git-diff",
         "github.com/kana/vim-repeat",
         "github.com/kana/vim-textobj-indent",
         "github.com/kana/vim-textobj-user",
+        "github.com/natebosch/vim-lsc",
         "github.com/rhysd/vim-color-spring-night",
         "github.com/thinca/vim-localrc",
         "github.com/thinca/vim-prettyprint",
@@ -219,8 +244,12 @@
         "github.com/tyru/homevim",
         "github.com/tyru/markdown-codehl-onthefly.vim",
         "github.com/tyru/nextfile.vim",
+        "github.com/tyru/open-browser-github.vim",
+        "github.com/tyru/open-browser.vim",
+        "github.com/tyru/qfpopup.vim",
         "github.com/tyru/quickey.vim",
         "github.com/tyru/stoptypofile.vim",
+        "github.com/tyru/tabsidebar-boost.vim",
         "github.com/vim-jp/autofmt",
         "github.com/vim-jp/vim-vimlparser",
         "github.com/vim-jp/vimdoc-ja-working",
