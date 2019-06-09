@@ -763,6 +763,10 @@ endif
 
 command! -bar EmojiTest tabedit https://unicode.org/Public/emoji/12.0/emoji-test.txt
 
+if has('sound')
+  command! -nargs=1 -complete=file PlayFile call sound_playfile(<q-args>)
+endif
+
 " Quickfix {{{1
 autocmd vimrc QuickfixCmdPost [l]*  call vimrc#quickfix_cmdpost#call(1)
 autocmd vimrc QuickfixCmdPost [^l]* call vimrc#quickfix_cmdpost#call(0)
