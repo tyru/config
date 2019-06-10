@@ -2,7 +2,11 @@
 
 name=vim
 prefix=$HOME/local/$name
-enable_lua=false
+enable_lua=true
+#lua_prefix=/usr/local
+# Mac (Homebrew)
+#lua_prefix=/usr/local/opt/lua
+lua_prefix=/usr/local/opt/luajit
 repos=$name
 # {remote name}!{branch}!{url}
 #repos_list=('origin!master!https://github.com/vim/vim' 'rbtnn!clpum_and_tabsidebar!https://github.com/rbtnn/vim')
@@ -103,7 +107,7 @@ build() {
   #config_opts="$config_opts --enable-pythoninterp"
   #config_opts="$config_opts --enable-rubyinterp"
   $enable_lua && config_opts="$config_opts --enable-luainterp"
-  #config_opts="$config_opts --with-lua-prefix=/usr/local"
+  config_opts="$config_opts --with-lua-prefix=$lua_prefix"
   config_opts="$config_opts --with-luajit"
   config_opts="$config_opts --enable-gui=gtk2"
   config_opts="$config_opts --enable-fontset"
