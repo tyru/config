@@ -106,9 +106,11 @@ build() {
   #config_opts="$config_opts --enable-perlinterp"
   #config_opts="$config_opts --enable-pythoninterp"
   #config_opts="$config_opts --enable-rubyinterp"
-  $enable_lua && config_opts="$config_opts --enable-luainterp"
-  config_opts="$config_opts --with-lua-prefix=$lua_prefix"
-  config_opts="$config_opts --with-luajit"
+  if $enable_lua; then
+    config_opts="$config_opts --enable-luainterp"
+    config_opts="$config_opts --with-lua-prefix=$lua_prefix"
+    config_opts="$config_opts --with-luajit"
+  fi
   config_opts="$config_opts --enable-gui=gtk2"
   config_opts="$config_opts --enable-fontset"
   config_opts="$config_opts --enable-fail-if-missing"
