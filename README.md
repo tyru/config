@@ -10,11 +10,11 @@ Usage: config COMMAND ARGS
 
 COMMAND
 
-  all
+  init
     same as make-symlinks, upgrade-all
 
   upgrade-all
-    upgrade all packages under src directory
+    upgrade all packages *except skip=true package* under src directory
 
   upgrade <pkg>
     same as running update, build, package to <pkg>
