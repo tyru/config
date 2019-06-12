@@ -15,12 +15,12 @@
     {
       "type": "git",
       "path": "github.com/Shougo/neosnippet-snippets",
-      "version": "ed18d979d76709036f6c4f7a2bdbfb29b11e3e0e"
+      "version": "c5bb9211f3050e405ec9e03cf655624c205b9e94"
     },
     {
       "type": "git",
       "path": "github.com/Shougo/neosnippet.vim",
-      "version": "3d3362622ef10deedaea8e026054064bf62aeb33"
+      "version": "ed80ae8cee732d52eb841d509a95aca9c27ece7a"
     },
     {
       "type": "git",
@@ -65,7 +65,7 @@
     {
       "type": "git",
       "path": "github.com/natebosch/vim-lsc",
-      "version": "a29bf109afcf8e0b7517ca73c233579660e51d06"
+      "version": "d4d34070c74261d749a74c1990c7e6ecf7b500bb"
     },
     {
       "type": "git",
@@ -80,7 +80,7 @@
     {
       "type": "git",
       "path": "github.com/rhysd/vim-color-spring-night",
-      "version": "c5ea559e587b7e6797b6b3ada7174ffd556da186"
+      "version": "3c43e9582cfa7896a33c10164fe5203a289a98cd"
     },
     {
       "type": "git",
@@ -100,7 +100,7 @@
     {
       "type": "git",
       "path": "github.com/thinca/vim-quickrun",
-      "version": "ed236e0e3fa9d4c5c286581ee68b6fa7d976674b"
+      "version": "09953abf07a4428dbec36c0747a4043ca9644da4"
     },
     {
       "type": "git",
@@ -160,7 +160,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/qfpopup.vim",
-      "version": "fa496773d96c16655c19f49147913c2ffc392c5b"
+      "version": "197244946487b7da9c6a338ae61dff1fafa65ce2"
     },
     {
       "type": "git",
@@ -195,12 +195,12 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/vim-vimlparser",
-      "version": "8851f8ef66cadd304b268306b265859cd236a0d6"
+      "version": "cc94f667b93e7e5ec40c8cd4e2b301d7f6c05744"
     },
     {
       "type": "git",
       "path": "github.com/vim-jp/vimdoc-ja-working",
-      "version": "99c22a78e4c463a16eecc442c447cb927e4400e8"
+      "version": "85e7c58270d463150e2485303ab4bd615508ed68"
     },
     {
       "type": "git",
@@ -215,7 +215,7 @@
     {
       "type": "git",
       "path": "github.com/w0rp/ale",
-      "version": "7f0954b89ef7c43e5fb7b6490665e9814c8205b2"
+      "version": "80ab12c7b645b392feb98723873d77b045a0a7e2"
     }
   ],
   "profiles": [
