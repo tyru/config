@@ -35,9 +35,11 @@ get_ordered_pkgs() {
 
 print_pkg() {
   [ "${skip:-}" != true ] && echo "$pkg"
-  for pkg in "${src_depends[@]}"; do
-    echo "$pkg"
-  done
+  if [ "${src_depends+x}" ]; then
+    for pkg in "${src_depends[@]}"; do
+      echo "$pkg"
+    done
+  fi
 }
 
 foreach_pkgs() {
