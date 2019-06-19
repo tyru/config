@@ -8,22 +8,20 @@
 	editor = vim
 	autocrlf = false
 [alias]
+	amend = commit --amend -C HEAD
+	amend-edit = commit -v --amend
 	br = branch
 	co = checkout
 	cont = rebase --continue
 	cp = cherry-pick
 	dish = diff --cached -M
-	amend = commit --amend -C HEAD
-	amend-edit = commit -v --amend
+	fixup = commit --fixup
 	gene = log --graph --pretty='%C(yellow)%h%Creset %ai %an: %s%C(yellow)%d%Creset' --all
-	view = log --pretty=oneline --abbrev-commit --graph --source --tags --branches
+	git = !git
 	last = log -p --reverse HEAD@{1}..
 	todo = grep -n -E "\b(TODO|XXX|FIXME)\b"
+	view = log --pretty=oneline --abbrev-commit --graph --source --tags --branches
 	wh = whatchanged
-	# https://gist.github.com/gnarf/5406589
-	pr = "!f() { git fetch -fu ${2:-origin} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
-	pr-clean = "!git for-each-ref refs/heads/pr/* --format=\"%(refname)\" | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done"
-	git = !git
 [color]
 	branch = auto
 	diff = auto
