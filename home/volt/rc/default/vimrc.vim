@@ -767,6 +767,10 @@ if has('sound')
   command! -nargs=1 -complete=file PlayFile call sound_playfile(<q-args>)
 endif
 
+if executable('sqlformat')
+  command! -range=% SQLFmt <line1>,<line2>!sqlformat -r -k upper -
+endif
+
 " Quickfix {{{1
 autocmd vimrc QuickfixCmdPost [l]*  call vimrc#quickfix_cmdpost#call(1)
 autocmd vimrc QuickfixCmdPost [^l]* call vimrc#quickfix_cmdpost#call(0)
