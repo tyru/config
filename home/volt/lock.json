@@ -59,6 +59,11 @@
     },
     {
       "type": "git",
+      "path": "github.com/lambdalisue/qfloc.vim",
+      "version": "2f9cf3141523a401d75f9f95cca32c6897811d24"
+    },
+    {
+      "type": "git",
       "path": "github.com/leafgarland/typescript-vim",
       "version": "0e9d92eead2df21abe342c4341c55536dd36b0af"
     },
@@ -120,7 +125,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/caw.vim",
-      "version": "98805a60aef339e55e5b917fdb9f69c74e8d8340"
+      "version": "66f5122001594a4ce7fbff2964d2148ecab43d89"
     },
     {
       "type": "git",
@@ -160,7 +165,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/qfpopup.vim",
-      "version": "197244946487b7da9c6a338ae61dff1fafa65ce2"
+      "version": "c3c5912ecf955e5af0e5610758c2cad595a283e4"
     },
     {
       "type": "git",
@@ -230,6 +235,7 @@
         "github.com/kana/vim-repeat",
         "github.com/kana/vim-textobj-indent",
         "github.com/kana/vim-textobj-user",
+        "github.com/lambdalisue/qfloc.vim",
         "github.com/natebosch/vim-lsc",
         "github.com/rhysd/vim-color-spring-night",
         "github.com/thinca/vim-localrc",

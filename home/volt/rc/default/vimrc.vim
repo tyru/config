@@ -120,8 +120,6 @@ endif
 set autoindent
 set backspace=indent,eol,start
 set browsedir=current
-" set complete=.,w,b,u,t,i,d,k,kspell
-" set complete=.
 set concealcursor=nvic
 set copyindent
 set diffopt+=vertical
@@ -149,6 +147,7 @@ set shiftround
 set shiftwidth=0
 set shortmess+=aI
 set shortmess-=S
+set showtabline=2
 set smartcase
 set softtabstop=-1
 set t_Co=256
@@ -542,6 +541,16 @@ function! s:toggle_diff() abort
   endif
 endfunction
 
+function! s:toggle_tabsidebar() abort
+  if &showtabsidebar ==# 2
+    setlocal showtabline=2
+    setlocal showtabsidebar=0
+  else
+    setlocal showtabline=0
+    setlocal showtabsidebar=2
+  endif
+endfunction
+
 nnoremap <Plug>(vimrc:prefix:excmd)oh  :<C-u>setlocal hlsearch! hlsearch?<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)oi  :<C-u>setlocal ignorecase! ignorecase?<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)op  :<C-u>setlocal paste! paste?<CR>
@@ -556,6 +565,7 @@ nnoremap <Plug>(vimrc:prefix:excmd)ofm :<C-u>call <SID>toggle_option_list(['manu
 nnoremap <Plug>(vimrc:prefix:excmd)ofw :<C-u>call <SID>toggle_winfix()<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)oT  :<C-u>call <SID>toggle_terminal_modes()<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)od  :<C-u>call <SID>toggle_diff()<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)ost :<C-u>call <SID>toggle_tabsidebar()<CR>
 
 " <Space>[hjkl] for <C-w>[hjkl] {{{2
 
