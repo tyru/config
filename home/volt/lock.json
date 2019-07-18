@@ -140,7 +140,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/homevim",
-      "version": "96dbe448e7ff400690aba7848267d7139bdeee38"
+      "version": "37d690cc4f844f43dc1d694363c25245e83bdf3d"
     },
     {
       "type": "git",
@@ -255,7 +255,6 @@
         "github.com/tyru/qfpopup.vim",
         "github.com/tyru/quickey.vim",
         "github.com/tyru/stoptypofile.vim",
-        "github.com/tyru/tabsidebar-boost.vim",
         "github.com/vim-jp/autofmt",
         "github.com/vim-jp/vim-vimlparser",
         "github.com/vim-jp/vimdoc-ja-working",

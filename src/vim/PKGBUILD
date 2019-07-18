@@ -10,9 +10,10 @@ lua_prefix=/usr/local/opt/luajit
 repos=$name
 # {remote name}!{branch}!{url}
 #repos_list=('origin!master!https://github.com/vim/vim' 'rbtnn!clpum_and_tabsidebar!https://github.com/rbtnn/vim')
-#default='tyru!tyru!https://github.com/tyru/vim'
 repos_list=()
-default='rbtnn!clpum_and_tabsidebar!https://github.com/rbtnn/vim'
+#default='tyru!tyru!https://github.com/tyru/vim'
+#default='rbtnn!clpum_and_tabsidebar!https://github.com/rbtnn/vim'
+default='origin!master!https://github.com/vim/vim'
 # https://vim-jp.org/docs/build_linux.html
 depends=(git gettext libtinfo-dev libacl1-dev libgpm-dev build-essential)
 $enable_lua && depends=("${depends[@]}" lua5.3 liblua5.3-dev luajit libluajit-5.1)
