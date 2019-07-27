@@ -28,8 +28,6 @@
 	interactive = auto
 	status = auto
 	ui = auto
-[rerere]
-	enabled = true
 [branch]
 	autosetuprebase = always
 [push]

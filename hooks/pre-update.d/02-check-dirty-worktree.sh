@@ -5,7 +5,7 @@
 status=$(git --git-dir=$pkgdir/$repos/.git status --porcelain)
 if [ "$status" != "" ]; then
   echo
-  echo "!!!!! Working is dirty or has untracked files !!!!!" >&2
+  echo "!!!!! Working tree is dirty or has untracked files !!!!!" >&2
   echo "$status" >&2
   exit 1
 fi
