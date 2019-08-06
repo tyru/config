@@ -184,6 +184,11 @@
     },
     {
       "type": "git",
+      "path": "github.com/tyru/sync-term-cwd.vim",
+      "version": "32f89453a1d8d19594cb29514775f728c248385e"
+    },
+    {
+      "type": "git",
       "path": "github.com/tyru/tabsidebar-boost.vim",
       "version": "e60d7d030e96b8ca128cf8990cb1c0ea2894ae36"
     },
@@ -255,6 +260,7 @@
         "github.com/tyru/qfpopup.vim",
         "github.com/tyru/quickey.vim",
         "github.com/tyru/stoptypofile.vim",
+        "github.com/tyru/sync-term-cwd.vim",
         "github.com/vim-jp/autofmt",
         "github.com/vim-jp/vim-vimlparser",
         "github.com/vim-jp/vimdoc-ja-working",
