@@ -137,6 +137,8 @@ set matchpairs+=<:>
 set nofixeol
 set noshowcmd
 set notimeout
+set ttimeout
+set ttimeoutlen=100
 set nrformats-=octal
 set number
 set preserveindent

@@ -60,7 +60,7 @@
     {
       "type": "git",
       "path": "github.com/lambdalisue/qfloc.vim",
-      "version": "2f9cf3141523a401d75f9f95cca32c6897811d24"
+      "version": "394fb61e58ec349ab4210e03b2e7972e9dea1b2f"
     },
     {
       "type": "git",
@@ -69,13 +69,13 @@
     },
     {
       "type": "git",
-      "path": "github.com/natebosch/vim-lsc",
-      "version": "d4d34070c74261d749a74c1990c7e6ecf7b500bb"
+      "path": "github.com/posva/vim-vue",
+      "version": "720ca48e0207f2aca331b9d949ce9d4ff5702737"
     },
     {
       "type": "git",
-      "path": "github.com/posva/vim-vue",
-      "version": "720ca48e0207f2aca331b9d949ce9d4ff5702737"
+      "path": "github.com/prabirshrestha/vim-lsp",
+      "version": "e829ca02c2aee08c3b87cc80f79b252ea5a9ae7a"
     },
     {
       "type": "git",
@@ -91,11 +91,6 @@
       "type": "git",
       "path": "github.com/syngan/vim-vimlint",
       "version": "cec40c28f119a5f4b92ceb0b6aae525122a81244"
-    },
-    {
-      "type": "git",
-      "path": "github.com/thinca/vim-localrc",
-      "version": "e2cc8a661bb3f3215fddf58549913c5115f585bd"
     },
     {
       "type": "git",
@@ -185,12 +180,17 @@
     {
       "type": "git",
       "path": "github.com/tyru/sync-term-cwd.vim",
-      "version": "32f89453a1d8d19594cb29514775f728c248385e"
+      "version": "91371c0d08923d1a827520265e33ff3e20a4be2c"
     },
     {
       "type": "git",
       "path": "github.com/tyru/tabsidebar-boost.vim",
       "version": "e60d7d030e96b8ca128cf8990cb1c0ea2894ae36"
+    },
+    {
+      "type": "git",
+      "path": "github.com/tyru/tapi-reg.vim",
+      "version": "adbc1c4fc95ce2fd13ead6ed2170b59785370499"
     },
     {
       "type": "git",
@@ -215,7 +215,7 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/vital.vim",
-      "version": "002cfe52a83253c2fb40c0a8f9d7e79146a61e7c"
+      "version": "9ef5d3d6f2185a0127476c8c087445448534261b"
     },
     {
       "type": "git",
@@ -241,9 +241,7 @@
         "github.com/kana/vim-textobj-indent",
         "github.com/kana/vim-textobj-user",
         "github.com/lambdalisue/qfloc.vim",
-        "github.com/natebosch/vim-lsc",
         "github.com/rhysd/vim-color-spring-night",
-        "github.com/thinca/vim-localrc",
         "github.com/thinca/vim-prettyprint",
         "github.com/thinca/vim-quickrun",
         "github.com/thinca/vim-themis",
@@ -261,6 +259,7 @@
         "github.com/tyru/quickey.vim",
         "github.com/tyru/stoptypofile.vim",
         "github.com/tyru/sync-term-cwd.vim",
+        "github.com/tyru/tapi-reg.vim",
         "github.com/vim-jp/autofmt",
         "github.com/vim-jp/vim-vimlparser",
         "github.com/vim-jp/vimdoc-ja-working",
@@ -293,7 +292,6 @@
     {
       "name": "test",
       "repos_path": [
-        "github.com/thinca/vim-localrc",
         "github.com/w0rp/ale"
       ]
     },
