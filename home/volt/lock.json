@@ -114,11 +114,6 @@
     },
     {
       "type": "git",
-      "path": "github.com/tyru/capture.vim",
-      "version": "857ee11cfe1193948d3d45dcb8d511fded8533fb"
-    },
-    {
-      "type": "git",
       "path": "github.com/tyru/caw.vim",
       "version": "66f5122001594a4ce7fbff2964d2148ecab43d89"
     },
@@ -190,7 +185,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/tapi-reg.vim",
-      "version": "adbc1c4fc95ce2fd13ead6ed2170b59785370499"
+      "version": "65f4e566b22378a21aeb93ab9b6bc1b4f6203100"
     },
     {
       "type": "git",
@@ -205,7 +200,7 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/vim-vimlparser",
-      "version": "cc94f667b93e7e5ec40c8cd4e2b301d7f6c05744"
+      "version": "9cc29eec7e83d749eee72e4b844c1199939303dd"
     },
     {
       "type": "git",
@@ -246,7 +241,6 @@
         "github.com/thinca/vim-quickrun",
         "github.com/thinca/vim-themis",
         "github.com/tpope/vim-markdown",
-        "github.com/tyru/capture.vim",
         "github.com/tyru/caw.vim",
         "github.com/tyru/closesubwin.vim",
         "github.com/tyru/eskk.vim",
@@ -288,12 +282,6 @@
     {
       "name": "sql",
       "repos_path": []
-    },
-    {
-      "name": "test",
-      "repos_path": [
-        "github.com/w0rp/ale"
-      ]
     },
     {
       "name": "toml",

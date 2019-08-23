@@ -1,9 +1,7 @@
 " vim:et:sw=2:ts=2
 
 function! s:on_load_pre()
-  let g:quickrun_config = {
-  \   '_': {'outputter/buffer/close_on_empty': 1}
-  \}
+  command! -nargs=+ -complete=command Capture QuickRun -type vim -src <q-args>
 endfunction
 
 function! s:on_load_post()
