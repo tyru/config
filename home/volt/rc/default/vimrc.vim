@@ -146,14 +146,14 @@ set pumheight=20
 set scrolloff=5
 set sessionoptions-=options
 set shiftround
-set shiftwidth=0
+set shiftwidth=2
 set shortmess+=aI
 set shortmess-=S
 set showtabline=2
 set smartcase
 set softtabstop=-1
 set t_Co=256
-set tabstop=2
+set tabstop=8
 set textwidth=80
 set whichwrap=b,s
 set wildmenu
@@ -436,7 +436,7 @@ endif
 
 
 " Set cwd to current file's directory
-nnoremap <Plug>(vimrc:prefix:excmd)cd   :<C-u>lcd %:h<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)cd   :<C-u>tcd %:h<CR>
 
 " 'Y' to yank till the end of line.
 nnoremap Y    y$
@@ -561,7 +561,7 @@ nnoremap <Plug>(vimrc:prefix:excmd)oe  :<C-u>setlocal expandtab! expandtab?<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)ol  :<C-u>setlocal list! list?<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)on  :<C-u>setlocal number! number?<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)om  :<C-u>setlocal modeline! modeline?<CR>
-nnoremap <Plug>(vimrc:prefix:excmd)ot  :<C-u>call <SID>toggle_option_list([2, 4, 8], "tabstop")<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)ot  :<C-u>call <SID>toggle_option_list([2, 4, 8], "shiftwidth")<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)ofc :<C-u>call <SID>toggle_option_list(['', 'all'], 'foldclose')<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)ofm :<C-u>call <SID>toggle_option_list(['manual', 'marker', 'indent'], 'foldmethod')<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)ofw :<C-u>call <SID>toggle_winfix()<CR>
