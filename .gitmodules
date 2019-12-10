@@ -10,3 +10,6 @@
 [submodule "src/gvm/gvm"]
 	path = src/gvm/gvm
 	url = https://github.com/moovweb/gvm.git
+[submodule "lsp/typescript-language-server"]
+	path = lsp/typescript-language-server
+	url = https://github.com/theia-ide/typescript-language-server.git
