@@ -10,13 +10,6 @@ endfunction
 function! s:on_load_post()
 endfunction
 
-" Whether to actually load this plugin.
-" Return a 0 value to prohibit loading the plugin. All other numbers mean
-" this plugin will be loaded.
-function! s:should_load()
-  return has('popupwin')
-endfunction
-
 " This function determines when a plugin is loaded.
 "
 " Possible values are:

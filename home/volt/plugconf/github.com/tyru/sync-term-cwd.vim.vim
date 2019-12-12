@@ -3,7 +3,7 @@
 " Plugin configuration like the code written in vimrc.
 " This configuration is executed *before* a plugin is loaded.
 function! s:on_load_pre()
-  let g:synctermcwd_cd_command = 'tcd'
+  let g:synctermcwd_cd_command = 'SyncTermCwdConditionalCd'
 endfunction
 
 " Plugin configuration like the code written in vimrc.

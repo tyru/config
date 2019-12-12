@@ -138,7 +138,7 @@ set nofixeol
 set noshowcmd
 set notimeout
 set ttimeout
-set ttimeoutlen=100
+set ttimeoutlen=50
 set nrformats-=octal
 set number
 set preserveindent
@@ -166,8 +166,8 @@ if has('path_extra')
 endif
 
 " Assumption: Trailing spaces are already highlighted and noticeable.
-" set listchars=tab:>.,extends:>,precedes:<,trail:-,eol:$
-set listchars=tab:>.,extends:>,precedes:<,trail:-
+" set listchars=tab:>\ ,extends:>,precedes:<,trail:-,eol:$
+set listchars=tab:>\ ,extends:>,precedes:<,trail:-
 
 " Swapfile
 if 1
@@ -188,15 +188,62 @@ set backup
 set backupdir=$MYVIMDIR/info/backup//
 silent! call mkdir(substitute(&backupdir, '//$', '', ''), 'p')
 
+" Don't change inode when writing a file
+autocmd vimrc BufRead */log/*,*.log setlocal backupcopy=yes
+
 " Title
 set title
 let &titlestring = '%{getcwd()}'
 
 " guitablabel {{{
 
+command! -nargs=* -bang TabTitle call s:tab_title(<q-args>, <bang>0)
+function! s:tab_title(new_title, clear) abort
+  if a:clear
+    unlet! t:title
+  elseif !empty(a:new_title)
+    let t:title = a:new_title
+  endif
+  redrawtabline
+endfunction
+
 let &guitablabel = '%{MyTabLabel(v:lnum)}'
+" TODO
+" let &tabline = '%!MyTabLine()'
+
+function MyTabLine()
+  let s = ''
+  for i in range(tabpagenr('$'))
+    " select the highlighting
+    if i + 1 == tabpagenr()
+      let s .= '%#TabLineSel#'
+    else
+      let s .= '%#TabLine#'
+    endif
+
+    " set the tab page number (for mouse clicks)
+    let s .= '%' . (i + 1) . 'T'
+
+    " the label is made by MyTabLabel()
+    let s .= ' %{MyTabLabel(' . (i + 1) . ')} '
+  endfor
+
+  " after the last tab fill with TabLineFill and reset tab page nr
+  let s .= '%#TabLineFill#%T'
+
+  " right-align the label to close the current tab page
+  if tabpagenr('$') > 1
+    let s .= '%=%#TabLine#%999Xclose'
+  endif
+
+  return s
+endfunction
 
 function! MyTabLabel(tabnr)
+  if !empty(gettabvar(a:tabnr, 'title', ''))
+    return gettabvar(a:tabnr, 'title', '')
+  endif
+
   let buflist = tabpagebuflist(a:tabnr)
   let bufname = ''
   let modified = 0
@@ -341,11 +388,13 @@ endif
 try
   colorscheme spring-night
   " https://github.com/rhysd/vim-color-spring-night/issues/7
-  Lazy hi SignColumn term=NONE guibg=#ffffff ctermbg=255
-  " for diff
-  Lazy hi FoldColumn term=NONE guibg=#ffffff ctermbg=255
+  if has('tabsidebar')
+    Lazy hi SignColumn term=NONE guibg=#ffffff ctermbg=255
+    " for diff
+    Lazy hi FoldColumn term=NONE guibg=#ffffff ctermbg=255
+  endif
 catch /E185/
-  colorscheme desert
+  colorscheme evening
 endtry
 
 " too annoying
@@ -390,7 +439,7 @@ function! s:first_non_blank(flags) abort
   return lnum > 0 ? lnum . 'G' : ''
 endfunction
 
-BulkMap <noremap> [nxo] gp %
+BulkMap <noremap> [nxo] gp ]p
 
 " }}}
 
@@ -561,7 +610,7 @@ nnoremap <Plug>(vimrc:prefix:excmd)oe  :<C-u>setlocal expandtab! expandtab?<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)ol  :<C-u>setlocal list! list?<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)on  :<C-u>setlocal number! number?<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)om  :<C-u>setlocal modeline! modeline?<CR>
-nnoremap <Plug>(vimrc:prefix:excmd)ot  :<C-u>call <SID>toggle_option_list([2, 4, 8], "shiftwidth")<CR>
+nnoremap <Plug>(vimrc:prefix:excmd)ot  :<C-u>call <SID>toggle_option_list([2, 4, 8], &l:shiftwidth ==# 0 ? 'tabstop' : 'shiftwidth')<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)ofc :<C-u>call <SID>toggle_option_list(['', 'all'], 'foldclose')<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)ofm :<C-u>call <SID>toggle_option_list(['manual', 'marker', 'indent'], 'foldmethod')<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)ofw :<C-u>call <SID>toggle_winfix()<CR>
@@ -781,6 +830,9 @@ endif
 
 if executable('sqlformat')
   command! -range=% SQLFmt <line1>,<line2>!sqlformat -r -k upper -
+endif
+if executable('tidy')
+  command! -range=% HTMLFmt <line1>,<line2>!tidy -indent --tidy-mark no --show-errors 0 --show-warnings no -quiet
 endif
 
 " Quickfix {{{1

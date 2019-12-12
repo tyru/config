@@ -15,12 +15,12 @@
     {
       "type": "git",
       "path": "github.com/Shougo/neosnippet-snippets",
-      "version": "c5bb9211f3050e405ec9e03cf655624c205b9e94"
+      "version": "7e300f1b986f46b217c26906ca4ee88629f18610"
     },
     {
       "type": "git",
       "path": "github.com/Shougo/neosnippet.vim",
-      "version": "ed80ae8cee732d52eb841d509a95aca9c27ece7a"
+      "version": "9f108b30a35e47f2705ffcb92967cfed51464455"
     },
     {
       "type": "git",
@@ -41,6 +41,11 @@
       "type": "git",
       "path": "github.com/kana/vim-repeat",
       "version": "6dd787884b4df5c9193073325775b22c3a800225"
+    },
+    {
+      "type": "git",
+      "path": "github.com/kana/vim-submode",
+      "version": "d29de4f55c40a7a03af1d8134453a703d6affbd2"
     },
     {
       "type": "git",
@@ -71,6 +76,11 @@
       "type": "git",
       "path": "github.com/posva/vim-vue",
       "version": "720ca48e0207f2aca331b9d949ce9d4ff5702737"
+    },
+    {
+      "type": "git",
+      "path": "github.com/prabirshrestha/async.vim",
+      "version": "627a8c4092df24260d3dc2104bc1d944c78f91ca"
     },
     {
       "type": "git",
@@ -109,6 +119,11 @@
     },
     {
       "type": "git",
+      "path": "github.com/thinca/vim-visualstar",
+      "version": "a18cd0e7a03311ac709595c1d261ed44b45c9098"
+    },
+    {
+      "type": "git",
       "path": "github.com/tpope/vim-markdown",
       "version": "57c58269a2ac89680e7b216c2bcfbb7df1ec5e69"
     },
@@ -116,11 +131,6 @@
       "type": "git",
       "path": "github.com/tyru/caw.vim",
       "version": "66f5122001594a4ce7fbff2964d2148ecab43d89"
-    },
-    {
-      "type": "git",
-      "path": "github.com/tyru/closesubwin.vim",
-      "version": "8c42579599d0ef6cdc302552d75e64612c55dab5"
     },
     {
       "type": "git",
@@ -145,7 +155,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/open-browser-github.vim",
-      "version": "6f63e9c8b9482858af12c2dc60f6df2854e57f28"
+      "version": "b252c5cf717865b61945f5c7fad0fb950a947db8"
     },
     {
       "type": "git",
@@ -175,7 +185,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/sync-term-cwd.vim",
-      "version": "91371c0d08923d1a827520265e33ff3e20a4be2c"
+      "version": "6879f220011511fde4ce027eb7bd47116cf51060"
     },
     {
       "type": "git",
@@ -210,7 +220,7 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/vital.vim",
-      "version": "9ef5d3d6f2185a0127476c8c087445448534261b"
+      "version": "139faed4eb0c5132e59829303b8f75278f5419b4"
     },
     {
       "type": "git",
@@ -233,16 +243,19 @@
         "github.com/cespare/vim-toml",
         "github.com/hotwatermorning/auto-git-diff",
         "github.com/kana/vim-repeat",
+        "github.com/kana/vim-submode",
         "github.com/kana/vim-textobj-indent",
         "github.com/kana/vim-textobj-user",
         "github.com/lambdalisue/qfloc.vim",
+        "github.com/prabirshrestha/async.vim",
+        "github.com/prabirshrestha/vim-lsp",
         "github.com/rhysd/vim-color-spring-night",
         "github.com/thinca/vim-prettyprint",
         "github.com/thinca/vim-quickrun",
         "github.com/thinca/vim-themis",
+        "github.com/thinca/vim-visualstar",
         "github.com/tpope/vim-markdown",
         "github.com/tyru/caw.vim",
-        "github.com/tyru/closesubwin.vim",
         "github.com/tyru/eskk.vim",
         "github.com/tyru/homevim",
         "github.com/tyru/markdown-codehl-onthefly.vim",

@@ -8,13 +8,14 @@ endfunction
 " Plugin configuration like the code written in vimrc.
 " This configuration is executed *after* a plugin is loaded.
 function! s:on_load_post()
-endfunction
-
-" Whether to actually load this plugin.
-" Return a 0 value to prohibit loading the plugin. All other numbers mean
-" this plugin will be loaded.
-function! s:should_load()
-  return has('popupwin')
+  call submode#enter_with('winsize', 'n', '', '<C-w>>', '<C-w>>')
+  call submode#enter_with('winsize', 'n', '', '<C-w><', '<C-w><')
+  call submode#enter_with('winsize', 'n', '', '<C-w>+', '<C-w>+')
+  call submode#enter_with('winsize', 'n', '', '<C-w>-', '<C-w>-')
+  call submode#map('winsize', 'n', '', '>', '<C-w>>')
+  call submode#map('winsize', 'n', '', '<', '<C-w><')
+  call submode#map('winsize', 'n', '', '+', '<C-w>+')
+  call submode#map('winsize', 'n', '', '-', '<C-w>-')
 endfunction
 
 " This function determines when a plugin is loaded.
