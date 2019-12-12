@@ -10,3 +10,6 @@
 [submodule "src/gvm/gvm"]
 	path = src/gvm/gvm
 	url = https://github.com/moovweb/gvm.git
+[submodule "src/jvgrep/jvgrep"]
+	path = src/jvgrep/jvgrep
+	url = https://github.com/mattn/jvgrep.git

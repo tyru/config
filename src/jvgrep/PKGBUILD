@@ -1,0 +1,18 @@
+
+name=jvgrep
+prefix=$HOME/local/$name
+repos=$name
+depends=()
+src_depends=(gvm)
+
+update() {
+  git --git-dir=$name/.git pull --quiet --rebase
+}
+
+build() {
+  cd $name && go build
+}
+
+package() {
+  cd $name && go install .
+}
