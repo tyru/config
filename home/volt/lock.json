@@ -231,6 +231,11 @@
       "type": "git",
       "path": "github.com/w0rp/ale",
       "version": "80ab12c7b645b392feb98723873d77b045a0a7e2"
+    },
+    {
+      "type": "git",
+      "path": "github.com/wavded/vim-stylus",
+      "version": "0514757a4795843978517ee73d7fa7d8bf2e5545"
     }
   ],
   "profiles": [
@@ -272,7 +277,8 @@
         "github.com/vim-jp/vimdoc-ja-working",
         "github.com/vim-jp/vital.vim",
         "github.com/vim-volt/vim-volt",
-        "github.com/w0rp/ale"
+        "github.com/w0rp/ale",
+        "github.com/wavded/vim-stylus"
       ]
     },
     {

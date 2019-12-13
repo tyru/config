@@ -5,17 +5,14 @@
 function! s:on_load_pre()
   let g:lsp_highlight_references_enabled = 0
 
+  function! s:common_settings() abort
+    setlocal omnifunc=lsp#complete
+    nmap <buffer> <C-]> <plug>(lsp-definition)
+  endfunction
+
   " https://github.com/prabirshrestha/vim-lsp/wiki
   augroup vimrc-lsp
     autocmd!
-    " efm-langserver
-    if 0 && executable('efm-langserver')
-      autocmd User lsp_setup call lsp#register_server({
-        \ 'name': 'efm-langserver',
-        \ 'cmd': {server_info->['efm-langserver', '-c=/path/to/your/config.yaml']},
-        \ 'whitelist': ['vim', 'markdown'],
-        \ })
-    endif
     " gopls
     if 1 && executable('gopls')
       autocmd User lsp_setup call lsp#register_server({
@@ -29,8 +26,7 @@ function! s:on_load_pre()
       \     'usePlaceholders': v:true,
       \   }},
       \ })
-      autocmd FileType go setlocal omnifunc=lsp#complete
-      autocmd FileType go nmap <buffer> <C-]> <plug>(lsp-definition)
+      autocmd FileType go call s:common_settings()
       autocmd FileType go autocmd vimrc-lsp BufWritePre <buffer> silent LspDocumentFormatSync
     endif
     " typescript-language-server
@@ -39,8 +35,19 @@ function! s:on_load_pre()
           \ 'name': 'typescript-language-server',
           \ 'cmd': {server_info->[&shell, &shellcmdflag, 'typescript-language-server --stdio']},
           \ 'root_uri':{server_info->lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'tsconfig.json'))},
-          \ 'whitelist': ['typescript', 'typescript.tsx'],
+          \ 'whitelist': ['typescript', 'typescript.tsx', 'javascript', 'javascript.jsx'],
           \ })
+      autocmd FileType typescript,typescript.tsx call s:common_settings()
+    endif
+    " metals-vim
+    if 1 && executable('metals-vim')
+         autocmd User lsp_setup call lsp#register_server({
+      \ 'name': 'metals',
+      \ 'cmd': {server_info->['metals-vim']},
+      \ 'initialization_options': { 'rootPatterns': 'build.sbt' },
+      \ 'whitelist': [ 'scala', 'sbt' ],
+      \ })
+      autocmd FileType scala,sbt call s:common_settings()
     endif
   augroup END
 endfunction
