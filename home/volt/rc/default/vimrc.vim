@@ -718,21 +718,6 @@ endfunction
 nnoremap <SID>(centering-display) zvzz
 xnoremap <SID>(centering-display) zvzz
 
-" Make *, gn command consistent
-" https://github.com/vim-jp/issues/issues/1094
-function! s:star_smartcase(forward) abort
-  let search = (a:forward ? '/' : '?')
-  let cw = expand('<cword>')
-  let case = (&smartcase && cw =~# '[A-Z]' ? '\C' : '')
-  return search . case . '\<' . cw . '\>' . "\<CR>"
-endfunction
-
-nnoremap <expr> <SID>(smart-*) <SID>star_smartcase(1)
-nnoremap <expr> <SID>(smart-#) <SID>star_smartcase(0)
-
-nmap * <SID>(smart-*)<SID>(centering-display)
-nmap # <SID>(smart-#)<SID>(centering-display)
-
 nnoremap <script> gd gd<SID>(centering-display)
 nnoremap <script> gD gD<SID>(centering-display)
 

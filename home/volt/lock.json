@@ -34,6 +34,11 @@
     },
     {
       "type": "git",
+      "path": "github.com/haya14busa/vim-asterisk",
+      "version": "7cf0d8f379babbdbf538aefe3af444ac4ba21dce"
+    },
+    {
+      "type": "git",
       "path": "github.com/hotwatermorning/auto-git-diff",
       "version": "1be2fec036f747fe44ec7f0a3868af0b0980954f"
     },
@@ -116,11 +121,6 @@
       "type": "git",
       "path": "github.com/thinca/vim-themis",
       "version": "f95b4a888a91cc9373cf2f801658287ff984592f"
-    },
-    {
-      "type": "git",
-      "path": "github.com/thinca/vim-visualstar",
-      "version": "a18cd0e7a03311ac709595c1d261ed44b45c9098"
     },
     {
       "type": "git",
@@ -246,6 +246,7 @@
         "github.com/Shougo/neosnippet-snippets",
         "github.com/Shougo/neosnippet.vim",
         "github.com/cespare/vim-toml",
+        "github.com/haya14busa/vim-asterisk",
         "github.com/hotwatermorning/auto-git-diff",
         "github.com/kana/vim-repeat",
         "github.com/kana/vim-submode",
@@ -258,7 +259,6 @@
         "github.com/thinca/vim-prettyprint",
         "github.com/thinca/vim-quickrun",
         "github.com/thinca/vim-themis",
-        "github.com/thinca/vim-visualstar",
         "github.com/tpope/vim-markdown",
         "github.com/tyru/caw.vim",
         "github.com/tyru/eskk.vim",
