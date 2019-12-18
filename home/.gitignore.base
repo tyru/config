@@ -5,3 +5,5 @@ tags-ja
 #*.old
 #*.bak
 #*.swp
+
+.metals/

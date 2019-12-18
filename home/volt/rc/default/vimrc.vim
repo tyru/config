@@ -832,6 +832,24 @@ function! s:setup_terminal() abort
   setlocal nowrap
 endfunction
 
+" <C-w>{count}gt, <C-w>{count}gT
+function! s:setup_jump_tab_mappings() abort
+  for [mode, cmds] in [['t', ['gt', 'gT']], ['n', ['gt', 'gT']]]
+    for cmd in cmds
+      execute printf('%snoremap <C-w>1%s <C-w>%s', mode, cmd, cmd)
+      execute printf('%smap <C-w>2%s <C-w>%s<C-w>1%s', mode, cmd, cmd, cmd)
+      execute printf('%smap <C-w>3%s <C-w>%s<C-w>2%s', mode, cmd, cmd, cmd)
+      execute printf('%smap <C-w>4%s <C-w>%s<C-w>3%s', mode, cmd, cmd, cmd)
+      execute printf('%smap <C-w>5%s <C-w>%s<C-w>4%s', mode, cmd, cmd, cmd)
+      execute printf('%smap <C-w>6%s <C-w>%s<C-w>5%s', mode, cmd, cmd, cmd)
+      execute printf('%smap <C-w>7%s <C-w>%s<C-w>6%s', mode, cmd, cmd, cmd)
+      execute printf('%smap <C-w>8%s <C-w>%s<C-w>7%s', mode, cmd, cmd, cmd)
+      execute printf('%smap <C-w>9%s <C-w>%s<C-w>8%s', mode, cmd, cmd, cmd)
+    endfor
+  endfor
+endfunction
+call s:setup_jump_tab_mappings()
+
 
 " Configurations for Vim runtime plugins {{{1
 
@@ -847,7 +865,7 @@ endfunction
 let g:vimsyn_folding = 'af'
 
 " indent/vim.vim {{{2
-let g:vim_indent_cont = 0
+let g:vim_indent_cont = shiftwidth()
 
 " syntax/sh.vim {{{2
 let g:is_bash = 1

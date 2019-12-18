@@ -79,6 +79,21 @@
     },
     {
       "type": "git",
+      "path": "github.com/mattn/vim-fz",
+      "version": "8fe1b1fb0e69eef95aa8c2f218cc84f5f1205dca"
+    },
+    {
+      "type": "git",
+      "path": "github.com/mattn/vim-lsp-settings",
+      "version": "1f7428720ca2716c9358fbd9a83779ae4d3d5b9e"
+    },
+    {
+      "type": "git",
+      "path": "github.com/mechatroner/rainbow_csv",
+      "version": "3f92f374f891f1505bc50fa9391c52ce22565edd"
+    },
+    {
+      "type": "git",
       "path": "github.com/posva/vim-vue",
       "version": "720ca48e0207f2aca331b9d949ce9d4ff5702737"
     },
@@ -253,6 +268,9 @@
         "github.com/kana/vim-textobj-indent",
         "github.com/kana/vim-textobj-user",
         "github.com/lambdalisue/qfloc.vim",
+        "github.com/mattn/vim-fz",
+        "github.com/mattn/vim-lsp-settings",
+        "github.com/mechatroner/rainbow_csv",
         "github.com/prabirshrestha/async.vim",
         "github.com/prabirshrestha/vim-lsp",
         "github.com/rhysd/vim-color-spring-night",
