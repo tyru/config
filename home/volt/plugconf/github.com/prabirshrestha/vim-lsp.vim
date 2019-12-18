@@ -1,30 +1,26 @@
 " vim:et:sw=2:ts=2
 
-" Plugin configuration like the code written in vimrc.
-" This configuration is executed *before* a plugin is loaded.
+" See also ~/config/home/volt/plugconf/github.com/mattn/vim-lsp-settings.vim
 function! s:on_load_pre()
   let g:lsp_highlight_references_enabled = 0
 
-  function! s:common_settings() abort
+  function! s:on_lsp_buffer_enabled() abort
     setlocal omnifunc=lsp#complete
     nmap <buffer> <C-]> <plug>(lsp-definition)
+    if &filetype ==# 'go'
+      autocmd lsp_install BufWritePre <buffer> silent LspDocumentFormatSync
+    endif
   endfunction
 
-  " cf.
-  " - https://github.com/prabirshrestha/vim-lsp/wiki
-  " - ~/config/home/volt/plugconf/github.com/mattn/vim-lsp-settings.vim
+  augroup lsp_install
+    autocmd!
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+  augroup END
+
+  " cf. https://github.com/prabirshrestha/vim-lsp/wiki
+  " TODO: send pull request(s) to mattn/vim-lsp-settings
   augroup vimrc-lsp
     autocmd!
-    " gopls
-    if executable('gopls')
-      autocmd FileType go call s:common_settings()
-      autocmd FileType go autocmd BufWritePre <buffer> silent LspDocumentFormatSync
-    endif
-    " typescript-language-server
-    if executable('typescript-language-server')
-      autocmd FileType typescript,typescript.tsx,javascript,javascript.jsx
-        \ call s:common_settings()
-    endif
     " metals-vim
     if executable('metals-vim')
       autocmd User lsp_setup call lsp#register_server({
@@ -33,11 +29,6 @@ function! s:on_load_pre()
         \ 'initialization_options': { 'rootPatterns': 'build.sbt' },
         \ 'whitelist': [ 'scala', 'sbt' ],
         \ })
-      autocmd FileType scala,sbt call s:common_settings()
-    endif
-    " pyls
-    if executable('pyls')
-      autocmd FileType python call s:common_settings()
     endif
   augroup END
 endfunction

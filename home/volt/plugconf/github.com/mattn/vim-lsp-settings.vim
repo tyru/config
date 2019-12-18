@@ -1,7 +1,6 @@
 " vim:et:sw=2:ts=2
 
-" Plugin configuration like the code written in vimrc.
-" This configuration is executed *before* a plugin is loaded.
+" See also ~/config/home/volt/plugconf/github.com/prabirshrestha/vim-lsp.vim
 function! s:on_load_pre()
   let g:lsp_settings = {
     \ 'gopls': {'workspace_config': {
