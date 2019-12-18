@@ -85,7 +85,7 @@
     {
       "type": "git",
       "path": "github.com/mattn/vim-lsp-settings",
-      "version": "1f7428720ca2716c9358fbd9a83779ae4d3d5b9e"
+      "version": "b384fe6f3c8c46315821bf2a08798bfdcda880ee"
     },
     {
       "type": "git",
@@ -105,7 +105,7 @@
     {
       "type": "git",
       "path": "github.com/prabirshrestha/vim-lsp",
-      "version": "e829ca02c2aee08c3b87cc80f79b252ea5a9ae7a"
+      "version": "a38c46d59184e932c6394a65bb2b31b8b22ad00d"
     },
     {
       "type": "git",
