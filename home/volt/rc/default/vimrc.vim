@@ -120,6 +120,7 @@ endif
 set autoindent
 set backspace=indent,eol,start
 set browsedir=current
+set completeopt=menu,popup
 set concealcursor=nvic
 set copyindent
 set diffopt+=vertical
@@ -137,8 +138,6 @@ set matchpairs+=<:>
 set nofixeol
 set noshowcmd
 set notimeout
-set ttimeout
-set ttimeoutlen=50
 set nrformats-=octal
 set number
 set preserveindent
@@ -155,6 +154,8 @@ set softtabstop=-1
 set t_Co=256
 set tabstop=8
 set textwidth=80
+set ttimeout
+set ttimeoutlen=50
 set whichwrap=b,s
 set wildmenu
 set wildmode=longest,list,full
@@ -514,9 +515,25 @@ nnoremap <silent> <Plug>(vimrc:prefix:excmd)q      :<C-u>close<CR>
 " Edit .vimrc
 nnoremap <Plug>(vimrc:prefix:excmd)ev     :<C-u>edit $MYVIMRC<CR>
 
+" Use gw instead of gT
+nnoremap gw gT
+nnoremap <C-w>gw <C-w>gT
+tnoremap <C-w>gw <C-w>gT
+
 " Terminal {{{2
 
-tnoremap <C-w><Space> <C-w>N
+" I don't use <C-w><C-t> mapping in normal mode
+tnoremap <C-w><C-t> <C-w>N
+nnoremap <expr> <C-w><C-t> term_getstatus(bufnr('')) =~# 'normal' ? 'a' : ''
+
+" FIXME: currently volt does not recognize tyru/empty-prompt.vim plugconf... why?
+
+" Enter command-line / normal-mode if current line is empty prompt
+function! s:empty_prompt_mappings() abort
+  call empty_prompt#map(#{lhs: ':', rhs: '<C-w>:'})
+  call empty_prompt#map(#{lhs: '<Esc>', rhs: '<C-w>N'})
+endfunction
+autocmd VimEnter * ++once call s:empty_prompt_mappings()
 
 " Cmdwin {{{2
 set cedit=<C-l>
@@ -813,11 +830,55 @@ if has('sound')
   command! -nargs=1 -complete=file PlayFile call sound_playfile(<q-args>)
 endif
 
-if executable('sqlformat')
-  command! -range=% SQLFmt <line1>,<line2>!sqlformat -r -k upper -
-endif
-if executable('tidy')
-  command! -range=% HTMLFmt <line1>,<line2>!tidy -indent --tidy-mark no --show-errors 0 --show-warnings no -quiet
+command! -range=% SQLFmt <line1>,<line2>!sqlformat -r -k upper -
+command! -range=% HTMLFmt <line1>,<line2>!tidy -indent --tidy-mark no --show-errors 0 --show-warnings no -quiet
+
+command! -nargs=1 -complete=file Tailf terminal ++kill=term ++close tail -f <args>
+command! TermTop terminal ++kill=term ++close top
+
+" FIXME: currently volt does not recognize tyru/project-guide.vim plugconf... why?
+if 1
+  command! -nargs=* -complete=dir Gof execute 'terminal ++close gof -t' .. (<q-args> !=# '' ? ' ' .. <q-args> : '')
+
+  function! s:volt_plugconf() abort
+    let root_dir = exists('$VOLTPATH') ? '$VOLTPATH' : '$HOME/volt'
+    return expand(root_dir .. '/plugconf')
+  endfunction
+  execute 'command! VoltPlugConf Gof -d' s:volt_plugconf()
+
+  function! s:volt_repos_dirs_pattern() abort
+    let root_dir = exists('$VOLTPATH') ? expand('$VOLTPATH') : expand('$HOME/volt')
+    let dirs_pattern = root_dir .. '/repos/*/*/*'
+    return dirs_pattern
+  endfunction
+
+  function! s:gopath_dirs_pattern() abort
+    let root_dir = exists('$GOPATH') ? expand('$GOPATH') : expand('$HOME/go')
+    let dirs_pattern = root_dir .. '/src/*/*/*'
+    return dirs_pattern
+  endfunction
+
+  function! s:pj_options() abort
+    return #{
+      "\ peco_args: ['--select-1'],
+      "\ gof_args: ['-f'],
+      "\ project_dialog_msg: 'Choose a project',
+      "\ project_dialog_options: #{time: 2000},
+      "\ file_dialog_msg: 'Choose a file',
+      "\ file_dialog_options: #{time: 2000},
+      "\ open_func: function('s:my_open_func'),
+      \}
+  endfunction
+
+  function! s:my_open_func(path_list) abort
+    call project_guide#default_open_func(a:path_list, 'vsplit')
+  endfunction
+
+  augroup vimrc-setup-project-guide
+    autocmd!
+    autocmd VimEnter * call project_guide#define_command('VoltRepos', function('s:volt_repos_dirs_pattern'), s:pj_options())
+    autocmd VimEnter * call project_guide#define_command('Gopath', function('s:gopath_dirs_pattern'), s:pj_options())
+  augroup END
 endif
 
 " Quickfix {{{1
@@ -832,19 +893,22 @@ function! s:setup_terminal() abort
   setlocal nowrap
 endfunction
 
-" <C-w>{count}gt, <C-w>{count}gT
+" <C-w>{count}gt, <C-w>{count}gw -> <C-w>{count}gT
 function! s:setup_jump_tab_mappings() abort
-  for [mode, cmds] in [['t', ['gt', 'gT']], ['n', ['gt', 'gT']]]
+  for [mode, cmds] in [
+    \ ['t', [#{lhs: 'gt', rhs: 'gt'}, #{lhs: 'gw', rhs: 'gT'}]],
+    \ ['n', [#{lhs: 'gt', rhs: 'gt'}, #{lhs: 'gw', rhs: 'gT'}]],
+    \]
     for cmd in cmds
-      execute printf('%snoremap <C-w>1%s <C-w>%s', mode, cmd, cmd)
-      execute printf('%smap <C-w>2%s <C-w>%s<C-w>1%s', mode, cmd, cmd, cmd)
-      execute printf('%smap <C-w>3%s <C-w>%s<C-w>2%s', mode, cmd, cmd, cmd)
-      execute printf('%smap <C-w>4%s <C-w>%s<C-w>3%s', mode, cmd, cmd, cmd)
-      execute printf('%smap <C-w>5%s <C-w>%s<C-w>4%s', mode, cmd, cmd, cmd)
-      execute printf('%smap <C-w>6%s <C-w>%s<C-w>5%s', mode, cmd, cmd, cmd)
-      execute printf('%smap <C-w>7%s <C-w>%s<C-w>6%s', mode, cmd, cmd, cmd)
-      execute printf('%smap <C-w>8%s <C-w>%s<C-w>7%s', mode, cmd, cmd, cmd)
-      execute printf('%smap <C-w>9%s <C-w>%s<C-w>8%s', mode, cmd, cmd, cmd)
+      execute printf('%snoremap <C-w>1%s <C-w>%s', mode, cmd.lhs, cmd.rhs)
+      execute printf('%smap <C-w>2%s <C-w>%s<C-w>1%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
+      execute printf('%smap <C-w>3%s <C-w>%s<C-w>2%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
+      execute printf('%smap <C-w>4%s <C-w>%s<C-w>3%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
+      execute printf('%smap <C-w>5%s <C-w>%s<C-w>4%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
+      execute printf('%smap <C-w>6%s <C-w>%s<C-w>5%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
+      execute printf('%smap <C-w>7%s <C-w>%s<C-w>6%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
+      execute printf('%smap <C-w>8%s <C-w>%s<C-w>7%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
+      execute printf('%smap <C-w>9%s <C-w>%s<C-w>8%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
     endfor
   endfor
 endfunction

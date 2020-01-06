@@ -3,6 +3,7 @@
 " Plugin configuration like the code written in vimrc.
 " This configuration is executed *before* a plugin is loaded.
 function! s:on_load_pre()
+  let g:fz_default_command_action = 'drop'
 endfunction
 
 " Plugin configuration like the code written in vimrc.

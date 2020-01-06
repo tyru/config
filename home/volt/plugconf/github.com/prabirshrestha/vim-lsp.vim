@@ -3,13 +3,13 @@
 " See also ~/config/home/volt/plugconf/github.com/mattn/vim-lsp-settings.vim
 function! s:on_load_pre()
   let g:lsp_highlight_references_enabled = 0
+  let g:lsp_signature_help_enabled = 0
+  let g:lsp_semantic_enabled = 0
+  let g:lsp_log_file = expand('~/vim-lsp.log')
 
   function! s:on_lsp_buffer_enabled() abort
     setlocal omnifunc=lsp#complete
     nmap <buffer> <C-]> <plug>(lsp-definition)
-    if &filetype ==# 'go'
-      autocmd lsp_install BufWritePre <buffer> silent LspDocumentFormatSync
-    endif
   endfunction
 
   augroup lsp_install
