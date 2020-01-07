@@ -54,13 +54,13 @@
     },
     {
       "type": "git",
-      "path": "github.com/kana/vim-repeat",
-      "version": "6dd787884b4df5c9193073325775b22c3a800225"
+      "path": "github.com/itchyny/vim-parenmatch",
+      "version": "663d45d56e4a7518c6618194358ae666f0706b73"
     },
     {
       "type": "git",
-      "path": "github.com/kana/vim-submode",
-      "version": "d29de4f55c40a7a03af1d8134453a703d6affbd2"
+      "path": "github.com/kana/vim-repeat",
+      "version": "6dd787884b4df5c9193073325775b22c3a800225"
     },
     {
       "type": "git",
@@ -170,7 +170,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/empty-prompt.vim",
-      "version": "1113478eb1aa34cee3c1394429d51cfc02b56749"
+      "version": "8e70208defd3ef8ba6da87f81ce8c46542fba2ea"
     },
     {
       "type": "git",
@@ -209,11 +209,6 @@
     },
     {
       "type": "git",
-      "path": "github.com/tyru/qfpopup.vim",
-      "version": "c3c5912ecf955e5af0e5610758c2cad595a283e4"
-    },
-    {
-      "type": "git",
       "path": "github.com/tyru/quickey.vim",
       "version": "8ec90adc65257115227e8e724a7509efd920b3f6"
     },
@@ -230,7 +225,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/sync-term-cwd.vim",
-      "version": "7ca70bead14207c0b8c08fa2574b52899cd7dc76"
+      "version": "7fce8643f5f4dfacda8b1bdc9cde52e98cbcf7f8"
     },
     {
       "type": "git",
@@ -295,8 +290,8 @@
         "github.com/dhruvasagar/vim-table-mode",
         "github.com/haya14busa/vim-asterisk",
         "github.com/hotwatermorning/auto-git-diff",
+        "github.com/itchyny/vim-parenmatch",
         "github.com/kana/vim-repeat",
-        "github.com/kana/vim-submode",
         "github.com/kana/vim-textobj-indent",
         "github.com/kana/vim-textobj-jabraces",
         "github.com/kana/vim-textobj-user",
@@ -310,7 +305,6 @@
         "github.com/rhysd/vim-color-spring-night",
         "github.com/thinca/vim-prettyprint",
         "github.com/thinca/vim-quickrun",
-        "github.com/thinca/vim-themis",
         "github.com/tpope/vim-markdown",
         "github.com/tyru/caw.vim",
         "github.com/tyru/empty-prompt.vim",
@@ -321,7 +315,6 @@
         "github.com/tyru/open-browser-github.vim",
         "github.com/tyru/open-browser.vim",
         "github.com/tyru/project-guide.vim",
-        "github.com/tyru/qfpopup.vim",
         "github.com/tyru/quickey.vim",
         "github.com/tyru/stoptypofile.vim",
         "github.com/tyru/sync-term-cwd.vim",

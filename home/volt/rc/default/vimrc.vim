@@ -452,18 +452,47 @@ BulkMap <noremap><expr> [nxo] <C-f> max([winheight(0) - 2, 1]) . "\<C-d>" . (lin
 BulkMap <noremap><expr> [nxo] <C-y> line('w0') <= 1         ? 'k' : "\<C-y>"
 BulkMap <noremap><expr> [nxo] <C-e> line('w$') >= line('$') ? 'j' : "\<C-e>"
 
-" Fold {{{2
-
-nmap z <Plug>(vimrc:prefix:fold)
-xmap z <Plug>(vimrc:prefix:fold)
-omap z <Plug>(vimrc:prefix:fold)
-" fallback
-nnoremap <Plug>(vimrc:prefix:fold) z
-xnoremap <Plug>(vimrc:prefix:fold) z
-onoremap <Plug>(vimrc:prefix:fold) z
-
 " Open only current line's fold.
-nnoremap <Plug>(vimrc:prefix:fold)<Space> zMzvzz
+nnoremap z<Space> zMzvzz
+
+
+" Set cwd to current file's directory
+nnoremap <Plug>(vimrc:prefix:excmd)cd   :<C-u>tcd %:h<CR>
+
+" 'Y' to yank till the end of line.
+nnoremap Y    y$
+
+" Moving tabs
+if has('tabsidebar')
+  nnoremap <silent> <C-w><Up>      :<C-u>call <SID>tabmove(-v:count1)<CR>
+  nnoremap <silent> <C-w><Down>    :<C-u>call <SID>tabmove(+v:count1)<CR>
+else
+  nnoremap <silent> <C-w><Left>    :<C-u>call <SID>tabmove(-v:count1)<CR>
+  nnoremap <silent> <C-w><Right>   :<C-u>call <SID>tabmove(+v:count1)<CR>
+endif
+
+function! s:tabmove(n) abort
+  let last = tabpagenr('$')
+  let i = (tabpagenr() - 1 + a:n) % last
+  let i = i < 0 ? last + i : i
+  let tabnr = i ==# 0 || i + 2 ==# tabpagenr() ? i : i + 1
+  execute 'tabmove' tabnr
+endfunction
+
+" :update / :close
+nnoremap <Plug>(vimrc:prefix:excmd)w      :<C-u>update<CR>
+nnoremap <silent> <Plug>(vimrc:prefix:excmd)q      :<C-u>close<CR>
+
+" Edit .vimrc
+nnoremap <Plug>(vimrc:prefix:excmd)ev     :<C-u>edit $MYVIMRC<CR>
+
+" Move window size {{{2
+" https://lambdalisue.hatenablog.com/entry/2015/12/25/000046
+
+nnoremap <Left>  <C-w><<CR>
+nnoremap <Right> <C-w>><CR>
+nnoremap <Up>    <C-w>-<CR>
+nnoremap <Down>  <C-w>+<CR>
 
 " GUI: Save current file with <C-s> {{{2
 
@@ -482,43 +511,31 @@ if has('gui_running')
   endfunction
 endif
 
-" }}}
-
-
-" Set cwd to current file's directory
-nnoremap <Plug>(vimrc:prefix:excmd)cd   :<C-u>tcd %:h<CR>
-
-" 'Y' to yank till the end of line.
-nnoremap Y    y$
-
-" Moving tabs
-if has('tabsidebar')
-  nnoremap <silent> <Up>      :<C-u>call <SID>tabmove(-v:count1)<CR>
-  nnoremap <silent> <Down>    :<C-u>call <SID>tabmove(+v:count1)<CR>
-else
-  nnoremap <silent> <Left>    :<C-u>call <SID>tabmove(-v:count1)<CR>
-  nnoremap <silent> <Right>   :<C-u>call <SID>tabmove(+v:count1)<CR>
-endif
-
-function! s:tabmove(n) abort
-  let last = tabpagenr('$')
-  let i = (tabpagenr() - 1 + a:n) % last
-  let i = i < 0 ? last + i : i
-  let tabnr = i ==# 0 || i + 2 ==# tabpagenr() ? i : i + 1
-  execute 'tabmove' tabnr
-endfunction
-
-" :update / :close
-nnoremap <Plug>(vimrc:prefix:excmd)w      :<C-u>update<CR>
-nnoremap <silent> <Plug>(vimrc:prefix:excmd)q      :<C-u>close<CR>
-
-" Edit .vimrc
-nnoremap <Plug>(vimrc:prefix:excmd)ev     :<C-u>edit $MYVIMRC<CR>
-
-" Use gw instead of gT
+" Use gw instead of gT {{{2
 nnoremap gw gT
 nnoremap <C-w>gw <C-w>gT
 tnoremap <C-w>gw <C-w>gT
+
+" <C-w>{count}gt, <C-w>{count}gw -> <C-w>{count}gT
+function! s:setup_jump_tab_mappings() abort
+  for [mode, cmds] in [
+    \ ['t', [#{lhs: 'gt', rhs: 'gt'}, #{lhs: 'gw', rhs: 'gT'}]],
+    \ ['n', [#{lhs: 'gt', rhs: 'gt'}, #{lhs: 'gw', rhs: 'gT'}]],
+    \]
+    for cmd in cmds
+      execute printf('%snoremap <C-w>1%s <C-w>%s', mode, cmd.lhs, cmd.rhs)
+      execute printf('%smap <C-w>2%s <C-w>%s<C-w>1%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
+      execute printf('%smap <C-w>3%s <C-w>%s<C-w>2%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
+      execute printf('%smap <C-w>4%s <C-w>%s<C-w>3%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
+      execute printf('%smap <C-w>5%s <C-w>%s<C-w>4%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
+      execute printf('%smap <C-w>6%s <C-w>%s<C-w>5%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
+      execute printf('%smap <C-w>7%s <C-w>%s<C-w>6%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
+      execute printf('%smap <C-w>8%s <C-w>%s<C-w>7%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
+      execute printf('%smap <C-w>9%s <C-w>%s<C-w>8%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
+    endfor
+  endfor
+endfunction
+call s:setup_jump_tab_mappings()
 
 " Terminal {{{2
 
@@ -893,29 +910,28 @@ function! s:setup_terminal() abort
   setlocal nowrap
 endfunction
 
-" <C-w>{count}gt, <C-w>{count}gw -> <C-w>{count}gT
-function! s:setup_jump_tab_mappings() abort
-  for [mode, cmds] in [
-    \ ['t', [#{lhs: 'gt', rhs: 'gt'}, #{lhs: 'gw', rhs: 'gT'}]],
-    \ ['n', [#{lhs: 'gt', rhs: 'gt'}, #{lhs: 'gw', rhs: 'gT'}]],
-    \]
-    for cmd in cmds
-      execute printf('%snoremap <C-w>1%s <C-w>%s', mode, cmd.lhs, cmd.rhs)
-      execute printf('%smap <C-w>2%s <C-w>%s<C-w>1%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
-      execute printf('%smap <C-w>3%s <C-w>%s<C-w>2%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
-      execute printf('%smap <C-w>4%s <C-w>%s<C-w>3%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
-      execute printf('%smap <C-w>5%s <C-w>%s<C-w>4%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
-      execute printf('%smap <C-w>6%s <C-w>%s<C-w>5%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
-      execute printf('%smap <C-w>7%s <C-w>%s<C-w>6%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
-      execute printf('%smap <C-w>8%s <C-w>%s<C-w>7%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
-      execute printf('%smap <C-w>9%s <C-w>%s<C-w>8%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
-    endfor
-  endfor
-endfunction
-call s:setup_jump_tab_mappings()
-
-
 " Configurations for Vim runtime plugins {{{1
+
+" Disable unnecessary runtime plugins!
+" cf. https://lambdalisue.hatenablog.com/entry/2015/12/25/000046
+let g:loaded_gzip              = 1
+let g:loaded_tar               = 1
+let g:loaded_tarPlugin         = 1
+let g:loaded_zip               = 1
+let g:loaded_zipPlugin         = 1
+let g:loaded_rrhelper          = 1
+let g:loaded_2html_plugin      = 1
+let g:loaded_vimball           = 1
+let g:loaded_vimballPlugin     = 1
+let g:loaded_getscript         = 1
+let g:loaded_getscriptPlugin   = 1
+let g:loaded_netrw             = 1
+let g:loaded_netrwPlugin       = 1
+let g:loaded_netrwSettings     = 1
+let g:loaded_netrwFileHandlers = 1
+let g:loaded_logiPat           = 1
+" use https://github.com/itchyny/vim-parenmatch instead
+let g:loaded_matchparen        = 1
 
 " syntax/vim.vim {{{2
 " augroup: a
