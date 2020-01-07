@@ -2,6 +2,7 @@
 
 " See also ~/config/home/volt/plugconf/github.com/prabirshrestha/vim-lsp.vim
 function! s:on_load_pre()
+  let g:lsp_settings_servers_dir = expand('$HOME/.cache/vim-lsp-settings/servers')
   let g:lsp_settings = {
     \ 'gopls': {'workspace_config': {
     \     'staticcheck': v:true,

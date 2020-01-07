@@ -7,3 +7,5 @@ tags-ja
 #*.swp
 
 .metals/
+
+Session.vim

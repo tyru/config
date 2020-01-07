@@ -143,7 +143,7 @@ set number
 set preserveindent
 set pumheight=20
 set scrolloff=5
-set sessionoptions-=options
+set sessionoptions=blank,folds,help,winsize,terminal,slash,unix
 set shiftround
 set shiftwidth=2
 set shortmess+=aI
@@ -877,24 +877,31 @@ if 1
 
   function! s:pj_options() abort
     return #{
-      "\ peco_args: ['--select-1'],
+      \ peco_args: ['--select-1'],
       "\ gof_args: ['-f'],
-      "\ project_dialog_msg: 'Choose a project',
-      "\ project_dialog_options: #{time: 2000},
-      "\ file_dialog_msg: 'Choose a file',
-      "\ file_dialog_options: #{time: 2000},
-      "\ open_func: function('s:my_open_func'),
       \}
   endfunction
 
-  function! s:my_open_func(path_list) abort
-    call project_guide#default_open_func(a:path_list, 'vsplit')
-  endfunction
 
   augroup vimrc-setup-project-guide
     autocmd!
     autocmd VimEnter * call project_guide#define_command('VoltRepos', function('s:volt_repos_dirs_pattern'), s:pj_options())
     autocmd VimEnter * call project_guide#define_command('Gopath', function('s:gopath_dirs_pattern'), s:pj_options())
+
+    autocmd User project-guide-post-tcd let t:vimrc_update_session_constantly = getcwd() . '/Session.vim'
+    autocmd User project-guide-post-file-open execute 'mksession!' t:vimrc_update_session_constantly
+    " Execute :mksession! in all tabpages which have t:vimrc_update_session_constantly
+    function! s:update_session(timer) abort
+      let winid = win_getid()
+      tabdo if t:->has_key('vimrc_update_session_constantly') | execute 'mksession!' t:vimrc_update_session_constantly | endif
+      call win_gotoid(winid)
+    endfunction
+    " Call above function every 30 seconds
+    function! s:register_update_session() abort
+      let sec = 1000
+      call timer_start(30 * sec, function('s:update_session'), #{repeat: -1})
+    endfunction
+    call s:register_update_session()
   augroup END
 endif
 
@@ -1025,7 +1032,7 @@ endif
 " https://qiita.com/Linda_pp/items/9e0c94eb82b18071db34
 " https://ttssh2.osdn.jp/manual/ja/usage/tips/vim.html
 
-if has('vim_starting')
+if has('vim_starting') && !s:is_win
   " insert mode (bar)
   let &t_SI .= "\e[5 q"
   " replace mode (underline)
