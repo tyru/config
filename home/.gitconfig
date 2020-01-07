@@ -41,3 +41,5 @@
 	path = ~/.gitconfig.secret
 [url "git@github.com:tyru/"]
 	insteadOf = https://github.com/tyru/
+[pull]
+	rebase = true
