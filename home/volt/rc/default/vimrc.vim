@@ -16,6 +16,8 @@ endif
 
 " Use plain vim when vim was invoked by 'sudo' command.
 if exists('$SUDO_USER')
+  set packpath-=$MYVIMDIR
+  set packpath-=$MYVIMDIR/after
   finish
 endif
 
