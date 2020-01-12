@@ -124,7 +124,6 @@ set backspace=indent,eol,start
 set browsedir=current
 set completeopt=menu,popup
 set concealcursor=nvic
-set copyindent
 set diffopt+=vertical
 set display=lastline
 set expandtab
@@ -142,7 +141,6 @@ set noshowcmd
 set notimeout
 set nrformats-=octal
 set number
-set preserveindent
 set pumheight=20
 set scrolloff=5
 set sessionoptions=blank,folds,help,winsize,terminal,slash,unix
@@ -411,8 +409,8 @@ BulkMap [nxo] <Space> <Plug>(vimrc:prefix:excmd)
 " fallback
 BulkMap <noremap> [nxo] <Plug>(vimrc:prefix:excmd) <Space>
 
-let g:mapleader = '\'
-let g:maplocalleader = '\'
+let g:mapleader = ';'
+let g:maplocalleader = ';'
 nnoremap <Leader> <Nop>
 nnoremap <LocalLeader> <Nop>
 
@@ -894,9 +892,12 @@ if 1
     autocmd User project-guide-post-file-open execute 'mksession!' t:vimrc_update_session_constantly
     " Execute :mksession! in all tabpages which have t:vimrc_update_session_constantly
     function! s:update_session(timer) abort
-      let winid = win_getid()
-      tabdo if t:->has_key('vimrc_update_session_constantly') | execute 'mksession!' t:vimrc_update_session_constantly | endif
-      call win_gotoid(winid)
+      for tabnr in range(1, tabpagenr('$'))
+        let tabval = gettabvar(tabnr, 'vimrc_update_session_constantly')
+        if tabval !=# ''
+          call win_execute(win_getid(1, tabnr), 'mksession! ' .. tabval)
+        endif
+      endfor
     endfunction
     " Call above function every 30 seconds
     function! s:register_update_session() abort
@@ -1003,9 +1004,9 @@ if has('vim_starting') && !has('gui_running') && has('vertsplit')
   BulkMap <special> [nxo] <Esc>[3;9R <Nop>
 
   " new vim can't handle CPR with direct mapping
-  " BulkMap <expr> [nxo] [3;3R <SID>EnableVsplitMode()
-  set t_F9=[3;3R
-  BulkMap <expr><noremap> [nxo] <t_F9> <SID>EnableVsplitMode()
+  BulkMap <expr> [nxo] [3;3R <SID>EnableVsplitMode()
+  " set t_F9=[3;3R
+  " BulkMap <expr><noremap> [nxo] <t_F9> <SID>EnableVsplitMode()
   let &t_RV .= "\e[?6;69h\e[1;3s\e[3;9H\e[6n\e[0;0s\e[?6;69l"
 endif
 

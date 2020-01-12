@@ -9,3 +9,5 @@ tags-ja
 .metals/
 
 Session.vim
+
+compile_flags.txt

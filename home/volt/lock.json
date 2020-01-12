@@ -15,7 +15,7 @@
     {
       "type": "git",
       "path": "github.com/Shougo/context_filetype.vim",
-      "version": "9d495ce4ddfdae8f0b268fcec3a7a5e0062456e8"
+      "version": "cbe3c0069e6a13bd9bfcd9739c0770f7fd4b4ef4"
     },
     {
       "type": "git",
@@ -25,7 +25,7 @@
     {
       "type": "git",
       "path": "github.com/Shougo/neosnippet.vim",
-      "version": "6cccbd41851f3d8f47c5e225d552a217cede4f3f"
+      "version": "5673f584c06431978a17609865f2adcf5e934be3"
     },
     {
       "type": "git",
@@ -45,7 +45,7 @@
     {
       "type": "git",
       "path": "github.com/haya14busa/vim-asterisk",
-      "version": "7cf0d8f379babbdbf538aefe3af444ac4ba21dce"
+      "version": "66a64172d21fab44312d0d49b22f63eeeaf89b23"
     },
     {
       "type": "git",
@@ -100,7 +100,7 @@
     {
       "type": "git",
       "path": "github.com/mattn/vim-lsp-settings",
-      "version": "e5179f80ff05d39d99b4b1b695cbd127ed522c22"
+      "version": "0298340b44655a6eb531828d68fb02c7499a68d5"
     },
     {
       "type": "git",
@@ -125,7 +125,7 @@
     {
       "type": "git",
       "path": "github.com/prabirshrestha/vim-lsp",
-      "version": "eadb20a0c87824a33a3d8f43c4c6386c4a96e817"
+      "version": "70234feca47ce355482d1734b66a78de92edd0d1"
     },
     {
       "type": "git",
@@ -170,17 +170,17 @@
     {
       "type": "git",
       "path": "github.com/tyru/empty-prompt.vim",
-      "version": "b95b49333815ca89feebb5bae8b756c99b526747"
+      "version": "23ca8eb925ed0d1740aebfb047b9ac262541e186"
     },
     {
       "type": "git",
       "path": "github.com/tyru/eskk.vim",
-      "version": "207d05cd50d126a84271aca7f02b3f839dab27c3"
+      "version": "30a11d934c911226a50c4bb4727c51749b231ef7"
     },
     {
       "type": "git",
       "path": "github.com/tyru/homevim",
-      "version": "37d690cc4f844f43dc1d694363c25245e83bdf3d"
+      "version": "decb5ef91bfcbf3e6f09db75a7530008b496b43f"
     },
     {
       "type": "git",
@@ -205,7 +205,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/project-guide.vim",
-      "version": "77d10b22d7a8071bf6e6366f9e0fadbc6fc0f37d"
+      "version": "f7baf47858e2dad2af210905531dab5d20076688"
     },
     {
       "type": "git",
@@ -255,12 +255,12 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/vimdoc-ja-working",
-      "version": "86e44712d36108d58a9971ef090202b40a69707b"
+      "version": "c9111b500b81eee319e9f758342685f58ad88cbc"
     },
     {
       "type": "git",
       "path": "github.com/vim-jp/vital.vim",
-      "version": "b464ac39240e2f460bac595fc8d37c6159e5700a"
+      "version": "9e6b43fdd17be7c59d45a081b8760d952268d6c7"
     },
     {
       "type": "git",
