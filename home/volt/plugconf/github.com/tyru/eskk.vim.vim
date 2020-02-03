@@ -32,9 +32,13 @@ function! s:on_load_pre()
       call t.add_map('zr', '®')
       call t.add_map('tm', '™')
       call t.add_map('z ', '　')
-      for n in range(10)
-        call t.add_map(n . '.', n . '.')
-      endfor
+      " FIXME: 「1gyou」と入力すると「ぎょう」になる。
+      " これは以下の設定がある場合の一般的なSKKの動作的に想定通りだが(ほんとに？)
+      " 「1Gyou」と入力しても「▽ぎょう」とならず「ぎょう」となってしまう。
+      " また g:eskk#rom_input_style = 'msime' の時も考慮できてるか不明。
+      " for n in range(10)
+      "   call t.add_map(n . '.', n . '.')
+      " endfor
       call eskk#register_mode_table('hira', t)
   endfunction
 

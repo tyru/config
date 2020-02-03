@@ -6,6 +6,7 @@ function! s:on_load_pre()
   let g:lsp_signature_help_enabled = 0
   let g:lsp_semantic_enabled = 0
   let g:lsp_log_file = expand('~/vim-lsp.log')
+  " let g:lsp_async_completion = 1
 
   function! s:on_lsp_buffer_enabled() abort
     setlocal omnifunc=lsp#complete
@@ -15,21 +16,6 @@ function! s:on_load_pre()
   augroup lsp_install
     autocmd!
     autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
-  augroup END
-
-  " cf. https://github.com/prabirshrestha/vim-lsp/wiki
-  " TODO: send pull request(s) to mattn/vim-lsp-settings
-  augroup vimrc-lsp
-    autocmd!
-    " metals-vim
-    if executable('metals-vim')
-      autocmd User lsp_setup call lsp#register_server({
-        \ 'name': 'metals',
-        \ 'cmd': {server_info->['metals-vim']},
-        \ 'initialization_options': { 'rootPatterns': 'build.sbt' },
-        \ 'whitelist': [ 'scala', 'sbt' ],
-        \ })
-    endif
   augroup END
 endfunction
 

@@ -20,12 +20,12 @@
     {
       "type": "git",
       "path": "github.com/Shougo/neosnippet-snippets",
-      "version": "7e300f1b986f46b217c26906ca4ee88629f18610"
+      "version": "0d7f506538a82b594e3527c58f7b2bccd44d9a85"
     },
     {
       "type": "git",
       "path": "github.com/Shougo/neosnippet.vim",
-      "version": "5673f584c06431978a17609865f2adcf5e934be3"
+      "version": "b6742c31b2e1c2d5c0b826cf75f0695310121da2"
     },
     {
       "type": "git",
@@ -55,7 +55,7 @@
     {
       "type": "git",
       "path": "github.com/itchyny/vim-parenmatch",
-      "version": "663d45d56e4a7518c6618194358ae666f0706b73"
+      "version": "9551aace10dd3aede2499645b9351dd965be1387"
     },
     {
       "type": "git",
@@ -95,17 +95,17 @@
     {
       "type": "git",
       "path": "github.com/mattn/vim-goimports",
-      "version": "3fc146492068e0073e305e0889a44339e4a1b18d"
+      "version": "ae085604f1825667bf9212266720f01bec22303c"
     },
     {
       "type": "git",
       "path": "github.com/mattn/vim-lsp-settings",
-      "version": "0298340b44655a6eb531828d68fb02c7499a68d5"
+      "version": "ae393c19947c1aa99f4765daf3ecb33c3b2f2dba"
     },
     {
       "type": "git",
       "path": "github.com/mechatroner/rainbow_csv",
-      "version": "03cacd8f5cb7f1d814904394b3ab979cfbb36047"
+      "version": "1ccf6380f0cdf9eafc0c4f9be4d4e74848f918ce"
     },
     {
       "type": "git",
@@ -125,7 +125,7 @@
     {
       "type": "git",
       "path": "github.com/prabirshrestha/vim-lsp",
-      "version": "70234feca47ce355482d1734b66a78de92edd0d1"
+      "version": "47ad01195c346192c480511b7f20e30df676227f"
     },
     {
       "type": "git",
@@ -165,7 +165,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/caw.vim",
-      "version": "59d1bbdec7d82740811806c4d4da1963089064a8"
+      "version": "364e803cfae22a9ef6d7543631495ba8644f3cce"
     },
     {
       "type": "git",
@@ -200,7 +200,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/open-browser.vim",
-      "version": "cd29e8c8db02cd7744728a8f77a829b967e5ff31"
+      "version": "88168d9c4cc41000b8020c852b6a75cb99bc7e1b"
     },
     {
       "type": "git",
@@ -255,12 +255,12 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/vimdoc-ja-working",
-      "version": "c9111b500b81eee319e9f758342685f58ad88cbc"
+      "version": "85b423f7ad22927cdbf9649dce0d3aa786d4c4fa"
     },
     {
       "type": "git",
       "path": "github.com/vim-jp/vital.vim",
-      "version": "9e6b43fdd17be7c59d45a081b8760d952268d6c7"
+      "version": "91177736ea63b3e7e6093ef3e60ba215c2f27437"
     },
     {
       "type": "git",

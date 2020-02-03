@@ -112,7 +112,7 @@ build() {
     config_opts="$config_opts --with-lua-prefix=$lua_prefix"
     config_opts="$config_opts --with-luajit"
   fi
-  config_opts="$config_opts --enable-gui=gtk2"
+  #config_opts="$config_opts --enable-gui=gtk2"
   config_opts="$config_opts --enable-fontset"
   config_opts="$config_opts --enable-fail-if-missing"
   config_opts="$config_opts --enable-gpm"

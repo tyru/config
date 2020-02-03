@@ -16,9 +16,9 @@
 	cp = cherry-pick
 	dish = diff --cached -M
 	fixup = commit --fixup
-	gene = log --graph --pretty='%C(yellow)%h%Creset %ai %an: %s%C(yellow)%d%Creset' --all
 	git = !git
 	last = log -p --reverse HEAD@{1}..
+	ls = !"git ls-files | less"
 	todo = grep -n -E "\b(TODO|XXX|FIXME)\b"
 	view = log --pretty=oneline --abbrev-commit --graph --source --tags --branches
 	wh = whatchanged
@@ -43,3 +43,5 @@
 	insteadOf = https://github.com/tyru/
 [pull]
 	rebase = true
+[advice]
+	detachedHead = false

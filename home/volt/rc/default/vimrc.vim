@@ -21,12 +21,6 @@ if exists('$SUDO_USER')
   finish
 endif
 
-if !exists('$VIMRC_USE_VIMPROC')
-  " 0: vimproc disabled
-  " 1: vimproc enabled
-  " 2: each plugin default(auto)
-  let $VIMRC_USE_VIMPROC = 1
-endif
 if !exists('$VIMRC_FORCE_LANG_C')
   let $VIMRC_FORCE_LANG_C = 0
 endif
@@ -147,7 +141,6 @@ set sessionoptions=blank,folds,help,winsize,terminal,slash,unix
 set shiftround
 set shiftwidth=2
 set shortmess+=aI
-set shortmess-=S
 set showtabline=2
 set smartcase
 set softtabstop=-1
@@ -277,7 +270,35 @@ let &statusline =
 \    '%f%( [%M%R%H%W]%)%( [%{&ft}]%) %{&fenc}/%{&ff}'
 \ .  '%( %{line(".")}/%{line("$")}%)'
 
-" }}}
+if exists('*searchcount')
+  function! LastSearchCount() abort
+    let result = searchcount(#{recompute: 0})
+    if empty(result)
+      return ''
+    endif
+    if result.incomplete ==# 1     " timed out
+      return printf(' /%s [?/??]', @/)
+    elseif result.incomplete ==# 2 " max count exceeded
+      if result.total > result.maxcount && result.current > result.maxcount
+	return printf(' /%s [>%d/>%d]', @/, result.current, result.total)
+      elseif result.total > result.maxcount
+	return printf(' /%s [%d/>%d]', @/, result.current, result.total)
+      endif
+    endif
+    return printf(' /%s [%d/%d]', @/, result.current, result.total)
+  endfunction
+  let &statusline .= '%{v:hlsearch ? LastSearchCount() : ""}'
+
+  autocmd CursorMoved,CursorMovedI *
+    \ let s:searchcount_timer =
+    \   timer_start(200, function('s:update_searchcount'))
+  function! s:update_searchcount(timer) abort
+    if a:timer ==# s:searchcount_timer
+      call searchcount(#{recompute: 1, maxcount: 0, timeout: 100})
+      redrawstatus
+    endif
+  endfunction
+endif
 
 " Unofficial patches {{{
 
@@ -489,10 +510,10 @@ nnoremap <Plug>(vimrc:prefix:excmd)ev     :<C-u>edit $MYVIMRC<CR>
 " Move window size {{{2
 " https://lambdalisue.hatenablog.com/entry/2015/12/25/000046
 
-nnoremap <Left>  <C-w><<CR>
-nnoremap <Right> <C-w>><CR>
-nnoremap <Up>    <C-w>-<CR>
-nnoremap <Down>  <C-w>+<CR>
+nnoremap <S-Left>  <C-w><
+nnoremap <S-Right> <C-w>>
+nnoremap <S-Up>    <C-w>-
+nnoremap <S-Down>  <C-w>+
 
 " GUI: Save current file with <C-s> {{{2
 
@@ -512,30 +533,11 @@ if has('gui_running')
 endif
 
 " Use gw instead of gT {{{2
-nnoremap gw gT
-nnoremap <C-w>gw <C-w>gT
-tnoremap <C-w>gw <C-w>gT
-
-" <C-w>{count}gt, <C-w>{count}gw -> <C-w>{count}gT
-function! s:setup_jump_tab_mappings() abort
-  for [mode, cmds] in [
-    \ ['t', [#{lhs: 'gt', rhs: 'gt'}, #{lhs: 'gw', rhs: 'gT'}]],
-    \ ['n', [#{lhs: 'gt', rhs: 'gt'}, #{lhs: 'gw', rhs: 'gT'}]],
-    \]
-    for cmd in cmds
-      execute printf('%snoremap <C-w>1%s <C-w>%s', mode, cmd.lhs, cmd.rhs)
-      execute printf('%smap <C-w>2%s <C-w>%s<C-w>1%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
-      execute printf('%smap <C-w>3%s <C-w>%s<C-w>2%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
-      execute printf('%smap <C-w>4%s <C-w>%s<C-w>3%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
-      execute printf('%smap <C-w>5%s <C-w>%s<C-w>4%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
-      execute printf('%smap <C-w>6%s <C-w>%s<C-w>5%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
-      execute printf('%smap <C-w>7%s <C-w>%s<C-w>6%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
-      execute printf('%smap <C-w>8%s <C-w>%s<C-w>7%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
-      execute printf('%smap <C-w>9%s <C-w>%s<C-w>8%s', mode, cmd.lhs, cmd.lhs, cmd.lhs)
-    endfor
-  endfor
-endfunction
-call s:setup_jump_tab_mappings()
+nnoremap gw              gT
+nnoremap <C-w>gw         <C-w>gT
+nnoremap <C-w><C-g><C-w> <C-w>gT
+tnoremap <C-w>gw         <C-w>gT
+tnoremap <C-w><C-g><C-w> <C-w>gT
 
 " Terminal {{{2
 
@@ -544,13 +546,16 @@ tnoremap <C-w><C-t> <C-w>N
 nnoremap <expr> <C-w><C-t> term_getstatus(bufnr('')) =~# 'normal' ? 'a' : ''
 
 " FIXME: currently volt does not recognize tyru/empty-prompt.vim plugconf... why?
+if 1
 
-" Enter command-line / normal-mode if current line is empty prompt
-function! s:empty_prompt_mappings() abort
-  call empty_prompt#map(#{lhs: ':', rhs: '<C-w>:'})
-  call empty_prompt#map(#{lhs: '<Esc>', rhs: '<C-w>N'})
-endfunction
-autocmd VimEnter * ++once call s:empty_prompt_mappings()
+  " Enter command-line / normal-mode if current line is empty prompt
+  function! s:empty_prompt_mappings() abort
+    call empty_prompt#map(#{lhs: ':', rhs: '<C-w>:'})
+    call empty_prompt#map(#{lhs: '<Esc>', rhs: '<C-w>N'})
+  endfunction
+  autocmd VimEnter * ++once call s:empty_prompt_mappings()
+
+endif
 
 " Cmdwin {{{2
 set cedit=<C-l>
@@ -755,10 +760,10 @@ xnoremap <SID>(centering-display) zvzz
 nnoremap <script> gd gd<SID>(centering-display)
 nnoremap <script> gD gD<SID>(centering-display)
 
-nmap n n<SID>(centering-display)
-xmap n n<SID>(centering-display)
-nmap N N<SID>(centering-display)
-xmap N N<SID>(centering-display)
+nmap <script> n n<SID>(centering-display)
+nmap <script> N N<SID>(centering-display)
+xmap <script> n n<SID>(centering-display)
+xmap <script> N N<SID>(centering-display)
 
 " Use gF (search line number after filename) {{{2
 
@@ -818,28 +823,6 @@ command! -nargs=+ LGitGrep call vimrc#cmd_git_grep#call(<q-args>, 1)
 
 " Add current line to quickfix (Use quickfix as bookmark list)
 command! -bar -range QFAddLine <line1>,<line2>call vimrc#cmd_qfaddline#add()
-
-if s:is_wsl
-  command! -bar -range=% Clip <line1>,<line2>call s:cmd_clip()
-
-  function! s:cmd_clip() range abort
-    let windir = s:windir()
-    if windir is# ''
-      echoerr 'windows directory not found'
-      return
-    endif
-    let clip = join([windir, 'System32', 'clip.exe'], '/')
-    let str = join(getline(a:firstline, a:lastline), "\n")
-    call system(clip, str)
-  endfunction
-
-  function! s:windir() abort
-    return get(filter([
-    \ '/mnt/c/Windows',
-    \ '/mnt/c/WINDOWS',
-    \], {_,p -> isdirectory(p)}), 0, '')
-  endfunction
-endif
 
 command! -bar EmojiTest tabedit https://unicode.org/Public/emoji/12.0/emoji-test.txt
 
@@ -922,7 +905,7 @@ endfunction
 
 " Configurations for Vim runtime plugins {{{1
 
-" Disable unnecessary runtime plugins!
+" Disable unnecessary runtime plugins {{{2
 " cf. https://lambdalisue.hatenablog.com/entry/2015/12/25/000046
 let g:loaded_gzip              = 1
 let g:loaded_tar               = 1
@@ -955,7 +938,7 @@ let g:loaded_matchparen        = 1
 let g:vimsyn_folding = 'af'
 
 " indent/vim.vim {{{2
-let g:vim_indent_cont = shiftwidth()
+let g:vim_indent_cont = 0
 
 " syntax/sh.vim {{{2
 let g:is_bash = 1
@@ -980,12 +963,15 @@ endif
 " Exit diff mode automatically {{{1
 " https://hail2u.net/blog/software/vim-turn-off-diff-mode-automatically.html
 
-" Turn off diff mode automatically
-autocmd vimrc WinEnter *
-\ if (winnr('$') == 1) &&
-\    (getbufvar(winbufnr(0), '&diff')) == 1 |
-\     diffoff                               |
-\ endif
+" closeoff is introduced at 8.1.2289
+if &diffopt !~# 'closeoff'
+  " Turn off diff mode automatically
+  autocmd vimrc WinEnter *
+  \ if (winnr('$') == 1) &&
+  \    (getbufvar(winbufnr(0), '&diff')) == 1 |
+  \     diffoff                               |
+  \ endif
+endif
 
 " Use vsplit mode {{{1
 " http://qiita.com/kefir_/items/c725731d33de4d8fb096
@@ -1016,7 +1002,7 @@ endif
 " (happens when dropping a file on gvim) and for a commit message (it's
 " likely a different one than last time).
 
-" From defaults.vim (:help defaults.vim)
+" From $VIMRUNTIME/defaults.vim
 
 autocmd vimrc BufReadPost *
   \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
