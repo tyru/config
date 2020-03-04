@@ -20,7 +20,7 @@
     {
       "type": "git",
       "path": "github.com/Shougo/neosnippet-snippets",
-      "version": "0d7f506538a82b594e3527c58f7b2bccd44d9a85"
+      "version": "aed6074642363d0c97da5cd86e1b23027479df84"
     },
     {
       "type": "git",
@@ -35,7 +35,7 @@
     {
       "type": "git",
       "path": "github.com/dhruvasagar/vim-table-mode",
-      "version": "0af25d72ebc0271648c8f91c0ce5c59174d2761b"
+      "version": "6412352b544bda764a9616c3090abb09729526bc"
     },
     {
       "type": "git",
@@ -75,7 +75,7 @@
     {
       "type": "git",
       "path": "github.com/kana/vim-textobj-user",
-      "version": "9861dc6829a0ce253e40b4d947a9432b58eb499b"
+      "version": "41a675ddbeefd6a93664a4dc52f302fe3086a933"
     },
     {
       "type": "git",
@@ -105,7 +105,7 @@
     {
       "type": "git",
       "path": "github.com/mechatroner/rainbow_csv",
-      "version": "c59ee39c9c61de6b1a01c37c25c298d02e6c83be"
+      "version": "4b1d1bb775536f4402486b2b90c6fecdc6dc743f"
     },
     {
       "type": "git",
@@ -125,7 +125,7 @@
     {
       "type": "git",
       "path": "github.com/prabirshrestha/vim-lsp",
-      "version": "77f3536c8b8f283351b4b417581b84fab7c6b3cc"
+      "version": "9fa593aed479fdf884f643a4711dfdfe32fc0424"
     },
     {
       "type": "git",
@@ -135,7 +135,7 @@
     {
       "type": "git",
       "path": "github.com/rbtnn/vim-mrw",
-      "version": "458a3ce04e820f5131700f757ee2eafbdb576efe"
+      "version": "98b71608e249d7c4c5ffab9b2c9ed538b3b0d5ec"
     },
     {
       "type": "git",
@@ -165,12 +165,12 @@
     {
       "type": "git",
       "path": "github.com/tpope/vim-markdown",
-      "version": "f35c43c535af40dc045d55dd459969b6f31d4128"
+      "version": "296eeaa8877528fae45e89a9013c5a8d317deef1"
     },
     {
       "type": "git",
       "path": "github.com/tsuyoshicho/vim-efm-langserver-settings",
-      "version": "c9d2816cf9e267d37f9ee44ab2174e1e88af34fe"
+      "version": "37eb3e041f6d3cbb88ff9f16e154091fc8cc5134"
     },
     {
       "type": "git",
@@ -270,12 +270,12 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/vim-vimlparser",
-      "version": "1d130bcd0b93f6f20d043a3a137f812aaa17bff8"
+      "version": "50d8ac4cddf4096a59816549dc362493db2ce62e"
     },
     {
       "type": "git",
       "path": "github.com/vim-jp/vimdoc-ja-working",
-      "version": "fd1a543a9d3fbcace93c292f3227c9a3f5ec3c27"
+      "version": "c8aefa6f16e33c872fafeaa7756eebf1ec20dd22"
     },
     {
       "type": "git",
