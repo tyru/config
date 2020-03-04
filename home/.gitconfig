@@ -18,7 +18,7 @@
 	fixup = commit --fixup
 	git = !git
 	last = log -p --reverse HEAD@{1}..
-	ls = !"git ls-files | less"
+	ls = ls-files
 	todo = grep -n -E "\b(TODO|XXX|FIXME)\b"
 	view = log --pretty=oneline --abbrev-commit --graph --source --tags --branches
 	wh = whatchanged
@@ -45,3 +45,5 @@
 	rebase = true
 [advice]
 	detachedHead = false
+[pager]
+	ls-files = true
