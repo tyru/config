@@ -1,0 +1,69 @@
+#!/bin/bash
+
+usage() {
+  progname=$(basename "$0")
+  cat <<EOM
+Usage:
+  ${progname} hash file
+EOM
+  exit 0
+}
+
+normalize_hash() {
+  local hash
+  hash=$1
+  # shellcheck disable=SC2116,SC2086
+  hash=$(echo ${hash})    # trim spaces
+  hash=$(echo "${hash}" | tr '[:lower:]' '[:upper:]')
+  echo "${hash}"
+}
+
+detect_algo() {
+  local hash
+  hash=$1
+  if [[ "${hash}" =~ [^0-9A-F] ]]; then
+    echo "error: hash contains invalid character: ${hash}" >&2
+    return 1
+  fi
+  case "${#hash}" in
+    32) echo -e "MD5\tmd5sum | awk '\$0=\$1'" ;;
+    40) echo -e "SHA1\tsha1sum | awk '\$0=\$1'" ;;
+    56) echo -e "SHA224\tsha224sum | awk '\$0=\$1'" ;;
+    64) echo -e "SHA256\tsha256sum | awk '\$0=\$1'" ;;
+    96) echo -e "SHA384\tsha384sum | awk '\$0=\$1'" ;;
+    128) echo -e "SHA512\tsha512sum | awk '\$0=\$1'" ;;
+    *)
+      echo "error: could not detect hash algorithm: $1" >&2
+      return 1 ;;
+  esac
+}
+
+main() {
+  ([[ $1 = --help ]] || [[ $1 = -h ]] || [[ $1 = -? ]]) && usage
+  [[ $# -ne 2 ]] && usage
+  local inhash
+  local infile
+  inhash=$1
+  infile=$2
+  if [[ "${infile}" = - ]]; then
+    infile=/dev/stdin
+  fi
+  inhash=$(normalize_hash "${inhash}")
+  local algo_and_cmd
+  local algo
+  local cmd
+  algo_and_cmd=$(detect_algo "${inhash}") || exit $?
+  algo=$(echo "${algo_and_cmd}" | cut -f1)
+  cmd=$(echo "${algo_and_cmd}" | cut -f2)
+  local outhash
+  outhash=$(bash -c "${cmd}" <"${infile}")
+  outhash=$(normalize_hash "${outhash}")
+  if [[ "${inhash}" != "${outhash}" ]]; then
+    echo "[Error] The hashes are different! (in: ${inhash}, out: ${outhash}, algo: ${algo})" >&2
+    return 1
+  fi
+  echo "[Success] The hashes are same (algo: ${algo})"
+  return 0
+}
+
+main "$@"
