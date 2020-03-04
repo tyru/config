@@ -116,6 +116,7 @@ endif
 set autoindent
 set backspace=indent,eol,start
 set browsedir=current
+set complete=.,w,t
 set completeopt=menu,popup
 set concealcursor=nvic
 set diffopt+=vertical
@@ -144,6 +145,7 @@ set shortmess+=aI
 set showtabline=2
 set smartcase
 set softtabstop=-1
+set switchbuf=useopen,usetab
 set t_Co=256
 set tabstop=8
 set textwidth=80
@@ -545,7 +547,7 @@ tnoremap <C-w><C-g><C-w> <C-w>gT
 tnoremap <C-w><C-t> <C-w>N
 nnoremap <expr> <C-w><C-t> term_getstatus(bufnr('')) =~# 'normal' ? 'a' : ''
 
-" FIXME: currently volt does not recognize tyru/empty-prompt.vim plugconf... why?
+" FIXME: currently volt does not recognize tyru/empty-prompt.vim plugconf...
 if 1
 
   " Enter command-line / normal-mode if current line is empty prompt
@@ -770,7 +772,7 @@ xmap <script> N N<SID>(centering-display)
 nnoremap gf gF
 nnoremap <C-w>f <C-w>F
 
-" FileType & Syntax {{{1
+" Default settings for each filetype {{{1
 
 " Must be after 'runtimepath' setting!
 syntax enable
@@ -784,11 +786,9 @@ function! s:on_filetype()
   set formatoptions+=j
 endfunction
 
-autocmd vimrc Syntax * call s:on_syntax()
+" Highlight TODO/FIXME/XXX/NOTE comments {{{1
 
-function! s:on_syntax() abort
-  call matchadd('TODO', '\<TODO\|FIXME\|XXX\|NOTE\>')
-endfunction
+autocmd vimrc BufNew * call matchadd('Todo', '\<TODO\|FIXME\|XXX\|NOTE\>')
 
 " Commands {{{1
 
@@ -821,6 +821,8 @@ command! -bar ResetHelpBuffer
 command! -nargs=+ GitGrep call vimrc#cmd_git_grep#call(<q-args>, 0)
 command! -nargs=+ LGitGrep call vimrc#cmd_git_grep#call(<q-args>, 1)
 
+command! -bar Todo /\v<(TODO|FIXME|XXX)>
+
 " Add current line to quickfix (Use quickfix as bookmark list)
 command! -bar -range QFAddLine <line1>,<line2>call vimrc#cmd_qfaddline#add()
 
@@ -836,7 +838,7 @@ command! -range=% HTMLFmt <line1>,<line2>!tidy -indent --tidy-mark no --show-err
 command! -nargs=1 -complete=file Tailf terminal ++kill=term ++close tail -f <args>
 command! TermTop terminal ++kill=term ++close top
 
-" FIXME: currently volt does not recognize tyru/project-guide.vim plugconf... why?
+" FIXME: currently volt does not recognize tyru/project-guide.vim plugconf...
 if 1
   command! -nargs=* -complete=dir Gof execute 'terminal ++close gof -t' .. (<q-args> !=# '' ? ' ' .. <q-args> : '')
 
@@ -891,6 +893,13 @@ if 1
   augroup END
 endif
 
+" FIXME: currently volt does not recognize tyru/forget-me-not.vim plugconf...
+if 1
+  " Try to switch to a stale session (which should be vim exited
+  " abnormally) if the stale sessions exist at vim startup
+  autocmd VimEnter * ForgetMeNot switch -recover
+endif
+
 " Quickfix {{{1
 autocmd vimrc QuickfixCmdPost [l]*  call vimrc#quickfix_cmdpost#call(1)
 autocmd vimrc QuickfixCmdPost [^l]* call vimrc#quickfix_cmdpost#call(0)
@@ -925,6 +934,10 @@ let g:loaded_netrwFileHandlers = 1
 let g:loaded_logiPat           = 1
 " use https://github.com/itchyny/vim-parenmatch instead
 let g:loaded_matchparen        = 1
+
+" Don't inspect *.log file content (because it's large) {{{2
+" :help filetype-ignore
+let g:ft_ignore_pat .= '\|\.log$'
 
 " syntax/vim.vim {{{2
 " augroup: a

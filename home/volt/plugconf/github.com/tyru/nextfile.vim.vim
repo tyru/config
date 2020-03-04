@@ -12,9 +12,9 @@ function! s:on_load_pre()
   let g:nf_open_command = 'silent edit'
 endfunction
 
+" Plugin configuration like the code written in vimrc.
+" This configuration is executed *after* a plugin is loaded.
 function! s:on_load_post()
-  " Plugin configuration like the code written in vimrc.
-  " This configuration is executed *after* a plugin is loaded.
 endfunction
 
 function! s:loaded_on()

@@ -44,9 +44,9 @@ function! s:on_load_pre()
 
 endfunction
 
+" Plugin configuration like the code written in vimrc.
+" This configuration is executed *after* a plugin is loaded.
 function! s:on_load_post()
-  " Plugin configuration like the code written in vimrc.
-  " This configuration is executed *after* a plugin is loaded.
 endfunction
 
 function! s:loaded_on()
@@ -74,3 +74,20 @@ function! s:depends()
 
   return []
 endfunction
+
+function! s:eskk_initial_pre()
+      let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
+      call t.add_map('~', '～')
+      call t.add_map('zc', '©')
+      call t.add_map('zr', '®')
+      call t.add_map('tm', '™')
+      call t.add_map('z ', '　')
+      " FIXME: 「1gyou」と入力すると「ぎょう」になる。
+      " これは以下の設定がある場合の一般的なSKKの動作的に想定通りだが(ほんとに？)
+      " 「1Gyou」と入力しても「▽ぎょう」とならず「ぎょう」となってしまう。
+      " また g:eskk#rom_input_style = 'msime' の時も考慮できてるか不明。
+      " for n in range(10)
+      "   call t.add_map(n . '.', n . '.')
+      " endfor
+      call eskk#register_mode_table('hira', t)
+  endfunction
