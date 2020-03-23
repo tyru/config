@@ -47,3 +47,9 @@
 	detachedHead = false
 [pager]
 	ls-files = true
+[grep]
+	lineNumber = true
+	patternType = extended
+[diff]
+	noprefix = true
+	renames = true

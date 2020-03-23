@@ -3,6 +3,13 @@
 " Plugin configuration like the code written in vimrc.
 " This configuration is executed *before* a plugin is loaded.
 function! s:on_load_pre()
+  let g:caw_operator_keymappings = 0
+  " if g:caw_operator_keymappings
+  "   " for [count]gcc, gcc (it doesn't enter operator-pending mode)
+  "   " https://github.com/tyru/caw.vim/issues/80#issuecomment-425324793
+  "   nmap gcc <Plug>(caw:hatpos:toggle:operator)_
+  "   xmap gcc <Plug>(caw:hatpos:toggle:operator)
+  " endif
 endfunction
 
 " Plugin configuration like the code written in vimrc.

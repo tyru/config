@@ -1,9 +1,18 @@
+" vint: -ProhibitUnusedVariable
+
 " Don't set scriptencoding before 'encoding' option is set!
 " scriptencoding utf-8
 
 " vim:set et fen fdm=marker:
 
 " See also: ~/.vimrc or ~/_vimrc
+
+if v:version < 802
+  echomsg 'Stop loading vimrc. Please use 8.2 later'
+  set packpath-=$MYVIMDIR
+  set packpath-=$MYVIMDIR/after
+  finish
+endif
 
 let s:is_win = has('win32')
 let s:is_wsl = has('unix') && isdirectory('/mnt/c/')
@@ -141,7 +150,7 @@ set scrolloff=5
 set sessionoptions=blank,folds,help,winsize,terminal,slash,unix
 set shiftround
 set shiftwidth=2
-set shortmess+=aI
+set shortmess+=aI shortmess-=S
 set showtabline=2
 set smartcase
 set softtabstop=-1
@@ -170,7 +179,7 @@ if 1
   " Use swapfile.
   set swapfile
   set directory=$MYVIMDIR/info/swap//
-  silent! call mkdir(substitute(&directory, '//$', '', ''), 'p')
+  call mkdir(substitute(&directory, '//$', '', ''), 'p')
   " Open a file as read-only if swap exists
   " autocmd vimrc SwapExists * let v:swapchoice = 'o'
 else
@@ -182,10 +191,11 @@ endif
 " Backup
 set backup
 set backupdir=$MYVIMDIR/info/backup//
-silent! call mkdir(substitute(&backupdir, '//$', '', ''), 'p')
+call mkdir(substitute(&backupdir, '//$', '', ''), 'p')
 
 " Don't change inode when writing a file
-autocmd vimrc BufRead */log/*,*.log setlocal backupcopy=yes
+autocmd vimrc BufRead */log/*,*.log setfiletype largefile
+autocmd vimrc FileType largefile setlocal noundofile noswapfile shortmess-=S nowrap noincsearch
 
 " Title
 set title
@@ -193,19 +203,19 @@ let &titlestring = '%{getcwd()}'
 
 " guitablabel {{{
 
-command! -nargs=* -bang TabTitle call s:tab_title(<q-args>, <bang>0)
-function! s:tab_title(new_title, clear) abort
-  if a:clear
+command! -nargs=* TabTitle call s:tab_title(<q-args>)
+function! s:tab_title(new_title) abort
+  let title = trim(a:new_title)
+  if title ==# ''
     unlet! t:title
-  elseif !empty(a:new_title)
-    let t:title = a:new_title
+  else
+    let t:title = title
   endif
   redrawtabline
 endfunction
 
 let &guitablabel = '%{MyTabLabel(v:lnum)}'
-" TODO
-" let &tabline = '%!MyTabLine()'
+let &tabline = '%!MyTabLine()'
 
 function MyTabLine()
   let s = ''
@@ -236,8 +246,9 @@ function MyTabLine()
 endfunction
 
 function! MyTabLabel(tabnr)
-  if !empty(gettabvar(a:tabnr, 'title', ''))
-    return gettabvar(a:tabnr, 'title', '')
+  let title = gettabvar(a:tabnr, 'title', '')
+  if title !=# ''
+    return title
   endif
 
   let buflist = tabpagebuflist(a:tabnr)
@@ -371,7 +382,7 @@ set t_te=
 if has('persistent_undo')
   set undofile
   set undodir=$MYVIMDIR/info/undo
-  silent! call mkdir(&undodir, 'p')
+  call mkdir(&undodir, 'p')
 endif
 
 " jvgrep
@@ -771,6 +782,7 @@ xmap <script> N N<SID>(centering-display)
 
 nnoremap gf gF
 nnoremap <C-w>f <C-w>F
+nnoremap <C-w><C-f> <C-w>F
 
 " Default settings for each filetype {{{1
 
@@ -818,13 +830,41 @@ command! -bar ScrollbindToggle  call vimrc#cmd_scrollbind#toggle()
 command! -bar ResetHelpBuffer
 \   setlocal noro modifiable buftype= list noet
 
-command! -nargs=+ GitGrep call vimrc#cmd_git_grep#call(<q-args>, 0)
-command! -nargs=+ LGitGrep call vimrc#cmd_git_grep#call(<q-args>, 1)
+function! s:cmd_git_grep(args, local) abort
+  setlocal grepprg=git\ grep
+  try
+    execute (a:local ? 'l' : '') . 'grep' a:args
+  finally
+    setlocal grepprg<
+  endtry
+endfunction
+command! -complete=file -nargs=+ GitGrep call s:cmd_git_grep(<q-args>, 0)
+command! -complete=file -nargs=+ LGitGrep call s:cmd_git_grep(<q-args>, 1)
 
 command! -bar Todo /\v<(TODO|FIXME|XXX)>
 
 " Add current line to quickfix (Use quickfix as bookmark list)
 command! -bar -range QFAddLine <line1>,<line2>call vimrc#cmd_qfaddline#add()
+
+function! s:cmd_cexprfile(lines, location) abort
+  if type(a:lines) ==# v:t_list
+    let lines = a:lines
+  elseif type(a:lines) ==# v:t_string
+    let lines = split(a:lines, '\n')
+  else
+    throw 'Invalid value type: expected = list or string, got = ' .. string(a:lines)
+  endif
+  let list = lines->map({-> trim(v:val)})->filter({-> !empty(v:val)})->map({-> #{filename: v:val, lnum: 1}})->setqflist()
+  if a:location
+    call setloclist(winnr(), list)
+  else
+    call setqflist(list)
+  endif
+endfunction
+command! -nargs=+ -complete=expression CExprFile call s:cmd_cexprfile(<args>, v:false)
+command! -nargs=+ -complete=expression LExprFile call s:cmd_cexprfile(<args>, v:true)
+command! -nargs=+ -complete=expression CExprSystem cexpr system(<q-args>)
+command! -nargs=+ -complete=expression LExprSystem lexpr system(<q-args>)
 
 command! -bar EmojiTest tabedit https://unicode.org/Public/emoji/12.0/emoji-test.txt
 
@@ -901,9 +941,6 @@ if 1
 endif
 
 " Quickfix {{{1
-autocmd vimrc QuickfixCmdPost [l]*  call vimrc#quickfix_cmdpost#call(1)
-autocmd vimrc QuickfixCmdPost [^l]* call vimrc#quickfix_cmdpost#call(0)
-
 
 " Terminal {{{1
 autocmd vimrc TerminalOpen *  call s:setup_terminal()

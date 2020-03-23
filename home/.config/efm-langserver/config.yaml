@@ -1,0 +1,4 @@
+languages:
+  vim:
+    lint-command: 'vint -'
+    lint-stdin: true
