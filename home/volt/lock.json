@@ -59,6 +59,11 @@
     },
     {
       "type": "git",
+      "path": "github.com/junegunn/seoul256.vim",
+      "version": "cfc0167e546a40eb26ec2a0a0f1c141a8c1bcaf1"
+    },
+    {
+      "type": "git",
       "path": "github.com/kana/vim-operator-user",
       "version": "c3dfd41c1ed516b4b901c97562e644de62c367aa"
     },
@@ -180,7 +185,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/caw.vim",
-      "version": "364e803cfae22a9ef6d7543631495ba8644f3cce"
+      "version": "018001a3754276ccd46249a698552370a11edaac"
     },
     {
       "type": "git",
@@ -289,11 +294,6 @@
     },
     {
       "type": "git",
-      "path": "github.com/vim-volt/vim-volt",
-      "version": "a31e4d4cbbea1ca21f0555447cd017d236bb0a32"
-    },
-    {
-      "type": "git",
       "path": "github.com/w0rp/ale",
       "version": "4afbf2f25dc0ce86b118261b0cfb904c80ae6ba0"
     },
@@ -316,6 +316,7 @@
         "github.com/haya14busa/vim-asterisk",
         "github.com/hotwatermorning/auto-git-diff",
         "github.com/itchyny/vim-parenmatch",
+        "github.com/junegunn/seoul256.vim",
         "github.com/kana/vim-operator-user",
         "github.com/kana/vim-repeat",
         "github.com/kana/vim-textobj-indent",
@@ -354,7 +355,6 @@
         "github.com/vim-jp/vim-vimlparser",
         "github.com/vim-jp/vimdoc-ja-working",
         "github.com/vim-jp/vital.vim",
-        "github.com/vim-volt/vim-volt",
         "github.com/wavded/vim-stylus"
       ]
     },

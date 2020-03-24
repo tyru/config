@@ -421,12 +421,16 @@ endif
 " ColorScheme {{{1
 
 try
-  colorscheme spring-night
-  " https://github.com/rhysd/vim-color-spring-night/issues/7
-  if has('tabsidebar')
-    Lazy hi SignColumn term=NONE guibg=#ffffff ctermbg=255
-    " for diff
-    Lazy hi FoldColumn term=NONE guibg=#ffffff ctermbg=255
+  if 0
+    colorscheme spring-night
+    " https://github.com/rhysd/vim-color-spring-night/issues/7
+    if has('tabsidebar')
+      Lazy hi SignColumn term=NONE guibg=#ffffff ctermbg=255
+      " for diff
+      Lazy hi FoldColumn term=NONE guibg=#ffffff ctermbg=255
+    endif
+  else
+    colorscheme seoul256
   endif
 catch /E185/
   colorscheme evening
