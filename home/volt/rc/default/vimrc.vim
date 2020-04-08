@@ -259,7 +259,8 @@ function! MyTabLabel(tabnr)
     let bufname = fnamemodify(bufname, ':t')
     " let bufname = pathshorten(bufname)
     for bufnr in buflist
-      if getbufvar(bufnr, '&modified')
+      " check only <empty> and acwrite
+      if getbufvar(bufnr, '&buftype', 'NONE') =~# '\v^(acwrite)?$' && getbufvar(bufnr, '&modified', 0)
         let modified = 1
         break
       endif
@@ -431,6 +432,12 @@ try
     endif
   else
     colorscheme seoul256
+    " https://qiita.com/Bakudankun/items/649aa6d8b9eccc1712b5
+    if exists('&wincolor')
+      autocmd ColorScheme * highlight NormalNC ctermbg=232 guibg=Black
+      autocmd WinEnter,BufWinEnter * setlocal wincolor=
+      autocmd WinLeave * setlocal wincolor=NormalNC
+    endif
   endif
 catch /E185/
   colorscheme evening
@@ -620,7 +627,7 @@ function! s:toggle_terminal_modes()
   let dest_mode = -1
   try
     for bufnr in tabpagebuflist()
-      if getbufvar(bufnr, '&buftype') isnot# 'terminal'
+      if getbufvar(bufnr, '&buftype', 'NONE') isnot# 'terminal'
         continue
       endif
       let is_normal = term_getstatus(bufnr) =~# '\<normal\>'
@@ -846,6 +853,11 @@ command! -complete=file -nargs=+ GitGrep call s:cmd_git_grep(<q-args>, 0)
 command! -complete=file -nargs=+ LGitGrep call s:cmd_git_grep(<q-args>, 1)
 
 command! -bar Todo /\v<(TODO|FIXME|XXX)>
+command! -complete=file -nargs=* GrepTodo call s:cmd_greptodo(<q-args>)
+function! s:cmd_greptodo(args) abort
+  let files = a:args ==# '' ? '%' : a:args
+  execute 'vimgrep /\v<(TODO|FIXME|XXX)>/' files
+endfunction
 
 " Add current line to quickfix (Use quickfix as bookmark list)
 command! -bar -range QFAddLine <line1>,<line2>call vimrc#cmd_qfaddline#add()
@@ -1022,7 +1034,7 @@ if &diffopt !~# 'closeoff'
   " Turn off diff mode automatically
   autocmd vimrc WinEnter *
   \ if (winnr('$') == 1) &&
-  \    (getbufvar(winbufnr(0), '&diff')) == 1 |
+  \    getbufvar(winbufnr(0), '&diff', -1) == 1 |
   \     diffoff                               |
   \ endif
 endif

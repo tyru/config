@@ -34,6 +34,21 @@
     },
     {
       "type": "git",
+      "path": "github.com/cocopon/colorswatch.vim",
+      "version": "2e3f847fc0e493de8b119d3c8560e47ceeff595c"
+    },
+    {
+      "type": "git",
+      "path": "github.com/cocopon/inspecthi.vim",
+      "version": "0cc36c8a1a82a0aa8d9b2b0d479c8e0d9623cabe"
+    },
+    {
+      "type": "git",
+      "path": "github.com/cocopon/pgmnt.vim",
+      "version": "7a47efadd4240c653764d66748e3dfa996b92615"
+    },
+    {
+      "type": "git",
       "path": "github.com/dhruvasagar/vim-table-mode",
       "version": "6412352b544bda764a9616c3090abb09729526bc"
     },
@@ -185,7 +200,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/caw.vim",
-      "version": "018001a3754276ccd46249a698552370a11edaac"
+      "version": "00ba51adaa5c2e6100a57e452fb6f5b6f1548f7a"
     },
     {
       "type": "git",
@@ -280,7 +295,7 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/vim-vimlparser",
-      "version": "90895c32a2f129148535d5be92904556cee417ef"
+      "version": "9303e1f546ee20885c49117e49c33effffdcfa06"
     },
     {
       "type": "git",
@@ -312,6 +327,9 @@
         "github.com/Shougo/neosnippet-snippets",
         "github.com/Shougo/neosnippet.vim",
         "github.com/cespare/vim-toml",
+        "github.com/cocopon/colorswatch.vim",
+        "github.com/cocopon/inspecthi.vim",
+        "github.com/cocopon/pgmnt.vim",
         "github.com/dhruvasagar/vim-table-mode",
         "github.com/haya14busa/vim-asterisk",
         "github.com/hotwatermorning/auto-git-diff",
