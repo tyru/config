@@ -1,9 +1,8 @@
+" vim:fdm=marker:fen:
 " vint: -ProhibitUnusedVariable
 
 " Don't set scriptencoding before 'encoding' option is set!
 " scriptencoding utf-8
-
-" vim:set et fen fdm=marker:
 
 " See also: ~/.vimrc or ~/_vimrc
 
@@ -487,6 +486,25 @@ endfunction
 
 BulkMap <noremap> [nxo] gp ]p
 
+function! s:same_indent(dir) abort
+  let lnum = line('.')
+  let width = col('.') <= 1 ? 0 : strdisplaywidth(matchstr(getline(lnum)[: col('.')-2], '^\s*'))
+  while 1 <= lnum && lnum <= line('$')
+    let lnum += (a:dir ==# '+' ? 1 : -1)
+    let line = getline(lnum)
+    if width >= strdisplaywidth(matchstr(line, '^\s*')) && line =~# '^\s*\S'
+      break
+    endif
+  endwhile
+  return abs(line('.') - lnum) . a:dir
+endfunction
+nnoremap <expr><silent> sj <SID>same_indent('+')
+nnoremap <expr><silent> sk <SID>same_indent('-')
+onoremap <expr><silent> sj <SID>same_indent('+')
+onoremap <expr><silent> sk <SID>same_indent('-')
+xnoremap <expr><silent> sj <SID>same_indent('+')
+xnoremap <expr><silent> sk <SID>same_indent('-')
+
 " }}}
 
 " Do not scroll over the last line
@@ -683,11 +701,6 @@ nnoremap <Plug>(vimrc:prefix:excmd)ost :<C-u>call <SID>toggle_tabsidebar()<CR>
 
 " <Space>[hjkl] for <C-w>[hjkl] {{{2
 
-nnoremap <silent> <Space>j <C-w>j
-nnoremap <silent> <Space>k <C-w>k
-nnoremap <silent> <Space>h <C-w>h
-nnoremap <silent> <Space>l <C-w>l
-
 " Make <M-Space> same as ordinal applications on MS Windows {{{2
 if has('gui_running') && s:is_win
   nnoremap <M-Space> :<C-u>simalt ~<CR>
@@ -818,25 +831,118 @@ autocmd vimrc BufNew * call matchadd('Todo', '\<TODO\|FIXME\|XXX\|NOTE\>')
 command! DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
     \ | wincmd p | diffthis
 
-command! -bar -nargs=? Expand call vimrc#cmd_expand#call(<q-args>)
-
 command! -bar -nargs=+ -complete=file Glob echo glob(<q-args>, 1)
 command! -bar -nargs=+ -complete=file GlobPath echo globpath(&rtp, <q-args>, 1)
 
-command! -bar SynNames call vimrc#cmd_synnames#call()
-
-command! -bar -nargs=* Ctags call vimrc#cmd_ctags#call(<q-args>)
+command! -bar -nargs=* Ctags call s:cmd_ctags(<q-args>)
+function! s:cmd_ctags(q_args)
+  if !executable('ctags')
+    echohl ErrorMsg
+    echomsg "Ctags: No 'ctags' command in PATH"
+    echohl None
+    return
+  endif
+  if a:q_args !=# ''
+    execute '!ctags' a:q_args
+  else
+    execute '!ctags' (filereadable('.ctags') ? '' : '-R')
+  endif
+endfunction
 
 command! -bar -bang -nargs=1 -complete=event WatchAutocmd
-\   call vimrc#cmd_watch_autocmd#call(<q-args>, <bang>0)
+\ call <SID>cmd_watch_autocmd(<q-args>, <bang>0)
+
+function! s:cmd_watch_autocmd(event, bang) abort
+  if a:event ==# '*'
+    for event in getcompletion('*', 'event')
+      call s:cmd_watch_autocmd(event, a:bang)
+    endfor
+    return
+  endif
+  if a:bang
+    call s:unwatch_autocmd(a:event)
+  else
+    call s:watch_autocmd(a:event)
+  endif
+endfunction
+
+augroup vimrc-watch-autocmd
+  autocmd!
+augroup END
+
+let s:watching_events = {}
+
+function! s:unwatch_autocmd(event)
+  let event = tolower(a:event)
+  if !exists('##'.event)
+    echohl ErrorMsg
+    echomsg 'Invalid event name: '.a:event
+    echohl None
+    return
+  endif
+  if !has_key(s:watching_events, event)
+    echohl ErrorMsg
+    echomsg 'Not watching '.a:event.' event yet...'
+    echohl None
+    return
+  endif
+
+  execute 'autocmd! vimrc-watch-autocmd' event
+  unlet s:watching_events[event]
+  echomsg 'Removed watch for '.a:event.' event.'
+endfunction
+
+function! s:watch_autocmd(event)
+  let event = tolower(a:event)
+  if !exists('##'.event)
+    echohl ErrorMsg
+    echomsg 'Invalid event name: '.a:event
+    echohl None
+    return
+  endif
+  if has_key(s:watching_events, event)
+    echomsg 'Already watching '.a:event.' event.'
+    return
+  endif
+
+  execute 'autocmd vimrc-watch-autocmd' event '*'
+  \       'echohl MoreMsg |'
+  \       'echomsg "Executing '''.a:event.''' event..." |'
+  \       'echohl None'
+  let s:watching_events[event] = 1
+  echomsg 'Added watch for' a:event 'event.'
+endfunction
 
 " http://nanasi.jp/articles/vim/kwbd_vim.html
 command! -bar Kwbd execute 'enew | bw' bufnr("%")
 
 " Enable/Disable 'scrollbind', 'cursorbind' options.
-command! -bar ScrollbindEnable  call vimrc#cmd_scrollbind#enable()
-command! -bar ScrollbindDisable call vimrc#cmd_scrollbind#disable()
-command! -bar ScrollbindToggle  call vimrc#cmd_scrollbind#toggle()
+command! -bar ScrollbindEnable  call s:cmd_scrollbind_enable()
+command! -bar ScrollbindDisable call s:cmd_scrollbind_disable()
+command! -bar ScrollbindToggle  call s:cmd_scrollbind_toggle()
+
+function! s:cmd_scrollbind_enable() abort
+  call s:cmd_scrollbind(1)
+endfunction
+
+function! s:cmd_scrollbind_disable() abort
+  call s:cmd_scrollbind(0)
+endfunction
+
+function! s:cmd_scrollbind_toggle() abort
+  if &l:scrollbind
+    ScrollbindDisable
+  else
+    ScrollbindEnable
+  endif
+endfunction
+
+function! s:cmd_scrollbind(enable)
+  let &l:scrollbind = a:enable
+  if exists('+cursorbind')
+    let &l:cursorbind = a:enable
+  endif
+endfunction
 
 command! -bar ResetHelpBuffer
 \   setlocal noro modifiable buftype= list noet
@@ -858,9 +964,6 @@ function! s:cmd_greptodo(args) abort
   let files = a:args ==# '' ? '%' : a:args
   execute 'vimgrep /\v<(TODO|FIXME|XXX)>/' files
 endfunction
-
-" Add current line to quickfix (Use quickfix as bookmark list)
-command! -bar -range QFAddLine <line1>,<line2>call vimrc#cmd_qfaddline#add()
 
 function! s:cmd_cexprfile(lines, location) abort
   if type(a:lines) ==# v:t_list
@@ -1102,9 +1205,7 @@ function! s:clean() abort
   for cmd in s:macros
     execute 'delcommand' cmd
   endfor
-  for name in keys(s:)
-    unlet s:[name]
-  endfor
+  unlet s:macros
 endfunction
 call s:clean()
 

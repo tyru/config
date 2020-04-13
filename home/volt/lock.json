@@ -40,7 +40,7 @@
     {
       "type": "git",
       "path": "github.com/cocopon/inspecthi.vim",
-      "version": "0cc36c8a1a82a0aa8d9b2b0d479c8e0d9623cabe"
+      "version": "b8a794e808b35d852c51bcdc67c5307dda943517"
     },
     {
       "type": "git",
@@ -220,7 +220,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/homevim",
-      "version": "34dbe20663fc2f83b5b15fea5af4e1769105e599"
+      "version": "89b1a0420d8c7bcc9fda0f362f74be5510f0eb58"
     },
     {
       "type": "git",
@@ -231,6 +231,11 @@
       "type": "git",
       "path": "github.com/tyru/nextfile.vim",
       "version": "3bef469967c950880a97c9bad38540d02e2f4a5e"
+    },
+    {
+      "type": "git",
+      "path": "github.com/tyru/notify-changed.vim",
+      "version": "455a166b7e71d9804e93cf5a3a8d9c6f59ff19dd"
     },
     {
       "type": "git",
@@ -295,7 +300,7 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/vim-vimlparser",
-      "version": "9303e1f546ee20885c49117e49c33effffdcfa06"
+      "version": "4139d51700ed72702bd9f7352e5359ac0cf54c6c"
     },
     {
       "type": "git",
@@ -361,6 +366,7 @@
         "github.com/tyru/homevim",
         "github.com/tyru/markdown-codehl-onthefly.vim",
         "github.com/tyru/nextfile.vim",
+        "github.com/tyru/notify-changed.vim",
         "github.com/tyru/open-browser-github.vim",
         "github.com/tyru/open-browser-unicode.vim",
         "github.com/tyru/open-browser.vim",
