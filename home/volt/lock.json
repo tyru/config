@@ -204,6 +204,11 @@
     },
     {
       "type": "git",
+      "path": "github.com/tyru/columnskip.vim",
+      "version": "5f61adc1e3ed5a4b11985be8c0354999fe99c1b7"
+    },
+    {
+      "type": "git",
       "path": "github.com/tyru/empty-prompt.vim",
       "version": "23ca8eb925ed0d1740aebfb047b9ac262541e186"
     },
@@ -235,7 +240,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/notify-changed.vim",
-      "version": "455a166b7e71d9804e93cf5a3a8d9c6f59ff19dd"
+      "version": "f0254e0a37253d7459dca72d627f3d2efc774186"
     },
     {
       "type": "git",
@@ -360,6 +365,7 @@
         "github.com/tpope/vim-markdown",
         "github.com/tsuyoshicho/vim-efm-langserver-settings",
         "github.com/tyru/caw.vim",
+        "github.com/tyru/columnskip.vim",
         "github.com/tyru/empty-prompt.vim",
         "github.com/tyru/eskk.vim",
         "github.com/tyru/forget-me-not.vim",
