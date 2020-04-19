@@ -59,6 +59,11 @@
     },
     {
       "type": "git",
+      "path": "github.com/fcpg/vim-orbital",
+      "version": "39ba0c7e995185ff262bb88b5af71394bafd5087"
+    },
+    {
+      "type": "git",
       "path": "github.com/haya14busa/vim-asterisk",
       "version": "77e97061d6691637a034258cc415d98670698459"
     },
@@ -161,6 +166,11 @@
       "type": "git",
       "path": "github.com/rbtnn/vim-mrw",
       "version": "ac0478fb2596ac1622b51229ace6d1895e5f353f"
+    },
+    {
+      "type": "git",
+      "path": "github.com/rhysd/conflict-marker.vim",
+      "version": "495f700bd73d45e5b92f7b5839604556e40b7ae8"
     },
     {
       "type": "git",
@@ -341,6 +351,7 @@
         "github.com/cocopon/inspecthi.vim",
         "github.com/cocopon/pgmnt.vim",
         "github.com/dhruvasagar/vim-table-mode",
+        "github.com/fcpg/vim-orbital",
         "github.com/haya14busa/vim-asterisk",
         "github.com/hotwatermorning/auto-git-diff",
         "github.com/itchyny/vim-parenmatch",
@@ -358,6 +369,7 @@
         "github.com/prabirshrestha/async.vim",
         "github.com/prabirshrestha/vim-lsp",
         "github.com/rbtnn/vim-mrw",
+        "github.com/rhysd/conflict-marker.vim",
         "github.com/rhysd/vim-color-spring-night",
         "github.com/thinca/vim-prettyprint",
         "github.com/thinca/vim-quickrun",
