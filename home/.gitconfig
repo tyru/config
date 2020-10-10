@@ -11,6 +11,8 @@
 	amend = commit --amend -C HEAD
 	amend-edit = commit -v --amend
 	br = branch
+	ci = commit -v
+	cia = commit -av
 	co = checkout
 	cont = rebase --continue
 	cp = cherry-pick

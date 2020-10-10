@@ -146,10 +146,9 @@ set nrformats-=octal
 set number
 set pumheight=20
 set scrolloff=5
-set sessionoptions=blank,folds,help,winsize,terminal,slash,unix
+set sessionoptions=blank,curdir,folds,help,tabpages,terminal,winsize,slash
 set shiftround
 set shiftwidth=2
-set shortmess+=aI shortmess-=S
 set showtabline=2
 set smartcase
 set softtabstop=-1
@@ -162,6 +161,11 @@ set ttimeoutlen=50
 set whichwrap=b,s
 set wildmenu
 set wildmode=longest,list,full
+
+set shortmess+=aI
+if !exists('*searchcount')
+  set shortmess-=S
+endif
 
 if has('path_extra')
   set tags+=.;
@@ -246,32 +250,50 @@ endfunction
 
 function! MyTabLabel(tabnr)
   let title = gettabvar(a:tabnr, 'title', '')
-  if title !=# ''
-    return title
-  endif
-
   let buflist = tabpagebuflist(a:tabnr)
+  let fname = title ==# '' ? MyTabFname(a:tabnr, buflist) : title
+  let modified = MyTabModified(buflist)
+  let wincount = MyWinCount(buflist)
+  return printf('%s:%s%s%s', a:tabnr, fname, modified, wincount)
+endfunction
+
+" TODO: separate filetype-specific code
+let s:webFt = ['javascript', 'typescript', 'stylus']
+function! MyTabFname(tabnr, buflist) abort
   let bufname = ''
-  let modified = 0
-  if type(buflist) ==# 3
-    let bufname = bufname(buflist[tabpagewinnr(a:tabnr) - 1])
+  let ft = getbufvar(winbufnr(win_getid(tabpagewinnr(a:tabnr), a:tabnr)), '&filetype')
+  if index(s:webFt, ft) !=# -1
+    let bufname = bufname(a:buflist[tabpagewinnr(a:tabnr) - 1])
+    echom bufname
+    let paths = bufname->split('/')
+    if bufname =~# '/index\.\w\+$' && len(paths) >= 2
+      let bufname = paths[-2]
+    else
+      let bufname = paths->get(-1, '')
+    endif
+  elseif type(a:buflist) ==# 3
+    let bufname = bufname(a:buflist[tabpagewinnr(a:tabnr) - 1])
     let bufname = fnamemodify(bufname, ':t')
     " let bufname = pathshorten(bufname)
-    for bufnr in buflist
-      " check only <empty> and acwrite
-      if getbufvar(bufnr, '&buftype', 'NONE') =~# '\v^(acwrite)?$' && getbufvar(bufnr, '&modified', 0)
-        let modified = 1
-        break
-      endif
-    endfor
   endif
+  let fname = bufname ==# '' ? '[No Name]' : bufname
+  return fname
+endfunction
 
-  if bufname ==# ''
-    let label = '[No Name]'
-  else
-    let label = bufname
-  endif
-  return label . (modified ? '[+]' : '')
+function! MyTabModified(buflist) abort
+  let modified = 0
+  for bufnr in a:buflist
+    " check only <empty> and acwrite
+    if getbufvar(bufnr, '&buftype', 'NONE') =~# '\v^(acwrite)?$' && getbufvar(bufnr, '&modified', 0)
+      let modified = 1
+      break
+    endif
+  endfor
+  return (modified ? '[+]' : '')
+endfunction
+
+function! MyWinCount(buflist) abort
+  return a:buflist->copy()->sort('n')->uniq()->len()->{n -> n >=# 2 ? '*' . n : ''}()
 endfunction
 
 " }}}
@@ -467,25 +489,6 @@ BulkMap <noremap> [nxo] x "_x
 
 onoremap gv :<C-u>normal! gv<CR>
 
-
-
-" Motions {{{2
-
-" Go to the next/previous line whose first character is not space.
-BulkMap [nxo] [k <SID>(go-prev-first-non-blank)
-BulkMap [nxo] ]k <SID>(go-next-first-non-blank)
-BulkMap <noremap><expr> [nx] <SID>(go-prev-first-non-blank) <SID>first_non_blank('Wbn')
-BulkMap <noremap><expr> [o]  <SID>(go-prev-first-non-blank) 'V' . <SID>first_non_blank('Wbn')
-BulkMap <noremap><expr> [nx] <SID>(go-next-first-non-blank) <SID>first_non_blank('Wn')
-BulkMap <noremap><expr> [o]  <SID>(go-next-first-non-blank) 'V' . <SID>first_non_blank('Wn')
-
-function! s:first_non_blank(flags) abort
-  let lnum = search('^\S', a:flags)
-  return lnum > 0 ? lnum . 'G' : ''
-endfunction
-
-BulkMap <noremap> [nxo] gp ]p
-
 " }}}
 
 " Do not scroll over the last line
@@ -505,6 +508,10 @@ nnoremap <Plug>(vimrc:prefix:excmd)cd   :<C-u>tcd %:h<CR>
 
 " 'Y' to yank till the end of line.
 nnoremap Y    y$
+
+" Jumping tabs
+nnoremap <expr> <C-n> ':<C-u>tabnext +' . v:count1 . "\<CR>"
+nnoremap        <C-p> gT
 
 " Moving tabs
 if has('tabsidebar')
@@ -1039,6 +1046,19 @@ if 1
   " abnormally) if the stale sessions exist at vim startup
   autocmd VimEnter * ForgetMeNot switch -recover
 endif
+
+command! FoldDiff call s:cmd_fold_diff()
+function! s:cmd_fold_diff() abort
+  if getline(1) !~# '^diff '
+    1,/^diff /-1 delete _
+  endif
+  normal! zE
+  1
+  while search('^diff ', 'W')
+    ?^diff ?,.-1 fold
+  endwhile
+  .,$ fold
+endfunction
 
 " Quickfix {{{1
 

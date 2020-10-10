@@ -1,12 +1,19 @@
 " vim:et:sw=2:ts=2
 
 function! s:on_load_pre()
-  nmap sj <Plug>(columnskip-j)
-  omap sj <Plug>(columnskip-j)
-  xmap sj <Plug>(columnskip-j)
-  nmap sk <Plug>(columnskip-k)
-  omap sk <Plug>(columnskip-k)
-  xmap sk <Plug>(columnskip-k)
+  nmap sj <Plug>(columnskip:nonblank:next)
+  omap sj <Plug>(columnskip:nonblank:next)
+  xmap sj <Plug>(columnskip:nonblank:next)
+  nmap sk <Plug>(columnskip:nonblank:prev)
+  omap sk <Plug>(columnskip:nonblank:prev)
+  xmap sk <Plug>(columnskip:nonblank:prev)
+
+  nmap ]k <Plug>(columnskip:first-nonblank:next)
+  omap ]k <Plug>(columnskip:first-nonblank:next)
+  xmap ]k <Plug>(columnskip:first-nonblank:next)
+  nmap [k <Plug>(columnskip:first-nonblank:prev)
+  omap [k <Plug>(columnskip:first-nonblank:prev)
+  xmap [k <Plug>(columnskip:first-nonblank:prev)
 endfunction
 
 function! s:on_load_post()
