@@ -307,6 +307,9 @@ let &statusline =
 
 if exists('*searchcount')
   function! LastSearchCount() abort
+    if !v:hlsearch
+      return ''
+    endif
     let result = searchcount(#{recompute: 0})
     if empty(result)
       return ''
@@ -322,11 +325,11 @@ if exists('*searchcount')
     endif
     return printf(' /%s [%d/%d]', @/, result.current, result.total)
   endfunction
-  let &statusline .= '%{v:hlsearch ? LastSearchCount() : ""}'
+  let &statusline .= '%{LastSearchCount()}'
 
-  autocmd CursorMoved,CursorMovedI *
-    \ let s:searchcount_timer =
-    \   timer_start(200, function('s:update_searchcount'))
+  " debounce
+  autocmd CursorMoved * let s:searchcount_timer =
+  \   timer_start(200, function('s:update_searchcount'))
   function! s:update_searchcount(timer) abort
     if a:timer ==# s:searchcount_timer
       call searchcount(#{recompute: 1, maxcount: 0, timeout: 100})
@@ -514,13 +517,11 @@ nnoremap <expr> <C-n> ':<C-u>tabnext +' . v:count1 . "\<CR>"
 nnoremap        <C-p> gT
 
 " Moving tabs
-if has('tabsidebar')
-  nnoremap <silent> <C-w><Up>      :<C-u>call <SID>tabmove(-v:count1)<CR>
-  nnoremap <silent> <C-w><Down>    :<C-u>call <SID>tabmove(+v:count1)<CR>
-else
-  nnoremap <silent> <C-w><Left>    :<C-u>call <SID>tabmove(-v:count1)<CR>
-  nnoremap <silent> <C-w><Right>   :<C-u>call <SID>tabmove(+v:count1)<CR>
-endif
+nnoremap <silent> <C-w><Left>    :<C-u>call <SID>tabmove(-v:count1)<CR>
+nnoremap <silent> <C-w><Right>   :<C-u>call <SID>tabmove(+v:count1)<CR>
+" for +tabsidebar
+nnoremap <silent> <C-w><Up>      :<C-u>call <SID>tabmove(-v:count1)<CR>
+nnoremap <silent> <C-w><Down>    :<C-u>call <SID>tabmove(+v:count1)<CR>
 
 function! s:tabmove(n) abort
   let last = tabpagenr('$')
@@ -562,30 +563,11 @@ if has('gui_running')
   endfunction
 endif
 
-" Use gw instead of gT {{{2
-nnoremap gw              gT
-nnoremap <C-w>gw         <C-w>gT
-nnoremap <C-w><C-g><C-w> <C-w>gT
-tnoremap <C-w>gw         <C-w>gT
-tnoremap <C-w><C-g><C-w> <C-w>gT
-
 " Terminal {{{2
 
 " I don't use <C-w><C-t> mapping in normal mode
 tnoremap <C-w><C-t> <C-w>N
 nnoremap <expr> <C-w><C-t> term_getstatus(bufnr('')) =~# 'normal' ? 'a' : ''
-
-" FIXME: currently volt does not recognize tyru/empty-prompt.vim plugconf...
-if 1
-
-  " Enter command-line / normal-mode if current line is empty prompt
-  function! s:empty_prompt_mappings() abort
-    call empty_prompt#map(#{lhs: ':', rhs: '<C-w>:'})
-    call empty_prompt#map(#{lhs: '<Esc>', rhs: '<C-w>N'})
-  endfunction
-  autocmd VimEnter * ++once call s:empty_prompt_mappings()
-
-endif
 
 " Cmdwin {{{2
 set cedit=<C-l>
@@ -905,32 +887,9 @@ endfunction
 command! -bar Kwbd execute 'enew | bw' bufnr("%")
 
 " Enable/Disable 'scrollbind', 'cursorbind' options.
-command! -bar ScrollbindEnable  call s:cmd_scrollbind_enable()
-command! -bar ScrollbindDisable call s:cmd_scrollbind_disable()
-command! -bar ScrollbindToggle  call s:cmd_scrollbind_toggle()
-
-function! s:cmd_scrollbind_enable() abort
-  call s:cmd_scrollbind(1)
-endfunction
-
-function! s:cmd_scrollbind_disable() abort
-  call s:cmd_scrollbind(0)
-endfunction
-
-function! s:cmd_scrollbind_toggle() abort
-  if &l:scrollbind
-    ScrollbindDisable
-  else
-    ScrollbindEnable
-  endif
-endfunction
-
-function! s:cmd_scrollbind(enable)
-  let &l:scrollbind = a:enable
-  if exists('+cursorbind')
-    let &l:cursorbind = a:enable
-  endif
-endfunction
+command! -bar ScrollbindEnable  setlocal scrollbind cursorbind scrollbind? cursorbind?
+command! -bar ScrollbindDisable setlocal noscrollbind nocursorbind scrollbind? cursorbind?
+command! -bar ScrollbindToggle  if &l:scrollbind | ScrollbindDisable | else | ScrollbindEnable | endif
 
 command! -bar ResetHelpBuffer
 \   setlocal noro modifiable buftype= list noet
@@ -1038,13 +997,6 @@ if 1
     endfunction
     call s:register_update_session()
   augroup END
-endif
-
-" FIXME: currently volt does not recognize tyru/forget-me-not.vim plugconf...
-if 1
-  " Try to switch to a stale session (which should be vim exited
-  " abnormally) if the stale sessions exist at vim startup
-  autocmd VimEnter * ForgetMeNot switch -recover
 endif
 
 command! FoldDiff call s:cmd_fold_diff()
