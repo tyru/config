@@ -4,7 +4,7 @@ function! s:on_load_pre()
   let g:lsp_highlight_references_enabled = 0
   let g:lsp_signature_help_enabled = 0
   let g:lsp_semantic_enabled = 0
-  let g:lsp_log_file = expand('~/vim-lsp.log')
+  " let g:lsp_log_file = expand('~/vim-lsp.log')
   " let g:lsp_async_completion = 1
   let g:lsp_diagnostics_float_cursor = 0
   let g:lsp_diagnostics_echo_cursor = 1

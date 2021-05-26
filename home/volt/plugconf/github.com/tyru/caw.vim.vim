@@ -4,6 +4,7 @@
 " This configuration is executed *before* a plugin is loaded.
 function! s:on_load_pre()
   let g:caw_operator_keymappings = 0
+  let g:caw_dollarpos_sp_left = ' '
   " if g:caw_operator_keymappings
   "   " for [count]gcc, gcc (it doesn't enter operator-pending mode)
   "   " https://github.com/tyru/caw.vim/issues/80#issuecomment-425324793

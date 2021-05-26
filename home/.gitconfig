@@ -4,6 +4,8 @@
 [github]
 	user = tyru
 [core]
+	# https://www.clear-code.com/blog/2017/6/27.html
+	pager = less --RAW-CONTROL-CHARS --quit-if-one-screen
 	excludesfile = ~/.gitignore.base
 	editor = vim
 	autocrlf = false
@@ -55,3 +57,5 @@
 [diff]
 	noprefix = true
 	renames = true
+[commit]
+	verbose = true

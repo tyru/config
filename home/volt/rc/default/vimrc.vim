@@ -310,7 +310,11 @@ if exists('*searchcount')
     if !v:hlsearch
       return ''
     endif
-    let result = searchcount(#{recompute: 0})
+    try
+      let result = searchcount(#{recompute: 0})
+    catch
+      return ''
+    endtry
     if empty(result)
       return ''
     endif
@@ -332,8 +336,11 @@ if exists('*searchcount')
   \   timer_start(200, function('s:update_searchcount'))
   function! s:update_searchcount(timer) abort
     if a:timer ==# s:searchcount_timer
-      call searchcount(#{recompute: 1, maxcount: 0, timeout: 100})
-      redrawstatus
+      try
+        call searchcount(#{recompute: 1, maxcount: 0, timeout: 100})
+        redrawstatus
+      catch
+      endtry
     endif
   endfunction
 endif
@@ -537,6 +544,88 @@ nnoremap <silent> <Plug>(vimrc:prefix:excmd)q      :<C-u>close<CR>
 
 " Edit .vimrc
 nnoremap <Plug>(vimrc:prefix:excmd)ev     :<C-u>edit $MYVIMRC<CR>
+
+" Mark current window ID {{{2
+let s:marked_winids = {}
+
+nnoremap <silent> <C-w>m     :<C-u>call <SID>mark_current_winid()<CR>
+nnoremap <silent> <C-w><C-m> :<C-u>call <SID>mark_current_winid()<CR>
+tnoremap <silent> <C-w>m     <C-w>:<C-u>call <SID>mark_current_winid()<CR>
+tnoremap <silent> <C-w><C-m> <C-w>:<C-u>call <SID>mark_current_winid()<CR>
+
+nnoremap <silent> <C-w><C-e> :<C-u>call <SID>jump_to_marked_winid()<CR>
+nmap              <C-w>e     <C-w><C-e>
+tnoremap <silent> <C-w><C-e> <C-w>:<C-u>call <SID>jump_to_marked_winid()<CR>
+tmap              <C-w>e     <C-w><C-e>
+
+let s:VALID_MARK_CHARACTER = '^[a-zA-Z]$'
+
+function! s:getchar(...) abort
+  let c = call('getchar', a:000)
+  return type(c) ==# v:t_string ? c : nr2char(c)
+endfunction
+
+function! s:errormsg(msg, redraw) abort
+  if a:redraw
+    redraw
+  endif
+  echohl ErrorMsg
+  echomsg a:msg
+  echohl None
+endfunction
+
+function! s:mark_current_winid() abort
+  echon 'Mark window ID as:'
+  let c = s:getchar()
+  if c ==# "\<CR>"
+    return
+  endif
+  if c !~# s:VALID_MARK_CHARACTER
+    call s:errormsg('Please input valid character to mark', v:true)
+    return
+  endif
+  echon c
+  " TODO: save pos with mark
+  let s:marked_winids[c] = win_getid()
+endfunction
+
+function! s:jump_to_marked_winid() abort
+  echon 'Jump to:'
+  let c = s:getchar()
+  if c ==# "\<CR>"
+    return
+  endif
+  if c !~# s:VALID_MARK_CHARACTER
+    call s:errormsg('Please input valid character to mark', v:true)
+    return
+  endif
+  if !has_key(s:marked_winids, c) || type(s:marked_winids[c]) !=# v:t_number
+    call s:errormsg(printf("'%s' is not marked yet", c), v:true)
+    return
+  endif
+  echon c
+  call win_gotoid(s:marked_winids[c])
+endfunction
+
+" Move to the previous tab {{{2
+nnoremap <silent> <C-w><C-w> :<C-u>call <SID>move_to_previous_tab()<CR>
+tnoremap <silent> <C-w><C-w> <C-w>:<C-u>call <SID>move_to_previous_tab()<CR>
+
+let s:prev_winid = -1
+function! s:move_to_previous_tab() abort
+  if s:prev_winid >= 0
+    let winid = win_getid()
+    call win_gotoid(s:prev_winid)
+    let s:prev_winid = winid
+  endif
+endfunction
+
+autocmd vimrc TabLeave * let s:prev_winid = win_getid()
+
+" Move tabpage {{{2
+
+nnoremap <Left>  :<C-u>tabmove -1<CR>
+nnoremap <Right> :<C-u>tabmove +1<CR>
 
 " Move window size {{{2
 " https://lambdalisue.hatenablog.com/entry/2015/12/25/000046
