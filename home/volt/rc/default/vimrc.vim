@@ -6,6 +6,9 @@
 
 " See also: ~/.vimrc or ~/_vimrc
 
+" TODO: Install plugins
+" - https://thinca.hatenablog.com/entry/qfhl-vim-released
+
 if v:version < 802
   echomsg 'Stop loading vimrc. Please use 8.2 later'
   set packpath-=$MYVIMDIR
@@ -142,7 +145,7 @@ set matchpairs+=<:>
 set nofixeol
 set noshowcmd
 set notimeout
-set nrformats-=octal
+set nrformats-=octal nrformats+=unsigned
 set number
 set pumheight=20
 set scrolloff=5
@@ -206,15 +209,32 @@ let &titlestring = '%{getcwd()}'
 
 " guitablabel {{{
 
+nnoremap <C-w>t :<C-u>TabTitle<CR>
+tnoremap <C-w>t <C-w>:<C-u>TabTitle<CR>
+
 command! -nargs=* TabTitle call s:tab_title(<q-args>)
 function! s:tab_title(new_title) abort
   let title = trim(a:new_title)
+  if title ==# ''
+    let title = s:prompt_tab_title()
+  endif
   if title ==# ''
     unlet! t:title
   else
     let t:title = title
   endif
   redrawtabline
+endfunction
+
+function! s:prompt_tab_title() abort
+  let with_tabnr = v:false
+  let initial_title = MyTabLabel(tabpagenr(), with_tabnr)
+  call inputsave()
+  try
+    return input('set tab title (blank to clear): ', initial_title)
+  finally
+    call inputrestore()
+  endtry
 endfunction
 
 let &guitablabel = '%{MyTabLabel(v:lnum)}'
@@ -248,13 +268,17 @@ function MyTabLine()
   return s
 endfunction
 
-function! MyTabLabel(tabnr)
+function! MyTabLabel(tabnr, ...)
+  let with_tabnr = get(a:000, 0, v:true)
   let title = gettabvar(a:tabnr, 'title', '')
   let buflist = tabpagebuflist(a:tabnr)
   let fname = title ==# '' ? MyTabFname(a:tabnr, buflist) : title
   let modified = MyTabModified(buflist)
   let wincount = MyWinCount(buflist)
-  return printf('%s:%s%s%s', a:tabnr, fname, modified, wincount)
+  return join([
+  \ (with_tabnr ? a:tabnr . ':' : ''),
+  \ fname, modified, wincount
+  \], '')
 endfunction
 
 " TODO: separate filetype-specific code
@@ -520,8 +544,21 @@ nnoremap <Plug>(vimrc:prefix:excmd)cd   :<C-u>tcd %:h<CR>
 nnoremap Y    y$
 
 " Jumping tabs
-nnoremap <expr> <C-n> ':<C-u>tabnext +' . v:count1 . "\<CR>"
-nnoremap        <C-p> gT
+tnoremap <silent> <C-w><C-n> <C-w>:<C-u>call <SID>tabjump(v:count1)<CR>
+tnoremap <silent> <C-w><C-p> <C-w>:<C-u>call <SID>tabjump(-v:count1)<CR>
+nnoremap <silent> <C-w><C-n> :<C-u>call <SID>tabjump(v:count1)<CR>
+nnoremap <silent> <C-w><C-p> :<C-u>call <SID>tabjump(-v:count1)<CR>
+nnoremap <silent> <C-n>      :<C-u>call <SID>tabjump(v:count1)<CR>
+nnoremap <silent> <C-p>      :<C-u>call <SID>tabjump(-v:count1)<CR>
+
+function! s:tabjump(n) abort
+  let dest = (tabpagenr() + a:n) % tabpagenr('$')
+  if a:n > 0
+    execute 'tabnext' (dest == 0 ? tabpagenr('$') : dest)
+  elseif a:n < 0
+    execute 'tabnext' (dest <= 0 ? tabpagenr('$') + dest : dest)
+  endif
+endfunction
 
 " Moving tabs
 nnoremap <silent> <C-w><Left>    :<C-u>call <SID>tabmove(-v:count1)<CR>
@@ -595,6 +632,33 @@ function! s:jump_to_marked_winid() abort
   if c ==# "\<CR>"
     return
   endif
+  " jump by tab number
+  if c =~# '[0-9]'
+    " 3 digits tab number is not supported :p
+    let re = '^' . c
+    let found_tabs = range(1, tabpagenr('$'))->filter('v:val =~# re')
+    if len(found_tabs) ==# 1
+      execute 'normal! ' . c . 'gt'
+    elseif len(found_tabs) >=# 2
+      redraw
+      echon 'which tab? ' . found_tabs->map('MyTabLabel(v:val)')->join(' ') . ': ' . c
+      let c2 = s:getchar()
+      if c2 =~# '[0-9]' || c2 ==# "\<CR>"
+        let tabnr = c . (c2 == "\<CR>" ? '' : c2)
+        if 1 <=# tabnr && tabnr <=# tabpagenr('$')
+          execute 'normal! ' . tabnr . 'gt'
+        else
+          echo tabnr . ': no such tab.'
+        endif
+      endif
+    else
+      echo c . ': no such tab.'
+    endif
+    redraw
+    echo ''
+    return
+  endif
+  " jump by mark
   if c !~# s:VALID_MARK_CHARACTER
     call s:errormsg('Please input valid character to mark', v:true)
     return
@@ -1034,7 +1098,7 @@ command! -nargs=1 -complete=file Tailf terminal ++kill=term ++close tail -f <arg
 command! TermTop terminal ++kill=term ++close top
 
 " FIXME: currently volt does not recognize tyru/project-guide.vim plugconf...
-if 1
+if 0
   command! -nargs=* -complete=dir Gof execute 'terminal ++close gof -t' .. (<q-args> !=# '' ? ' ' .. <q-args> : '')
 
   function! s:volt_plugconf() abort
@@ -1088,6 +1152,7 @@ if 1
   augroup END
 endif
 
+" TODO: use https://github.com/thinca/vim-ft-diff_fold
 command! FoldDiff call s:cmd_fold_diff()
 function! s:cmd_fold_diff() abort
   if getline(1) !~# '^diff '
@@ -1099,6 +1164,26 @@ function! s:cmd_fold_diff() abort
     ?^diff ?,.-1 fold
   endwhile
   .,$ fold
+endfunction
+
+command! -register CopyPathLnum
+\ call setreg(<q-reg>, @% . ':' . line('.')) |
+\ echo @% . ':' . line('.')
+
+" Duplicate tab also in terminal
+tnoremap <C-w>s <C-w>:<C-u>call <SID>duplicate_tab_term()<CR>
+
+function! s:duplicate_tab_term() abort
+  let fname = tempname()
+  try
+    call term_dumpwrite(bufnr(''), fname)
+    call term_dumpload(fname)
+    setlocal nowrap
+  catch
+  finally
+    " XXX: this might fail on Windows when opening fname
+    silent! call delete(fname)
+  endtry
 endfunction
 
 " Quickfix {{{1

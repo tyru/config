@@ -130,7 +130,7 @@
     {
       "type": "git",
       "path": "github.com/mattn/vim-lsp-settings",
-      "version": "78539e17f2a1dcfa2b781c66188af1aecdba3c7b"
+      "version": "c8517db278a72da205efa2318d38472f8d9ac654"
     },
     {
       "type": "git",
