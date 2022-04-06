@@ -228,7 +228,7 @@ endfunction
 
 function! s:prompt_tab_title() abort
   let with_tabnr = v:false
-  let initial_title = MyTabLabel(tabpagenr(), with_tabnr)
+  let initial_title = gettabvar(tabpagenr(), 'title', '')
   call inputsave()
   try
     return input('set tab title (blank to clear): ', initial_title)
@@ -622,14 +622,21 @@ function! s:mark_current_winid() abort
     return
   endif
   echon c
-  " TODO: save pos with mark
+  " TODO: save pos with text property
   let s:marked_winids[c] = win_getid()
 endfunction
 
+" TODO: Popup UI
+" TODO: Add ex-command to select & jump to marked window (ex-command version of popup UI)
+" TODO: Add feature to search by bufname (like :buffer) if input was not digit
+" (this feature conflicts with jumping to marked window,
+" mark feature should be deprecate because it's enough to jump to tabpage by tabnr)
 function! s:jump_to_marked_winid() abort
   echon 'Jump to:'
   let c = s:getchar()
-  if c ==# "\<CR>"
+  if c ==# "\<CR>" || c ==# "\<Esc>"
+    redraw
+    echo 'Canceled.'
     return
   endif
   " jump by tab number
@@ -643,6 +650,11 @@ function! s:jump_to_marked_winid() abort
       redraw
       echon 'which tab? ' . found_tabs->map('MyTabLabel(v:val)')->join(' ') . ': ' . c
       let c2 = s:getchar()
+      if c2 ==# "\<Esc>"
+        redraw
+        echo 'Canceled.'
+        return
+      endif
       if c2 =~# '[0-9]' || c2 ==# "\<CR>"
         let tabnr = c . (c2 == "\<CR>" ? '' : c2)
         if 1 <=# tabnr && tabnr <=# tabpagenr('$')
@@ -822,8 +834,6 @@ nnoremap <Plug>(vimrc:prefix:excmd)oT  :<C-u>call <SID>toggle_terminal_modes()<C
 nnoremap <Plug>(vimrc:prefix:excmd)od  :<C-u>call <SID>toggle_diff()<CR>
 nnoremap <Plug>(vimrc:prefix:excmd)ost :<C-u>call <SID>toggle_tabsidebar()<CR>
 
-" <Space>[hjkl] for <C-w>[hjkl] {{{2
-
 " Make <M-Space> same as ordinal applications on MS Windows {{{2
 if has('gui_running') && s:is_win
   nnoremap <M-Space> :<C-u>simalt ~<CR>
@@ -897,21 +907,6 @@ inoremap <Plug>(vimrc:prefix:compl)<C-t> <C-x><C-t>
 cnoremap <C-n> <Down>
 cnoremap <C-p> <Up>
 
-" Duplicate terminal buffer {{{2
-
-" Duplicate current lines to another plain buffer,
-" to see the output without stopping command I/O.
-tnoremap <C-w>y <C-w>:<C-u>call <SID>dup_term_buf()<CR>
-
-" TODO dump also scrolled lines
-function! s:dup_term_buf() abort
-  let file = tempname()
-  call term_dumpwrite('', file)
-  call term_dumpload(file)
-  setlocal nolist
-  call delete(file)
-endfunction
-
 " Centering display position after certain commands {{{2
 
 nnoremap <SID>(centering-display) zvzz
@@ -925,11 +920,74 @@ nmap <script> N N<SID>(centering-display)
 xmap <script> n n<SID>(centering-display)
 xmap <script> N N<SID>(centering-display)
 
-" Use gF (search line number after filename) {{{2
+" gF series {{{2
+" * Search line number after filename (Behave like gF series, not gf series)
+" * Jump to buffer across tabpages if the buffer was already opened
 
-nnoremap gf gF
-nnoremap <C-w>f <C-w>F
-nnoremap <C-w><C-f> <C-w>F
+nnoremap <silent> gf :<C-u>call <SID>open_and_go_lnum('edit')<CR>
+vnoremap <silent> gf :<C-u>call <SID>v_open_and_go_lnum('edit')<CR>
+
+nmap     <C-w>f     <C-w><C-f>
+vmap     <C-w>f     <C-w><C-f>
+nnoremap <silent> <C-w><C-f> :<C-u>call <SID>open_and_go_lnum('split')<CR>
+vnoremap <silent> <C-w><C-f> :<C-u>call <SID>v_open_and_go_lnum('split')<CR>
+
+function! s:v_open_and_go_lnum(opencmd) abort
+  let [prev_reg, prev_regtype] = [getreg('z', 1), getregtype('z')]
+  try
+    normal! gv"zy
+    let [cfile, clnum] = s:parse_file_and_lnum(@z)
+    call s:open_and_go_lnum(a:opencmd, cfile, clnum)
+  finally
+    call setreg('z', prev_reg, prev_regtype)
+  endtry
+endfunction
+
+function! s:parse_file_and_lnum(str) abort
+  let r = split(a:str, ':')
+  let file = get(r, 0, '')
+  let lnum = get(r, 1, '')
+  return [file, lnum]
+endfunction
+
+function! s:open_and_go_lnum(opencmd, ...) abort
+  let cfile = a:0 >=# 1 ? a:1 : expand('<cfile>')
+  if cfile ==# ''
+    return
+  endif
+  let file = findfile(cfile)
+  if file ==# ''
+    echohl ErrorMsg
+    echomsg 'No such file in path:' cfile
+    echohl None
+    return
+  endif
+  let clnum = a:0 >=# 2 ? a:2 : matchstr(getline('.'), '\V' . cfile . '\v:\zs\d+')
+  let winid = s:get_winid_by_fname(file)
+  if win_gotoid(winid)
+    echo 'Already opened.'
+  else
+    try
+      execute a:opencmd file
+    catch
+      echohl ErrorMsg
+      echomsg v:exception
+      echohl None
+      return
+    endtry
+  endif
+  if clnum !=# ''
+    execute clnum
+  endif
+endfunction
+
+function! s:get_winid_by_fname(expr) abort
+  " XXX: why this won't work?
+  " return bufwinid(a:expr)
+  let bufnr = bufnr(a:expr)
+  let buflist = win_findbuf(bufnr)
+  return empty(buflist) ? -1 : buflist[0]
+endfunction
 
 " Default settings for each filetype {{{1
 
@@ -951,8 +1009,29 @@ autocmd vimrc BufNew * call matchadd('Todo', '\<TODO\|FIXME\|XXX\|NOTE\>')
 
 " Commands {{{1
 
-command! DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
-    \ | wincmd p | diffthis
+command! -bar DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+\ | wincmd p | diffthis
+
+command! -bar DiffAlgoDefault call s:cmd_set_diffalgo('myers')
+command! -bar DiffAlgoToggle
+\ call s:cmd_diff_algo_toggle(['myers', 'minimal', 'patience', 'histogram'])
+
+function! s:cmd_set_diffalgo(algo) abort
+  let opts = split(&diffopt, ',')
+  let &diffopt = filter(opts, 'v:val !~# "^algorithm:"')->add('algorithm:' . a:algo)->join(',')
+  redraw
+  set diffopt?
+  diffupdate
+endfunction
+
+" algo_list[0] is vim default algorithm
+function! s:cmd_diff_algo_toggle(algo_list) abort
+  let opts = split(&diffopt, ',')
+  let current_algo = match(opts, '^algorithm:')
+  let idx = current_algo ==# -1 ? 0 : index(a:algo_list, strpart(opts[current_algo], len('algorithm:')))
+  let next_algo = a:algo_list[idx+1 >= len(a:algo_list) ? 0 : idx+1]
+  call s:cmd_set_diffalgo(next_algo)
+endfunction
 
 command! -bar -nargs=+ -complete=file Glob echo glob(<q-args>, 1)
 command! -bar -nargs=+ -complete=file GlobPath echo globpath(&rtp, <q-args>, 1)
@@ -1085,7 +1164,7 @@ command! -nargs=+ -complete=expression LExprFile call s:cmd_cexprfile(<args>, v:
 command! -nargs=+ -complete=expression CExprSystem cexpr system(<q-args>)
 command! -nargs=+ -complete=expression LExprSystem lexpr system(<q-args>)
 
-command! -bar EmojiTest tabedit https://unicode.org/Public/emoji/12.0/emoji-test.txt
+command! -bar EmojiTest OpenBrowser https://unicode.org/Public/emoji/12.0/emoji-test.txt
 
 if has('sound')
   command! -nargs=1 -complete=file PlayFile call sound_playfile(<q-args>)
@@ -1152,20 +1231,6 @@ if 0
   augroup END
 endif
 
-" TODO: use https://github.com/thinca/vim-ft-diff_fold
-command! FoldDiff call s:cmd_fold_diff()
-function! s:cmd_fold_diff() abort
-  if getline(1) !~# '^diff '
-    1,/^diff /-1 delete _
-  endif
-  normal! zE
-  1
-  while search('^diff ', 'W')
-    ?^diff ?,.-1 fold
-  endwhile
-  .,$ fold
-endfunction
-
 command! -register CopyPathLnum
 \ call setreg(<q-reg>, @% . ':' . line('.')) |
 \ echo @% . ':' . line('.')
@@ -1178,7 +1243,7 @@ function! s:duplicate_tab_term() abort
   try
     call term_dumpwrite(bufnr(''), fname)
     call term_dumpload(fname)
-    setlocal nowrap
+    setlocal nolist nowrap
   catch
   finally
     " XXX: this might fail on Windows when opening fname
@@ -1254,19 +1319,6 @@ if has('multi_byte_ime') || has('xim')
   " Cursor color when IME is on.
   highlight CursorIM guibg=Purple guifg=NONE
   set iminsert=0 imsearch=0
-endif
-
-" Exit diff mode automatically {{{1
-" https://hail2u.net/blog/software/vim-turn-off-diff-mode-automatically.html
-
-" closeoff is introduced at 8.1.2289
-if &diffopt !~# 'closeoff'
-  " Turn off diff mode automatically
-  autocmd vimrc WinEnter *
-  \ if (winnr('$') == 1) &&
-  \    getbufvar(winbufnr(0), '&diff', -1) == 1 |
-  \     diffoff                               |
-  \ endif
 endif
 
 " Use vsplit mode {{{1

@@ -59,6 +59,11 @@
     },
     {
       "type": "git",
+      "path": "github.com/gpanders/vim-oldfiles",
+      "version": "02480a8bbc080064a285a34060d1641907fa4cac"
+    },
+    {
+      "type": "git",
       "path": "github.com/haya14busa/vim-asterisk",
       "version": "77e97061d6691637a034258cc415d98670698459"
     },
@@ -176,6 +181,21 @@
       "type": "git",
       "path": "github.com/syngan/vim-vimlint",
       "version": "cec40c28f119a5f4b92ceb0b6aae525122a81244"
+    },
+    {
+      "type": "git",
+      "path": "github.com/t9md/vim-quickhl",
+      "version": "be1f44169c3fdee3beab629e83380515da03835e"
+    },
+    {
+      "type": "git",
+      "path": "github.com/thinca/vim-ft-diff_fold",
+      "version": "89771dffd3682ef82a4b3b3e9c971b9909f08e87"
+    },
+    {
+      "type": "git",
+      "path": "github.com/thinca/vim-localrc",
+      "version": "b224cfbb11a30610551e7635a64f3fb22dbd74a1"
     },
     {
       "type": "git",
@@ -342,6 +362,7 @@
         "github.com/Shougo/neosnippet-snippets",
         "github.com/Shougo/neosnippet.vim",
         "github.com/cespare/vim-toml",
+        "github.com/gpanders/vim-oldfiles",
         "github.com/haya14busa/vim-asterisk",
         "github.com/hotwatermorning/auto-git-diff",
         "github.com/itchyny/vim-parenmatch",
@@ -359,6 +380,9 @@
         "github.com/prabirshrestha/async.vim",
         "github.com/prabirshrestha/vim-lsp",
         "github.com/rbtnn/vim-mrw",
+        "github.com/t9md/vim-quickhl",
+        "github.com/thinca/vim-ft-diff_fold",
+        "github.com/thinca/vim-localrc",
         "github.com/thinca/vim-prettyprint",
         "github.com/thinca/vim-quickrun",
         "github.com/thinca/vim-themis",

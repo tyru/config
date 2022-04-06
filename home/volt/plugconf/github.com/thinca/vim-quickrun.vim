@@ -1,7 +1,7 @@
 " vim:et:sw=2:ts=2
 
 function! s:on_load_pre()
-  command! -nargs=+ -complete=command Capture QuickRun -type vim -src <q-args>
+  command! -nargs=+ -complete=command Capture QuickRun -type vim -outputter buffer:into=1 -src <q-args>
 endfunction
 
 " Plugin configuration like the code written in vimrc.
