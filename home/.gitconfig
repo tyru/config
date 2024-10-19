@@ -11,7 +11,7 @@
 	autocrlf = false
 [alias]
 	amend = commit --amend -C HEAD
-	amend-edit = commit -v --amend
+	amend-edit = commit -v --amend --allow-empty
 	br = branch
 	ci = commit -v
 	cia = commit -av
@@ -23,9 +23,11 @@
 	git = !git
 	last = log -p --reverse HEAD@{1}..
 	ls = ls-files
+	# sw = !"git checkout $(git branch | grep -E '^\*' | peco)"
 	todo = grep -w -n -E "(TODO|XXX|FIXME)"
 	view = log --pretty=oneline --abbrev-commit --graph --source --tags --branches
 	wh = whatchanged
+	# br-delete-merged = !"git branch -d $(git branch --merged | grep -E -v '^\*')"
 [color]
 	branch = auto
 	diff = auto

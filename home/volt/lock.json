@@ -5,7 +5,7 @@
     {
       "type": "git",
       "path": "github.com/MaxMEllon/vim-jsx-pretty",
-      "version": "3a24dca8f8cc9b88efca3faf446db41f5b7da121"
+      "version": "6989f1663cc03d7da72b5ef1c03f87e6ddb70b41"
     },
     {
       "type": "git",
@@ -15,22 +15,22 @@
     {
       "type": "git",
       "path": "github.com/Shougo/context_filetype.vim",
-      "version": "cf25d744ac35872364c49fac3cb6a546e8af92ce"
+      "version": "e276626e441eee2c624b9192113f1484bc2bc0f3"
     },
     {
       "type": "git",
       "path": "github.com/Shougo/neosnippet-snippets",
-      "version": "7448233dfd40e7f0a1075fefa76d1d5a84e5d28a"
+      "version": "725c989f18e9c134cddd63a7c6b15bed5c244657"
     },
     {
       "type": "git",
       "path": "github.com/Shougo/neosnippet.vim",
-      "version": "30b6b53b7a86b84371714b4a0f092d5d303c4a35"
+      "version": "af18dc963b706568bf28f7dd2facea2ca2784299"
     },
     {
       "type": "git",
       "path": "github.com/cespare/vim-toml",
-      "version": "897cb4eaa81a0366bc859effe14116660d4015cd"
+      "version": "d36caa6b1cf508a4df1c691f915572fc02143258"
     },
     {
       "type": "git",
@@ -80,7 +80,7 @@
     {
       "type": "git",
       "path": "github.com/junegunn/seoul256.vim",
-      "version": "24ed467ca6ef9ce7ede56c9ffb1c6b30cd0ee906"
+      "version": "1c48e3e1e3f3521920788d90a83819cff14eadc9"
     },
     {
       "type": "git",
@@ -130,17 +130,17 @@
     {
       "type": "git",
       "path": "github.com/mattn/vim-goimports",
-      "version": "d42f3951232ada2b14c6356d4e60399a63ade96f"
+      "version": "e50dae830c3cc405003bbc79e90c2dfb5c8da7f5"
     },
     {
       "type": "git",
       "path": "github.com/mattn/vim-lsp-settings",
-      "version": "c8517db278a72da205efa2318d38472f8d9ac654"
+      "version": "48698366c3a0d06e252fd44dd76d4f9d50aa7045"
     },
     {
       "type": "git",
       "path": "github.com/mechatroner/rainbow_csv",
-      "version": "df89266d6c03479def77793fd7a0a651986865a5"
+      "version": "fce637e03667268c70c3684eb7038e961082bbe9"
     },
     {
       "type": "git",
@@ -155,12 +155,12 @@
     {
       "type": "git",
       "path": "github.com/prabirshrestha/async.vim",
-      "version": "6102020b4690f05ab6509a37fa25bc53e2d799a9"
+      "version": "2082d13bb195f3203d41a308b89417426a7deca1"
     },
     {
       "type": "git",
       "path": "github.com/prabirshrestha/vim-lsp",
-      "version": "b6651468b78fb6e386a6eb4b7cca4479affbe853"
+      "version": "8fdaf4f78c94c6abba06a907520a5de157c5803b"
     },
     {
       "type": "git",
@@ -170,7 +170,7 @@
     {
       "type": "git",
       "path": "github.com/rbtnn/vim-mrw",
-      "version": "ac0478fb2596ac1622b51229ace6d1895e5f353f"
+      "version": "38b90886ce82e707bf06b588465b657bcda2aafc"
     },
     {
       "type": "git",
@@ -205,27 +205,27 @@
     {
       "type": "git",
       "path": "github.com/thinca/vim-quickrun",
-      "version": "c688f336a4aeb002319994f4fb4a8873f204f0ab"
+      "version": "50f9ced186cf2651f4356aa3548c2306e181ec3b"
     },
     {
       "type": "git",
       "path": "github.com/thinca/vim-themis",
-      "version": "51bec3386b661d28fda7736006475b8b2ebe343d"
+      "version": "737e5444713ba53a9dcfbe3b962239bd0bd9162e"
     },
     {
       "type": "git",
       "path": "github.com/tpope/vim-markdown",
-      "version": "276524ed9c8aec415d3c6dbeec7c05fbd31c95ce"
+      "version": "b78bbce3371a2eb56c89f618cd4ab2baadc9ee61"
     },
     {
       "type": "git",
       "path": "github.com/tsuyoshicho/vim-efm-langserver-settings",
-      "version": "a5397ae8e699a75e6f0f61d22d3ef4805891c394"
+      "version": "c6d7a00e83c78ea301e9ae28ace4c38cd0ae8cee"
     },
     {
       "type": "git",
       "path": "github.com/tyru/caw.vim",
-      "version": "26279f70cdfe5da2226cd15d7dd832ef6242ed26"
+      "version": "3aefcb5a752a599a9200dd801d6bcb0b7606bf29"
     },
     {
       "type": "git",
@@ -240,7 +240,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/eskk.vim",
-      "version": "43e3e75ee5551b5f5752b2eb8d3aa6e8bbb40dd9"
+      "version": "a2a722c1c020748249a1f04b788cecd4f509202b"
     },
     {
       "type": "git",
@@ -270,7 +270,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/open-browser-github.vim",
-      "version": "7c31cd0093fdf89d53fa02b210c82b1326b00a8c"
+      "version": "ac7c034e300f36d591ef234dcd5eb5cd5c07c74f"
     },
     {
       "type": "git",
@@ -280,7 +280,7 @@
     {
       "type": "git",
       "path": "github.com/tyru/open-browser.vim",
-      "version": "d6f1784685abdd86500fdb5fa2fbaf2aab833f18"
+      "version": "80ec3f2bb0a86ac13c998e2f2c86e16e6d2f20bb"
     },
     {
       "type": "git",
@@ -325,7 +325,7 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/autofmt",
-      "version": "641529c17265bc5b17db595b17b42401b9daa742"
+      "version": "c5595976b8b6eedf8d260aa925b9ec9c5fc79971"
     },
     {
       "type": "git",
@@ -335,7 +335,7 @@
     {
       "type": "git",
       "path": "github.com/vim-jp/vimdoc-ja-working",
-      "version": "65ad6ec3c9f952768b66b52dd3f3d5f889902f2b"
+      "version": "2f1c4e28c8dde4ecf8e003e5514417654cf88934"
     },
     {
       "type": "git",

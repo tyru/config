@@ -2,7 +2,7 @@
 
 name=vim
 prefix=$HOME/local/$name
-enable_lua=true
+enable_lua=false
 #lua_prefix=/usr/local
 # Mac (Homebrew)
 #lua_prefix=/usr/local/opt/lua

@@ -274,10 +274,10 @@ function! MyTabLabel(tabnr, ...)
   let buflist = tabpagebuflist(a:tabnr)
   let fname = title ==# '' ? MyTabFname(a:tabnr, buflist) : title
   let modified = MyTabModified(buflist)
-  let wincount = MyWinCount(buflist)
   return join([
   \ (with_tabnr ? a:tabnr . ':' : ''),
-  \ fname, modified, wincount
+  \ fname,
+  \ modified
   \], '')
 endfunction
 
@@ -314,10 +314,6 @@ function! MyTabModified(buflist) abort
     endif
   endfor
   return (modified ? '[+]' : '')
-endfunction
-
-function! MyWinCount(buflist) abort
-  return a:buflist->copy()->sort('n')->uniq()->len()->{n -> n >=# 2 ? '*' . n : ''}()
 endfunction
 
 " }}}
@@ -426,7 +422,7 @@ if exists('+shellslash')
 endif
 
 " Visual bell
-set novisualbell
+set visualbell
 set t_vb=
 
 " Restore screen
@@ -1119,9 +1115,8 @@ endfunction
 command! -bar Kwbd execute 'enew | bw' bufnr("%")
 
 " Enable/Disable 'scrollbind', 'cursorbind' options.
-command! -bar ScrollbindEnable  setlocal scrollbind cursorbind scrollbind? cursorbind?
-command! -bar ScrollbindDisable setlocal noscrollbind nocursorbind scrollbind? cursorbind?
-command! -bar ScrollbindToggle  if &l:scrollbind | ScrollbindDisable | else | ScrollbindEnable | endif
+command! -bar ScrollbindEnable  windo setlocal scrollbind cursorbind
+command! -bar ScrollbindDisable windo setlocal noscrollbind nocursorbind
 
 command! -bar ResetHelpBuffer
 \   setlocal noro modifiable buftype= list noet
